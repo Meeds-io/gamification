@@ -23,13 +23,19 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
-    <!-- Badges storage (JPA) -->
+    <!-- Enable JPA -->
     <component>
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
+    <!-- Badges storage (JPA) -->
     <component>
         <type>org.exoplatform.gamification.storage.dao.BadgeDAO</type>
     </component>
+    <!-- Rules storage (JPA) -->
+    <component>
+        <type>org.exoplatform.gamification.storage.dao.BadgeDAO</type>
+    </component>
+
     <!-- Gamification storage layour (Liquebase initializer) -->
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
