@@ -1,9 +1,10 @@
-package org.exoplatform.gamification.model.configuration;
+package org.exoplatform.gamification.domain.configuration;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity(name = "Rule")
 @ExoEntity
@@ -31,6 +32,8 @@ import java.io.Serializable;
         )
 })
 public class RuleEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -104,5 +107,35 @@ public class RuleEntity implements Serializable {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        RuleEntity ruleEntity = (RuleEntity) o;
+        return !(ruleEntity.getId() == null || getId() == null) && Objects.equals(getId(), ruleEntity.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Badge{" +
+                "title='" + title + '\'' +
+                ", score='" + score + '\'' +
+                ", area='" + area + '\'' +
+                ", description='" + description + '\'' +
+                ", enable='" + isEnabled + '\'' +
+                "}";
     }
 }

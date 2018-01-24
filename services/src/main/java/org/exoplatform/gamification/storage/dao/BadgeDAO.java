@@ -1,7 +1,7 @@
 package org.exoplatform.gamification.storage.dao;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.gamification.model.configuration.BadgeEntity;
+import org.exoplatform.gamification.domain.configuration.BadgeEntity;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;

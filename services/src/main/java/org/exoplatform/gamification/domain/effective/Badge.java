@@ -1,4 +1,4 @@
-package org.exoplatform.gamification.model.effective;
+package org.exoplatform.gamification.domain.effective;
 
 import java.io.Serializable;
 import java.util.Date;
