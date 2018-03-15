@@ -33,7 +33,7 @@
     </component>
     <!-- Rules storage (JPA) -->
     <component>
-        <type>org.exoplatform.gamification.storage.dao.BadgeDAO</type>
+        <type>org.exoplatform.gamification.storage.dao.RuleDAO</type>
     </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->
