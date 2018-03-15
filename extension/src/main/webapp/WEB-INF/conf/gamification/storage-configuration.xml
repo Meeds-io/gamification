@@ -40,13 +40,13 @@
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
         <component-plugin>
-            <name>WebConferencingChangeLogsPlugin</name>
+            <name>GamificationChangeLogsPlugin</name>
             <set-method>addChangeLogsPlugin</set-method>
             <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
             <init-params>
                 <values-param>
                     <name>changelogs</name>
-                    <description>Change logs of Web Conferencing</description>
+                    <description>Change logs of Gamification</description>
                     <value>db/changelog/gamification.db.changelog-1.0.0.xml</value>
                 </values-param>
             </init-params>

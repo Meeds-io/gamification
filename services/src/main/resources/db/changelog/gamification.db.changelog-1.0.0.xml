@@ -5,15 +5,15 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
 
     <!-- Managing auto generation of timestamp by Database -->
-    <property name="now" value="now()" dbms="mysql,hsqldb,postgresql"/>
-    <property name="now" value="sysdate" dbms="oracle"/>
-    <property name="now" value="CURRENT_TIMESTAMP" dbms="mssql"/>
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="now()" dbms="mysql"/>
+    <property name="autoIncrement" value="true"/>
 
     <!-- Definition of GAMIFICATION_BADGE table -->
     <changeSet author="gamification" id="1.0.0-1">
         <createTable tableName="GAMIFICATION_BADGE">
-            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGE"/>
+            <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="TITLE" type="NVARCHAR(32)">
                 <constraints nullable="false" unique="true"/>
@@ -33,12 +33,42 @@
             <column name="BADGE_IS_ENABLE" type="BIT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="CREATED_DATE" type="TIMESTAMP" defaultValue="${now}">
+            <column name="CREATED_BY" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LAST_DATE" type="TIMESTAMP" defaultValue="${now}">
+            <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
                 <constraints nullable="false"/>
             </column>
+            <column name="LAST_MODIFIED_BY" type="varchar(50)"/>
+            <column name="LAST_MODIFIED_DATE" type="timestamp"/>
+        </createTable>
+        <createTable tableName="GAMIFICATION_RULE">
+            <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="NVARCHAR(32)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="DESCRIPTION" type="NVARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCORE" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AREA" type="NVARCHAR(32)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="RULE_IS_ENABLE" type="BIT" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_BY" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LAST_MODIFIED_BY" type="varchar(50)"/>
+            <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
         <modifySql dbms="mysql">
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>

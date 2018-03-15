@@ -1,6 +1,6 @@
 package org.exoplatform.gamification.service;
 
-import org.exoplatform.gamification.domain.configuration.BadgeEntity;
+import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.gamification.storage.dao.BadgeDAO;
 
 public class BadgeService {

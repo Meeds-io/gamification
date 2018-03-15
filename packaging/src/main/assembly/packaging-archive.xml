@@ -29,7 +29,7 @@
        <outputDirectory>lib</outputDirectory>
        <useTransitiveDependencies>true</useTransitiveDependencies>
        <includes>
-         <include>org.exoplatform.addons.gamification:gamification-services-*:jar</include>
+         <include>org.exoplatform.addons.gamification:gamification-services*:jar</include>
        </includes>
        <scope>provided</scope>
        <fileMode>0644</fileMode>

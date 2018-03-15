@@ -29,7 +29,7 @@
   
   <artifactId>gamification-services</artifactId>
   <packaging>jar</packaging>
-  <name>eXo Gamificcation :: Backend Services</name>
+  <name>eXo Gamification :: Backend Services</name>
   <description>eXo Gamification services</description>
   
   <dependencies>

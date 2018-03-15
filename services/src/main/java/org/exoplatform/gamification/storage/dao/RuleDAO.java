@@ -1,7 +1,7 @@
 package org.exoplatform.gamification.storage.dao;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.gamification.domain.configuration.RuleEntity;
+import org.exoplatform.gamification.entities.domain.configuration.RuleEntity;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;

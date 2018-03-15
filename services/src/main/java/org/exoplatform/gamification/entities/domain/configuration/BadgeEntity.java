@@ -1,7 +1,6 @@
-package org.exoplatform.gamification.domain.configuration;
+package org.exoplatform.gamification.entities.domain.configuration;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
-import org.exoplatform.gamification.domain.effective.Badge;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -41,12 +40,12 @@ import java.util.Objects;
                 query = "DELETE FROM Badge badge WHERE badge.id = :badgeId "
         )
 })
-public class BadgeEntity implements Serializable {
+public class BadgeEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     @Column(name = "TITLE", unique = true,   nullable = false)
@@ -75,10 +74,6 @@ public class BadgeEntity implements Serializable {
 
     @Column(name = "BADGE_IS_ENABLE",nullable = false)
     protected boolean isEnabled;
-
-    @Column(name = "CREATED_DATE")
-    protected Date createdDate;
-
 
     public BadgeEntity() {
     }
@@ -146,15 +141,6 @@ public class BadgeEntity implements Serializable {
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -182,7 +168,6 @@ public class BadgeEntity implements Serializable {
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +
                 ", enable='" + isEnabled + '\'' +
-                ", created date='" + createdDate + '\'' +
                 ", description='" + description + '\'' +
                 "}";
     }

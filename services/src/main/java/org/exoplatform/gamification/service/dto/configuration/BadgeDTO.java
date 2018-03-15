@@ -1,6 +1,6 @@
 package org.exoplatform.gamification.service.dto.configuration;
 
-import org.exoplatform.gamification.domain.configuration.BadgeEntity;
+import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;

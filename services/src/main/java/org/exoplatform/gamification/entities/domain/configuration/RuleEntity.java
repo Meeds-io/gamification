@@ -1,4 +1,4 @@
-package org.exoplatform.gamification.domain.configuration;
+package org.exoplatform.gamification.entities.domain.configuration;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
@@ -31,12 +31,12 @@ import java.util.Objects;
                 query = "DELETE FROM Rule rule WHERE rule.id = :badgeId "
         )
 })
-public class RuleEntity implements Serializable {
+public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
     @Column(name = "TITLE", unique = true,   nullable = false)
@@ -108,7 +108,6 @@ public class RuleEntity implements Serializable {
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
-
 
     @Override
     public boolean equals(Object o) {
