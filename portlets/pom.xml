@@ -19,59 +19,130 @@
     02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.exoplatform.addons.gamification</groupId>
-    <artifactId>gamification</artifactId>
-    <version>1.0.x-SNAPSHOT</version>
-  </parent>
-  
-  <artifactId>gamification-portlets</artifactId>
-  <packaging>war</packaging>
-  <name>eXo Gamification :: Portlets Pack</name>
-  <description>eXo Gamification Portlets Pack</description>
-  
-  <dependencies>
-    <!-- Application dependencies-->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.portlet</groupId>
-      <artifactId>portlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-          <include>**/*.drl</include>
-          <include>**/*.doc</include>
-          <include>**/*.xls</include>
-          <include>**/*.ppt</include>
-          <include>**/*.txt</include>
-          <include>**/*.jar</include>
-          <include>**/*.pom</include>
-          <include>**/*.sha1</include>
-          <include>**/*.conf</include>
-          <include>**/*.gtmpl</include>
-          <include>**/*.gif</include>
-          <include>**/*.jpg</include>
-          <include>**/*.png</include>
-        </includes>
-      </resource>
-    </resources>
-    <finalName>gamification-portlets</finalName>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.exoplatform.addons.gamification</groupId>
+        <artifactId>gamification</artifactId>
+        <version>1.0.x-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gamification-portlets</artifactId>
+    <packaging>war</packaging>
+    <name>eXo Gamification :: Portlets Pack</name>
+    <description>eXo Gamification Portlets Pack</description>
+
+    <dependencies>
+        <!-- Application dependencies-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.portlet</groupId>
+            <artifactId>portlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.juzu</groupId>
+            <artifactId>juzu-core</artifactId>
+            <version>${juzu.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.juzu</groupId>
+            <artifactId>juzu-core</artifactId>
+            <version>${juzu.version}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.juzu</groupId>
+            <artifactId>juzu-plugins-less</artifactId>
+            <version>${juzu.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.juzu</groupId>
+            <artifactId>juzu-plugins-portlet</artifactId>
+            <version>${juzu.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.juzu</groupId>
+            <artifactId>juzu-plugins-upload</artifactId>
+            <version>${juzu.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.juzu</groupId>
+            <artifactId>juzu-plugins-jackson</artifactId>
+            <version>${juzu.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.exoplatform.core</groupId>
+            <artifactId>exo.core.component.organization.api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Commons project-->
+        <dependency>
+            <groupId>org.exoplatform.commons</groupId>
+            <artifactId>commons-juzu</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Gatein deps-->
+        <dependency>
+            <groupId>org.exoplatform.gatein.portal</groupId>
+            <artifactId>exo.portal.component.web.controller</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.exoplatform.gatein.portal</groupId>
+            <artifactId>exo.portal.webui.portal</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Categories addon dep -->
+        <dependency>
+            <groupId>org.exoplatform.addons.gamification</groupId>
+            <artifactId>gamification-services</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.drl</include>
+                    <include>**/*.doc</include>
+                    <include>**/*.xls</include>
+                    <include>**/*.ppt</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.jar</include>
+                    <include>**/*.pom</include>
+                    <include>**/*.sha1</include>
+                    <include>**/*.conf</include>
+                    <include>**/*.gtmpl</include>
+                    <include>**/*.gif</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
+        </resources>
+        <finalName>gamification-portlets</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

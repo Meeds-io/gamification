@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2003-2014 eXo Platform SAS.
+
+    This is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation; either version 3 of
+    the License, or (at your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this software; if not, write to the Free
+    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+-->
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+             version="2.0"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd
+   http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
+    <portlet>
+        <portlet-name>ManageBadgeControllerApplication</portlet-name>
+        <display-name xml:lang="EN">Badges Management Application</display-name>
+        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
+        <init-param>
+            <name>juzu.app_name</name>
+            <value>org.exoplatform.addons.gamification.portlets.admin.badge</value>
+        </init-param>
+        <init-param>
+            <name>juzu.run_mode</name>
+            <value>prod</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <resource-bundle>locale.portlet.badgesManagement</resource-bundle>
+        <portlet-info>
+            <title>Gamification Manage Badges</title>
+            <short-title>Gamification Manage Badges</short-title>
+            <keywords>Administration</keywords>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>id</name>
+                <value>XXXXX</value>
+                <read-only>false</read-only>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+    <portlet>
+        <portlet-name>ManageRuleControllerApplication</portlet-name>
+        <display-name xml:lang="EN">Rules Management Application</display-name>
+        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
+        <init-param>
+            <name>juzu.app_name</name>
+            <value>org.exoplatform.addons.gamification.portlets.admin.rule</value>
+        </init-param>
+        <init-param>
+            <name>juzu.run_mode</name>
+            <value>prod</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <resource-bundle>locale.portlet.rulesManagement</resource-bundle>
+        <portlet-info>
+            <title>Gamification Manage Rules</title>
+            <short-title>Gamification Manage Rules</short-title>
+            <keywords>Administration</keywords>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>id</name>
+                <value>XXXXX</value>
+                <read-only>false</read-only>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+    <portlet>
+        <portlet-name>LeaderboardControllerApplication</portlet-name>
+        <display-name xml:lang="EN">Leaderboard Application</display-name>
+        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
+        <init-param>
+            <name>juzu.app_name</name>
+            <value>org.exoplatform.addons.gamification.portlets.leaderboard</value>
+        </init-param>
+        <init-param>
+            <name>juzu.run_mode</name>
+            <value>prod</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <resource-bundle>locale.portlet.leaderboard</resource-bundle>
+        <portlet-info>
+            <title>Gamification Leaderboard</title>
+            <short-title>Gamification Leaderboard</short-title>
+            <keywords>User</keywords>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>id</name>
+                <value>XXXXX</value>
+                <read-only>false</read-only>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+    <portlet>
+        <portlet-name>UserProfileBadgesControllerApplication</portlet-name>
+        <display-name xml:lang="EN">User Profile Badges Application</display-name>
+        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
+        <init-param>
+            <name>juzu.app_name</name>
+            <value>org.exoplatform.addons.gamification.portlets.profile.badge</value>
+        </init-param>
+        <init-param>
+            <name>juzu.run_mode</name>
+            <value>prod</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <resource-bundle>locale.portlet.userProfileBadges</resource-bundle>
+        <portlet-info>
+            <title>Gamification User Badges</title>
+            <short-title>Gamification User Badges</short-title>
+            <keywords>User</keywords>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>id</name>
+                <value>XXXXX</value>
+                <read-only>false</read-only>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+</portlet-app>
