@@ -19,59 +19,52 @@
     02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.exoplatform.addons.gamification</groupId>
-    <artifactId>gamification</artifactId>
-    <version>1.0.x-SNAPSHOT</version>
-  </parent>
-  
-  <artifactId>gamification-extension</artifactId>
-  <packaging>war</packaging>
-  <name>eXo Gamification :: Extension Webapp</name>
-  <description>eXo Gamification portal extension</description>
-  
-  <dependencies>
-    <!-- Application dependencies-->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.portlet</groupId>
-      <artifactId>portlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-          <include>**/*.drl</include>
-          <include>**/*.doc</include>
-          <include>**/*.xls</include>
-          <include>**/*.ppt</include>
-          <include>**/*.txt</include>
-          <include>**/*.jar</include>
-          <include>**/*.pom</include>
-          <include>**/*.sha1</include>
-          <include>**/*.conf</include>
-          <include>**/*.gtmpl</include>
-          <include>**/*.gif</include>
-          <include>**/*.jpg</include>
-          <include>**/*.png</include>
-        </includes>
-      </resource>
-    </resources>
-    <finalName>gamification-extension</finalName>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.exoplatform.addons.gamification</groupId>
+        <artifactId>gamification</artifactId>
+        <version>1.0.x-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gamification-extension</artifactId>
+    <packaging>war</packaging>
+    <name>eXo Gamification :: Extension Webapp</name>
+    <description>eXo Gamification portal extension</description>
+
+    <dependencies>
+        <!-- Social project-->
+        <dependency>
+            <groupId>org.exoplatform.social</groupId>
+            <artifactId>social-component-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.drl</include>
+                    <include>**/*.doc</include>
+                    <include>**/*.xls</include>
+                    <include>**/*.ppt</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.jar</include>
+                    <include>**/*.pom</include>
+                    <include>**/*.sha1</include>
+                    <include>**/*.conf</include>
+                    <include>**/*.gtmpl</include>
+                    <include>**/*.gif</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
+        </resources>
+        <finalName>gamification-extension</finalName>
+    </build>
 </project>

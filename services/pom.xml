@@ -58,6 +58,19 @@
             <artifactId>ecms-core-webui-explorer</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- Social -->
+        <dependency>
+            <groupId>org.exoplatform.social</groupId>
+            <artifactId>social-component-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- -->
+        <dependency>
+            <groupId>org.exoplatform.forum</groupId>
+            <artifactId>forum-forum-service</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>

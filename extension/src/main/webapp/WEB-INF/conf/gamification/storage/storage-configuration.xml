@@ -47,7 +47,10 @@
                 <values-param>
                     <name>changelogs</name>
                     <description>Change logs of Gamification</description>
+                    <!--
                     <value>db/changelog/gamification.db.changelog-master.xml</value>
+                    -->
+                    <value>db/changelog/gamification.db.changelog-1.0.0.xml</value>
                 </values-param>
             </init-params>
         </component-plugin>
