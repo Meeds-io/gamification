@@ -28,13 +28,13 @@ public class BadgeDTO {
 
     protected boolean isEnabled;
 
-    protected boolean createdBy;
+    private String createdBy;
 
-    protected boolean createdDate;
+    private Date createdDate;
 
-    protected boolean lastModifiedBy;
+    private String lastModifiedBy;
 
-    protected boolean lastModifiedDate;
+    private Date lastModifiedDate;
 
     public BadgeDTO(BadgeEntity badgeEntity) {
 
@@ -53,9 +53,15 @@ public class BadgeDTO {
         this.isEnabled = badgeEntity.isEnabled();
 
         this.description = badgeEntity.getDescription();
+
+        this.createdBy = badgeEntity.getCreatedBy();
+
+        this.createdDate = badgeEntity.getCreatedDate();
+
+        this.lastModifiedBy = badgeEntity.getLastModifiedBy();
+
+        this.lastModifiedDate = badgeEntity.getLastModifiedDate();
     }
-
-
 
     public Long getId() {
         return id;
@@ -121,6 +127,38 @@ public class BadgeDTO {
         isEnabled = enabled;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
     @Override
     public String toString() {
         return "BadgeDTO{" +
@@ -128,6 +166,7 @@ public class BadgeDTO {
                 ", needed score='" + neededScore + '\'' +
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +
+                ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
                 ", isEnabled=" + isEnabled +
                 ", createdBy=" + createdBy +

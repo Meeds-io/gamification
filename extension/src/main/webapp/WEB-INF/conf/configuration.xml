@@ -31,5 +31,10 @@
     <import>war:/conf/gamification/portal/portal-configuration.xml</import>
     <import>war:/conf/gamification/storage/storage-configuration.xml</import>
     <import>war:/conf/gamification/portlets/container-configuration.xml</import>
+    <import>war:/conf/gamification/global/completion-configuration.xml</import>
+    <import>war:/conf/gamification/listener/file-explorer-listeners-configuration.xml</import>
+    <import>war:/conf/gamification/listener/forum-listeners-configuration.xml</import>
+    <import>war:/conf/gamification/listener/ideation-listeners-configuration.xml</import>
+    <import>war:/conf/gamification/listener/social-listeners-configuration.xml</import>
 
 </configuration>

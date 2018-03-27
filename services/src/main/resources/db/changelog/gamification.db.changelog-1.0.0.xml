@@ -33,7 +33,7 @@
             <column name="BADGE_IS_ENABLE" type="BIT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="CREATED_BY" type="varchar(50)">
+            <column name="CREATED_BY" type="varchar(70)">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
@@ -46,7 +46,7 @@
             <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="TITLE" type="NVARCHAR(32)">
+            <column name="TITLE" type="NVARCHAR(70)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="DESCRIPTION" type="NVARCHAR(255)">

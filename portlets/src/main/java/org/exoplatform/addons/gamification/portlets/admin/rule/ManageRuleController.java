@@ -4,9 +4,7 @@ import juzu.Path;
 import juzu.Response;
 import juzu.View;
 import juzu.template.Template;
-import org.exoplatform.addons.gamification.portlets.admin.badge.ManageBadgeController;
 import org.exoplatform.addons.gamification.portlets.common.BaseController;
-import org.exoplatform.gamification.service.BadgeService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 

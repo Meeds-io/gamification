@@ -1,6 +1,8 @@
 package org.exoplatform.gamification.entities.domain.configuration;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
+import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,7 +10,7 @@ import java.util.Objects;
 
 @Entity(name = "Rule")
 @ExoEntity
-@Table(name = "RULE")
+@Table(name = "GAMIFICATION_RULE")
 @NamedQueries({
         @NamedQuery(
                 name = "Rule.getAllRules",
@@ -50,7 +52,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     protected String description;
 
     @Column(name = "SCORE")
-    protected int score;
+    protected Long score;
 
     @Column(name = "AREA", unique = false,   nullable = false)
     protected String area;
@@ -85,11 +87,11 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
         this.description = description;
     }
 
-    public int getScore() {
+    public Long getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(Long score) {
         this.score = score;
     }
 
@@ -136,5 +138,13 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
                 ", description='" + description + '\'' +
                 ", enable='" + isEnabled + '\'' +
                 "}";
+    }
+
+
+
+    public RuleDTO convertToEntity () {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(this, RuleDTO.class);
+
     }
 }

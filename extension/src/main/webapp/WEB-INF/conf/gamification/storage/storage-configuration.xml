@@ -31,9 +31,29 @@
     <component>
         <type>org.exoplatform.gamification.storage.dao.BadgeDAO</type>
     </component>
+    <!-- Badges Service Layer-->
+    <component>
+        <type>org.exoplatform.gamification.service.configuration.BadgeService</type>
+    </component>
     <!-- Rules storage (JPA) -->
     <component>
         <type>org.exoplatform.gamification.storage.dao.RuleDAO</type>
+    </component>
+    <!-- Rules Service Layer-->
+    <component>
+        <type>org.exoplatform.gamification.service.configuration.RuleService</type>
+    </component>
+    <!-- Gamification Service -->
+    <component>
+        <type>org.exoplatform.gamification.service.effective.GamificationService</type>
+    </component>
+    <!-- Rule entity Mapper -->
+    <component>
+        <type>org.exoplatform.gamification.service.mapper.RuleMapper</type>
+    </component>
+    <!-- Badge entity Mapper -->
+    <component>
+        <type>org.exoplatform.gamification.service.mapper.BadgeMapper</type>
     </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->
