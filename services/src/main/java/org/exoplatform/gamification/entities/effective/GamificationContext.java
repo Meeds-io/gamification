@@ -5,14 +5,21 @@ import org.exoplatform.services.log.Log;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 
 public class GamificationContext implements Serializable {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationContext.class);
 
-    protected String userName;
+    protected String actorUserName;
 
-    protected Long score;
+    protected List<String> targetUserName;
+
+    protected boolean isSpaceActivity;
+
+    protected Long actorScore;
+
+    protected Long targetScore;
 
     protected Instant lastModifiedDate;
 
@@ -26,21 +33,21 @@ public class GamificationContext implements Serializable {
         return new GamificationContext();
     }
 
-    public String getUserName() {
-        return userName;
+    public Long getActorScore() {
+        return actorScore;
     }
 
-    public GamificationContext setUserName(String userName) {
-        this.userName = userName;
+    public GamificationContext setActorScore(Long actorScore) {
+        this.actorScore = actorScore;
         return this;
     }
 
-    public Long getScore() {
-        return score;
+    public Long getTargetScore() {
+        return targetScore;
     }
 
-    public GamificationContext setScore(Long score) {
-        this.score = score;
+    public GamificationContext setTargetScore(Long targetScore) {
+        this.targetScore = targetScore;
         return this;
     }
 
@@ -62,6 +69,33 @@ public class GamificationContext implements Serializable {
         return this;
     }
 
+    public String getActorUserName() {
+        return actorUserName;
+    }
+
+    public GamificationContext setActorUserName(String actorUserName) {
+        this.actorUserName = actorUserName;
+        return this;
+    }
+
+    public List<String> getTargetUserName() {
+        return targetUserName;
+    }
+
+    public GamificationContext setTargetUserName(List<String> targetUserName) {
+        this.targetUserName = targetUserName;
+        return this;
+    }
+
+    public boolean isSpaceActivity() {
+        return isSpaceActivity;
+    }
+
+    public GamificationContext setSpaceActivity(boolean spaceActivity) {
+        isSpaceActivity = spaceActivity;
+        return this;
+    }
+
     @Override
     public GamificationContext clone() {
         return clone(false);
@@ -73,8 +107,11 @@ public class GamificationContext implements Serializable {
 
     public GamificationContext clone(boolean isNew) {
         GamificationContext game = instance();
-        game.setUserName(userName)
-                .setScore(score)
+        game.setActorScore(actorScore)
+                .setTargetScore(targetScore)
+                .setActorUserName(actorUserName)
+                .setTargetUserName(targetUserName)
+                .setSpaceActivity(isSpaceActivity)
                 .setLastModifiedDate(lastModifiedDate)
                 .setCreatedDate(createdDate);
         if (!isNew) {
@@ -82,5 +119,17 @@ public class GamificationContext implements Serializable {
 
         }
         return game;
+    }
+    @Override
+    public String toString() {
+        return "GamificationContext{" +
+                "actorUserName='" + actorUserName + '\'' +
+                ", targetUserName='" + targetUserName + '\'' +
+                ", isSpaceActivity='" + isSpaceActivity + '\'' +
+                ", actorScore='" + actorScore + '\'' +
+                ", targetScore='" + targetScore + '\'' +
+                ", lastModifiedDate='" + lastModifiedDate + '\'' +
+                ", createdDate='" + createdDate + '\'' +
+                "}";
     }
 }

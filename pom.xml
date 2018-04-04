@@ -73,6 +73,10 @@
         <mysql.version>5.1.23</mysql.version>
         <!-- Juzu Version -->
         <juzu.version>1.1.0</juzu.version>
+        <!-- Hibernate ORM -->
+        <hibernate-ogm.version>4.2.0.Final</hibernate-ogm.version>
+        <!-- Mongo Java Driver -->
+        <mongo.java.driver.version>3.5.0</mongo.java.driver.version>
     </properties>
 
     <dependencyManagement>
@@ -118,6 +122,23 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <!-- Hibernate OGM MongoDB -->
+            <dependency>
+                <groupId>org.hibernate.ogm</groupId>
+                <artifactId>hibernate-ogm-core</artifactId>
+                <version>${hibernate-ogm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.ogm</groupId>
+                <artifactId>hibernate-ogm-mongodb</artifactId>
+                <version>${hibernate-ogm.version}</version>
+            </dependency>
+            <!-- Mongo Java Driver -->
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongo-java-driver</artifactId>
+                <version>${mongo.java.driver.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -191,7 +212,7 @@
                 <db.port>3306</db.port>
                 <db.schema>tribe</db.schema>
                 <db.username>root</db.username>
-                <db.password></db.password>
+                <db.password>exoplatform</db.password>
             </properties>
         </profile>
 

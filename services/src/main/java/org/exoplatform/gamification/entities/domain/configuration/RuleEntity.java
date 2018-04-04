@@ -1,8 +1,6 @@
 package org.exoplatform.gamification.entities.domain.configuration;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
-import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
-import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -140,11 +138,4 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
                 "}";
     }
 
-
-
-    public RuleDTO convertToEntity () {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(this, RuleDTO.class);
-
-    }
 }

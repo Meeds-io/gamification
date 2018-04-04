@@ -19,72 +19,93 @@
     02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.exoplatform.addons.gamification</groupId>
-    <artifactId>gamification</artifactId>
-    <version>1.0.x-SNAPSHOT</version>
-  </parent>
-  
-  <artifactId>gamification-packaging</artifactId>
-  <packaging>pom</packaging>
-  <name>eXo Gamification :: Extension Packaging</name>
-  <description>eXo Gamification packaging for installation</description>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.exoplatform.addons.gamification</groupId>
-      <artifactId>gamification-extension</artifactId>
-      <type>war</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.exoplatform.addons.gamification</groupId>
-      <artifactId>gamification-portlets</artifactId>
-      <type>war</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.exoplatform.addons.gamification</groupId>
-      <artifactId>gamification-services</artifactId>
-      <type>jar</type>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-  
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-          <include>**/*.conf</include>
-          <include>**/*.sh</include>
-        </includes>
-      </resource>
-    </resources>
-    <finalName>gamification</finalName>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>01-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>src/main/assembly/packaging-archive.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.exoplatform.addons.gamification</groupId>
+        <artifactId>gamification</artifactId>
+        <version>1.0.x-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gamification-packaging</artifactId>
+    <packaging>pom</packaging>
+    <name>eXo Gamification :: Extension Packaging</name>
+    <description>eXo Gamification packaging for installation</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.exoplatform.addons.gamification</groupId>
+            <artifactId>gamification-extension</artifactId>
+            <type>war</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.exoplatform.addons.gamification</groupId>
+            <artifactId>gamification-portlets</artifactId>
+            <type>war</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.exoplatform.addons.gamification</groupId>
+            <artifactId>gamification-services</artifactId>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Hibernate OGM -->
+        <dependency>
+            <groupId>org.hibernate.ogm</groupId>
+            <artifactId>hibernate-ogm-core</artifactId>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.ogm</groupId>
+            <artifactId>hibernate-ogm-mongodb</artifactId>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Mongodb -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.conf</include>
+                    <include>**/*.sh</include>
+                </includes>
+            </resource>
+        </resources>
+        <finalName>gamification</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>01-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/packaging-archive.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

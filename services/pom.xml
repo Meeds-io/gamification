@@ -76,11 +76,14 @@
             <artifactId>hibernate-validator</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Tool : ModelMapper-->
+        <!-- Hibernate OGM MongoDB -->
         <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>1.1.0</version>
+            <groupId>org.hibernate.ogm</groupId>
+            <artifactId>hibernate-ogm-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.ogm</groupId>
+            <artifactId>hibernate-ogm-mongodb</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -132,7 +135,7 @@
                     <url>jdbc:mysql://localhost:3306/tribe</url>
                     <defaultSchemaName>tribe</defaultSchemaName>
                     <username>root</username>
-                    <password></password>
+                    <password>exoplatform</password>
                     <!--
                     <referenceUrl>hibernate:classic:org.exoplatform.gamification.entities.domain.configuration?dialect=org.hibernate.dialect.MySQLDialect</referenceUrl>
                     -->
