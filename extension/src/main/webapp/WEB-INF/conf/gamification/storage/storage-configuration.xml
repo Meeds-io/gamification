@@ -45,7 +45,7 @@
     </component>
     <!-- Gamification Service -->
     <component>
-        <type>org.exoplatform.gamification.service.effective.GamificationService</type>
+        <type>org.exoplatform.gamification.service.effective.GamificationProcessor</type>
     </component>
     <!-- Rule entity Mapper -->
     <component>
@@ -54,6 +54,11 @@
     <!-- Badge entity Mapper -->
     <component>
         <type>org.exoplatform.gamification.service.mapper.BadgeMapper</type>
+    </component>
+
+    <!-- Hibernate OGM Service -->
+    <component>
+        <type>org.exoplatform.gamification.service.effective.GamificationService</type>
     </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->

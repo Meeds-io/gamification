@@ -20,7 +20,7 @@ public class GamificationDTO {
     @Size(max = 256)
     protected String username;
 
-    protected int score;
+    protected Long score;
 
     private List<BadgeItemDTO> badges;
 
@@ -68,11 +68,11 @@ public class GamificationDTO {
         this.username = username;
     }
 
-    public int getScore() {
+    public Long getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(Long score) {
         this.score = score;
     }
 

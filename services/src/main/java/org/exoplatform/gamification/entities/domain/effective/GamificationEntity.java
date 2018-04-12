@@ -9,10 +9,17 @@ import java.util.Date;
 import java.util.List;
 
 @Entity(name = "Gamification")
-@NamedQuery(
-        name="byItemsQuantity",
-        query = "SELECT g FROM Gamification g JOIN g.badges b WHERE b.title = :title"
-)
+
+@NamedQueries( {
+        @NamedQuery(
+                name="Gamification.findGamificationByUsername",
+                query = "SELECT g FROM Gamification g WHERE g.username = :username"
+        ),
+        @NamedQuery(
+                name = "Gamification.findGamificationByBadgeTitle",
+                query = "SELECT g FROM Gamification g JOIN g.badges b WHERE b.title = :title"
+        )
+})
 public class GamificationEntity implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +30,7 @@ public class GamificationEntity implements Serializable {
     protected String username;
 
     @Column(name = "SCORE")
-    protected int score;
+    protected Long score;
 
     @ElementCollection
     private List<BadgeItemEntity> badges;
@@ -71,11 +78,11 @@ public class GamificationEntity implements Serializable {
         this.username = username;
     }
 
-    public int getScore() {
+    public Long getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(Long score) {
         this.score = score;
     }
 

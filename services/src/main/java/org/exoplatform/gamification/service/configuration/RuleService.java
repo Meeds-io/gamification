@@ -32,7 +32,9 @@ public class RuleService {
             //--- Get Entity from DB
             RuleEntity entity = ruleDAO.findRuleByTitle(ruleTitle);
             //--- Convert Entity to DTO
-            return ruleMapper.ruleToRuleDTO(entity);
+            if (entity != null ) {
+                return ruleMapper.ruleToRuleDTO(entity);
+            }
 
         } catch (Exception e) {
             LOG.error("Error to find Rule entity with title : {}",ruleTitle,e.getMessage());

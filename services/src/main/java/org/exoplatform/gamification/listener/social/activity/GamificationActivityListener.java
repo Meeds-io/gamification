@@ -2,10 +2,12 @@ package org.exoplatform.gamification.listener.social.activity;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.entities.effective.GamificationContext;
+import org.exoplatform.gamification.entities.effective.SourceContextHolder;
+import org.exoplatform.gamification.entities.effective.TargetContextholder;
 import org.exoplatform.gamification.listener.GamificationListener;
 import org.exoplatform.gamification.service.configuration.RuleService;
 import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.gamification.service.effective.GamificationService;
+import org.exoplatform.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
@@ -17,23 +19,21 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.List;
 
 public class GamificationActivityListener extends ActivityListenerPlugin implements GamificationListener {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationActivityListener.class);
 
     protected RuleService ruleService;
-    protected GamificationService gamificationService;
+    protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
     protected SpaceService spaceService;
 
 
     public GamificationActivityListener() {
         this.ruleService = CommonsUtils.getService(RuleService.class);
-        this.gamificationService = CommonsUtils.getService(GamificationService.class);
+        this.gamificationProcessor = CommonsUtils.getService(GamificationProcessor.class);
         this.identityManager = CommonsUtils.getService(IdentityManager.class);
         this.spaceService = CommonsUtils.getService(SpaceService.class);
 
@@ -43,69 +43,98 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
     public void saveActivity(ActivityLifeCycleEvent event) {
 
         //--- To hold GamificationRule
-        RuleDTO ruleDto= null;
+        RuleDTO ruleDto = null;
 
         //--- To hold GamificationContext
-        GamificationContext gamificationContext = null;
+        GamificationContext gamificationContext = GamificationContext.instance();
+
+        //--- To hold SourceContext
+        SourceContextHolder sourceContextHolder = null;
+
+        //--- To hold TargetContext
+        TargetContextholder targetContextholder = null;
 
         //--- Gamification Activity
         ExoSocialActivity activity = event.getSource();
 
-       try {
+        try {
 
 
-           //--- Case1 : User add an activity on his own Stream
-           //--- Case2 : User add an activity on Stream of one of his network
-           //--- Case3: User add an activity on a Space Stream
-           //--- CAse3: User add an activity on a Space Stream where you are manager
+            //--- Case1 : User add an activity on his own Stream
+            //--- Case2 : User add an activity on Stream of one of his network
+            //--- Case3: User add an activity on a Space Stream
+            //--- CAse3: User add an activity on a Space Stream where you are manager
 
-           //TODO I really look for a pattern to move this test to GamificationService side
-           //--- Build GamificationContext
-           gamificationContext = GamificationContext.instance().setActorUserName(getUserId(activity.getPosterId()));
-           //---Case1
-           if (isSpaceActivity(activity)) {
+            //TODO I really look for a pattern to move this test to GamificationProcessor side
+            //---Case1
+            if (isSpaceActivity(activity)) {
 
-               //--- Get the space
-               Space space = spaceService.getSpaceByPrettyName(activity.getStreamOwner());
-               //--- Load the Rule (User add an activity within a space)
-               ruleDto= ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE);
+                /********************** Manage SourceContext *********************/
+                //--- Get the space
+                Space space = spaceService.getSpaceByPrettyName(activity.getStreamOwner());
+                //--- Load the Rule (User add an activity within a space)
+                ruleDto = ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE);
+                //--- Build SourceContextHolder
+                sourceContextHolder = new SourceContextHolder();
+                sourceContextHolder.setUsername(getUserId(activity.getPosterId()));
+                sourceContextHolder.setScore(ruleDto.getScore());
 
-               //--- Set actorScore
-               gamificationContext.setActorScore(ruleDto.getScore());
-
-               //--- Load the Rule (User add an activity within a space where I'm a manager)
-               ruleDto= ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE_STREAM_MANAGER);
-
-               //--- Set actorScore
-               gamificationContext.setTargetScore(ruleDto.getScore());
-
-               //--- Get Space manager List
-               //--- Set target actors
-               gamificationContext.setTargetUserName(Arrays.asList(space.getManagers()));
-
-
-
-           } else {
-
-           }
-
-           //--- Build GamificationContext
-           gamificationContext = GamificationContext.instance()
-                                                               .setSpaceActivity(isSpaceActivity(activity))
-
-                                                               .setCreatedDate(Instant.now())
-                                                               .setLastModifiedDate(Instant.now());
+                /********************** Manage TargetContext *********************/
+                //--- Load the Rule (User add an activity within a space where I'm a manager)
+                ruleDto = ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE_STREAM_MANAGER);
+                //--- Build TargetContextHolder
+                targetContextholder = new TargetContextholder();
+                //--- Get Space manager List
+                targetContextholder.setUsernames(Arrays.asList(space.getManagers()));
+                //--- Set score
+                targetContextholder.setScore(ruleDto.getScore());
 
 
-           //--- Run Gamification process
-           gamificationService.process(gamificationContext);
+            } else {
 
-       } catch (Exception E) {
+                //--- User push an activity on his own Stream
+                if (activity.getPosterId().equalsIgnoreCase(activity.getStreamId())) {
 
-       }
+                    /********************** Manage SourceContext *********************/
+                    //--- Build SourceContextHolder
+                    sourceContextHolder = new SourceContextHolder();
+                    //--- Load the specific rule
+                    ruleDto = ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE);
+                    //--- Set score
+                    sourceContextHolder.setScore(ruleDto.getScore());
 
 
+                } else { //--- User push an activity on the stream of another user
 
+                    //--- Build SourceContextHolder
+                    sourceContextHolder = new SourceContextHolder();
+                    //--- Load the Rule (User add an activity within a space)
+                    ruleDto = ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE);
+                    //--- Set score
+                    sourceContextHolder.setScore(ruleDto.getScore());
+
+                    // Get the target username
+                    targetContextholder = new TargetContextholder();
+                    targetContextholder.setUsernames(Arrays.asList(getUserId(activity.getStreamId())));
+                    //--- Load the Rule (User add an activity within a space)
+                    ruleDto = ruleService.findRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ACTIVITY_ADD_NEW_ON_SPACE);
+                    targetContextholder.setScore(ruleDto.getScore());
+
+                }
+
+                sourceContextHolder.setUsername(getUserId(activity.getPosterId()));
+
+            }
+
+            //--- Attach Sub-contexts to the global gamification context
+            gamificationContext.setTargetContextholder(targetContextholder).setSourceContextHolder(sourceContextHolder);
+
+            //--- Processing Gamification
+            gamificationProcessor.process(gamificationContext);
+
+        } catch (Exception E) {
+
+        }
     }
 
     @Override
