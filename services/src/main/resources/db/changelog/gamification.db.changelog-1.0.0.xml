@@ -10,7 +10,7 @@
     <property name="autoIncrement" value="true"/>
 
     <!-- Definition of GAMIFICATION_BADGE table -->
-    <changeSet author="gamification" id="1.0.0-1">
+    <changeSet author="exo-gamification" id="1.0.0-1">
         <createTable tableName="GAMIFICATION_BADGE">
             <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -23,6 +23,9 @@
             </column>
             <column name="NEEDED_SCORE" type="BIGINT">
                 <constraints nullable="false"/>
+            </column>
+            <column name="ICON" type="NVARCHAR(32)">
+                <constraints nullable="true"/>
             </column>
             <column name="VALIDITY_DATE_START" type="TIMESTAMP">
                 <constraints nullable="true"/>
@@ -73,5 +76,37 @@
         <modifySql dbms="mysql">
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
         </modifySql>
+    </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-2" runOnChange="true">
+        <loadData tableName="GAMIFICATION_BADGE" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
+            <column name="ID" type="STRING"/>
+            <column name="TITLE" type="STRING"/>
+            <column name="DESCRIPTION" type="STRING"/>
+            <column name="NEEDED_SCORE" type="NUMERIC"/>
+            <column name="ICON" type="STRING"/>
+            <column name="BADGE_IS_ENABLE" type="BOOLEAN"/>
+            <column name="VALIDITY_DATE_START" type="DATE"/>
+            <column name="VALIDITY_DATE_END" type="DATE"/>
+            <column name="CREATED_BY" type="STRING"/>
+            <column name="CREATED_DATE" type="DATE"/>
+            <column name="LAST_MODIFIED_BY" type="STRING"/>
+            <column name="LAST_MODIFIED_DATE" type="DATE"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
+        <loadData tableName="GAMIFICATION_RULE" file="db/changelog/rules-init-data.csv" encoding="UTF-8">
+            <column name="ID" type="STRING"/>
+            <column name="TITLE" type="STRING"/>
+            <column name="DESCRIPTION" type="STRING"/>
+            <column name="SCORE" type="NUMERIC"/>
+            <column name="AREA" type="STRING"/>
+            <column name="RULE_IS_ENABLE" type="BOOLEAN"/>
+            <column name="CREATED_BY" type="STRING"/>
+            <column name="CREATED_DATE" type="DATE"/>
+            <column name="LAST_MODIFIED_BY" type="STRING"/>
+            <column name="LAST_MODIFIED_DATE" type="DATE"/>
+        </loadData>
     </changeSet>
 </databaseChangeLog>

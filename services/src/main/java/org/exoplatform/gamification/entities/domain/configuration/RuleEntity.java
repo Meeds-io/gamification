@@ -39,12 +39,12 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(name = "TITLE", unique = true,   nullable = false)
+    @Column(name = "TITLE", unique = true, nullable = false)
     protected String title;
 
     /**
-     @Column(name = "MODULE", unique = true,   nullable = false)
-     protected Module  module /**(module) List [Foreigh_Key to table CategoryType]
+     * @Column(name = "MODULE", unique = true,   nullable = false)
+     * protected CategoryEntity category; /**(module) List [Foreigh_Key to table CategoryType]
      */
     @Column(name = "DESCRIPTION")
     protected String description;
@@ -52,10 +52,10 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "SCORE")
     protected Long score;
 
-    @Column(name = "AREA", unique = false,   nullable = false)
+    @Column(name = "AREA", unique = false, nullable = false)
     protected String area;
 
-    @Column(name = "RULE_IS_ENABLE",nullable = false)
+    @Column(name = "RULE_IS_ENABLE", nullable = false)
     protected boolean isEnabled;
 
     public RuleEntity() {

@@ -115,6 +115,7 @@
                     <include>**/*.gif</include>
                     <include>**/*.jpg</include>
                     <include>**/*.png</include>
+                    <include>**/*.csv</include>
                 </includes>
             </resource>
         </resources>
@@ -122,55 +123,6 @@
             <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${org.liquibase.version}</version>
-                <configuration>
-                    <changeLogFile>${basedir}/src/main/resources/db/changelog/gamification.db.changelog-master.xml</changeLogFile>
-                    <diffChangeLogFile>${basedir}/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml</diffChangeLogFile>
-                    <outputChangeLogFile>${basedir}/src/main/resources/db/changelog/gamification.db.changelog.xml</outputChangeLogFile>
-                    <driver>com.mysql.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost:3306/tribe</url>
-                    <defaultSchemaName>tribe</defaultSchemaName>
-                    <username>root</username>
-                    <password>exoplatform</password>
-                    <!--
-                    <referenceUrl>hibernate:classic:org.exoplatform.gamification.entities.domain.configuration?dialect=org.hibernate.dialect.MySQLDialect</referenceUrl>
-                    -->
-                    <referenceUrl>hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy</referenceUrl>
-                    <verbose>true</verbose>
-                    <logging>debug</logging>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.javassist</groupId>
-                        <artifactId>javassist</artifactId>
-                        <version>${org.javassist.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-core</artifactId>
-                        <version>${org.liquibase.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.liquibase.ext</groupId>
-                        <artifactId>liquibase-hibernate4</artifactId>
-                        <version>${org.liquibase-hibernate4.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>javax.validation</groupId>
-                        <artifactId>validation-api</artifactId>
-                        <version>${validation-api.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>mysql</groupId>
-                        <artifactId>mysql-connector-java</artifactId>
-                        <!-- Replace with the version of the MySQL driver you want to use -->
-                        <version>${mysql.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
