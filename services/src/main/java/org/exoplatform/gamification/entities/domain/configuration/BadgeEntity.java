@@ -42,7 +42,8 @@ import java.util.Objects;
 })
 public class BadgeEntity extends AbstractAuditingEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,11 +66,13 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     protected String icon;
 
     @Column(name = "VALIDITY_DATE_START")
-    @Temporal(TemporalType.DATE)
+    // When I used this annotation I get an issue with serialization within REST services
+    //@Temporal(TemporalType.DATE)
     protected Date startValidityDate;
 
     @Column(name = "VALIDITY_DATE_END")
-    @Temporal(TemporalType.DATE)
+    // When I used this annotation I get an issue with serialization within REST services
+    //@Temporal(TemporalType.DATE)
     protected Date endValidityDate;
 
     @Column(name = "BADGE_IS_ENABLE",nullable = false)

@@ -1,5 +1,48 @@
 <div class="container">
-  <div id="gamification-admin-rules">
-<h2>Manage rules</h2>
+  <div id="rules-management">
+    <h2>Manage rules</h2>
+
+    <div class="col-md-12">
+      {{messageGamification}}
+
+
+
+      <table class="uiGrid table table-hover table-striped">
+
+        <!--Table titles -->
+        <tr>
+
+          <td class="center">#</td>
+          <td class="center">Title</td>
+          <td class="center">Description</td>
+          <td class="center">Score</td>
+          <td class="center">Area</td>
+          <td class="center">Enable</td>
+          <td class="center">CREATED_BY</td>
+          <td class="center">CREATED_DATE</td>
+          <td class="center">LAST_MODIFIED_BY</td>
+          <td class="center">LAST_MODIFIED_DATE</td>
+        </tr>
+        <!-- Table data-->
+        <!-- Table data-->
+        <tr v-for="(rule,key) in rules" v-bind:item="rule" v-bind:key="rule.id" v-if="rule.length > 0">
+          <td class="center">{{rule.id}}</td>
+          <td class="center">{{rule.title}}</td>
+          <td class="center">{{rule.title}}</td>
+          <td class="center">{{rule.score}}</td>
+          <td class="center">{{rule.area}}</td>
+          <td class="center">{{rule.isEnable}}</td>
+          <td class="center">{{rule.createdBy}}</td>
+          <td class="center">{{rule.createdDate}}</td>
+          <td class="center">{{rule.lastModifiedBy}}</td>
+          <td class="center">{{rule.lastModifiedDate}}</td>
+        </tr>
+        <tr v-if="rule.length  == 0">
+          <td class="empty center" colspan="5">Vide</td>
+        </tr>
+      </table>
+
+    </div>
+
   </div>
 </div>

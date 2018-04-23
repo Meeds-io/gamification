@@ -1,21 +1,17 @@
 package org.exoplatform.gamification.service.dto.configuration;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
-import org.hibernate.validator.constraints.NotBlank;
 
-import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
-public class BadgeDTO {
-
+public class BadgeDTO implements Serializable {
 
     protected Long id;
 
-    @NotBlank
-    @Size(min = 10, max = 50)
     protected String title;
 
-    @Size(min = 10, max = 256)
     protected String description;
 
     protected int neededScore;
@@ -35,6 +31,9 @@ public class BadgeDTO {
     private String lastModifiedBy;
 
     private Date lastModifiedDate;
+
+    public BadgeDTO() {
+    }
 
     public BadgeDTO(BadgeEntity badgeEntity) {
 
@@ -135,6 +134,7 @@ public class BadgeDTO {
         this.createdBy = createdBy;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -151,6 +151,7 @@ public class BadgeDTO {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getLastModifiedDate() {
         return lastModifiedDate;
     }
@@ -163,9 +164,9 @@ public class BadgeDTO {
     public String toString() {
         return "BadgeDTO{" +
                 "title='" + title + '\'' +
-                ", needed score='" + neededScore + '\'' +
-                ", start validity date='" + startValidityDate + '\'' +
-                ", end validity date='" + endValidityDate + '\'' +
+                ", neededScore='" + neededScore + '\'' +
+                ", startValidityDate='" + startValidityDate + '\'' +
+                ", endValidityDate='" + endValidityDate + '\'' +
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
                 ", isEnabled=" + isEnabled +

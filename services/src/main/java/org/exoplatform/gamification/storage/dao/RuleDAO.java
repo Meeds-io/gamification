@@ -1,5 +1,7 @@
 package org.exoplatform.gamification.storage.dao;
 
+import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.gamification.entities.domain.configuration.RuleEntity;
 
@@ -8,7 +10,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> {
+public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
     public RuleDAO() {
     }
@@ -38,15 +40,16 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> {
 
     }
 
-    public int deleteBadgeById(int ruleId) throws PersistenceException {
+    public int deleteRuleById(int ruleId) throws PersistenceException {
         return getEntityManager().createNamedQuery("Rule.deleteRuleById")
                 .setParameter("ruleId", ruleId)
                 .executeUpdate();
 
     }
 
-    public int deleteBadgeByTitle(int ruleTitle) throws PersistenceException {
-        return getEntityManager().createNamedQuery("Badge.deleterRuleByTitle")
+
+    public int deleteRuleByTitle(String ruleTitle) throws PersistenceException {
+        return getEntityManager().createNamedQuery("Rule.deleteRuleByTitle")
                 .setParameter("ruleTitle", ruleTitle)
                 .executeUpdate();
 

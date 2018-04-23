@@ -27,8 +27,8 @@ import java.util.Objects;
                 query = "DELETE FROM Rule rule WHERE rule.title = :ruleTitle "
         ),
         @NamedQuery(
-                name = "Badge.deleteRuleById",
-                query = "DELETE FROM Rule rule WHERE rule.id = :badgeId "
+                name = "Rule.deleteRuleById",
+                query = "DELETE FROM Rule rule WHERE rule.id = :ruleId "
         )
 })
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
@@ -42,10 +42,6 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "TITLE", unique = true, nullable = false)
     protected String title;
 
-    /**
-     * @Column(name = "MODULE", unique = true,   nullable = false)
-     * protected CategoryEntity category; /**(module) List [Foreigh_Key to table CategoryType]
-     */
     @Column(name = "DESCRIPTION")
     protected String description;
 

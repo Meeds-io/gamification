@@ -144,4 +144,27 @@
             </preference>
         </portlet-preferences>
     </portlet>
+    <!-- Admin portlet : manage rules -->
+    <portlet>
+        <portlet-name>ManageRulesApp</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.admin.rule.ManageRulesPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Manage rules App</title>
+        </portlet-info>
+    </portlet>
+
+    <!-- Admin portlet : manage badges -->
+    <portlet>
+        <portlet-name>ManageBadgesApp</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.admin.badge.ManageBadgesPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Manage badge App</title>
+        </portlet-info>
+    </portlet>
 </portlet-app>

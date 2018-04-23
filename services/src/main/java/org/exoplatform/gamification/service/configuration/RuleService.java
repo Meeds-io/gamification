@@ -1,5 +1,6 @@
 package org.exoplatform.gamification.service.configuration;
 
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
@@ -7,6 +8,8 @@ import org.exoplatform.gamification.service.mapper.RuleMapper;
 import org.exoplatform.gamification.storage.dao.RuleDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+
+import java.util.List;
 
 public class RuleService {
 
@@ -40,6 +43,34 @@ public class RuleService {
             LOG.error("Error to find Rule entity with title : {}",ruleTitle,e.getMessage());
         }
         return null;
+
+    }
+
+    public List<RuleDTO> getAllRules() {
+        try {
+            //--- load all Rules
+            List<RuleEntity> rules =  ruleDAO.getAllRules();
+            if (rules != null) {
+                return ruleMapper.rulesToRoleDTOs(rules);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Rules",e.getMessage());
+        }
+        return null;
+    }
+
+    @ExoTransactional
+    public void deleteRule (String ruleTitle) {
+
+        try {
+
+            ruleDAO.deleteRuleByTitle(ruleTitle);
+
+        } catch (Exception e) {
+            LOG.error("Error to delete rule with title {}", ruleTitle, e);
+        }
+
 
     }
 }

@@ -17,7 +17,7 @@ public class RuleMapper {
         return new RuleDTO(rule);
     }
 
-    public List<RuleDTO> rolesToRoleDTOs(List<RuleEntity> rules) {
+    public List<RuleDTO> rulesToRoleDTOs(List<RuleEntity> rules) {
         return rules.stream()
                 .filter(Objects::nonNull)
                 .map(this::ruleToRuleDTO)

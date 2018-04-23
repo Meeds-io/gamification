@@ -23,7 +23,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     protected String createdBy;
 
     @Column(name = "CREATED_DATE", nullable = false)
-    @JsonIgnore
+    //@JsonIgnore
     //---Can't match java8 API with JPA/hibernate : we have to upgrade to jpa-2.2
     //private Instant createdDate = Instant.now();
     protected Date createdDate = new Date();
@@ -33,7 +33,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     protected String lastModifiedBy;
 
     @Column(name = "LAST_MODIFIED_DATE")
-    @JsonIgnore
+    //@JsonIgnore
     //---Can't match java8 API with JPA/hibernate : we have to upgrade to jpa-2.2
     //private Instant lastModifiedDate = Instant.now();
     protected Date lastModifiedDate = new Date ();

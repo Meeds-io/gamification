@@ -59,7 +59,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
     }
 
-    public int deleteBadgeByTitle(int badgeTitle) throws PersistenceException {
+    public int deleteBadgeByTitle(String badgeTitle) throws PersistenceException {
         return getEntityManager().createNamedQuery("Badge.deleteBadgeByTitle")
                 .setParameter("badgeTitle", badgeTitle)
                 .executeUpdate();

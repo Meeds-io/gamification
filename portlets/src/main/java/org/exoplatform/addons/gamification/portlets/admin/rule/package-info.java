@@ -29,7 +29,9 @@
 )
 @Bindings(
         {
-                @Binding(value = org.exoplatform.services.organization.OrganizationService.class)
+                @Binding(value = org.exoplatform.services.organization.OrganizationService.class),
+                @Binding(value = org.exoplatform.gamification.service.configuration.RuleService.class),
+
 
         }
 )

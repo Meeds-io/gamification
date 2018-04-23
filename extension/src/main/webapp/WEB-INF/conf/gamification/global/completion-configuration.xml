@@ -21,4 +21,16 @@
             </value-param>
         </init-params>
     </component>
+
+    <!-- Rules Rest Service -->
+    <component>
+        <type>org.exoplatform.gamification.rest.ManageRulesEndpoint</type>
+    </component>
+    <!-- END -->
+
+    <!-- Badges Rest Service -->
+    <component>
+        <type>org.exoplatform.gamification.rest.ManageBadgesEndpoint</type>
+    </component>
+    <!-- END -->
 </configuration>

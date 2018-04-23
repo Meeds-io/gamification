@@ -31,7 +31,7 @@
         <portlet-application>
             <portlet>
                 <application-ref>gamification-portlets</application-ref>
-                <portlet-ref>ManageRuleControllerApplication</portlet-ref>
+                <portlet-ref>ManageRulesApp</portlet-ref>
             </portlet>
             <title>Manage Rules</title>
             <access-permissions>*:/platform/administrators</access-permissions>
@@ -46,7 +46,7 @@
         <portlet-application>
             <portlet>
                 <application-ref>gamification-portlets</application-ref>
-                <portlet-ref>ManageBadgeControllerApplication</portlet-ref>
+                <portlet-ref>ManageBadgesApp</portlet-ref>
             </portlet>
             <title>Manage Badges</title>
             <access-permissions>*:/platform/administrators</access-permissions>
