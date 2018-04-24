@@ -25,9 +25,9 @@ public class BadgeService {
     }
 
     /**
-     *
-     * @param badgeTitle
-     * @return
+     * Find a BadgeEntity by title
+     * @param badgeTitle : badge title
+     * @return an instance BadgeDTO
      */
     public BadgeDTO findBadgeByTitle(String badgeTitle) {
 
@@ -47,7 +47,8 @@ public class BadgeService {
     }
 
     /**
-     * @return
+     * Return all badges within the DB
+     * @return a list of BadgeDTO
      */
     public List<BadgeDTO> getAllBadges() {
         try {
@@ -63,6 +64,11 @@ public class BadgeService {
         return null;
 
     }
+
+    /**
+     * Delete a BadgeEntity using the title
+     * @param badgeTitle : badge title
+     */
     @ExoTransactional
     public void deleteBadge (String badgeTitle) {
 

@@ -24,10 +24,9 @@ public class RuleService {
     }
 
     /**
-     *
-     * @param ruleTitle
-     * @return
-     * @throws Exception
+     * Find a RuleEntity by title
+     * @param ruleTitle : rule's title param
+     * @return an instance of RuleDTO
      */
     public RuleDTO findRuleByTitle (String ruleTitle) {
 

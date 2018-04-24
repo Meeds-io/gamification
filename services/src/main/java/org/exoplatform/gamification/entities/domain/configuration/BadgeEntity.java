@@ -10,7 +10,7 @@ import java.util.Objects;
 @Entity(name = "Badge")
 @ExoEntity
 @Table(name = "GAMIFICATION_BADGE")
-@NamedQueries( {
+@NamedQueries({
         @NamedQuery(
                 name = "Badge.getAllBadges",
                 query = "SELECT badge FROM Badge badge"
@@ -49,13 +49,9 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(name = "TITLE", unique = true,   nullable = false)
+    @Column(name = "TITLE", unique = true, nullable = false)
     protected String title;
 
-    /**
-    @Column(name = "MODULE", unique = true,   nullable = false)
-    protected Module  module /**(module) List [Foreigh_Key to table CategoryType]
-    */
     @Column(name = "DESCRIPTION")
     protected String description;
 
@@ -75,7 +71,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     //@Temporal(TemporalType.DATE)
     protected Date endValidityDate;
 
-    @Column(name = "BADGE_IS_ENABLE",nullable = false)
+    @Column(name = "BADGE_IS_ENABLE", nullable = false)
     protected boolean isEnabled;
 
     public BadgeEntity() {
@@ -144,6 +140,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
