@@ -35,7 +35,9 @@
             <scope>provided</scope>
             <fileMode>0644</fileMode>
         </dependencySet>
+
         <!-- Hibernate OGM -->
+<!--
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
@@ -54,7 +56,9 @@
             <scope>provided</scope>
             <fileMode>0644</fileMode>
         </dependencySet>
+-->
         <!-- Mongodb java driver-->
+<!--
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
@@ -64,5 +68,6 @@
             <scope>provided</scope>
             <fileMode>0644</fileMode>
         </dependencySet>
+-->
     </dependencySets>
 </assembly>
