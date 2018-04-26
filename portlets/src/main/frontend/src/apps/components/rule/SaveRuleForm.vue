@@ -66,6 +66,7 @@
 </template>
 
 <script>
+
     export default {
         props: ['rule'],
         data() {

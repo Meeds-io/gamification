@@ -30,6 +30,7 @@ public class RuleDTO implements Serializable {
     private Date lastModifiedDate;
 
     public RuleDTO() {
+
     }
 
     public RuleDTO(RuleEntity rule) {

@@ -38,41 +38,30 @@
         },
 
         data: initialData,
-        methods: {
-            onFormSave(rule) {
-
-                // Generate an id using the third-party lib 'uuid' ==> doesn't work as expected
-                //rule.id = uuid.v4()
-                rule.id = Math.random();
-                // eslint-disable-next-line no-console
-                console.log('ruleData', JSON.stringify(rule))
-                // add it to the product list
-                this.rules.push(rule)
-                // reset the form
-                this.resetRuleInForm()
-            },
+        methods: {   
             resetRuleInForm() {
                 this.ruleInForm = initialData().ruleInForm
             },
             onEditClicked(rule) {
-                // since objects are passed by reference we need to clone the product
-                // either by using Object.assign({}, product) or by using object
-                // spread like we do here.
+                // since objects are passed by reference we need to clone the rule
+                // either by using Object.assign({}, rule) or by using object
+                // spread like I do here.
                 this.ruleInForm = { ...rule }
             },
             onRuleAction(rule) {
                 const index = this.rules.findIndex((p) => p.id === rule.id)
 
                 console.log(index);
-                // update product if it exists or create it if it doesn't
+                // update rule if it exists or create it if it doesn't
                 if (index !== -1) {
-                    // We need to replace the array entirely so that vue can recognize
-                    // the change and re-render entirely.
+                    // Update the selected rule
                     // See http://vuejs.org/guide/list.html#Caveats
+                    this.updateRule(rule)
                     this.rules.splice(index, 1, rule)
                 } else {
-                    //rule.id = uuid.v4()
-                    rule.id = Math.random();
+                    // Create a new rule
+                    //rule.id = Math.random();
+                    this.createRule(rule)
                     this.rules.push(rule)
                 }
 
@@ -81,7 +70,6 @@
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId)
 
-                console.log('#############################' + ruleTitle)
                 // Add dynamic invocation to server side
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
                     .then(response => {
@@ -100,9 +88,33 @@
                 if (ruleId === this.ruleInForm.id) {
                     this.resetRuleInForm()
                 }
-            }
+            },
+            createRule(ruleDTO) {
+                axios.post(`/rest/gamification/rules/add`, ruleDTO)
+                    .then(response => {
+                        //this.rules = response.data;
+                    })
+                    .catch(e => {
+                       
+                        this.errors.push(e)
+                        
+                    })
+                this.resetRuleInForm()    
+
+            },
+            updateRule(ruleDTO) {
+                axios.put(`/rest/gamification/rules/update`,ruleDTO)
+                    .then(response => {
+                       
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    })
+            },
+
+
         },
-        // Fetches posts when the component is created.
+        // Fetches rules when the component is created.
         created() {
             axios.get(`/rest/gamification/rules/all`)
                 .then(response => {

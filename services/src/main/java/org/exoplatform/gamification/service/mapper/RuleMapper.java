@@ -29,10 +29,14 @@ public class RuleMapper {
         } else {
             RuleEntity rule = new RuleEntity();
             rule.setId(ruleDTO.getId());
+            rule.setScore(ruleDTO.getScore());
             rule.setTitle(ruleDTO.getTitle());
             rule.setDescription(ruleDTO.getDescription());
             rule.setArea(ruleDTO.getArea());
             rule.setEnabled(ruleDTO.isEnabled());
+            rule.setCreatedBy(ruleDTO.getCreatedBy());
+            rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
+            rule.setLastModifiedDate(ruleDTO.getLastModifiedDate());
 
             return rule;
         }

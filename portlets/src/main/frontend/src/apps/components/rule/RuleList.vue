@@ -34,8 +34,8 @@
                             <td>{{rule.title}}</td>
                             <td class="rule-desc-col">{{rule.description}}</td>
                             <td>{{rule.score}}</td>
-                            <td>{{rule.createdDate}}</td>
-                            <td>{{rule.lastModifiedDate}}</td>
+                            <td>{{ moment(rule.createdDate).format('YYYY-MM-DD') }}</td>
+                            <td>{{ moment(rule.lastModifiedDate).format('YYYY-MM-DD') }}</td>
                             <td>{{rule.createdBy}}</td>
                             <td>{{rule.lastModifiedBy}}</td>
                             <td>{{rule.enabled}}</td>
@@ -57,6 +57,10 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import moment from 'moment'
+    Vue.prototype.moment = moment
+
     export default {
         props: ['rules'],
         data() {
@@ -68,7 +72,7 @@
             onEdit(rule) {
                 this.$emit('edit', rule)
             },
-            onRemove(id,title) {
+            onRemove(id, title) {
                 this.$emit('remove', id, title)
             }
         }

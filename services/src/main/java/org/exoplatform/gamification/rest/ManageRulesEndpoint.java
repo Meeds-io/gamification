@@ -7,93 +7,200 @@ import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Path("/gamification/rules")
+@Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
 
+    private final CacheControl cacheControl;
+
     protected RuleService ruleService = null;
 
     public ManageRulesEndpoint() {
+
+        this.cacheControl = new CacheControl();
+
+        cacheControl.setNoCache(true);
+
+        cacheControl.setNoStore(true);
 
         ruleService = CommonsUtils.getService(RuleService.class);
 
     }
 
     @GET
-    @RolesAllowed("users")
-    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("administrators")
     @Path("/all")
-    public Response getAllRules(@Context UriInfo uriInfo) {
+    public Response getAllRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
-        CacheControl cacheControl = new CacheControl();
+        ConversationState conversationState = ConversationState.getCurrent();
 
-        cacheControl.setNoCache(true);
+        if (conversationState != null) {
+            try {
+                List<RuleDTO> allRules = ruleService.getAllRules();
 
-        cacheControl.setNoStore(true);
+                return Response.ok().cacheControl(cacheControl).entity(allRules).build();
 
-        try {
-            List<RuleDTO> allRules = ruleService.getAllRules();
+            } catch (Exception e) {
 
-            return Response.ok(allRules, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                LOG.error("Error listing all rules ", e);
 
-        } catch (Exception e) {
-            return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error listing all rules")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
+        }
+
+
+    }
+
+    @POST
+    @RolesAllowed("administrators")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Path("/add")
+    public Response addRule(@Context SecurityContext securityContext, @Context UriInfo uriInfo, RuleDTO ruleDTO) {
+
+        ConversationState conversationState = ConversationState.getCurrent();
+
+        if (conversationState != null) {
+
+            String currentUserName = conversationState.getIdentity().getUserId();
+
+            try {
+                // Compute rule's data
+                ruleDTO.setId(null);
+                ruleDTO.setCreatedBy(currentUserName);
+                ruleDTO.setLastModifiedBy(currentUserName);
+                ruleDTO.setLastModifiedDate(new Date());
+
+                //--- Add rule
+                ruleDTO = ruleService.addRule(ruleDTO);
+
+                return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error adding new rule")
+                        .build();
+
+            }
+
+
+        } else {
+
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
         }
 
     }
 
     @PUT
-    @RolesAllowed("users")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/add")
-    public Response AddRule(@Context UriInfo uriInfo) {
+    @RolesAllowed("administrators")
+    @Path("/update")
+    public Response AddRule(@Context UriInfo uriInfo, @Context HttpServletRequest request, RuleDTO ruleDTO) {
 
-        CacheControl cacheControl = new CacheControl();
+        ConversationState conversationState = ConversationState.getCurrent();
 
-        cacheControl.setNoCache(true);
+        if (conversationState != null) {
 
-        cacheControl.setNoStore(true);
+            String currentUserName = conversationState.getIdentity().getUserId();
+            try {
 
-        try {
-            List<RuleDTO> allRules = ruleService.getAllRules();
+                //TODO : Load locale
+                Locale lc = request.getLocale();
 
-            return Response.ok(allRules, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                // Compute rule's data
+                ruleDTO.setCreatedBy(currentUserName);
+                ruleDTO.setLastModifiedBy(currentUserName);
+                ruleDTO.setLastModifiedDate(new Date());
 
-        } catch (Exception e) {
-            return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
+                //--- Add rule
+                ruleDTO = ruleService.updateRule(ruleDTO);
+
+                return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error updating rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error adding new rule")
+                        .build();
+            }
+
+        } else {
+
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
         }
+
 
     }
 
+
     @DELETE
-    @RolesAllowed("users")
-    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("administrators")
     @Path("/delete")
     public Response deleteRule(@Context UriInfo uriInfo, @QueryParam("ruleTitle") String ruleTitle) {
 
-        CacheControl cacheControl = new CacheControl();
+        ConversationState conversationState = ConversationState.getCurrent();
 
-        cacheControl.setNoCache(true);
+        if (conversationState != null) {
 
-        cacheControl.setNoStore(true);
+            String currentUserName = conversationState.getIdentity().getUserId();
 
-        try {
-            //--- Remove the rule
-            ruleService.deleteRule(ruleTitle);
+            try {
+                //--- Remove the rule
+                ruleService.deleteRule(ruleTitle);
 
+                return Response.ok().cacheControl(cacheControl).entity("Rule " + ruleTitle + " has been removed successfully ").build();
 
-            return Response.ok("Deleted " + ruleTitle, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+            } catch (Exception e) {
 
-        } catch (Exception e) {
-            return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
+                LOG.error("Error removing rule {} by {} ", ruleTitle, currentUserName, e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error adding new rule")
+                        .build();
+
+            }
+
+        } else {
+
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
         }
+
 
     }
 }

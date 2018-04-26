@@ -69,7 +69,47 @@ public class RuleService {
         } catch (Exception e) {
             LOG.error("Error to delete rule with title {}", ruleTitle, e);
         }
+    }
 
+    /**
+     * Add Rule to DB
+     * @param ruleDTO : an object of type RuleDTO
+     * @return RuleDTO object
+     */
+    @ExoTransactional
+    public RuleDTO addRule (RuleDTO ruleDTO) {
 
+        RuleEntity ruleEntity = null;
+
+        try {
+
+            ruleEntity = ruleDAO.create(ruleMapper.ruleDTOToRule(ruleDTO));
+
+        } catch (Exception e) {
+            LOG.error("Error to delete rule with title {}", ruleDTO.getTitle() , e);
+        }
+
+        return ruleMapper.ruleToRuleDTO(ruleEntity);
+    }
+
+    /**
+     * Update Rule to DB
+     * @param ruleDTO : an object of type RuleDTO
+     * @return RuleDTO object
+     */
+    @ExoTransactional
+    public RuleDTO updateRule (RuleDTO ruleDTO) {
+
+        RuleEntity ruleEntity = null;
+
+        try {
+
+            ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO));
+
+        } catch (Exception e) {
+            LOG.error("Error to delete rule with title {}", ruleDTO.getTitle() , e);
+        }
+
+        return ruleMapper.ruleToRuleDTO(ruleEntity);
     }
 }
