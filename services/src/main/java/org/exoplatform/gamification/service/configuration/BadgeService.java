@@ -3,7 +3,9 @@ package org.exoplatform.gamification.service.configuration;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
+import org.exoplatform.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.services.log.ExoLogger;
@@ -66,6 +68,48 @@ public class BadgeService {
     }
 
     /**
+     * Add Badge to DB
+     * @param badgeDTO : an object of type RuleDTO
+     * @return BadgeDTO object
+     */
+    @ExoTransactional
+    public BadgeDTO addBadge (BadgeDTO badgeDTO) {
+
+        BadgeEntity badgeEntity = null;
+
+        try {
+
+            badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
+
+        } catch (Exception e) {
+            LOG.error("Error to delete badge with title {}", badgeDTO.getTitle() , e);
+        }
+
+        return badgeMapper.badgeToBadgeDTO(badgeEntity);
+    }
+
+    /**
+     * Update Badge to DB
+     * @param badgeDTO : an instance of type BadgeDTO
+     * @return BadgeDTO object
+     */
+    @ExoTransactional
+    public BadgeDTO updateBadge (BadgeDTO badgeDTO) {
+
+        BadgeEntity badgeEntity = null;
+
+        try {
+
+            badgeEntity = badgeStorage.update(badgeMapper.badgeDTOToBadge(badgeDTO));
+
+        } catch (Exception e) {
+            LOG.error("Error to update with title {}", badgeDTO.getTitle() , e);
+        }
+
+        return badgeMapper.badgeToBadgeDTO(badgeEntity);
+    }
+
+    /**
      * Delete a BadgeEntity using the title
      * @param badgeTitle : badge title
      */
@@ -77,7 +121,7 @@ public class BadgeService {
             badgeStorage.deleteBadgeByTitle(badgeTitle);
 
         } catch (Exception e) {
-            LOG.error("Error to delete rule with title {}", badgeTitle, e);
+            LOG.error("Error to delete badge with title {}", badgeTitle, e);
         }
 
 

@@ -38,7 +38,7 @@
         },
 
         data: initialData,
-        methods: {   
+        methods: {
             resetRuleInForm() {
                 this.ruleInForm = initialData().ruleInForm
             },
@@ -50,8 +50,6 @@
             },
             onRuleAction(rule) {
                 const index = this.rules.findIndex((p) => p.id === rule.id)
-
-                console.log(index);
                 // update rule if it exists or create it if it doesn't
                 if (index !== -1) {
                     // Update the selected rule
@@ -95,22 +93,22 @@
                         //this.rules = response.data;
                     })
                     .catch(e => {
-                       
+
                         this.errors.push(e)
-                        
+
                     })
-                this.resetRuleInForm()    
+                this.resetRuleInForm()
 
             },
             updateRule(ruleDTO) {
-                axios.put(`/rest/gamification/rules/update`,ruleDTO)
+                axios.put(`/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
-                       
+
                     })
                     .catch(e => {
                         this.errors.push(e)
                     })
-            },
+            }
 
 
         },
@@ -129,3 +127,7 @@
         }
     }
 </script>
+
+<style scoped>
+    
+</style>

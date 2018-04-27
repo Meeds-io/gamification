@@ -1,6 +1,5 @@
 package org.exoplatform.gamification.rest;
 
-import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.service.configuration.RuleService;
 import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
@@ -121,7 +120,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
     @PUT
     @RolesAllowed("administrators")
     @Path("/update")
-    public Response AddRule(@Context UriInfo uriInfo, @Context HttpServletRequest request, RuleDTO ruleDTO) {
+    public Response updateRule(@Context UriInfo uriInfo, @Context HttpServletRequest request, RuleDTO ruleDTO) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 

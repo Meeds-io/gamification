@@ -22,7 +22,7 @@ public class BadgeMapper {
                 .map(this::badgeToBadgeDTO)
                 .collect(Collectors.toList());
     }
-    public BadgeEntity BadgeDTOToBadge(BadgeDTO badgeDTO) {
+    public BadgeEntity badgeDTOToBadge(BadgeDTO badgeDTO) {
         if (badgeDTO == null) {
             return null;
         } else {
@@ -35,15 +35,19 @@ public class BadgeMapper {
             badge.setStartValidityDate(badgeDTO.getStartValidityDate());
             badge.setEndValidityDate(badgeDTO.getEndValidityDate());
             badge.setEnabled(badgeDTO.isEnabled());
+            badge.setCreatedBy(badgeDTO.getCreatedBy());
+            badge.setCreatedDate(badgeDTO.getCreatedDate());
+            badge.setLastModifiedBy(badgeDTO.getLastModifiedBy());
+            badge.setLastModifiedDate(badgeDTO.getLastModifiedDate());
 
             return badge;
         }
     }
 
-    public List<BadgeEntity> BadgeDTOsToBadges(List<BadgeDTO> BadgeDTOs) {
+    public List<BadgeEntity> badgeDTOsToBadges(List<BadgeDTO> BadgeDTOs) {
         return BadgeDTOs.stream()
                 .filter(Objects::nonNull)
-                .map(this::BadgeDTOToBadge)
+                .map(this::badgeDTOToBadge)
                 .collect(Collectors.toList());
     }
 

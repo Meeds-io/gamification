@@ -120,6 +120,7 @@ public class RuleDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getLastModifiedDate() {
         return lastModifiedDate;
     }

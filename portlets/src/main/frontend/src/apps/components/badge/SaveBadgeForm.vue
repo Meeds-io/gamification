@@ -95,8 +95,7 @@
                 selectedFile: undefined,
                 selectedFileName: '',
                 dismissSecs: 5,
-                dismissCountDown: 0,
-                rules: []
+                dismissCountDown: 0
             }
         },
         watch: {
@@ -115,8 +114,8 @@
                     this.dismissCountDown = 5
                 }
 
-                if (!this.badge.score) {
-                    errors.score = 'Score is required'
+                if (!this.badge.neededScore) {
+                    errors.neededScore = 'Needed score is required'
                 }
 
                 this.formErrors = errors
@@ -138,20 +137,6 @@
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
-        },
-        
-        created() {
-            // Fetches rules when the component is created.
-            axios.get(`/rest/gamification/rules/all`)
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
         }
     }
 </script>

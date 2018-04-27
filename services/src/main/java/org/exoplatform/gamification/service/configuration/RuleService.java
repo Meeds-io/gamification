@@ -107,7 +107,7 @@ public class RuleService {
             ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO));
 
         } catch (Exception e) {
-            LOG.error("Error to delete rule with title {}", ruleDTO.getTitle() , e);
+            LOG.error("Error to update rule with title {}", ruleDTO.getTitle() , e);
         }
 
         return ruleMapper.ruleToRuleDTO(ruleEntity);

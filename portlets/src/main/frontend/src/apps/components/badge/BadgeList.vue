@@ -21,7 +21,7 @@
                             <th class="badge-last-modified-date-col">Last Modified Date</th>
                             <th class="badge-creation-date-col">Creation Date</th>
                             <th class="badge-last-modified-by-col">Last modified by</th>
-                            <th class="badge-created-by-col">Created by</th>                            
+                            <th class="badge-created-by-col">Created by</th>
                             <th class="badge-action-col">Action</th>
                         </tr>
                     </thead>
@@ -36,12 +36,12 @@
                             <td class="badge-title-col">{{badge.title}}</td>
                             <td class="badge-desc-col">{{badge.description}}</td>
                             <td class="badge-needed-score-col">{{badge.neededScore}}</td>
-                            <td class="badge-start-validity-date-col">{{badge.startValidityDate}}</td>
-                            <td class="badge-end-validity-date-col">{{badge.endValidityDate}}</td>
+                            <td class="badge-start-validity-date-col">{{ moment(badge.startValidityDate).format('YYYY-MM-DD') }}</td>
+                            <td class="badge-end-validity-date-col">{{ moment(badge.endValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-icon-col">{{badge.icon}}</td>
                             <td class="badge-status-col">{{badge.isEnabled}}</td>
-                            <td class="badge-last-modified-date-col">{{badge.lastModifiedDate}}</td>
-                            <td class="badge-created-date-col">{{badge.createdDate}}</td>
+                            <td class="badge-last-modified-date-col">{{moment(badge.lastModifiedDate).format('YYYY-MM-DD') }}</td>
+                            <td class="badge-created-date-col">{{ moment(badge.createdDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-last-modified-date-col">{{badge.lastModifiedBy}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>
                             <td>
@@ -62,6 +62,9 @@
 </template>
 
 <script>
+    import Vue from 'vue'
+    import moment from 'moment'
+    Vue.prototype.moment = moment
     export default {
         props: ['badges'],
         data() {
@@ -79,3 +82,6 @@
         }
     }
 </script>
+<style scoped>
+    
+</style>
