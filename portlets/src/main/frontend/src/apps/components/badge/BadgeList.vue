@@ -65,6 +65,8 @@
     import Vue from 'vue'
     import moment from 'moment'
     Vue.prototype.moment = moment
+    import 'bootstrap/dist/css/bootstrap.css'
+    import 'bootstrap-vue/dist/bootstrap-vue.css'
     export default {
         props: ['badges'],
         data() {
@@ -83,5 +85,5 @@
     }
 </script>
 <style scoped>
-    
+
 </style>

@@ -66,7 +66,14 @@
 </template>
 
 <script>
-
+    import Vue from 'vue'
+    import BootstrapVue from 'bootstrap-vue'
+    import 'bootstrap/dist/css/bootstrap.css'
+    import 'bootstrap-vue/dist/bootstrap-vue.css'
+    import datePicker from 'vue-bootstrap-datetimepicker';
+    import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
+    Vue.use(BootstrapVue);
+    Vue.use(datePicker);
     export default {
         props: ['rule'],
         data() {
@@ -75,7 +82,12 @@
                 selectedFile: undefined,
                 selectedFileName: '',
                 dismissSecs: 5,
-                dismissCountDown: 0
+                dismissCountDown: 0,
+                date: new Date(),
+                config: {
+                    format: 'DD/MM/YYYY',
+                    useCurrent: false,
+                }
             }
         },
         watch: {
@@ -124,5 +136,30 @@
 <style scoped>
     form {
         margin-bottom: 24px;
+    }
+    h5.mt-0{
+        color: #578dc9;
+        font-family: Helvetica,arial,sans-serif;
+        line-height: 20px;
+        font-size:1.5em;
+        text-transform:uppercase;
+        font-weight:bold;
+    }
+
+    input[type="number"], input[type="date"]{
+        font-size: 15px;
+        height: 40px;
+        padding: 0 10px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        max-height: 40px;
+        text-overflow: ellipsis;
+    }
+    input[type="number"]:focus:invalid:focus, input[type="date"]:focus:invalid:focus{
+        border-color: #e9322d;
+        -webkit-box-shadow: 0 0 6px #f8b9b7;
+        -moz-box-shadow: 0 0 6px #f8b9b7;
+        box-shadow: 0 0 6px #f8b9b7;
     }
 </style>

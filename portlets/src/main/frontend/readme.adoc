@@ -1,0 +1,29 @@
+Overview
+--------
+
+The goals of development and production builds differ greatly. In development, we want strong source mapping and a localhost server with live reloading or hot module replacement. In production, our goals shift to a focus on minified bundles, lighter weight source maps, and optimized assets to improve load time.
+
+We will write separate webpack configurations for each environment.
+
+We will have 3 configurtions :
+* production
+* development
+* common
+
+
+With the "common" configuration in place, we won't have to duplicate code within the environment-specific configurations.
+
+
+In order to merge these configurations together, we'll use a utility called *webpack-merge*
+
+Steps
+-----
+
+= Install webpack-merge =
+
+$ npm install --save-dev webpack-merge
+
+= =
+
+
+

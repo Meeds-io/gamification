@@ -23,7 +23,7 @@
                     </b-form-group>
 
                     <!-- Badge icon Component -->
-                    <!--    
+                    <!--
                     <b-form-group id="neededScoreInputGroup" label="Score:" label-for="neededScoreInput">
                         <b-form-input id="neededScoreDescription" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
                         </b-form-input>
@@ -39,16 +39,15 @@
                     <!-- END -->
 
                     <!-- Badge Start validity Date Component -->
-                    <b-form-group id="startValidityDateInputGroup" label="Start Validity Date:" label-for="startValidityDateInput">
-                        <b-form-input id="startValidityDateInput" type="date" v-model="badge.startValidityDate" required placeholder="Enter badge's start validity date">
-                        </b-form-input>
+                    <b-form-group id="startValidityDateInputGroup " label="Start Validity Date:" label-for="startValidityDateInput">
+
+                        <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
                     </b-form-group>
                     <!-- END -->
 
                     <!-- Badge End validity date component -->
                     <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
-                        <b-form-input id="endValidityDateInput" type="date" v-model="badge.startValidityDate" required placeholder="Enter badge's start validity date">
-                        </b-form-input>
+                        <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
                     </b-form-group>
                     <!-- END -->
 
@@ -82,10 +81,13 @@
 
 <script>
     import Vue from 'vue'
-    import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
-
+    import 'bootstrap/dist/css/bootstrap.css'
+    import 'bootstrap-vue/dist/bootstrap-vue.css'
+    import datePicker from 'vue-bootstrap-datetimepicker';
+    import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
+    Vue.use(datePicker);
 
     export default {
         props: ['badge'],
@@ -95,7 +97,12 @@
                 selectedFile: undefined,
                 selectedFileName: '',
                 dismissSecs: 5,
-                dismissCountDown: 0
+                dismissCountDown: 0,
+                date: new Date(),
+                config: {
+                    format: 'jj/mm/aaaa',
+                    useCurrent: false,
+                }
             }
         },
         watch: {
@@ -122,9 +129,13 @@
 
                 return Object.keys(errors).length === 0
             },
+
+
+
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
                 this.selectedFileName = event.target.files[0].name
+
             },
             onCancel() {
                 this.$emit('cancel')
@@ -133,16 +144,43 @@
                 if (this.validateForm()) {
                     this.$emit('submit', this.badge)
                 }
+
             },
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
         }
+
+
     }
 </script>
 
 <style scoped>
     form {
         margin-bottom: 24px;
+    }
+    h5.mt-0{
+        color: #578dc9;
+        font-family: Helvetica,arial,sans-serif;
+        line-height: 20px;
+        font-size:1.5em;
+        text-transform:uppercase;
+        font-weight:bold;
+    }
+    input[type="number"], input[type="date"]{
+        font-size: 15px;
+        height: 40px;
+        padding: 0 10px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        max-height: 40px;
+        text-overflow: ellipsis;
+    }
+    input[type="number"]:focus:invalid:focus, input[type="date"]:focus:invalid:focus{
+        border-color: #e9322d;
+        -webkit-box-shadow: 0 0 6px #f8b9b7;
+        -moz-box-shadow: 0 0 6px #f8b9b7;
+        box-shadow: 0 0 6px #f8b9b7;
     }
 </style>
