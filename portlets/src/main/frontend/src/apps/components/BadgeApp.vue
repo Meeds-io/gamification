@@ -10,3 +10,12 @@
     }
   }
 </script>
+
+
+<style>
+
+    a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
+        color:#fff ;
+    }
+
+</style>

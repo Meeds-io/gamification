@@ -5,7 +5,8 @@
         <b-container fluid>
             <b-col sm="12">
                 <h5 class="mt-0">Manage gamification's badges</h5>
-                <b-form>
+                <b-form-row>
+                    <b-col class="card">
                     <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
                         <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
                         </b-form-input>
@@ -37,17 +38,24 @@
                         </b-form-input>
                     </b-form-group>
                     <!-- END -->
-
+                    </b-col>
+                    <b-col class="card">
                     <!-- Badge Start validity Date Component -->
                     <b-form-group id="startValidityDateInputGroup " label="Start Validity Date:" label-for="startValidityDateInput">
 
-                        <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
+                       <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
+
+                        <!-- <b-form-input id="startValidityDateInput" type="date" v-model="badge.startValidityDate" required placeholder="Enter rule's start validity">
+                        </b-form-input> -->
                     </b-form-group>
                     <!-- END -->
 
                     <!-- Badge End validity date component -->
                     <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
                         <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
+
+                      <!--  <b-form-input id="endValidityDateInput" type="date" v-model="badge.endValidityDate" required placeholder="Enter rule's end validity">
+                        </b-form-input> -->
                     </b-form-group>
                     <!-- END -->
 
@@ -65,14 +73,17 @@
                         </b-form-checkbox-group>
                     </b-form-group>
                     <!-- END -->
-
+                        <b-row>
+                            <b-col>
                     <!-- Form's actions -->
                     <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
                         {{badge.id ? 'Update' : 'Add'}} badge
-                    </b-button>
+                    </b-button></b-col><b-col>
                     <b-button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
                     <!-- END -->
-                </b-form>
+                        </b-col> </b-row>
+                    </b-col>
+                    </b-form-row>
             </b-col>
         </b-container>
     </div>
@@ -82,7 +93,6 @@
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     import datePicker from 'vue-bootstrap-datetimepicker';
     import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
@@ -91,7 +101,7 @@
 
     export default {
         props: ['badge'],
-        data() {
+        data: function () {
             return {
                 formErrors: {},
                 selectedFile: undefined,
@@ -100,7 +110,7 @@
                 dismissCountDown: 0,
                 date: new Date(),
                 config: {
-                    format: 'jj/mm/aaaa',
+                    format: 'YYYY-MM-DD',
                     useCurrent: false,
                 }
             }
@@ -166,12 +176,22 @@
         font-size:1.5em;
         text-transform:uppercase;
         font-weight:bold;
+        text-align:center;
+        padding:20px 0px;
     }
-    input[type="number"], input[type="date"]{
+    label{
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    input[type="number"]{
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
-        border: Solid 2px #e1e8ee;
+        border: 2px solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
         max-height: 40px;
@@ -183,4 +203,18 @@
         -moz-box-shadow: 0 0 6px #f8b9b7;
         box-shadow: 0 0 6px #f8b9b7;
     }
+    .card{
+        position: relative;
+        border-radius: 3px;
+        background: #ffffff;
+        border-top: 3px solid #d2d6de;
+        margin-bottom: 20px;
+        width: 100%;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        border-top-color: #3c8dbc;
+        margin: 0px 11px;
+        padding: 15px;
+
+    }
+
 </style>

@@ -5,7 +5,8 @@
 
         <b-row>
             <b-col sm="12">
-                <table class="table table-hover badge-table">
+                <b-col class="card">
+                <table class="table table-hover table-striped badge-table">
                     <thead>
                         <tr>
                             <!--
@@ -45,7 +46,7 @@
                             <td class="badge-last-modified-date-col">{{badge.lastModifiedBy}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>
                             <td>
-                                <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)">remove</a>
+                                <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
                             </td>
                         </tr>
                         <tr v-if="!badges.length">
@@ -56,6 +57,7 @@
                     </tbody>
 
                 </table>
+            </b-col>
             </b-col>
         </b-row>
     </b-container>
@@ -85,5 +87,32 @@
     }
 </script>
 <style scoped>
+    .card{
+        position: relative;
+        border-radius: 3px;
+        background: #ffffff;
+        border-top: 3px solid #d2d6de;
+        margin-bottom: 20px;
+        width: 100%;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        border-top-color: #3c8dbc;
+        margin: 0px 11px;
+        padding: 15px;
 
+    }
+
+    .table thead th{font-size: 0.9em;}
+
+    .table td, .table th{
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        text-align:center;
+    }
+    .table-hover tbody tr:hover{
+            cursor: pointer;
+        }
+    .table-striped>tbody>tr:nth-of-type(odd){
+        background-color: #f9f9f9;
+    }
 </style>

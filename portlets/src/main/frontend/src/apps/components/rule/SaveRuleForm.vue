@@ -5,8 +5,9 @@
         <b-container fluid>
             <b-col sm="12">
                 <h5 class="mt-0">Manage gamification's rules</h5>
-                <b-form>
-                    <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
+                <b-form-row>
+<b-col class="card">
+                    <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput"  >
                         <b-form-input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
                         </b-form-input>
 
@@ -15,51 +16,59 @@
                         </b-alert>
                     </b-form-group>
 
-                    <!-- Rule Description Component -->
-
-                    <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
+                    <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput" >
                         <b-form-textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
                         </b-form-textarea>
                     </b-form-group>
 
                     <!-- Rule Score Component -->
 
-                    <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput">
+
+
+                    <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput" >
                         <b-form-input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
                         </b-form-input>
                     </b-form-group>
+                </b-col>
                     <!-- END -->
+                    <b-col class="card">
+
 
                     <!-- Start validity date -->
-                    <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput">
-                        <b-form-input id="startValidityInput" type="date" v-model="rule.startValidity" required placeholder="Enter rule's start validity">
-                        </b-form-input>
+                    <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput" >
+                        <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
+                        <!--<b-form-input id="startValidityInput" type="date" v-model="rule.startValidity" required placeholder="Enter rule's start validity">
+                        </b-form-input> -->
                     </b-form-group>
                     <!-- END -->
 
                     <!-- End validity date -->
                     <b-form-group id="endValidityInputGroup" label="End validity:" label-for="endValidityInput">
-                        <b-form-input id="endValidityInput" type="date" v-model="rule.endValidity" required placeholder="Enter rule's end validity">
-                        </b-form-input>
+                        <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
+                        <!--<b-form-input id="endValidityInput" type="date" v-model="rule.endValidity" required placeholder="Enter rule's end validity">
+                        </b-form-input> -->
                     </b-form-group>
                     <!-- END -->
+                        <!-- Rule Enable Component -->
+                        <b-form-group id="enableCheckboxGroup">
+                            <b-form-checkbox-group v-model="rule.enabled" id="enabledChecks">
+                                <b-form-checkbox>Enable rule</b-form-checkbox>
+                            </b-form-checkbox-group>
+                        </b-form-group>
+                        <!-- END -->
+                        <b-row>
+                       <b-col> <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary" :size="lg" >
+                            {{rule.id ? 'Update' : 'Add'}} rule
+                        </b-button>
+                        </b-col><b-col>
+                        <b-button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary" >Cancel</b-button>
+                </b-col> </b-row>
+                        <!-- END -->
+                        </b-col>
+                </b-form-row>
+                <!-- Form's actions -->
+              </b-col>
 
-                    <!-- Rule Enable Component -->
-                    <b-form-group id="enableCheckboxGroup">
-                        <b-form-checkbox-group v-model="rule.enabled" id="enabledChecks">
-                            <b-form-checkbox>Enable rule</b-form-checkbox>
-                        </b-form-checkbox-group>
-                    </b-form-group>
-                    <!-- END -->
-
-                    <!-- Form's actions -->
-                    <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
-                        {{rule.id ? 'Update' : 'Add'}} rule
-                    </b-button>
-                    <b-button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
-                    <!-- END -->
-                </b-form>
-            </b-col>
         </b-container>
     </div>
 
@@ -85,7 +94,7 @@
                 dismissCountDown: 0,
                 date: new Date(),
                 config: {
-                    format: 'DD/MM/YYYY',
+                    format: 'YYYY-MM-DD',
                     useCurrent: false,
                 }
             }
@@ -144,13 +153,22 @@
         font-size:1.5em;
         text-transform:uppercase;
         font-weight:bold;
+        text-align:center;
+        padding:20px 0px;
+    }
+    label{
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 700;
+        color: #333;
     }
 
-    input[type="number"], input[type="date"]{
+    input[type="number"]{
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
-        border: Solid 2px #e1e8ee;
+        border: 2px solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
         max-height: 40px;
@@ -162,4 +180,18 @@
         -moz-box-shadow: 0 0 6px #f8b9b7;
         box-shadow: 0 0 6px #f8b9b7;
     }
+    .card{
+        position: relative;
+        border-radius: 3px;
+        background: #ffffff;
+        border-top: 3px solid #d2d6de;
+        margin-bottom: 20px;
+        width: 100%;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        border-top-color: #3c8dbc;
+        margin: 0px 11px;
+        padding: 15px;
+
+    }
+
 </style>
