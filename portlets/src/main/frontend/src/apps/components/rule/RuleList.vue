@@ -3,7 +3,7 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12" >
-                <b-col class="card">
+
 
                 <table striped hover class="table table-hover table-striped rule-table">
                     <thead>
@@ -39,7 +39,7 @@
                             <td>{{rule.lastModifiedBy}}</td>
                             <td>{{rule.enabled}}</td>
                             <td>
-                                <a href="#" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
+                                <a href="#" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Supprimer"><i class="uiIconDelete uiIconLightGray"></i></a>
                             </td>
                         </tr>
                         <tr v-if="!rules.length">
@@ -51,8 +51,7 @@
 
                 </table>
             </b-col>
-            </b-col>
-        </b-row>
+            </b-row>
     </b-container>
 </template>
 

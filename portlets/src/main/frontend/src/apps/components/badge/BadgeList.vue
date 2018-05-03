@@ -1,11 +1,10 @@
 <template>
     <b-container fluid>
-        <b-row>
-        </b-row>
+
 
         <b-row>
             <b-col sm="12">
-                <b-col class="card">
+
                 <table class="table table-hover table-striped badge-table">
                     <thead>
                         <tr>
@@ -46,7 +45,7 @@
                             <td class="badge-last-modified-date-col">{{badge.lastModifiedBy}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>
                             <td>
-                                <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Delete"><i class="uiIconDelete uiIconLightGray"></i></a>
+                                <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Supprimer"><i class="uiIconDelete uiIconLightGray"></i></a>
                             </td>
                         </tr>
                         <tr v-if="!badges.length">
@@ -58,7 +57,7 @@
 
                 </table>
             </b-col>
-            </b-col>
+
         </b-row>
     </b-container>
 </template>
@@ -87,7 +86,7 @@
     }
 </script>
 <style scoped>
-    .card{
+    .table{
         position: relative;
         border-radius: 3px;
         background: #ffffff;
@@ -96,11 +95,9 @@
         width: 100%;
         box-shadow: 0 1px 1px rgba(0,0,0,0.1);
         border-top-color: #3c8dbc;
-        margin: 0px 11px;
-        padding: 15px;
+        margin-top:3%;
 
     }
-
     .table thead th{font-size: 0.9em;}
 
     .table td, .table th{
