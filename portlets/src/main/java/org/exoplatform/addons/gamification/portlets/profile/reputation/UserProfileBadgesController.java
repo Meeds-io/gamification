@@ -1,4 +1,4 @@
-package org.exoplatform.addons.gamification.portlets.profile.badge;
+package org.exoplatform.addons.gamification.portlets.profile.reputation;
 
 import juzu.Path;
 import juzu.Response;

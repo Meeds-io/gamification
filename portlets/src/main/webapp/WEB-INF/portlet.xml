@@ -120,7 +120,7 @@
         <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
         <init-param>
             <name>juzu.app_name</name>
-            <value>org.exoplatform.addons.gamification.portlets.profile.badge</value>
+            <value>org.exoplatform.addons.gamification.portlets.profile.reputation</value>
         </init-param>
         <init-param>
             <name>juzu.run_mode</name>
@@ -144,6 +144,18 @@
             </preference>
         </portlet-preferences>
     </portlet>
+    <!-- End-user portlet : user reputation -->
+    <portlet>
+        <portlet-name>UserReputationApp</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.profile.reputation.UserReputationPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>User Reputation App</title>
+        </portlet-info>
+    </portlet>
+
     <!-- Admin portlet : manage rules -->
     <portlet>
         <portlet-name>ManageRulesApp</portlet-name>

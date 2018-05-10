@@ -33,4 +33,10 @@
         <type>org.exoplatform.gamification.rest.ManageBadgesEndpoint</type>
     </component>
     <!-- END -->
+
+    <!-- Reputation Rest Service -->
+    <component>
+        <type>org.exoplatform.gamification.rest.UserReputationEndpoint</type>
+    </component>
+    <!-- END -->
 </configuration>

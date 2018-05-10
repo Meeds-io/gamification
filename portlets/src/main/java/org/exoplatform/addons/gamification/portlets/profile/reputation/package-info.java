@@ -23,7 +23,7 @@
 
 @Stylesheets(
         {
-                @Stylesheet(value = "/org/exoplatform/addons/gamification/portlets/profile/badge/assets/global.css", location = AssetLocation.APPLICATION, id = "global")
+                @Stylesheet(value = "/org/exoplatform/addons/gamification/portlets/profile/reputation/assets/global.css", location = AssetLocation.APPLICATION, id = "global")
         }
 
 )
@@ -36,7 +36,7 @@
 
 @Less(value = {"global.less"}, minify = true)
 @Assets("*")
-package org.exoplatform.addons.gamification.portlets.profile.badge;
+package org.exoplatform.addons.gamification.portlets.profile.reputation;
 
 
 import juzu.Application;
@@ -48,4 +48,3 @@ import juzu.plugin.binding.Binding;
 import juzu.plugin.binding.Bindings;
 import juzu.plugin.less.Less;
 import juzu.plugin.portlet.Portlet;
-import org.exoplatform.addons.gamification.portlets.admin.badge.ManageBadgeController;

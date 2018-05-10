@@ -41,6 +41,14 @@
             </depends>
         </module>
     </portlet>
+    <portlet>
+        <name>UserReputationApp</name>
+        <module>
+            <depends>
+                <module>userReputation</module>
+            </depends>
+        </module>
+    </portlet>
     <module>
         <name>manageRules</name>
         <script>
@@ -55,5 +63,13 @@
             <path>/javascript/badge/badge.bundle.js</path>
         </script>
     </module>
+    <module>
+        <name>userReputation</name>
+        <script>
+            <minify>false</minify>
+            <path>/javascript/reputation/reputation.bundle.js</path>
+        </script>
+    </module>
+
 
 </gatein-resources>
