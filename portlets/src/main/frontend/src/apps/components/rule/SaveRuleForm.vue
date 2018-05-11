@@ -6,68 +6,90 @@
             <b-col sm="12">
                 <h5 class="mt-0">Manage gamification's rules</h5>
                 <b-form-row>
-<b-col class="card">
-                    <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput"  >
-                        <b-form-input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
-                        </b-form-input>
+                    <b-col class="card">
+                        <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
+                            <b-form-input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
+                            </b-form-input>
 
-                        <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="warning" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                            This alert will dismiss after {{dismissCountDown}} seconds...
-                        </b-alert>
-                    </b-form-group>
+                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                Rule title is required please enter a title {{dismissCountDown}} ...
+                            </b-alert>
+                        </b-form-group>
 
-                    <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput" >
-                        <b-form-textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
-                        </b-form-textarea>
-                    </b-form-group>
+                        <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
+                            <b-form-textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
+                            </b-form-textarea>
+                        </b-form-group>
 
-                    <!-- Rule Score Component -->
+                        <!-- Rule Score Component -->
 
 
 
-                    <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput" >
-                        <b-form-input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
-                        </b-form-input>
-                    </b-form-group>
-                </b-col>
+                        <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput">
+                            <b-form-input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
+                            </b-form-input>
+                            <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                Rule score is required please enter a score {{dismissCountDown}} ...
+                            </b-alert>
+                        </b-form-group>
+                    </b-col>
                     <!-- END -->
                     <b-col class="card">
 
 
-                    <!-- Start validity date -->
-                    <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput" >
-                        <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
-                        <!--<b-form-input id="startValidityInput" type="date" v-model="rule.startValidity" required placeholder="Enter rule's start validity">
-                        </b-form-input> -->
-                    </b-form-group>
-                    <!-- END -->
-
-                    <!-- End validity date -->
-                    <b-form-group id="endValidityInputGroup" label="End validity:" label-for="endValidityInput">
-                        <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
-                        <!--<b-form-input id="endValidityInput" type="date" v-model="rule.endValidity" required placeholder="Enter rule's end validity">
-                        </b-form-input> -->
-                    </b-form-group>
-                    <!-- END -->
-                        <!-- Rule Enable Component -->
-                        <b-form-group id="enableCheckboxGroup">
-                            <b-form-checkbox-group v-model="rule.enabled" id="enabledChecks">
-                                <b-form-checkbox>Enable rule</b-form-checkbox>
-                            </b-form-checkbox-group>
+                        <!-- Start validity date -->
+                        <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput">
+                            <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
+                            <b-alert v-if="formErrors.startValidity" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                Rule start validity date is required please enter a date {{dismissCountDown}} ...
+                            </b-alert>
                         </b-form-group>
                         <!-- END -->
-                        <b-row>
-                       <b-col> <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary" :size="lg" >
-                            {{rule.id ? 'Update' : 'Add'}} rule
-                        </b-button>
-                        </b-col><b-col>
-                        <b-button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary" >Cancel</b-button>
-                </b-col> </b-row>
+
+                        <!-- End validity date -->
+                        <b-form-group id="endValidityInputGroup" label="End validity:" label-for="endValidityInput">
+                            <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
+                            <b-alert v-if="formErrors.endValidity" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                Rule end validity date is required please enter a date {{dismissCountDown}} ...
+                            </b-alert>
+                        </b-form-group>
                         <!-- END -->
-                        </b-col>
+                        <!-- Rule Enable Component -->
+                        <b-form-group id="enableCheckboxGroup">
+                            <b-form-checkbox v-model="rule.enabled">Enable rule</b-form-checkbox>
+                        </b-form-group>
+                        <!-- END -->
+                        <!-- Rule Area Component-->
+                        <b-form-group id="areaSelectboxGroup">
+                            <b-form-select v-model="rule.area" class="mb-3">
+                                <template slot="first">
+                                    <!-- this slot appears above the options from 'options' prop -->
+                                    <option :value="null" disabled>-- Please select an area --</option>
+                                </template>
+                                <!-- these options will appear after the ones from 'options' prop -->
+                                <option value="Social">Social</option>
+                                <option value="Knowledge">Knowledge</option>
+                                <option value="Content">Content</option>
+                                <option value="Monitization">Monitization</option>
+                            </b-form-select>
+                        </b-form-group>
+
+                        <!-- END -->
+                        <b-row>
+                            <b-col>
+                                <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary" :size="lg">
+                                    {{rule.id ? 'Update' : 'Add'}} rule
+                                </b-button>
+                            </b-col>
+                            <b-col>
+                                <b-button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
+                            </b-col>
+                        </b-row>
+                        <!-- END -->
+                    </b-col>
                 </b-form-row>
                 <!-- Form's actions -->
-              </b-col>
+            </b-col>
 
         </b-container>
     </div>
@@ -96,7 +118,8 @@
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
-                }
+                },
+                dynamicAreas: []
             }
         },
         watch: {
@@ -112,11 +135,20 @@
 
                 if (!this.rule.title) {
                     errors.title = 'Title is required'
-                    this.dismissCountDown=5
+                    this.dismissCountDown = 5
                 }
 
                 if (!this.rule.score) {
                     errors.score = 'Score is required'
+                    this.dismissCountDown = 5
+                }
+                if (!this.rule.startValidity) {
+                    errors.startValidity = 'Start validity date is required'
+                    this.dismissCountDown = 5
+                }
+                if (!this.rule.endValidity) {
+                    errors.endValidity = 'End validity date is required'
+                    this.dismissCountDown = 5
                 }
 
                 this.formErrors = errors
@@ -146,17 +178,19 @@
     form {
         margin-bottom: 24px;
     }
-    h5.mt-0{
+
+    h5.mt-0 {
         color: #578dc9;
-        font-family: Helvetica,arial,sans-serif;
+        font-family: Helvetica, arial, sans-serif;
         line-height: 20px;
-        font-size:1.5em;
-        text-transform:uppercase;
-        font-weight:bold;
-        text-align:center;
-        padding:20px 0px;
+        font-size: 1.5em;
+        text-transform: uppercase;
+        font-weight: bold;
+        text-align: center;
+        padding: 20px 0px;
     }
-    label{
+
+    label {
         display: inline-block;
         max-width: 100%;
         margin-bottom: 5px;
@@ -164,7 +198,7 @@
         color: #333;
     }
 
-    input[type="number"]{
+    input[type="number"] {
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
@@ -174,24 +208,26 @@
         max-height: 40px;
         text-overflow: ellipsis;
     }
-    input[type="number"]:focus:invalid:focus, input[type="date"]:focus:invalid:focus{
+
+    input[type="number"]:focus:invalid:focus,
+    input[type="date"]:focus:invalid:focus {
         border-color: #e9322d;
         -webkit-box-shadow: 0 0 6px #f8b9b7;
         -moz-box-shadow: 0 0 6px #f8b9b7;
         box-shadow: 0 0 6px #f8b9b7;
     }
-    .card{
+
+    .card {
         position: relative;
         border-radius: 3px;
         background: #ffffff;
         border-top: 3px solid #d2d6de;
         margin-bottom: 20px;
         width: 100%;
-        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         border-top-color: #3c8dbc;
         margin: 0px 11px;
         padding: 15px;
 
     }
-
 </style>

@@ -14,12 +14,13 @@
                             <th class="rule-name-col">Title</th>
                             <th class="rule-desc-col">Description</th>
                             <th class="rule-price-col">score</th>
-                            <th class="rule-delete-col">Creation Date</th>
-                            <th class="rule-delete-col">Last Modified Date</th>
-                            <th class="rule-delete-col">Created by</th>
-                            <th class="rule-delete-col">Last modified by</th>
-                            <th class="rule-delete-col">Enabled</th>
-                            <th class="rule-delete-col">Action</th>
+                            <th class="rule-area-col">Area</th>
+                            <th class="rule-creation-date-col">Creation Date</th>
+                            <th class="rule-modified-date-col">Last Modified Date</th>
+                            <th class="rule-created-by-col">Created by</th>
+                            <th class="rule-modified-by-col">Last modified by</th>
+                            <th class="rule-enable-col">Enabled</th>
+                            <th class="rule-action-col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,6 +34,7 @@
                             <td>{{rule.title}}</td>
                             <td class="rule-desc-col">{{rule.description}}</td>
                             <td>{{rule.score}}</td>
+                            <td>{{rule.area}}</td>
                             <td>{{ moment(rule.createdDate).format('YYYY-MM-DD') }}</td>
                             <td>{{ moment(rule.lastModifiedDate).format('YYYY-MM-DD') }}</td>
                             <td>{{rule.createdBy}}</td>

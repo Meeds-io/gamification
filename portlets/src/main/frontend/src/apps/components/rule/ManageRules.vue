@@ -1,6 +1,12 @@
 <!-- src/components/ManageRules.vue -->
 <template>
     <section>
+        <!-- Manage Success Alerts -->
+        <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successully</b-alert>
+        <!-- End -->
+        <!-- Manage Success Alerts -->
+        <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
+        <!-- End -->
         <save-rule-form :rule="ruleInForm" v-on:submit="onRuleAction" v-on:cancel="resetRuleInForm"></save-rule-form>
         <rule-list :rules="rules" v-on:edit="onEditClicked" v-on:remove="onRemoveClicked"></rule-list>
     </section>
@@ -25,8 +31,12 @@
                 score: null,
                 startValidity: null,
                 endValidity: null,
-                enabled: false
+                enabled: null,
+                area: ''
             },
+            addSuccess: false,
+            addError: false,
+            updateMessage: '',
             rules: []
 
         }
@@ -37,7 +47,6 @@
             RuleList,
             SaveRuleForm
         },
-
         data: initialData,
         methods: {
             resetRuleInForm() {
@@ -82,8 +91,6 @@
                         this.errors.push(e)
                     })
 
-
-
                 if (ruleId === this.ruleInForm.id) {
                     this.resetRuleInForm()
                 }
@@ -92,9 +99,12 @@
                 axios.post(`/rest/gamification/rules/add`, ruleDTO)
                     .then(response => {
                         //this.rules = response.data;
+                        this.addSuccess=true
+                         this.updateMessage='added'
                     })
                     .catch(e => {
 
+                        this.addError=true
                         this.errors.push(e)
 
                     })
@@ -104,13 +114,15 @@
             updateRule(ruleDTO) {
                 axios.put(`/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
+                         this.addSuccess=true; 
+                         this.updateMessage='updated'
 
                     })
                     .catch(e => {
+                        this.addError=true                        
                         this.errors.push(e)
                     })
             }
-
 
         },
         // Fetches rules when the component is created.
