@@ -26,7 +26,7 @@
                 icon: null,
                 startValidityDate: null,
                 endValidityDate: null,
-                rules: null,
+                rule: null,
                 isEnabled: false,
                 createdBy: '',
                 createdDate: null,

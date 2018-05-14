@@ -3,11 +3,15 @@ package org.exoplatform.gamification.rest;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.service.configuration.BadgeService;
+import org.exoplatform.gamification.service.configuration.RuleService;
 import org.exoplatform.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +31,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
     protected BadgeService badgeService = null;
 
+    protected RuleService ruleService = null;
+
     public ManageBadgesEndpoint() {
 
         this.cacheControl = new CacheControl();
@@ -36,6 +42,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         cacheControl.setNoStore(true);
 
         badgeService = CommonsUtils.getService(BadgeService.class);
+
+        ruleService = CommonsUtils.getService(RuleService.class);
 
     }
 
@@ -184,6 +192,51 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
         } catch (Exception e) {
             return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
+        }
+
+    }
+
+    @GET
+    @RolesAllowed("users")
+    @Path("rule")
+    public Response getAllRules(@Context UriInfo uriInfo) {
+
+        ConversationState conversationState = ConversationState.getCurrent();
+
+        if (conversationState != null) {
+
+            try {
+                List<RuleDTO> allRules = ruleService.getAllRules();
+
+                JSONArray ruleOptions = new JSONArray();
+                JSONObject rule = null;
+
+                for (RuleDTO rDTO : allRules) {
+                    rule = new JSONObject();
+
+                    rule.put("value", rDTO.getId());
+                    rule.put("text", rDTO.getTitle());
+                    ruleOptions.put(rule);
+
+                }
+
+                return Response.ok(ruleOptions.toString(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error listing all badges ", e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error listing all badges")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
         }
 
     }

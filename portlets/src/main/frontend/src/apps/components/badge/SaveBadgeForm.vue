@@ -7,83 +7,90 @@
                 <h5 class="mt-0">Manage gamification's badges</h5>
                 <b-form-row>
                     <b-col class="card">
-                    <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
-                        <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
-                        </b-form-input>
+                        <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
+                            <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
+                            </b-form-input>
 
-                        <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="warning" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                            Title should not be blanc {{dismissCountDown}} seconds...
-                        </b-alert>
-                    </b-form-group>
+                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="warning" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                Title should not be blanc {{dismissCountDown}} seconds...
+                            </b-alert>
+                        </b-form-group>
 
-                    <!-- Badge Description Component -->
+                        <!-- Badge Description Component -->
 
-                    <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
-                        <b-form-textarea id="badgeDescription" v-model="badge.description" placeholder="Enter description" :rows="3" :max-rows="6">
-                        </b-form-textarea>
-                    </b-form-group>
+                        <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
+                            <b-form-textarea id="badgeDescription" v-model="badge.description" placeholder="Enter description" :rows="3" :max-rows="6">
+                            </b-form-textarea>
+                        </b-form-group>
 
-                    <!-- Badge icon Component -->
-                    <!--
+                        <!-- Badge icon Component -->
+                        <!--
                     <b-form-group id="neededScoreInputGroup" label="Score:" label-for="neededScoreInput">
                         <b-form-input id="neededScoreDescription" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
                         </b-form-input>
                     </b-form-group>
                     -->
-                    <!-- END -->
+                        <!-- END -->
 
-                    <!-- Badge neededScore Component -->
-                    <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
-                        <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
-                        </b-form-input>
-                    </b-form-group>
-                    <!-- END -->
+                        <!-- Badge neededScore Component -->
+                        <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
+                            <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
+                            </b-form-input>
+                        </b-form-group>
+                        <!-- END -->
                     </b-col>
                     <b-col class="card">
-                    <!-- Badge Start validity Date Component -->
-                    <b-form-group id="startValidityDateInputGroup " label="Start Validity Date:" label-for="startValidityDateInput">
+                        <!-- Badge Start validity Date Component -->
+                        <b-form-group id="startValidityDateInputGroup " label="Start Validity Date:" label-for="startValidityDateInput">
 
-                       <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
+                            <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
+                                placeholder="Enter badge's start validity date"></date-picker>
+                        </b-form-group>
+                        <!-- END -->
 
-                        <!-- <b-form-input id="startValidityDateInput" type="date" v-model="badge.startValidityDate" required placeholder="Enter rule's start validity">
+                        <!-- Badge End validity date component -->
+                        <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
+                            <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" 
+                                placeholder="Enter badge's start validity date"></date-picker>
+
+                            <!--  <b-form-input id="endValidityDateInput" type="date" v-model="badge.endValidityDate" required placeholder="Enter rule's end validity">
                         </b-form-input> -->
-                    </b-form-group>
-                    <!-- END -->
+                        </b-form-group>
+                        <!-- END -->
 
-                    <!-- Badge End validity date component -->
-                    <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
-                        <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" required placeholder="Enter badge's start validity date"></date-picker>
+                        <!-- Badge rule Component -->
+                        <b-form-group id="badgeSelectboxGroup" label="Rule:" label-for="ruleInput">
+                            <b-form-select id="ruleInput" v-model="badge.rule" :options="dynamicRules" required class="mb-3">
+                                <template slot="first">
+                                    <!-- this slot appears above the options from 'options' prop -->
+                                    <option :value="null" disabled>-- Please select a rule --</option>
+                                </template>
+                            </b-form-select>
+                        </b-form-group>
 
-                      <!--  <b-form-input id="endValidityDateInput" type="date" v-model="badge.endValidityDate" required placeholder="Enter rule's end validity">
-                        </b-form-input> -->
-                    </b-form-group>
-                    <!-- END -->
+                        <!-- END -->
 
-                    <!-- Badge rule Component -->
-                    <b-form-group id="ruleInputGroup" label="Rule:" label-for="ruleInput">
-                        <b-form-select id="ruleInput" :options="rules" required v-model="badge.rules">
-                        </b-form-select>
-                    </b-form-group>
-                    <!-- END -->
-
-                    <!-- Badge Enable Component -->
-                    <b-form-group id="isEnabledCheckboxGroup">
-                        <b-form-checkbox-group v-model="badge.isEnabled" id="enabledChecks">
-                            <b-form-checkbox>Enable badge</b-form-checkbox>
-                        </b-form-checkbox-group>
-                    </b-form-group>
-                    <!-- END -->
+                        <!-- Badge Enable Component -->
+                        <b-form-group id="isEnabledCheckboxGroup">
+                            <b-form-checkbox-group v-model="badge.isEnabled" id="enabledChecks">
+                                <b-form-checkbox>Enable badge</b-form-checkbox>
+                            </b-form-checkbox-group>
+                        </b-form-group>
+                        <!-- END -->
                         <b-row>
                             <b-col>
-                    <!-- Form's actions -->
-                    <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
-                        {{badge.id ? 'Update' : 'Add'}} badge
-                    </b-button></b-col><b-col>
-                    <b-button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
-                    <!-- END -->
-                        </b-col> </b-row>
+                                <!-- Form's actions -->
+                                <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
+                                    {{badge.id ? 'Update' : 'Add'}} badge
+                                </b-button>
+                            </b-col>
+                            <b-col>
+                                <b-button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
+                                <!-- END -->
+                            </b-col>
+                        </b-row>
                     </b-col>
-                    </b-form-row>
+                </b-form-row>
             </b-col>
         </b-container>
     </div>
@@ -92,6 +99,7 @@
 
 <script>
     import Vue from 'vue'
+    import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     import datePicker from 'vue-bootstrap-datetimepicker';
@@ -112,7 +120,8 @@
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
-                }
+                },
+                dynamicRules: []
             }
         },
         watch: {
@@ -140,8 +149,6 @@
                 return Object.keys(errors).length === 0
             },
 
-
-
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
                 this.selectedFileName = event.target.files[0].name
@@ -159,6 +166,19 @@
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
+        },
+        // Fetches badges when the component is created.
+        created() {
+            axios.get(`/rest/gamification/badges/rule`)
+                .then(response => {
+                    // JSON responses are automatically parsed.
+                    //this.posts = response.data
+                    console.log(JSON.stringify(response.data))
+                    this.dynamicRules = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
 
 
@@ -169,17 +189,19 @@
     form {
         margin-bottom: 24px;
     }
-    h5.mt-0{
+
+    h5.mt-0 {
         color: #578dc9;
-        font-family: Helvetica,arial,sans-serif;
+        font-family: Helvetica, arial, sans-serif;
         line-height: 20px;
-        font-size:1.5em;
-        text-transform:uppercase;
-        font-weight:bold;
-        text-align:center;
-        padding:20px 0px;
+        font-size: 1.5em;
+        text-transform: uppercase;
+        font-weight: bold;
+        text-align: center;
+        padding: 20px 0px;
     }
-    label{
+
+    label {
         display: inline-block;
         max-width: 100%;
         margin-bottom: 5px;
@@ -187,7 +209,7 @@
         color: #333;
     }
 
-    input[type="number"]{
+    input[type="number"] {
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
@@ -197,24 +219,26 @@
         max-height: 40px;
         text-overflow: ellipsis;
     }
-    input[type="number"]:focus:invalid:focus, input[type="date"]:focus:invalid:focus{
+
+    input[type="number"]:focus:invalid:focus,
+    input[type="date"]:focus:invalid:focus {
         border-color: #e9322d;
         -webkit-box-shadow: 0 0 6px #f8b9b7;
         -moz-box-shadow: 0 0 6px #f8b9b7;
         box-shadow: 0 0 6px #f8b9b7;
     }
-    .card{
+
+    .card {
         position: relative;
         border-radius: 3px;
         background: #ffffff;
         border-top: 3px solid #d2d6de;
         margin-bottom: 20px;
         width: 100%;
-        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         border-top-color: #3c8dbc;
         margin: 0px 11px;
         padding: 15px;
 
     }
-
 </style>

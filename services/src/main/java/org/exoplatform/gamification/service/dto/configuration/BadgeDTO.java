@@ -102,6 +102,7 @@ public class BadgeDTO implements Serializable {
         this.icon = icon;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getStartValidityDate() {
         return startValidityDate;
     }
@@ -110,6 +111,7 @@ public class BadgeDTO implements Serializable {
         this.startValidityDate = startValidityDate;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getEndValidityDate() {
         return endValidityDate;
     }
