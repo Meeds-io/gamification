@@ -12,7 +12,7 @@
                             </b-form-input>
 
                             <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="warning" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Title should not be blanc {{dismissCountDown}} seconds...
+                                Badge title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
 
@@ -36,6 +36,10 @@
                         <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
                             <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
                             </b-form-input>
+                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                                @dismiss-count-down="countDownChanged">
+                                Badge needed score is required please enter a value {{dismissCountDown}} ...
+                            </b-alert>
                         </b-form-group>
                         <!-- END -->
                     </b-col>
@@ -45,16 +49,20 @@
 
                             <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
                                 placeholder="Enter badge's start validity date"></date-picker>
+                            <b-alert v-if="formErrors.startValidityDate" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                                @dismiss-count-down="countDownChanged">
+                                Badge start validity date is required please enter a date {{dismissCountDown}} ...
+                            </b-alert>
                         </b-form-group>
                         <!-- END -->
 
                         <!-- Badge End validity date component -->
                         <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
-                            <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" 
-                                placeholder="Enter badge's start validity date"></date-picker>
-
-                            <!--  <b-form-input id="endValidityDateInput" type="date" v-model="badge.endValidityDate" required placeholder="Enter rule's end validity">
-                        </b-form-input> -->
+                            <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
+                            <b-alert v-if="formErrors.endValidityDate" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                                @dismiss-count-down="countDownChanged">
+                                Badge end validity date is required please enter a date {{dismissCountDown}} ...
+                            </b-alert>
                         </b-form-group>
                         <!-- END -->
 
@@ -66,6 +74,9 @@
                                     <option :value="null" disabled>-- Please select a rule --</option>
                                 </template>
                             </b-form-select>
+                            <b-alert v-if="formErrors.rule" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                Rule is required please select a rule {{dismissCountDown}} ...
+                            </b-alert>
                         </b-form-group>
 
                         <!-- END -->
@@ -142,6 +153,19 @@
 
                 if (!this.badge.neededScore) {
                     errors.neededScore = 'Needed score is required'
+                    this.dismissCountDown = 5
+                }
+                if (!this.badge.startValidityDate) {
+                    errors.startValidityDate = 'Start validity date is required'
+                    this.dismissCountDown = 5
+                }
+                if (!this.badge.endValidityDate) {
+                    errors.endValidityDate = 'End validity date is required'
+                    this.dismissCountDown = 5
+                }
+                if (!this.badge.rule) {
+                    errors.rule = 'Rule is required'
+                    this.dismissCountDown = 5
                 }
 
                 this.formErrors = errors
@@ -172,8 +196,7 @@
             axios.get(`/rest/gamification/badges/rule`)
                 .then(response => {
                     // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
+                    //console.log(JSON.stringify(response.data))
                     this.dynamicRules = response.data;
                 })
                 .catch(e => {

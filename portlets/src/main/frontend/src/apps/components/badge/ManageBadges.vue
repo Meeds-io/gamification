@@ -1,6 +1,12 @@
 <!-- src/components/ManageBadges.vue -->
 <template>
     <section>
+        <!-- Manage Success Alerts -->
+        <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successully</b-alert>
+        <!-- End -->
+        <!-- Manage Success Alerts -->
+        <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
+        <!-- End -->
         <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeAction" v-on:cancel="resetBadgeInForm"></save-badge-form>
         <badge-list :badges="badges" v-on:edit="onEditClicked" v-on:remove="onRemoveClicked"></badge-list>
     </section>
@@ -33,6 +39,9 @@
                 lastModifiedBy: '',
                 lastModifiedDate: null
             },
+            addSuccess: false,
+            addError: false,
+            updateMessage: '',
             badges: []
 
         }
@@ -97,9 +106,12 @@
                 axios.post(`/rest/gamification/badges/add`, badgeDTO)
                     .then(response => {
                         //this.rules = response.data;
+                        this.addSuccess = true
+                        this.updateMessage = 'added'
                     })
                     .catch(e => {
 
+                        this.addError = true
                         this.errors.push(e)
 
                     })
@@ -108,9 +120,12 @@
             updateBadge(badgeDTO) {
                 axios.put(`/rest/gamification/badges/update`, badgeDTO)
                     .then(response => {
+                        this.addSuccess = true;
+                        this.updateMessage = 'updated'
 
                     })
                     .catch(e => {
+                        this.addError = true
                         this.errors.push(e)
                     })
             }
@@ -132,5 +147,4 @@
 </script>
 
 <style scoped>
-
 </style>
