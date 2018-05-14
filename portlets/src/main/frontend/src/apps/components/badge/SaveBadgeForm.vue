@@ -11,7 +11,7 @@
                             <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
                             </b-form-input>
 
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="warning" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Badge title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
@@ -23,15 +23,6 @@
                             </b-form-textarea>
                         </b-form-group>
 
-                        <!-- Badge icon Component -->
-                        <!--
-                    <b-form-group id="neededScoreInputGroup" label="Score:" label-for="neededScoreInput">
-                        <b-form-input id="neededScoreDescription" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
-                        </b-form-input>
-                    </b-form-group>
-                    -->
-                        <!-- END -->
-
                         <!-- Badge neededScore Component -->
                         <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
                             <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
@@ -42,6 +33,16 @@
                             </b-alert>
                         </b-form-group>
                         <!-- END -->
+
+                        <!-- Badge icon Component -->
+
+                        <b-form-group id="iconInputGroup" label="Icon:" label-for="iconInput">
+                            <!-- Accept specific image formats by IANA type -->
+                            <b-form-file v-model="badge.icon" :state="Boolean(badge.icon)" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                            <div class="mt-3">Selected icon: {{badge.icon && badge.icon.name}}</div>
+                        </b-form-group>
+                        <!-- END -->
+
                     </b-col>
                     <b-col class="card">
                         <!-- Badge Start validity Date Component -->
@@ -83,9 +84,9 @@
 
                         <!-- Badge Enable Component -->
                         <b-form-group id="isEnabledCheckboxGroup">
-                            <b-form-checkbox-group v-model="badge.isEnabled" id="enabledChecks">
-                                <b-form-checkbox>Enable badge</b-form-checkbox>
-                            </b-form-checkbox-group>
+                            <b-form-group id="isEnabledCheckboxGroup">
+                                <b-form-checkbox v-model="badge.isEnabled">Enable badge</b-form-checkbox>
+                            </b-form-group>
                         </b-form-group>
                         <!-- END -->
                         <b-row>
@@ -263,5 +264,9 @@
         margin: 0px 11px;
         padding: 15px;
 
+    }
+
+    .custom-file-input:lang(en)~.custom-file-label::after {
+        content: "Badge";
     }
 </style>

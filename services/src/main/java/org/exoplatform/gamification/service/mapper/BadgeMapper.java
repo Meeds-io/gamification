@@ -3,11 +3,15 @@ package org.exoplatform.gamification.service.mapper;
 import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.gamification.service.dto.configuration.BadgeDTO;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BadgeMapper {
+
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public BadgeMapper() {
     }
@@ -22,26 +26,35 @@ public class BadgeMapper {
                 .map(this::badgeToBadgeDTO)
                 .collect(Collectors.toList());
     }
-    public BadgeEntity badgeDTOToBadge(BadgeDTO badgeDTO) {
-        if (badgeDTO == null) {
-            return null;
-        } else {
-            BadgeEntity badge = new BadgeEntity();
-            badge.setId(badgeDTO.getId());
-            badge.setTitle(badgeDTO.getTitle());
-            badge.setDescription(badgeDTO.getDescription());
-            badge.setNeededScore(badgeDTO.getNeededScore());
-            badge.setIcon(badgeDTO.getIcon());
-            badge.setStartValidityDate(badgeDTO.getStartValidityDate());
-            badge.setEndValidityDate(badgeDTO.getEndValidityDate());
-            badge.setEnabled(badgeDTO.isEnabled());
-            badge.setCreatedBy(badgeDTO.getCreatedBy());
-            badge.setCreatedDate(badgeDTO.getCreatedDate());
-            badge.setLastModifiedBy(badgeDTO.getLastModifiedBy());
-            badge.setLastModifiedDate(badgeDTO.getLastModifiedDate());
+    public BadgeEntity badgeDTOToBadge(BadgeDTO badgeDTO)  {
+        try {
+            if (badgeDTO == null) {
+                return null;
+            } else {
+                BadgeEntity badge = new BadgeEntity();
+                badge.setId(badgeDTO.getId());
+                badge.setTitle(badgeDTO.getTitle());
+                badge.setDescription(badgeDTO.getDescription());
+                badge.setNeededScore(badgeDTO.getNeededScore());
+                //TODO save an inputStream
+                //badge.setIcon(badgeDTO.getIcon());
+                badge.setStartValidityDate(formatter.parse(badgeDTO.getStartValidityDate()));
+                badge.setEndValidityDate(formatter.parse(badgeDTO.getEndValidityDate()));
+                badge.setEnabled(badgeDTO.isEnabled());
+                badge.setCreatedBy(badgeDTO.getCreatedBy());
+                badge.setCreatedDate(formatter.parse(badgeDTO.getCreatedDate()));
+                badge.setLastModifiedBy(badgeDTO.getLastModifiedBy());
+                badge.setLastModifiedDate(formatter.parse(badgeDTO.getLastModifiedDate()));
 
-            return badge;
+                return badge;
+            }
+
+        } catch (ParseException pe) {
+
+
         }
+        return null;
+
     }
 
     public List<BadgeEntity> badgeDTOsToBadges(List<BadgeDTO> BadgeDTOs) {

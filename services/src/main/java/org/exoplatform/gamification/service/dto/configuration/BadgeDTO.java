@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BadgeDTO implements Serializable {
+
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     protected Long id;
 
@@ -16,21 +19,23 @@ public class BadgeDTO implements Serializable {
 
     protected int neededScore;
 
-    protected String icon;
+    //protected String icon;
 
-    protected Date startValidityDate;
+    private byte[] icon;
 
-    protected Date endValidityDate;
+    protected String startValidityDate;
+
+    protected String endValidityDate;
 
     protected boolean isEnabled;
 
     private String createdBy;
 
-    private Date createdDate;
+    private String createdDate;
 
     private String lastModifiedBy;
 
-    private Date lastModifiedDate;
+    private String lastModifiedDate;
 
     public BadgeDTO() {
     }
@@ -41,13 +46,14 @@ public class BadgeDTO implements Serializable {
 
         this.title = badgeEntity.getTitle();
 
-        this.icon = badgeEntity.getIcon();
+        //TODO : save an inputStream
+        //this.icon = badgeEntity.getIcon();
 
         this.neededScore = badgeEntity.getNeededScore();
 
-        this.startValidityDate = badgeEntity.getStartValidityDate();
+        this.startValidityDate = formatter.format(badgeEntity.getStartValidityDate());
 
-        this.endValidityDate = badgeEntity.getEndValidityDate();
+        this.endValidityDate = formatter.format(badgeEntity.getEndValidityDate());
 
         this.isEnabled = badgeEntity.isEnabled();
 
@@ -55,11 +61,11 @@ public class BadgeDTO implements Serializable {
 
         this.createdBy = badgeEntity.getCreatedBy();
 
-        this.createdDate = badgeEntity.getCreatedDate();
+        this.createdDate = formatter.format(badgeEntity.getCreatedDate());
 
         this.lastModifiedBy = badgeEntity.getLastModifiedBy();
 
-        this.lastModifiedDate = badgeEntity.getLastModifiedDate();
+        this.lastModifiedDate = formatter.format(badgeEntity.getLastModifiedDate());
     }
 
     public Long getId() {
@@ -94,32 +100,53 @@ public class BadgeDTO implements Serializable {
         this.neededScore = neededScore;
     }
 
-    public String getIcon() {
+    public byte[] getIcon() {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(byte[] icon) {
         this.icon = icon;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    //TODO : it seems that eXo ws module doesn't supoprt Date's serialization, thus I have to use Tring instead of java.util.Date
+
+    public String getStartValidityDate() {
+        return startValidityDate;
+    }
+
+    public void setStartValidityDate(String startValidityDate) {
+        this.startValidityDate = startValidityDate;
+    }
+
+    public String getEndValidityDate() {
+        return endValidityDate;
+    }
+
+    public void setEndValidityDate(String endValidityDate) {
+        this.endValidityDate = endValidityDate;
+    }
+
+    /**
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public Date getStartValidityDate() {
         return startValidityDate;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public void setStartValidityDate(Date startValidityDate) {
         this.startValidityDate = startValidityDate;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public Date getEndValidityDate() {
         return endValidityDate;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public void setEndValidityDate(Date endValidityDate) {
         this.endValidityDate = endValidityDate;
     }
-
+*/
     public boolean isEnabled() {
         return isEnabled;
     }
@@ -136,6 +163,24 @@ public class BadgeDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(String lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    //TODO : it seems that eXo ws module doesn't supoprt Date's serialization, thus I have to use Tring instead of java.util.Date
+/**
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getCreatedDate() {
         return createdDate;
@@ -144,15 +189,6 @@ public class BadgeDTO implements Serializable {
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
-
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getLastModifiedDate() {
         return lastModifiedDate;
@@ -161,6 +197,16 @@ public class BadgeDTO implements Serializable {
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
+*/
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+
 
     @Override
     public String toString() {

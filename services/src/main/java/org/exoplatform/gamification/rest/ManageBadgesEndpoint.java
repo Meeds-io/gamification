@@ -17,6 +17,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,8 @@ import java.util.Locale;
 public class ManageBadgesEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
+
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     private final CacheControl cacheControl;
 
@@ -97,7 +100,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
                 badgeDTO.setId(null);
                 badgeDTO.setCreatedBy(currentUserName);
                 badgeDTO.setLastModifiedBy(currentUserName);
-                badgeDTO.setLastModifiedDate(new Date());
+                badgeDTO.setCreatedDate(formatter.format(new Date()));
+                badgeDTO.setLastModifiedDate(formatter.format(new Date()));
 
                 //--- Add badge
                 badgeDTO = badgeService.addBadge(badgeDTO);
@@ -144,7 +148,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
                 // Compute rule's data
                 badgeDTO.setCreatedBy(currentUserName);
                 badgeDTO.setLastModifiedBy(currentUserName);
-                badgeDTO.setLastModifiedDate(new Date());
+                badgeDTO.setLastModifiedDate(formatter.format(new Date()));
 
                 //--- Add rule
                 badgeDTO = badgeService.updateBadge(badgeDTO);
