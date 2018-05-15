@@ -39,4 +39,10 @@
         <type>org.exoplatform.gamification.rest.UserReputationEndpoint</type>
     </component>
     <!-- END -->
+
+    <!-- Leaderboard Rest Service -->
+    <component>
+        <type>org.exoplatform.gamification.rest.LeaderboardEndpoint</type>
+    </component>
+    <!-- END -->
 </configuration>

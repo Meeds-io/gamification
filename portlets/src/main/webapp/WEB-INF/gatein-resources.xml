@@ -49,6 +49,14 @@
             </depends>
         </module>
     </portlet>
+    <portlet>
+        <name>LeaderboardApp</name>
+        <module>
+            <depends>
+                <module>userLeaderboard</module>
+            </depends>
+        </module>
+    </portlet>
     <module>
         <name>manageRules</name>
         <script>
@@ -68,6 +76,13 @@
         <script>
             <minify>false</minify>
             <path>/javascript/reputation/reputation.bundle.js</path>
+        </script>
+    </module>
+    <module>
+        <name>userLeaderboard</name>
+        <script>
+            <minify>false</minify>
+            <path>/javascript/leaderboard/leaderboard.bundle.js</path>
         </script>
     </module>
 

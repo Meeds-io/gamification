@@ -24,125 +24,16 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd
    http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
+    <!-- End-user portlet : leaderboard -->
     <portlet>
-        <portlet-name>ManageBadgeControllerApplication</portlet-name>
-        <display-name xml:lang="EN">Badges Management Application</display-name>
-        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
-        <init-param>
-            <name>juzu.app_name</name>
-            <value>org.exoplatform.addons.gamification.portlets.admin.badge</value>
-        </init-param>
-        <init-param>
-            <name>juzu.run_mode</name>
-            <value>prod</value>
-        </init-param>
+        <portlet-name>LeaderboardApp</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.leaderboard.LeaderboardPortlet</portlet-class>
         <supports>
             <mime-type>text/html</mime-type>
-            <portlet-mode>view</portlet-mode>
         </supports>
-        <resource-bundle>locale.portlet.badgesManagement</resource-bundle>
         <portlet-info>
-            <title>Gamification Manage Badges</title>
-            <short-title>Gamification Manage Badges</short-title>
-            <keywords>Administration</keywords>
+            <title>Leaderboard App</title>
         </portlet-info>
-        <portlet-preferences>
-            <preference>
-                <name>id</name>
-                <value>XXXXX</value>
-                <read-only>false</read-only>
-            </preference>
-        </portlet-preferences>
-    </portlet>
-    <portlet>
-        <portlet-name>ManageRuleControllerApplication</portlet-name>
-        <display-name xml:lang="EN">Rules Management Application</display-name>
-        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
-        <init-param>
-            <name>juzu.app_name</name>
-            <value>org.exoplatform.addons.gamification.portlets.admin.rule</value>
-        </init-param>
-        <init-param>
-            <name>juzu.run_mode</name>
-            <value>prod</value>
-        </init-param>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>view</portlet-mode>
-        </supports>
-        <resource-bundle>locale.portlet.rulesManagement</resource-bundle>
-        <portlet-info>
-            <title>Gamification Manage Rules</title>
-            <short-title>Gamification Manage Rules</short-title>
-            <keywords>Administration</keywords>
-        </portlet-info>
-        <portlet-preferences>
-            <preference>
-                <name>id</name>
-                <value>XXXXX</value>
-                <read-only>false</read-only>
-            </preference>
-        </portlet-preferences>
-    </portlet>
-    <portlet>
-        <portlet-name>LeaderboardControllerApplication</portlet-name>
-        <display-name xml:lang="EN">Leaderboard Application</display-name>
-        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
-        <init-param>
-            <name>juzu.app_name</name>
-            <value>org.exoplatform.addons.gamification.portlets.leaderboard</value>
-        </init-param>
-        <init-param>
-            <name>juzu.run_mode</name>
-            <value>prod</value>
-        </init-param>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>view</portlet-mode>
-        </supports>
-        <resource-bundle>locale.portlet.leaderboard</resource-bundle>
-        <portlet-info>
-            <title>Gamification Leaderboard</title>
-            <short-title>Gamification Leaderboard</short-title>
-            <keywords>User</keywords>
-        </portlet-info>
-        <portlet-preferences>
-            <preference>
-                <name>id</name>
-                <value>XXXXX</value>
-                <read-only>false</read-only>
-            </preference>
-        </portlet-preferences>
-    </portlet>
-    <portlet>
-        <portlet-name>UserProfileBadgesControllerApplication</portlet-name>
-        <display-name xml:lang="EN">User Profile Badges Application</display-name>
-        <portlet-class>juzu.bridge.portlet.JuzuPortlet</portlet-class>
-        <init-param>
-            <name>juzu.app_name</name>
-            <value>org.exoplatform.addons.gamification.portlets.profile.reputation</value>
-        </init-param>
-        <init-param>
-            <name>juzu.run_mode</name>
-            <value>prod</value>
-        </init-param>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>view</portlet-mode>
-        </supports>
-        <resource-bundle>locale.portlet.userProfileBadges</resource-bundle>
-        <portlet-info>
-            <title>Gamification User Badges</title>
-            <short-title>Gamification User Badges</short-title>
-            <keywords>User</keywords>
-        </portlet-info>
-        <portlet-preferences>
-            <preference>
-                <name>id</name>
-                <value>XXXXX</value>
-                <read-only>false</read-only>
-            </preference>
-        </portlet-preferences>
     </portlet>
     <!-- End-user portlet : user reputation -->
     <portlet>
