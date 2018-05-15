@@ -44,7 +44,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
 
     private static final long serialVersionUID = 2L;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -58,8 +57,9 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     @Column(name = "NEEDED_SCORE")
     protected int neededScore;
 
-    @Column(name = "ICON")
-    protected String icon;
+    @Lob
+    @Column(name="ICON", nullable=false, columnDefinition="mediumblob")
+    private byte[] icon;
 
     @Column(name = "VALIDITY_DATE_START")
     // When I used this annotation I get an issue with serialization within REST services
@@ -101,20 +101,20 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         this.description = description;
     }
 
+    public byte[] getIcon() {
+        return icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
+    }
+
     public int getNeededScore() {
         return neededScore;
     }
 
     public void setNeededScore(int neededScore) {
         this.neededScore = neededScore;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
     }
 
     public Date getStartValidityDate() {
