@@ -1,8 +1,8 @@
-<template>
-    <b-container fluid>
-        <b-row>
+<template >
+    <b-container fluid class="uiBox" >
+        <b-row >
             <b-col>
-                <h5 class="mt-0">Leaderboard</h5>
+                <h5 class="mt-0 title">Leaderboard</h5>
             </b-col>
         </b-row>
         <b-row>
@@ -10,7 +10,7 @@
                 <b-form-select v-model="type" class="mb-3">
                     <template slot="first">
                         <!-- this slot appears above the options from 'options' prop -->
-                        <option :value="null" disabled>-- Please select an option --</option>
+                        <option :value="null" disabled >-- Please select an option --</option>
                     </template>
                     <!-- these options will appear after the ones from 'options' prop -->
                     <option value="rank">Rank</option>
@@ -18,8 +18,7 @@
                 </b-form-select>
 
             </b-col>
-        </b-row>
-        <b-row>
+
             <b-col>
                 <b-form-select v-model="category" class="mb-3">
                     <template slot="first">
@@ -47,7 +46,7 @@
             <b-col>
                 <b-list-group>
                     <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
-                        {{index}} - <avatar username="Jane Doe"></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail" class="m-1" width="50" height="50" />
+                        {{index}} - <avatar username="Jane Doe"></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail"  width="50" height="50" />
                     </b-list-group-item>
                 </b-list-group>
             </b-col>
@@ -71,7 +70,8 @@
             users: [],
             type: '',
             category: '',
-            connection: 'everyone'
+            connection: 'everyone',
+            selected: null
 
         }
     }
@@ -137,4 +137,31 @@
 </script>
 
 <style scoped>
+
+    .btn{
+        color: #fff;
+        background-color: #476a9c;
+        border-color: #8eb0ea;
+    }
+
+    .btn-group .btn:hover {
+        color: #fff;
+        background: #8eb0ea;
+        border-color: #8eb0ea;
+    }
+    .d-flex{
+        padding: 5px;
+        font-size: 14px;
+        color: #000;
+    }
+    .col{
+        padding: 5px;
+    }
+    .btn-group>.btn{
+        padding: 9px 25px;
+    }
+    uiBox{
+    padding: 10px 15px;}
+    h5{text-align: center;}
+    .btn-toolbar{margin-bottom:0px;}
 </style>

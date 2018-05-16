@@ -142,5 +142,11 @@
 </script>
 
 <style scoped>
-
+    .alert-success {
+        color: #315b73;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        margin: 0 auto;
+        top: 10px;
+    }
 </style>
