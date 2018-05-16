@@ -1,7 +1,6 @@
 package org.exoplatform.gamification.entities.effective;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.Date;
 
 public class SourceContextHolder implements Serializable {

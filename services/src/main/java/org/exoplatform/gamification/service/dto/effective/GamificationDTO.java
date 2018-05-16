@@ -3,14 +3,12 @@ package org.exoplatform.gamification.service.dto.effective;
 import org.exoplatform.gamification.entities.domain.effective.ExoCoinEntity;
 import org.exoplatform.gamification.entities.domain.effective.GamificationEntity;
 import org.exoplatform.gamification.service.mapper.BadgeItemMapper;
-import org.exoplatform.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.gamification.service.mapper.MissionItemMapper;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GamificationDTO {
 

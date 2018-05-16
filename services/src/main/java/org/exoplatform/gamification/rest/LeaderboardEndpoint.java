@@ -2,9 +2,6 @@ package org.exoplatform.gamification.rest;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
-import org.exoplatform.gamification.service.configuration.BadgeService;
-import org.exoplatform.gamification.service.configuration.RuleService;
-import org.exoplatform.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;

@@ -4,8 +4,6 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.util.List;
 
 public class GamificationContext implements Serializable {
 

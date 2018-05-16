@@ -1,6 +1,5 @@
 package org.exoplatform.gamification.storage.dao;
 
-import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.gamification.entities.domain.configuration.RuleEntity;

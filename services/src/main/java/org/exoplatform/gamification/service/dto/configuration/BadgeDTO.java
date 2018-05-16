@@ -1,11 +1,9 @@
 package org.exoplatform.gamification.service.dto.configuration;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class BadgeDTO implements Serializable {
 
@@ -126,27 +124,6 @@ public class BadgeDTO implements Serializable {
         this.endValidityDate = endValidityDate;
     }
 
-    /**
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    public Date getStartValidityDate() {
-        return startValidityDate;
-    }
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    public void setStartValidityDate(Date startValidityDate) {
-        this.startValidityDate = startValidityDate;
-    }
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    public Date getEndValidityDate() {
-        return endValidityDate;
-    }
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    public void setEndValidityDate(Date endValidityDate) {
-        this.endValidityDate = endValidityDate;
-    }
-*/
     public boolean isEnabled() {
         return isEnabled;
     }
@@ -179,25 +156,6 @@ public class BadgeDTO implements Serializable {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    //TODO : it seems that eXo ws module doesn't supoprt Date's serialization, thus I have to use Tring instead of java.util.Date
-/**
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-*/
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -205,7 +163,6 @@ public class BadgeDTO implements Serializable {
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
-
 
 
     @Override
