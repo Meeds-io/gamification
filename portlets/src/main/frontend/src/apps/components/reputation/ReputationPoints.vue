@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section >
         <h5 class="mt-0">Reputation</h5>
         <div>
             <b-progress :value="reputation.points" :max="reputation.max" show-progress animated></b-progress>
