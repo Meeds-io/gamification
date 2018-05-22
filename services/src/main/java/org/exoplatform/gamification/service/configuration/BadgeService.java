@@ -80,7 +80,7 @@ public class BadgeService {
             badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
 
         } catch (Exception e) {
-            LOG.error("Error to delete badge with title {}", badgeDTO.getTitle() , e);
+            LOG.error("Error to create badge with title {}", badgeDTO.getTitle() , e);
         }
 
         return badgeMapper.badgeToBadgeDTO(badgeEntity);

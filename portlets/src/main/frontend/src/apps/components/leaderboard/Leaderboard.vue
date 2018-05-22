@@ -46,7 +46,7 @@
             <b-col>
                 <b-list-group>
                     <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
-                        {{index}} - <avatar username="Jane Doe"></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail"  width="50" height="50" />
+                        {{index+1}} - <avatar username="Khemais Menzli" :size="35" ></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail"  width="50" height="50" />
                     </b-list-group-item>
                 </b-list-group>
             </b-col>
@@ -71,7 +71,7 @@
             type: '',
             category: '',
             connection: 'everyone',
-            selected: null
+            selected: null,
 
         }
     }

@@ -15,10 +15,6 @@
                             <th class="rule-desc-col">Description</th>
                             <th class="rule-price-col">score</th>
                             <th class="rule-area-col">Area</th>
-                            <th class="rule-creation-date-col">Creation Date</th>
-                            <th class="rule-modified-date-col">Last Modified Date</th>
-                            <th class="rule-created-by-col">Created by</th>
-                            <th class="rule-modified-by-col">Last modified by</th>
                             <th class="rule-enable-col">Enabled</th>
                             <th class="rule-action-col">Action</th>
                         </tr>
@@ -35,10 +31,6 @@
                             <td class="rule-desc-col">{{rule.description}}</td>
                             <td>{{rule.score}}</td>
                             <td>{{rule.area}}</td>
-                            <td>{{ moment(rule.createdDate).format('YYYY-MM-DD') }}</td>
-                            <td>{{ moment(rule.lastModifiedDate).format('YYYY-MM-DD') }}</td>
-                            <td>{{rule.createdBy}}</td>
-                            <td>{{rule.lastModifiedBy}}</td>
                             <td>{{rule.enabled}}</td>
                             <td>
                                 <a href="#" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Supprimer"><i class="uiIconDelete uiIconLightGray"></i></a>

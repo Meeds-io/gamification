@@ -58,7 +58,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     protected int neededScore;
 
     @Lob
-    @Column(name="ICON", nullable=false, columnDefinition="mediumblob")
+    @Column(name="ICON", nullable=false, columnDefinition="BLOB")
     private byte[] icon;
 
     @Column(name = "VALIDITY_DATE_START")
@@ -73,6 +73,9 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
 
     @Column(name = "BADGE_IS_ENABLE", nullable = false)
     protected boolean isEnabled;
+
+    @Column(name = "ZONE", nullable = false)
+    protected String zone;
 
     public BadgeEntity() {
     }
@@ -141,6 +144,14 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         isEnabled = enabled;
     }
 
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -164,6 +175,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         return "Badge{" +
                 "title='" + title + '\'' +
                 ", needed score='" + neededScore + '\'' +
+                ", zone='" + zone + '\'' +
                 ", icon='" + icon + '\'' +
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +

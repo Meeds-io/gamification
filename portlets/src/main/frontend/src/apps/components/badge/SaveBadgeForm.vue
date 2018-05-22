@@ -50,28 +50,20 @@
 
                             <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
                                 placeholder="Enter badge's start validity date"></date-picker>
-                            <b-alert v-if="formErrors.startValidityDate" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
-                                @dismiss-count-down="countDownChanged">
-                                Badge start validity date is required please enter a date {{dismissCountDown}} ...
-                            </b-alert>
                         </b-form-group>
                         <!-- END -->
 
                         <!-- Badge End validity date component -->
                         <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
                             <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
-                            <b-alert v-if="formErrors.endValidityDate" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
-                                @dismiss-count-down="countDownChanged">
-                                Badge end validity date is required please enter a date {{dismissCountDown}} ...
-                            </b-alert>
                         </b-form-group>
                         <!-- END -->
 
                         <!-- Badge rule Component -->
+                        <!--
                         <b-form-group id="badgeSelectboxGroup" label="Rule:" label-for="ruleInput">
                             <b-form-select id="ruleInput" v-model="badge.rule" :options="dynamicRules" required class="mb-3">
                                 <template slot="first">
-                                    <!-- this slot appears above the options from 'options' prop -->
                                     <option :value="null" disabled>-- Please select a rule --</option>
                                 </template>
                             </b-form-select>
@@ -79,8 +71,26 @@
                                 Rule is required please select a rule {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
-
+                        -->
                         <!-- END -->
+
+                        <!-- Rule Area Component-->
+                        <b-form-group id="zoneSelectboxGroup">
+                            <b-form-select v-model="badge.zone" class="mb-3" required>
+                                <template slot="first">
+                                    <!-- this slot appears above the options from 'options' prop -->
+                                    <option :value="null" disabled>-- Please select a zone --</option>
+                                </template>
+                                <!-- these options will appear after the ones from 'options' prop -->
+                                <option value="Social">Social</option>
+                                <option value="Knowledge">Knowledge</option>
+                                <option value="Content">Content</option>
+                            </b-form-select>
+                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                                @dismiss-count-down="countDownChanged">
+                                Zone is required please choice a zone {{dismissCountDown}} ...
+                            </b-alert>
+                        </b-form-group>
 
                         <!-- Badge Enable Component -->
                         <b-form-group id="isEnabledCheckboxGroup">
@@ -156,19 +166,10 @@
                     errors.neededScore = 'Needed score is required'
                     this.dismissCountDown = 5
                 }
-                if (!this.badge.startValidityDate) {
-                    errors.startValidityDate = 'Start validity date is required'
+                if (!this.badge.zone) {
+                    errors.zone = 'Zone required'
                     this.dismissCountDown = 5
                 }
-                if (!this.badge.endValidityDate) {
-                    errors.endValidityDate = 'End validity date is required'
-                    this.dismissCountDown = 5
-                }
-                if (!this.badge.rule) {
-                    errors.rule = 'Rule is required'
-                    this.dismissCountDown = 5
-                }
-
                 this.formErrors = errors
 
                 return Object.keys(errors).length === 0
@@ -194,15 +195,7 @@
         },
         // Fetches badges when the component is created.
         created() {
-            axios.get(`/rest/gamification/badges/rule`)
-                .then(response => {
-                    // JSON responses are automatically parsed.
-                    //console.log(JSON.stringify(response.data))
-                    this.dynamicRules = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+
         }
 
 
@@ -264,9 +257,5 @@
         margin: 0px 11px;
         padding: 15px;
 
-    }
-
-    .custom-file-input:lang(en)~.custom-file-label::after {
-        content: "Badge";
     }
 </style>

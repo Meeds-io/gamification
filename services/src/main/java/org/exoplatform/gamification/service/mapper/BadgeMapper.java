@@ -36,8 +36,9 @@ public class BadgeMapper {
                 badge.setTitle(badgeDTO.getTitle());
                 badge.setDescription(badgeDTO.getDescription());
                 badge.setNeededScore(badgeDTO.getNeededScore());
+                badge.setZone(badgeDTO.getZone());
                 //TODO save an inputStream
-                //badge.setIcon(badgeDTO.getIcon());
+                badge.setIcon(badgeDTO.getIcon());
                 badge.setStartValidityDate(formatter.parse(badgeDTO.getStartValidityDate()));
                 badge.setEndValidityDate(formatter.parse(badgeDTO.getEndValidityDate()));
                 badge.setEnabled(badgeDTO.isEnabled());

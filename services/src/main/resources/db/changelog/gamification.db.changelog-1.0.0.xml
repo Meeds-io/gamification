@@ -39,6 +39,9 @@
             <column name="CREATED_BY" type="varchar(70)">
                 <constraints nullable="false"/>
             </column>
+            <column name="ZONE" type="varchar(70)">
+                <constraints nullable="false"/>
+            </column>
             <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
                 <constraints nullable="false"/>
             </column>
@@ -95,6 +98,7 @@
         </loadData>
     </changeSet>
 
+    <!--
     <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
         <loadData tableName="GAMIFICATION_RULE" file="db/changelog/rules-init-data.csv" encoding="UTF-8">
             <column name="ID" type="STRING"/>
@@ -109,4 +113,5 @@
             <column name="LAST_MODIFIED_DATE" type="DATE"/>
         </loadData>
     </changeSet>
+    -->
 </databaseChangeLog>

@@ -5,7 +5,7 @@
         <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successully</b-alert>
         <!-- End -->
         <!-- Manage Success Alerts -->
-        <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
+        <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
         <!-- End -->
         <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeAction" v-on:cancel="resetBadgeInForm"></save-badge-form>
         <badge-list :badges="badges" v-on:edit="onEditClicked" v-on:remove="onRemoveClicked"></badge-list>

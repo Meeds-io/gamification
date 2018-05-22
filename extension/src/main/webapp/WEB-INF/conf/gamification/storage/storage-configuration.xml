@@ -61,6 +61,17 @@
         <type>org.exoplatform.gamification.service.effective.GamificationService</type>
     </component>
 
+    <!-- Gamification Settings : Zone -->
+    <component>
+        <key>org.exoplatform.gamification.service.setting.zone.ZonePlugin</key>
+        <type>org.exoplatform.gamification.service.setting.zone.impl.ZonePluginImpl</type>
+    </component>
+    <!-- Gamification Settings : Rule -->
+    <component>
+        <key>org.exoplatform.gamification.service.setting.rule.RulePlugin</key>
+        <type>org.exoplatform.gamification.service.setting.rule.impl.RulePluginImpl</type>
+    </component>
+
     <!-- Gamification storage layour (Liquebase initializer) -->
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
@@ -77,6 +88,109 @@
                     -->
                     <value>db/changelog/gamification.db.changelog-1.0.0.xml</value>
                 </values-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Upload badge's avatar-->
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.file.services.NameSpaceService</target-component>
+        <component-plugin>
+            <name>SocialNameSpacePlugin</name>
+            <set-method>addNameSpacePlugin</set-method>
+            <type>org.exoplatform.commons.file.services.NameSpacePlugin</type>
+            <init-params>
+                <properties-param>
+                    <name>fileNameSpace.params</name>
+                    <property name="name" value="gamification"/>
+                    <property name="description" value="gamification files storage"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+    <!-- Gamification zones : Social  zone -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.gamification.service.setting.zone.ZonePlugin</target-component>
+        <component-plugin>
+            <name>social.zone</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.gamification.service.setting.zone.model.ZoneConfig</type>
+            <init-params>
+                <value-param>
+                    <name>zone-name</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>zone-description</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>zone-priority</name>
+                    <value>1</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+    <!-- Gamification Rule Config -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.gamification.service.setting.rule.RulePlugin</target-component>
+        <component-plugin>
+            <name>rule.addActivity</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>addActivity</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>User add an activity on his own Stream</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>100</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Gamification Rule Config -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.gamification.service.setting.rule.RulePlugin</target-component>
+        <component-plugin>
+            <name>rule.addComment</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>addComment</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>User add a comment on an activity</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>200</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
             </init-params>
         </component-plugin>
     </external-component-plugins>

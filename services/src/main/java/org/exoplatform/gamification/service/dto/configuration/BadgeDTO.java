@@ -17,6 +17,8 @@ public class BadgeDTO implements Serializable {
 
     protected int neededScore;
 
+    protected String zone;
+
     //protected String icon;
 
     private byte[] icon;
@@ -64,6 +66,10 @@ public class BadgeDTO implements Serializable {
         this.lastModifiedBy = badgeEntity.getLastModifiedBy();
 
         this.lastModifiedDate = formatter.format(badgeEntity.getLastModifiedDate());
+
+        this.zone = badgeEntity.getZone();
+
+        this.icon = badgeEntity.getIcon();
     }
 
     public Long getId() {
@@ -164,6 +170,13 @@ public class BadgeDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
 
     @Override
     public String toString() {
@@ -174,6 +187,7 @@ public class BadgeDTO implements Serializable {
                 ", endValidityDate='" + endValidityDate + '\'' +
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
+                ", zone='" + zone + '\'' +
                 ", isEnabled=" + isEnabled +
                 ", createdBy=" + createdBy +
                 ", createdDate=" + createdDate +

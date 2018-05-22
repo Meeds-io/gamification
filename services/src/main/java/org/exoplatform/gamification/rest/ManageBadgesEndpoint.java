@@ -1,6 +1,8 @@
 package org.exoplatform.gamification.rest;
 
 import org.exoplatform.common.http.HTTPStatus;
+import org.exoplatform.commons.file.model.FileItem;
+import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.service.configuration.BadgeService;
 import org.exoplatform.gamification.service.configuration.RuleService;
@@ -10,6 +12,8 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.model.Profile;
+import org.exoplatform.social.core.model.AvatarAttachment;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,6 +21,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +41,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
     protected RuleService ruleService = null;
 
+    protected FileService fileService = null;
+
     public ManageBadgesEndpoint() {
 
         this.cacheControl = new CacheControl();
@@ -47,6 +54,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         badgeService = CommonsUtils.getService(BadgeService.class);
 
         ruleService = CommonsUtils.getService(RuleService.class);
+
+        fileService = CommonsUtils.getService(FileService.class);
 
     }
 
@@ -101,7 +110,23 @@ public class ManageBadgesEndpoint implements ResourceContainer {
                 badgeDTO.setCreatedBy(currentUserName);
                 badgeDTO.setLastModifiedBy(currentUserName);
                 badgeDTO.setCreatedDate(formatter.format(new Date()));
+                badgeDTO.setIcon(badgeDTO.getIcon());
                 badgeDTO.setLastModifiedDate(formatter.format(new Date()));
+
+                /** Upload badge's icon into DB */
+                FileItem fileItem =null;
+
+                fileItem = new FileItem(null,
+                        badgeDTO.getTitle().toLowerCase(),
+                        "image/jpeg",
+                        "gamification",
+                        badgeDTO.getIcon().length,
+                        new Date(),
+                        currentUserName,
+                        false,
+                        new ByteArrayInputStream(badgeDTO.getIcon()));
+                fileItem = fileService.writeFile(fileItem);
+                /** END upload */
 
                 //--- Add badge
                 badgeDTO = badgeService.addBadge(badgeDTO);

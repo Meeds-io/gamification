@@ -4,7 +4,8 @@
         <b-row v-for="badge in badges">
             <b-col>
                 <b-img thumbnail fluid :id="badge.id" :src="badge.url" alt="Thumbnail" class="m-1" width="50" height="50" />
-                <b-popover :target="badge.id" container="reputation-badge-container" :badge="badge" :title="title" triggers="hover focus" :content="badge.description">
+                <b-popover :target="badge.id" container="reputation-badge-container" :badge="badge" :title="title" triggers="hover focus"
+                    :content="badge.description">
                 </b-popover>
 
             </b-col>
@@ -31,7 +32,7 @@
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import axios from 'axios';
-    import {Popover} from 'bootstrap-vue/es/components';
+    import { Popover } from 'bootstrap-vue/es/components';
 
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
