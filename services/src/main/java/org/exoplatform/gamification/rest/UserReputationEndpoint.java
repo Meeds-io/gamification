@@ -86,7 +86,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
                 JSONObject reputation = null;
 
-                for (int i=0; i < 3; i++) {
+                for (int i=0; i < 9; i++) {
                     reputation = new JSONObject();
 
                     reputation.put("url", "https://image.flaticon.com/icons/svg/511/511131.svg");
