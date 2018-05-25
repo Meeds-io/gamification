@@ -2,14 +2,33 @@
 
     <b-container fluid class="p-4" id="reputation-badge-container">
         <b-row>
-            <b-col v-for="badge in badges">
-                <b-img thumbnail fluid :id="badge.id" :src="badge.url" alt="Thumbnail" class="m-1" cols="4" width="50" height="50" />
-                <b-popover :target="badge.id" container="reputation-badge-container" :badge="badge" :title="title" triggers="hover focus"
+            <b-col v-for="badge in badges" :key="badge">
+
+                <b-btn :id="badge.id"  variant="primary">
+{{ badge.id }}
+                                      </b-btn>
+                <b-popover :target="badge.id" container="reputation-badge-container" :placement="top" :badge="badge" title="title" triggers="hover focus"
                     :content="badge.description">
                 </b-popover>
             </b-col>
 
         </b-row>
+
+         <b-row>
+               <b-col md="4" class="py-4 text-center"
+                         v-for="placement in placements" :key="placement">
+                      <b-btn :id="'exPopover1-'+placement" variant="primary">
+                        {{ placement }}
+                      </b-btn>
+                      <b-popover :target="'exPopover1-'+placement"
+                                 :placement="placement"
+                                 title="Popover!"
+                                 triggers="hover focus"
+                                 :content="`Placement ${placement}`">
+                      </b-popover>
+                    </b-col>
+            </b-row>
+
         <!--       
         <h5 class="my-3">Placement</h5>
         <b-row>
@@ -30,9 +49,8 @@
 
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import axios from 'axios';
     import { Popover } from 'bootstrap-vue/es/components';
-
+    import axios from 'axios';
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     Vue.use(BootstrapVue);
@@ -42,10 +60,10 @@
         return {
             badges: [],
             placements: [
-                'topright', 'top', 'topleft',
-                'bottomright', 'bottom', 'bottomleft',
-                'righttop', 'right', 'lefttop',
-                'rightbottom', 'left', 'leftbottom'
+                'topright',
+                'bottomright',
+                'righttop',
+                'rightbottom',
             ]
 
         }
@@ -83,4 +101,5 @@
 </script>
 
 <style scoped>
+
 </style>

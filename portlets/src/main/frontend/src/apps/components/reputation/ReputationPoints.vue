@@ -4,7 +4,7 @@
         <div>
             <b-progress :value="reputation.points" :max="reputation.max" show-progress animated></b-progress>
         </div>
-        
+
     </section>
 </template>
 <script>
