@@ -46,7 +46,13 @@
             <b-col>
                 <b-list-group>
                     <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
-                        {{index+1}} - <avatar username="Khemais Menzli" :size="35" ></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail"  width="50" height="50" />
+                        {{index+1}} - <avatar username="Khemais Menzli" :size="35" ></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid :id="'leader'" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail"  width="50" height="50" />
+                        <b-popover :target="'leader'"
+                        :placement="'topright'"
+                        title="leaderboard!"
+                        triggers="hover focus"
+                        :content="'description'">
+             </b-popover>
                     </b-list-group-item>
                 </b-list-group>
             </b-col>
@@ -59,12 +65,15 @@
 
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
+    import { Popover } from 'bootstrap-vue/es/components';
+    import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     Vue.use(BootstrapVue);
-
+    Vue.use(Popover);
+    Vue.use(Image);
     const initialData = () => {
         return {
             users: [],
@@ -72,6 +81,7 @@
             category: '',
             connection: 'everyone',
             selected: null,
+        
 
         }
     }
