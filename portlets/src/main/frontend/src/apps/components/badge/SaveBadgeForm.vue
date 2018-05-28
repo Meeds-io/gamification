@@ -11,7 +11,7 @@
                             <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
                             </b-form-input>
 
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Badge title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
@@ -27,7 +27,7 @@
                         <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
                             <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
                             </b-form-input>
-                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
                                 Badge needed score is required please enter a value {{dismissCountDown}} ...
                             </b-alert>
@@ -86,7 +86,7 @@
                                 <option value="Knowledge">Knowledge</option>
                                 <option value="Content">Content</option>
                             </b-form-select>
-                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
                                 Zone is required please choice a zone {{dismissCountDown}} ...
                             </b-alert>
@@ -258,4 +258,10 @@
         padding: 15px;
 
     }
+    .require-msg{
+     max-width: 100% !important;
+     font-size: 14px;
+     padding: 10px;
+    }
+   
 </style>

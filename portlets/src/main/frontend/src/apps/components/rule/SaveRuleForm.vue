@@ -11,7 +11,7 @@
                             <b-form-input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
                             </b-form-input>
 
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
@@ -28,7 +28,7 @@
                         <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput">
                             <b-form-input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
                             </b-form-input>
-                            <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule score is required please enter a score {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
@@ -40,7 +40,7 @@
                         <!-- Start validity date -->
                         <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput">
                             <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
-                            <b-alert v-if="formErrors.startValidity" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.startValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule start validity date is required please enter a date {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
@@ -49,7 +49,7 @@
                         <!-- End validity date -->
                         <b-form-group id="endValidityInputGroup" label="End validity:" label-for="endValidityInput">
                             <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
-                            <b-alert v-if="formErrors.endValidity" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.endValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule end validity date is required please enter a date {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
@@ -230,4 +230,10 @@
         padding: 15px;
 
     }
+    .require-msg{
+        max-width: 100% !important;
+        font-size: 14px;
+        padding: 10px;
+    }
+    
 </style>

@@ -18,4 +18,9 @@
         color:#fff ;
     }
 
+.alert{
+           max-width: 98%;
+           margin: 0 auto;
+           top: 7px;
+}
 </style>
