@@ -68,4 +68,7 @@ h5 {
 
      right: calc((.5rem + 1px) * -2.2) !important;
     }
+    .no-padding{
+    padding:5px;
+    }
 </style>
