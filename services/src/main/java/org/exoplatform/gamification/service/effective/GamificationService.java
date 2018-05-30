@@ -1,84 +1,65 @@
 package org.exoplatform.gamification.service.effective;
 
-import org.exoplatform.gamification.entities.domain.effective.GamificationEntity;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
+import org.exoplatform.gamification.service.dto.effective.GamificationContextHolder;
+import org.exoplatform.gamification.storage.dao.GamificationDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-
-import javax.persistence.*;
 
 public class GamificationService {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationService.class);
 
-    @PersistenceContext(unitName = "gamification-ogm")
-    private EntityManager em;
+    protected final GamificationDAO gamificationDAO;
 
     public GamificationService() {
-
+        this.gamificationDAO = CommonsUtils.getService(GamificationDAO.class);
     }
 
-    public GamificationEntity findGamificationByUsername (String username) {
+    /**
+     * Find a GamificationContext by username
+     * @param username : gamification's username param
+     * @return an instance of GamificationContextDTO
+     */
+    public GamificationContextEntity findGamificationContextByUername (String username) {
 
-        //EntityManager em = HibernateOgmFactory.getInstance().getEntityManagerFactory().createEntityManager();
-
-        EntityTransaction tx = null;
-
-        try {
-
-            TypedQuery<GamificationEntity> query = em.createNamedQuery("Gamification.findGamificationByUsername", GamificationEntity.class)
-                    .setParameter("username", username);
-
-            return query.getSingleResult();
-
-
-        } catch (NoResultException e) {
-            LOG.error("Error to find Gamification entity with title : {} ", username, e.getMessage());
-            if (tx != null ){
-                tx.rollback();
-            }
-
-        } finally {
-
-            if (em != null) {
-                em.close();
-            }
-        }
-
-        return null;
-
-    }
-
-    public GamificationEntity persist (GamificationEntity entity) {
-
-        //EntityManager em = HibernateOgmFactory.getInstance().getEntityManagerFactory().createEntityManager();
-
-        EntityTransaction tx = null;
+        GamificationContextEntity entity = null;
 
         try {
+            //--- Get Entity from DB
+            entity = gamificationDAO.findGamificationContextByUsername(username);
 
-            tx = em.getTransaction();
-
-            tx.begin();
-
-            em.persist(entity);
-
-            tx.commit();
 
         } catch (Exception e) {
-
-            LOG.error("Error to persiste gamification entity : {} ", entity.getUsername(), e);
-            if (tx != null ){
-                tx.rollback();
-            }
-
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-
+            LOG.error("Error to find Gamification entity with username : {}",username,e.getMessage());
         }
-
         return entity;
+
     }
 
+    /**
+     * Add GamificationContext to DB
+     * @param gamificationContextHolder : GamificationContext to be saved
+     */
+    @ExoTransactional
+    public void saveGamificationContext (GamificationContextHolder gamificationContextHolder) {
+
+        try {
+
+            if (gamificationContextHolder.isNew()) {
+
+                gamificationDAO.create(gamificationContextHolder.getGamificationContextEntity());
+
+            } else {
+
+                gamificationDAO.update(gamificationContextHolder.getGamificationContextEntity());
+
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to save gamificationContext for user {}",gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
+        }
+    }
 }

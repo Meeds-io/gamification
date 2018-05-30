@@ -28,7 +28,7 @@ public class RuleService {
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
      */
-    public RuleDTO findRuleByTitle (String ruleTitle) {
+    public RuleDTO findEnableRuleByTitle (String ruleTitle) {
 
         try {
             //--- Get Entity from DB

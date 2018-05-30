@@ -3,16 +3,16 @@ package org.exoplatform.gamification.service.effective;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.gamification.entities.domain.effective.GamificationEntity;
-import org.exoplatform.gamification.entities.effective.GamificationContext;
+import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.gamification.service.completation.GamificationCompletionService;
 import org.exoplatform.gamification.service.configuration.BadgeService;
+import org.exoplatform.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 public class GamificationProcessor {
 
@@ -31,7 +31,7 @@ public class GamificationProcessor {
         gamificationService = CommonsUtils.getService(GamificationService.class);
     }
 
-    public boolean process(final GamificationContext ctx) {
+    public boolean process(final List<GamificationContextHolder> gamificationContexts) {
         try {
 
             Callable<Boolean> task = new Callable<Boolean>() {
@@ -39,8 +39,8 @@ public class GamificationProcessor {
                 public Boolean call() throws Exception {
                     try {
                         ExoContainerContext.setCurrentContainer(PortalContainer.getInstance());
-                        if (ctx != null) {
-                            execute(build(ctx));
+                        if (gamificationContexts != null && !gamificationContexts.isEmpty()) {
+                            execute(gamificationContexts);
                         }
                     } catch (Exception e) {
                         LOG.warn("Process GamificationContext is failed: " + e.getMessage(), e);
@@ -61,24 +61,16 @@ public class GamificationProcessor {
 
     }
 
-    private void execute(List<GamificationEntity> games) throws Exception {
+    private void execute(List<GamificationContextHolder> gamificationContexts) throws Exception {
 
         //--- Build new gamification entity
 
         try {
 
-            for (GamificationEntity game : games) {
+            gamificationContexts.forEach(item->{
+                gamificationService.saveGamificationContext(item);
 
-                GamificationEntity aGame = gamificationService.findGamificationByUsername(game.getUsername());
-
-                if (aGame != null) { //--- Update the existing one
-
-                    game.setScore(aGame.getScore()+game.getScore());
-
-                }
-                gamificationService.persist(game);
-
-            }
+            });
 
         } catch (Exception e) {
 
@@ -88,42 +80,6 @@ public class GamificationProcessor {
         } finally {
 
         }
-
-    }
-    private List<GamificationEntity> build(GamificationContext gamification) throws Exception {
-
-        if (gamification == null) {
-            return null;
-        }
-
-
-        GamificationEntity gEntity = new GamificationEntity();
-
-        //---Build sourceContext
-        gEntity.setUsername(gamification.getSourceContextHolder().getUsername());
-        gEntity.setScore(gamification.getSourceContextHolder().getScore());
-        gEntity.setLastModifiedDate(gamification.getSourceContextHolder().getLastModifiedDate());
-        gEntity.setCreatedDate(gamification.getSourceContextHolder().getCreatedDate());
-
-        // Build target Context
-        List<GamificationEntity> output = null;
-        if (gamification.getTargetContextholder() != null) {
-            output = gamification.getTargetContextholder().getUsernames().stream().map(temp -> {
-                GamificationEntity obj = new GamificationEntity();
-                obj.setUsername(temp);
-                obj.setScore(gamification.getTargetContextholder().getScore());
-                obj.setLastModifiedDate(gamification.getTargetContextholder().getLastModifiedDate());
-                obj.setCreatedDate(gamification.getTargetContextholder().getCreatedDate());
-
-                return obj;
-            }).collect(Collectors.toList());
-
-            output.add(gEntity);
-        }
-
-
-        return output;
-
 
     }
 }

@@ -43,7 +43,7 @@ public class RuleConfig extends BaseComponentPlugin {
         ValueParam zoneParam = params.getValueParam("rule-zone");
 
         if (zoneParam != null) {
-            zone = scoreParam.getValue();
+            zone = zoneParam.getValue();
         }
 
         ValueParam enableParam = params.getValueParam("rule-enable");
