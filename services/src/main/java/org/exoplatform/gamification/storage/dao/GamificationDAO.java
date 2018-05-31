@@ -24,4 +24,27 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
         }
 
     }
+
+    /**
+     * Get the user global score based on userId
+     * @param username
+     * @return GamificationContextEntity which hold effective data
+     * @throws PersistenceException
+     */
+    public GamificationContextEntity getUserGlobalScore(String username) throws PersistenceException {
+
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.getUserGlobalScore", GamificationContextEntity.class)
+                .setParameter("username", username);
+
+        try {
+
+            return query.getSingleResult();
+
+        } catch (NoResultException e) {
+
+            return null;
+
+        }
+
+    }
 }

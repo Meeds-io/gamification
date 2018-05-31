@@ -73,10 +73,8 @@
         <mysql.version>5.1.23</mysql.version>
         <!-- Juzu Version -->
         <juzu.version>1.1.0</juzu.version>
-        <!-- Hibernate ORM -->
-        <hibernate-ogm.version>4.2.0.Final</hibernate-ogm.version>
-        <!-- Mongo Java Driver -->
-        <mongo.java.driver.version>3.5.0</mongo.java.driver.version>
+        <!-- Lombok driver-->
+        <lombok.version>1.16.22</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -123,22 +121,11 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!-- Hibernate OGM MongoDB -->
+            <!-- lombock -->
             <dependency>
-                <groupId>org.hibernate.ogm</groupId>
-                <artifactId>hibernate-ogm-core</artifactId>
-                <version>${hibernate-ogm.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.ogm</groupId>
-                <artifactId>hibernate-ogm-mongodb</artifactId>
-                <version>${hibernate-ogm.version}</version>
-            </dependency>
-            <!-- Mongo Java Driver -->
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongo-java-driver</artifactId>
-                <version>${mongo.java.driver.version}</version>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

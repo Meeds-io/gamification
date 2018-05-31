@@ -62,4 +62,34 @@ public class GamificationService {
             LOG.error("Error to save gamificationContext for user {}",gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
         }
     }
+
+    /**
+     *
+     * @param username
+     * @return
+     */
+    @ExoTransactional
+    public long getUserGlobalScore (String username) {
+
+        long userScore = 0;
+
+        GamificationContextEntity entity = null;
+
+        try {
+            //--- Get Entity from DB
+            entity = gamificationDAO.getUserGlobalScore(username);
+
+
+        } catch (Exception e) {
+            LOG.error("Error to find Gamification entity with username : {}",username,e.getMessage());
+        }
+
+        if (entity != null) {
+            userScore = entity.getScore();
+        }
+
+        return userScore;
+
+
+    }
 }

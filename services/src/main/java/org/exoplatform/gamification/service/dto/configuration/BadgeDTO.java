@@ -37,6 +37,10 @@ public class BadgeDTO implements Serializable {
 
     private String lastModifiedDate;
 
+    private long iconFileId;
+
+
+
     public BadgeDTO() {
     }
 
@@ -69,7 +73,8 @@ public class BadgeDTO implements Serializable {
 
         this.zone = badgeEntity.getZone();
 
-        this.icon = badgeEntity.getIcon();
+        this.iconFileId = badgeEntity.getIconFileId();
+
     }
 
     public Long getId() {
@@ -110,6 +115,14 @@ public class BadgeDTO implements Serializable {
 
     public void setIcon(byte[] icon) {
         this.icon = icon;
+    }
+
+    public long getIconFileId() {
+        return iconFileId;
+    }
+
+    public void setIconFileId(long iconFileId) {
+        this.iconFileId = iconFileId;
     }
 
     //TODO : it seems that eXo ws module doesn't supoprt Date's serialization, thus I have to use Tring instead of java.util.Date

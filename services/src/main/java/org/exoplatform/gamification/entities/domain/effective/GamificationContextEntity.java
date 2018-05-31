@@ -14,6 +14,10 @@ import java.util.Set;
         @NamedQuery(
                 name = "GamificationContext.findGamificationContextByUsername",
                 query = "SELECT game FROM GamificationContext game where game.username = :username"
+        ),
+        @NamedQuery(
+                name = "GamificationContext.getUserGlobalScore",
+                query = "SELECT game FROM GamificationContext game where game.username = :username"
         )
 })
 public class GamificationContextEntity implements Serializable {

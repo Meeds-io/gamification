@@ -35,39 +35,5 @@
             <scope>provided</scope>
             <fileMode>0644</fileMode>
         </dependencySet>
-
-        <!-- Hibernate OGM -->
-<!--
-        <dependencySet>
-            <outputDirectory>lib</outputDirectory>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <includes>
-                <include>org.hibernate.ogm:hibernate-ogm-core*:jar</include>
-            </includes>
-            <scope>provided</scope>
-            <fileMode>0644</fileMode>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>lib</outputDirectory>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <includes>
-                <include>org.hibernate.ogm:hibernate-ogm-mongodb*:jar</include>
-            </includes>
-            <scope>provided</scope>
-            <fileMode>0644</fileMode>
-        </dependencySet>
--->
-        <!-- Mongodb java driver-->
-<!--
-        <dependencySet>
-            <outputDirectory>lib</outputDirectory>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <includes>
-                <include>org.mongodb:mongo-java-driver*:jar</include>
-            </includes>
-            <scope>provided</scope>
-            <fileMode>0644</fileMode>
-        </dependencySet>
--->
     </dependencySets>
 </assembly>

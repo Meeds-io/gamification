@@ -24,7 +24,7 @@
             <column name="NEEDED_SCORE" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="ICON" type="LONGBLOB">
+            <column name="ICON_FILE_ID" type="BIGINT">
                 <constraints nullable="true"/>
             </column>
             <column name="VALIDITY_DATE_START" type="TIMESTAMP">

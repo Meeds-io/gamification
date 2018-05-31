@@ -1,9 +1,13 @@
 package org.exoplatform.gamification.rest;
 
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.gamification.service.effective.GamificationService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,7 +26,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     private final CacheControl cacheControl;
 
-    //protected ReputationService reputationService = null;
+    protected GamificationService gamificationService = null;
+
+    protected IdentityManager identityManager = null;
 
     public UserReputationEndpoint() {
 
@@ -32,7 +38,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         cacheControl.setNoStore(true);
 
-        //reputationService = CommonsUtils.getService(ReputationService.class);
+        gamificationService = CommonsUtils.getService(GamificationService.class);
+
+        this.identityManager = CommonsUtils.getService(IdentityManager.class);
     }
 
     @GET
@@ -44,11 +52,13 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         if (conversationState != null) {
             try {
-                //List<ReputationDTO> allRules = reputationService.getAllRules();
+
+                // Compute user id
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
 
                 JSONObject reputation = new JSONObject();
-                reputation.put("points", 3);
-                reputation.put("max", 10);
+                reputation.put("points", gamificationService.getUserGlobalScore(actorId));
+                reputation.put("max", 100);
 
 
                 return Response.ok().cacheControl(cacheControl).entity(reputation.toString()).build();

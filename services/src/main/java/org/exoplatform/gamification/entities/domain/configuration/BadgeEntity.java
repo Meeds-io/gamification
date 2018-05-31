@@ -57,9 +57,9 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     @Column(name = "NEEDED_SCORE")
     protected int neededScore;
 
-    @Lob
-    @Column(name="ICON", nullable=false, columnDefinition="BLOB")
-    private byte[] icon;
+
+    @Column(name="ICON_FILE_ID")
+    private long iconFileId;
 
     @Column(name = "VALIDITY_DATE_START")
     // When I used this annotation I get an issue with serialization within REST services
@@ -104,14 +104,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         this.description = description;
     }
 
-    public byte[] getIcon() {
-        return icon;
-    }
-
-    public void setIcon(byte[] icon) {
-        this.icon = icon;
-    }
-
     public int getNeededScore() {
         return neededScore;
     }
@@ -152,6 +144,14 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         this.zone = zone;
     }
 
+    public long getIconFileId() {
+        return iconFileId;
+    }
+
+    public void setIconFileId(long iconFileId) {
+        this.iconFileId = iconFileId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -176,7 +176,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
                 "title='" + title + '\'' +
                 ", needed score='" + neededScore + '\'' +
                 ", zone='" + zone + '\'' +
-                ", icon='" + icon + '\'' +
+                ", iconFileId='" + iconFileId + '\'' +
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +
                 ", enable='" + isEnabled + '\'' +
