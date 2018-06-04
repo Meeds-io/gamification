@@ -4,7 +4,7 @@
     <div>
         <b-container fluid>
             <b-col sm="12">
-                <h5 class="mt-0">Manage gamification's badges</h5>
+                <h5 class="mt-0 ">Manage gamification's badges</h5>
                 <b-form-row>
                     <b-col class="card">
                         <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
@@ -114,6 +114,9 @@
                     </b-col>
                 </b-form-row>
             </b-col>
+
+      
+
         </b-container>
     </div>
 
@@ -124,11 +127,11 @@
     import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import datePicker from 'vue-bootstrap-datetimepicker';
+    import datePicker from 'vue-bootstrap-datetimepicker'
     import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
     Vue.use(datePicker);
-
+    
     export default {
         props: ['badge'],
         data: function () {
@@ -146,6 +149,7 @@
                 dynamicRules: []
             }
         },
+       
         watch: {
             'badge.id'() {
                 this.formErrors = {}
@@ -192,7 +196,18 @@
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
-        },
+            confirm() {
+               this.$modals.confirm({
+               message: 'Confirm?',
+               onApprove: () => { alert('Approve'); },
+               onCancel: () => { alert('Cancel'); },
+               });
+            },
+
+
+  },
+           
+        
         // Fetches badges when the component is created.
         created() {
 
@@ -208,7 +223,7 @@
     }
 
     h5.mt-0 {
-        color: #578dc9;
+        color: #4d5466;
         font-family: Helvetica, arial, sans-serif;
         line-height: 20px;
         font-size: 1.5em;
@@ -263,5 +278,18 @@
      font-size: 14px;
      padding: 10px;
     }
+    .close {
+    float: right;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #bbb;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #000;
+  }
    
 </style>

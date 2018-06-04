@@ -43,5 +43,48 @@
 
      right: calc((.5rem + 1px) * -2.2) !important;
     }
+.d2b-tooltip {
+    z-index: 99999999555555 !important;
+}
+.d2b-chart{
+  width: 219px !important;height: 160px !important;
+}
+.d2b-chart-frame{
+  width: 239px;
+    height: 200px;
+}
+.d2b-legend-frame{
+  bottom: 10px;
+    left: 10px;
+    width: 219px;
+}
+.d2b-legend-svg-icon{
+  width: 12px !important;
+    height: 12px !important;
+}
+.popover{font-family: Helvetica,arial,sans-serif !important;}
+body {
+    margin: 0 !important;
+    font-family: Helvetica,arial,sans-serif !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    color: #333 !important;
+    background-color: #fff !important;
+}
+.bs-popover-auto[x-placement^=left], .bs-popover-left{
+    left: -211px!important;  
+}
+.vue-avatar--wrapper{
+     margin: 3px 6px;
+}
+
+.list-group-item{
+    padding: 5px;
+    font-size: 14px;
+    color: #4d5466;
+    font-family: myriad pro;
+}
+
+
 
 </style>

@@ -35,9 +35,9 @@
         <b-row>
             <b-col>
                 <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
-                    <b-button-group class="mx-1">
-                        <b-btn v-on:click.prevent="filter('everyone')">Everyone</b-btn>
-                        <b-btn v-on:click.prevent="filter('my-connection')">My connection</b-btn>
+                    <b-button-group id="app" >
+                            <b-btn v-bind:class="{ active: isActive }" v-on:click.prevent="filter('everyone')" @click="toggleClass">Everyone</b-btn>
+                            <b-btn  v-bind:class="{ active: isActive }" v-on:click.prevent="filter('my-connection')" @click="toggleClass">My connections</b-btn>
                     </b-button-group>
                 </b-button-toolbar>
             </b-col>
@@ -46,16 +46,51 @@
             <b-col>
                 <b-list-group>
                     <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
-                        {{index+1}} - <avatar username="Khemais Menzli" :size="35" ></avatar> - {{user.username}} - {{user.score}} - <b-img thumbnail fluid :id="'leader'" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail"  width="50" height="50" />
+                        {{index+1}}334 <avatar username="Khemais Menzli" :size="35" ></avatar><div class="desc-user"> {{user.username}}  </div><div class="number-user">{{user.score}}</div> <b-img thumbnail fluid :id="'leader'" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail" @click="onOpen"  width="40" height="40" />
                         <b-popover :target="'leader'"
-                        :placement="'topright'"
-                        title="leaderboard!"
+                        :placement="'left'"
                         triggers="hover focus"
-                        :content="'description'">
+                        @shown="onShown"
+                        >
+                        <template>
+                            <div class ='chart' id="chart">
+                              <!-- import font awesome for legend icons -->
+                              <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+                          
+                              <!--
+                                Both the :data and :config properties are deeply reactive so any changes
+                                to these will cause the chart to update.
+                              -->
+                              <chart-pie :data = 'chartData' :config = 'chartConfig' v-on:load="onload"></chart-pie>
+                            </div>
+                          </template>
+             </b-popover>
+                    </b-list-group-item>
+                    <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
+                            {{index+1}}325 <avatar username="Khemais Menzli" :size="35" ></avatar><div class="desc-user"> {{user.username}}  </div><div class="number-user">{{user.score}}</div> <b-img thumbnail fluid :id="'leader2'" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX" alt="Thumbnail" @click="onOpen"  width="40" height="40" />
+                        <b-popover :target="'leader2'"
+                        :placement="'left'"
+                        triggers="hover focus"
+                        @shown="onShown"
+                        >
+                        <template>
+                            <div class ='chart' id="chart">
+                              <!-- import font awesome for legend icons -->
+                              <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+                          
+                              <!--
+                                Both the :data and :config properties are deeply reactive so any changes
+                                to these will cause the chart to update.
+                              -->
+                              <chart-pie :data = 'chartData' :config = 'chartConfig' v-on:load="onload"></chart-pie>
+                            </div>
+                          </template>
              </b-popover>
                     </b-list-group-item>
                 </b-list-group>
             </b-col>
+
+           
         </b-row>
 
 
@@ -65,6 +100,7 @@
 
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
+    import { ChartPie } from 'vue-d2b'   
     import { Popover } from 'bootstrap-vue/es/components';
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
@@ -74,22 +110,35 @@
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
-    const initialData = () => {
+   
+       const initialData = () => {
         return {
+            chartData: [
+               {label: 'arc 1', value: 23},
+               {label: 'arc 2', value: 31},
+               {label: 'arc 3', value: 80},
+               {label: 'arc 4', value: 8}
+        ],
+       
+        chartConfig (chart) {
+          chart.donutRatio(0.5)
+        },
+            
             users: [],
             type: '',
             category: '',
             connection: 'everyone',
             selected: null,
-        
-
-        }
+            isActive: false
+        }    
     }
 
     export default {
-        data: initialData,
+        data : initialData,
+
         components: {
-            Avatar
+            Avatar,
+            ChartPie
         },
         watch: {
             category() {
@@ -127,7 +176,26 @@
 
                     })
 
-            }
+            },
+    
+            onShown() {
+               
+  window.dispatchEvent(new Event('resize'));   
+},
+
+isActive(value) {
+    	return this.active === value
+    },
+    toggleClass(){
+            this.isActive = !this.isActive;
+    }
+
+
+       /* this.id = e.target.id;
+        this.$root.$emit('bv::show::popover').load("#chart");
+       }, */
+           
+
 
         },
 
@@ -142,7 +210,10 @@
                 .catch(e => {
                     this.errors.push(e)
                 })
-        }
+        },
+
+      
+
     }
 </script>
 
@@ -174,4 +245,42 @@
     padding: 10px 15px;}
     h5{text-align: center;}
     .btn-toolbar{margin-bottom:0px;}
+    .chart{
+        width:239px  !important;
+    height: 200px   !important;
+  }
+  .d2b-chart-frame{
+      width:239px   !important;
+  }
+  .vue-d2b-container {
+    width: 239px  !important ;
+    height: 200px  !important ;
+}
+.d2b-tooltip {
+    z-index: 99999999555555 !important;
+}
+.d2b-chart{
+    width: 219px  !important; height: 160px  !important;
+}
+.number-user{
+    width: 20%;
+    text-align: center;
+}
+
+.desc-user{
+width:50%;
+text-align: center;
+}
+
+.vue-avatar--wrapper{
+    margin: 3px;
+}
+.btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-secondary:not(:disabled):not(.disabled):active:focus, .show>.btn-secondary.dropdown-toggle:focus{
+    box-shadow: none; 
+}
+.btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active, .show>.btn-secondary.dropdown-toggle{
+    color: #fff;
+        background: #8eb0ea;
+        border-color: #8eb0ea;
+}
 </style>

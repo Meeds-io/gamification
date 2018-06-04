@@ -3,9 +3,18 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12" >
+                <b-col md="6" class="my-1">
+                    <b-form-group horizontal label="Filter" class="mb-0">
+                      <b-input-group>
+                        <b-form-input v-model="filter" placeholder="Type to Search" />
+                        <b-input-group-append>
+                          <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-form-group>
+                  </b-col>
 
-
-                <table striped hover class="table table-hover table-striped rule-table">
+                <table striped hover class="uiGrid table table-hover table-striped rule-table">
                     <thead>
                         <tr>
                             <!--
@@ -33,7 +42,7 @@
                             <td>{{rule.area}}</td>
                             <td>{{rule.enabled}}</td>
                             <td>
-                                <a href="#" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Supprimer"><i class="uiIconDelete uiIconLightGray"></i></a>
+                                <a href="#" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon" data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer"><i class="uiIconDelete uiIconLightGray"></i></a>
                             </td>
                         </tr>
                         <tr v-if="!rules.length">
@@ -80,14 +89,15 @@
 <style scoped>
     .table{
         position: relative;
-        border-radius: 3px;
-        background: #ffffff;
-        border-top: 3px solid #d2d6de;
-        margin-bottom: 20px;
-        width: 100%;
-        box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-        border-top-color: #3c8dbc;
-        margin-top:3%;
+    border-radius: 3px;
+    background: #fff;
+    border-top: 3px solid #d2d6de;
+    margin-bottom: 20px;
+    width: 96%;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    border-top-color: #3c8dbc;
+    margin: 30px auto 0;
+    margin-bottom: 30px;
 
     }
 

@@ -3,7 +3,7 @@
         <b-row>
             <b-col sm="12">
 
-                <table class="table table-hover table-striped badge-table">
+                <table class=" uiGrid table table-hover table-striped badge-table">
                     <thead>
                         <tr>
                             <!--
@@ -32,9 +32,9 @@
                             <td class="badge-icon-col">{{badge.icon}}</td>
                             <td class="badge-status-col">{{badge.isEnabled}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>
-                            <td>
+                            <td class="center actionContainer">
                                 <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
-                                    data-original-title="Supprimer">
+                                    data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
                                     <i class="uiIconDelete uiIconLightGray"></i>
                                 </a>
                             </td>
@@ -79,15 +79,15 @@
 <style scoped>
     .table {
         position: relative;
-        border-radius: 3px;
-        background: #ffffff;
-        border-top: 3px solid #d2d6de;
-        margin-bottom: 20px;
-        width: 100%;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        border-top-color: #3c8dbc;
-        margin-top: 3%;
-
+    border-radius: 3px;
+    background: #fff;
+    border-top: 3px solid #d2d6de;
+    margin-bottom: 20px;
+    width: 96%;
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    border-top-color: #3c8dbc;
+    margin: 30px auto 0;
+    margin-bottom: 30px;
     }
 
     .table thead th {

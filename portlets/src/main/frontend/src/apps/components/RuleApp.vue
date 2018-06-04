@@ -30,5 +30,9 @@
     .alert .close{
      line-height: 16px;   
     }
+        .btn-primary:hover {
+    background-color: #476a9c;
+ 
+}
 
 </style>

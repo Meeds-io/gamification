@@ -4,7 +4,7 @@
     <div>
         <b-container fluid>
             <b-col sm="12">
-                <h5 class="mt-0">Manage gamification's rules</h5>
+                <h5 class="mt-0 ">Manage gamification's rules</h5>
                 <b-form-row>
                     <b-col class="card">
                         <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
@@ -180,7 +180,7 @@
     }
 
     h5.mt-0 {
-        color: #578dc9;
+        color: #4d5466;
         font-family: Helvetica, arial, sans-serif;
         line-height: 20px;
         font-size: 1.5em;
