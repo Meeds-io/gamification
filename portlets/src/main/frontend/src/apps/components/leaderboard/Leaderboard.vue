@@ -36,8 +36,8 @@
             <b-col>
                 <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
                     <b-button-group id="app">
-                        <b-btn v-bind:class="{ active: isActive }" v-on:click.prevent="filter('everyone')" @click="toggleClass">Everyone</b-btn>
-                        <b-btn v-bind:class="{ active: isActive }" v-on:click.prevent="filter('my-connection')" @click="toggleClass">My connections</b-btn>
+                        <b-btn v-on:click="activeBtn = 'btn1'" v-bind:class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')" >Everyone</b-btn>
+                        <b-btn v-on:click="activeBtn = 'btn2'" v-bind:class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')" >My connections</b-btn>
                     </b-button-group>
                 </b-button-toolbar>
             </b-col>
@@ -107,7 +107,7 @@
             category: '',
             connection: 'everyone',
             selected: null,
-            isActive: false
+            activeBtn:''
         }
     }
 
@@ -223,7 +223,7 @@
 
     .chart {
         width: 239px !important;
-        height: 200px !important;
+        height: 226px !important;
     }
 
     .d2b-chart-frame {
@@ -232,7 +232,7 @@
 
     .vue-d2b-container {
         width: 239px !important;
-        height: 200px !important;
+        height: 226px !important;
     }
 
     .d2b-tooltip {
@@ -241,7 +241,7 @@
 
     .d2b-chart {
         width: 219px !important;
-        height: 160px !important;
+        height: 168px!important;
     }
 
     .number-user {

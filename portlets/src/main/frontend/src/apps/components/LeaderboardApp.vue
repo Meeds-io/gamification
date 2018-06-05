@@ -47,16 +47,18 @@
     z-index: 99999999555555 !important;
 }
 .d2b-chart{
-  width: 219px !important;height: 160px !important;
+  width: 219px !important;height: 200px !important;
 }
 .d2b-chart-frame{
   width: 239px;
-    height: 200px;
+    height: 226px !important;
 }
 .d2b-legend-frame{
-  bottom: 10px;
-    left: 10px;
-    width: 219px;
+    bottom: 2px!important;
+    left: 11px !important;
+    width: 226px !important;
+    min-height: 50px !important;
+    text-align: left !important;
 }
 .d2b-legend-svg-icon{
   width: 12px !important;
@@ -81,10 +83,21 @@ body {
 .list-group-item{
     padding: 5px;
     font-size: 14px;
-    color: #4d5466;
+    color: #4d5466 !important;
     font-family: myriad pro;
 }
+.d2b-legend:not(.d2b-vertical) .d2b-legend-icon {
+    margin-top: -0.5px !important;
+}
+.d2b-legend:not(.d2b-vertical) .d2b-legend-item {
+    display: block !important;
+    width: 50% !important;
+    float: left !important;
+}
 
+.d2b-legend:not(.d2b-vertical) .d2b-legend-item:not(:last-child){
+  margin-right:0 !important;
+}
 
 
 </style>
