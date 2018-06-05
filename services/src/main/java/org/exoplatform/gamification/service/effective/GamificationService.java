@@ -129,10 +129,6 @@ public class GamificationService {
         return gamificationContextEntities;
     }
 
-    /**
-     * @param userId
-     * @return
-     */
     @ExoTransactional
     public Set<GamificationContextItemEntity> getUserGamification(String userId) {
 
