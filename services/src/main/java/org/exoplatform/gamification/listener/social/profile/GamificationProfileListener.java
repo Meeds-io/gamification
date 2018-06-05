@@ -178,6 +178,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
                 if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
                     gamificationContextItemEntitySet.forEach(item -> {
                         item.setOccurrence(item.getOccurrence() + 1);
+                        item.setScore(item.getScore()+ruleDto.getScore());
                     });
 
                     // Update user's global score
@@ -189,6 +190,10 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
                     gamificationContextItemEntity.setZone(ruleDto.getArea());
 
                     gamificationContextItemEntity.setOccurrence(1);
+
+                    // Compute the current score
+                    gamificationContextItemEntity.setScore(ruleDto.getScore());
+
 
                     // Link GamificationItem to its parent
                     gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
@@ -210,8 +215,13 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
                 GamificationContextItemEntity gamificationContextItemEntity = new GamificationContextItemEntity();
 
                 gamificationContextItemEntity.setOccurrence(1);
+
                 gamificationContextItemEntity.setOpType(ruleDto.getTitle());
+
                 gamificationContextItemEntity.setZone(ruleDto.getArea());
+
+                // compute current score
+                gamificationContextItemEntity.setScore(ruleDto.getScore());
 
                 // Link GamificationItem to its parent
                 gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);

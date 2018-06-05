@@ -230,6 +230,10 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
                 if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
                     gamificationContextItemEntitySet.forEach(item -> {
                         item.setOccurrence(item.getOccurrence() + 1);
+
+                        // Compute current score
+                        item.setScore(item.getScore()+ruleDto.getScore());
+
                     });
 
                     // Update user's global score
@@ -241,6 +245,9 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
                     gamificationContextItemEntity.setZone(ruleDto.getArea());
 
                     gamificationContextItemEntity.setOccurrence(1);
+
+                    // Compute current score
+                    gamificationContextItemEntity.setScore(ruleDto.getScore());
 
                     // Link GamificationItem to its parent
                     gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
@@ -262,8 +269,13 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
                 GamificationContextItemEntity gamificationContextItemEntity = new GamificationContextItemEntity();
 
                 gamificationContextItemEntity.setOccurrence(1);
+
                 gamificationContextItemEntity.setOpType(ruleDto.getTitle());
+
                 gamificationContextItemEntity.setZone(ruleDto.getArea());
+
+                // Compute current score
+                gamificationContextEntity.setScore(ruleDto.getScore());
 
                 // Link GamificationItem to its parent
                 gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);

@@ -18,7 +18,26 @@ import java.util.Set;
         @NamedQuery(
                 name = "GamificationContext.getUserGlobalScore",
                 query = "SELECT game FROM GamificationContext game where game.username = :username"
+        ),
+        @NamedQuery(
+                name = "GamificationContext.getUserGamification",
+                query = "SELECT game FROM GamificationContext game where game.username = :username"
+        ),
+        @NamedQuery(
+                name = "GamificationContext.findLeaderboardByZone",
+                query = "SELECT game FROM GamificationContext game where game.username = :username"
+        ),
+        @NamedQuery(
+                name = "GamificationContext.findDefaultLeaderboard",
+                query = "SELECT game FROM GamificationContext game ORDER BY game.score DESC"
         )
+
+/**        ,
+        @NamedQuery(
+                name = "GamificationContext.filterLeadersByZone",
+                query = "SELECT game FROM GamificationContext game JOIN game.gamificationItems items where items.zone = :zone where game.username = :username ORDER BY game.score"
+        )*/
+
 })
 public class GamificationContextEntity implements Serializable {
 

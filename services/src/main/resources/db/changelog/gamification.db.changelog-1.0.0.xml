@@ -99,6 +99,7 @@
             <column name="OCCURRENCE" type="INT"/>
             <column name="OPERATION_TYPE" type="VARCHAR(255)"/>
             <column name="ZONE" type="VARCHAR(255)"/>
+            <column name="SCORE" type="BIGINT"/>
             <column name="GAMIFICATION_USER_ID" type="BIGINT">
                 <constraints nullable="false"/>
             </column>

@@ -15,7 +15,7 @@ public class RuleDTO implements Serializable {
 
     protected String description;
 
-    protected Long score;
+    protected int score;
 
     protected String area;
 
@@ -71,11 +71,11 @@ public class RuleDTO implements Serializable {
         this.description = description;
     }
 
-    public Long getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(Long score) {
+    public void setScore(int score) {
         this.score = score;
     }
 

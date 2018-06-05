@@ -46,7 +46,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     protected String description;
 
     @Column(name = "SCORE")
-    protected Long score;
+    protected int score;
 
     @Column(name = "AREA", unique = false, nullable = false)
     protected String area;
@@ -81,11 +81,11 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
         this.description = description;
     }
 
-    public Long getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(Long score) {
+    public void setScore(int score) {
         this.score = score;
     }
 

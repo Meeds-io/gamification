@@ -103,19 +103,51 @@
                 }
             },
             createBadge(badgeDTO) {
-                axios.post(`/rest/gamification/badges/add`, badgeDTO)
-                    .then(response => {
-                        //this.rules = response.data;
-                        this.addSuccess = true
-                        this.updateMessage = 'added'
+
+                console.log(badgeDTO)
+
+                const formData = new FormData();
+                /**
+                Object.keys(badgeDTO).forEach(field => {
+                    formData.append(field, badgeDTO[field]);
+                });
+                */    
+                formData.append('file', badgeDTO.icon)
+
+               const MAX_RANDOM_NUMBER = 100000;
+               const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);     
+               
+
+                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                        console.log("Doneeeeeee")
+                        badgeDTO.uploadId=uploadId
+                        axios.post(`/rest/gamification/badges/add`, badgeDTO)
+                        .then(response => {
+                            //this.rules = response.data;
+                            this.addSuccess = true
+                            this.updateMessage = 'added'
+                        })
+                        .catch(e => {
+
+                            this.addError = true
+                            this.errors.push(e)
+
+                        })
+
+                         
                     })
                     .catch(e => {
 
-                        this.addError = true
-                        this.errors.push(e)
+                        console.log("Error")
 
                     })
 
+                
             },
             updateBadge(badgeDTO) {
                 axios.put(`/rest/gamification/badges/update`, badgeDTO)

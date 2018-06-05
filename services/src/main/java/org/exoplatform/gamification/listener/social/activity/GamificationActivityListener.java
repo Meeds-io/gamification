@@ -445,6 +445,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
                     gamificationContextItemEntitySet.forEach(item -> {
                         item.setOccurrence(item.getOccurrence() + 1);
+                        item.setScore(item.getScore()+ruleDto.getScore());
                     });
 
                     // Update user's global score
@@ -456,6 +457,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     gamificationContextItemEntity.setZone(ruleDto.getArea());
 
                     gamificationContextItemEntity.setOccurrence(1);
+
+                    // Set the score
+                    gamificationContextItemEntity.setScore(ruleDto.getScore());
 
                     // Link GamificationItem to its parent
                     gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
@@ -477,7 +481,11 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 GamificationContextItemEntity gamificationContextItemEntity = new GamificationContextItemEntity();
 
                 gamificationContextItemEntity.setOccurrence(1);
+
+                gamificationContextItemEntity.setScore(gamificationContextItemEntity.getScore()+ruleDto.getScore());
+
                 gamificationContextItemEntity.setOpType(ruleDto.getTitle());
+
                 gamificationContextItemEntity.setZone(ruleDto.getArea());
 
                 // Link GamificationItem to its parent

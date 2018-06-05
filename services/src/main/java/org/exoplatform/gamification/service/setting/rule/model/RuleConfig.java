@@ -11,7 +11,7 @@ public class RuleConfig extends BaseComponentPlugin {
 
     private String description;
 
-    private Long score;
+    private int score;
 
     private String zone;
 
@@ -37,7 +37,7 @@ public class RuleConfig extends BaseComponentPlugin {
         ValueParam scoreParam = params.getValueParam("rule-score");
 
         if (scoreParam != null) {
-            score = Long.parseLong(scoreParam.getValue());
+            score = Integer.parseInt(scoreParam.getValue());
         }
 
         ValueParam zoneParam = params.getValueParam("rule-zone");
@@ -63,7 +63,7 @@ public class RuleConfig extends BaseComponentPlugin {
         return description;
     }
 
-    public Long getScore() {
+    public int getScore() {
         return score;
     }
 

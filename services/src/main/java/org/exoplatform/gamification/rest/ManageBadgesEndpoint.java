@@ -1,5 +1,7 @@
 package org.exoplatform.gamification.rest;
 
+import com.google.api.client.util.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
@@ -14,6 +16,8 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.model.AvatarAttachment;
+import org.exoplatform.upload.UploadResource;
+import org.exoplatform.upload.UploadService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +47,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     protected RuleService ruleService = null;
 
     protected FileService fileService = null;
+    protected UploadService uploadService = null;
 
     public ManageBadgesEndpoint() {
 
@@ -56,6 +62,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         ruleService = CommonsUtils.getService(RuleService.class);
 
         fileService = CommonsUtils.getService(FileService.class);
+        uploadService = CommonsUtils.getService(UploadService.class);
 
     }
 
@@ -110,23 +117,31 @@ public class ManageBadgesEndpoint implements ResourceContainer {
                 badgeDTO.setCreatedBy(currentUserName);
                 badgeDTO.setLastModifiedBy(currentUserName);
                 badgeDTO.setCreatedDate(formatter.format(new Date()));
-                badgeDTO.setIcon(badgeDTO.getIcon());
+                /** Gamification rely on FileService, thus we don't need to persist icon in Gamification DB*/
+                //badgeDTO.setIcon(badgeDTO.getIcon());
+
                 badgeDTO.setLastModifiedDate(formatter.format(new Date()));
 
-                /** Upload badge's icon into DB */
-                FileItem fileItem =null;
+                if (badgeDTO.getUploadId() != null) {
+                    UploadResource uploadResource = uploadService.getUploadResource(badgeDTO.getUploadId());
 
-                fileItem = new FileItem(null,
-                        badgeDTO.getTitle().toLowerCase(),
-                        "image/jpeg",
-                        "gamification",
-                        badgeDTO.getIcon().length,
-                        new Date(),
-                        currentUserName,
-                        false,
-                        new ByteArrayInputStream(badgeDTO.getIcon()));
-                fileItem = fileService.writeFile(fileItem);
-                /** END upload */
+                    /** Upload badge's icon into DB */
+                    FileItem fileItem = null;
+
+                    fileItem = new FileItem(null,
+                            badgeDTO.getTitle().toLowerCase(),
+                            uploadResource.getMimeType(),
+                            "gamification",
+                            (long)uploadResource.getUploadedSize(),
+                            new Date(),
+                            currentUserName,
+                            false,
+                            new FileInputStream(uploadResource.getStoreLocation()));
+                    fileItem = fileService.writeFile(fileItem);
+                    /** END upload */
+
+                    badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
+                }
 
                 //--- Add badge
                 badgeDTO = badgeService.addBadge(badgeDTO);
@@ -225,48 +240,4 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
     }
 
-    @GET
-    @RolesAllowed("users")
-    @Path("rule")
-    public Response getAllRules(@Context UriInfo uriInfo) {
-
-        ConversationState conversationState = ConversationState.getCurrent();
-
-        if (conversationState != null) {
-
-            try {
-                List<RuleDTO> allRules = ruleService.getAllRules();
-
-                JSONArray ruleOptions = new JSONArray();
-                JSONObject rule = null;
-
-                for (RuleDTO rDTO : allRules) {
-                    rule = new JSONObject();
-
-                    rule.put("value", rDTO.getId());
-                    rule.put("text", rDTO.getTitle());
-                    ruleOptions.put(rule);
-
-                }
-
-                return Response.ok(ruleOptions.toString(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error listing all badges ", e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error listing all badges")
-                        .build();
-            }
-
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
-    }
 }

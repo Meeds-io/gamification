@@ -25,6 +25,10 @@ public class GamificationContextItemEntity implements Serializable {
     @Column(name = "OCCURRENCE")
     protected int occurrence;
 
+    @Column(name = "SCORE")
+    protected int score;
+
+
     // Master relationship GamificationScore(many) -> GamificationUser (one)
     // Foreign key is used within GamificationContextItemEntity (gamification_user_id)
     // 1 GamificationScore must necessarily have 1 GamificationUser (nullable=false)
@@ -65,6 +69,14 @@ public class GamificationContextItemEntity implements Serializable {
 
     public void setOccurrence(int occurrence) {
         this.occurrence = occurrence;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public GamificationContextEntity getGamificationUserEntity() {

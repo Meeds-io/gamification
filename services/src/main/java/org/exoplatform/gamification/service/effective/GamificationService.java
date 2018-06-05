@@ -3,10 +3,18 @@ package org.exoplatform.gamification.service.effective;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
+import org.exoplatform.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.gamification.service.dto.effective.GamificationContextHolder;
+import org.exoplatform.gamification.service.dto.effective.UserBadge;
 import org.exoplatform.gamification.storage.dao.GamificationDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+
+import javax.naming.Context;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GamificationService {
 
@@ -20,10 +28,11 @@ public class GamificationService {
 
     /**
      * Find a GamificationContext by username
+     *
      * @param username : gamification's username param
      * @return an instance of GamificationContextDTO
      */
-    public GamificationContextEntity findGamificationContextByUername (String username) {
+    public GamificationContextEntity findGamificationContextByUername(String username) {
 
         GamificationContextEntity entity = null;
 
@@ -33,7 +42,7 @@ public class GamificationService {
 
 
         } catch (Exception e) {
-            LOG.error("Error to find Gamification entity with username : {}",username,e.getMessage());
+            LOG.error("Error to find Gamification entity with username : {}", username, e.getMessage());
         }
         return entity;
 
@@ -41,10 +50,11 @@ public class GamificationService {
 
     /**
      * Add GamificationContext to DB
+     *
      * @param gamificationContextHolder : GamificationContext to be saved
      */
     @ExoTransactional
-    public void saveGamificationContext (GamificationContextHolder gamificationContextHolder) {
+    public void saveGamificationContext(GamificationContextHolder gamificationContextHolder) {
 
         try {
 
@@ -59,17 +69,16 @@ public class GamificationService {
             }
 
         } catch (Exception e) {
-            LOG.error("Error to save gamificationContext for user {}",gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
+            LOG.error("Error to save gamificationContext for user {}", gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
         }
     }
 
     /**
-     *
      * @param username
      * @return
      */
     @ExoTransactional
-    public long getUserGlobalScore (String username) {
+    public long getUserGlobalScore(String username) {
 
         long userScore = 0;
 
@@ -81,7 +90,7 @@ public class GamificationService {
 
 
         } catch (Exception e) {
-            LOG.error("Error to find Gamification entity with username : {}",username,e.getMessage());
+            LOG.error("Error to find Gamification entity with username : {}", username, e.getMessage());
         }
 
         if (entity != null) {
@@ -89,7 +98,60 @@ public class GamificationService {
         }
 
         return userScore;
-
-
     }
+
+    /**
+     * @param gamificationSearch
+     * @return
+     */
+    @ExoTransactional
+    public List<GamificationContextEntity> filter(GamificationSearch gamificationSearch) {
+
+        List<GamificationContextEntity> gamificationContextEntities = null;
+
+        try {
+            switch (gamificationSearch.getZone()) {
+                case "social":
+                    //Load Effective Gamification by rank
+                    gamificationContextEntities = gamificationDAO.findLeaderboardByZone(gamificationSearch.getZone());
+                    break;
+                default:
+                    //Load Effective Gamification by rank
+                    gamificationContextEntities = gamificationDAO.findDefaultLeaderboard();
+                    break;
+            }
+
+
+        } catch (Exception e) {
+            LOG.error("Error to filter leaderboards by {} and {}", gamificationSearch.getFilter(), gamificationSearch.getZone(), e);
+        }
+
+        return gamificationContextEntities;
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    @ExoTransactional
+    public Set<GamificationContextItemEntity> getUserGamification(String userId) {
+
+        Set<GamificationContextItemEntity> gamificationContextItemEntitySet = null;
+
+        try {
+            //--- Get Entity from DB
+            GamificationContextEntity gamificationContextEntity = gamificationDAO.getUserGamification(userId);
+
+            gamificationContextItemEntitySet = gamificationContextEntity.getGamificationItems();
+
+
+        } catch (Exception e) {
+            LOG.error("Error to load effective gamification for user {} ", userId, e);
+        }
+
+
+        return gamificationContextItemEntitySet;
+    }
+
+
 }

@@ -141,6 +141,8 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
                 if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
                     gamificationContextItemEntitySet.forEach(item -> {
                         item.setOccurrence(item.getOccurrence() + 1);
+                        // Compute the current score
+                        item.setScore(item.getScore()+ ruleDto.getScore());
                     });
 
                     // Update user's global score
@@ -152,6 +154,9 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
                     gamificationContextItemEntity.setZone(ruleDto.getArea());
 
                     gamificationContextItemEntity.setOccurrence(1);
+
+                    // Compute current score
+                    gamificationContextItemEntity.setScore(ruleDto.getScore());
 
                     // Link GamificationItem to its parent
                     gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
@@ -173,8 +178,13 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
                 GamificationContextItemEntity gamificationContextItemEntity = new GamificationContextItemEntity();
 
                 gamificationContextItemEntity.setOccurrence(1);
+
                 gamificationContextItemEntity.setOpType(ruleDto.getTitle());
+
                 gamificationContextItemEntity.setZone(ruleDto.getArea());
+
+                // compute current score
+                gamificationContextItemEntity.setScore(ruleDto.getScore());
 
                 // Link GamificationItem to its parent
                 gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);

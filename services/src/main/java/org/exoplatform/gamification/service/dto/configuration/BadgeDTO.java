@@ -39,7 +39,7 @@ public class BadgeDTO implements Serializable {
 
     private long iconFileId;
 
-
+    private String uploadId;
 
     public BadgeDTO() {
     }
@@ -75,6 +75,14 @@ public class BadgeDTO implements Serializable {
 
         this.iconFileId = badgeEntity.getIconFileId();
 
+    }
+
+    public String getUploadId() {
+        return uploadId;
+    }
+
+    public void setUploadId(String uploadId) {
+        this.uploadId = uploadId;
     }
 
     public Long getId() {
