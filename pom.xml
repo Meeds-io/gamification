@@ -122,11 +122,13 @@
                 <scope>test</scope>
             </dependency>
             <!-- lombock -->
+            <!--
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+            -->
         </dependencies>
     </dependencyManagement>
 
@@ -140,15 +142,23 @@
                         <artifactId>liquibase-maven-plugin</artifactId>
                         <version>${org.liquibase.version}</version>
                         <configuration>
-                            <changeLogFile>services/src/main/resources/db/changelog/gamification.db.changelog-master.xml</changeLogFile>
-                            <diffChangeLogFile>services/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml</diffChangeLogFile>
-                            <outputChangeLogFile>services/src/main/resources/db/changelog/gamification.db.changelog.xml</outputChangeLogFile>
+                            <changeLogFile>
+                                services/src/main/resources/db/changelog/gamification.db.changelog-master.xml
+                            </changeLogFile>
+                            <diffChangeLogFile>
+                                services/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml
+                            </diffChangeLogFile>
+                            <outputChangeLogFile>
+                                services/src/main/resources/db/changelog/gamification.db.changelog.xml
+                            </outputChangeLogFile>
                             <driver>com.mysql.jdbc.Driver</driver>
                             <url>jdbc:mysql://${db.host}:${db.port}/${db.schema}</url>
                             <defaultSchemaName>tribe</defaultSchemaName>
                             <username>${db.username}</username>
                             <password>${db.password}</password>
-                            <referenceUrl>hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy</referenceUrl>
+                            <referenceUrl>
+                                hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
+                            </referenceUrl>
                             <verbose>true</verbose>
                             <logging>debug</logging>
                         </configuration>
@@ -212,15 +222,23 @@
                         <artifactId>liquibase-maven-plugin</artifactId>
                         <version>${org.liquibase.version}</version>
                         <configuration>
-                            <changeLogFile>services/src/main/resources/db/changelog/gamification.db.changelog-master.xml</changeLogFile>
-                            <diffChangeLogFile>services/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml</diffChangeLogFile>
-                            <outputChangeLogFile>services/src/main/resources/db/changelog/gamification.db.changelog.xml</outputChangeLogFile>
+                            <changeLogFile>
+                                services/src/main/resources/db/changelog/gamification.db.changelog-master.xml
+                            </changeLogFile>
+                            <diffChangeLogFile>
+                                services/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml
+                            </diffChangeLogFile>
+                            <outputChangeLogFile>
+                                services/src/main/resources/db/changelog/gamification.db.changelog.xml
+                            </outputChangeLogFile>
                             <driver>com.mysql.jdbc.Driver</driver>
                             <url>jdbc:mysql://${db.host}:${db.port}/${db.schema}</url>
                             <defaultSchemaName>tribe</defaultSchemaName>
                             <username>${db.username}</username>
                             <password>${db.password}</password>
-                            <referenceUrl>hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy</referenceUrl>
+                            <referenceUrl>
+                                hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
+                            </referenceUrl>
                             <verbose>true</verbose>
                             <logging>debug</logging>
                         </configuration>
