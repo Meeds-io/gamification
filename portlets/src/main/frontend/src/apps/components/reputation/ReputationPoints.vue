@@ -2,7 +2,9 @@
     <section >
         <h5 class="mt-0">Reputation</h5>
         <div>
-            <b-progress :value="reputation.points" :max="reputation.max" show-progress animated></b-progress>
+
+               <div class="points">{{reputation.points}} Points</div>
+           <!-- <b-progress :value="reputation.points" :max="reputation.max" show-progress animated></b-progress> -->
         </div>
 
     </section>
@@ -49,5 +51,29 @@
 </script>
 
 <style scoped>
+.points{
+    text-align: center;
+    color: #333;
+    font-family: 'open_sansregular';
+    position: relative;
+    font-size: 14px;
+    background:url('/gamification-portlets/skin/images/ico-points.png') left center no-repeat;
+    padding-left: 56px;
+    display: -webkit-inline-box;
+    padding-top: 13px;
+    min-height: 50px;
+    position: relative;
+    margin-left: 12%;
+}
+.rep-points{
+    padding: 0px 20px;
+    clear: both;
+    min-height: 50px;
+    margin: 0 auto;
+}
+.rep-points img{
+    float: left; 
+}
+
 
 </style>
