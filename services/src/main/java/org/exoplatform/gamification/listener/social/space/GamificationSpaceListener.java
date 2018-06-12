@@ -249,11 +249,11 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
                     // Compute current score
                     gamificationContextItemEntity.setScore(ruleDto.getScore());
 
-                    // Link GamificationItem to its parent
-                    gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
+                    // Compute Global Score
+                    gamificationContextEntity.setScore(gamificationContextEntity.getScore()+ruleDto.getScore());
+                    // Link GamificationItem : parent/child
+                    gamificationContextEntity.addGamificationItem(gamificationContextItemEntity);
 
-                    // Add GamificationItem as child to GamificationContext
-                    gamificationContextEntity.getGamificationItems().add(gamificationContextItemEntity);
 
                 }
 

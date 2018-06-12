@@ -100,7 +100,6 @@ public class GamificationContextEntity implements Serializable {
         // l'article est ajouté dans la collection des articles de la catégorie 40.
         gamificationItems.add(gamificationItem);
         // l'article change de catégorie
-
         gamificationItem.setGamificationUserEntity(this);
     }
 

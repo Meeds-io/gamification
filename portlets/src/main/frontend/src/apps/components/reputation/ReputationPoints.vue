@@ -4,7 +4,6 @@
         <div>
 
                <div class="points">{{reputation.points}} Points</div>
-           <!-- <b-progress :value="reputation.points" :max="reputation.max" show-progress animated></b-progress> -->
         </div>
 
     </section>
@@ -22,7 +21,7 @@
         return {
             reputation: {
                 points: null,
-                max: ''            
+                rank: ''            
             },
 
         }
@@ -38,9 +37,7 @@
         created() {
             axios.get(`/rest/gamification/reputation/point/status`)
                 .then(response => {
-                    // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
+                    //console.log(JSON.stringify(response.data))
                     this.reputation = response.data;
                 })
                 .catch(e => {

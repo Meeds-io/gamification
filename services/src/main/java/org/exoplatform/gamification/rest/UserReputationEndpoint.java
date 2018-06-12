@@ -79,7 +79,6 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 JSONObject reputation = new JSONObject();
                 reputation.put("points", gamificationService.getUserGlobalScore(actorId));
-                reputation.put("max", 100);
 
 
                 return Response.ok().cacheControl(cacheControl).entity(reputation.toString()).build();
@@ -229,47 +228,50 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         JSONArray allBadges = new JSONArray();
 
-        JSONObject reputation = null;
+        if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
+            JSONObject reputation = null;
 
-        // Get available zone within the solution
-        // TODO
+            // Get available zone within the solution
+            // TODO
 
 
-        //TODO : Badge should be done for all zone not only SOCIAL ZONE
-        int userScore = gamificationContextItemEntitySet.stream().
-                filter(i -> i.getZone().equalsIgnoreCase("social")).
-                map(GamificationContextItemEntity::getScore).
-                mapToInt(Integer::intValue).
-                sum();
+            //TODO : Badge should be done for all zone not only SOCIAL ZONE
+            int userScore = gamificationContextItemEntitySet.stream().
+                    filter(i -> i.getZone().equalsIgnoreCase("social")).
+                    map(GamificationContextItemEntity::getScore).
+                    mapToInt(Integer::intValue).
+                    sum();
 
-        // Compute won badge
-        List<BadgeDTO> badgeDTOS = buildWonBadges("social", userScore);
-        int startScore = 0;
-        // Var to compute Badge level
-        int k = 0;
+            // Compute won badge
+            List<BadgeDTO> badgeDTOS = buildWonBadges("social", userScore);
+            int startScore = 0;
+            // Var to compute Badge level
+            int k = 0;
 
-        for (int i = 0; i < badgeDTOS.size(); i++) {
+            for (int i = 0; i < badgeDTOS.size(); i++) {
 
-            BadgeDTO badgeDTO = badgeDTOS.get(i);
-            reputation = new JSONObject();
-            try {
-                //computte badge's icon
-                String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
-                reputation.put("url", iconUrl);
-                reputation.put("description", badgeDTO.getDescription());
-                reputation.put("id", i);
-                reputation.put("title", badgeDTO.getTitle());
-                reputation.put("zone", badgeDTO.getZone());
-                reputation.put("level", ++k);
-                reputation.put("startScore", startScore);
-                reputation.put("endScore", badgeDTO.getNeededScore());
-                startScore = startScore + badgeDTO.getNeededScore();
-                allBadges.put(reputation);
+                BadgeDTO badgeDTO = badgeDTOS.get(i);
+                reputation = new JSONObject();
+                try {
+                    //computte badge's icon
+                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    reputation.put("url", iconUrl);
+                    reputation.put("description", badgeDTO.getDescription());
+                    reputation.put("id", i);
+                    reputation.put("title", badgeDTO.getTitle());
+                    reputation.put("zone", badgeDTO.getZone());
+                    reputation.put("level", ++k);
+                    reputation.put("startScore", startScore);
+                    reputation.put("endScore", badgeDTO.getNeededScore());
+                    startScore = startScore + badgeDTO.getNeededScore();
+                    allBadges.put(reputation);
 
-            } catch (Exception e) {
+                } catch (Exception e) {
 
+                }
             }
         }
+
 
         return allBadges;
 

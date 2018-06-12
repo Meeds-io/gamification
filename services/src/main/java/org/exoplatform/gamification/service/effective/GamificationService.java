@@ -138,13 +138,17 @@ public class GamificationService {
             //--- Get Entity from DB
             GamificationContextEntity gamificationContextEntity = gamificationDAO.getUserGamification(userId);
 
-            gamificationContextItemEntitySet = gamificationContextEntity.getGamificationItems();
+            // Get Context items if exists
+            if (gamificationContextEntity != null) {
+
+                gamificationContextItemEntitySet = gamificationContextEntity.getGamificationItems();
+
+            }
 
 
         } catch (Exception e) {
             LOG.error("Error to load effective gamification for user {} ", userId, e);
         }
-
 
         return gamificationContextItemEntitySet;
     }
