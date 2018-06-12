@@ -11,7 +11,7 @@
                         {{ badge.id }}
                       </b-btn> -->
                       <b-popover :target="'reputation'+badge.id"
-                                 :placement="'left'"
+                                 :placement="'top'"
                                  triggers="hover focus"
                                  :content="`${badge.description}`">
                                  <div class="level-badges">
@@ -22,7 +22,7 @@
                                     <div class="date-badges">{{badge.createdDate}}</div>
                                     <div class="desc-badges">{{badge.description}}</div>
                                     <div class="prog-point">
-                                        <div class="first-number">{{badge.startScore}}</div><hr class="interval"><div class="last-number">{{badge.endScore}}</div>
+                                    <div class="first-number">{{badge.startScore}}</div><hr class="interval"><div class="last-number">{{badge.endScore}}</div>
                                     </div>                                     
                       </b-popover>
                       </b-col>
@@ -172,10 +172,10 @@
 .prog-point{
     background: #f0f8fe;
     min-height: 46px;
-    padding: 7px 0px;
+    padding: 7px 5px 0px 5px;
 }
 .first-number{
-    padding: 4px 3px;
+    padding-top: 4px;
     border-radius: 50%;
     background:#60a352;
     color:#fff;
@@ -184,13 +184,15 @@
     float:left;
     position: relative;
     top: 3px;
-    left: 5px;
     z-index: 10;
+    width: 30px;
+    height: 30px;
+    text-align: center;
 }
 .last-number{
     font-size: 14px;
     float: left;
-    padding: 6px 4px;
+    padding-top: 6px;
     background:#60a352;
     color:#fff;
     font-family: 'open_sansregular';
@@ -198,13 +200,20 @@
     position: relative;
     z-index: 10;
     border: 3px solid #c7e5c8;
+    float: right;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    position: relative;
+    top: -2px;
 }
 .interval{
     height: 2px;
     background: #60a352;
-    width: 124px;
     float: left;
-    position: relative;
-    top: 1px;
+    position: absolute;
+    bottom: 4px;
+    width: 91%;
+    left: 7px;
 }
 </style>

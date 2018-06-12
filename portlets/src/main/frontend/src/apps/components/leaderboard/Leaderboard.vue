@@ -21,8 +21,8 @@
             <b-col>
                 <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
                     <b-button-group id="app">
-                        <b-btn @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" >Everyone</b-btn>
-                        <b-btn @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" >My connections</b-btn>
+                        <b-btn @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')" >Everyone</b-btn>
+                        <b-btn @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')" >My connections</b-btn>
                     </b-button-group>
                 </b-button-toolbar>
             </b-col>
@@ -92,7 +92,7 @@
             category: '',
             connection: 'everyone',
             selected: null,
-            activeBtn:''
+            activeBtn:'btn1'
         }
     }
 

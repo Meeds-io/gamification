@@ -12,7 +12,7 @@
                             <th class="badge-title-col">Title</th>
                             <th class="badge-desc-col">Description</th>
                             <th class="badge-nedded-score-col">Needed Score</th>
-                            <td class="badge-zone-col">Zone</td>
+                            <th class="badge-zone-col">Zone</th>
                             <th class="badge-start-validity-date-col">Start validity date</th>
                             <th class="badge-end-validity-date-col">End validity Date</th>
                             <th class="badge-icon-col">Icon</th>
