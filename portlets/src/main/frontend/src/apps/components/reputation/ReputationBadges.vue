@@ -15,18 +15,17 @@
                                  triggers="hover focus"
                                  :content="`${badge.description}`">
                                  <div class="level-badges">
-                                        1<br><span>Level</span>
+                                        {{badge.level}}<br><span>Level</span>
                                     </div>
                                     <div class="title-badges">{{badge.title}}</div>
                                     <div class="cat-badges">{{badge.zone}} </div>                          
                                     <div class="date-badges">{{badge.createdDate}}</div>
-                                    <div class="desc-badges">{{badge.description}} </div>
+                                    <div class="desc-badges">{{badge.description}}</div>
                                     <div class="prog-point">
-                                        <div class="first-number">200</div><hr class="interval"><div class="last-number">500</div>
+                                        <div class="first-number">{{badge.startScore}}</div><hr class="interval"><div class="last-number">{{badge.endScore}}</div>
                                     </div>                                     
                       </b-popover>
                       </b-col>
-                      
                       
             </b-row>
 

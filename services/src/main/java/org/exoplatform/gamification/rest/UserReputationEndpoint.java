@@ -19,6 +19,8 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.service.rest.Util;
+import org.exoplatform.social.webui.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -105,6 +107,10 @@ public class UserReputationEndpoint implements ResourceContainer {
     @Path("badge/all")
     public Response getUserBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
+
+        //String s = Util.getViewerId(uriInfo);
+
+        //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
 
         if (conversationState != null) {
@@ -120,8 +126,6 @@ public class UserReputationEndpoint implements ResourceContainer {
                 Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationService.getUserGamification(actorId);
 
                 allBadges = buildProfileBadge(gamificationContextItemEntitySet);
-
-
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -221,7 +225,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         return file.getAsStream();
     }
 
-    private JSONArray buildProfileBadge (Set<GamificationContextItemEntity> gamificationContextItemEntitySet) {
+    private JSONArray buildProfileBadge(Set<GamificationContextItemEntity> gamificationContextItemEntitySet) {
 
         JSONArray allBadges = new JSONArray();
 
@@ -233,53 +237,52 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         //TODO : Badge should be done for all zone not only SOCIAL ZONE
         int userScore = gamificationContextItemEntitySet.stream().
-                                                         filter(i -> i.getZone().equalsIgnoreCase("social")).
-                                                         map(GamificationContextItemEntity::getScore).
-                                                         mapToInt(Integer::intValue).
-                                                         sum();
+                filter(i -> i.getZone().equalsIgnoreCase("social")).
+                map(GamificationContextItemEntity::getScore).
+                mapToInt(Integer::intValue).
+                sum();
 
         // Compute won badge
-        List<BadgeDTO> badgeDTOS = buildWonBadges("social",userScore);
+        List<BadgeDTO> badgeDTOS = buildWonBadges("social", userScore);
         int startScore = 0;
+        // Var to compute Badge level
+        int k = 0;
+
         for (int i = 0; i < badgeDTOS.size(); i++) {
 
             BadgeDTO badgeDTO = badgeDTOS.get(i);
             reputation = new JSONObject();
             try {
                 //computte badge's icon
-                String iconUrl = "/rest/gamification/reputation/badge/"+badgeDTO.getTitle()+"/avatar";
+                String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
                 reputation.put("url", iconUrl);
-                reputation.put("description",badgeDTO.getDescription());
+                reputation.put("description", badgeDTO.getDescription());
                 reputation.put("id", i);
                 reputation.put("title", badgeDTO.getTitle());
                 reputation.put("zone", badgeDTO.getZone());
-                reputation.put("level", ++i);
+                reputation.put("level", ++k);
                 reputation.put("startScore", startScore);
                 reputation.put("endScore", badgeDTO.getNeededScore());
-                startScore = startScore+badgeDTO.getNeededScore();
+                startScore = startScore + badgeDTO.getNeededScore();
                 allBadges.put(reputation);
 
             } catch (Exception e) {
 
             }
-
-
         }
-
 
         return allBadges;
 
-
     }
 
-    private List<BadgeDTO> buildWonBadges (String zone, int score) {
+    private List<BadgeDTO> buildWonBadges(String zone, int score) {
 
         // Get available badge within the solution
         List<BadgeDTO> allBadges = badgeService.getAllBadges();
 
         return allBadges.stream().
                 filter(b -> b.getZone().equalsIgnoreCase(zone)).
-                filter(b -> b.getNeededScore() < score ).
+                filter(b -> b.getNeededScore() < score).
                 collect(Collectors.toList());
 
     }

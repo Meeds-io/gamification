@@ -115,8 +115,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     @GET
     @RolesAllowed("users")
-    @Path("search")
-    public Response search(@Context UriInfo uriInfo, @QueryParam("category") String category, @QueryParam("type") String type) {
+    @Path("filter")
+    public Response search(@Context UriInfo uriInfo, @QueryParam("category") String category) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -131,7 +131,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
             // compute user's social ID
             //String usersocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
 
-            switch (type) {
+            switch (category) {
                 case "rank":
                     //Load Effective Gamification by rank
                     gamificationService.filter(gamificationSearch);
@@ -144,55 +144,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     //Do something
                     break;
             }
-
-
-            try {
-
-                /** This is a fake endpoint */
-                ListAccess<Identity> list = identityManager.getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME, new ProfileFilter(), true);
-
-                Identity[] identities = list.load(0, 20);
-                List<LeaderboardInfo> leaders = new ArrayList<LeaderboardInfo>();
-                for (Identity identity : identities) {
-                    leaderboardInfo = new LeaderboardInfo();
-
-                    leaderboardInfo.setUserAvatarUrl(identity.getProfile().getAvatarUrl());
-                    leaderboardInfo.setUsername(identity.getProfile().getFullName());
-                    leaderboardInfo.setScore(String.valueOf(new Random().nextInt(90) + 10));
-
-                    leaders.add(leaderboardInfo);
-                }
-
-                return Response.ok(leaders, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error listing all badges ", e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error listing all badges")
-                        .build();
-            }
-
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-    }
-
-    @GET
-    @RolesAllowed("users")
-    @Path("filter")
-    public Response filter(@Context UriInfo uriInfo, @QueryParam("filter") String filter) {
-
-        ConversationState conversationState = ConversationState.getCurrent();
-
-        if (conversationState != null) {
-
-            LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
 
 
             try {

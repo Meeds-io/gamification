@@ -6,26 +6,11 @@
             </b-col>
         </b-row>
         <b-row>
-            <b-col>
-                <b-form-select v-model="type" class="mb-3">
-                    <template slot="first">
-                        <!-- this slot appears above the options from 'options' prop -->
-                        <option :value="null" disabled>-- Please select an option --</option>
-                    </template>
-                    <!-- these options will appear after the ones from 'options' prop -->
-                    <option value="rank">Rank</option>
-                    <option value="badge">Badge</option>
-                </b-form-select>
-
-            </b-col>
 
             <b-col>
-                <b-form-select v-model="category" class="mb-3">
-                    <template slot="first">
-                        <!-- this slot appears above the options from 'options' prop -->
-                        <option :value="null" disabled>-- Please select a category --</option>
-                    </template>
+                <b-form-select v-model="category" class="mb-3" @change="filter(this)">
                     <!-- these options will appear after the ones from 'options' prop -->
+                    <option value="all">Overall Rank</option>
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
                     <option value="content">Content</option>
@@ -118,32 +103,9 @@
             Avatar,
             ChartPie
         },
-        watch: {
-            category() {
-                this.search()
-            },
-            type() {
-                this.search()
-            },
-
-        },
         methods: {
-            filter(filter) {
-
-                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'filter': filter } })
-                    .then(response => {
-                        console.log(JSON.stringify(response.data))
-                        this.users = response.data;
-
-                    })
-                    .catch(e => {
-
-
-                    })
-            },
-            search() {
-
-                axios.get(`/rest/gamification/leaderboard/search`, { params: { 'category': this.category, 'type': this.type } })
+            filter(domain) {
+                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': domain} })
                     .then(response => {
                         console.log(JSON.stringify(response.data))
                         this.users = response.data;
