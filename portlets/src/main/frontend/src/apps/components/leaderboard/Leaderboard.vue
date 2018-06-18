@@ -8,9 +8,12 @@
         <b-row>
 
             <b-col>
-                <b-form-select v-model="category" class="mb-3" @change="filter(this)">
+                <b-form-select v-model="domain" class="mb-3">
+                    <template slot="first">
+                        <!-- this slot appears above the options from 'options' prop -->
+                        <option :value="null" >Overall Rank</option>
+                    </template>
                     <!-- these options will appear after the ones from 'options' prop -->
-                    <option value="all">Overall Rank</option>
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
                     <option value="content">Content</option>
@@ -21,8 +24,8 @@
             <b-col>
                 <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
                     <b-button-group id="app">
-                        <b-btn @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')" >Everyone</b-btn>
-                        <b-btn @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')" >My connections</b-btn>
+                        <b-btn @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')">Everyone</b-btn>
+                        <b-btn @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')">My connections</b-btn>
                     </b-button-group>
                 </b-button-toolbar>
             </b-col>
@@ -38,7 +41,7 @@
                         <div class="number-user">{{user.score}}</div>
                         <b-img thumbnail fluid :id="'leaderboard'+index" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
                             alt="Thumbnail" @click="onOpen" width="40" height="40" />
-                        <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown">
+                        <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown(user.username)">
                             <template>
                                 <div class='chart' id="chart">
                                     <!-- import font awesome for legend icons -->
@@ -49,7 +52,7 @@
                                     Both the :data and :config properties are deeply reactive so any changes
                                     to these will cause the chart to update.
                                 -->
-                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onload"></chart-pie>
+                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
                                 </div>
                             </template>
                         </b-popover>
@@ -76,13 +79,7 @@
 
     const initialData = () => {
         return {
-            chartData: [
-                { label: 'Social', value: 23 },
-                { label: 'Knowledge', value: 31 },
-                { label: 'Marketing', value: 80 },
-                { label: 'Communications', value: 8 }
-            ],
-
+            chartData: [],
             chartConfig(chart) {
                 chart.donutRatio(0.5)
             },
@@ -92,7 +89,8 @@
             category: '',
             connection: 'everyone',
             selected: null,
-            activeBtn:'btn1'
+            activeBtn: 'btn1',
+            domain: ''
         }
     }
 
@@ -103,9 +101,17 @@
             Avatar,
             ChartPie
         },
+        watch: {
+            domain() {
+                this.filter()
+            }
+
+        },
         methods: {
-            filter(domain) {
-                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': domain} })
+            filter() {
+                let self = this
+                console.log("Filter called ")
+                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': self.domain } })
                     .then(response => {
                         console.log(JSON.stringify(response.data))
                         this.users = response.data;
@@ -117,15 +123,32 @@
                     })
 
             },
-            onShown() {
+            onShown(username) {
 
                 window.dispatchEvent(new Event('resize'));
+                axios.get(`/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
+                    .then(response => {
+                        console.log(JSON.stringify(response.data))
+                        this.chartData = response.data;
+
+                    })
+                    .catch(e => {
+                        console.warn(e)
+
+                    })
             },
             isActive(value) {
                 return this.active === value
             },
             toggleClass() {
                 this.isActive = !this.isActive;
+            },
+            onLoad() {
+                console.log("Pie chart loading")
+
+            },
+            onOpen() {
+                console.log("Pie chart onOpen")
             }
         },
 
@@ -203,7 +226,7 @@
 
     .d2b-chart {
         width: 219px !important;
-        height: 168px!important;
+        height: 168px !important;
     }
 
     .number-user {

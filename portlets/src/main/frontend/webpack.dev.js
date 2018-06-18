@@ -8,17 +8,19 @@ module.exports = merge(common, {
 
     entry: {
 
-        common: "./common.js"
-    },
+           rule: "./rule.js",
+           badge: "./badge.js",
+           reputation: "./reputation.js",
+           leaderboard: "./leaderboard.js",
 
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
-    },
+
+       },
+       output: {
+
+           path: path.resolve(__dirname, '../webapp/javascript/'),
+           filename: '[name]/[name].bundle.js'
+
+       },
 
     devtool: 'inline-source-map',
-
-    devServer: {
-        contentBase: './dist'
-    }
 });

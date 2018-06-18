@@ -5,16 +5,13 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.gamification.service.dto.effective.GamificationContextHolder;
-import org.exoplatform.gamification.service.dto.effective.UserBadge;
 import org.exoplatform.gamification.storage.dao.GamificationDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import javax.naming.Context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class GamificationService {
 
@@ -109,18 +106,30 @@ public class GamificationService {
 
         List<GamificationContextEntity> gamificationContextEntities = null;
 
+        LOG.info("Leaderboard used filter is {}",gamificationSearch.getZone());
+
         try {
-            switch (gamificationSearch.getZone()) {
-                case "social":
-                    //Load Effective Gamification by rank
-                    gamificationContextEntities = gamificationDAO.findLeaderboardByZone(gamificationSearch.getZone());
-                    break;
-                default:
-                    //Load Effective Gamification by rank
-                    gamificationContextEntities = gamificationDAO.findDefaultLeaderboard();
-                    break;
+
+            //TODO : This only a fork, we must get the effective filter from UI
+            //List<Leaderboard> lb =  gamificationDAO.findLeaderboardByDomain(gamificationSearch.getZone());
+            List<Leaderboard> leaderboardList =  gamificationDAO.findLeaderboardByDomain("Social");
+
+            // Build Gamification Entities
+            if (leaderboardList != null && !leaderboardList.isEmpty()) {
+                GamificationContextEntity gamificationContextEntity = null;
+                gamificationContextEntities = new ArrayList<>();
+               for (Leaderboard leaderBoard : leaderboardList) {
+                   gamificationContextEntity = new GamificationContextEntity();
+                   gamificationContextEntity.setUsername(leaderBoard.getUserId());
+                   gamificationContextEntity.setScore(leaderBoard.getScore());
+                   gamificationContextEntities.add(gamificationContextEntity);
+
+               }
+
             }
 
+            // Sort Collection
+            gamificationContextEntities.sort((GamificationContextEntity g1, GamificationContextEntity g2)-> (int)g2.getScore()- (int)g1.getScore());
 
         } catch (Exception e) {
             LOG.error("Error to filter leaderboards by {} and {}", gamificationSearch.getFilter(), gamificationSearch.getZone(), e);
@@ -129,6 +138,11 @@ public class GamificationService {
         return gamificationContextEntities;
     }
 
+    /**
+     * Get user gamification
+     * @param userId
+     * @return
+     */
     @ExoTransactional
     public Set<GamificationContextItemEntity> getUserGamification(String userId) {
 
@@ -151,6 +165,27 @@ public class GamificationService {
         }
 
         return gamificationContextItemEntitySet;
+    }
+
+    /**
+     *
+     * @param userId
+     * @return
+     */
+    @ExoTransactional
+    public List<Piechart> findStatsByUserId(String userId) {
+
+        List<Piechart> leaderboardList = null;
+
+        try {
+            //--- Get Stats
+            leaderboardList = gamificationDAO.findStatsByUserId(userId);
+
+        } catch (Exception e) {
+            LOG.error("Error to load gamification stats for user {} ", userId, e);
+        }
+
+        return leaderboardList;
     }
 
 

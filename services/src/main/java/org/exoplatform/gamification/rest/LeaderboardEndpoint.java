@@ -5,6 +5,7 @@ import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.gamification.service.effective.GamificationSearch;
 import org.exoplatform.gamification.service.effective.GamificationService;
+import org.exoplatform.gamification.service.effective.Piechart;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -116,7 +117,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
     @GET
     @RolesAllowed("users")
     @Path("filter")
-    public Response search(@Context UriInfo uriInfo, @QueryParam("category") String category) {
+    public Response filter(@Context UriInfo uriInfo, @QueryParam("category") String category) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -164,6 +165,48 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 }
 
                 return Response.ok(leaders, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error listing all badges ", e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error listing all badges")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
+        }
+    }
+
+    @GET
+    @RolesAllowed("users")
+    @Path("stats")
+    public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String username) {
+
+        ConversationState conversationState = ConversationState.getCurrent();
+
+        if (conversationState != null) {
+
+
+            try {
+
+                String userSocialId = null;
+                if (username != null) {
+                    userSocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username, false).getId();
+
+                }
+                //String usersocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
+
+                // Find user's stats
+                List<Piechart> pieChart= gamificationService.findStatsByUserId(userSocialId);
+
+                return Response.ok(pieChart, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
             } catch (Exception e) {
 

@@ -24,19 +24,13 @@ import java.util.Set;
                 query = "SELECT game FROM GamificationContext game where game.username = :username"
         ),
         @NamedQuery(
-                name = "GamificationContext.findLeaderboardByZone",
-                query = "SELECT game FROM GamificationContext game where game.username = :username"
+                name = "GamificationContext.findLeaderboardByDomain",
+                query = "SELECT new org.exoplatform.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
         ),
         @NamedQuery(
-                name = "GamificationContext.findDefaultLeaderboard",
-                query = "SELECT game FROM GamificationContext game ORDER BY game.score DESC"
+                name = "GamificationContext.findStatsByUserId",
+                query = "SELECT new org.exoplatform.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
         )
-
-/**        ,
-        @NamedQuery(
-                name = "GamificationContext.filterLeadersByZone",
-                query = "SELECT game FROM GamificationContext game JOIN game.gamificationItems items where items.zone = :zone where game.username = :username ORDER BY game.score"
-        )*/
 
 })
 public class GamificationContextEntity implements Serializable {

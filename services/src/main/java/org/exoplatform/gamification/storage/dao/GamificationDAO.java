@@ -1,10 +1,10 @@
 package org.exoplatform.gamification.storage.dao;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.gamification.entities.domain.configuration.BadgeEntity;
-import org.exoplatform.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.gamification.service.effective.GamificationSearch;
+import org.exoplatform.gamification.service.effective.Leaderboard;
+import org.exoplatform.gamification.service.effective.Piechart;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -78,43 +78,36 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     /**
      *
-     * @param username
+     * @param domain
      * @return
      * @throws PersistenceException
      */
-    public List<GamificationContextEntity> findLeaderboardByZone(String username) throws PersistenceException {
+    public List<Leaderboard> findLeaderboardByDomain(String domain) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findLeaderboardByZone", GamificationContextEntity.class)
-                .setParameter("username", username)
-                .setMaxResults(10);
+                // TODO : We should load only first 10 users
+                List <Leaderboard> leaderBoards = getEntityManager().createNamedQuery("GamificationContext.findLeaderboardByDomain")
+                                                             .setParameter("domain", domain)
+                                                             .getResultList();
 
         try {
-            return query.getResultList();
+            return leaderBoards;
         } catch (NoResultException e) {
             return null;
         }
     }
 
-    /**
-     *
-     * @return
-     * @throws PersistenceException
-     */
-    public List<GamificationContextEntity> findDefaultLeaderboard() throws PersistenceException {
+    public List<Piechart> findStatsByUserId(String userId) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findDefaultLeaderboard", GamificationContextEntity.class)
-                .setMaxResults(10);
+        // TODO : We should load only first 10 users
+        List <Piechart> pieChart = getEntityManager().createNamedQuery("GamificationContext.findStatsByUserId")
+                .setParameter("userId", userId)
+                .getResultList();
 
         try {
-            return query.getResultList();
+            return pieChart;
         } catch (NoResultException e) {
             return null;
         }
     }
-
-
-
-
-
 
 }
