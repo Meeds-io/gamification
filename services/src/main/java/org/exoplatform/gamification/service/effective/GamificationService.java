@@ -106,33 +106,48 @@ public class GamificationService {
 
         List<GamificationContextEntity> gamificationContextEntities = null;
 
-        LOG.info("Leaderboard used filter is {}",gamificationSearch.getZone());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Filtering leaderboard based on domain name : {}", gamificationSearch.getDomain());
+        }
+
 
         try {
 
-            //TODO : This only a fork, we must get the effective filter from UI
-            //List<Leaderboard> lb =  gamificationDAO.findLeaderboardByDomain(gamificationSearch.getZone());
-            List<Leaderboard> leaderboardList =  gamificationDAO.findLeaderboardByDomain("Social");
+            // Get overall leaderboard
+            if (gamificationSearch.getDomain().equalsIgnoreCase("all")) {
 
-            // Build Gamification Entities
-            if (leaderboardList != null && !leaderboardList.isEmpty()) {
-                GamificationContextEntity gamificationContextEntity = null;
-                gamificationContextEntities = new ArrayList<>();
-               for (Leaderboard leaderBoard : leaderboardList) {
-                   gamificationContextEntity = new GamificationContextEntity();
-                   gamificationContextEntity.setUsername(leaderBoard.getUserId());
-                   gamificationContextEntity.setScore(leaderBoard.getScore());
-                   gamificationContextEntities.add(gamificationContextEntity);
+                gamificationContextEntities = gamificationDAO.findOverallLeaderboard();
 
-               }
+
+            } else { // Get leaderboard by domain
+
+                List<Leaderboard> leaderboardList = gamificationDAO.findLeaderboardByDomain(gamificationSearch.getDomain());
+
+                // Build Gamification Entities
+                if (leaderboardList != null && !leaderboardList.isEmpty()) {
+                    GamificationContextEntity gamificationContextEntity = null;
+                    gamificationContextEntities = new ArrayList<>();
+                    for (Leaderboard leaderBoard : leaderboardList) {
+                        gamificationContextEntity = new GamificationContextEntity();
+                        gamificationContextEntity.setUsername(leaderBoard.getUserId());
+                        gamificationContextEntity.setScore(leaderBoard.getScore());
+                        gamificationContextEntities.add(gamificationContextEntity);
+
+                    }
+
+                    gamificationContextEntities.sort((GamificationContextEntity g1, GamificationContextEntity g2) -> (int) g2.getScore() - (int) g1.getScore());
+
+                }
 
             }
 
-            // Sort Collection
-            gamificationContextEntities.sort((GamificationContextEntity g1, GamificationContextEntity g2)-> (int)g2.getScore()- (int)g1.getScore());
+            //
+
+
+
 
         } catch (Exception e) {
-            LOG.error("Error to filter leaderboards by {} and {}", gamificationSearch.getFilter(), gamificationSearch.getZone(), e);
+            LOG.error("Error to filter leaderboard by domain : {} and by netowrk : {}", gamificationSearch.getDomain(), gamificationSearch.getNetwork(), e);
         }
 
         return gamificationContextEntities;
@@ -140,6 +155,7 @@ public class GamificationService {
 
     /**
      * Get user gamification
+     *
      * @param userId
      * @return
      */
@@ -168,7 +184,6 @@ public class GamificationService {
     }
 
     /**
-     *
      * @param userId
      * @return
      */

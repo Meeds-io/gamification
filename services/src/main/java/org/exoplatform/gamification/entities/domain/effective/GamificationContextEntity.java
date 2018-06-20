@@ -28,6 +28,10 @@ import java.util.Set;
                 query = "SELECT new org.exoplatform.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
         ),
         @NamedQuery(
+                name = "GamificationContext.findOverallLeaderboard",
+                query = "SELECT game FROM GamificationContext game ORDER BY game.score DESC"
+        ),
+        @NamedQuery(
                 name = "GamificationContext.findStatsByUserId",
                 query = "SELECT new org.exoplatform.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
         )

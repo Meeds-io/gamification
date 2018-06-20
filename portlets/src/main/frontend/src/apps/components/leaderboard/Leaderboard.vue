@@ -103,15 +103,14 @@
         },
         watch: {
             domain() {
-                this.filter()
+                this.filter("everyone")
             }
 
         },
         methods: {
-            filter() {
+            filter(network) {
                 let self = this
-                console.log("Filter called ")
-                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': self.domain } })
+                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': self.domain, 'network': network } })
                     .then(response => {
                         console.log(JSON.stringify(response.data))
                         this.users = response.data;

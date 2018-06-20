@@ -1,5 +1,6 @@
 package org.exoplatform.gamification.rest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.gamification.entities.domain.effective.GamificationContextEntity;
@@ -13,7 +14,9 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.profile.ProfileFilter;
+import org.exoplatform.social.core.relationship.model.Relationship;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -37,6 +40,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     protected GamificationService gamificationService = null;
 
+    protected RelationshipManager relationshipManager;
+
 
     public LeaderboardEndpoint() {
 
@@ -49,6 +54,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
         identityManager = CommonsUtils.getService(IdentityManager.class);
 
         gamificationService = CommonsUtils.getService(GamificationService.class);
+
+        relationshipManager = CommonsUtils.getService(RelationshipManager.class);
     }
 
     @GET
@@ -73,7 +80,11 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 // TODO : Use a DTO instead of JPA entity
                 List<GamificationContextEntity> gamificationContextEntities = gamificationService.filter(gamificationSearch);
 
-                // Build Leaderboard flow
+                if (gamificationContextEntities == null) {
+                    return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                }
+
+                // Build Leaderboard flow only when the returned list is not null
                 for (GamificationContextEntity game : gamificationContextEntities) {
 
                     leaderboardInfo = new LeaderboardInfo();
@@ -82,7 +93,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     Identity identity = identityManager.getIdentity(game.getUsername(), true);
 
                     // Set score
-                    leaderboardInfo.setScore(String.valueOf(game.getScore()));
+                    leaderboardInfo.setScore(game.getScore());
 
                     // Set username
                     leaderboardInfo.setUsername(identity.getProfile().getFullName());
@@ -117,7 +128,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
     @GET
     @RolesAllowed("users")
     @Path("filter")
-    public Response filter(@Context UriInfo uriInfo, @QueryParam("category") String category) {
+    public Response filter(@Context UriInfo uriInfo, @QueryParam("category") String category, @QueryParam("network") String network) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -126,45 +137,59 @@ public class LeaderboardEndpoint implements ResourceContainer {
             //Init search criteria
             GamificationSearch gamificationSearch = new GamificationSearch();
 
+            if (StringUtils.isNotBlank(category)) gamificationSearch.setDomain(category);
+
+            if (StringUtils.isNotBlank(network)) gamificationSearch.setNetwork(network);
+
             // hold leaderboard flow
-            LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
+            LeaderboardInfo leaderboardInfo = null;
 
-            // compute user's social ID
-            //String usersocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
+            // Build leaderboard list
+            List<LeaderboardInfo> leaderboardInfos = null;
 
-            switch (category) {
-                case "rank":
-                    //Load Effective Gamification by rank
-                    gamificationService.filter(gamificationSearch);
-                    break;
-                case "badge":
-                    // Load Effective Gmaification by badge
-                    break;
-
-                default:
-                    //Do something
-                    break;
-            }
+            List<GamificationContextEntity> gamificationContextEntities = gamificationService.filter(gamificationSearch);
 
 
             try {
 
-                /** This is a fake endpoint */
-                ListAccess<Identity> list = identityManager.getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME, new ProfileFilter(), true);
+                if (gamificationContextEntities != null && !gamificationContextEntities.isEmpty()) {
 
-                Identity[] identities = list.load(0, 20);
-                List<LeaderboardInfo> leaders = new ArrayList<LeaderboardInfo>();
-                for (Identity identity : identities) {
-                    leaderboardInfo = new LeaderboardInfo();
+                    leaderboardInfos = new ArrayList<LeaderboardInfo>();
 
-                    leaderboardInfo.setUserAvatarUrl(identity.getProfile().getAvatarUrl());
-                    leaderboardInfo.setUsername(identity.getProfile().getFullName());
-                    leaderboardInfo.setScore(String.valueOf(new Random().nextInt(90) + 10));
+                    int max = (10 > gamificationContextEntities.size()) ? gamificationContextEntities.size() : 10;
 
-                    leaders.add(leaderboardInfo);
+                    Identity identity = null;
+
+                    for (int i = 0; i < max; i++) {
+
+                        leaderboardInfo = new LeaderboardInfo();
+
+                        // Load Social identity
+                        identity = identityManager.getIdentity(gamificationContextEntities.get(i).getUsername(), true);
+
+                        leaderboardInfo.setUserAvatarUrl(identity.getProfile().getAvatarUrl());
+                        leaderboardInfo.setUsername(identity.getProfile().getFullName());
+                        leaderboardInfo.setScore(gamificationContextEntities.get(i).getScore());
+
+                        if (gamificationSearch.getNetwork().equalsIgnoreCase("my-connection")) {
+
+                            if (isinMyConnections(identity, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false))) {
+                                leaderboardInfos.add(leaderboardInfo);
+                            }
+
+
+                        } else {
+
+                            leaderboardInfos.add(leaderboardInfo);
+
+                        }
+
+
+                    }
+
                 }
 
-                return Response.ok(leaders, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                return Response.ok(leaderboardInfos, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
             } catch (Exception e) {
 
@@ -204,7 +229,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 //String usersocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
 
                 // Find user's stats
-                List<Piechart> pieChart= gamificationService.findStatsByUserId(userSocialId);
+                List<Piechart> pieChart = gamificationService.findStatsByUserId(userSocialId);
 
                 return Response.ok(pieChart, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
@@ -226,11 +251,20 @@ public class LeaderboardEndpoint implements ResourceContainer {
         }
     }
 
+    private boolean isinMyConnections(Identity gameficationIdentity, Identity myIdentity) {
+
+        Relationship gamificationRelationship = relationshipManager.get(myIdentity, gameficationIdentity);
+
+        if (gamificationRelationship == null) return false;
+
+        return gamificationRelationship.getStatus().name().equalsIgnoreCase(Relationship.Type.CONFIRMED.name());
+    }
+
     public static class LeaderboardInfo {
 
         String userAvatarUrl;
         String username;
-        String score;
+        long score;
 
         public String getUserAvatarUrl() {
             return userAvatarUrl;
@@ -248,12 +282,13 @@ public class LeaderboardEndpoint implements ResourceContainer {
             this.username = username;
         }
 
-        public String getScore() {
+        public long getScore() {
             return score;
         }
 
-        public void setScore(String score) {
+        public void setScore(long score) {
             this.score = score;
         }
     }
+
 }
