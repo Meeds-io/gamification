@@ -26,7 +26,7 @@
     <!-- CSS for Gamification support in Platform -->
 
     <portlet>
-        <name>ManageRulesApp</name>
+        <name>GamificationManageRules</name>
         <module>
             <depends>
                 <module>manageRules</module>
@@ -34,7 +34,7 @@
         </module>
     </portlet>
     <portlet>
-        <name>ManageBadgesApp</name>
+        <name>GamificationManageBadges</name>
         <module>
             <depends>
                 <module>manageBadges</module>
@@ -42,7 +42,7 @@
         </module>
     </portlet>
     <portlet>
-        <name>UserReputationApp</name>
+        <name>GamificationUserReputation</name>
         <module>
             <depends>
                 <module>userReputation</module>
@@ -50,7 +50,7 @@
         </module>
     </portlet>
     <portlet>
-        <name>LeaderboardApp</name>
+        <name>GamificationLeaderboard</name>
         <module>
             <depends>
                 <module>userLeaderboard</module>

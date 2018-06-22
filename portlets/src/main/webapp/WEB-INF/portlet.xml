@@ -26,48 +26,48 @@
    http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
     <!-- End-user portlet : leaderboard -->
     <portlet>
-        <portlet-name>LeaderboardApp</portlet-name>
+        <portlet-name>GamificationLeaderboard</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.leaderboard.LeaderboardPortlet</portlet-class>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
         <portlet-info>
-            <title>Leaderboard App</title>
+            <title>Gamification Leaderboard </title>
         </portlet-info>
     </portlet>
     <!-- End-user portlet : user reputation -->
     <portlet>
-        <portlet-name>UserReputationApp</portlet-name>
+        <portlet-name>GamificationUserReputation</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.profile.reputation.UserReputationPortlet</portlet-class>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
         <portlet-info>
-            <title>User Reputation App</title>
+            <title>Gamification User Reputation</title>
         </portlet-info>
     </portlet>
 
     <!-- Admin portlet : manage rules -->
     <portlet>
-        <portlet-name>ManageRulesApp</portlet-name>
+        <portlet-name>GamificationManageRules</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.admin.rule.ManageRulesPortlet</portlet-class>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
         <portlet-info>
-            <title>Manage rules App</title>
+            <title>Gamification Manage rules</title>
         </portlet-info>
     </portlet>
 
     <!-- Admin portlet : manage badges -->
     <portlet>
-        <portlet-name>ManageBadgesApp</portlet-name>
+        <portlet-name>GamificationManageBadges</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.admin.badge.ManageBadgesPortlet</portlet-class>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
         <portlet-info>
-            <title>Manage badge App</title>
+            <title>Gamification Manage badges</title>
         </portlet-info>
     </portlet>
 </portlet-app>

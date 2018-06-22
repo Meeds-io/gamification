@@ -47,7 +47,7 @@
                         <field name="state">
                             <object type="org.exoplatform.portal.config.model.TransientApplicationState">
                                 <field name="contentId">
-                                    <string>gamification-portlets/UserReputationApp</string>
+                                    <string>gamification-portlets/GamificationUserReputation</string>
                                 </field>
                             </object>
                         </field>
@@ -79,7 +79,7 @@
                         <field name="state">
                             <object type="org.exoplatform.portal.config.model.TransientApplicationState">
                                 <field name="contentId">
-                                    <string>gamification-portlets/LeaderboardApp</string>
+                                    <string>gamification-portlets/GamificationLeaderboard</string>
                                 </field>
                             </object>
                         </field>
