@@ -16,14 +16,6 @@ import java.util.Set;
                 query = "SELECT game FROM GamificationContext game where game.username = :username"
         ),
         @NamedQuery(
-                name = "GamificationContext.getUserGlobalScore",
-                query = "SELECT game FROM GamificationContext game where game.username = :username"
-        ),
-        @NamedQuery(
-                name = "GamificationContext.getUserGamification",
-                query = "SELECT game FROM GamificationContext game where game.username = :username"
-        ),
-        @NamedQuery(
                 name = "GamificationContext.findLeaderboardByDomain",
                 query = "SELECT new org.exoplatform.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
         ),
@@ -102,6 +94,6 @@ public class GamificationContextEntity implements Serializable {
     }
 
     public String toString() {
-        return String.format("GamificationGloba[%d,%s,%d]", id, username, score);
+        return String.format("Gamification Entity[%d,%s,%d]", id, username, score);
     }
 }

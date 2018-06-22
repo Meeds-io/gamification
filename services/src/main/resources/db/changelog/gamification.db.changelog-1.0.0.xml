@@ -36,7 +36,7 @@
             <column name="BADGE_IS_ENABLE" type="BIT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="CREATED_BY" type="varchar(70)">
+            <column name="CREATED_BY" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
             <column name="ZONE" type="varchar(70)">
@@ -45,7 +45,7 @@
             <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
                 <constraints nullable="false"/>
             </column>
-            <column name="LAST_MODIFIED_BY" type="varchar(50)"/>
+            <column name="LAST_MODIFIED_BY" type="varchar(200)"/>
             <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
         <createTable tableName="GAMIFICATION_RULE">
@@ -67,13 +67,13 @@
             <column name="RULE_IS_ENABLE" type="BIT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="CREATED_BY" type="varchar(50)">
+            <column name="CREATED_BY" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
                 <constraints nullable="false"/>
             </column>
-            <column name="LAST_MODIFIED_BY" type="varchar(50)"/>
+            <column name="LAST_MODIFIED_BY" type="varchar(200)"/>
             <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
         <modifySql dbms="mysql">
@@ -86,7 +86,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="SCORE" type="BIGINT"/>
-            <column name="USERNAME" type="VARCHAR(255)">
+            <column name="USERNAME" type="VARCHAR(200)">
                 <constraints nullable="false" unique="true" />
             </column>
         </createTable>
@@ -98,7 +98,7 @@
             </column>
             <column name="OCCURRENCE" type="INT"/>
             <column name="OPERATION_TYPE" type="VARCHAR(255)"/>
-            <column name="ZONE" type="VARCHAR(255)"/>
+            <column name="ZONE" type="VARCHAR(70)"/>
             <column name="SCORE" type="BIGINT"/>
             <column name="GAMIFICATION_USER_ID" type="BIGINT">
                 <constraints nullable="false"/>

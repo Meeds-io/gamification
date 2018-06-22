@@ -87,24 +87,17 @@
                 axios.delete(`/rest/gamification/badges/delete`, { params: { 'badgeTitle': badgeTitle } })
                     .then(response => {
                         // JSON responses are automatically parsed.
-
-                        console.log(JSON.stringify(response.data))
-
                         this.badges.splice(index, 1)
                     })
                     .catch(e => {
                         this.errors.push(e)
                     })
 
-
-
                 if (badgeId === this.badgeInForm.id) {
                     this.resetBadgeInForm()
                 }
             },
             createBadge(badgeDTO) {
-
-                console.log(badgeDTO)
 
                 const formData = new FormData();
                 /**
@@ -124,7 +117,6 @@
                             'Content-Type': 'multipart/form-data'
                         }
                     }).then(response => {
-                        console.log("Doneeeeeee")
                         badgeDTO.uploadId=uploadId
                         axios.post(`/rest/gamification/badges/add`, badgeDTO)
                         .then(response => {
@@ -166,9 +158,6 @@
         created() {
             axios.get(`/rest/gamification/badges/all`)
                 .then(response => {
-                    // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
                     this.badges = response.data;
                 })
                 .catch(e => {

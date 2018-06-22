@@ -148,7 +148,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error adding new rule")
+                        .entity("Error updating a rule")
                         .build();
             }
 
@@ -183,11 +183,11 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error removing rule {} by {} ", ruleTitle, currentUserName, e);
+                LOG.error("Error deleting rule {} by {} ", ruleTitle, currentUserName, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error adding new rule")
+                        .entity("Error deleting a rule")
                         .build();
 
             }

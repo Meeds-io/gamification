@@ -37,7 +37,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
      */
     public GamificationContextEntity getUserGlobalScore(String username) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.getUserGlobalScore", GamificationContextEntity.class)
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findGamificationContextByUsername", GamificationContextEntity.class)
                 .setParameter("username", username);
 
         try {
@@ -65,7 +65,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     public GamificationContextEntity getUserGamification(String username) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.getUserGamification", GamificationContextEntity.class)
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findGamificationContextByUsername", GamificationContextEntity.class)
                 .setParameter("username", username);
 
         try {

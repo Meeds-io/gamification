@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import RuleComponent from './components/BadgeApp.vue'
+import BadgeApp from './components/BadgeApp.vue'
 
 new Vue({
-    render: h => h(RuleComponent)
+    render: h => h(BadgeApp)
 }).$mount('#app')

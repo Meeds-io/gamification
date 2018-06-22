@@ -89,7 +89,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all rules")
+                        .entity("Error to compute the user reputaiotn points")
                         .build();
             }
 
@@ -130,11 +130,11 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all rules ", e);
+                LOG.error("Error loading badges belong to user : {} ",conversationState.getIdentity().getUserId(), e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all rules")
+                        .entity("Error loading user's badges")
                         .build();
             }
 

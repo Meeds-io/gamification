@@ -112,7 +112,6 @@
                 let self = this
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': self.domain, 'network': network } })
                     .then(response => {
-                        console.log(JSON.stringify(response.data))
                         this.users = response.data;
 
                     })
@@ -127,7 +126,6 @@
                 window.dispatchEvent(new Event('resize'));
                 axios.get(`/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
                     .then(response => {
-                        console.log(JSON.stringify(response.data))
                         this.chartData = response.data;
 
                     })
@@ -154,9 +152,6 @@
         created() {
             axios.get(`/rest/gamification/leaderboard/rank/all`)
                 .then(response => {
-                    // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
                     this.users = response.data;
                 })
                 .catch(e => {

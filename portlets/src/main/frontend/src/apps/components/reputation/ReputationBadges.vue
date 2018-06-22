@@ -85,9 +85,7 @@
         created() {
             axios.get(`/rest/gamification/reputation/badge/all`)
                 .then(response => {
-                    // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
+
                     this.badges = response.data;
                 })
                 .catch(e => {

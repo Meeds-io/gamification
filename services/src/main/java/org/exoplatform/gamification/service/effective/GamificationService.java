@@ -29,7 +29,7 @@ public class GamificationService {
      * @param username : gamification's username param
      * @return an instance of GamificationContextDTO
      */
-    public GamificationContextEntity findGamificationContextByUername(String username) {
+    public GamificationContextEntity findGamificationContextByUsername(String username) {
 
         GamificationContextEntity entity = null;
 
@@ -39,7 +39,7 @@ public class GamificationService {
 
 
         } catch (Exception e) {
-            LOG.error("Error to find Gamification entity with username : {}", username, e.getMessage());
+            LOG.error("Error to find Gamification entity with username : {}", username, e);
         }
         return entity;
 

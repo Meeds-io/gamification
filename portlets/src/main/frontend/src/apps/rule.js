@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import RuleComponent from './components/RuleApp.vue'
+import RuleApp from './components/RuleApp.vue'
 
 new Vue({
-    render: h => h(RuleComponent)
+    render: h => h(RuleApp)
 }).$mount('#app')

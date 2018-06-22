@@ -47,6 +47,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     protected RuleService ruleService = null;
 
     protected FileService fileService = null;
+
     protected UploadService uploadService = null;
 
     public ManageBadgesEndpoint() {
@@ -155,7 +156,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error adding new rule")
+                        .entity("Error adding new badge")
                         .build();
 
             }
@@ -219,24 +220,33 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     @DELETE
     @RolesAllowed("administrators")
     @Path("/delete")
-    public Response deleteBadge(@Context UriInfo uriInfo, @QueryParam("badgeTitle") String ruleTitle) {
+    public Response deleteBadge(@Context UriInfo uriInfo, @QueryParam("badgeTitle") String badgeTitle) {
 
-        CacheControl cacheControl = new CacheControl();
+        ConversationState conversationState = ConversationState.getCurrent();
 
-        cacheControl.setNoCache(true);
-
-        cacheControl.setNoStore(true);
-
-        try {
-            //--- Remove the rule
-            badgeService.deleteBadge(ruleTitle);
+        if (conversationState != null) {
+            try {
+                //--- Remove the rule
+                badgeService.deleteBadge(badgeTitle);
 
 
-            return Response.ok("Deleted " + ruleTitle, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                return Response.ok("Deleted " + badgeTitle, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
-        } catch (Exception e) {
-            return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
+            } catch (Exception e) {
+
+                LOG.error("Error deleting badge {} by {} ", badgeTitle, conversationState.getIdentity().getUserId(), e);
+
+                return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
         }
+
+
 
     }
 

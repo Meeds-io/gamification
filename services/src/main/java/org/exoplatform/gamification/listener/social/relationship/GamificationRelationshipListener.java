@@ -124,7 +124,7 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
         // Process only when an enable rule is found
         if (ruleDto != null) {
             //Find if a gamificationContext exists for the current user
-            gamificationContextEntity = gamificationService.findGamificationContextByUername(actor);
+            gamificationContextEntity = gamificationService.findGamificationContextByUsername(actor);
 
             // Start building GamificationContextHolder
             contextHolder = new GamificationContextHolder();

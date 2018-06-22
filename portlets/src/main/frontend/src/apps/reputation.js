@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import ReputationComponent from './components/ReputationApp.vue'
+import ReputationApp from './components/ReputationApp.vue'
 
 new Vue({
-    render: h => h(ReputationComponent)
+    render: h => h(ReputationApp)
 }).$mount('#app')

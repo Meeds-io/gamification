@@ -40,7 +40,7 @@ public class BadgeService {
             }
 
         } catch (Exception e) {
-            LOG.error("Error to find Rule entity with title : {}", badgeTitle, e.getMessage());
+            LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
         }
         return null;
 

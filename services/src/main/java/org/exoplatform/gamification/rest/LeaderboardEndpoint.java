@@ -109,11 +109,11 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all badges ", e);
+                LOG.error("Error building leaderboard ", e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all badges")
+                        .entity("Error building leaderboard")
                         .build();
             }
 
@@ -193,11 +193,11 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all badges ", e);
+                LOG.error("Error filtering leaderbaord by Doamin : {} and by Network {} ",gamificationSearch.getDomain(),gamificationSearch.getNetwork(), e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all badges")
+                        .entity("Error filtering leaderboard")
                         .build();
             }
 
@@ -235,11 +235,11 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all badges ", e);
+                LOG.error("Error building statistics for user {} ",username, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all badges")
+                        .entity("Error building statistics")
                         .build();
             }
 

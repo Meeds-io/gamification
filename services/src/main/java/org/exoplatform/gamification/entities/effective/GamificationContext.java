@@ -52,10 +52,14 @@ public class GamificationContext implements Serializable {
         GamificationContext game = instance();
 
         game.setSourceContextHolder(sourceContextHolder);
+
         game.setTargetContextholder(targetContextholder);
 
         if (!isNew) {
-            LOG.info("Is a new Instance");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Is not a new Instance");
+            }
+
 
         }
         return game;

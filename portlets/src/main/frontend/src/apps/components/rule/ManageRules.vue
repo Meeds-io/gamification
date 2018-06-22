@@ -81,9 +81,6 @@
                 // Add dynamic invocation to server side
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
                     .then(response => {
-                        // JSON responses are automatically parsed.
-
-                        console.log(JSON.stringify(response.data))
 
                         this.rules.splice(index, 1)
                     })
@@ -129,9 +126,6 @@
         created() {
             axios.get(`/rest/gamification/rules/all`)
                 .then(response => {
-                    // JSON responses are automatically parsed.
-                    //this.posts = response.data
-                    console.log(JSON.stringify(response.data))
                     this.rules = response.data;
                 })
                 .catch(e => {
