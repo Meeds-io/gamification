@@ -8,7 +8,7 @@
         <b-row>
 
             <b-col>
-                <b-form-select v-model="domain" class="mb-3">
+                <b-form-select v-model="domain, selected" class="">
                     <template slot="first">
                         <!-- this slot appears above the options from 'options' prop -->
                         <option :value="null" >Overall Rank</option>
@@ -162,16 +162,17 @@
 </script>
 
 <style scoped>
-    .btn {
-        color: #fff;
-        background-color: #476a9c;
-        border-color: #8eb0ea;
+   .btn {
+        color: #4d5466;
+        background-color: #fff;
+        border-color: #e1e8ee;
+         width:50%;
     }
 
     .btn-group .btn:hover {
+        background-color: #578dc9;
+        border: solid 1px #578dc9;
         color: #fff;
-        background: #8eb0ea;
-        border-color: #8eb0ea;
     }
 
     .d-flex {
@@ -179,13 +180,18 @@
         font-size: 14px;
         color: #000;
     }
+    .btn-group{
+        width: 100%; 
+    }
 
     .col {
         padding: 5px;
     }
 
     .btn-group>.btn {
-        padding: 9px 25px;
+        padding: 5px 0px;
+        width:50%;
+        text-align: center;
     }
 
     uiBox {
@@ -220,7 +226,7 @@
 
     .d2b-chart {
         width: 219px !important;
-        height: 168px !important;
+        height: 168px!important;
     }
 
     .number-user {
@@ -230,7 +236,7 @@
 
     .desc-user {
         width: 50%;
-        text-align: center;
+        text-align: left;
     }
 
     .vue-avatar--wrapper {
@@ -246,8 +252,11 @@
     .btn-secondary:not(:disabled):not(.disabled).active,
     .btn-secondary:not(:disabled):not(.disabled):active,
     .show>.btn-secondary.dropdown-toggle {
+        background-color: #578dc9;
+        border: solid 1px #578dc9;
         color: #fff;
-        background: #8eb0ea;
-        border-color: #8eb0ea;
+    }
+    .custom-select{
+        font-size:14px;
     }
 </style>
