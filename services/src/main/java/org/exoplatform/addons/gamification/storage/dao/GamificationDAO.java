@@ -45,7 +45,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     public GamificationContextEntity findGamificationContextByUsername(String username) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findGamificationContextByUsername", GamificationContextEntity.class)
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findGamificationContextByUsername", GamificationContextEntity.class)
                 .setParameter("username", username);
 
         try {
@@ -64,7 +64,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
      */
     public GamificationContextEntity getUserGlobalScore(String username) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findGamificationContextByUsername", GamificationContextEntity.class)
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findGamificationContextByUsername", GamificationContextEntity.class)
                 .setParameter("username", username);
 
         try {
@@ -92,7 +92,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     public GamificationContextEntity getUserGamification(String username) throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findGamificationContextByUsername", GamificationContextEntity.class)
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findGamificationContextByUsername", GamificationContextEntity.class)
                 .setParameter("username", username);
 
         try {
@@ -112,7 +112,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
     public List<Leaderboard> findLeaderboardByDomain(String domain) throws PersistenceException {
 
                 // TODO : We should load only first 10 users
-                List <Leaderboard> leaderBoards = getEntityManager().createNamedQuery("GamificationContext.findLeaderboardByDomain")
+                List <Leaderboard> leaderBoards = getEntityManager().createNamedQuery("GamificationUserReputation.findLeaderboardByDomain")
                                                              .setParameter("domain", domain)
                                                              .getResultList();
 
@@ -125,7 +125,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     public List<GamificationContextEntity> findOverallLeaderboard() throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationContext.findOverallLeaderboard", GamificationContextEntity.class);
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findOverallLeaderboard", GamificationContextEntity.class);
 
         try {
 
@@ -141,7 +141,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
     public List<Piechart> findStatsByUserId(String userId) throws PersistenceException {
 
         // TODO : We should load only first 10 users
-        List <Piechart> pieChart = getEntityManager().createNamedQuery("GamificationContext.findStatsByUserId")
+        List <Piechart> pieChart = getEntityManager().createNamedQuery("GamificationUserReputation.findStatsByUserId")
                 .setParameter("userId", userId)
                 .setMaxResults(queryLimitOffset)
                 .getResultList();

@@ -41,7 +41,7 @@ public class GamificationProcessor {
                             execute(gamificationContexts);
                         }
                     } catch (Exception e) {
-                        LOG.warn("Process GamificationContext is failed: " + e.getMessage(), e);
+                        LOG.warn("Process GamificationUserReputation is failed: " + e.getMessage(), e);
                         LOG.debug(e.getMessage(), e);
                         return false;
                     }

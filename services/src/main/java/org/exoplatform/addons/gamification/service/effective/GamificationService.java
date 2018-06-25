@@ -66,7 +66,7 @@ public class GamificationService {
             }
 
         } catch (Exception e) {
-            LOG.error("Error to save gamificationContext for user {}", gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
+            LOG.error("Error to save GamificationUserReputation for user {}", gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
         }
     }
 

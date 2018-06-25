@@ -91,7 +91,7 @@
         </modifySql>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
-        <createTable tableName="GAMIFICATION_CONTEXT">
+        <createTable tableName="GAMIFICATION_USER_REPUTATION">
             <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -120,7 +120,7 @@
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-5" runOnChange="true">
-        <addForeignKeyConstraint baseColumnNames="GAMIFICATION_USER_ID" baseTableName="GAMIFICATION_CONTEXT_ITEM" constraintName="FK_GAMIFICATION_CONTEXT_ITEM_CONTEXT_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="GAMIFICATION_CONTEXT"/>
+        <addForeignKeyConstraint baseColumnNames="GAMIFICATION_USER_ID" baseTableName="GAMIFICATION_CONTEXT_ITEM" constraintName="FK_GAMIFICATION_CONTEXT_ITEM_CONTEXT_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">

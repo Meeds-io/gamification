@@ -7,25 +7,25 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "GamificationContext")
+@Entity(name = "GamificationUserReputation")
 @ExoEntity
-@Table(name = "GAMIFICATION_CONTEXT")
+@Table(name = "GAMIFICATION_USER_REPUTATION")
 @NamedQueries({
         @NamedQuery(
-                name = "GamificationContext.findGamificationContextByUsername",
-                query = "SELECT game FROM GamificationContext game where game.username = :username"
+                name = "GamificationUserReputation.findGamificationContextByUsername",
+                query = "SELECT game FROM GamificationUserReputation game where game.username = :username"
         ),
         @NamedQuery(
-                name = "GamificationContext.findLeaderboardByDomain",
-                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
+                name = "GamificationUserReputation.findLeaderboardByDomain",
+                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationUserReputation game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
         ),
         @NamedQuery(
-                name = "GamificationContext.findOverallLeaderboard",
-                query = "SELECT game FROM GamificationContext game ORDER BY game.score DESC"
+                name = "GamificationUserReputation.findOverallLeaderboard",
+                query = "SELECT game FROM GamificationUserReputation game ORDER BY game.score DESC"
         ),
         @NamedQuery(
-                name = "GamificationContext.findStatsByUserId",
-                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
+                name = "GamificationUserReputation.findStatsByUserId",
+                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationUserReputation game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
         )
 
 })
