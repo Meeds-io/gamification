@@ -5,6 +5,10 @@ import org.exoplatform.addons.gamification.service.effective.GamificationSearch;
 import org.exoplatform.addons.gamification.service.effective.Leaderboard;
 import org.exoplatform.addons.gamification.service.effective.Piechart;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValueParam;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -13,7 +17,30 @@ import java.util.List;
 
 public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity, Long> {
 
-    public GamificationDAO() {
+    private static final Log LOG = ExoLogger.getLogger(GamificationDAO.class);
+
+    private int queryLimitOffset;
+
+    public GamificationDAO(InitParams params) {
+
+        ValueParam offsetLimit = params.getValueParam("query-limit-offset");
+
+        try {
+            if (offsetLimit != null) {
+                queryLimitOffset = Integer.parseInt(offsetLimit.getValue());
+            }
+
+        } catch (NumberFormatException nfe) {
+
+            // Set a default value any
+            queryLimitOffset = 10;
+
+            LOG.error("Error while parsing query-limit-offset, the default value will be used {}",queryLimitOffset, nfe);
+
+
+        }
+
+
     }
 
     public GamificationContextEntity findGamificationContextByUsername(String username) throws PersistenceException {
@@ -116,6 +143,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
         // TODO : We should load only first 10 users
         List <Piechart> pieChart = getEntityManager().createNamedQuery("GamificationContext.findStatsByUserId")
                 .setParameter("userId", userId)
+                .setMaxResults(queryLimitOffset)
                 .getResultList();
 
         try {

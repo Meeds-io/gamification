@@ -54,6 +54,8 @@ public class GamificationProcessor {
             return true;
         } catch (Exception e) {
 
+            LOG.error("Error processing gamification action",e);
+
             return false;
         }
 
@@ -72,10 +74,7 @@ public class GamificationProcessor {
 
         } catch (Exception e) {
 
-            LOG.error("Exception",e);
-
-
-        } finally {
+            LOG.error("Cannot save gamification entry",e);
 
         }
 

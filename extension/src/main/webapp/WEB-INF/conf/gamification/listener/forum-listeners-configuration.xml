@@ -28,7 +28,7 @@
         <component-plugin>
             <name>GamificationForumTracker</name>
             <set-method>addListenerPlugin</set-method>
-            <type>org.exoplatform.gamification.listener.forum.GamificationForumListener</type>
+            <type>org.exoplatform.addons.gamification.listener.forum.GamificationForumListener</type>
         </component-plugin>
     </external-component-plugins>
 </configuration>

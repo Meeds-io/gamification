@@ -3,7 +3,7 @@ package org.exoplatform.addons.gamification.service.setting.zone;
 
 import org.exoplatform.addons.gamification.service.setting.zone.model.ZoneConfig;
 
-public interface ZonePlugin {
+public interface ZoneRegistry {
 
     void addPlugin(ZoneConfig zone);
 

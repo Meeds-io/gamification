@@ -8,7 +8,7 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
-import org.exoplatform.addons.gamification.service.setting.rule.RulePlugin;
+import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
@@ -17,11 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RulePluginImpl implements Startable, RulePlugin {
+public class RuleRegistryImpl implements Startable, RuleRegistry {
 
-    private static final Log LOG = ExoLogger.getLogger(RulePluginImpl.class);
-
-    private static final String GAMIFICATION_PREFERENCES = "gamification:";
+    private static final Log LOG = ExoLogger.getLogger(RuleRegistryImpl.class);
 
     // Gamification Settings
     public static final String GAMIFICATION_SETTINGS_RULE_KEY = "GAMIFICATION_SETTINGS_RULE_KEY";
@@ -31,7 +29,7 @@ public class RulePluginImpl implements Startable, RulePlugin {
 
     private final Map<String, RuleConfig> ruleMap;
 
-    public RulePluginImpl() {
+    public RuleRegistryImpl() {
         this.ruleMap = new HashMap<String, RuleConfig>();
     }
 

@@ -2,7 +2,7 @@ package org.exoplatform.addons.gamification.service.setting.rule;
 
 import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
 
-public interface RulePlugin {
+public interface RuleRegistry {
 
     void addPlugin(RuleConfig rule);
 

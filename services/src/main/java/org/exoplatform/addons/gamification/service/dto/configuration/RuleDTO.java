@@ -19,7 +19,8 @@ public class RuleDTO implements Serializable {
 
     protected String area;
 
-    protected boolean isEnabled;
+    //protected boolean isEnabled;
+    protected boolean enabled;
 
     private String createdBy;
 
@@ -39,7 +40,7 @@ public class RuleDTO implements Serializable {
         this.description = rule.getDescription();
         this.score = rule.getScore();
         this.area = rule.getArea();
-        this.isEnabled = rule.isEnabled();
+        this.enabled = rule.isEnabled();
         this.createdBy = rule.getCreatedBy();
         this.createdDate = rule.getCreatedDate();
         this.lastModifiedBy = rule.getLastModifiedBy();
@@ -88,11 +89,11 @@ public class RuleDTO implements Serializable {
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     public String getCreatedBy() {

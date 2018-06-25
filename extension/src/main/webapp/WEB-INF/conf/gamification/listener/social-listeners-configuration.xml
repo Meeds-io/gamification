@@ -28,7 +28,7 @@
         <component-plugin>
             <name>GamificationRelationshipTracker</name>
             <set-method>addListenerPlugin</set-method>
-            <type>org.exoplatform.gamification.listener.social.relationship.GamificationRelationshipListener</type>
+            <type>org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Activities -->
@@ -37,7 +37,7 @@
         <component-plugin>
             <name>GamificationActivityTracker</name>
             <set-method>addActivityEventListener</set-method>
-            <type>org.exoplatform.gamification.listener.social.activity.GamificationActivityListener</type>
+            <type>org.exoplatform.addons.gamification.listener.social.activity.GamificationActivityListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Spaces -->
@@ -46,7 +46,7 @@
         <component-plugin>
             <name>GamificationSpaceTracker</name>
             <set-method>registerSpaceListenerPlugin</set-method>
-            <type>org.exoplatform.gamification.listener.social.space.GamificationSpaceListener</type>
+            <type>org.exoplatform.addons.gamification.listener.social.space.GamificationSpaceListener</type>
         </component-plugin>
     </external-component-plugins>
     <!-- Identity -->
@@ -55,7 +55,7 @@
         <component-plugin>
             <name>GamificationProfileTracker</name>
             <set-method>registerProfileListener</set-method>
-            <type>org.exoplatform.gamification.listener.social.profile.GamificationProfileListener</type>
+            <type>org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener</type>
         </component-plugin>
     </external-component-plugins>
 

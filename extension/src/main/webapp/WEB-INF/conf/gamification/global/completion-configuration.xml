@@ -4,8 +4,8 @@
         xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
         xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
     <component>
-        <key>org.exoplatform.gamification.service.completation.GamificationCompletionService</key>
-        <type>org.exoplatform.gamification.service.completation.GamificationCompletionService</type>
+        <key>org.exoplatform.addons.gamification.service.completation.GamificationCompletionService</key>
+        <type>org.exoplatform.addons.gamification.service.completation.GamificationCompletionService</type>
         <init-params>
             <value-param>
                 <name>async-execution</name>
@@ -24,25 +24,25 @@
 
     <!-- Rules Rest Service -->
     <component>
-        <type>org.exoplatform.gamification.rest.ManageRulesEndpoint</type>
+        <type>org.exoplatform.addons.gamification.rest.ManageRulesEndpoint</type>
     </component>
     <!-- END -->
 
     <!-- Badges Rest Service -->
     <component>
-        <type>org.exoplatform.gamification.rest.ManageBadgesEndpoint</type>
+        <type>org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint</type>
     </component>
     <!-- END -->
 
     <!-- Reputation Rest Service -->
     <component>
-        <type>org.exoplatform.gamification.rest.UserReputationEndpoint</type>
+        <type>org.exoplatform.addons.gamification.rest.UserReputationEndpoint</type>
     </component>
     <!-- END -->
 
     <!-- Leaderboard Rest Service -->
     <component>
-        <type>org.exoplatform.gamification.rest.LeaderboardEndpoint</type>
+        <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
     </component>
     <!-- END -->
 </configuration>

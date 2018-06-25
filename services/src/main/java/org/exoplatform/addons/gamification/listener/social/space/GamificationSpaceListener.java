@@ -8,7 +8,6 @@ import org.exoplatform.addons.gamification.service.dto.effective.GamificationCon
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
-import org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class GamificationSpaceListener extends SpaceListenerPlugin implements GamificationListener {
 
-    private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
+    private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
 
     protected RuleService ruleService;
     protected GamificationProcessor gamificationProcessor;
@@ -53,11 +52,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-        // To hold GamificationRule
-        RuleDTO ruleDto = null;
-
-        // Get associated rule :
-        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_ADD);
+        // Get associated rule
+        RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_ADD);
 
         // Process only when an enable rule is found
         if (ruleDto != null) {

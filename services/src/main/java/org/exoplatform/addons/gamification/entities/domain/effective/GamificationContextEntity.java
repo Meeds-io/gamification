@@ -17,7 +17,7 @@ import java.util.Set;
         ),
         @NamedQuery(
                 name = "GamificationContext.findLeaderboardByDomain",
-                query = "SELECT new org.exoplatform.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
+                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
         ),
         @NamedQuery(
                 name = "GamificationContext.findOverallLeaderboard",
@@ -25,7 +25,7 @@ import java.util.Set;
         ),
         @NamedQuery(
                 name = "GamificationContext.findStatsByUserId",
-                query = "SELECT new org.exoplatform.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
+                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationContext game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
         )
 
 })

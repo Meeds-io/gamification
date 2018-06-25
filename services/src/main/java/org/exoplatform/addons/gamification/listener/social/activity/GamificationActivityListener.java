@@ -509,11 +509,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
     }
 
     //TODO : use eXo stack
-    public String getUserId(String identityId) {
-        return identityManager.getIdentity(identityId, false).getRemoteId();
-    }
-
-    //TODO : use eXo stack
     public boolean isSpaceActivity(ExoSocialActivity activity) {
         Identity id = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, activity.getStreamOwner(), false);
         return (id != null);
