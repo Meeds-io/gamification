@@ -9,7 +9,7 @@ public class GamificationContext implements Serializable {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationContext.class);
 
-    protected SourceContextHolder sourceContextHolder;
+    protected SourceContext sourceContext;
 
     protected TargetContextholder targetContextholder;
 
@@ -29,12 +29,12 @@ public class GamificationContext implements Serializable {
         return this;
     }
 
-    public SourceContextHolder getSourceContextHolder() {
-        return sourceContextHolder;
+    public SourceContext getSourceContext() {
+        return sourceContext;
     }
 
-    public GamificationContext setSourceContextHolder(SourceContextHolder sourceContextHolder) {
-        this.sourceContextHolder = sourceContextHolder;
+    public GamificationContext setSourceContext(SourceContext sourceContext) {
+        this.sourceContext = sourceContext;
         return this;
     }
 
@@ -51,7 +51,7 @@ public class GamificationContext implements Serializable {
 
         GamificationContext game = instance();
 
-        game.setSourceContextHolder(sourceContextHolder);
+        game.setSourceContext(sourceContext);
 
         game.setTargetContextholder(targetContextholder);
 
@@ -67,10 +67,10 @@ public class GamificationContext implements Serializable {
     @Override
     public String toString() {
         return "GamificationContext{" +
-                "Source:username='" + sourceContextHolder.getUsername() + '\'' +
-                ", Source:score='" + sourceContextHolder.getScore() + '\'' +
-                ", Source:createdDate='" + sourceContextHolder.getCreatedDate() + '\'' +
-                ", Source:lastModifiedDate='" + sourceContextHolder.getLastModifiedDate() + '\'' +
+                "Source:username='" + sourceContext.getUsername() + '\'' +
+                ", Source:score='" + sourceContext.getScore() + '\'' +
+                ", Source:createdDate='" + sourceContext.getCreatedDate() + '\'' +
+                ", Source:lastModifiedDate='" + sourceContext.getLastModifiedDate() + '\'' +
                 ", Target:usernames='" + targetContextholder.getUsernames() + '\'' +
                 ", Target:score ='" + targetContextholder.getScore() + '\'' +
                 "}";

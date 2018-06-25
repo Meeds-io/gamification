@@ -16,7 +16,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
     public BadgeEntity findBadgeByTitle(String badgeTitle) throws PersistenceException {
 
-        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("Badge.findBadgeByTitle", BadgeEntity.class)
+        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findBadgeByTitle", BadgeEntity.class)
                 .setParameter("badgeTitle", badgeTitle);
 
         try {
@@ -29,7 +29,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
     public BadgeEntity findBadgeByNeededScore(String neededScore) throws PersistenceException {
 
-        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("Badge.findBadgeByNeededScore", BadgeEntity.class)
+        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findBadgeByNeededScore", BadgeEntity.class)
                 .setParameter("neededScore", neededScore);
 
         try {
@@ -42,7 +42,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
     public List<BadgeEntity> getAllBadges() throws PersistenceException {
 
-        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("Badge.getAllBadges", BadgeEntity.class);
+        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.getAllBadges", BadgeEntity.class);
 
         try {
             return query.getResultList();
@@ -53,14 +53,14 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
     }
 
     public int deleteBadgeById(int badgeId) throws PersistenceException {
-        return getEntityManager().createNamedQuery("Badge.deleteBadgeById")
+        return getEntityManager().createNamedQuery("GamificationBadge.deleteBadgeById")
                 .setParameter("badgeId", badgeId)
                 .executeUpdate();
 
     }
 
     public int deleteBadgeByTitle(String badgeTitle) throws PersistenceException {
-        return getEntityManager().createNamedQuery("Badge.deleteBadgeByTitle")
+        return getEntityManager().createNamedQuery("GamificationBadge.deleteBadgeByTitle")
                 .setParameter("badgeTitle", badgeTitle)
                 .executeUpdate();
 

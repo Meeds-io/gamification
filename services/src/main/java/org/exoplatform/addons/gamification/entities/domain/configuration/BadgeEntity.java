@@ -7,37 +7,37 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity(name = "Badge")
+@Entity(name = "GamificationBadge")
 @ExoEntity
-@Table(name = "GAMIFICATION_BADGE")
+@Table(name = "GAMIFICATION_BADGES")
 @NamedQueries({
         @NamedQuery(
-                name = "Badge.getAllBadges",
-                query = "SELECT badge FROM Badge badge"
+                name = "GamificationBadge.getAllBadges",
+                query = "SELECT badge FROM GamificationBadge badge"
         ),
         @NamedQuery(
-                name = "Badge.getEnabledBadges",
-                query = "SELECT badge FROM Badge badge where badge.isEnabled = :isEnabled "
+                name = "GamificationBadge.getEnabledBadges",
+                query = "SELECT badge FROM GamificationBadge badge where badge.enabled = :isEnabled "
         ),
         @NamedQuery(
-                name = "Badge.getValidBadges",
-                query = "SELECT badge FROM Badge badge where (badge.startValidityDate BETWEEN :stDate AND :edDate) AND (badge.endValidityDate BETWEEN :stDate AND :edDate) "
+                name = "GamificationBadge.getValidBadges",
+                query = "SELECT badge FROM GamificationBadge badge where (badge.startValidityDate BETWEEN :stDate AND :edDate) AND (badge.endValidityDate BETWEEN :stDate AND :edDate) "
         ),
         @NamedQuery(
-                name = "Badge.findBadgeByNeededScore",
-                query = "SELECT badge FROM Badge badge where badge.neededScore = :neededScore"
+                name = "GamificationBadge.findBadgeByNeededScore",
+                query = "SELECT badge FROM GamificationBadge badge where badge.neededScore = :neededScore"
         ),
         @NamedQuery(
-                name = "Badge.findBadgeByTitle",
-                query = "SELECT badge FROM Badge badge where badge.title = :badgeTitle"
+                name = "GamificationBadge.findBadgeByTitle",
+                query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle"
         ),
         @NamedQuery(
-                name = "Badge.deleteBadgeByTitle",
-                query = "DELETE FROM Badge badge WHERE badge.title = :badgeTitle "
+                name = "GamificationBadge.deleteBadgeByTitle",
+                query = "DELETE FROM GamificationBadge badge WHERE badge.title = :badgeTitle "
         ),
         @NamedQuery(
-                name = "Badge.deleteBadgeById",
-                query = "DELETE FROM Badge badge WHERE badge.id = :badgeId "
+                name = "GamificationBadge.deleteBadgeById",
+                query = "DELETE FROM GamificationBadge badge WHERE badge.id = :badgeId "
         )
 })
 public class BadgeEntity extends AbstractAuditingEntity implements Serializable {
@@ -74,7 +74,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     protected Date endValidityDate;
 
     @Column(name = "BADGE_IS_ENABLE", nullable = false)
-    protected boolean isEnabled;
+    protected boolean enabled;
 
     @Column(name = "ZONE", nullable = false)
     protected String zone;
@@ -131,11 +131,11 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     public String getZone() {
@@ -181,7 +181,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
                 ", iconFileId='" + iconFileId + '\'' +
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +
-                ", enable='" + isEnabled + '\'' +
+                ", enable='" + enabled + '\'' +
                 ", description='" + description + '\'' +
                 "}";
     }

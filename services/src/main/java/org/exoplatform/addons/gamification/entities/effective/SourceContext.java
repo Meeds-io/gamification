@@ -3,7 +3,7 @@ package org.exoplatform.addons.gamification.entities.effective;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SourceContextHolder implements Serializable {
+public class SourceContext implements Serializable {
 
     protected String username;
 
@@ -13,7 +13,7 @@ public class SourceContextHolder implements Serializable {
 
     protected Long score;
 
-    public SourceContextHolder() {
+    public SourceContext() {
         this.lastModifiedDate = new Date();
         this.createdDate = new Date();
     }

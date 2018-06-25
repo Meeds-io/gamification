@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <!-- Managing auto generation of timestamp by Database -->
     <property name="now" value="now()" dbms="h2"/>
@@ -13,7 +13,7 @@
 
     <!-- Definition of GAMIFICATION_BADGE table -->
     <changeSet author="exo-gamification" id="1.0.0-1">
-        <createTable tableName="GAMIFICATION_BADGE">
+        <createTable tableName="GAMIFICATION_BADGES">
             <column name="BADGE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGES" />
             </column>
@@ -124,7 +124,7 @@
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
-        <loadData tableName="GAMIFICATION_BADGE" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
+        <loadData tableName="GAMIFICATION_BADGES" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
             <column name="ID" type="STRING"/>
             <column name="TITLE" type="STRING"/>
             <column name="DESCRIPTION" type="STRING"/>
