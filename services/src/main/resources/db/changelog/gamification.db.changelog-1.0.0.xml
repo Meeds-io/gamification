@@ -7,13 +7,15 @@
     <!-- Managing auto generation of timestamp by Database -->
     <property name="now" value="now()" dbms="h2"/>
     <property name="now" value="now()" dbms="mysql"/>
-    <property name="autoIncrement" value="true"/>
+    <!-- Managing both DB that use sequences and db that use auto increment -->
+    <property name="autoIncrement" value="true" dbms="mysql,mssql,h2,sybase,db2,hsqldb"/>
+    <property name="autoIncrement" value="false" dbms="oracle,postgresql"/>
 
     <!-- Definition of GAMIFICATION_BADGE table -->
     <changeSet author="exo-gamification" id="1.0.0-1">
         <createTable tableName="GAMIFICATION_BADGE">
-            <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="BADGE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGES" />
             </column>
             <column name="TITLE" type="NVARCHAR(32)">
                 <constraints nullable="false" unique="true"/>
@@ -48,6 +50,14 @@
             <column name="LAST_MODIFIED_BY" type="varchar(200)"/>
             <column name="LAST_MODIFIED_DATE" type="timestamp"/>
         </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="task" id="1.0.0-2" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_GAMIFICATION_BADGE_ID" startValue="1"/>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-2">
         <createTable tableName="GAMIFICATION_RULE">
             <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -80,7 +90,7 @@
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
         </modifySql>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-2" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
         <createTable tableName="GAMIFICATION_CONTEXT">
             <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
@@ -91,7 +101,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-4" runOnChange="true">
         <createTable tableName="GAMIFICATION_CONTEXT_ITEM">
             <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
@@ -109,11 +119,11 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-4" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-5" runOnChange="true">
         <addForeignKeyConstraint baseColumnNames="GAMIFICATION_USER_ID" baseTableName="GAMIFICATION_CONTEXT_ITEM" constraintName="FK_GAMIFICATION_CONTEXT_ITEM_CONTEXT_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="GAMIFICATION_CONTEXT"/>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-5" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
         <loadData tableName="GAMIFICATION_BADGE" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
             <column name="ID" type="STRING"/>
             <column name="TITLE" type="STRING"/>
