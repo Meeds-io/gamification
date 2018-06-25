@@ -199,8 +199,8 @@
             confirm() {
                this.$modals.confirm({
                message: 'Confirm?',
-               onApprove: () => { alert('Approve'); },
-               onCancel: () => { alert('Cancel'); },
+               onApprove: () => { },
+               onCancel: () => { },
                });
             },
 
