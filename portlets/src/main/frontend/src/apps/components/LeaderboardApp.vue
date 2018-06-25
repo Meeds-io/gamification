@@ -93,7 +93,7 @@ body {
     font-family: myriad pro;
     border: none;
     border-bottom: 1px solid #f4f5f5;
-    border-radius: inherit;
+    border-radius:inherit !important;
 }
 .d2b-legend:not(.d2b-vertical) .d2b-legend-icon {
     margin-top: -0.5px !important;
