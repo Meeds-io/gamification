@@ -1,12 +1,11 @@
-<!-- src/components/ManageRules.vue -->
+
 <template>
     <section>
-        <!-- Manage Success Alerts -->
+       
         <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successully</b-alert>
-        <!-- End -->
-        <!-- Manage Success Alerts -->
+      
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
-        <!-- End -->
+       
         <save-rule-form :rule="ruleInForm" v-on:submit="onRuleAction" v-on:cancel="resetRuleInForm"></save-rule-form>
         <rule-list :rules="rules" v-on:edit="onEditClicked" v-on:remove="onRemoveClicked"></rule-list>
     </section>
@@ -53,22 +52,18 @@
                 this.ruleInForm = initialData().ruleInForm
             },
             onEditClicked(rule) {
-                // since objects are passed by reference we need to clone the rule
-                // either by using Object.assign({}, rule) or by using object
-                // spread like I do here.
+                
                 this.ruleInForm = { ...rule }
             },
             onRuleAction(rule) {
                 const index = this.rules.findIndex((p) => p.id === rule.id)
-                // update rule if it exists or create it if it doesn't
+                
                 if (index !== -1) {
-                    // Update the selected rule
-                    // See http://vuejs.org/guide/list.html#Caveats
+                   
                     this.updateRule(rule)
                     this.rules.splice(index, 1, rule)
                 } else {
-                    // Create a new rule
-                    //rule.id = Math.random();
+                   
                     this.createRule(rule)
                     this.rules.push(rule)
                 }
@@ -78,7 +73,7 @@
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId)
 
-                // Add dynamic invocation to server side
+              
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
                     .then(response => {
 
@@ -95,7 +90,7 @@
             createRule(ruleDTO) {
                 axios.post(`/rest/gamification/rules/add`, ruleDTO)
                     .then(response => {
-                        //this.rules = response.data;
+                       
                         this.addSuccess=true
                          this.updateMessage='added'
                     })
@@ -122,7 +117,7 @@
             }
 
         },
-        // Fetches rules when the component is created.
+       
         created() {
             axios.get(`/rest/gamification/rules/all`)
                 .then(response => {

@@ -1,4 +1,4 @@
-<!-- src/components/SaveProductForm.vue  -->
+
 <template>
 
     <div>
@@ -20,11 +20,6 @@
                             <b-form-textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
                             </b-form-textarea>
                         </b-form-group>
-
-                        <!-- Rule Score Component -->
-
-
-
                         <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput">
                             <b-form-input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
                             </b-form-input>
@@ -33,40 +28,34 @@
                             </b-alert>
                         </b-form-group>
                     </b-col>
-                    <!-- END -->
+                  
                     <b-col class="card">
-
-
-                        <!-- Start validity date -->
+      
                         <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput">
                             <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
                             <b-alert v-if="formErrors.startValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule start validity date is required please enter a date {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
-                        <!-- END -->
-
-                        <!-- End validity date -->
+                      
                         <b-form-group id="endValidityInputGroup" label="End validity:" label-for="endValidityInput">
                             <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
                             <b-alert v-if="formErrors.endValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule end validity date is required please enter a date {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
-                        <!-- END -->
-                        <!-- Rule Enable Component -->
+                       
                         <b-form-group id="enableCheckboxGroup">
                             <b-form-checkbox v-model="rule.enabled">Enable rule</b-form-checkbox>
                         </b-form-group>
-                        <!-- END -->
-                        <!-- Rule Area Component-->
+                       
                         <b-form-group id="areaSelectboxGroup">
                             <b-form-select v-model="rule.area" class="mb-3">
                                 <template slot="first">
-                                    <!-- this slot appears above the options from 'options' prop -->
+                                    
                                     <option :value="null" disabled>-- Please select an area --</option>
                                 </template>
-                                <!-- these options will appear after the ones from 'options' prop -->
+                                
                                 <option value="Social">Social</option>
                                 <option value="Knowledge">Knowledge</option>
                                 <option value="Content">Content</option>
@@ -74,7 +63,6 @@
                             </b-form-select>
                         </b-form-group>
 
-                        <!-- END -->
                         <b-row>
                             <b-col>
                                 <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary" :size="lg">
@@ -85,10 +73,10 @@
                                 <b-button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
                             </b-col>
                         </b-row>
-                        <!-- END -->
+                      
                     </b-col>
                 </b-form-row>
-                <!-- Form's actions -->
+             
             </b-col>
 
         </b-container>

@@ -1,6 +1,5 @@
 <template>
-  <!-- when using a component in a template Vue.js expects the DOM element to be
-    lowercased and dasherized. e.g. RulesList -> rules-list -->
+
 
     <manage-rules></manage-rules>
 </template>
@@ -16,23 +15,22 @@
 
 <style>
 
-  a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
-    color:#fff ;
-  }
-  .alert{
-            max-width: 98%;
-            margin: 0 auto;
-            top: 7px;
-}
-.alert-dismissible .close{
-        padding:0.5rem 1.25rem !important;
+    a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
+      color:#fff ;
+    }
+    .alert{
+      max-width: 98%;
+      margin: 0 auto;
+      top: 7px;
+    }
+    .alert-dismissible .close{
+      padding:0.5rem 1.25rem !important;
     }
     .alert .close{
-     line-height: 16px;   
+      line-height: 16px;   
     }
-        .btn-primary:hover {
-    background-color: #476a9c;
- 
-}
+    .btn-primary:hover {
+      background-color: #476a9c;
+    }
 
 </style>
