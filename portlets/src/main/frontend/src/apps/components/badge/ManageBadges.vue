@@ -1,12 +1,11 @@
-<!-- src/components/ManageBadges.vue -->
+
 <template>
     <section>
-        <!-- Manage Success Alerts -->
+        
         <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successully</b-alert>
-        <!-- End -->
-        <!-- Manage Success Alerts -->
+        
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
-        <!-- End -->
+        
         <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeAction" v-on:cancel="resetBadgeInForm"></save-badge-form>
         <badge-list :badges="badges" v-on:edit="onEditClicked" v-on:remove="onRemoveClicked"></badge-list>
     </section>
@@ -59,20 +58,17 @@
                 this.badgeInForm = initialData().badgeInForm
             },
             onEditClicked(badge) {
-                // since objects are passed by reference we need to clone the product
-                // either by using Object.assign({}, product) or by using object
-                // spread like we do here.
+                
                 this.badgeInForm = { ...badge }
             },
             onBadgeAction(badge) {
                 const index = this.badges.findIndex((p) => p.id === badge.id)
                 if (index !== -1) {
-                    // Update the selected badge
-                    // See http://vuejs.org/guide/list.html#Caveats
+                   
                     this.updateBadge(badge)
                     this.badges.splice(index, 1, badge)
                 } else {
-                    // Create a new badge
+                    
                     this.createBadge(badge)
                     this.badges.push(badge)
                 }
@@ -83,10 +79,10 @@
                 const index = this.badges.findIndex((p) => p.id === badgeId)
 
 
-                // Add dynamic invocation to server side
+                
                 axios.delete(`/rest/gamification/badges/delete`, { params: { 'badgeTitle': badgeTitle } })
                     .then(response => {
-                        // JSON responses are automatically parsed.
+                        
                         this.badges.splice(index, 1)
                     })
                     .catch(e => {
@@ -100,11 +96,7 @@
             createBadge(badgeDTO) {
 
                 const formData = new FormData();
-                /**
-                Object.keys(badgeDTO).forEach(field => {
-                    formData.append(field, badgeDTO[field]);
-                });
-                */    
+                  
                 formData.append('file', badgeDTO.icon)
 
                const MAX_RANDOM_NUMBER = 100000;
@@ -120,7 +112,7 @@
                         badgeDTO.uploadId=uploadId
                         axios.post(`/rest/gamification/badges/add`, badgeDTO)
                         .then(response => {
-                            //this.rules = response.data;
+                           
                             this.addSuccess = true
                             this.updateMessage = 'added'
                         })
@@ -140,10 +132,10 @@
                     })
 
                 
-            },
+                    },
             updateBadge(badgeDTO) {
                 axios.put(`/rest/gamification/badges/update`, badgeDTO)
-                    .then(response => {
+                      .then(response => {
                         this.addSuccess = true;
                         this.updateMessage = 'updated'
 
@@ -152,19 +144,19 @@
                         this.addError = true
                         this.errors.push(e)
                     })
-            }
-        },
-        // Fetches badges when the component is created.
+                }
+            },
+       
         created() {
-            axios.get(`/rest/gamification/badges/all`)
+              axios.get(`/rest/gamification/badges/all`)
                 .then(response => {
                     this.badges = response.data;
                 })
                 .catch(e => {
                     this.errors.push(e)
                 })
-        }
-    }
+            }
+       }
 </script>
 
 <style scoped>

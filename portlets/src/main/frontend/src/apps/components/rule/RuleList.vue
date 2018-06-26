@@ -1,4 +1,4 @@
-<!-- src/components/ProductList.vue -->
+
 <template>
     <b-container fluid>
         <b-row>
@@ -17,9 +17,7 @@
                 <table striped hover class="uiGrid table table-hover table-striped rule-table">
                     <thead>
                         <tr>
-                            <!--
-                <th class="rule-image-col"></th>
-                -->
+               
                             <th class="rule-name-col">Title</th>
                             <th class="rule-desc-col">Description</th>
                             <th class="rule-price-col">score</th>
@@ -30,12 +28,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="rule in rules" track-by="id" v-on:click.prevent="onEdit(rule)">
-                            <!--
-                <td>
-                    <img v-if="rule.imageUrl" v-bind:src="rule.imageUrl" alt="Rule image" class="rule-image">
-                    <img v-else src="../assets/rule_placeholder.svg" alt="Rule image" class="rule-image">
-                </td>
-            -->
+         
                             <td>{{rule.title}}</td>
                             <td class="rule-desc-col">{{rule.description}}</td>
                             <td>{{rule.score}}</td>
@@ -89,15 +82,15 @@
 <style scoped>
     .table{
         position: relative;
-    border-radius: 3px;
-    background: #fff;
-    border-top: 3px solid #d2d6de;
-    margin-bottom: 20px;
-    width: 96%;
-    box-shadow: 0 1px 1px rgba(0,0,0,.1);
-    border-top-color: #3c8dbc;
-    margin: 30px auto 0;
-    margin-bottom: 30px;
+        border-radius: 3px;
+        background: #fff;
+        border-top: 3px solid #d2d6de;
+        margin-bottom: 20px;
+        width: 96%;
+        box-shadow: 0 1px 1px rgba(0,0,0,.1);
+        border-top-color: #3c8dbc;
+        margin: 30px auto 0;
+        margin-bottom: 30px;
 
     }
 

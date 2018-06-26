@@ -21,49 +21,49 @@
 
 <style>
 
-@font-face {
-    font-family: 'open_sanssemibold';
-    src: url('/gamification-portlets/skin/fonts/opensans-semibold-webfont.woff2') format('woff2'),
-         url('/gamification-portlets/skin/fonts/opensans-semibold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+    @font-face {
+        font-family: 'open_sanssemibold';
+        src: url('/gamification-portlets/skin/fonts/opensans-semibold-webfont.woff2') format('woff2'),
+            url('/gamification-portlets/skin/fonts/opensans-semibold-webfont.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
 
-}
-@font-face {
-    font-family: 'open_sansbold';
-    src: url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff2') format('woff2'),
-         url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+    }
+    @font-face {
+        font-family: 'open_sansbold';
+        src: url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff2') format('woff2'),
+            url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
 
-}
-@font-face {
-    font-family: 'open_sansregular';
-    src: url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff2') format('woff2'),
-         url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+    }
+    @font-face {
+        font-family: 'open_sansregular';
+        src: url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff2') format('woff2'),
+            url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
 
-}
+    }
 
     a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
         color:#fff ;
     }
 
     h4{
-    color: #4d5466 !important;
-    font-family: 'open_sanssemibold';
-    font-size: 17px;
+        color: #4d5466 !important;
+        font-family: 'open_sanssemibold';
+        font-size: 17px;
     }
     h5 {
-    color: #212529 !important;
-    font-family: 'open_sanssemibold' !important;
-    font-size: 20px;
-    padding:15px 10px 0 10px;
-    text-align: center;
+        color: #212529 !important;
+        font-family: 'open_sanssemibold' !important;
+        font-size: 20px;
+        padding:15px 10px 0 10px;
+        text-align: center;
     }
    .uiBox{
-    padding:5px;
+        padding:5px;
     }
     .left-border-row{
         border-left:0px !important;
@@ -73,12 +73,12 @@
         opacity: 1 !important;
     }
     .popover .arrow {
-           width: auto !important;
-           height: auto !important;
-           margin: 0 !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 !important;
     }
     .fade{
-    opacity:1 !important;
+        opacity:1 !important;
     }
     .bs-popover-auto[x-placement^=top] .arrow, .bs-popover-top .arrow {
         bottom: calc((.5rem + 1px) * -2.1) !important;
@@ -91,32 +91,32 @@
    }
    .bs-popover-auto[x-placement^=left] .arrow, .bs-popover-right .arrow {
 
-     right: calc((.5rem + 1px) * -2.2) !important;
+        right: calc((.5rem + 1px) * -2.2) !important;
     }
     .no-padding{
-    padding:5px;
+        padding:5px;
     }
     .reputation-badge-container{
-    padding-right: 10px !important;
-    padding-left: 10px !important;
+        padding-right: 10px !important;
+        padding-left: 10px !important;
     } 
     .popover{
-    max-width: 222px !important;
-    width:200px !important;
-    border :none !important;
+        max-width: 222px !important;
+        width:200px !important;
+        border :none !important;
     }
     .popover-body{
-    text-align: center!important;
-    padding:10px 0px 0px 0!important;
-    line-height: 20px;
-    font-family: helvetica;
+        text-align: center!important;
+        padding:10px 0px 0px 0!important;
+        line-height: 20px;
+        font-family: helvetica;
     }
     .bs-popover-auto[x-placement^=top] .arrow:before, .bs-popover-top .arrow:before{
         border-top-color:inherit !important;
     }
     .bs-popover-auto[x-placement^=top] .arrow:after, .bs-popover-top .arrow:after {
-    bottom: 1px;
-    border-top-color: #f0f8fe;
+        bottom: 1px;
+        border-top-color: #f0f8fe;
     }
     .img-thumbnail{
         border: 0px !important;

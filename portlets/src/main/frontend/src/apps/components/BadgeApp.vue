@@ -18,19 +18,18 @@
         color:#fff ;
     }
 
-.alert{
-           max-width: 98%;
-           margin: 0 auto;
-           top: 7px;
-}
-.alert-dismissible .close{
+    .alert{
+        max-width: 98%;
+        margin: 0 auto;
+        top: 7px;
+    }
+    .alert-dismissible .close{
         padding:0.5rem 1.25rem !important;
     }
     .alert .close{
-     line-height: 16px;   
+        line-height: 16px;   
     }
     .btn-primary:hover {
-    background-color: #476a9c;
- 
-}
+        background-color: #476a9c;
+    }
 </style>

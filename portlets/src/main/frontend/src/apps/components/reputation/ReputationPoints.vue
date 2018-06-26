@@ -32,12 +32,12 @@
         methods: {            
             
 
-        },
+    },
         
-        created() {
+    created() {
             axios.get(`/rest/gamification/reputation/point/status`)
                 .then(response => {
-                    //console.log(JSON.stringify(response.data))
+                   
                     this.reputation = response.data;
                 })
                 .catch(e => {

@@ -6,14 +6,13 @@
             </b-col>
         </b-row>
         <b-row>
-
             <b-col>
                 <b-form-select v-model="domain, selected" class="">
                     <template slot="first">
-                        <!-- this slot appears above the options from 'options' prop -->
+                     
                         <option :value="null" >Overall Rank</option>
                     </template>
-                    <!-- these options will appear after the ones from 'options' prop -->
+                    
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
                     <option value="content">Content</option>
@@ -44,14 +43,10 @@
                         <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown(user.username)">
                             <template>
                                 <div class='chart' id="chart">
-                                    <!-- import font awesome for legend icons -->
+                                   
                                     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
                                         crossorigin="anonymous">
 
-                                    <!--
-                                    Both the :data and :config properties are deeply reactive so any changes
-                                    to these will cause the chart to update.
-                                -->
                                     <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
                                 </div>
                             </template>
@@ -240,7 +235,9 @@
     }
 
     .vue-avatar--wrapper {
-        margin: 3px;
+        margin: 3px 6px 3px 6px;
+        width: 40px !important;
+        
     }
 
     .btn-secondary:not(:disabled):not(.disabled).active:focus,

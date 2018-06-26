@@ -2,14 +2,11 @@
 
     <b-container fluid class="p-4" id="reputation-badge-container">
 
-
          <b-row>
                <b-col md="4" class="text-center no-padding"
                          v-for="badge in badges" :key="badge">
                          <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1"  width="50" height="50" />
-                     <!-- <b-btn :id="'reputation'+badge.id" variant="primary">
-                        {{ badge.id }}
-                      </b-btn> -->
+                     
                       <b-popover :target="'reputation'+badge.id"
                                  :placement="'top'"
                                  triggers="hover focus"
@@ -28,20 +25,6 @@
                       </b-col>
                       
             </b-row>
-
-        <!--       
-        <h5 class="my-3">Placement</h5>
-        <b-row>
-            <b-col md="4" class="py-4 text-center" v-for="placement in placements" :key="placement">
-                <b-btn :id="'exPopover1-'+placement" variant="primary">
-                    {{ placement }}
-                </b-btn>
-                <b-popover :target="'exPopover1-'+placement" :placement="placement" title="Popover!" triggers="hover focus" :content="`Placement ${placement}`">
-                </b-popover>
-            </b-col>
-        </b-row>
-    -->
-
 
     </b-container>
 </template>
@@ -62,7 +45,6 @@
         return {
             badges: [],
            
-
         }
     }
 
