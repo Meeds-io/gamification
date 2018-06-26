@@ -5,8 +5,9 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <!-- Managing auto generation of timestamp by Database -->
-    <property name="now" value="now()" dbms="h2"/>
-    <property name="now" value="now()" dbms="mysql"/>
+    <property name="now" value="now()" dbms="mysql,hsqldb,postgresql,h2"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="CURRENT_TIMESTAMP" dbms="mssql"/>
     <!-- Managing both DB that use sequences and db that use auto increment -->
     <property name="autoIncrement" value="true" dbms="mysql,mssql,h2,sybase,db2,hsqldb"/>
     <property name="autoIncrement" value="false" dbms="oracle,postgresql"/>
@@ -15,9 +16,9 @@
     <changeSet author="exo-gamification" id="1.0.0-1">
         <createTable tableName="GAMIFICATION_BADGES">
             <column name="BADGE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGES" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGES"/>
             </column>
-            <column name="TITLE" type="NVARCHAR(32)">
+            <column name="TITLE" type="NVARCHAR(50)">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="DESCRIPTION" type="NVARCHAR(255)">
@@ -97,9 +98,12 @@
             </column>
             <column name="SCORE" type="BIGINT"/>
             <column name="USERNAME" type="VARCHAR(200)">
-                <constraints nullable="false" unique="true" />
+                <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-4" runOnChange="true">
         <createTable tableName="GAMIFICATION_CONTEXT_ITEM">
@@ -114,13 +118,16 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <createIndex tableName="GAMIFICATION_CONTEXT_ITEM" indexName="IDX_GAMIFICATION_CONTEXT_ITEM_01">
-            <column name="GAMIFICATION_USER_ID"/>
-        </createIndex>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-5" runOnChange="true">
-        <addForeignKeyConstraint baseColumnNames="GAMIFICATION_USER_ID" baseTableName="GAMIFICATION_CONTEXT_ITEM" constraintName="FK_GAMIFICATION_CONTEXT_ITEM_CONTEXT_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
+        <addForeignKeyConstraint baseColumnNames="GAMIFICATION_USER_ID" baseTableName="GAMIFICATION_CONTEXT_ITEM"
+                                 constraintName="FK_GAMIFICATION_CONTEXT_ITEM_CONTEXT_01" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
@@ -140,20 +147,10 @@
         </loadData>
     </changeSet>
 
-    <!--
-    <changeSet author="exo-gamification" id="1.0.0-3" runOnChange="true">
-        <loadData tableName="GAMIFICATION_RULE" file="db/changelog/rules-init-data.csv" encoding="UTF-8">
-            <column name="ID" type="STRING"/>
-            <column name="TITLE" type="STRING"/>
-            <column name="DESCRIPTION" type="STRING"/>
-            <column name="SCORE" type="NUMERIC"/>
-            <column name="AREA" type="STRING"/>
-            <column name="RULE_IS_ENABLE" type="BOOLEAN"/>
-            <column name="CREATED_BY" type="STRING"/>
-            <column name="CREATED_DATE" type="DATE"/>
-            <column name="LAST_MODIFIED_BY" type="STRING"/>
-            <column name="LAST_MODIFIED_DATE" type="DATE"/>
-        </loadData>
+    <changeSet author="exo-gamification" id="1.0.0-7" runOnChange="true">
+
+        <createIndex tableName="GAMIFICATION_CONTEXT_ITEM" indexName="IDX_GAME_CONTEXT_ITEM_01">
+            <column name="GAMIFICATION_USER_ID"/>
+        </createIndex>
     </changeSet>
-    -->
 </databaseChangeLog>
