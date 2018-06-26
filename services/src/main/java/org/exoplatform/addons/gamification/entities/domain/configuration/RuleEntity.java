@@ -51,7 +51,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "AREA", unique = false, nullable = false)
     protected String area;
 
-    @Column(name = "RULE_IS_ENABLE", nullable = false)
+    @Column(name = "ENABLED", nullable = false)
     protected boolean isEnabled;
 
     public RuleEntity() {

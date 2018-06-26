@@ -12,7 +12,7 @@
                             <th class="badge-title-col">Title</th>
                             <th class="badge-desc-col">Description</th>
                             <th class="badge-nedded-score-col">Needed Score</th>
-                            <th class="badge-zone-col">Zone</th>
+                            <th class="badge-domain-col">Domain</th>
                             <th class="badge-start-validity-date-col">Start validity date</th>
                             <th class="badge-end-validity-date-col">End validity Date</th>
                             <th class="badge-icon-col">Icon</th>
@@ -26,7 +26,7 @@
                             <td class="badge-title-col">{{badge.title}}</td>
                             <td class="badge-desc-col">{{badge.description}}</td>
                             <td class="badge-needed-score-col">{{badge.neededScore}}</td>
-                            <td class="badge-zone-col">{{badge.zone}}</td>
+                            <td class="badge-domain-col">{{badge.domain}}</td>
                             <td class="badge-start-validity-date-col">{{ moment(badge.startValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-end-validity-date-col">{{ moment(badge.endValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-icon-col">{{badge.icon}}</td>

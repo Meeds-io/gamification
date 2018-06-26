@@ -252,7 +252,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", i);
                     reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getZone());
+                    reputation.put("zone", badgeDTO.getDomain());
                     reputation.put("level", ++k);
                     reputation.put("startScore", startScore);
                     reputation.put("endScore", badgeDTO.getNeededScore());
@@ -276,7 +276,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         List<BadgeDTO> allBadges = badgeService.getAllBadges();
 
         return allBadges.stream().
-                filter(b -> b.getZone().equalsIgnoreCase(zone)).
+                filter(b -> b.getDomain().equalsIgnoreCase(zone)).
                 filter(b -> b.getNeededScore() < score).
                 collect(Collectors.toList());
 

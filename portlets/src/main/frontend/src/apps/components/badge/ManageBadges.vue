@@ -32,7 +32,7 @@
                 icon: null,
                 startValidityDate: null,
                 endValidityDate: null,
-                zone: '',
+                domain: '',
                 isEnabled: false,
                 createdBy: '',
                 createdDate: null,

@@ -75,11 +75,11 @@
                         <!-- END -->
 
                         <!-- Rule Area Component-->
-                        <b-form-group id="zoneSelectboxGroup">
-                            <b-form-select v-model="badge.zone" class="mb-3" required>
+                        <b-form-group id="domainSelectboxGroup">
+                            <b-form-select v-model="badge.domain" class="mb-3" required>
                                 <template slot="first">
                                     <!-- this slot appears above the options from 'options' prop -->
-                                    <option :value="null" disabled>-- Please select a zone --</option>
+                                    <option :value="null" disabled>-- Please select a domain --</option>
                                 </template>
                                 <!-- these options will appear after the ones from 'options' prop -->
                                 <option value="Social">Social</option>
@@ -88,7 +88,7 @@
                             </b-form-select>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
-                                Zone is required please choice a zone {{dismissCountDown}} ...
+                                Domain is required please choice a domain {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
 
@@ -170,8 +170,8 @@
                     errors.neededScore = 'Needed score is required'
                     this.dismissCountDown = 5
                 }
-                if (!this.badge.zone) {
-                    errors.zone = 'Zone required'
+                if (!this.badge.domain) {
+                    errors.domain = 'Domain required'
                     this.dismissCountDown = 5
                 }
                 this.formErrors = errors

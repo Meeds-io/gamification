@@ -36,7 +36,7 @@ public class BadgeMapper {
                 badge.setTitle(badgeDTO.getTitle());
                 badge.setDescription(badgeDTO.getDescription());
                 badge.setNeededScore(badgeDTO.getNeededScore());
-                badge.setZone(badgeDTO.getZone());
+                badge.setDomain(badgeDTO.getDomain());
                 //TODO save an inputStream
                 //badge.setIcon(badgeDTO.getIcon());
                 badge.setIconFileId(badgeDTO.getIconFileId());

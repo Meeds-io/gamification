@@ -35,13 +35,13 @@
             <column name="VALIDITY_DATE_END" type="TIMESTAMP">
                 <constraints nullable="true"/>
             </column>
-            <column name="BADGE_IS_ENABLE" type="BIT" defaultValue="0">
+            <column name="ENABLED" type="BIT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_BY" type="varchar(200)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ZONE" type="varchar(70)">
+            <column name="DOMAIN" type="varchar(70)">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
@@ -74,7 +74,7 @@
             <column name="AREA" type="NVARCHAR(32)">
                 <constraints nullable="true"/>
             </column>
-            <column name="RULE_IS_ENABLE" type="BIT" defaultValue="0">
+            <column name="ENABLED" type="BIT" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_BY" type="varchar(200)">
@@ -130,7 +130,7 @@
             <column name="DESCRIPTION" type="STRING"/>
             <column name="NEEDED_SCORE" type="NUMERIC"/>
             <column name="ICON" type="STRING"/>
-            <column name="BADGE_IS_ENABLE" type="BOOLEAN"/>
+            <column name="ENABLED" type="BOOLEAN"/>
             <column name="VALIDITY_DATE_START" type="DATE"/>
             <column name="VALIDITY_DATE_END" type="DATE"/>
             <column name="CREATED_BY" type="STRING"/>

@@ -73,11 +73,11 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     //@Temporal(TemporalType.DATE)
     protected Date endValidityDate;
 
-    @Column(name = "BADGE_IS_ENABLE", nullable = false)
+    @Column(name = "ENABLED", nullable = false)
     protected boolean enabled;
 
-    @Column(name = "ZONE", nullable = false)
-    protected String zone;
+    @Column(name = "DOMAIN", nullable = false)
+    protected String domain;
 
     public BadgeEntity() {
     }
@@ -138,12 +138,12 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         this.enabled = enabled;
     }
 
-    public String getZone() {
-        return zone;
+    public String getDomain() {
+        return domain;
     }
 
-    public void setZone(String zone) {
-        this.zone = zone;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public long getIconFileId() {
@@ -177,7 +177,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         return "Badge{" +
                 "title='" + title + '\'' +
                 ", needed score='" + neededScore + '\'' +
-                ", zone='" + zone + '\'' +
+                ", zone='" + domain + '\'' +
                 ", iconFileId='" + iconFileId + '\'' +
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +
