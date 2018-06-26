@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.file.model.FileItem;
@@ -60,15 +61,18 @@ public class UserReputationEndpoint implements ResourceContainer {
     @GET
     @RolesAllowed("users")
     @Path("point/status")
-    public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+    public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
         ConversationState conversationState = ConversationState.getCurrent();
+
+        // Compute social profile owner
+        String profileOwner = substringAfterLast(url,"/");
 
         if (conversationState != null) {
             try {
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false).getId();
 
                 JSONObject reputation = new JSONObject();
                 reputation.put("points", gamificationService.getUserGlobalScore(actorId));
@@ -78,7 +82,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all rules ", e);
+                LOG.error("Error to calculate repuation score for user {} ",profileOwner, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -97,13 +101,15 @@ public class UserReputationEndpoint implements ResourceContainer {
     @GET
     @RolesAllowed("users")
     @Path("badge/all")
-    public Response getUserBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+    public Response getUserBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
 
         //String s = Util.getViewerId(uriInfo);
 
         //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
+
+        String streamOwner = substringAfterLast(url,"/");
 
         if (conversationState != null) {
             try {
@@ -113,7 +119,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, streamOwner, false).getId();
 
                 Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationService.getUserGamification(actorId);
 
@@ -123,7 +129,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error loading badges belong to user : {} ",conversationState.getIdentity().getUserId(), e);
+                LOG.error("Error loading badges belong to user : {} ",streamOwner, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -280,5 +286,18 @@ public class UserReputationEndpoint implements ResourceContainer {
                 filter(b -> b.getNeededScore() < score).
                 collect(Collectors.toList());
 
+    }
+    public static String substringAfterLast(String str, String separator) {
+        if (StringUtils.isEmpty(str)) {
+            return str;
+        }
+        if (StringUtils.isEmpty(separator)) {
+            return "";
+        }
+        int pos = str.lastIndexOf(separator);
+        if (pos == -1 || pos == (str.length() - separator.length())) {
+            return "";
+        }
+        return str.substring(pos + separator.length());
     }
 }

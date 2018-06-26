@@ -65,7 +65,9 @@
         },
 
         created() {
-            axios.get(`/rest/gamification/reputation/badge/all`)
+            var url = window.location.pathname
+            console.log(url)
+            axios.get(`/rest/gamification/reputation/badge/all`, { params: { 'url': url} })
                 .then(response => {
 
                     this.badges = response.data;
