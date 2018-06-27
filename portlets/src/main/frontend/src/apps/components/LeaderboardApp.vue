@@ -107,6 +107,9 @@
     .d2b-legend:not(.d2b-vertical) .d2b-legend-item:not(:last-child){
         margin-right:0 !important;
     }
-
+    .avatarCircle{
+        width: 50px !important;
+        height: 50px !important;
+    }
 
 </style>
