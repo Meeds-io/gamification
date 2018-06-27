@@ -256,4 +256,8 @@
     .custom-select{
         font-size:14px;
     }
+    .avatarCircle{
+        width: 50px !important;
+        height: 50px !important;
+    }
 </style>
