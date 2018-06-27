@@ -90,7 +90,7 @@
         padding: 5px;
         font-size: 14px;
         color: #4d5466 !important;
-        font-family: myriad pro;
+        font-family: helvetica;
         border: none;
         border-bottom: 1px solid #f4f5f5;
         border-radius:inherit !important;
