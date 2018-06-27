@@ -158,11 +158,10 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
                     // Compute current score
                     gamificationContextItemEntity.setScore(ruleDto.getScore());
 
-                    // Link GamificationItem to its parent
-                    gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
-
-                    // Add GamificationItem as child to GamificationContext
-                    gamificationContextEntity.getGamificationItems().add(gamificationContextItemEntity);
+                    // Compute Global Score
+                    gamificationContextEntity.setScore(gamificationContextEntity.getScore()+ruleDto.getScore());
+                    // Link GamificationItem : parent/child
+                    gamificationContextEntity.addGamificationItem(gamificationContextItemEntity);
 
                 }
 

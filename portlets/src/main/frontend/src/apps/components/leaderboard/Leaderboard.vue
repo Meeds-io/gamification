@@ -7,10 +7,10 @@
         </b-row>
         <b-row>
             <b-col>
-                <b-form-select v-model="domain, selected" class="">
+                <b-form-select v-model="domain" class="">
                     <template slot="first">
                      
-                        <option :value="null" >Overall Rank</option>
+                        <option :value="null" v-model="selected" >Overall Rank</option>
                     </template>
                     
                     <option value="social">Social</option>
@@ -34,7 +34,6 @@
                 <b-list-group>
                     <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
 
-                        {{index+1}}
                         <avatar :username="user.username" :size="35" :src="user.userAvatarUrl"></avatar>
                         <div class="desc-user"> {{user.username}} </div>
                         <div class="number-user">{{user.score}}</div>
