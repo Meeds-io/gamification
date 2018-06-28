@@ -10,7 +10,7 @@
                 <b-form-select v-model="domain" class="">
                     <template slot="first">
                      
-                        <option :value="null" v-model="selected" >Overall Rank</option>
+                        <option :value="null" >Overall Rank</option>
                     </template>
                     
                     <option value="social">Social</option>
@@ -84,7 +84,7 @@
             connection: 'everyone',
             selected: null,
             activeBtn: 'btn1',
-            domain: ''
+            domain: 'null'
         }
     }
 
