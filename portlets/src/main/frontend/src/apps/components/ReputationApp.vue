@@ -46,10 +46,6 @@
 
     }
 
-    a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
-        color:#fff ;
-    }
-
     h4{
         color: #4d5466 !important;
         font-family: 'open_sanssemibold';
@@ -120,6 +116,9 @@
     }
     .img-thumbnail{
         border: 0px !important;
+    }
+    user-reputation-container{
+        margin-top: 15px;
     }
 
 </style>

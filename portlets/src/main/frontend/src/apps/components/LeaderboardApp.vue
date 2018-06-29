@@ -20,8 +20,9 @@
         font-size:16px;
     }
 
-    a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
-        color:#fff ;
+    a, a:hover, a:focus {
+        color: #578dc9 !important;
+        text-decoration: none !important;
     }
    .fade{
         opacity:1 !important;
@@ -37,7 +38,7 @@
     .bs-popover-auto[x-placement^=top] .arrow, .bs-popover-top .arrow {
         bottom: calc((.5rem + 1px) * -2.1) !important;
     }
-    .bs-popover-auto[x-placement^=left] .arrow, .bs-popover-left .arrow {
+    .bs-popover-auto[x-placement^=left] .arrow.container-fluid .bs-popover-left .arrow {
         right: calc((.5rem + 1px) * -2.2) !important;
      }
    .bs-popover-auto[x-placement^=bottom] .arrow, .bs-popover-bottom .arrow {
@@ -84,6 +85,7 @@
     }
     .vue-avatar--wrapper{
         margin: 3px 6px;
+            width: 40px!important;
     }
 
     .list-group-item{
@@ -110,6 +112,22 @@
     .avatarCircle{
         width: 50px !important;
         height: 50px !important;
+    }
+    .container-fluid{
+        width:inherit !important;
+    }
+    *, :after, :before{
+        box-sizing: none !important;
+    }
+    .h4, h4{
+        font-size: 18px;
+    }
+    .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+        margin-bottom: inherit;
+        font-family: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        color: none !important;
     }
 
 </style>

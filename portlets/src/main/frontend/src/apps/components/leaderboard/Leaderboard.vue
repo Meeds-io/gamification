@@ -229,13 +229,13 @@
     }
 
     .desc-user {
-        width: 50%;
+        width: 55%;
         text-align: left;
     }
 
     .vue-avatar--wrapper {
         margin: 3px 6px 3px 6px;
-        width: 40px !important;
+
         
     }
 
