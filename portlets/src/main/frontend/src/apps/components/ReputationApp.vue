@@ -46,6 +46,14 @@
 
     }
 
+   .UIToolbarContainer .uiDropdownWithIcon>a{
+        color: #4d5466 !important;
+    }
+    a, a:hover, a:focus {
+                    color: #578dc9 !important;
+                    text-decoration: none !important;
+    }
+
     h4{
         color: #4d5466 !important;
         font-family: 'open_sanssemibold';

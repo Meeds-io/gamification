@@ -13,9 +13,12 @@
 
 
 <style>
-
-    a:not([href]):not([tabindex]), a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover{
-        color:#fff ;
+   .UIToolbarContainer .uiDropdownWithIcon>a{
+        color: #4d5466 !important;
+    }
+    a, a:hover, a:focus {
+                color: #578dc9 !important;
+                text-decoration: none !important;
     }
 
     .alert{

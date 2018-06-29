@@ -15,6 +15,9 @@
 
 <style>
 
+   .UIToolbarContainer .uiDropdownWithIcon>a{
+        color: #4d5466 !important;
+    }
     .title{
         color:#4d5466;
         font-size:16px;
