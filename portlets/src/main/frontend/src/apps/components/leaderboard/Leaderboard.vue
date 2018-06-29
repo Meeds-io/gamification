@@ -51,6 +51,9 @@
                                             </template>
                                         </b-popover>
                                     </b-list-group-item>
+                                    <div v-if="!users.length" class="empty-leaderboard" >
+                                        Coming soon ...
+                                    </div>
                                 </b-list-group>
             </b-col>
         </b-row>
