@@ -106,6 +106,10 @@
 
 }
 
+#user-reputation-portlet .img-thumbnail{
+border-radius:50%;
+}
+
 #reputation-badge-container{
     padding-right: 10px !important;
     padding-left: 10px !important;
