@@ -17,13 +17,16 @@
    .UIToolbarContainer .uiDropdownWithIcon>a{
          color: #4d5466 !important;
      }
-     a, a:hover, a:focus {
-         color: inherit !important;
-         text-decoration: inherit;
-     }
-     a{
-     color: inherit;
-     }
+      a, a:hover, a:focus {
+           color: inherit;
+           text-decoration: none;
+       }
+       a{
+           color: none;
+           text-decoration: none;
+           background-color: transparent;
+           -webkit-text-decoration-skip: objects;
+       }
     .alert{
       max-width: 98%;
       margin: 0 auto;
@@ -38,5 +41,11 @@
     .btn-primary:hover {
       background-color: #476a9c;
     }
+    .dropdown-toggle:after{
+        display:none;
+     }
+     .dropdown-menu{
+        font-size: inherit;
+     }
 
 </style>

@@ -17,11 +17,14 @@
          color: #4d5466 !important;
      }
      a, a:hover, a:focus {
-         color: inherit !important;
-         text-decoration: inherit;
+          color: inherit;
+          text-decoration: none;
      }
      a{
-          color: inherit;
+         color: none;
+         text-decoration: none;
+         background-color: transparent;
+         -webkit-text-decoration-skip: objects;
      }
     .alert{
         max-width: 98%;
@@ -37,4 +40,10 @@
     .btn-primary:hover {
         background-color: #476a9c;
     }
+    .dropdown-toggle:after{
+        display:none;
+    }
+    .dropdown-menu{
+        font-size: inherit;
+     }
 </style>

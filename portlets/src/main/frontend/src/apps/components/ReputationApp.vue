@@ -50,13 +50,16 @@
         color: #4d5466 !important;
     }
 
-    a, a:hover, a:focus {
-        color: inherit !important;
-        text-decoration: inherit;
-    }
-    a{
-    color: inherit;
-    }
+     a, a:hover, a:focus {
+        color: inherit;
+        text-decoration: none;
+     }
+     a{
+        color: none;
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+     }
     h4{
         color: #4d5466 !important;
         font-family: 'open_sanssemibold';
@@ -128,15 +131,19 @@
     .img-thumbnail{
         border: 0px !important;
     }
-    user-reputation-container{
+    .user-reputation-container{
         margin-top: 15px;
     }
+
     .avatarCircle{
         width: 50px !important;
         height: 50px !important;
      }
      .dropdown-toggle:after{
          display:none;
+     }
+     .dropdown-menu{
+         font-size: inherit;
      }
 
 </style>
