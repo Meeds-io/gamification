@@ -33,7 +33,7 @@
                 <application-ref>gamification-portlets</application-ref>
                 <portlet-ref>GamificationManageRules</portlet-ref>
             </portlet>
-            <title>Manage Rules</title>
+            <title>Gamification Manage Rules</title>
             <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
         </portlet-application>

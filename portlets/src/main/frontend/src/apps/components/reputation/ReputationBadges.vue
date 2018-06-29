@@ -5,7 +5,7 @@
          <b-row>
                <b-col md="4" class="text-center no-padding"
                          v-for="badge in badges" :key="badge">
-                         <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1"  width="50" height="50" />
+                         <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1"  width="70" height="70" />
                      
                       <b-popover :target="'reputation'+badge.id"
                                  :placement="'top'"

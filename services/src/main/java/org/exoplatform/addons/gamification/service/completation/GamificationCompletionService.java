@@ -12,7 +12,7 @@ public class GamificationCompletionService implements Startable {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationCompletionService.class);
 
-    private final String THREAD_NUMBER_KEY = "thread-number";
+    private final String THREAD_NUMBER_KEY = "thread-pool-size";
 
     private final String ASYNC_EXECUTION_KEY = "async-execution";
 

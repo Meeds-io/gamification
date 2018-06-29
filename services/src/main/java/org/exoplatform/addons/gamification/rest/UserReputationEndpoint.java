@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Path("/gamification/reputation")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("users")
 public class UserReputationEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(UserReputationEndpoint.class);
@@ -59,7 +60,6 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("users")
     @Path("point/status")
     public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -99,7 +99,6 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("users")
     @Path("badge/all")
     public Response getUserBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -147,7 +146,6 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     @GET
     @Path("badge/{badge}/avatar")
-    @RolesAllowed("users")
     public Response getSpaceAvatarById(@Context UriInfo uriInfo,
                                        @Context Request request,
                                        @PathParam("badge") String badgeTitle) throws IOException {
@@ -287,7 +285,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 collect(Collectors.toList());
 
     }
-    public static String substringAfterLast(String str, String separator) {
+    private static String substringAfterLast(String str, String separator) {
         if (StringUtils.isEmpty(str)) {
             return str;
         }

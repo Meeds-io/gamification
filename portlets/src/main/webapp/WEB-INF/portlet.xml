@@ -28,6 +28,8 @@
     <portlet>
         <portlet-name>GamificationLeaderboard</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.leaderboard.LeaderboardPortlet</portlet-class>
+        <expiration-cache>-1</expiration-cache>
+        <cache-scope>PUBLIC</cache-scope>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
@@ -39,12 +41,15 @@
     <portlet>
         <portlet-name>GamificationUserReputation</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.profile.reputation.UserReputationPortlet</portlet-class>
+        <expiration-cache>-1</expiration-cache>
+        <cache-scope>PUBLIC</cache-scope>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
         <portlet-info>
             <title>Gamification User Reputation</title>
         </portlet-info>
+
     </portlet>
 
     <!-- Admin portlet : manage rules -->
@@ -57,6 +62,10 @@
         <portlet-info>
             <title>Gamification Manage rules</title>
         </portlet-info>
+        <security-role-ref>
+            <role-name>admin</role-name>
+            <role-link>admin</role-link>
+        </security-role-ref>
     </portlet>
 
     <!-- Admin portlet : manage badges -->
@@ -69,5 +78,9 @@
         <portlet-info>
             <title>Gamification Manage badges</title>
         </portlet-info>
+        <security-role-ref>
+            <role-name>admin</role-name>
+            <role-link>admin</role-link>
+        </security-role-ref>
     </portlet>
 </portlet-app>

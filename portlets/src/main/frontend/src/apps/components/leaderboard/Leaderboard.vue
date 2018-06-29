@@ -32,26 +32,26 @@
         <b-row>
             <b-col>
                 <b-list-group>
-                    <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
+                                    <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
 
-                        <avatar :username="user.username" :size="35" :src="user.userAvatarUrl"></avatar>
-                        <div class="desc-user"> {{user.username}} </div>
-                        <div class="number-user">{{user.score}}</div>
-                        <b-img thumbnail fluid :id="'leaderboard'+index" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
-                            alt="Thumbnail" @click="onOpen" width="40" height="40" />
-                        <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown(user.username)">
-                            <template>
-                                <div class='chart' id="chart">
-                                   
-                                    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-                                        crossorigin="anonymous">
+                                        <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
+                                        <div class="desc-user"> {{user.fullname}} </div>
+                                        <div class="number-user">{{user.score}}</div>
+                                        <b-img thumbnail fluid :id="'leaderboard'+index" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
+                                            alt="Thumbnail" @click="onOpen" width="40" height="40" />
+                                        <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown(user.remoteId)">
+                                            <template>
+                                                <div class='chart' id="chart">
 
-                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
-                                </div>
-                            </template>
-                        </b-popover>
-                    </b-list-group-item>
-                </b-list-group>
+                                                    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+                                                        crossorigin="anonymous">
+
+                                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
+                                                </div>
+                                            </template>
+                                        </b-popover>
+                                    </b-list-group-item>
+                                </b-list-group>
             </b-col>
         </b-row>
     </b-container>

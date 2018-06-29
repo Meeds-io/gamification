@@ -18,6 +18,7 @@ import java.util.Locale;
 
 @Path("/gamification/rules")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("administrators")
 public class ManageRulesEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
@@ -39,7 +40,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("administrators")
     @Path("/all")
     public Response getAllRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
@@ -72,7 +72,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
     }
 
     @POST
-    @RolesAllowed("administrators")
     @Consumes({MediaType.APPLICATION_JSON})
     @Path("/add")
     public Response addRule(@Context SecurityContext securityContext, @Context UriInfo uriInfo, RuleDTO ruleDTO) {
@@ -118,7 +117,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
     }
 
     @PUT
-    @RolesAllowed("administrators")
     @Path("/update")
     public Response updateRule(@Context UriInfo uriInfo, @Context HttpServletRequest request, RuleDTO ruleDTO) {
 
@@ -165,7 +163,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
 
     @DELETE
-    @RolesAllowed("administrators")
     @Path("/delete")
     public Response deleteRule(@Context UriInfo uriInfo, @QueryParam("ruleTitle") String ruleTitle) {
 

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity(name = "GamificationContextItem")
 @ExoEntity
-@Table(name = "GAMIFICATION_CONTEXT_ITEM")
+@Table(name = "GAMIFICATION_CONTEXT_ITEMS")
 public class GamificationContextItemEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

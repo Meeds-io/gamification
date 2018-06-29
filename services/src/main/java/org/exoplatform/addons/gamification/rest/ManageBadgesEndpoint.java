@@ -26,6 +26,7 @@ import java.util.Locale;
 
 @Path("/gamification/badges")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("administrators")
 public class ManageBadgesEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
@@ -60,7 +61,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("users")
     @Path("/all")
     public Response getAllBadges(@Context UriInfo uriInfo) {
 
@@ -93,7 +93,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     }
 
     @POST
-    @RolesAllowed("administrators")
     @Path("/add")
     public Response addBadge(@Context UriInfo uriInfo, BadgeDTO badgeDTO) {
 
@@ -164,7 +163,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     }
 
     @PUT
-    @RolesAllowed("administrators")
     @Path("/update")
     public Response updateBadge(@Context UriInfo uriInfo, @Context HttpServletRequest request, BadgeDTO badgeDTO) {
 
@@ -210,7 +208,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     }
 
     @DELETE
-    @RolesAllowed("administrators")
     @Path("/delete")
     public Response deleteBadge(@Context UriInfo uriInfo, @QueryParam("badgeTitle") String badgeTitle) {
 

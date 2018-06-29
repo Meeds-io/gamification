@@ -27,6 +27,7 @@ import java.util.List;
 
 @Path("/gamification/leaderboard")
 @Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("users")
 public class LeaderboardEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
@@ -56,7 +57,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("users")
     @Path("rank/all")
     public Response getAllLeadersByRank(@Context UriInfo uriInfo) {
 
@@ -93,10 +93,13 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     leaderboardInfo.setScore(game.getScore());
 
                     // Set username
-                    leaderboardInfo.setUsername(identity.getProfile().getFullName());
+                    leaderboardInfo.setRemoteId(identity.getRemoteId());
+
+                    // Set FullName
+                    leaderboardInfo.setFullname(identity.getProfile().getFullName());
 
                     // Set avatar
-                    leaderboardInfo.setUserAvatarUrl(identity.getProfile().getAvatarUrl());
+                    leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
 
                     // Leader
                     leaderboardList.add(leaderboardInfo);
@@ -123,7 +126,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("users")
     @Path("filter")
     public Response filter(@Context UriInfo uriInfo, @QueryParam("category") String category, @QueryParam("network") String network) {
 
@@ -157,6 +159,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
                     Identity identity = null;
 
+                    // Get current User identity
+
+                    Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
+
                     for (int i = 0; i < max; i++) {
 
                         leaderboardInfo = new LeaderboardInfo();
@@ -164,23 +170,21 @@ public class LeaderboardEndpoint implements ResourceContainer {
                         // Load Social identity
                         identity = identityManager.getIdentity(gamificationContextEntities.get(i).getUsername(), true);
 
-                        leaderboardInfo.setUserAvatarUrl(identity.getProfile().getAvatarUrl());
-                        leaderboardInfo.setUsername(identity.getProfile().getFullName());
+                        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+                        leaderboardInfo.setFullname(identity.getProfile().getFullName());
+                        leaderboardInfo.setRemoteId(identity.getRemoteId());
                         leaderboardInfo.setScore(gamificationContextEntities.get(i).getScore());
 
                         if (gamificationSearch.getNetwork().equalsIgnoreCase("my-connection")) {
 
-                            if (isinMyConnections(identity, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false))) {
+                            if ((identity.getId().equalsIgnoreCase(currentIdentity.getId()))|| (isinMyConnections(identity, currentIdentity))){
                                 leaderboardInfos.add(leaderboardInfo);
                             }
 
-
                         } else {
-
                             leaderboardInfos.add(leaderboardInfo);
 
                         }
-
 
                     }
 
@@ -190,7 +194,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error filtering leaderbaord by Doamin : {} and by Network {} ",gamificationSearch.getDomain(),gamificationSearch.getNetwork(), e);
+                LOG.error("Error filtering leaderbaord by Doamin : {} and by Network {} ", gamificationSearch.getDomain(), gamificationSearch.getNetwork(), e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -207,7 +211,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
     }
 
     @GET
-    @RolesAllowed("users")
     @Path("stats")
     public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String username) {
 
@@ -232,7 +235,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error building statistics for user {} ",username, e);
+                LOG.error("Error building statistics for user {} ", username, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -259,24 +262,33 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     public static class LeaderboardInfo {
 
-        String userAvatarUrl;
-        String username;
+        String avatarUrl;
+        String remoteId;
+        String fullname;
         long score;
 
-        public String getUserAvatarUrl() {
-            return userAvatarUrl;
+        public String getAvatarUrl() {
+            return avatarUrl;
         }
 
-        public void setUserAvatarUrl(String userAvatarUrl) {
-            this.userAvatarUrl = userAvatarUrl;
+        public void setAvatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
         }
 
-        public String getUsername() {
-            return username;
+        public String getRemoteId() {
+            return remoteId;
         }
 
-        public void setUsername(String username) {
-            this.username = username;
+        public void setRemoteId(String remoteId) {
+            this.remoteId = remoteId;
+        }
+
+        public String getFullname() {
+            return fullname;
+        }
+
+        public void setFullname(String fullname) {
+            this.fullname = fullname;
         }
 
         public long getScore() {

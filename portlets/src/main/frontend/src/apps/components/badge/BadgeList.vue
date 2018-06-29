@@ -59,11 +59,6 @@
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     export default {
         props: ['badges'],
-        data() {
-            return {
-
-            }
-        },
         methods: {
             onEdit(badge) {
                 this.$emit('edit', badge)
