@@ -120,5 +120,9 @@
     user-reputation-container{
         margin-top: 15px;
     }
+    .avatarCircle{
+            width: 50px !important;
+            height: 50px !important;
+     }
 
 </style>
