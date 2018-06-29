@@ -171,7 +171,10 @@
         border: solid 1px #578dc9;
         color: #fff;
     }
-
+    .empty-leaderboard{
+        text-align: center;
+        color: #578dc9;
+     }
     .d-flex {
         padding: 5px;
         font-size: 14px;
