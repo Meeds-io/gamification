@@ -14,14 +14,16 @@
 </script>
 
 <style>
-    .UIToolbarContainer .uiDropdownWithIcon>a{
-        color: #4d5466 !important;
-    }
-    a, a:hover, a:focus {
-            color: #578dc9 !important;
-            text-decoration: none !important;
-    }
-
+   .UIToolbarContainer .uiDropdownWithIcon>a{
+         color: #4d5466 !important;
+     }
+     a, a:hover, a:focus {
+         color: inherit !important;
+         text-decoration: inherit;
+     }
+     a{
+     color: inherit;
+     }
     .alert{
       max-width: 98%;
       margin: 0 auto;

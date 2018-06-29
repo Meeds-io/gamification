@@ -24,8 +24,11 @@
     }
 
     a, a:hover, a:focus {
-        color: #578dc9 !important;
-        text-decoration: none !important;
+        color: inherit !important;
+        text-decoration: inherit;
+    }
+    a{
+    color: inherit;
     }
    .fade{
         opacity:1 !important;
@@ -88,9 +91,11 @@
     }
     .vue-avatar--wrapper{
         margin: 3px 6px;
-            width: 40px!important;
+        width: 40px!important;
     }
-
+    .list-group-item:first-child{
+        border-bottom: 1px solid #f4f5f5;
+    }
     .list-group-item{
         padding: 5px;
         font-size: 14px;
@@ -108,29 +113,35 @@
         width: 50% !important;
         float: left !important;
     }
+    .bs-popover-auto[x-placement^=left] .arrow, .bs-popover-left .arrow {
+        right: calc((.5rem + 1px) * -2.1) !important;
+        width: .5rem;
+        height: 1rem;
+        margin: .3rem 0;
+    }
 
     .d2b-legend:not(.d2b-vertical) .d2b-legend-item:not(:last-child){
         margin-right:0 !important;
     }
-    .avatarCircle{
-        width: 50px !important;
-        height: 50px !important;
-    }
+
     .container-fluid{
         width:inherit !important;
     }
     *, :after, :before{
-        box-sizing: none !important;
+        box-sizing: inherit ;
     }
     .h4, h4{
         font-size: 18px;
     }
     .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-        margin-bottom: inherit;
+        margin-bottom: initial;
         font-family: inherit;
         font-weight: inherit;
         line-height: inherit;
         color: none !important;
+    }
+    .dropdown-toggle:after{
+        display:none;
     }
 
 </style>
