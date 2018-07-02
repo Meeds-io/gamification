@@ -143,7 +143,8 @@
          display:none;
      }
      .dropdown-menu{
-         font-size: inherit;
+          font-size: 14px;
+          font-family: Helvetica,arial,sans-serif;
      }
 
 </style>

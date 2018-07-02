@@ -107,7 +107,8 @@
 }
 
 #user-reputation-portlet .img-thumbnail{
-border-radius:50%;
+    border-radius: 50%;
+    height: 60px;
 }
 
 #reputation-badge-container{

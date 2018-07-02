@@ -96,9 +96,7 @@
         margin: 3px 6px;
         width: 40px!important;
     }
-    .list-group-item:first-child{
-        border-bottom: 1px solid #f4f5f5;
-    }
+
     .list-group-item{
         padding: 5px;
         font-size: 14px;
