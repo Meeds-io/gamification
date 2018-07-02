@@ -34,7 +34,7 @@
             <init-params>
                 <value-param>
                     <name>priority</name>
-                    <value>6</value>
+                    <value>5</value>
                 </value-param>
                 <value-param>
                     <name>containerName</name>
