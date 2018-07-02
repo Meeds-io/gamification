@@ -90,7 +90,7 @@
         background-color: #fff !important;
     }
     .bs-popover-auto[x-placement^=left], .bs-popover-left{
-        left: -211px!important;  
+        left: -231px !important;
     }
     .vue-avatar--wrapper{
         margin: 3px 6px;
