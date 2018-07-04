@@ -125,7 +125,8 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     public List<GamificationContextEntity> findOverallLeaderboard() throws PersistenceException {
 
-        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findOverallLeaderboard", GamificationContextEntity.class);
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findOverallLeaderboard", GamificationContextEntity.class)
+                                                                        .setMaxResults(queryLimitOffset);
 
         try {
 

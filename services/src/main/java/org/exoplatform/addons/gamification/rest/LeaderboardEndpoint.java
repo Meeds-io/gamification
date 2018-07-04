@@ -136,7 +136,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
             //Init search criteria
             GamificationSearch gamificationSearch = new GamificationSearch();
 
-            if (StringUtils.isNotBlank(category)) gamificationSearch.setDomain(category);
+            if (StringUtils.isNotBlank(category) && !category.equalsIgnoreCase("null")) gamificationSearch.setDomain(category);
 
             if (StringUtils.isNotBlank(network)) gamificationSearch.setNetwork(network);
 
