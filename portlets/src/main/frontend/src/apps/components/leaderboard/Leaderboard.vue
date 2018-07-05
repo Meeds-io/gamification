@@ -2,7 +2,7 @@
     <b-container fluid class="uiBox">
         <b-row>
             <b-col>
-                <h5 class="mt-0 title">Leaderboard</h5>
+                <h5 class="mt-0 title">Top users</h5>
             </b-col>
         </b-row>
         <b-row>
