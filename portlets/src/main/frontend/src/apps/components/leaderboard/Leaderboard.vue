@@ -35,7 +35,7 @@
                                     <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
 
                                         <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
-                                        <div class="desc-user"> {{user.fullname}} </div>
+                                        <div class="desc-user"><a :href="user.profileUrl">{{user.fullname}}</a></div>
                                         <div class="number-user">{{user.score}} Points</div>
                                         <b-img thumbnail fluid :id="'leaderboard'+index" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
                                             alt="Thumbnail" @click="onOpen" width="40" height="40" />

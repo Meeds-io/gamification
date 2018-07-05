@@ -120,6 +120,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     // Set avatar
                     leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
 
+                    // Set profile URL
+                    leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+
                     // Leader
                     leaderboardList.add(leaderboardInfo);
                 }
@@ -200,6 +203,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
                         leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
                         leaderboardInfo.setFullname(identity.getProfile().getFullName());
                         leaderboardInfo.setRemoteId(identity.getRemoteId());
+                        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+
                         leaderboardInfo.setScore(gamificationContextEntities.get(i).getScore());
 
                         if (gamificationSearch.getNetwork().equalsIgnoreCase("my-connection")) {
@@ -325,6 +330,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         String remoteId;
         String fullname;
         long score;
+        String profileUrl;
 
         public String getAvatarUrl() {
             return avatarUrl;
@@ -356,6 +362,14 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
         public void setScore(long score) {
             this.score = score;
+        }
+
+        public String getProfileUrl() {
+            return profileUrl;
+        }
+
+        public void setProfileUrl(String profileUrl) {
+            this.profileUrl = profileUrl;
         }
     }
 
