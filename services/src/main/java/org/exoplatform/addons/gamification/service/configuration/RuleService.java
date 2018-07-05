@@ -32,7 +32,7 @@ public class RuleService {
 
         try {
             //--- Get Entity from DB
-            RuleEntity entity = ruleDAO.findRuleByTitle(ruleTitle);
+            RuleEntity entity = ruleDAO.findEnableRuleByTitle(ruleTitle);
             //--- Convert Entity to DTO
             if (entity != null ) {
                 return ruleMapper.ruleToRuleDTO(entity);

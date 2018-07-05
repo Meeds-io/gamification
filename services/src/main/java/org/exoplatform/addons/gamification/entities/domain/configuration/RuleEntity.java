@@ -19,8 +19,8 @@ import java.util.Objects;
                 query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled "
         ),
         @NamedQuery(
-                name = "Rule.findRuleByTitle",
-                query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle"
+                name = "Rule.findEnabledRuleByTitle",
+                query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle and rule.isEnabled = true"
         ),
         @NamedQuery(
                 name = "Rule.deleteRuleByTitle",

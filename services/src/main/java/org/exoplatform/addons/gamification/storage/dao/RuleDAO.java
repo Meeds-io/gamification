@@ -14,9 +14,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     public RuleDAO() {
     }
 
-    public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
+    public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class)
+        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
                 .setParameter("ruleTitle", ruleTitle);
 
         try {
