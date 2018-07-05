@@ -1,6 +1,6 @@
 <template>
     <section >
-        <h5 class="mt-0">Reputation</h5>
+        <h5 class="mt-0">Achievements</h5>
         <div>
 
                <div class="points">{{reputation.points}} Points</div>
