@@ -15,6 +15,9 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.relationship.model.Relationship;
+import org.exoplatform.services.organization.User;
+import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.services.organization.OrganizationService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -32,6 +35,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
 
+    private final static String BLACK_LISTED_USERS_GROUP = "/leaderboard-blacklist-users";
+
     private final CacheControl cacheControl;
 
     protected IdentityManager identityManager = null;
@@ -39,6 +44,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
     protected GamificationService gamificationService = null;
 
     protected RelationshipManager relationshipManager;
+
+    private List<String> blackListedUsers;
+
+    private OrganizationService organizationService;
 
 
     public LeaderboardEndpoint() {
@@ -54,6 +63,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
         gamificationService = CommonsUtils.getService(GamificationService.class);
 
         relationshipManager = CommonsUtils.getService(RelationshipManager.class);
+
+        organizationService = CommonsUtils.getService(OrganizationService.class);
+
+
     }
 
     @GET
@@ -84,10 +97,16 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 // Build Leaderboard flow only when the returned list is not null
                 for (GamificationContextEntity game : gamificationContextEntities) {
 
-                    leaderboardInfo = new LeaderboardInfo();
+                    // Compute blackList
+                    populateBlackListedUsers();
 
                     // Load Social identity
                     Identity identity = identityManager.getIdentity(game.getUsername(), true);
+
+                    // Do not add blacklisted user to the leaderboard
+                    if (isBlackListedUser(identity.getRemoteId())) continue;
+
+                    leaderboardInfo = new LeaderboardInfo();
 
                     // Set score
                     leaderboardInfo.setScore(game.getScore());
@@ -163,12 +182,20 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
                     Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
 
+                    // Compute blackList
+                    populateBlackListedUsers();
+
                     for (int i = 0; i < max; i++) {
 
-                        leaderboardInfo = new LeaderboardInfo();
+
 
                         // Load Social identity
                         identity = identityManager.getIdentity(gamificationContextEntities.get(i).getUsername(), true);
+
+                        // Do not add blacklisted user to the leaderboard
+                        if (isBlackListedUser(identity.getRemoteId())) continue;
+
+                        leaderboardInfo = new LeaderboardInfo();
 
                         leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
                         leaderboardInfo.setFullname(identity.getProfile().getFullName());
@@ -258,6 +285,38 @@ public class LeaderboardEndpoint implements ResourceContainer {
         if (gamificationRelationship == null) return false;
 
         return gamificationRelationship.getStatus().name().equalsIgnoreCase(Relationship.Type.CONFIRMED.name());
+    }
+
+    /**
+     * Compute the list of user whithin the black list (user we shouldn't display them on leaderboard screen)
+     */
+    private void populateBlackListedUsers() {
+        try {
+            blackListedUsers = new ArrayList<String>();
+            ListAccess<User> usersBlackList = organizationService.getUserHandler().findUsersByGroupId(BLACK_LISTED_USERS_GROUP);
+            if(null!= usersBlackList && usersBlackList.getSize()>0){
+                User[] managerUser = usersBlackList.load(0, usersBlackList.getSize());
+                for (User user : managerUser) {
+                    try {
+                        blackListedUsers.add(user.getUserName());
+                    } catch (Exception e) {
+                        LOG.error(e);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Exceptions in initListUserToDisconnect",e);
+        }
+
+    }
+
+    private boolean isBlackListedUser(String username) {
+
+        // Return true when there is no user in blacklist
+        if (blackListedUsers == null) return false;
+
+        return blackListedUsers.contains(username);
+
     }
 
     public static class LeaderboardInfo {
