@@ -301,12 +301,12 @@ public class UserReputationEndpoint implements ResourceContainer {
         return userBadges;
 
     }
-    private int computeBadgeNextLevel (List<BadgeDTO> allBadges, int index) {
+    private String computeBadgeNextLevel (List<BadgeDTO> allBadges, int index) {
 
         if (index >= 0 && index < allBadges.size()) {
-            return allBadges.get(index).getNeededScore();
+            return String.valueOf(allBadges.get(index).getNeededScore());
         }
-        return 0;
+        return "";
     }
     private static String extractProfileOwnerFromUrl(String str, String separator) {
         if (StringUtils.isEmpty(str)) {
