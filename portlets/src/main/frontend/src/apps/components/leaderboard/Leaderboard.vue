@@ -280,10 +280,19 @@
         border-radius: inherit !important;
     }
 
-    .list-group-item:last-child {
-        border-bottom: 0px !important;
-    }
-
+     .list-lead .list-li::after{
+            content: "";
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 1px;
+            background: #f4f5f5;
+            left: 0;
+            display: block;
+         }
+         .list-lead .list-li:last-child::after{
+             display:none;
+         }
     .list-group-item:hover {
         background: #fbfbfb;
 
