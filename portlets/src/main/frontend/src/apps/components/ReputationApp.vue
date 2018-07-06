@@ -60,12 +60,12 @@
         background-color: transparent;
         -webkit-text-decoration-skip: objects;
      }
-    h4{
+    #user-reputation-container h4{
         color: #4d5466 !important;
         font-family: 'open_sanssemibold';
         font-size: 17px;
     }
-    h5 {
+    #user-reputation-container h5 {
         color: #212529 !important;
         font-family: 'open_sanssemibold' !important;
         font-size: 20px;

@@ -30,13 +30,13 @@
             </b-col>
         </b-row>
         <b-row>
-            <b-col>
+            <b-col class="list-lead">
                 <b-list-group>
-                                    <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between align-items-center">
+                                    <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between list-li align-items-center">
 
                                         <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
                                         <div class="desc-user"><a :href="user.profileUrl">{{user.fullname}}</a></div>
-                                        <div class="number-user">{{user.score}} Points</div>
+                                        <div class="number-user">{{user.score}} <span>Pts</span></div>
                                         <b-img thumbnail fluid :id="'leaderboard'+index" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
                                             alt="Thumbnail" @click="onOpen" width="40" height="40" />
                                         <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown(user.remoteId)">
@@ -159,110 +159,141 @@
 </script>
 
 <style scoped>
-   .btn {
-        color: #4d5466;
-        background-color: #fff;
-        border-color: #e1e8ee;
+    .btn {
+         color: #4d5466;
+         background-color: #fff;
+         border-color: #e1e8ee;
+          width:50%;
+     }
+ 
+     .btn-group .btn:hover {
+         background-color: #578dc9;
+         border: solid 1px #578dc9;
+         color: #fff;
+     }
+     .empty-leaderboard{
+         text-align: center;
+         color: #578dc9;
+      }
+     .d-flex {
+         padding: 5px;
+         font-size: 14px;
+         color: #000;
+     }
+     .btn-group{
+         width: 100%; 
+     }
+     .list-lead{
+         padding:5px 0px !important;
+     }
+     .list-lead .list-li{
+        border-bottom: 1px solid #f4f5f5;
+     }
+ 
+     .col {
+         padding: 5px;
+     }
+ 
+     .btn-group>.btn {
+         padding: 5px 0px;
          width:50%;
-    }
-
-    .btn-group .btn:hover {
-        background-color: #578dc9;
-        border: solid 1px #578dc9;
-        color: #fff;
-    }
-    .empty-leaderboard{
-        text-align: center;
+         text-align: center;
+     }
+ 
+     uiBox {
+         padding: 10px 15px;
+     }
+ 
+     h5 {
+         text-align: center;
+     }
+ 
+     .btn-toolbar {
+         margin-bottom: 0px;
+     }
+ 
+     .chart {
+         width: 239px !important;
+         height: 226px !important;
+     }
+ 
+     .d2b-chart-frame {
+         width: 239px !important;
+     }
+ 
+     .vue-d2b-container {
+         width: 239px !important;
+         height: 226px !important;
+     }
+ 
+     .d2b-tooltip {
+         z-index: 99999999555555 !important;
+     }
+ 
+     .d2b-chart {
+         width: 219px !important;
+         height: 168px!important;
+     }
+ 
+     .number-user {
+         font-size: 14px;
+         width: 25%;
+         white-space: nowrap;
+         
+         text-align: center;
+     }
+    
+     .desc-user {
+         width: 55%;
+         text-align: left;
+         white-space: nowrap;
+         overflow: hidden;
+         display: block;
+         text-overflow: ellipsis;
+     }
+     
+     .desc-user a:hover{
         color: #578dc9;
      }
-    .d-flex {
-        padding: 5px;
-        font-size: 14px;
-        color: #000;
-    }
-    .btn-group{
-        width: 100%; 
-    }
-
-    .col {
-        padding: 5px;
-    }
-
-    .btn-group>.btn {
-        padding: 5px 0px;
-        width:50%;
-        text-align: center;
-    }
-
-    uiBox {
-        padding: 10px 15px;
-    }
-
-    h5 {
-        text-align: center;
-    }
-
-    .btn-toolbar {
-        margin-bottom: 0px;
-    }
-
-    .chart {
-        width: 239px !important;
-        height: 226px !important;
-    }
-
-    .d2b-chart-frame {
-        width: 239px !important;
-    }
-
-    .vue-d2b-container {
-        width: 239px !important;
-        height: 226px !important;
-    }
-
-    .d2b-tooltip {
-        z-index: 99999999555555 !important;
-    }
-
-    .d2b-chart {
-        width: 219px !important;
-        height: 168px!important;
-    }
-
-    .number-user {
-        width: 20%;
-        text-align: center;
-    }
-
-    .desc-user {
-        width: 55%;
-        text-align: left;
-    }
-
-    .vue-avatar--wrapper {
-        margin: 3px 6px 3px 6px;
-
-        
-    }
-
-    .btn-secondary:not(:disabled):not(.disabled).active:focus,
-    .btn-secondary:not(:disabled):not(.disabled):active:focus,
-    .show>.btn-secondary.dropdown-toggle:focus {
-        box-shadow: none;
-    }
-
-    .btn-secondary:not(:disabled):not(.disabled).active,
-    .btn-secondary:not(:disabled):not(.disabled):active,
-    .show>.btn-secondary.dropdown-toggle {
-        background-color: #578dc9;
-        border: solid 1px #578dc9;
-        color: #fff;
-    }
-    .custom-select{
-        font-size:14px;
-    }
-    .avatarCircle{
-        width: 50px !important;
-        height: 50px !important;
-    }
-</style>
+ 
+     .vue-avatar--wrapper {
+         margin: 3px 6px 3px 6px; 
+     }
+     .list-group-item{
+         padding: 5px;
+         font-size: 14px;
+         color: #4d5466 !important;
+         font-family: helvetica;
+         border: none;
+         border-bottom: 1px solid #f4f5f5;
+         border-radius:inherit !important;
+     }
+     .list-group-item:last-child{
+         border-bottom: 0px !important;
+     }
+     .list-group-item:hover{
+         background:#fbfbfb;
+ 
+     }
+ 
+     .btn-secondary:not(:disabled):not(.disabled).active:focus,
+     .btn-secondary:not(:disabled):not(.disabled):active:focus,
+     .show>.btn-secondary.dropdown-toggle:focus {
+         box-shadow: none;
+     }
+ 
+     .btn-secondary:not(:disabled):not(.disabled).active,
+     .btn-secondary:not(:disabled):not(.disabled):active,
+     .show>.btn-secondary.dropdown-toggle {
+         background-color: #578dc9;
+         border: solid 1px #578dc9;
+         color: #fff;
+     }
+     .custom-select{
+         font-size:14px;
+     }
+     .avatarCircle{
+         width: 50px !important;
+         height: 50px !important;
+     }
+ </style>
