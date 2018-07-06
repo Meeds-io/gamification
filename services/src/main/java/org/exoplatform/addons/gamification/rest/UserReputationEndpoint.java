@@ -25,6 +25,8 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,8 +67,8 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
-        // Compute social profile owner
-        String profileOwner = substringAfterLast(url,"/");
+        // Get profile owner from url
+        String profileOwner = extractProfileOwnerFromUrl(url,"/");
 
         if (conversationState != null) {
             try {
@@ -75,7 +77,21 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false).getId();
 
                 JSONObject reputation = new JSONObject();
-                reputation.put("points", gamificationService.getUserGlobalScore(actorId));
+
+                Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationService.getUserGamification(actorId);
+                int userScore = 0;
+                if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
+
+                    //TODO : Badge should be done for all zone not only SOCIAL ZONE
+                    userScore = gamificationContextItemEntitySet.stream().
+                            map(GamificationContextItemEntity::getScore).
+                            mapToInt(Integer::intValue).
+                            sum();
+
+
+                }
+
+                reputation.put("points", userScore);
 
 
                 return Response.ok().cacheControl(cacheControl).entity(reputation.toString()).build();
@@ -108,27 +124,26 @@ public class UserReputationEndpoint implements ResourceContainer {
         //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
 
-        String streamOwner = substringAfterLast(url,"/");
+        String profilePageOwner = extractProfileOwnerFromUrl(url,"/");
 
         if (conversationState != null) {
             try {
-                //List<ReputationDTO> allRules = reputationService.getBadgesByUser();
 
                 /** This is a fake */
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, streamOwner, false).getId();
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
 
                 Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationService.getUserGamification(actorId);
 
-                allBadges = buildProfileBadge(gamificationContextItemEntitySet);
+                allBadges = buildProfileBadges(gamificationContextItemEntitySet);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
             } catch (Exception e) {
 
-                LOG.error("Error loading badges belong to user : {} ",streamOwner, e);
+                LOG.error("Error loading badges belong to user : {} ",profilePageOwner, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -221,16 +236,11 @@ public class UserReputationEndpoint implements ResourceContainer {
         return file.getAsStream();
     }
 
-    private JSONArray buildProfileBadge(Set<GamificationContextItemEntity> gamificationContextItemEntitySet) {
+    private JSONArray buildProfileBadges(Set<GamificationContextItemEntity> gamificationContextItemEntitySet) {
 
         JSONArray allBadges = new JSONArray();
 
         if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
-            JSONObject reputation = null;
-
-            // Get available zone within the solution
-            // TODO
-
 
             //TODO : Badge should be done for all zone not only SOCIAL ZONE
             int userScore = gamificationContextItemEntitySet.stream().
@@ -240,16 +250,34 @@ public class UserReputationEndpoint implements ResourceContainer {
                     sum();
 
             // Compute won badge
-            List<BadgeDTO> badgeDTOS = buildWonBadges("social", userScore);
-            int startScore = 0;
-            // Var to compute Badge level
-            int k = 0;
+            buildWonBadges("social", userScore,allBadges);
 
-            for (int i = 0; i < badgeDTOS.size(); i++) {
+        }
 
-                BadgeDTO badgeDTO = badgeDTOS.get(i);
+
+        return allBadges;
+
+    }
+
+    private JSONArray buildWonBadges(String domain, int score, JSONArray userBadges) {
+
+        // Get available badge within the solution
+        List<BadgeDTO> allBadges = badgeService.findBadgesByDomain(domain);
+
+        // A badge
+        JSONObject reputation = null;
+
+        int i = 0;
+        int k = 0;
+        Iterator<BadgeDTO> iterable = allBadges.iterator();
+
+        while(iterable.hasNext()) {
+            BadgeDTO badgeDTO = iterable.next();
+            if (badgeDTO.getNeededScore() < score) {
+
                 reputation = new JSONObject();
                 try {
+
                     //computte badge's icon
                     String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
                     reputation.put("url", iconUrl);
@@ -258,34 +286,29 @@ public class UserReputationEndpoint implements ResourceContainer {
                     reputation.put("title", badgeDTO.getTitle());
                     reputation.put("zone", badgeDTO.getDomain());
                     reputation.put("level", ++k);
-                    reputation.put("startScore", startScore);
-                    reputation.put("endScore", badgeDTO.getNeededScore());
-                    startScore = startScore + badgeDTO.getNeededScore();
-                    allBadges.put(reputation);
+                    reputation.put("startScore", badgeDTO.getNeededScore());
+
+                    reputation.put("endScore", computeBadgeNextLevel(allBadges,i+1));
+
+                    userBadges.put(reputation);
+                    ++i;
 
                 } catch (Exception e) {
 
                 }
             }
         }
-
-
-        return allBadges;
+        return userBadges;
 
     }
+    private int computeBadgeNextLevel (List<BadgeDTO> allBadges, int index) {
 
-    private List<BadgeDTO> buildWonBadges(String zone, int score) {
-
-        // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.getAllBadges();
-
-        return allBadges.stream().
-                filter(b -> b.getDomain().equalsIgnoreCase(zone)).
-                filter(b -> b.getNeededScore() < score).
-                collect(Collectors.toList());
-
+        if (index >= 0 && index < allBadges.size()) {
+            return allBadges.get(index).getNeededScore();
+        }
+        return 0;
     }
-    private static String substringAfterLast(String str, String separator) {
+    private static String extractProfileOwnerFromUrl(String str, String separator) {
         if (StringUtils.isEmpty(str)) {
             return str;
         }

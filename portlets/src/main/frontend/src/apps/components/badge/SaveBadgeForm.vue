@@ -1,4 +1,3 @@
-
 <template>
 
     <div>
@@ -11,16 +10,17 @@
                             <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
                             </b-form-input>
 
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                @dismiss-count-down="countDownChanged">
                                 Badge title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
-                        
+
                         <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
                             <b-form-textarea id="badgeDescription" v-model="badge.description" placeholder="Enter description" :rows="3" :max-rows="6">
                             </b-form-textarea>
                         </b-form-group>
-                    
+
                         <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
                             <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
                             </b-form-input>
@@ -29,34 +29,34 @@
                                 Badge needed score is required please enter a value {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
-                      
+
                         <b-form-group id="iconInputGroup" label="Icon:" label-for="iconInput">
-                          
+
                             <b-form-file v-model="badge.icon" :state="Boolean(badge.icon)" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
                             <div class="mt-3">Selected icon: {{badge.icon && badge.icon.name}}</div>
                         </b-form-group>
-                       
+
 
                     </b-col>
                     <b-col class="card">
-                      
+
                         <b-form-group id="startValidityDateInputGroup " label="Start Validity Date:" label-for="startValidityDateInput">
 
                             <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
                                 placeholder="Enter badge's start validity date"></date-picker>
                         </b-form-group>
-                      
+
                         <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
                             <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
                         </b-form-group>
-                      
+
                         <b-form-group id="domainSelectboxGroup">
                             <b-form-select v-model="badge.domain" class="mb-3" required>
                                 <template slot="first">
-                                   
+
                                     <option :value="null" disabled>-- Please select a domain --</option>
                                 </template>
-                               
+
                                 <option value="Social">Social</option>
                                 <option value="Knowledge">Knowledge</option>
                                 <option value="Content">Content</option>
@@ -66,29 +66,29 @@
                                 Domain is required please choice a domain {{dismissCountDown}} ...
                             </b-alert>
                         </b-form-group>
-                      
+
+
                         <b-form-group id="isEnabledCheckboxGroup">
-                            <b-form-group id="isEnabledCheckboxGroup">
-                                <b-form-checkbox v-model="badge.isEnabled">Enable badge</b-form-checkbox>
-                            </b-form-group>
+                            <b-form-checkbox v-model="badge.isEnabled">Enable badge</b-form-checkbox>
                         </b-form-group>
-                     
+
+
                         <b-row>
                             <b-col>
-                            
+
                                 <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
                                     {{badge.id ? 'Update' : 'Add'}} badge
                                 </b-button>
                             </b-col>
                             <b-col>
                                 <b-button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
-                             
+
                             </b-col>
                         </b-row>
                     </b-col>
                 </b-form-row>
             </b-col>
-  
+
         </b-container>
     </div>
 
@@ -103,7 +103,7 @@
     import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
     Vue.use(datePicker);
-    
+
     export default {
         props: ['badge'],
         data: function () {
@@ -121,7 +121,7 @@
                 dynamicRules: []
             }
         },
-       
+
         watch: {
             'badge.id'() {
                 this.formErrors = {}
@@ -169,16 +169,16 @@
                 this.dismissCountDown = dismissCountDown
             },
             confirm() {
-               this.$modals.confirm({
-               message: 'Confirm?',
-               onApprove: () => { },
-               onCancel: () => { },
-               });
+                this.$modals.confirm({
+                    message: 'Confirm?',
+                    onApprove: () => { },
+                    onCancel: () => { },
+                });
             },
 
 
         },
-        
+
         created() {
 
         }
@@ -243,11 +243,13 @@
         padding: 15px;
 
     }
-    .require-msg{
+
+    .require-msg {
         max-width: 100% !important;
         font-size: 14px;
         padding: 10px;
     }
+
     .close {
         float: right;
         font-size: 21px;
@@ -257,9 +259,9 @@
         text-shadow: 0 1px 0 #fff;
         filter: alpha(opacity=20);
         cursor: pointer;
-  }
-  .close:hover {
+    }
+
+    .close:hover {
         color: #000;
-  }
-   
+    }
 </style>

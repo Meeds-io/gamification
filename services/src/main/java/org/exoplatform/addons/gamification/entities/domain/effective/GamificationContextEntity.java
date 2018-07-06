@@ -1,5 +1,7 @@
 package org.exoplatform.addons.gamification.entities.domain.effective;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
@@ -95,5 +97,26 @@ public class GamificationContextEntity implements Serializable {
 
     public String toString() {
         return String.format("Gamification Entity[%d,%s,%d]", id, username, score);
+    }
+
+    @Override
+    public int hashCode() {
+        HashCodeBuilder hcb = new HashCodeBuilder();
+        hcb.append(username);
+        return hcb.toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GamificationContextEntity)) {
+            return false;
+        }
+        GamificationContextEntity that = (GamificationContextEntity) obj;
+        EqualsBuilder eb = new EqualsBuilder();
+        eb.append(username, that.username);
+        return eb.isEquals();
     }
 }

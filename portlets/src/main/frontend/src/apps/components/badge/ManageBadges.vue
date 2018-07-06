@@ -32,7 +32,7 @@
                 startValidityDate: null,
                 endValidityDate: null,
                 domain: '',
-                isEnabled: false,
+                isEnabled: null,
                 createdBy: '',
                 createdDate: null,
                 lastModifiedBy: '',
@@ -132,18 +132,44 @@
                     })
 
                 
-                    },
+            },
             updateBadge(badgeDTO) {
-                axios.put(`/rest/gamification/badges/update`, badgeDTO)
-                      .then(response => {
-                        this.addSuccess = true;
-                        this.updateMessage = 'updated'
 
-                    })
-                    .catch(e => {
-                        this.addError = true
-                        this.errors.push(e)
-                    })
+                const formData = new FormData();
+                  
+                formData.append('file', badgeDTO.icon)
+  
+                const MAX_RANDOM_NUMBER = 100000;
+                const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);     
+                
+                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
+                      {
+                          headers: {
+                              'Content-Type': 'multipart/form-data'
+                          }
+                      }).then(response => {
+                          badgeDTO.uploadId=uploadId
+                          axios.put(`/rest/gamification/badges/update`, badgeDTO)
+                          .then(response => {
+                             
+                            this.addSuccess = true;
+                        this.updateMessage = 'updated'
+                          })
+                          .catch(e => {
+  
+                              this.addError = true
+                              this.errors.push(e)
+  
+                          })
+  
+                           
+                      })
+                      .catch(e => {
+  
+                          console.log("Error")
+  
+                      })
+
                 }
             },
        

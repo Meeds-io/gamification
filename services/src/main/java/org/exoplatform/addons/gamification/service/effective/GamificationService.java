@@ -9,9 +9,7 @@ import org.exoplatform.addons.gamification.storage.dao.GamificationDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GamificationService {
 
@@ -171,7 +169,15 @@ public class GamificationService {
             // Get Context items if exists
             if (gamificationContextEntity != null) {
 
-                gamificationContextItemEntitySet = gamificationContextEntity.getGamificationItems();
+                gamificationContextItemEntitySet = new HashSet<>();
+
+                for (GamificationContextItemEntity item : gamificationContextEntity.getGamificationItems()) {
+
+                    if (checkElementExist(gamificationContextItemEntitySet, item.getOpType())) {
+                        gamificationContextItemEntitySet.add(item);
+                    }
+
+                }
 
             }
 
@@ -181,6 +187,17 @@ public class GamificationService {
         }
 
         return gamificationContextItemEntitySet;
+    }
+
+    private boolean checkElementExist (Set<GamificationContextItemEntity> gamificationContextItemEntities, String opType) {
+
+        for (GamificationContextItemEntity item: gamificationContextItemEntities) {
+
+            if (item.getOpType().equalsIgnoreCase(opType)) return false;
+
+        }
+        return true;
+
     }
 
     /**

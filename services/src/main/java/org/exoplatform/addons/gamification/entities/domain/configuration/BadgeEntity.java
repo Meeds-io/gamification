@@ -16,6 +16,10 @@ import java.util.Objects;
                 query = "SELECT badge FROM GamificationBadge badge"
         ),
         @NamedQuery(
+                name = "GamificationBadge.findBadgeByDomain",
+                query = "SELECT badge FROM GamificationBadge badge WHERE badge.domain = :badgeDomain ORDER BY badge.neededScore ASC"
+        ),
+        @NamedQuery(
                 name = "GamificationBadge.getEnabledBadges",
                 query = "SELECT badge FROM GamificationBadge badge where badge.enabled = :isEnabled "
         ),

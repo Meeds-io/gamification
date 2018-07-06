@@ -124,4 +124,22 @@ public class BadgeService {
 
 
     }
+
+    @ExoTransactional
+    public List<BadgeDTO> findBadgesByDomain(String badgeDomain) {
+
+        try {
+            //--- load all Rules
+            List<BadgeEntity> badges = badgeStorage.findBadgesByDomain(badgeDomain);
+            if (badges != null) {
+                return badgeMapper.badgesToBadgeDTOs(badges);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find badges within domain {}", badgeDomain, e);
+        }
+        return null;
+
+
+    }
 }
