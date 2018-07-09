@@ -19,7 +19,9 @@
                                     <div class="date-badges">{{badge.createdDate}}</div>
                                     <div class="desc-badges">{{badge.description}}</div>
                                     <div class="prog-point">
-                                    <div class="first-number">{{badge.startScore}}</div><hr class="interval"><div class="last-number">{{badge.endScore}}</div>
+                                    <div class="first-number">{{badge.startScore}}</div><hr class="interval">
+                                    <div class="last-number" v-if="badge.endScore == 0"  v-bind:class="{'bg-red': bgBadges(badge)}"  > ∞ </div>
+                                    <div class="last-number"  v-else >{{badge.endScore}}</div>
                                     </div>                                     
                       </b-popover>
                       </b-col>
@@ -59,7 +61,15 @@
                     .catch(e => {
                         this.errors.push(e)
                     })
-            }
+            },
+            bgBadges : function(badge){
+                
+
+                return badge.endScore == 0;
+                
+                   
+                  
+             }
 
 
         },
@@ -193,6 +203,14 @@
     text-align: center;
     position: relative;
     top: -2px;
+}
+.bg-red{
+    background: #fd7e14;
+    border: none;
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+    top: 1px;
 }
 .interval{
     height: 2px;
