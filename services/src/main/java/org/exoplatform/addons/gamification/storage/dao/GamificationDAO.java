@@ -33,7 +33,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
         } catch (NumberFormatException nfe) {
 
             // Set a default value any
-            queryLimitOffset = 10;
+            queryLimitOffset = 11;
 
             LOG.error("Error while parsing query-limit-offset, the default value will be used {}",queryLimitOffset, nfe);
 
