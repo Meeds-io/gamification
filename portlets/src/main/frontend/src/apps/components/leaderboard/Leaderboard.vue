@@ -172,9 +172,9 @@
     }
 
     .btn-group .btn:hover {
-        background-color: #578dc9;
-        border: solid 1px #578dc9;
-        color: #fff;
+        background-color: #f8f8f8;
+        border-color: #e1e8ee;
+        color: #333;
     }
 
     .empty-leaderboard {
@@ -187,6 +187,9 @@
         font-size: 14px;
         color: #000;
     }
+    .btn-group>.btn+.btn {
+    margin-left: 0px;
+}
 
     .btn-group {
         width: 100%;
@@ -279,6 +282,9 @@
         border-bottom: 1px solid #f4f5f5;
         border-radius: inherit !important;
     }
+    .list-group-item:last-child{
+        border-bottom: 0px !important;
+    }
 
      .list-lead .list-li::after{
             content: "";
@@ -290,9 +296,9 @@
             left: 0;
             display: block;
          }
-         .list-lead .list-li:last-child::after{
-             display:none;
-         }
+    .list-lead .list-li:last-child::after{
+        display:none;
+    }
     .list-group-item:hover {
         background: #fbfbfb;
 
