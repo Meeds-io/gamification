@@ -29,6 +29,8 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     private final Map<String, RuleConfig> ruleMap;
 
+    protected RuleService ruleService;
+
     public RuleRegistryImpl() {
         this.ruleMap = new HashMap<String, RuleConfig>();
     }
@@ -48,17 +50,20 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
     @Override
     public void start() {
 
+        ruleService = CommonsUtils.getService(RuleService.class);
+
         try {
             // Processing registered rules
-            if (!isRulesProcessingDone()) {
-                for (RuleConfig rule : ruleMap.values()) {
-                    store(rule);
 
+            for (RuleConfig rule : ruleMap.values()) {
+                RuleDTO ruleDTO = ruleService.findRuleByTitle(rule.getTitle());
+
+                if (ruleDTO == null) {
+                    store(rule);
                 }
 
-                //Update processessing status
-                setRuleProcessingSettingsDone();
             }
+
 
         } catch (Exception e) {
             LOG.error("Error when processing Rules ", e);
@@ -72,6 +77,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     /**
      * Persist new rule within DB
+     *
      * @param ruleConfig
      */
     private void store(RuleConfig ruleConfig) {

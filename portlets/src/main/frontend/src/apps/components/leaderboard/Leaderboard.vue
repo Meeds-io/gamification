@@ -13,8 +13,8 @@
                     </template>
 
                     <option value="social">Social</option>
-                    <!--
                     <option value="knowledge">Knowledge</option>
+                    <!--
                     <option value="content">Content</option>
                     -->
                 </b-form-select>

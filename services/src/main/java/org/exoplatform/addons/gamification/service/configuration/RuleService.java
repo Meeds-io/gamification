@@ -24,15 +24,39 @@ public class RuleService {
     }
 
     /**
-     * Find a RuleEntity by title
+     * Find enable RuleEntity by title
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
      */
+    @ExoTransactional
     public RuleDTO findEnableRuleByTitle (String ruleTitle) {
 
         try {
             //--- Get Entity from DB
             RuleEntity entity = ruleDAO.findEnableRuleByTitle(ruleTitle);
+            //--- Convert Entity to DTO
+            if (entity != null ) {
+                return ruleMapper.ruleToRuleDTO(entity);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find enable Rule entity with title : {}",ruleTitle,e.getMessage());
+        }
+        return null;
+
+    }
+
+    /**
+     * Find a RuleEntity by title
+     * @param ruleTitle : rule's title param
+     * @return an instance of RuleDTO
+     */
+    @ExoTransactional
+    public RuleDTO findRuleByTitle (String ruleTitle) {
+
+        try {
+            //--- Get Entity from DB
+            RuleEntity entity = ruleDAO.findRuleByTitle(ruleTitle);
             //--- Convert Entity to DTO
             if (entity != null ) {
                 return ruleMapper.ruleToRuleDTO(entity);

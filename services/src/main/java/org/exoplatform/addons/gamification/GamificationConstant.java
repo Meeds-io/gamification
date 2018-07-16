@@ -75,4 +75,12 @@ public interface GamificationConstant {
     String GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER                                     = "sendRelationshipRequest";
     /** RECEIVE RELATIONSHIP REQUEST */
     String GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER                                   = "receiveRelationshipRequest";
+
+    /***************************************************************************************************************************************************/
+    /************************************************** CONSTANTS TO MANAGE FORUM GAMIFICATION PROCESS *************************************************/
+    /***************************************************************************************************************************************************/
+    /** ADD POST IN FORUM */
+    String GAMIFICATION_FORUM_ADD_POST                                                  = "addForumPost";
+    /** ADD TOPIC IN FORUM */
+    String GAMIFICATION_FORUM_ADD_TOPIC                                                 = "addForumTopic";
 }

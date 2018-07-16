@@ -209,7 +209,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
                         if (gamificationSearch.getNetwork().equalsIgnoreCase("my-connection")) {
 
-                            if ((identity.getId().equalsIgnoreCase(currentIdentity.getId()))|| (isinMyConnections(identity, currentIdentity))){
+                            if ((identity.getId().equalsIgnoreCase(currentIdentity.getId()))|| (isInMyConnections(identity, currentIdentity))){
                                 leaderboardInfos.add(leaderboardInfo);
                             }
 
@@ -283,7 +283,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         }
     }
 
-    private boolean isinMyConnections(Identity gameficationIdentity, Identity myIdentity) {
+    private boolean isInMyConnections(Identity gameficationIdentity, Identity myIdentity) {
 
         Relationship gamificationRelationship = relationshipManager.get(myIdentity, gameficationIdentity);
 
