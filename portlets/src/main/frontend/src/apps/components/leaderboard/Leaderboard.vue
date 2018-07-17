@@ -3,7 +3,7 @@
         <b-row>
             <b-col>
                 <h5 class="mt-0 title">Top users</h5>
-                <a href="gamification-earn-points" class="ico-info actionIcon" target="_blank" rel="tooltip" data-original-title="How can I earn points ?"><i class="uiIconInformation"></i></a>
+                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" data-original-title="How can I earn points ?"><i class="uiIconInformation"></i></a>
             </b-col>
         </b-row>
         <b-row>
@@ -332,6 +332,22 @@
             top: 0;
             margin: 8px 0px;
             right: 6px;
-            padding: 3px 3px 0px 3px;
+            padding: 2px 3px 0px 3px;
         }
+        .actionIco{
+            border: 1px solid transparent;
+        }
+        .actionIco:hover {
+            background: none;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#fff0f0f0',GradientType=0);
+            border: 1px solid #e1e8ee;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            -webkit-box-shadow: 0 1px 2px 0 rgba(255,255,255,0);
+            -moz-box-shadow: 0 1px 2px 0 rgba(255,255,255,0);
+            box-shadow: 0 1px 2px 0 rgba(255,255,255,0);
+            color: #333;
+        }
+
 </style>
