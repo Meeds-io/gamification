@@ -3,6 +3,7 @@
         <b-row>
             <b-col>
                 <h5 class="mt-0 title">Top users</h5>
+                <a href="gamification-earn-points" class="ico-info actionIcon" target="_blank" rel="tooltip" data-original-title="How can I earn points ?"><i class="uiIconInformation"></i></a>
             </b-col>
         </b-row>
         <b-row>
@@ -326,4 +327,11 @@
         width: 50px !important;
         height: 50px !important;
     }
+    .ico-info{
+            position: absolute;
+            top: 0;
+            margin: 8px 0px;
+            right: 6px;
+            padding: 3px 3px 0px 3px;
+        }
 </style>
