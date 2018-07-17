@@ -928,11 +928,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he add a post in the forum</value>
+                    <value>Post a reply in the forum</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>2</value>
+                    <value>5</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -958,11 +958,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he add a topic to the forum</value>
+                    <value>Start a new topic in the forum</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>5</value>
+                    <value>15</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
