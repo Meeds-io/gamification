@@ -1,15 +1,17 @@
 package org.exoplatform.addons.gamification.service.effective;
 
-import org.exoplatform.commons.api.persistence.ExoTransactional;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.addons.gamification.storage.dao.GamificationDAO;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class GamificationService {
 
@@ -17,8 +19,8 @@ public class GamificationService {
 
     protected final GamificationDAO gamificationDAO;
 
-    public GamificationService() {
-        this.gamificationDAO = CommonsUtils.getService(GamificationDAO.class);
+    public GamificationService(GamificationDAO gamificationDAO) {
+        this.gamificationDAO =  gamificationDAO;
     }
 
     /**
@@ -120,18 +122,48 @@ public class GamificationService {
 
             } else { // Get leaderboard by domain
 
-                List<Leaderboard> leaderboardList = gamificationDAO.findLeaderboardByDomain(gamificationSearch.getDomain());
+                List<GamificationContextEntity> leaderboardList = gamificationDAO.findLeaderboardByDomain(gamificationSearch.getDomain());
 
-                // Build Gamification Entities
+                gamificationContextEntities = new ArrayList<GamificationContextEntity>();
+
                 if (leaderboardList != null && !leaderboardList.isEmpty()) {
-                    GamificationContextEntity gamificationContextEntity = null;
-                    gamificationContextEntities = new ArrayList<>();
-                    for (Leaderboard leaderBoard : leaderboardList) {
-                        gamificationContextEntity = new GamificationContextEntity();
-                        gamificationContextEntity.setUsername(leaderBoard.getUserId());
-                        gamificationContextEntity.setScore(leaderBoard.getScore());
-                        gamificationContextEntities.add(gamificationContextEntity);
 
+                    GamificationContextEntity gamificationContextEntity = null;
+
+                    List<String> red = null;
+
+                    for (GamificationContextEntity leaderBoard : leaderboardList) {
+
+                        Set<GamificationContextItemEntity> items = leaderBoard.getGamificationItems();
+
+                        if (items != null && !items.isEmpty())  {
+
+                            red = new ArrayList<>();
+
+                            int userScore = 0;
+
+                            for (GamificationContextItemEntity gamificationContextItemEntity : items) {
+
+                                if (gamificationContextItemEntity.getZone().equalsIgnoreCase(gamificationSearch.getDomain())) {
+
+
+                                    if (!red.contains(gamificationContextItemEntity.getOpType())) {
+
+                                        userScore += gamificationContextItemEntity.getScore();
+                                        red.add(gamificationContextItemEntity.getOpType());
+
+                                    }
+
+                                }
+
+                            }
+
+                            gamificationContextEntity = new GamificationContextEntity();
+                            gamificationContextEntity.setUsername(leaderBoard.getUsername());
+                            gamificationContextEntity.setScore(userScore);
+                            gamificationContextEntities.add(gamificationContextEntity);
+
+                        }
                     }
 
                     gamificationContextEntities.sort((GamificationContextEntity g1, GamificationContextEntity g2) -> (int) g2.getScore() - (int) g1.getScore());
@@ -139,11 +171,6 @@ public class GamificationService {
                 }
 
             }
-
-            //
-
-
-
 
         } catch (Exception e) {
             LOG.error("Error to filter leaderboard by domain : {} and by netowrk : {}", gamificationSearch.getDomain(), gamificationSearch.getNetwork(), e);

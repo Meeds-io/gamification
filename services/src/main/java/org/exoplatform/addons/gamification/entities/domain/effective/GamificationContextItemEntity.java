@@ -10,6 +10,13 @@ import java.io.Serializable;
 @Entity(name = "GamificationContextItem")
 @ExoEntity
 @Table(name = "GAMIFICATION_CONTEXT_ITEMS")
+@NamedQueries({
+        @NamedQuery(
+                name = "GamificationContextItem.findGamificationLeaderboardByDomain",
+                query = "SELECT item FROM GamificationContextItem item where item.zone = :domain GROUP BY item.id"
+        ),
+
+})
 public class GamificationContextItemEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

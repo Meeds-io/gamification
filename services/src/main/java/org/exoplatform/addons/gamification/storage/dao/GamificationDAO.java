@@ -109,10 +109,10 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
      * @return
      * @throws PersistenceException
      */
-    public List<Leaderboard> findLeaderboardByDomain(String domain) throws PersistenceException {
+    public List<GamificationContextEntity> findLeaderboardByDomain(String domain) throws PersistenceException {
 
                 // TODO : We should load only first 10 users
-                List <Leaderboard> leaderBoards = getEntityManager().createNamedQuery("GamificationUserReputation.findLeaderboardByDomain")
+                List <GamificationContextEntity> leaderBoards = getEntityManager().createNamedQuery("GamificationUserReputation.findLeaderboardByDomain")
                                                              .setParameter("domain", domain)
                                                              .getResultList();
 

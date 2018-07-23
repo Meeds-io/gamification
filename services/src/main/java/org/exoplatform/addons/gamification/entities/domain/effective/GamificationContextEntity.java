@@ -19,7 +19,7 @@ import java.util.Set;
         ),
         @NamedQuery(
                 name = "GamificationUserReputation.findLeaderboardByDomain",
-                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Leaderboard(game.username,sum(item.score)) FROM GamificationUserReputation game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
+                query = "SELECT game FROM GamificationUserReputation game INNER JOIN game.gamificationItems item where item.zone = :domain GROUP BY item.gamificationUserEntity"
         ),
         @NamedQuery(
                 name = "GamificationUserReputation.findOverallLeaderboard",
