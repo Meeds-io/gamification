@@ -262,7 +262,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     private JSONArray buildWonBadges(String domain, int score, JSONArray userBadges) {
 
         // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findBadgesByDomain(domain);
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
 
         // A badge
         JSONObject reputation = null;

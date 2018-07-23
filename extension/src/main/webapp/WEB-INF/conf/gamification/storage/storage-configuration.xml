@@ -975,4 +975,67 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+    <!-- ############################################################################################ -->
+    <!-- ################## Gamification Rule Config : WIKI FLOW ########################## -->
+    <!-- ############################################################################################ -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.AddWikiPage</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>addWikiPage</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Create wiki Page</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>5</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.UpdateWikiPage</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>updateWikiPage</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Update wiki Page</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>2</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 </configuration>

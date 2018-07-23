@@ -59,7 +59,9 @@
 
                                 <option value="Social">Social</option>
                                 <option value="Knowledge">Knowledge</option>
+                                <!--
                                 <option value="Content">Content</option>
+                                -->
                             </b-form-select>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
@@ -68,8 +70,8 @@
                         </b-form-group>
 
 
-                        <b-form-group id="isEnabledCheckboxGroup">
-                            <b-form-checkbox v-model="badge.isEnabled">Enable badge</b-form-checkbox>
+                        <b-form-group id="enableCheckboxGroup">
+                            <b-form-checkbox v-model="badge.enabled">Enable rule</b-form-checkbox>
                         </b-form-group>
 
 

@@ -40,14 +40,22 @@ public class BadgeMapper {
                 //TODO save an inputStream
                 //badge.setIcon(badgeDTO.getIcon());
                 badge.setIconFileId(badgeDTO.getIconFileId());
-                badge.setStartValidityDate(formatter.parse(badgeDTO.getStartValidityDate()));
-                badge.setEndValidityDate(formatter.parse(badgeDTO.getEndValidityDate()));
+                if (badgeDTO.getStartValidityDate() != null) {
+                    badge.setStartValidityDate(formatter.parse(badgeDTO.getStartValidityDate()));
+                }
+                if (badgeDTO.getEndValidityDate() != null) {
+                    badge.setEndValidityDate(formatter.parse(badgeDTO.getEndValidityDate()));
+                }
                 badge.setEnabled(badgeDTO.isEnabled());
                 badge.setCreatedBy(badgeDTO.getCreatedBy());
-                badge.setCreatedDate(formatter.parse(badgeDTO.getCreatedDate()));
+                if (badgeDTO.getCreatedDate() != null) {
+                    badge.setCreatedDate(formatter.parse(badgeDTO.getCreatedDate()));
+                }
                 badge.setLastModifiedBy(badgeDTO.getLastModifiedBy());
-                badge.setLastModifiedDate(formatter.parse(badgeDTO.getLastModifiedDate()));
 
+                if (badgeDTO.getLastModifiedDate() != null) {
+                    badge.setLastModifiedDate(formatter.parse(badgeDTO.getLastModifiedDate()));
+                }
                 return badge;
             }
 

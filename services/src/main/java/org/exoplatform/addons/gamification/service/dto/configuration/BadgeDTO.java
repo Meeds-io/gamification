@@ -27,7 +27,7 @@ public class BadgeDTO implements Serializable {
 
     protected String endValidityDate;
 
-    protected boolean isEnabled;
+    protected boolean enabled;
 
     private String createdBy;
 
@@ -55,21 +55,28 @@ public class BadgeDTO implements Serializable {
 
         this.neededScore = badgeEntity.getNeededScore();
 
-        this.startValidityDate = formatter.format(badgeEntity.getStartValidityDate());
+        if (badgeEntity.getStartValidityDate() != null) {
+            this.startValidityDate = formatter.format(badgeEntity.getStartValidityDate());
+        }
 
-        this.endValidityDate = formatter.format(badgeEntity.getEndValidityDate());
-
-        this.isEnabled = badgeEntity.isEnabled();
+        if (badgeEntity.getEndValidityDate() != null) {
+            this.endValidityDate = formatter.format(badgeEntity.getEndValidityDate());
+        }
+        this.enabled = badgeEntity.isEnabled();
 
         this.description = badgeEntity.getDescription();
 
         this.createdBy = badgeEntity.getCreatedBy();
 
-        this.createdDate = formatter.format(badgeEntity.getCreatedDate());
+        if (badgeEntity.getCreatedDate() != null) {
+            this.createdDate = formatter.format(badgeEntity.getCreatedDate());
+        }
 
         this.lastModifiedBy = badgeEntity.getLastModifiedBy();
 
-        this.lastModifiedDate = formatter.format(badgeEntity.getLastModifiedDate());
+        if (badgeEntity.getLastModifiedDate() != null) {
+            this.lastModifiedDate = formatter.format(badgeEntity.getLastModifiedDate());
+        }
 
         this.domain = badgeEntity.getDomain();
 
@@ -152,11 +159,11 @@ public class BadgeDTO implements Serializable {
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     public String getCreatedBy() {
@@ -209,7 +216,6 @@ public class BadgeDTO implements Serializable {
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
                 ", zone='" + domain + '\'' +
-                ", isEnabled=" + isEnabled +
                 ", createdBy=" + createdBy +
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +

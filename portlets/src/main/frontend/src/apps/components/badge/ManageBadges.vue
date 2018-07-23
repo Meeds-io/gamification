@@ -32,7 +32,7 @@
                 startValidityDate: null,
                 endValidityDate: null,
                 domain: '',
-                isEnabled: null,
+                enabled: null,
                 createdBy: '',
                 createdDate: null,
                 lastModifiedBy: '',

@@ -1,59 +1,64 @@
-package org.exoplatform.addons.gamification.listener.social.space;
+package org.exoplatform.addons.gamification.listener.wiki;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.addons.gamification.listener.GamificationListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
+import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.space.SpaceListenerPlugin;
-import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
-import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.wiki.WikiException;
+import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.service.PageUpdateType;
+import org.exoplatform.wiki.service.listener.PageWikiListener;
+import org.exoplatform.wiki.utils.WikiConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GamificationSpaceListener extends SpaceListenerPlugin implements GamificationListener {
+public class GamificationWikiListener extends PageWikiListener implements GamificationListener {
 
-    private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
+    private static final Log LOG = ExoLogger.getLogger(GamificationWikiListener.class);
+
 
     protected RuleService ruleService;
     protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
-    protected SpaceService spaceService;
     protected GamificationService gamificationService;
 
-    public GamificationSpaceListener() {
-        this.ruleService = CommonsUtils.getService(RuleService.class);
-        this.gamificationProcessor = CommonsUtils.getService(GamificationProcessor.class);
-        this.identityManager = CommonsUtils.getService(IdentityManager.class);
-        this.spaceService = CommonsUtils.getService(SpaceService.class);
-        this.gamificationService = CommonsUtils.getService(GamificationService.class);
+    public GamificationWikiListener(RuleService ruleService, GamificationProcessor gamificationProcessor, IdentityManager identityManager, GamificationService gamificationService) {
+
+        this.ruleService = ruleService;
+        this.gamificationProcessor = gamificationProcessor;
+        this.identityManager = identityManager;
+        this.gamificationService = gamificationService;
     }
 
     @Override
-    public void spaceCreated(SpaceLifeCycleEvent event) {
+    public void postAddPage(String wikiType, String wikiOwner, String pageId, Page page) throws WikiException {
+        if (WikiConstants.WIKI_HOME_NAME.equals(pageId)) {
+            // catch the case of the Wiki Home added as it's created by the system, not by users.
+            return;
+        }
+
         List<GamificationContextHolder> gamificationContextEntityList = null;
 
-        // Get the created space
-        //Space space = event.getSpace();
         // Get the space's creator username
-        String actorUsername = event.getSource();
+        String actorUsername = ConversationState.getCurrent().getIdentity().getUserId();
 
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
         // Get associated rule
-        RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_ADD);
+        RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_WIKI_ADD_PAGE);
 
         // Process only when an enable rule is found
         if (ruleDto != null) {
@@ -63,128 +68,51 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
         }
-
         // Save Gamification Context
         gamificationProcessor.process(gamificationContextEntityList);
 
+
     }
 
     @Override
-    public void spaceRemoved(SpaceLifeCycleEvent event) {
+    public void postDeletePage(String wikiType, String wikiOwner, String pageId, Page page) throws WikiException {
+
     }
 
     @Override
-    public void applicationAdded(SpaceLifeCycleEvent event) {
-    }
+    public void postUpdatePage(String wikiType, String wikiOwner, String pageId, Page page, PageUpdateType wikiUpdateType) throws WikiException {
+        // Generate an activity only in the following cases
+        if(page != null && wikiUpdateType != null
+                && (wikiUpdateType.equals(PageUpdateType.ADD_PAGE)
+                || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_CONTENT)
+                || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_CONTENT_AND_TITLE))) {
+            //saveActivity(wikiType, wikiOwner, pageId, page, wikiUpdateType);
+            String username = ConversationState.getCurrent().getIdentity().getUserId();
 
-    @Override
-    public void applicationRemoved(SpaceLifeCycleEvent event) {
-    }
+            List<GamificationContextHolder> gamificationContextEntityList = null;
 
-    @Override
-    public void applicationActivated(SpaceLifeCycleEvent event) {
-    }
+            // Get the space's creator username
+            String actorUsername = ConversationState.getCurrent().getIdentity().getUserId();
 
-    @Override
-    public void applicationDeactivated(SpaceLifeCycleEvent event) {
-    }
+            // Compute user id
+            String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-    @Override
-    public void joined(SpaceLifeCycleEvent event) {
-        List<GamificationContextHolder> gamificationContextEntityList = null;
+            // Get associated rule
+            RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_WIKI_UPDATE_PAGE);
 
-        // Get the created space
-        //Space space = event.getSpace();
-        // Get the space's creator username
-        String actorUsername = event.getSource();
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
-
-        // To hold GamificationRule
-        RuleDTO ruleDto = null;
-
-        // Get associated rule :
-        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_JOIN);
-
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                gamificationContextEntityList = gamify(ruleDto, actorId);
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+            // Process only when an enable rule is found
+            if (ruleDto != null) {
+                try {
+                    gamificationContextEntityList = gamify(ruleDto, actorId);
+                } catch (Exception e) {
+                    LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+                }
             }
+
+            // Save Gamification Context
+            gamificationProcessor.process(gamificationContextEntityList);
+
         }
-
-        // Save Gamification Context
-        gamificationProcessor.process(gamificationContextEntityList);
-    }
-
-    @Override
-    public void left(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void grantedLead(SpaceLifeCycleEvent event) {
-        List<GamificationContextHolder> gamificationContextEntityList = null;
-
-        // Get the created space
-        //Space space = event.getSpace();
-        // Get the space's creator username
-        String actorUsername = event.getSource();
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
-
-        // To hold GamificationRule
-        RuleDTO ruleDto = null;
-
-        // Get associated rule :
-        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD);
-
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                gamificationContextEntityList = gamify(ruleDto, actorId);
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
-            }
-        }
-
-        // Save Gamification Context
-        gamificationProcessor.process(gamificationContextEntityList);
-    }
-
-    @Override
-    public void revokedLead(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceRenamed(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceAvatarEdited(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceAccessEdited(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void addInvitedUser(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void addPendingUser(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceBannerEdited(SpaceLifeCycleEvent event) {
     }
 
     /**

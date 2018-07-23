@@ -28,7 +28,7 @@
                             <td class="badge-start-validity-date-col">{{ moment(badge.startValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-end-validity-date-col">{{ moment(badge.endValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-icon-col">{{badge.icon}}</td>
-                            <td class="badge-status-col">{{badge.isEnabled}}</td>
+                            <td class="badge-status-col">{{badge.enabled}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>
                             <td class="center actionContainer">
                                 <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"

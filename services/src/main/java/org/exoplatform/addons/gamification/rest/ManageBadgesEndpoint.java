@@ -117,22 +117,27 @@ public class ManageBadgesEndpoint implements ResourceContainer {
                 if (badgeDTO.getUploadId() != null) {
                     UploadResource uploadResource = uploadService.getUploadResource(badgeDTO.getUploadId());
 
-                    /** Upload badge's icon into DB */
-                    FileItem fileItem = null;
+                    if (uploadResource != null) {
 
-                    fileItem = new FileItem(null,
-                            badgeDTO.getTitle().toLowerCase(),
-                            uploadResource.getMimeType(),
-                            "gamification",
-                            (long)uploadResource.getUploadedSize(),
-                            new Date(),
-                            currentUserName,
-                            false,
-                            new FileInputStream(uploadResource.getStoreLocation()));
-                    fileItem = fileService.writeFile(fileItem);
-                    /** END upload */
+                        /** Upload badge's icon into DB */
+                        FileItem fileItem = null;
 
-                    badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
+                        fileItem = new FileItem(null,
+                                badgeDTO.getTitle().toLowerCase(),
+                                uploadResource.getMimeType(),
+                                "gamification",
+                                (long)uploadResource.getUploadedSize(),
+                                new Date(),
+                                currentUserName,
+                                false,
+                                new FileInputStream(uploadResource.getStoreLocation()));
+                        fileItem = fileService.writeFile(fileItem);
+                        /** END upload */
+
+                        badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
+
+                    }
+
                 }
 
                 //--- Add badge

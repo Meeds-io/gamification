@@ -487,6 +487,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
                 gamificationContextItemEntity.setZone(ruleDto.getArea());
 
+                // compute current score
+                gamificationContextItemEntity.setScore(ruleDto.getScore());
+
                 // Link GamificationItem to its parent
                 gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
 

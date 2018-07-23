@@ -27,6 +27,7 @@ public class GamificationService {
      * @param username : gamification's username param
      * @return an instance of GamificationContextDTO
      */
+    @ExoTransactional
     public GamificationContextEntity findGamificationContextByUsername(String username) {
 
         GamificationContextEntity entity = null;
