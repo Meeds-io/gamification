@@ -27,7 +27,7 @@
                             <td class="badge-domain-col">{{badge.domain}}</td>
                             <td class="badge-start-validity-date-col">{{ moment(badge.startValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-end-validity-date-col">{{ moment(badge.endValidityDate).format('YYYY-MM-DD') }}</td>
-                            <td class="badge-icon-col">{{badge.icon}}</td>
+                            <td class="badge-icon-col"><b-img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/></td>
                             <td class="badge-status-col">{{badge.enabled}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>
                             <td class="center actionContainer">
