@@ -15,6 +15,10 @@ import java.io.Serializable;
                 name = "GamificationContextItem.findGamificationLeaderboardByDomain",
                 query = "SELECT item FROM GamificationContextItem item where item.zone = :domain GROUP BY item.id"
         ),
+        @NamedQuery(
+                name = "GamificationContextItem.findGamificationItemsByUserIdAndDomain",
+                query = "SELECT item FROM GamificationContextItem item where item.gamificationUserEntity.id = :userid AND item.zone = :domain"
+        ),
 
 })
 public class GamificationContextItemEntity implements Serializable {

@@ -1,13 +1,16 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.addons.gamification.service.effective.GamificationSearch;
+import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.Piechart;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -15,9 +18,6 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.relationship.model.Relationship;
-import org.exoplatform.services.organization.User;
-import org.exoplatform.commons.utils.ListAccess;
-import org.exoplatform.services.organization.OrganizationService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;

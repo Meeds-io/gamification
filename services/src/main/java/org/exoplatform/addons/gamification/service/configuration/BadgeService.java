@@ -1,11 +1,11 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
+import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
-import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 

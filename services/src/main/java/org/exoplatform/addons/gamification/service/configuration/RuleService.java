@@ -1,11 +1,11 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.commons.api.persistence.ExoTransactional;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 

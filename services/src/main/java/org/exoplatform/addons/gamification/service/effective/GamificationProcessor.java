@@ -1,11 +1,11 @@
 package org.exoplatform.addons.gamification.service.effective;
 
+import org.exoplatform.addons.gamification.service.completation.GamificationCompletionService;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.addons.gamification.service.completation.GamificationCompletionService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 

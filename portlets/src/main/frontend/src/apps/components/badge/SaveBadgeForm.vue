@@ -69,7 +69,6 @@
                             </b-alert>
                         </b-form-group>
 
-
                         <b-form-group id="enableCheckboxGroup">
                             <b-form-checkbox v-model="badge.enabled">Enable rule</b-form-checkbox>
                         </b-form-group>

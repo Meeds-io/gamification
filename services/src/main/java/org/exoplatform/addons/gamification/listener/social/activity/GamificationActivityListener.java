@@ -1,7 +1,5 @@
 package org.exoplatform.addons.gamification.listener.social.activity;
 
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.addons.gamification.listener.GamificationListener;
@@ -9,6 +7,8 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
+import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;

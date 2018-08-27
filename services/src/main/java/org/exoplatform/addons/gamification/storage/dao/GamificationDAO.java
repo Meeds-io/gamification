@@ -1,8 +1,6 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
-import org.exoplatform.addons.gamification.service.effective.GamificationSearch;
-import org.exoplatform.addons.gamification.service.effective.Leaderboard;
 import org.exoplatform.addons.gamification.service.effective.Piechart;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.container.xml.InitParams;
@@ -76,17 +74,6 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
             return null;
 
         }
-
-    }
-
-    /**
-     *
-     * @return
-     * @throws PersistenceException
-     */
-    public List<GamificationContextEntity> search(GamificationSearch gamificationSearch) throws PersistenceException {
-
-       return null;
 
     }
 

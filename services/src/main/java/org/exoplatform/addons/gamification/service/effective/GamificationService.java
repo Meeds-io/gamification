@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.entities.domain.effective.Gamificatio
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.addons.gamification.storage.dao.GamificationDAO;
+import org.exoplatform.addons.gamification.storage.dao.GamificationItemDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -19,8 +20,13 @@ public class GamificationService {
 
     protected final GamificationDAO gamificationDAO;
 
-    public GamificationService(GamificationDAO gamificationDAO) {
-        this.gamificationDAO =  gamificationDAO;
+    protected final GamificationItemDAO gamificationItemDAO;
+
+    public GamificationService(GamificationDAO gamificationDAO, GamificationItemDAO gamificationItemDAO) {
+
+        this.gamificationDAO = gamificationDAO;
+
+        this.gamificationItemDAO = gamificationItemDAO;
     }
 
     /**
@@ -68,6 +74,22 @@ public class GamificationService {
 
         } catch (Exception e) {
             LOG.error("Error to save GamificationUserReputation for user {}", gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
+        }
+    }
+
+    /**
+     *
+     * @param gamificationContextEntity
+     */
+    @ExoTransactional
+    public void updateUserGamificationContextScore(GamificationContextEntity gamificationContextEntity) {
+
+        try {
+
+            gamificationDAO.update(gamificationContextEntity);
+
+        } catch (Exception e) {
+            LOG.error("Error to update GamificationUserReputation for username {}", gamificationContextEntity.getUsername(), e);
         }
     }
 
@@ -124,6 +146,8 @@ public class GamificationService {
 
                 List<GamificationContextEntity> leaderboardList = gamificationDAO.findLeaderboardByDomain(gamificationSearch.getDomain());
 
+                LOG.info("1 >>>>>>>>>>>>> Leader size that match creteria {} is {}", gamificationSearch.getDomain(), leaderboardList.size());
+
                 gamificationContextEntities = new ArrayList<GamificationContextEntity>();
 
                 if (leaderboardList != null && !leaderboardList.isEmpty()) {
@@ -136,7 +160,9 @@ public class GamificationService {
 
                         Set<GamificationContextItemEntity> items = leaderBoard.getGamificationItems();
 
-                        if (items != null && !items.isEmpty())  {
+                        LOG.info("2 >>>>>>>>>>>>> items for user {} is {}", leaderBoard.getUsername(), items.size());
+
+                        if (items != null && !items.isEmpty()) {
 
                             red = new ArrayList<>();
 
@@ -163,6 +189,8 @@ public class GamificationService {
                             gamificationContextEntity.setScore(userScore);
                             gamificationContextEntities.add(gamificationContextEntity);
 
+                            LOG.info("3 >>>>>>>>>>>>> Construct Leaderboard entity user {} and score {}", gamificationContextEntity.getUsername(), userScore);
+
                         }
                     }
 
@@ -178,6 +206,7 @@ public class GamificationService {
 
         return gamificationContextEntities;
     }
+
 
     /**
      * Get user gamification
@@ -217,9 +246,9 @@ public class GamificationService {
         return gamificationContextItemEntitySet;
     }
 
-    private boolean checkElementExist (Set<GamificationContextItemEntity> gamificationContextItemEntities, String opType) {
+    private boolean checkElementExist(Set<GamificationContextItemEntity> gamificationContextItemEntities, String opType) {
 
-        for (GamificationContextItemEntity item: gamificationContextItemEntities) {
+        for (GamificationContextItemEntity item : gamificationContextItemEntities) {
 
             if (item.getOpType().equalsIgnoreCase(opType)) return false;
 
@@ -246,6 +275,49 @@ public class GamificationService {
         }
 
         return leaderboardList;
+    }
+
+    /**
+     * Find all item by user_id and and domain
+     *
+     * @param userId
+     * @param domain
+     * @return
+     */
+    @ExoTransactional
+    public List<GamificationContextItemEntity> findGamificationItemsByUserIdAndDomain(String userId, String domain) {
+
+        List<GamificationContextItemEntity> gamificationItems = null;
+
+        try {
+            //--- Get Stats
+            gamificationItems = gamificationItemDAO.findGamificationItemsByUserIdAndDomain(userId, domain);
+
+        } catch (Exception e) {
+            LOG.error("Error to load gamification items for user {} ", userId, e);
+        }
+
+        return gamificationItems;
+    }
+
+
+    /**
+     * Delete an item
+     *
+     * @return boolean
+     */
+    @ExoTransactional
+    public boolean deleteItem(GamificationContextItemEntity gamificationContextItemEntity) {
+
+        try {
+
+            return gamificationItemDAO.deleteItem(gamificationContextItemEntity);
+
+        } catch (Exception e) {
+            LOG.error("Error to delete gamification item with Optype {} for user {} ", gamificationContextItemEntity.getOpType(), gamificationContextItemEntity.getGamificationUserEntity().getUsername(), e);
+            return false;
+        }
+
     }
 
 

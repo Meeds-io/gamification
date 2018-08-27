@@ -1,12 +1,12 @@
 package org.exoplatform.addons.gamification.service.setting.zone.impl;
 
+import org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry;
+import org.exoplatform.addons.gamification.service.setting.zone.model.ZoneConfig;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry;
-import org.exoplatform.addons.gamification.service.setting.zone.model.ZoneConfig;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;

@@ -1,14 +1,14 @@
 package org.exoplatform.addons.gamification.service.setting.rule.impl;
 
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
+import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
-import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
