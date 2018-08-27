@@ -103,8 +103,6 @@ public class PurgeGamificationDataEndPoint implements ResourceContainer {
 
         if (conversationState != null) {
 
-            List<GamificationContextItemEntity> gamificationContextItemEntityList = null;
-
             try {
 
                 GamificationContextEntity gamificationContextEntity = gamificationService.findGamificationContextByUsername(id);

@@ -146,8 +146,6 @@ public class GamificationService {
 
                 List<GamificationContextEntity> leaderboardList = gamificationDAO.findLeaderboardByDomain(gamificationSearch.getDomain());
 
-                LOG.info("1 >>>>>>>>>>>>> Leader size that match creteria {} is {}", gamificationSearch.getDomain(), leaderboardList.size());
-
                 gamificationContextEntities = new ArrayList<GamificationContextEntity>();
 
                 if (leaderboardList != null && !leaderboardList.isEmpty()) {
@@ -159,8 +157,6 @@ public class GamificationService {
                     for (GamificationContextEntity leaderBoard : leaderboardList) {
 
                         Set<GamificationContextItemEntity> items = leaderBoard.getGamificationItems();
-
-                        LOG.info("2 >>>>>>>>>>>>> items for user {} is {}", leaderBoard.getUsername(), items.size());
 
                         if (items != null && !items.isEmpty()) {
 
@@ -188,8 +184,6 @@ public class GamificationService {
                             gamificationContextEntity.setUsername(leaderBoard.getUsername());
                             gamificationContextEntity.setScore(userScore);
                             gamificationContextEntities.add(gamificationContextEntity);
-
-                            LOG.info("3 >>>>>>>>>>>>> Construct Leaderboard entity user {} and score {}", gamificationContextEntity.getUsername(), userScore);
 
                         }
                     }
