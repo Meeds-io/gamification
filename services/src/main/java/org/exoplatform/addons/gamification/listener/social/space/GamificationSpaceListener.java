@@ -9,6 +9,7 @@ import org.exoplatform.addons.gamification.service.dto.effective.GamificationCon
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Asynchronous
 public class GamificationSpaceListener extends SpaceListenerPlugin implements GamificationListener {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
