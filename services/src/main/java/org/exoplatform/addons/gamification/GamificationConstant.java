@@ -83,6 +83,9 @@ public interface GamificationConstant {
     String GAMIFICATION_FORUM_ADD_POST                                                  = "addForumPost";
     /** ADD TOPIC IN FORUM */
     String GAMIFICATION_FORUM_ADD_TOPIC                                                 = "addForumTopic";
+    /** ADD TOPIC IN FORUM */
+    String GAMIFICATION_FORUM_VOTE_TOPIC                                                = "voteForumTopic";
+
 
     /***************************************************************************************************************************************************/
     /************************************************** CONSTANTS TO MANAGE WIKI GAMIFICATION PROCESS **************************************************/

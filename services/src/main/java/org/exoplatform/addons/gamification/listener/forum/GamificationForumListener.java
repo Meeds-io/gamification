@@ -16,6 +16,7 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -146,6 +147,12 @@ public class GamificationForumListener extends ForumEventListener implements Gam
     @Override
     public void updateTopic(Topic topic) {
 
+        PropertyChangeEvent[] events = topic.getChangeEvent();
+
+        for (int i = 0; i < events.length; i++) {
+            processUpdateTopicType(events[i], topic);
+        }
+
 
     }
 
@@ -185,6 +192,8 @@ public class GamificationForumListener extends ForumEventListener implements Gam
     public void movePost(List<Post> list, List<String> list1, String s) {
 
     }
+
+
 
     @Override
     public List<GamificationContextHolder> gamify(RuleDTO ruleDto, String actor) throws Exception {
@@ -278,5 +287,38 @@ public class GamificationForumListener extends ForumEventListener implements Gam
         }
 
         return gamificationContextEntityList;
+    }
+
+    private void processUpdateTopicType(PropertyChangeEvent event, Topic topic) {
+
+        // Start gamification process only when a topic is voted
+        if (Topic.TOPIC_RATING.equals(event.getPropertyName())) {
+
+            List<GamificationContextHolder> gamificationContextEntityList = null;
+
+            // To hold GamificationRule
+            RuleDTO ruleDto = null;
+
+            // Get associated rule : Reward user who send a relationship request
+            ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_FORUM_VOTE_TOPIC);
+
+            // Process only when an enable rule is found
+            if (ruleDto != null) {
+                try {
+                    gamificationContextEntityList = gamify(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId());
+                } catch (Exception e) {
+                    LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+                }
+            }
+
+            if (!gamificationContextEntityList.isEmpty()) {
+
+                // Save Gamification Context
+                gamificationProcessor.process(gamificationContextEntityList);
+
+            }
+
+        }
+
     }
 }
