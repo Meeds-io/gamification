@@ -37,6 +37,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     private final static String BLACK_LISTED_USERS_GROUP = "/leaderboard-blacklist-users";
 
+    private final static String YOUR_CURRENT_RANK_MSG = "Your current rank";
+
     private final CacheControl cacheControl;
 
     protected IdentityManager identityManager = null;
@@ -136,27 +138,27 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 if (!isCurrentUserInTopTen(identity.getId(),gamificationContextEntities)) {
 
                     // Get GaamificationScore for current user
-                    int game = gamificationService.loadGamification(identity.getId());
+                    int rank = gamificationService.loadGamification(identity.getId());
 
-                    if (game  > 0) {
+                    if (rank  > 0) {
 
 
                         leaderboardInfo = new LeaderboardInfo();
 
                         // Set score
-                        leaderboardInfo.setScore(game);
+                        leaderboardInfo.setScore(rank);
 
                         // Set username
-                        leaderboardInfo.setRemoteId("Current_user");
+                        leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
 
                         // Set FullName
-                        leaderboardInfo.setFullname("Current_user");
+                        leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
 
                         // Set avatar
-                        leaderboardInfo.setAvatarUrl("Current_user");
+                        leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
 
                         // Set profile URL
-                        leaderboardInfo.setProfileUrl("Current_user");
+                        leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
 
                         // Leader
                         leaderboardList.add(leaderboardInfo);
