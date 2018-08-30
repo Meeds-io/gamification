@@ -1,17 +1,19 @@
 <template class="">
-    <div class="uiBox container-fluid" >
+    <div class="uiBox container-fluid">
         <div class="row">
             <div class="col">
                 <h5 class="mt-0 title">Top users</h5>
-                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" data-original-title="How can I earn points ?"><i class="uiIconInformation"></i></a>
+                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" data-original-title="How can I earn points ?">
+                    <i class="uiIconInformation"></i>
+                </a>
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <select v-model="domain" class="custom-select">
-                 
-                        <option :value="null">Overall</option>
-                   
+
+                    <option :value="null">Overall</option>
+
 
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
@@ -33,38 +35,52 @@
         </div>
         <div class="row">
 
-            <div class="list-lead col"   >
-                    <div class="list-group parentPosition"  @mouseleave.native="popover = hidden"   >
-                        <div v-for="(user, index) in users"   @mouseover="onShown(user.remoteId)"  class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
-    
-                            <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
-                            <div class="desc-user">
-                                <a :href="user.profileUrl">{{user.fullname}}</a>
-                            </div>
-                            <div class="number-user">{{user.score}}
-                                <span>Pts</span>
-                            </div>
-                            <img :id="'leaderboard'+index" data-toggle="popover" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
-                                alt="Thumbnail" @click="onOpen" width="40" height="40" class="img-thumbnail img-fluid" />
-                                <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
-                                        <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip" tabindex="-1" :id="'leaderboard'+index" x-placement="left" ><div class="arrow" style="top: 108px;"></div>
-                                        <template   >
-                                                <div class='chart' id="chart">
-                
-                                                    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-                                                        crossorigin="anonymous">
-                
-                                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
-                                                </div>
-                                            </template>
-                                      </div></div>
+            <div class="list-lead col">
+                <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
+                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+
+                        <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
+                        <div class="desc-user">
+                            <a :href="user.profileUrl">{{user.fullname}}</a>
                         </div>
-                        <div v-if="!users.length" class="empty-leaderboard">
-                            Coming soon ...
+                        <div class="number-user">{{user.score}}
+                            <span>Pts</span>
+                        </div>
+                        <img :id="'leaderboard'+index" data-toggle="popover" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
+                            alt="Thumbnail" @click="onOpen" width="40" height="40" class="img-thumbnail img-fluid" />
+                        <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
+                            <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip"
+                                tabindex="-1" :id="'leaderboard'+index" x-placement="left">
+                                <div class="arrow" style="top: 108px;"></div>
+                                <template>
+                                    <div class='chart' id="chart">
+
+                                        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+                                            crossorigin="anonymous">
+
+                                        <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div v-if="user.fullname == 'Your current rank'" v-bind:class="{'current-rank': currentRank(user)}" v-for="(user, index) in users"
+                        class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+                        <div class="desc-user">
+                            {{user.fullname}} :
+                        </div>
+                        <div class="number-user">{{user.score}}
+
                         </div>
                     </div>
+
+                    <div v-if="!users.length" class="empty-leaderboard">
+                        Coming soon ...
+                    </div>
                 </div>
-  
+            </div>
+
         </div>
     </div>
 </template>
@@ -77,7 +93,7 @@
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar'
- 
+
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -96,11 +112,11 @@
             selected: null,
             activeBtn: 'btn1',
             domain: 'null',
-            show: false, 
-            
+            show: false,
+
             popoverShow: false
-            
-            
+
+
         }
     }
 
@@ -110,24 +126,24 @@
         components: {
             Avatar,
             ChartPie,
-            
-           
+
+
         },
         directives: {
             mouseover: {
-                mounted: function() {
+                mounted: function () {
                     jQuery('[data-toggle="popover"]').popover({
-                html: true,
-                content: $('#popover')
-            }).on('mouseenter', function () {
-                    
-    popoverShow : true;
-                    
+                        html: true,
+                        content: $('#popover')
+                    }).on('mouseenter', function () {
+
+                        popoverShow: true;
+
                     })
-            .on('mouseleave', function () {
-                  
-                popoverShow: false;
-                });
+                        .on('mouseleave', function () {
+
+                            popoverShow: false;
+                        });
                 },
             }
         },
@@ -137,25 +153,25 @@
             }
 
         },
-        mounted: function() {
-            jQuery(".pop").popover({ trigger: "hover" , html: true, animation:false})
-                    .on("mouseenter", function () {
-                        var _this = this;
-                        jQuery(this).popover("show");
-                        jQuery(".popover").on("mouseleave", function () {
-                            jQuery(_this).popover('hide');
-                        });
-                    }).on("mouseleave", function () {
-                        var _this = this;
-                        setTimeout(function () {
-                            if (!jQuery(".popover:hover").length) {
-                                jQuery(_this).popover("hide");
-                            }
-                        }, 300);
+        mounted: function () {
+            jQuery(".pop").popover({ trigger: "hover", html: true, animation: false })
+                .on("mouseenter", function () {
+                    var _this = this;
+                    jQuery(this).popover("show");
+                    jQuery(".popover").on("mouseleave", function () {
+                        jQuery(_this).popover('hide');
+                    });
+                }).on("mouseleave", function () {
+                    var _this = this;
+                    setTimeout(function () {
+                        if (!jQuery(".popover:hover").length) {
+                            jQuery(_this).popover("hide");
+                        }
+                    }, 300);
                 });
-                  
-                },
-        
+
+        },
+
         methods: {
             filter(network) {
                 let self = this
@@ -182,31 +198,31 @@
                         console.warn(e)
 
                     })
-               
-                    
+
+
             },
             popOpen() {
-                jQuery(".popover").popover({ trigger: "hover" , html: true, animation:false})
+                jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
                     .on("mouseenter", function () {
-                        popoverShow : true;
+                        popoverShow: true;
                     }).on("mouseleave", function () {
-                        popoverShow : false;
-                });
-      },
+                        popoverShow: false;
+                    });
+            },
 
             disableByRef() {
-           if (this.disabled){
-               this.$refs.popover.$emit('enable')
-           }else{
-               this.$refs.popover.$emit('disable')
-           }
-           }, 
-           
+                if (this.disabled) {
+                    this.$refs.popover.$emit('enable')
+                } else {
+                    this.$refs.popover.$emit('disable')
+                }
+            },
+
             mouseOver() {
-                
-                        jQuery(this).popover("show");
-                        
-                  
+
+                jQuery(this).popover("show");
+
+
             },
             isActive(value) {
                 return this.active === value
@@ -220,7 +236,17 @@
             },
             onOpen() {
                 console.log("Pie chart onOpen")
+            },
+
+            currentRank: function (user) {
+
+
+                return user.fullname == 'Your current rank';
+
             }
+
+
+
         },
 
         created() {
@@ -235,27 +261,40 @@
 
     }
 
-   
+
 </script>
 
-<style scoped >
+<style scoped>
+    .popover__title {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 24px;
+        line-height: 36px;
+        text-decoration: none;
+        color: rgb(228, 68, 68);
+        text-align: center;
+        padding: 15px 0;
+    }
 
-.popover__title {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 24px;
-  line-height: 36px;
-  text-decoration: none;
-  color: rgb(228, 68, 68);
-  text-align: center;
-  padding: 15px 0;
-}
+    .popover__wrapper {
+        position: relative;
+        display: inline-block;
+    }
 
-.popover__wrapper {
-    position: relative;
-    display: inline-block;
-}
+    .desc-user a {
+        color: #4d5466 !important;
+    }
 
+    .current-rank .desc-user {
+        padding-left: 10px;
+        width: 50%;
+    }
 
+    .current-rank .number-user {
+        padding-left: 10px;
+        width: 50%;
+        margin: 0 auto;
+        font-weight: bold;
+    }
 
     .popover__content {
         opacity: 0;
@@ -265,66 +304,72 @@
         transform: translateY(10px);
         background-color: #fff;
         padding: 1.5rem;
-        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
         width: 193px;
         height: 179px;
         top: -68px;
         border-radius: 7px;
-}
-.popover__content:before {
-    position: absolute;
-    z-index: -1;
-    content: "";
-    top: calc(50% - 10px);
-    right: -15px;
-    border-style: solid;
-    border-width: 0 10px 10px;
-    border-color: transparent transparent #fff;
-    transition-duration: .3s;
-    transition-property: transform;
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    transform: rotate(90deg);
-}
-.popover__wrapper:hover .popover__content {
-    z-index: 10;
-    opacity: 1;
-    visibility: visible;
-    transform: translate(0,-20px);
-    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
-}
-.popover__message {
-  text-align: center;
-}
+    }
+
+    .popover__content:before {
+        position: absolute;
+        z-index: -1;
+        content: "";
+        top: calc(50% - 10px);
+        right: -15px;
+        border-style: solid;
+        border-width: 0 10px 10px;
+        border-color: transparent transparent #fff;
+        transition-duration: .3s;
+        transition-property: transform;
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        transform: rotate(90deg);
+    }
+
+    .popover__wrapper:hover .popover__content {
+        z-index: 10;
+        opacity: 1;
+        visibility: visible;
+        transform: translate(0, -20px);
+        transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+    }
+
+    .popover__message {
+        text-align: center;
+    }
 
 
 
 
 
-   
-.d-flex {
-    display: -ms-flexbox!important;
-    display: flex!important;
-}
+
+    .d-flex {
+        display: -ms-flexbox !important;
+        display: flex !important;
+    }
 
 
-.user-leaderboard-portlet .row {
-     margin-left: 0px !important; 
-}
-.user-leaderboard-portlet .img-thumbnail {
-    width: 40px;
-    padding: 0;
-    height: 40px;
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: .25rem;
-}
-.container-fluid {
-    padding-right: 0px;
-    padding-left: 0px;
-}
+    .user-leaderboard-portlet .row {
+        margin-left: 0px !important;
+    }
+
+    .user-leaderboard-portlet .img-thumbnail {
+        width: 40px;
+        padding: 0;
+        height: 40px;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: .25rem;
+    }
+
+    .container-fluid {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
     .btn {
         color: #4d5466;
         background-color: #fff;
@@ -348,9 +393,10 @@
         font-size: 14px;
         color: #000;
     }
+
     .btn-group>.btn+.btn {
-    margin-left: 0px;
-}
+        margin-left: 0px;
+    }
 
     .btn-group {
         width: 100%;
@@ -360,7 +406,7 @@
         padding: 5px 0px !important;
     }
 
-    
+
 
     .col {
         padding: 5px;
@@ -414,27 +460,29 @@
         padding-top: 10px;
         text-align: center;
     }
-    select{
-        height: calc(2.25rem + 2px);   
+
+    select {
+        height: calc(2.25rem + 2px);
         font-size: 14px;
-        transition: background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
- 
+        transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
     }
+
     .custom-select {
-    display: inline-block;
-    width: 100%;
-    height: calc(2.25rem + 2px);
-    padding: .375rem 1.75rem .375rem .75rem;
-    line-height: 1.5;
-    color: #495057;
-    vertical-align: middle;
-    background-size: 8px 10px;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
+        display: inline-block;
+        width: 100%;
+        height: calc(2.25rem + 2px);
+        padding: .375rem 1.75rem .375rem .75rem;
+        line-height: 1.5;
+        color: #495057;
+        vertical-align: middle;
+        background-size: 8px 10px;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
 
     .desc-user {
         width: 55%;
@@ -460,26 +508,29 @@
         color: #4d5466 !important;
         font-family: helvetica;
         border: none;
-       
+
         border-radius: inherit !important;
     }
-    .list-group-item:last-child{
+
+    .list-group-item:last-child {
         border-bottom: 0px !important;
     }
 
-     .list-lead .list-li::after{
-            content: "";
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 1px;
-            background: #f4f5f5;
-            left: 0;
-            display: block;
-         }
-    .list-lead .list-li:last-child::after{
-        display:none;
+    .list-lead .list-li::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background: #f4f5f5;
+        left: 0;
+        display: block;
     }
+
+    .list-lead .list-li:last-child::after {
+        display: none;
+    }
+
     .list-group-item:hover {
         background: #fbfbfb;
 
@@ -507,28 +558,30 @@
         width: 50px !important;
         height: 50px !important;
     }
-    .ico-info{
+
+    .ico-info {
         position: relative;
         margin-top: -37px;
         padding: 2px 3px 0;
         display: block;
         top: 5px;
         float: right;
-        }
-        .actionIco{
-            border: 1px solid transparent;
-        }
-        .actionIco:hover {
-            background: none;
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#fff0f0f0',GradientType=0);
-            border: 1px solid #e1e8ee;
-            -webkit-border-radius: 3px;
-            -moz-border-radius: 3px;
-            border-radius: 3px;
-            -webkit-box-shadow: 0 1px 2px 0 rgba(255,255,255,0);
-            -moz-box-shadow: 0 1px 2px 0 rgba(255,255,255,0);
-            box-shadow: 0 1px 2px 0 rgba(255,255,255,0);
-            color: #333;
-        }
+    }
 
+    .actionIco {
+        border: 1px solid transparent;
+    }
+
+    .actionIco:hover {
+        background: none;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff0f0f0', GradientType=0);
+        border: 1px solid #e1e8ee;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        -webkit-box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
+        -moz-box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
+        box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
+        color: #333;
+    }
 </style>
