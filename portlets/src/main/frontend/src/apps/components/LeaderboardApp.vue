@@ -15,24 +15,10 @@
 
 <style>
 
-.UIToolbarContainer .uiDropdownWithIcon>a{
-     color: #4d5466 !important;
- }
- .title{
-     color:#4d5466;
-     font-size:16px;
- }
 
- a, a:hover, a:focus {
-      color: inherit;
-      text-decoration: none;
- }
- a{
-      color: none;
-      text-decoration: none;
-      background-color: transparent;
-      -webkit-text-decoration-skip: objects;
- }
+ 
+
+
 .fade{
      opacity:1 !important;
  }
@@ -81,25 +67,15 @@
  .popover{
      font-family: Helvetica,arial,sans-serif !important;
  }
- body {
-     margin: 0 !important;
-     font-family: Helvetica,arial,sans-serif !important;
-     font-size: 14px !important;
-     line-height: 20px !important;
-     color: #333 !important;
-     background-color: #fff !important;
- }
+
  .bs-popover-auto[x-placement^=left], .bs-popover-left{
-     left: -231px !important;
+     left: 0px !important;
  }
  .vue-avatar--wrapper{
      margin: 3px 6px;
      width: 40px!important;
  }
 
-
-
- 
  .d2b-legend:not(.d2b-vertical) .d2b-legend-icon {
      margin-top: -0.5px !important;
  }
@@ -119,29 +95,6 @@
      margin-right:0 !important;
  }
 
- .container-fluid{
-     width:inherit !important;
- }
- *, :after, :before{
-     box-sizing: inherit ;
- }
- .h4, h4{
-     font-size: 18px;
- }
- .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-     margin-bottom: initial;
-     font-family: inherit;
-     font-weight: inherit;
-     line-height: inherit;
-     color: none !important;
- }
- .dropdown-toggle:after{
-     display:none;
- }
- .dropdown-menu{
-     font-size: inherit;
-  }
-  .img-thumbnail{
-      padding:0px;
-  }
+ 
+
 </style>

@@ -46,20 +46,9 @@
 
     }
 
-  .UIToolbarContainer .uiDropdownWithIcon>a{
-        color: #4d5466 !important;
-    }
+  
 
-     a, a:hover, a:focus {
-        color: inherit;
-        text-decoration: none;
-     }
-     a{
-        color: none;
-        text-decoration: none;
-        background-color: transparent;
-        -webkit-text-decoration-skip: objects;
-     }
+     
     #user-reputation-container h4{
         color: #4d5466 !important;
         font-family: 'open_sanssemibold';
@@ -72,12 +61,7 @@
         padding:15px 10px 0 10px;
         text-align: center;
     }
-   .uiBox{
-        padding:5px;
-    }
-    .left-border-row{
-        border-left:0px !important;
-    }
+   
 
     .fade:not(.show) {
         opacity: 1 !important;
@@ -114,6 +98,7 @@
         max-width: 222px !important;
         width:200px !important;
         border :none !important;
+        top: -10px !important;
     }
     .popover-body{
         text-align: center!important;
@@ -125,8 +110,14 @@
         border-top-color:inherit !important;
     }
     .bs-popover-auto[x-placement^=top] .arrow:after, .bs-popover-top .arrow:after {
-        bottom: 1px;
+        bottom: -10px;
         border-top-color: #f0f8fe;
+        left: -10px;
+    }
+    .bs-popover-auto[x-placement^=bottom] .arrow:after, .bs-popover-bottom .arrow:after {
+        top: -10px;
+        border-bottom-color: #f0f8fe;
+        left: -10px;
     }
     .img-thumbnail{
         border: 0px !important;
@@ -135,16 +126,8 @@
         margin-top: 15px;
     }
 
-    .avatarCircle{
-        width: 50px !important;
-        height: 50px !important;
-     }
-     .dropdown-toggle:after{
-         display:none;
-     }
-     .dropdown-menu{
-          font-size: 14px;
-          font-family: Helvetica,arial,sans-serif;
-     }
+   
+    
+     
 
 </style>

@@ -2,7 +2,7 @@
 
     <b-container fluid class="p-4" id="reputation-badge-container">
 
-         <b-row>
+         <div>
                <b-col md="4" class="text-center no-padding"
                          v-for="badge in badges" :key="badge">
                          <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1"  width="70" height="70" />
@@ -26,7 +26,7 @@
                       </b-popover>
                       </b-col>
                       
-            </b-row>
+                    </div>
 
     </b-container>
 </template>
@@ -37,8 +37,7 @@
     import { Popover } from 'bootstrap-vue/es/components';
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
+    
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -167,9 +166,13 @@
     font-family: 'open_sansregular';
 }
 .prog-point{
-    background: #f0f8fe;
+       background: #f0f8fe;
     min-height: 46px;
-    padding: 7px 5px 0px 5px;
+    padding: 5px 5px 2px 5px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    top: 2px;
+    position: relative;
 }
 .first-number{
     padding-top: 4px;
@@ -180,16 +183,17 @@
     font-size:12px;
     float:left;
     position: relative;
-    top: 3px;
     z-index: 10;
+    top: 7px;
     width: 30px;
     height: 30px;
+    padding: 1px;
+    line-height: 27px;
     text-align: center;
 }
 .last-number{
     font-size: 14px;
     float: left;
-    padding-top: 6px;
     background:#60a352;
     color:#fff;
     font-family: 'open_sansregular';
@@ -200,9 +204,11 @@
     float: right;
     width: 40px;
     height: 40px;
+    top: -2px;
+    line-height: 35px;
     text-align: center;
     position: relative;
-    top: -2px;
+    padding: 1px;
 }
 .bg-red{
     background: #fd7e14;
@@ -221,4 +227,12 @@
     width: 91%;
     left: 7px;
 }
+@media (min-width: 768px){
+
+.col-md-4 {
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    width: 28%;
+    float: left;
+}}
 </style>

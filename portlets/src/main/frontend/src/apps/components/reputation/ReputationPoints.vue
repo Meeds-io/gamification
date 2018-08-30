@@ -3,7 +3,7 @@
         <h5 class="mt-0">Achievements</h5>
         <div>
 
-               <div class="points">{{reputation.points}} Points</div>
+               <div class="points"><span>{{reputation.points}} Points</span></div>
         </div>
 
     </section>
@@ -13,8 +13,7 @@
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import axios from 'axios';
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
+   
     Vue.use(BootstrapVue);
 
     const initialData = () => {
@@ -52,16 +51,19 @@
 .points{
     text-align: center;
     color: #333;
-    font-family: 'open_sansregular';
-    position: relative;
+    font-family: open_sansregular;
     font-size: 14px;
-    background:url('/gamification-portlets/skin/images/ico-points.png') left center no-repeat;
-    padding-left: 56px;
-    display: -webkit-inline-box;
+    background: url(/gamification-portlets/skin/images/ico-points.png)left center no-repeat;
     padding-top: 13px;
     min-height: 50px;
     position: relative;
-    margin-left: 12%;
+    margin: 0 auto;
+    display: table;
+}
+.points span{
+    padding-left: 56px;
+    top: 16px;
+    position: relative;
 }
 .rep-points{
     padding: 0px 20px;

@@ -1,69 +1,72 @@
-<template>
-    <b-container fluid class="uiBox">
-        <b-row>
-            <b-col>
+<template class="">
+    <div class="uiBox container-fluid" >
+        <div class="row">
+            <div class="col">
                 <h5 class="mt-0 title">Top users</h5>
                 <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" data-original-title="How can I earn points ?"><i class="uiIconInformation"></i></a>
-            </b-col>
-        </b-row>
-        <b-row>
-            <b-col>
-                <b-form-select v-model="domain" class="">
-                    <template slot="first">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <select v-model="domain" class="custom-select">
+                 
                         <option :value="null">Overall Rank</option>
-                    </template>
+                   
 
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
                     <!--
                     <option value="content">Content</option>
                     -->
-                </b-form-select>
-            </b-col>
-        </b-row>
-        <b-row>
-            <b-col>
-                <b-button-toolbar aria-label="Toolbar with button groups and dropdown menu">
-                    <b-button-group id="app">
-                        <b-btn @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')">Everyone</b-btn>
-                        <b-btn @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')">My connections</b-btn>
-                    </b-button-group>
-                </b-button-toolbar>
-            </b-col>
-        </b-row>
-        <b-row>
-            <b-col class="list-lead">
-                <b-list-group>
-                    <b-list-group-item v-for="(user, index) in users" class="d-flex justify-content-between list-li align-items-center">
-
-                        <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
-                        <div class="desc-user">
-                            <a :href="user.profileUrl">{{user.fullname}}</a>
-                        </div>
-                        <div class="number-user">{{user.score}}
-                            <span>Pts</span>
-                        </div>
-                        <b-img thumbnail fluid :id="'leaderboard'+index" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
-                            alt="Thumbnail" @click="onOpen" width="40" height="40" />
-                        <b-popover :target="'leaderboard'+index" :placement="'left'" triggers="hover focus" @shown="onShown(user.remoteId)">
-                            <template>
-                                <div class='chart' id="chart">
-
-                                    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-                                        crossorigin="anonymous">
-
-                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
-                                </div>
-                            </template>
-                        </b-popover>
-                    </b-list-group-item>
-                    <div v-if="!users.length" class="empty-leaderboard">
-                        Coming soon ...
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
+                    <div id="app" role="group" class="btn-group">
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')">Everyone</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')">My connections</button>
                     </div>
-                </b-list-group>
-            </b-col>
-        </b-row>
-    </b-container>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="list-lead col"   >
+                    <div class="list-group parentPosition"  @mouseleave.native="popover = hidden"   >
+                        <div v-for="(user, index) in users"   @mouseover="onShown(user.remoteId)"  class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+    
+                            <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
+                            <div class="desc-user">
+                                <a :href="user.profileUrl">{{user.fullname}}</a>
+                            </div>
+                            <div class="number-user">{{user.score}}
+                                <span>Pts</span>
+                            </div>
+                            <img :id="'leaderboard'+index" data-toggle="popover" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
+                                alt="Thumbnail" @click="onOpen" width="40" height="40" class="img-thumbnail img-fluid" />
+                                <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
+                                        <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip" tabindex="-1" :id="'leaderboard'+index" x-placement="left" ><div class="arrow" style="top: 108px;"></div>
+                                        <template   >
+                                                <div class='chart' id="chart">
+                
+                                                    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+                                                        crossorigin="anonymous">
+                
+                                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
+                                                </div>
+                                            </template>
+                                      </div></div>
+                        </div>
+                        <div v-if="!users.length" class="empty-leaderboard">
+                            Coming soon ...
+                        </div>
+                    </div>
+                </div>
+  
+        </div>
+    </div>
 </template>
 <script>
 
@@ -74,8 +77,7 @@
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
+ 
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -93,7 +95,12 @@
             connection: 'everyone',
             selected: null,
             activeBtn: 'btn1',
-            domain: 'null'
+            domain: 'null',
+            show: false, 
+            
+            popoverShow: false
+            
+            
         }
     }
 
@@ -102,7 +109,27 @@
 
         components: {
             Avatar,
-            ChartPie
+            ChartPie,
+            
+           
+        },
+        directives: {
+            mouseover: {
+                mounted: function() {
+                    jQuery('[data-toggle="popover"]').popover({
+                html: true,
+                content: $('#popover')
+            }).on('mouseenter', function () {
+                    
+    popoverShow : true;
+                    
+                    })
+            .on('mouseleave', function () {
+                  
+                popoverShow: false;
+                });
+                },
+            }
         },
         watch: {
             domain() {
@@ -110,6 +137,25 @@
             }
 
         },
+        mounted: function() {
+            jQuery(".pop").popover({ trigger: "hover" , html: true, animation:false})
+                    .on("mouseenter", function () {
+                        var _this = this;
+                        jQuery(this).popover("show");
+                        jQuery(".popover").on("mouseleave", function () {
+                            jQuery(_this).popover('hide');
+                        });
+                    }).on("mouseleave", function () {
+                        var _this = this;
+                        setTimeout(function () {
+                            if (!jQuery(".popover:hover").length) {
+                                jQuery(_this).popover("hide");
+                            }
+                        }, 300);
+                });
+                  
+                },
+        
         methods: {
             filter(network) {
                 let self = this
@@ -136,6 +182,31 @@
                         console.warn(e)
 
                     })
+               
+                    
+            },
+            popOpen() {
+                jQuery(".popover").popover({ trigger: "hover" , html: true, animation:false})
+                    .on("mouseenter", function () {
+                        popoverShow : true;
+                    }).on("mouseleave", function () {
+                        popoverShow : false;
+                });
+      },
+
+            disableByRef() {
+           if (this.disabled){
+               this.$refs.popover.$emit('enable')
+           }else{
+               this.$refs.popover.$emit('disable')
+           }
+           }, 
+           
+            mouseOver() {
+                
+                        jQuery(this).popover("show");
+                        
+                  
             },
             isActive(value) {
                 return this.active === value
@@ -161,10 +232,99 @@
                     this.errors.push(e)
                 })
         }
+
     }
+
+   
 </script>
 
-<style scoped>
+<style scoped >
+
+.popover__title {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  line-height: 36px;
+  text-decoration: none;
+  color: rgb(228, 68, 68);
+  text-align: center;
+  padding: 15px 0;
+}
+
+.popover__wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+
+
+    .popover__content {
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        left: -251px;
+        transform: translateY(10px);
+        background-color: #fff;
+        padding: 1.5rem;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+        width: 193px;
+        height: 179px;
+        top: -68px;
+        border-radius: 7px;
+}
+.popover__content:before {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    top: calc(50% - 10px);
+    right: -15px;
+    border-style: solid;
+    border-width: 0 10px 10px;
+    border-color: transparent transparent #fff;
+    transition-duration: .3s;
+    transition-property: transform;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+.popover__wrapper:hover .popover__content {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0,-20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+}
+.popover__message {
+  text-align: center;
+}
+
+
+
+
+
+   
+.d-flex {
+    display: -ms-flexbox!important;
+    display: flex!important;
+}
+
+
+.user-leaderboard-portlet .row {
+     margin-left: 0px !important; 
+}
+.user-leaderboard-portlet .img-thumbnail {
+    width: 40px;
+    padding: 0;
+    height: 40px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+}
+.container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
     .btn {
         color: #4d5466;
         background-color: #fff;
@@ -200,9 +360,7 @@
         padding: 5px 0px !important;
     }
 
-    .list-lead .list-li {
-        border-bottom: 1px solid #f4f5f5;
-    }
+    
 
     .col {
         padding: 5px;
@@ -253,9 +411,30 @@
         font-size: 14px;
         width: 25%;
         white-space: nowrap;
-
+        padding-top: 10px;
         text-align: center;
     }
+    select{
+        height: calc(2.25rem + 2px);   
+        font-size: 14px;
+        transition: background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+ 
+    }
+    .custom-select {
+    display: inline-block;
+    width: 100%;
+    height: calc(2.25rem + 2px);
+    padding: .375rem 1.75rem .375rem .75rem;
+    line-height: 1.5;
+    color: #495057;
+    vertical-align: middle;
+    background-size: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
 
     .desc-user {
         width: 55%;
@@ -264,6 +443,7 @@
         overflow: hidden;
         display: block;
         text-overflow: ellipsis;
+        padding-top: 10px;
     }
 
     .desc-user a:hover {
@@ -280,7 +460,7 @@
         color: #4d5466 !important;
         font-family: helvetica;
         border: none;
-        border-bottom: 1px solid #f4f5f5;
+       
         border-radius: inherit !important;
     }
     .list-group-item:last-child{
@@ -328,11 +508,12 @@
         height: 50px !important;
     }
     .ico-info{
-            position: absolute;
-            top: 0;
-            margin: 8px 0px;
-            right: 6px;
-            padding: 2px 3px 0px 3px;
+        position: relative;
+        margin-top: -37px;
+        padding: 2px 3px 0;
+        display: block;
+        top: 5px;
+        float: right;
         }
         .actionIco{
             border: 1px solid transparent;
