@@ -31,9 +31,7 @@
                         </b-form-group>
 
                         <b-form-group id="iconInputGroup" label="Icon:" label-for="iconInput">
-
-                            <b-form-file v-model="badge.icon" :state="Boolean(badge.icon)" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                            <div class="mt-3">Selected icon: {{badge.icon && badge.icon.name}}</div>
+                            <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
                         </b-form-group>
 
 

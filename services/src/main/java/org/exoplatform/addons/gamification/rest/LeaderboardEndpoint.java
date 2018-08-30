@@ -85,6 +85,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             LeaderboardInfo leaderboardInfo = null;
 
+            Identity identity = null;
+
             try {
                 // Filter users to add to leaderboard according to filter criteria
                 // TODO : Use a DTO instead of JPA entity
@@ -101,10 +103,11 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     populateBlackListedUsers();
 
                     // Load Social identity
-                    Identity identity = identityManager.getIdentity(game.getUsername(), true);
+                    identity = identityManager.getIdentity(game.getUsername(), true);
 
                     // Do not add blacklisted user to the leaderboard
                     if (isBlackListedUser(identity.getRemoteId())) continue;
+
 
                     leaderboardInfo = new LeaderboardInfo();
 
@@ -125,6 +128,41 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
                     // Leader
                     leaderboardList.add(leaderboardInfo);
+                }
+
+                // Get eXo Identity of current user
+                identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
+                // Check if the current user is already in top10
+                if (!isCurrentUserInTopTen(identity.getId(),gamificationContextEntities)) {
+
+                    // Get GaamificationScore for current user
+                    int game = gamificationService.loadGamification(identity.getId());
+
+                    if (game  > 0) {
+
+
+                        leaderboardInfo = new LeaderboardInfo();
+
+                        // Set score
+                        leaderboardInfo.setScore(game);
+
+                        // Set username
+                        leaderboardInfo.setRemoteId("Current_user");
+
+                        // Set FullName
+                        leaderboardInfo.setFullname("Current_user");
+
+                        // Set avatar
+                        leaderboardInfo.setAvatarUrl("Current_user");
+
+                        // Set profile URL
+                        leaderboardInfo.setProfileUrl("Current_user");
+
+                        // Leader
+                        leaderboardList.add(leaderboardInfo);
+
+                    }
+
                 }
 
                 return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
@@ -322,6 +360,11 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
         return blackListedUsers.contains(username);
 
+    }
+
+    private boolean isCurrentUserInTopTen(String username, List<GamificationContextEntity> leaderboard) {
+
+       return leaderboard.stream().map(GamificationContextEntity::getUsername).anyMatch(username::equals);
     }
 
     public static class LeaderboardInfo {

@@ -126,6 +126,26 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
         }
     }
 
+    /**
+     * Get all UserReputation order by score desc
+     * @return
+     * @throws PersistenceException
+     */
+    public List<GamificationContextEntity> findAllLeaderboard() throws PersistenceException {
+
+        TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findOverallLeaderboard", GamificationContextEntity.class);
+
+        try {
+
+            return query.getResultList();
+
+        } catch (NoResultException e) {
+
+            return null;
+
+        }
+    }
+
     public List<Piechart> findStatsByUserId(String userId) throws PersistenceException {
 
         // TODO : We should load only first 10 users

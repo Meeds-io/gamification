@@ -10,7 +10,7 @@
             <div class="col">
                 <select v-model="domain" class="custom-select">
                  
-                        <option :value="null">Overall Rank</option>
+                        <option :value="null">Overall</option>
                    
 
                     <option value="social">Social</option>

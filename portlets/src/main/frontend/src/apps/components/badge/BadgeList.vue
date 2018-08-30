@@ -11,8 +11,6 @@
                             <th class="badge-desc-col">Description</th>
                             <th class="badge-nedded-score-col">Needed Score</th>
                             <th class="badge-domain-col">Domain</th>
-                            <th class="badge-start-validity-date-col">Start validity date</th>
-                            <th class="badge-end-validity-date-col">End validity Date</th>
                             <th class="badge-icon-col">Icon</th>
                             <th class="badge-status-col">Status</th>
                             <th class="badge-created-by-col">Created by</th>
@@ -25,8 +23,6 @@
                             <td class="badge-desc-col">{{badge.description}}</td>
                             <td class="badge-needed-score-col">{{badge.neededScore}}</td>
                             <td class="badge-domain-col">{{badge.domain}}</td>
-                            <td class="badge-start-validity-date-col">{{ moment(badge.startValidityDate).format('YYYY-MM-DD') }}</td>
-                            <td class="badge-end-validity-date-col">{{ moment(badge.endValidityDate).format('YYYY-MM-DD') }}</td>
                             <td class="badge-icon-col"><b-img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/></td>
                             <td class="badge-status-col">{{badge.enabled}}</td>
                             <td class="badge-created-date-col">{{badge.createdBy}}</td>

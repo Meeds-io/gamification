@@ -314,5 +314,36 @@ public class GamificationService {
 
     }
 
+    /**
+     * Get UserReputation object by name
+     * @param username
+     * @return
+     */
+    @ExoTransactional
+    public int loadGamification(String username) {
+
+        int rank = 0;
+
+        GamificationContextEntity entity = null;
+
+        try {
+            // Get all users from DB
+            List<GamificationContextEntity> entities = gamificationDAO.findAllLeaderboard();
+
+            // Get username
+            GamificationContextEntity item = entities.stream()
+                    .filter(g -> username.equals(g.getUsername()))
+                    .findAny()
+                    .orElse(null);
+
+            return (entities.indexOf(item)+1);
+        } catch (Exception e) {
+            LOG.error("Error to find Gamification entity with username : {}", username, e.getMessage());
+
+        }
+        return rank;
+
+    }
+
 
 }
