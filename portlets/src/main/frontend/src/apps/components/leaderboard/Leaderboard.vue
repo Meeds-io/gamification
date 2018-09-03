@@ -46,8 +46,7 @@
                         <div class="number-user">{{user.score}}
                             <span>Pts</span>
                         </div>
-                        <img :id="'leaderboard'+index" data-toggle="popover" src="https://www.uspto.gov/sites/default/files/styles/wysiwyg_small/public/Statistics%20-%20Pie%20Chart.png?itok=2rpaaFEX"
-                            alt="Thumbnail" @click="onOpen" width="40" height="40" class="img-thumbnail img-fluid" />
+                            <i class="uiIconViewByChart"></i>
                         <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
                             <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip"
                                 tabindex="-1" :id="'leaderboard'+index" x-placement="left">
@@ -265,6 +264,17 @@
 </script>
 
 <style scoped>
+
+    .user-leaderboard-portlet .uiIconViewByChart{
+        color: #4d5466!important;
+        font-size: 18px;
+        top: 9px;
+        padding-right: 10px;
+        opacity: 0.4;
+    }
+    .list-group-item:hover .uiIconViewByChart{
+        opacity:1;
+    }
     .popover__title {
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 24px;
@@ -282,6 +292,9 @@
 
     .desc-user a {
         color: #4d5466 !important;
+    }
+    .desc-user a:hover, .desc-user a:focus {
+         color: #578dc9 !important;
     }
 
     .current-rank .desc-user {
