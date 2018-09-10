@@ -10,7 +10,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <select v-model="domain" class="custom-select">
+                <select v-model="domain" class="custom-select ">
 
                     <option :value="null">Overall</option>
 
@@ -39,14 +39,15 @@
                 <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
                     <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
 
-                        <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
+                            <div class="rank-user">{{index+1}}
+                                </div><avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
                         <div class="desc-user">
                             <a :href="user.profileUrl">{{user.fullname}}</a>
                         </div>
                         <div class="number-user">{{user.score}}
                             <span>Pts</span>
                         </div>
-                            <i class="uiIconViewByChart"></i>
+                           
                         <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
                             <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip"
                                 tabindex="-1" :id="'leaderboard'+index" x-placement="left">
@@ -265,6 +266,7 @@
 
 <style scoped>
 
+
     .user-leaderboard-portlet .uiIconViewByChart{
         color: #4d5466!important;
         font-size: 18px;
@@ -301,6 +303,10 @@
         padding-left: 10px;
         width: 50%;
     }
+    .current-rank{
+        background: #fbfbfb !important;
+        padding: 5px 5px 10px 5px;
+    }
 
     .current-rank .number-user {
         padding-left: 10px;
@@ -308,6 +314,14 @@
         margin: 0 auto;
         font-weight: bold;
     }
+    .rank-user{
+    font-size: 14px;
+    width: 6%;
+    white-space: nowrap;
+    padding-top: 10px;
+    text-align: center;
+    color:#4d5466;
+}
 
     .popover__content {
         opacity: 0;
@@ -492,9 +506,7 @@
         background-size: 8px 10px;
         border: 1px solid #ced4da;
         border-radius: .25rem;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
+      
     }
 
     .desc-user {
