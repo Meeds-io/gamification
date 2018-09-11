@@ -94,8 +94,8 @@ public class GamificationService {
     }
 
     /**
-     * @param username
-     * @return
+     * @param username : username to load
+     * @return long score user
      */
     @ExoTransactional
     public long getUserGlobalScore(String username) {
@@ -121,8 +121,8 @@ public class GamificationService {
     }
 
     /**
-     * @param gamificationSearch
-     * @return
+     * @param gamificationSearch : search context
+     * @return Lits of GamificationContextEntity
      */
     @ExoTransactional
     public List<GamificationContextEntity> filter(GamificationSearch gamificationSearch) {
@@ -201,13 +201,6 @@ public class GamificationService {
         return gamificationContextEntities;
     }
 
-
-    /**
-     * Get user gamification
-     *
-     * @param userId
-     * @return
-     */
     @ExoTransactional
     public Set<GamificationContextItemEntity> getUserGamification(String userId) {
 
@@ -251,10 +244,6 @@ public class GamificationService {
 
     }
 
-    /**
-     * @param userId
-     * @return
-     */
     @ExoTransactional
     public List<Piechart> findStatsByUserId(String userId) {
 
@@ -271,13 +260,6 @@ public class GamificationService {
         return leaderboardList;
     }
 
-    /**
-     * Find all item by user_id and and domain
-     *
-     * @param userId
-     * @param domain
-     * @return
-     */
     @ExoTransactional
     public List<GamificationContextItemEntity> findGamificationItemsByUserIdAndDomain(String userId, String domain) {
 
@@ -294,12 +276,6 @@ public class GamificationService {
         return gamificationItems;
     }
 
-
-    /**
-     * Delete an item
-     *
-     * @return boolean
-     */
     @ExoTransactional
     public boolean deleteItem(GamificationContextItemEntity gamificationContextItemEntity) {
 
@@ -316,8 +292,8 @@ public class GamificationService {
 
     /**
      * Get UserReputation object by name
-     * @param username
-     * @return
+     * @param username username to load
+     * @return int number of gamification
      */
     @ExoTransactional
     public int loadGamification(String username) {

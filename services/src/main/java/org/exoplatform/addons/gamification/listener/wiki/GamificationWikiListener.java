@@ -118,14 +118,6 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
         }
     }
 
-    /**
-     * Compute GamificationContext for each social action made by enduser
-     *
-     * @param ruleDto
-     * @param actor
-     * @return GamificationContextHolder : a list of GamificationContextHolder to be persist in DB
-     * @throws Exception
-     */
     @Override
     public List<GamificationContextHolder> gamify(RuleDTO ruleDto, String actor) throws Exception {
 

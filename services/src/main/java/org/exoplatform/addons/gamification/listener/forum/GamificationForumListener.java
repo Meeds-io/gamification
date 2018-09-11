@@ -194,14 +194,6 @@ public class GamificationForumListener extends ForumEventListener implements Gam
 
     }
 
-     /** Enable it when FORUM-1409 is resolved
-    @Override
-    public void openTopic(String userId, String topicId) {
-
-        // Put gamification business logic here
-    }
-     */
-
     @Override
     public List<GamificationContextHolder> gamify(RuleDTO ruleDto, String actor) throws Exception {
 

@@ -14,10 +14,10 @@ public class GamificationItemDAO extends GenericDAOJPAImpl<GamificationContextIt
 
     /**
      * Get gamification items by userid and by domain
-     * @param userid
-     * @param domain
-     * @return
-     * @throws PersistenceException
+     * @param userid : username to load
+     * @param domain : domain to load
+     * @return List of GamificationContextItemEntity
+     * @throws PersistenceException hibernate exception
      */
     public List<GamificationContextItemEntity> findGamificationItemsByUserIdAndDomain(String userid, String domain) throws PersistenceException {
 
@@ -36,8 +36,8 @@ public class GamificationItemDAO extends GenericDAOJPAImpl<GamificationContextIt
 
     /**
      * Delete item
-     * @param gamificationContextItemEntity
-     * @return
+     * @param gamificationContextItemEntity Item to load
+     * @return boolean
      */
     public boolean deleteItem (GamificationContextItemEntity gamificationContextItemEntity) {
         boolean done = true;

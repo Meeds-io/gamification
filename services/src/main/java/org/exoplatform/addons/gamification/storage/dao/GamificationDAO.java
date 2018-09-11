@@ -56,9 +56,9 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     /**
      * Get the user global score based on userId
-     * @param username
+     * @param username : userid to load
      * @return GamificationContextEntity which hold effective data
-     * @throws PersistenceException
+     * @throws PersistenceException throws and exception
      */
     public GamificationContextEntity getUserGlobalScore(String username) throws PersistenceException {
 
@@ -92,9 +92,9 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     /**
      *
-     * @param domain
-     * @return
-     * @throws PersistenceException
+     * @param domain : domain to load
+     * @return List of GamificationContextEntity
+     * @throws PersistenceException throws hibernate exception
      */
     public List<GamificationContextEntity> findLeaderboardByDomain(String domain) throws PersistenceException {
 
@@ -128,8 +128,8 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     /**
      * Get all UserReputation order by score desc
-     * @return
-     * @throws PersistenceException
+     * @return List of GamificationContextEntity
+     * @throws PersistenceException throws hibernate exception
      */
     public List<GamificationContextEntity> findAllLeaderboard() throws PersistenceException {
 
