@@ -18,6 +18,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import java.beans.PropertyChangeEvent;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -108,8 +109,6 @@ public class GamificationForumListener extends ForumEventListener implements Gam
     public void updatePost(Post post) {
 
 
-
-
     }
 
     @Override
@@ -195,7 +194,13 @@ public class GamificationForumListener extends ForumEventListener implements Gam
 
     }
 
+     /** Enable it when FORUM-1409 is resolved
+    @Override
+    public void openTopic(String userId, String topicId) {
 
+        // Put gamification business logic here
+    }
+     */
 
     @Override
     public List<GamificationContextHolder> gamify(RuleDTO ruleDto, String actor) throws Exception {
@@ -282,6 +287,10 @@ public class GamificationForumListener extends ForumEventListener implements Gam
                 contextHolder.setNew(true);
 
             }
+
+            // Gamification simple audit logger
+            LOG.info("service=gamification operation=knowledge parameters=\"data:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actor,gamificationContextEntity.getScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+
             contextHolder.setGamificationContextEntity(gamificationContextEntity);
 
             // Add the GamificationContext entry to list

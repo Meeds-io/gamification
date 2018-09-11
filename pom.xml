@@ -59,7 +59,7 @@
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
         <org.exoplatform.depmgt.version>13</org.exoplatform.depmgt.version>
-        <org.exoplatform.platform.version>5.1.0-RC10</org.exoplatform.platform.version>
+        <org.exoplatform.platform.version>5.1.0-RC11</org.exoplatform.platform.version>
         <!-- for tests -->
         <junit.version>4.12</junit.version>
         <!-- Liquibase stack -->

@@ -17,6 +17,7 @@ import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -235,6 +236,9 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
                 contextHolder.setNew(true);
 
             }
+
+            // Gamification simple audit logger
+            LOG.info("service=gamification operation=social parameters=\"data:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actor,gamificationContextEntity.getScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             contextHolder.setGamificationContextEntity(gamificationContextEntity);
 
             // Add the GamificationContext entry to list

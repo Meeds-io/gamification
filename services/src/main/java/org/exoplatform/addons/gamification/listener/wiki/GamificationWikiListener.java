@@ -20,6 +20,7 @@ import org.exoplatform.wiki.service.PageUpdateType;
 import org.exoplatform.wiki.service.listener.PageWikiListener;
 import org.exoplatform.wiki.utils.WikiConstants;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -183,6 +184,7 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
 
                 }
 
+
             } else {
 
                 // Create new Gamification for current user
@@ -216,6 +218,10 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
                 contextHolder.setNew(true);
 
             }
+
+            // Gamification simple audit logger
+            LOG.info("service=gamification operation=knowledge parameters=\"data:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actor,gamificationContextEntity.getScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+
             contextHolder.setGamificationContextEntity(gamificationContextEntity);
 
             // Add the GamificationContext entry to list
