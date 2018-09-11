@@ -291,7 +291,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
             }
 
             // Gamification simple audit logger
-            LOG.info("service=gamification operation=social parameters=\"data:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actor,gamificationContextEntity.getScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+            LOG.info("Add new auditing entry service=gamification operation=social parameters=\"data:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actor,gamificationContextEntity.getScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+
 
             contextHolder.setGamificationContextEntity(gamificationContextEntity);
 
