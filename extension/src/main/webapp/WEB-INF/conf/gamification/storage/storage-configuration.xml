@@ -157,11 +157,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add an activity on his own Stream</value>
+                    <value>Post on your own stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>10</value>
+                    <value>15</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -188,11 +188,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add a comment on an activity</value>
+                    <value>Comment a post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>200</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -221,11 +221,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User like a comment made by another user within a space</value>
+                    <value>Like a comment in a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>20</value>
+                    <value>2</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -251,11 +251,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User like a comment made by one of his network stream</value>
+                    <value>Like a comment on one of your Connections stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>10</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -281,11 +281,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User like a comment</value>
+                    <value>Like a comment</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>5</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -314,11 +314,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add a comment on any Stream</value>
+                    <value>Comment a post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>2</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -331,6 +331,7 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+    <!--
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
@@ -361,6 +362,8 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+    -->
+    <!--
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
@@ -391,6 +394,7 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+    -->
     <!-- ############################################################################################ -->
     <!-- ################# Gamification Rule Config : ADD ACTIVITY FLOW ############################# -->
     <!-- ############################################################################################ -->
@@ -407,7 +411,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add an activity on a space Stream</value>
+                    <value>Post an activity in a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -437,11 +441,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add an activity on a network Stream</value>
+                    <value>Someone posts on your stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>15</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -467,11 +471,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Spaces's manager are rewarded when an activity is added to the Stream of their spaces</value>
+                    <value>As a space manager, someone posts in your space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>15</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -497,7 +501,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Users are rewarded when an activity is pushed to their Stream</value>
+                    <value>Post on someone else's stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -527,11 +531,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he add an activity on his own Stream</value>
+                    <value>Post an activity on your stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>2</value>
+                    <value>15</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -560,7 +564,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he like an activity on the stream of one of his network</value>
+                    <value>Like an activity of one of your connections</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -590,11 +594,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he like an activity on a space stream</value>
+                    <value>Like an activity in a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>2</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -620,11 +624,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when his activity on a space stream has been liked</value>
+                    <value>Receive a Like in a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>6</value>
+                    <value>2</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -650,7 +654,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when his activity on his own Stream has been liked</value>
+                    <value>Receive a Like on your stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -683,7 +687,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he add an avatar to his profile</value>
+                    <value>Set a profile picture</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -713,7 +717,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he add a banner to his profile</value>
+                    <value>Set a banner on your profile</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -743,11 +747,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he add about me text to his profile</value>
+                    <value>Fill "About me" on your profile</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>2</value>
+                    <value>5</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -776,7 +780,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he create a new space</value>
+                    <value>Create a new space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -806,7 +810,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he receive an invitation to a space</value>
+                    <value>Join a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -836,7 +840,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he is promoted as  a manager within a space</value>
+                    <value>Become a space manager</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -869,7 +873,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he send a relationship request to others</value>
+                    <value>Invite someone to connect with you</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -899,11 +903,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Reward a user when he receive a relationship request to others</value>
+                    <value>Receive a connection request</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>5</value>
+                    <value>1</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
