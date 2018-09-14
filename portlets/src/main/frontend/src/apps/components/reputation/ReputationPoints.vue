@@ -53,18 +53,17 @@
         color: #333;
         font-family: open_sansregular;
         font-size: 14px;
-        background: url(/gamification-portlets/skin/images/ico-points.png)left center no-repeat;
-        padding-top: 13px;
-        min-height: 50px;
+        background: url(/gamification-portlets/skin/images/ico-points.png)0 no-repeat;
         position: relative;
         margin: 0 auto;
         display: table;
+        height: 50px;
     }
 
     .points span {
         padding-left: 56px;
-        top: 16px;
         position: relative;
+        line-height: 44px;
     }
 
     .rep-points {
