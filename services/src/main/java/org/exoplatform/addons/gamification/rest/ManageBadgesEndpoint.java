@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.rest;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +34,10 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
 
     private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+    private static final String DEFAULT_BADGE_ICON_NAME          = "DEFAULT_BADGE_ICON";
+    private static final String DEFAULT_BADGE_ICON_MIME_TYPE     = "image/png";
+    private static final String DEFAULT_BADGE_ICON_NAMESPACE     = "gamification";
 
     private final CacheControl cacheControl;
 
@@ -56,6 +62,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         ruleService = CommonsUtils.getService(RuleService.class);
 
         fileService = CommonsUtils.getService(FileService.class);
+
         uploadService = CommonsUtils.getService(UploadService.class);
 
     }
@@ -102,6 +109,11 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
             String currentUserName = conversationState.getIdentity().getUserId();
 
+            InputStream inputStream = null;
+
+            /** Upload badge's icon into DB */
+            FileItem fileItem = null;
+
             try {
 
                 // Compute rule's data
@@ -119,26 +131,39 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
                     if (uploadResource != null) {
 
-                        /** Upload badge's icon into DB */
-                        FileItem fileItem = null;
-
                         fileItem = new FileItem(null,
                                 badgeDTO.getTitle().toLowerCase(),
                                 uploadResource.getMimeType(),
-                                "gamification",
+                                DEFAULT_BADGE_ICON_NAMESPACE,
                                 (long)uploadResource.getUploadedSize(),
                                 new Date(),
                                 currentUserName,
                                 false,
                                 new FileInputStream(uploadResource.getStoreLocation()));
                         fileItem = fileService.writeFile(fileItem);
-                        /** END upload */
 
-                        badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
+
+                    } else {
+                        inputStream = BadgeRegistryImpl.class.getClassLoader().getResourceAsStream("medias/images/default_badge.png");
+
+                        fileItem = new FileItem(null,
+                                DEFAULT_BADGE_ICON_NAME,
+                                DEFAULT_BADGE_ICON_MIME_TYPE,
+                                DEFAULT_BADGE_ICON_NAMESPACE,
+                                inputStream.available(),
+                                new Date(),
+                                currentUserName,
+                                false,
+                                inputStream);
+
+                        fileItem = fileService.writeFile(fileItem);
 
                     }
 
                 }
+
+                /** END upload */
+                badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
 
                 //--- Add badge
                 badgeDTO = badgeService.addBadge(badgeDTO);
@@ -204,9 +229,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
                     }
 
-
                 }
-
 
                 // Compute rule's data
                 badgeDTO.setCreatedBy(currentUserName);

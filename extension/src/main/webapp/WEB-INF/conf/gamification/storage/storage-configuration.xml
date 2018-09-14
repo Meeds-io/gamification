@@ -83,6 +83,12 @@
         <type>org.exoplatform.addons.gamification.service.setting.rule.impl.RuleRegistryImpl</type>
     </component>
 
+    <!-- Gamification Settings : Badge -->
+    <component>
+        <key>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</key>
+        <type>org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl</type>
+    </component>
+
     <!-- Gamification storage layour (Liquebase initializer) -->
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>

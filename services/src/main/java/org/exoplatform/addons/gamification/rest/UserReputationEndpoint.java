@@ -167,12 +167,16 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         if (conversationState != null) {
 
+            InputStream stream = null;
+
             try {
                 BadgeDTO badgeDTO = badgeService.findBadgeByTitle(badgeTitle);
 
                 Long lastUpdated = null;
                 if (badgeDTO != null) {
                     lastUpdated = (new SimpleDateFormat("yyyy-MM-dd")).parse(badgeDTO.getLastModifiedDate()).getTime();
+                } else {
+                    stream = UserReputationEndpoint.class.getClassLoader().getResourceAsStream("medias/images/default_badge.png");
                 }
                 EntityTag eTag = null;
                 if (lastUpdated != null) {
@@ -181,9 +185,11 @@ public class UserReputationEndpoint implements ResourceContainer {
                 //
                 Response.ResponseBuilder builder = (eTag == null ? null : request.evaluatePreconditions(eTag));
                 if (builder == null) {
-                    InputStream stream = getBadgeAvatarInputStream(badgeDTO);
                     if (stream == null) {
-                        throw new WebApplicationException(Response.Status.NOT_FOUND);
+                        stream = getBadgeAvatarInputStream(badgeDTO);
+                        if (stream == null) {
+                            throw new WebApplicationException(Response.Status.NOT_FOUND);
+                        }
                     }
 
                     builder = Response.ok(stream, "image/png");

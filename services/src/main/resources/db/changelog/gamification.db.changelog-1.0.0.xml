@@ -129,7 +129,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
     </changeSet>
-
+<!--
     <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
         <loadData tableName="GAMIFICATION_BADGES" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
             <column name="ID" type="STRING"/>
@@ -146,7 +146,7 @@
             <column name="LAST_MODIFIED_DATE" type="DATE"/>
         </loadData>
     </changeSet>
-
+-->
     <changeSet author="exo-gamification" id="1.0.0-7" runOnChange="true">
         <createIndex tableName="GAMIFICATION_CONTEXT_ITEMS" indexName="IDX_GAME_CONTEXT_ITEM_01">
             <column name="GAMIFICATION_USER_ID"/>

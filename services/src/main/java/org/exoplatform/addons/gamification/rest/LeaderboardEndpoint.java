@@ -141,7 +141,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 // Get eXo Identity of current user
                 identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
 
-                leaderboardList = leaderboardList.subList(0, LEADERBOARD_MAX_SIZE);
+                if (leaderboardList.isEmpty()) {
+                    return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                }
+                leaderboardList =  leaderboardList.size() < LEADERBOARD_MAX_SIZE ? leaderboardList.subList(0, leaderboardList.size()) : leaderboardList.subList(0, LEADERBOARD_MAX_SIZE);
                 // Check if the current user is already in top10
                 if (!isCurrentUserInTopTen(identity.getId(), leaderboardList)) {
 
