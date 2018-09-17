@@ -13,7 +13,7 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(
                 name = "GamificationBadge.getAllBadges",
-                query = "SELECT badge FROM GamificationBadge badge"
+                query = "SELECT badge FROM GamificationBadge badge ORDER BY badge.iconFileId ASC "
         ),
         @NamedQuery(
                 name = "GamificationBadge.findBadgeByDomain",

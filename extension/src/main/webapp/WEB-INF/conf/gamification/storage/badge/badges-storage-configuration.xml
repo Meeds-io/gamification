@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+  Copyright (C) 2017 eXo Platform SAS.
+
+  This is free software; you can redistribute it and/or modify it
+  under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation; either version 2.1 of
+  the License, or (at your option) any later version.
+
+  This software is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this software; if not, write to the Free
+  Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
+               xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
+    <!-- Badges storage (JPA) -->
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
+    </component>
+
+    <!-- Badges Service Layer-->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
+    </component>
+
+    <!-- Badge entity Mapper -->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
+    </component>
+
+    <!-- Gamification Settings : Badge -->
+    <component>
+        <key>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</key>
+        <type>org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl</type>
+    </component>
+
+    <!-- Gamification Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.effective.GamificationProcessor</type>
+    </component>
+
+    <!-- ############################################################################################ -->
+    <!-- #################### Gamification Badge Config : Social FLOW ############################### -->
+    <!-- ############################################################################################ -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.SocialNovice</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>SocialNovice</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Growing your network and ramping up your interactions</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>socialNovice.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>50</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Sociable</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Sociable</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Starting to engage with the community through an increasing number of interactions</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>sociable.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>150</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Networker</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Networker</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>At ease with social networking. Interacts and contributes easily</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>networker.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>500</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Influencer</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Influencer</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>An influencing member of the community possessing a higher than average level of networking and interactions</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>influencer.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>1200</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Guru</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Guru</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>A social master, a top influencer with a large network and a lot of interactions with others</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>guru.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>3000</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Legend</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Legend</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>An exceptional social performer so influent and popular that he's now part of history and popular culture in the communities.</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>legend.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>10000</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- ############################################################################################ -->
+    <!-- #################### Gamification Badge Config : Knowldge FLOW ############################### -->
+    <!-- ############################################################################################ -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Freshman</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Freshman</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Just started to learn and share knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>freshman.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>50</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Apprentice</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Apprentice</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Ramping up its skills, still learning and sharing what he learnt along the way</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>apprentice.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>150</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Knowledgeable</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Knowledgeable</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Has some expertise and started to share significant knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>knowledgeable.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>500</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Distinguished</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Distinguished</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Has some expertise and started to share significant knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>distinguished.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>500</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Erudite</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Erudite</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>A trusted source of knowledge on many topics, a strong contributor to communities knowledge bases</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>erudite.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>3000</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</target-component>
+        <component-plugin>
+            <name>badge.Encyclopedia</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig</type>
+            <init-params>
+                <value-param>
+                    <name>badge-title</name>
+                    <value>Encyclopedia</value>
+                </value-param>
+                <value-param>
+                    <name>badge-description</name>
+                    <value>Knows pretty much everything common mortals would need. A reference that has shaped community knowledge in the long run</value>
+                </value-param>
+                <value-param>
+                    <name>badge-domain</name>
+                    <value>Knowledge</value>
+                </value-param>
+                <value-param>
+                    <name>badge-icon</name>
+                    <value>encyclopedia.png</value>
+                </value-param>
+                <value-param>
+                    <name>badge-neededScore</name>
+                    <value>3000</value>
+                </value-param>
+                <value-param>
+                    <name>badge-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+</configuration>

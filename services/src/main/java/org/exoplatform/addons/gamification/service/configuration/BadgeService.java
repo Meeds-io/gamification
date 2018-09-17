@@ -29,6 +29,7 @@ public class BadgeService {
      * @param badgeTitle : badge title
      * @return an instance BadgeDTO
      */
+    @ExoTransactional
     public BadgeDTO findBadgeByTitle(String badgeTitle) {
 
         try {
