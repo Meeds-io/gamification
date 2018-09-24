@@ -61,7 +61,7 @@
             <init-params>
                 <value-param>
                     <name>badge-title</name>
-                    <value>SocialNovice</value>
+                    <value>Social Novice</value>
                 </value-param>
                 <value-param>
                     <name>badge-description</name>
