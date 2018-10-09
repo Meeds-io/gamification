@@ -80,7 +80,6 @@ public class DataModelMigration {
 
     private void migrateOldDatamodelentries() throws Exception {
 
-        int pageSize = 20;
         int current = 0;
 
         try {
@@ -89,22 +88,14 @@ public class DataModelMigration {
             LOG.info("    Number of gamification entries to process = " + totalEntries);
             List<GamificationContextEntity> currentPage;
             if (gamification != null) totalEntries = gamification.size();
-            while (gamification != null && current < gamification.size()) {
-                LOG.info("    Progression of users web notifications migration : " + current + "/" + totalEntries);
-                if (current + pageSize > totalEntries) {
-                    pageSize = totalEntries - current;
+            double userPercent = 0;
+            for (GamificationContextEntity entry : gamification) {
+                LOG.info("Migrate gamification entry service=gamification operation=migration parameters=\"user_social_id:{}, global_score:{}, progress:{} %\"", entry.getUsername(), entry.getScore(), userPercent);
+                if (!GamificationUtils.isGamificationDatamodelMigrated(entry.getUsername())) {
+                    migrateEntry(entry);
                 }
-                currentPage = gamification.subList(current, pageSize);
-                int migratedUsersCount = current + 1;
-                for (GamificationContextEntity entry : currentPage) {
-                    LOG.info("Migrate gamification entry service=gamification operation=migration parameters=\"user_social_id:{},global_score:{}\"", entry.getUsername(), entry.getScore());
-                    if (!GamificationUtils.isGamificationDatamodelMigrated(entry.getUsername())) {
-                        migrateEntry(entry);
-                    }
-
-                }
-                current += currentPage.size();
-
+                current++;
+                userPercent = ((double) current / totalEntries) * 100;
             }
 
             // Make migration done only when all records are OK
