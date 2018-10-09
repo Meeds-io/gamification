@@ -3,7 +3,7 @@
         <h5 class="mt-0">Achievements</h5>
         <div>
 
-            <div class="points"><span>{{reputation.points}} Points</span></div>
+            <div class="points"><span>{{reputation.score}} Points</span></div>
         </div>
 
     </section>
@@ -19,7 +19,7 @@
     const initialData = () => {
         return {
             reputation: {
-                points: null,
+                score: null,
                 rank: ''
             },
 
@@ -28,14 +28,9 @@
 
     export default {
         data: initialData,
-        methods: {
-
-
-        },
-
         created() {
             var url = window.location.pathname
-            axios.get(`/rest/gamification/reputation/point/status`, { params: { 'url': url } })
+            axios.get(`/rest/gamification/reputation/status`, { params: { 'url': url } })
                 .then(response => {
 
                     this.reputation = response.data;

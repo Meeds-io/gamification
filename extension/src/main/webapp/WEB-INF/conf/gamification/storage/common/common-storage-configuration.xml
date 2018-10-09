@@ -39,9 +39,34 @@
         <type>org.exoplatform.addons.gamification.storage.dao.GamificationItemDAO</type>
     </component>
 
+    <!-- Gamification Action History storage (JPA) -->
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
+        <init-params>
+            <value-param>
+                <name>query-limit-offset</name>
+                <value>10</value>
+            </value-param>
+        </init-params>
+    </component>
     <!-- Gamification Effective Service -->
     <component>
         <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
+    </component>
+
+    <!-- Gamification Datamodel Migration Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.migration.datamodel.DataModelMigration</type>
+    </component>
+
+    <!-- Gamification Effective Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.migration.GamificationAsyncMigrationService</type>
+    </component>
+
+    <!-- Gamification Migration Service -->
+    <component>
+        <type>org.exoplatform.commons.migration.JPAAsynMigrationService</type>
     </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->

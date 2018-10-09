@@ -27,7 +27,7 @@ import java.util.Set;
         ),
         @NamedQuery(
                 name = "GamificationUserReputation.findStatsByUserId",
-                query = "SELECT new org.exoplatform.addons.gamification.service.effective.Piechart(item.zone,sum(item.score)) FROM GamificationUserReputation game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
+                query = "SELECT new org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard(item.zone,sum(item.score)) FROM GamificationUserReputation game INNER JOIN game.gamificationItems item where game.username = :userId GROUP BY item.zone"
         )
 
 })

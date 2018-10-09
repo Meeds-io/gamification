@@ -129,27 +129,79 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
     </changeSet>
-<!--
-    <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
-        <loadData tableName="GAMIFICATION_BADGES" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
-            <column name="ID" type="STRING"/>
-            <column name="TITLE" type="STRING"/>
-            <column name="DESCRIPTION" type="STRING"/>
-            <column name="NEEDED_SCORE" type="NUMERIC"/>
-            <column name="ICON" type="STRING"/>
-            <column name="ENABLED" type="BOOLEAN"/>
-            <column name="VALIDITY_DATE_START" type="DATE"/>
-            <column name="VALIDITY_DATE_END" type="DATE"/>
-            <column name="CREATED_BY" type="STRING"/>
-            <column name="CREATED_DATE" type="DATE"/>
-            <column name="LAST_MODIFIED_BY" type="STRING"/>
-            <column name="LAST_MODIFIED_DATE" type="DATE"/>
-        </loadData>
-    </changeSet>
--->
+    <!--
+        <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
+            <loadData tableName="GAMIFICATION_BADGES" file="db/changelog/badges-init-data.csv" encoding="UTF-8">
+                <column name="ID" type="STRING"/>
+                <column name="TITLE" type="STRING"/>
+                <column name="DESCRIPTION" type="STRING"/>
+                <column name="NEEDED_SCORE" type="NUMERIC"/>
+                <column name="ICON" type="STRING"/>
+                <column name="ENABLED" type="BOOLEAN"/>
+                <column name="VALIDITY_DATE_START" type="DATE"/>
+                <column name="VALIDITY_DATE_END" type="DATE"/>
+                <column name="CREATED_BY" type="STRING"/>
+                <column name="CREATED_DATE" type="DATE"/>
+                <column name="LAST_MODIFIED_BY" type="STRING"/>
+                <column name="LAST_MODIFIED_DATE" type="DATE"/>
+            </loadData>
+        </changeSet>
+    -->
     <changeSet author="exo-gamification" id="1.0.0-7" runOnChange="true">
         <createIndex tableName="GAMIFICATION_CONTEXT_ITEMS" indexName="IDX_GAME_CONTEXT_ITEM_01">
             <column name="GAMIFICATION_USER_ID"/>
         </createIndex>
     </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-8" runOnChange="true">
+        <createTable tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_ACTION_HISTORY"/>
+            </column>
+            <column name="ACTION_DATE" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_SOCIAL_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="GLOBAL_SCORE" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ACTION_TITLE" type="NVARCHAR(70)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOMAIN" type="NVARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONTEXT" type="NVARCHAR(200)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ACTION_SCORE" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_BY" type="NVARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_DATE" type="TIMESTAMP" defaultValueDate="${now}"/>
+            <column name="LAST_MODIFIED_BY" type="NVARCHAR(200)"/>
+            <column name="LAST_MODIFIED_DATE" type="TIMESTAMP"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-9" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_GAMIFICATION_SCORE_HISTORY_ID" startValue="1"/>
+    </changeSet>
+    <!-- Add index for performance -->
+    <changeSet author="exo-gamification" id="1.0.0-10">
+        <createIndex indexName="IDX_GAMIFICATION_ACTIONS_HISTORY_01"
+                     tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="ACTION_DATE" type="DATE"/>
+        </createIndex>
+    </changeSet>
+
+
 </databaseChangeLog>

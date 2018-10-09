@@ -1,7 +1,7 @@
 package org.exoplatform.addons.gamification.service.effective;
 
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.completation.GamificationCompletionService;
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
@@ -16,13 +16,10 @@ public class GamificationProcessor {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationProcessor.class);
 
-    protected final BadgeService badgeService;
     protected final GamificationCompletionService gamificationCompletionService;
     protected final GamificationService gamificationService;
 
     public GamificationProcessor() {
-
-        badgeService = CommonsUtils.getService(BadgeService.class);
 
         gamificationCompletionService = CommonsUtils.getService(GamificationCompletionService.class);
 
@@ -38,7 +35,7 @@ public class GamificationProcessor {
                     try {
                         ExoContainerContext.setCurrentContainer(PortalContainer.getInstance());
                         if (gamificationContexts != null && !gamificationContexts.isEmpty()) {
-                            execute(gamificationContexts);
+                            //execute(gamificationContexts);
                         }
                     } catch (Exception e) {
                         LOG.warn("Process GamificationUserReputation is failed: " + e.getMessage(), e);
@@ -61,21 +58,16 @@ public class GamificationProcessor {
 
     }
 
-    private void execute(List<GamificationContextHolder> gamificationContexts) throws Exception {
-
-        //--- Build new gamification entity
-
+    public void execute(GamificationActionsHistory actionsHistory) throws Exception {
         try {
 
-            gamificationContexts.forEach(item->{
-                gamificationService.saveGamificationContext(item);
+            if (actionsHistory != null) {
+                gamificationService.saveActionHistory(actionsHistory);
+            }
 
-            });
 
         } catch (Exception e) {
-
-            LOG.error("Cannot save gamification entry",e);
-
+            LOG.error("Error to save an actionHistory entry {}",actionsHistory,e);
         }
 
     }

@@ -1,11 +1,9 @@
 package org.exoplatform.addons.gamification.listener.social.activity;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.listener.GamificationListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -20,12 +18,6 @@ import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Asynchronous
 public class GamificationActivityListener extends ActivityListenerPlugin implements GamificationListener {
@@ -67,7 +59,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
          *  Case 5 : Assign XP to space's manager  on which an activity has been added
          */
 
-        List<GamificationContextHolder> gamificationContextEntityList = null;
+        GamificationActionsHistory aHistory = null;
+
 
         // To hold GamificationRule
         RuleDTO ruleDto = null;
@@ -80,7 +73,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    gamificationContextEntityList = gamify(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId());
+
+                    gamificationProcessor.execute(aHistory);
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -93,7 +88,10 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    gamificationContextEntityList.addAll(gamify(ruleDto, activity.getPosterId()));
+
+                    aHistory = build(ruleDto, activity.getPosterId());
+
+                    gamificationProcessor.execute(aHistory);
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -110,7 +108,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        gamificationContextEntityList = gamify(ruleDto, activity.getStreamId());
+                        aHistory = build(ruleDto, activity.getStreamId());
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -124,7 +123,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        gamificationContextEntityList = gamify(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId());
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -136,7 +136,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        gamificationContextEntityList.addAll(gamify(ruleDto, activity.getStreamId()));
+                        aHistory = build(ruleDto, activity.getStreamId());
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -145,9 +146,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             }
 
         }
-
-        // Save Gamification Context
-        gamificationProcessor.process(gamificationContextEntityList);
 
     }
 
@@ -170,7 +168,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
          *  Case 3 : Assign XP to user who made a comment on his own stream : NO
          */
 
-        List<GamificationContextHolder> gamificationContextEntityList = null;
+        GamificationActionsHistory aHistory = null;
 
         // To hold GamificationRule
         RuleDTO ruleDto = null;
@@ -190,7 +188,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             if (ruleDto != null) {
 
                 try {
-                    gamificationContextEntityList = gamify(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId());
+
+                    gamificationProcessor.execute(aHistory);
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -210,7 +210,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 if (ruleDto != null) {
 
                     try {
-                        gamificationContextEntityList = gamify(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId());
+
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -218,9 +220,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 }
             }
         }
-
-        // Save Gamification Context
-        gamificationProcessor.process(gamificationContextEntityList);
 
 
     }
@@ -241,9 +240,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
          *  Case 4 : Assign XP to user who has an activity liked on a space stream
          */
 
-
-        List<GamificationContextHolder> gamificationContextEntityList = null;
-
+        GamificationActionsHistory aHistory = null;
         // To hold GamificationRule
         RuleDTO ruleDto = null;
 
@@ -258,7 +255,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     // Compute activity's liker
                     String[] likersId = activity.getLikeIdentityIds();
                     String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
-                    gamificationContextEntityList = gamify(ruleDto, liker);
+                    aHistory = build(ruleDto, liker);
+
+                    gamificationProcessor.execute(aHistory);
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -271,7 +270,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    gamificationContextEntityList.addAll(gamify(ruleDto, activity.getPosterId()));
+                    aHistory = build(ruleDto, activity.getPosterId());
+                    gamificationProcessor.execute(aHistory);
+
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -294,7 +295,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        gamificationContextEntityList = gamify(ruleDto, liker);
+                        aHistory = build(ruleDto, liker);
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -306,7 +308,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        gamificationContextEntityList.addAll(gamify(ruleDto, activity.getPosterId()));
+                        aHistory = build(ruleDto, activity.getPosterId());
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -314,8 +317,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
             }
         }
-        // Save Gamification Context
-        gamificationProcessor.process(gamificationContextEntityList);
 
     }
 
@@ -332,7 +333,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
          *  Case 3 : Assign XP to each user who like a comment
          */
 
-        List<GamificationContextHolder> gamificationContextEntityList = null;
+        GamificationActionsHistory aHistory = null;
 
         // To hold GamificationRule
         RuleDTO ruleDto = null;
@@ -346,7 +347,10 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    gamificationContextEntityList = gamify(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId());
+
+                    // Save actionHistory
+                    gamificationProcessor.execute(aHistory);
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -374,7 +378,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 if (ruleDto != null) {
 
                     try {
-                        gamificationContextEntityList = gamify(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId());
+                        // Save actionHistory
+                        gamificationProcessor.execute(aHistory);
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -396,115 +402,15 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             String[] likersId = activity.getLikeIdentityIds();
             String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
             try {
-                gamificationContextEntityList.addAll(gamify(ruleDto, activity.getPosterId()));
+                aHistory = build(ruleDto, activity.getPosterId());
+
+                // Save actionHistory
+                gamificationProcessor.execute(aHistory);
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
 
         }
-
-        // Save Gamification Context
-        gamificationProcessor.process(gamificationContextEntityList);
-
-    }
-
-    @Override
-    public List<GamificationContextHolder> gamify(RuleDTO ruleDto, String actor) throws Exception {
-
-        List<GamificationContextHolder> gamificationContextEntityList = new ArrayList<GamificationContextHolder>();
-
-        // Build GamificationContextHolder
-        GamificationContextHolder contextHolder = null;
-
-        // Build a gamificationContext entry
-        GamificationContextEntity gamificationContextEntity = null;
-
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            //Find if a gamificationContext exists for the current user
-            gamificationContextEntity = gamificationService.findGamificationContextByUsername(actor);
-
-            // Start building GamificationContextHolder
-            contextHolder = new GamificationContextHolder();
-
-            if (gamificationContextEntity != null) {
-
-                // Load gamification  items
-                final String title = ruleDto.getTitle();
-                Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationContextEntity.getGamificationItems()
-                        .stream()
-                        .filter(item -> item.getOpType().equalsIgnoreCase(title))
-                        .collect(Collectors.toSet());
-
-                if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
-                    gamificationContextItemEntitySet.forEach(item -> {
-                        item.setOccurrence(item.getOccurrence() + 1);
-                        item.setScore(item.getScore()+ruleDto.getScore());
-                    });
-
-                    // Update user's global score
-                    gamificationContextEntity.setScore(gamificationContextEntity.getScore() + ruleDto.getScore());
-
-                } else { // Create a new item entry
-                    GamificationContextItemEntity gamificationContextItemEntity = new GamificationContextItemEntity();
-                    gamificationContextItemEntity.setOpType(title);
-                    gamificationContextItemEntity.setZone(ruleDto.getArea());
-
-                    gamificationContextItemEntity.setOccurrence(1);
-
-                    // Set the score
-                    gamificationContextItemEntity.setScore(ruleDto.getScore());
-
-                    // Compute Global Score
-                    gamificationContextEntity.setScore(gamificationContextEntity.getScore()+ruleDto.getScore());
-                    // Link GamificationItem : parent/child
-                    gamificationContextEntity.addGamificationItem(gamificationContextItemEntity);
-
-                }
-
-            } else {
-
-                // Create new Gamification for current user
-                gamificationContextEntity = new GamificationContextEntity();
-                //gamificationContextEntity.setId(null);
-                gamificationContextEntity.setUsername(actor);
-                gamificationContextEntity.setScore(ruleDto.getScore());
-
-                // Create specific gamification item for ingoing action
-                GamificationContextItemEntity gamificationContextItemEntity = new GamificationContextItemEntity();
-
-                gamificationContextItemEntity.setOccurrence(1);
-
-                gamificationContextItemEntity.setScore(gamificationContextItemEntity.getScore()+ruleDto.getScore());
-
-                gamificationContextItemEntity.setOpType(ruleDto.getTitle());
-
-                gamificationContextItemEntity.setZone(ruleDto.getArea());
-
-                // compute current score
-                gamificationContextItemEntity.setScore(ruleDto.getScore());
-
-                // Link GamificationItem to its parent
-                gamificationContextItemEntity.setGamificationUserEntity(gamificationContextEntity);
-
-                // Add GamificationItem as child to GamificationContext
-                gamificationContextEntity.getGamificationItems().add(gamificationContextItemEntity);
-
-                // Udapte action (create enw enity)
-                contextHolder.setNew(true);
-
-            }
-
-            // Gamification simple audit logger
-            LOG.info("Add new auditing entry service=gamification operation=social parameters=\"data:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actor,gamificationContextEntity.getScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-
-            contextHolder.setGamificationContextEntity(gamificationContextEntity);
-
-            // Add the GamificationContext entry to list
-            gamificationContextEntityList.add(contextHolder);
-        }
-
-        return gamificationContextEntityList;
 
     }
 

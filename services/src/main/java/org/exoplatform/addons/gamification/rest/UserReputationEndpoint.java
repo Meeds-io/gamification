@@ -1,10 +1,10 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.file.services.FileStorageException;
@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 @Path("/gamification/reputation")
 @Produces(MediaType.APPLICATION_JSON)
@@ -60,13 +59,15 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
-    @Path("point/status")
+    @Path("status")
     public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
         // Get profile owner from url
         String profileOwner = extractProfileOwnerFromUrl(url,"/");
+
+        long userReputationScore = 0;
 
         if (conversationState != null) {
             try {
@@ -76,20 +77,10 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 JSONObject reputation = new JSONObject();
 
-                Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationService.getUserGamification(actorId);
-                int userScore = 0;
-                if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
-
-                    //TODO : Badge should be done for all zone not only SOCIAL ZONE
-                    userScore = gamificationContextItemEntitySet.stream().
-                            map(GamificationContextItemEntity::getScore).
-                            mapToInt(Integer::intValue).
-                            sum();
+                userReputationScore = gamificationService.findUserReputationBySocialId(actorId);
 
 
-                }
-
-                reputation.put("points", userScore);
+                reputation.put("score", userReputationScore);
 
 
                 return Response.ok().cacheControl(cacheControl).entity(reputation.toString()).build();
@@ -113,7 +104,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
-    @Path("badge/all")
+    @Path("badges")
     public Response getUserBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
 
@@ -133,9 +124,9 @@ public class UserReputationEndpoint implements ResourceContainer {
                 // Compute user id
                 String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
 
-                Set<GamificationContextItemEntity> gamificationContextItemEntitySet = gamificationService.getUserGamification(actorId);
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
 
-                allBadges = buildProfileBadges(gamificationContextItemEntitySet);
+                allBadges = buildProfileBadges(badgesByDomain);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -240,30 +231,24 @@ public class UserReputationEndpoint implements ResourceContainer {
         return file.getAsStream();
     }
 
-    private JSONArray buildProfileBadges(Set<GamificationContextItemEntity> gamificationContextItemEntitySet) {
+    private JSONArray buildProfileBadges(List<ProfileReputation> reputationLis) {
 
         JSONArray allBadges = new JSONArray();
 
-        if (gamificationContextItemEntitySet != null && !gamificationContextItemEntitySet.isEmpty()) {
+        if (reputationLis != null && !reputationLis.isEmpty()) {
 
-            //TODO : Badge should be done for all zone not only SOCIAL ZONE
-            int userScore = gamificationContextItemEntitySet.stream().
-                    filter(i -> i.getZone().equalsIgnoreCase("social")).
-                    map(GamificationContextItemEntity::getScore).
-                    mapToInt(Integer::intValue).
-                    sum();
-
-            // Compute won badge
-            buildWonBadges("social", userScore,allBadges);
+           for (ProfileReputation rep : reputationLis) {
+               // Compute won badge
+               buildWonBadges(rep.getDomain(), rep.getScore(), allBadges);
+           }
 
         }
-
 
         return allBadges;
 
     }
 
-    private JSONArray buildWonBadges(String domain, int score, JSONArray userBadges) {
+    private void buildWonBadges(String domain, long score, JSONArray userBadges) {
 
         // Get available badge within the solution
         List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
@@ -286,7 +271,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
                     reputation.put("url", iconUrl);
                     reputation.put("description", badgeDTO.getDescription());
-                    reputation.put("id", i);
+                    reputation.put("id", badgeDTO.getId());
                     reputation.put("title", badgeDTO.getTitle());
                     reputation.put("zone", badgeDTO.getDomain());
                     reputation.put("level", ++k);
@@ -302,7 +287,6 @@ public class UserReputationEndpoint implements ResourceContainer {
                 }
             }
         }
-        return userBadges;
 
     }
     private String computeBadgeNextLevel (List<BadgeDTO> allBadges, int index) {

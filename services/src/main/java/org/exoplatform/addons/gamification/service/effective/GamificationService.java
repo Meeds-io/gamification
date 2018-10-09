@@ -1,18 +1,17 @@
 package org.exoplatform.addons.gamification.service.effective;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextItemEntity;
-import org.exoplatform.addons.gamification.service.dto.effective.GamificationContextHolder;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.storage.dao.GamificationDAO;
+import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.GamificationItemDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class GamificationService {
 
@@ -22,304 +21,264 @@ public class GamificationService {
 
     protected final GamificationItemDAO gamificationItemDAO;
 
-    public GamificationService(GamificationDAO gamificationDAO, GamificationItemDAO gamificationItemDAO) {
+    protected final GamificationHistoryDAO gamificationHistoryDAO;
+
+    public GamificationService(GamificationDAO gamificationDAO,
+                               GamificationItemDAO gamificationItemDAO,
+                               GamificationHistoryDAO gamificationHistoryDAO) {
 
         this.gamificationDAO = gamificationDAO;
 
         this.gamificationItemDAO = gamificationItemDAO;
+
+        this.gamificationHistoryDAO = gamificationHistoryDAO;
     }
 
     /**
-     * Find a GamificationContext by username
-     *
-     * @param username : gamification's username param
-     * @return an instance of GamificationContextDTO
+     * Get actionsHistory entities
+     * @param date : filter by date
+     * @param socialId : filter by socialId
+     * @return List of object of type GamificationActionsHistory
      */
     @ExoTransactional
-    public GamificationContextEntity findGamificationContextByUsername(String username) {
+    public List<GamificationActionsHistory> findActionHistoryByDateBySocialId(Date date, String socialId) {
 
-        GamificationContextEntity entity = null;
+        List<GamificationActionsHistory> entities = null;
 
         try {
             //--- Get Entity from DB
-            entity = gamificationDAO.findGamificationContextByUsername(username);
+            entities = gamificationHistoryDAO.findActionHistoryByDateBySocialId(date, socialId);
 
 
         } catch (Exception e) {
-            LOG.error("Error to find Gamification entity with username : {}", username, e);
+            LOG.error("Error to find ActionsHistory entities with the following cretiria [socialId:{} / date:{}", socialId, date, e);
         }
-        return entity;
+        return entities;
 
     }
 
     /**
-     * Add GamificationContext to DB
-     *
-     * @param gamificationContextHolder : GamificationContext to be saved
+     * Get latest actionsHistory entitiese
+     * @param socialId : filter by socialId
+     * @return an object of type GamificationActionsHistory
      */
     @ExoTransactional
-    public void saveGamificationContext(GamificationContextHolder gamificationContextHolder) {
+    public GamificationActionsHistory findLatestActionHistoryBySocialId(String socialId) {
 
-        try {
-
-            if (gamificationContextHolder.isNew()) {
-
-                gamificationDAO.create(gamificationContextHolder.getGamificationContextEntity());
-
-            } else {
-
-                gamificationDAO.update(gamificationContextHolder.getGamificationContextEntity());
-
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to save GamificationUserReputation for user {}", gamificationContextHolder.getGamificationContextEntity().getUsername(), e);
-        }
-    }
-
-    /**
-     *
-     * @param gamificationContextEntity
-     */
-    @ExoTransactional
-    public void updateUserGamificationContextScore(GamificationContextEntity gamificationContextEntity) {
-
-        try {
-
-            gamificationDAO.update(gamificationContextEntity);
-
-        } catch (Exception e) {
-            LOG.error("Error to update GamificationUserReputation for username {}", gamificationContextEntity.getUsername(), e);
-        }
-    }
-
-    /**
-     * @param username : username to load
-     * @return long score user
-     */
-    @ExoTransactional
-    public long getUserGlobalScore(String username) {
-
-        long userScore = 0;
-
-        GamificationContextEntity entity = null;
+        List<GamificationActionsHistory> entities = null;
 
         try {
             //--- Get Entity from DB
-            entity = gamificationDAO.getUserGlobalScore(username);
+            entities = this.findActionHistoryByDateBySocialId(new Date(), socialId);
+
+            // Return the first element since the underluing API returns entities ordered by insertion date
+            return (entities != null && !entities.isEmpty()) ? entities.get(0) : null;
 
 
         } catch (Exception e) {
-            LOG.error("Error to find Gamification entity with username : {}", username, e.getMessage());
+            LOG.error("Error to find ActionsHistory entities with the following cretiria [socialId:{} / date:{}", socialId, LocalDate.now(), e);
         }
-
-        if (entity != null) {
-            userScore = entity.getScore();
-        }
-
-        return userScore;
-    }
-
-    /**
-     * @param gamificationSearch : search context
-     * @return Lits of GamificationContextEntity
-     */
-    @ExoTransactional
-    public List<GamificationContextEntity> filter(GamificationSearch gamificationSearch) {
-
-        List<GamificationContextEntity> gamificationContextEntities = null;
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Filtering leaderboard based on domain name : {}", gamificationSearch.getDomain());
-        }
-
-
-        try {
-
-            // Get overall leaderboard
-            if (gamificationSearch.getDomain().equalsIgnoreCase("all")) {
-
-                gamificationContextEntities = gamificationDAO.findOverallLeaderboard();
-
-
-            } else { // Get leaderboard by domain
-
-                List<GamificationContextEntity> leaderboardList = gamificationDAO.findLeaderboardByDomain(gamificationSearch.getDomain());
-
-                gamificationContextEntities = new ArrayList<GamificationContextEntity>();
-
-                if (leaderboardList != null && !leaderboardList.isEmpty()) {
-
-                    GamificationContextEntity gamificationContextEntity = null;
-
-                    List<String> red = null;
-
-                    for (GamificationContextEntity leaderBoard : leaderboardList) {
-
-                        Set<GamificationContextItemEntity> items = leaderBoard.getGamificationItems();
-
-                        if (items != null && !items.isEmpty()) {
-
-                            red = new ArrayList<>();
-
-                            int userScore = 0;
-
-                            for (GamificationContextItemEntity gamificationContextItemEntity : items) {
-
-                                if (gamificationContextItemEntity.getZone().equalsIgnoreCase(gamificationSearch.getDomain())) {
-
-
-                                    if (!red.contains(gamificationContextItemEntity.getOpType())) {
-
-                                        userScore += gamificationContextItemEntity.getScore();
-                                        red.add(gamificationContextItemEntity.getOpType());
-
-                                    }
-
-                                }
-
-                            }
-
-                            gamificationContextEntity = new GamificationContextEntity();
-                            gamificationContextEntity.setUsername(leaderBoard.getUsername());
-                            gamificationContextEntity.setScore(userScore);
-                            gamificationContextEntities.add(gamificationContextEntity);
-
-                        }
-                    }
-
-                    gamificationContextEntities.sort((GamificationContextEntity g1, GamificationContextEntity g2) -> (int) g2.getScore() - (int) g1.getScore());
-
-                }
-
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to filter leaderboard by domain : {} and by netowrk : {}", gamificationSearch.getDomain(), gamificationSearch.getNetwork(), e);
-        }
-
-        return gamificationContextEntities;
-    }
-
-    @ExoTransactional
-    public Set<GamificationContextItemEntity> getUserGamification(String userId) {
-
-        Set<GamificationContextItemEntity> gamificationContextItemEntitySet = null;
-
-        try {
-            //--- Get Entity from DB
-            GamificationContextEntity gamificationContextEntity = gamificationDAO.getUserGamification(userId);
-
-            // Get Context items if exists
-            if (gamificationContextEntity != null) {
-
-                gamificationContextItemEntitySet = new HashSet<>();
-
-                for (GamificationContextItemEntity item : gamificationContextEntity.getGamificationItems()) {
-
-                    if (checkElementExist(gamificationContextItemEntitySet, item.getOpType())) {
-                        gamificationContextItemEntitySet.add(item);
-                    }
-
-                }
-
-            }
-
-
-        } catch (Exception e) {
-            LOG.error("Error to load effective gamification for user {} ", userId, e);
-        }
-
-        return gamificationContextItemEntitySet;
-    }
-
-    private boolean checkElementExist(Set<GamificationContextItemEntity> gamificationContextItemEntities, String opType) {
-
-        for (GamificationContextItemEntity item : gamificationContextItemEntities) {
-
-            if (item.getOpType().equalsIgnoreCase(opType)) return false;
-
-        }
-        return true;
+        return null;
 
     }
 
-    @ExoTransactional
-    public List<Piechart> findStatsByUserId(String userId) {
-
-        List<Piechart> leaderboardList = null;
-
-        try {
-            //--- Get Stats
-            leaderboardList = gamificationDAO.findStatsByUserId(userId);
-
-        } catch (Exception e) {
-            LOG.error("Error to load gamification stats for user {} ", userId, e);
-        }
-
-        return leaderboardList;
-    }
-
-    @ExoTransactional
-    public List<GamificationContextItemEntity> findGamificationItemsByUserIdAndDomain(String userId, String domain) {
-
-        List<GamificationContextItemEntity> gamificationItems = null;
-
-        try {
-            //--- Get Stats
-            gamificationItems = gamificationItemDAO.findGamificationItemsByUserIdAndDomain(userId, domain);
-
-        } catch (Exception e) {
-            LOG.error("Error to load gamification items for user {} ", userId, e);
-        }
-
-        return gamificationItems;
-    }
-
-    @ExoTransactional
-    public boolean deleteItem(GamificationContextItemEntity gamificationContextItemEntity) {
-
-        try {
-
-            return gamificationItemDAO.deleteItem(gamificationContextItemEntity);
-
-        } catch (Exception e) {
-            LOG.error("Error to delete gamification item with Optype {} for user {} ", gamificationContextItemEntity.getOpType(), gamificationContextItemEntity.getGamificationUserEntity().getUsername(), e);
-            return false;
-        }
-
-    }
-
-    /**
-     * Get UserReputation object by name
-     * @param username username to load
-     * @return int number of gamification
-     */
-    @ExoTransactional
-    public int loadGamification(String username) {
-
+    public int bluidCurrentUserRank (String socialId) {
+        List<StandardLeaderboard> leaderboard = null;
         int rank = 0;
-
-        GamificationContextEntity entity = null;
-
         try {
-            // Get all users from DB
-            List<GamificationContextEntity> entities = gamificationDAO.findAllLeaderboard();
-
+            leaderboard = gamificationHistoryDAO.findAllActionsHistoryAgnostic();
             // Get username
-            GamificationContextEntity item = entities.stream()
-                    .filter(g -> username.equals(g.getUsername()))
+            StandardLeaderboard item = leaderboard.stream()
+                    .filter(g -> socialId.equals(g.getUserSocialId()))
                     .findAny()
                     .orElse(null);
 
-            return (entities.indexOf(item)+1);
+            return (leaderboard.indexOf(item)+1);
+
         } catch (Exception e) {
-            LOG.error("Error to find Gamification entity with username : {}", username, e.getMessage());
 
         }
         return rank;
+    }
+
+    /**
+     * Compute reputation's score
+     * @param socialId : the current user socialId
+     * @return long score of user
+     */
+    @ExoTransactional
+    public long findUserReputationBySocialId(String socialId) {
+
+        GamificationActionsHistory aHistory = null;
+
+        try {
+
+            aHistory = this.findLatestActionHistoryBySocialId(socialId);
+            return (aHistory != null ? aHistory.getGlobalScore() : 0);
+
+        } catch (Exception e) {
+
+            LOG.error("Error to find ActionsHistory entity with the following cretiria [socialId:{} / date:{}", socialId, LocalDate.now(), e);
+
+        }
+
+        return 0;
 
     }
 
+    /**
+     * Compute User reputation score by Domain
+     * @param socialId
+     * @return list of objects of type ProfileReputation
+     */
+    @ExoTransactional
+    public List<ProfileReputation> buildDomainScoreByUserId(String socialId) {
 
+        List<ProfileReputation> domainsScore = null;
+
+        try {
+
+            domainsScore = gamificationHistoryDAO.findDomainScoreByUserId(socialId);
+
+        } catch (Exception e) {
+
+            LOG.error("Error to find ActionsHistory entity with the following cretiria [socialId:{} / date:{}", socialId, LocalDate.now(), e);
+
+        }
+
+        return domainsScore;
+
+    }
+
+    /**
+     * Save a GamificationActionsHistory in DB
+     * @param aHistory
+     */
+    @ExoTransactional
+    public void saveActionHistory(GamificationActionsHistory aHistory) {
+
+        try {
+            gamificationHistoryDAO.create(aHistory);
+
+        } catch (Exception e) {
+            LOG.error("Error to save the following GamificationActionsHistory entry {}", aHistory, e);
+        }
+    }
+
+    /**
+     * Filter Leaderboard logic (filter by Domain or/and by period)
+     * @param filter
+     * @return list of objects of type StandardLeaderboard
+     */
+    @ExoTransactional
+    public List<StandardLeaderboard> filter(LeaderboardFilter filter) {
+        List<StandardLeaderboard> leaderboard = null;
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Filtering leaderboard based on Period/Somain name : [{}/{}]", filter.getPeriod(),filter.getDomain());
+        }
+        try {
+
+            // Get overall leaderboard
+            if (filter.getDomain().equalsIgnoreCase("all")) {
+
+                // Compute date
+                LocalDate now = LocalDate.now();
+
+                // Check the period
+                if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
+
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+
+
+                } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
+
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+
+                } else {
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistory();
+                }
+
+            } else {
+
+                // Compute date
+                LocalDate now = LocalDate.now();
+
+                // Check the period
+                if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
+
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), filter.getDomain());
+
+
+                } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
+
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()),filter.getDomain());
+
+                } else {
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain());
+                }
+
+
+            }
+
+
+        } catch (Exception e) {
+            LOG.error("Error to filter leaderboard using the following filter [Period:{}-domain:{}-period:{}]", filter.getPeriod(), filter.getDomain(), filter.getPeriod(), e);
+        }
+
+        return leaderboard;
+    }
+
+    /**
+     * Build stats dashboard of a given user (based on domain)
+     * @param userSocialId
+     * @return a list of object of type PiechartLeaderboard
+     */
+    @ExoTransactional
+    public List<PiechartLeaderboard> buildStatsByUser(String userSocialId) {
+
+        List<PiechartLeaderboard> userStats = null;
+
+        try {
+            //--- Get Stats
+            userStats = gamificationHistoryDAO.findStatsByUserId(userSocialId);
+
+        } catch (Exception e) {
+            LOG.error("Error to load gamification stats for user {} ", userSocialId, e);
+        }
+
+        return userStats;
+    }
+
+    @ExoTransactional
+    public long findUserReputationScoreBetweenDate(String userSocialId, Date fromDate, Date toDate) {
+
+        long reputationScore = 0;
+
+        try {
+            //--- Get Stats
+            reputationScore = gamificationHistoryDAO.findUserReputationScoreBetweenDate(userSocialId,fromDate, toDate);
+
+        } catch (Exception e) {
+            LOG.error("Error to find gamification history from user {} from date:{} to dat:{}", userSocialId, fromDate, toDate, e);
+        }
+
+        return reputationScore;
+    }
+
+    @ExoTransactional
+    public long findUserReputationScoreByDomainBetweenDate(String userSocialId, String domain, Date fromDate, Date toDate) {
+
+        long reputationScore = 0;
+
+        try {
+            //--- Get Stats
+            reputationScore = gamificationHistoryDAO.findUserReputationScoreByDomainBetweenDate(userSocialId,domain, fromDate, toDate);
+
+        } catch (Exception e) {
+            LOG.error("Error to find gamification history from user {} from date:{} to dat:{}", userSocialId, fromDate, toDate, e);
+        }
+
+        return reputationScore;
+    }
 }

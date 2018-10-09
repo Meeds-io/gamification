@@ -1,23 +1,20 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
-import org.exoplatform.addons.gamification.service.effective.GamificationSearch;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.effective.Piechart;
+import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter;
+import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
+import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.User;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
-import org.exoplatform.social.core.relationship.model.Relationship;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -82,7 +79,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         if (conversationState != null) {
 
             //Init search criteria
-            GamificationSearch gamificationSearch = new GamificationSearch();
+            LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
             // Hold leaderboard flow
             List<LeaderboardInfo> leaderboardList = new ArrayList<>();
@@ -93,25 +90,17 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             try {
                 // Filter users to add to leaderboard according to filter criteria
-                // TODO : Use a DTO instead of JPA entity
-                List<GamificationContextEntity> gamificationContextEntities = gamificationService.filter(gamificationSearch);
+                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
 
-                if (gamificationContextEntities == null) {
+                if (standardLeaderboards == null) {
                     return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
                 }
 
-                // Build Leaderboard flow only when the returned list is not null
-                for (GamificationContextEntity game : gamificationContextEntities) {
-
-                    // Compute blackList
-                    populateBlackListedUsers();
+                // Build StandardLeaderboard flow only when the returned list is not null
+                for (StandardLeaderboard element : standardLeaderboards) {
 
                     // Load Social identity
-                    identity = identityManager.getIdentity(game.getUsername(), true);
-
-                    // Do not add blacklisted user to the leaderboard
-                    if (isBlackListedUser(identity.getRemoteId())) continue;
-
+                    identity = identityManager.getIdentity(element.getUserSocialId(), true);
 
                     leaderboardInfo = new LeaderboardInfo();
 
@@ -120,7 +109,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     leaderboardInfo.setSocialId(identity.getId());
 
                     // Set score
-                    leaderboardInfo.setScore(game.getScore());
+                    leaderboardInfo.setScore(element.getReputationScore());
 
                     // Set username
                     leaderboardInfo.setRemoteId(identity.getRemoteId());
@@ -137,48 +126,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     // Leader
                     leaderboardList.add(leaderboardInfo);
                 }
-
-                // Get eXo Identity of current user
-                identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
-
-                if (leaderboardList.isEmpty()) {
-                    return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-                }
-                leaderboardList =  leaderboardList.size() < LEADERBOARD_MAX_SIZE ? leaderboardList.subList(0, leaderboardList.size()) : leaderboardList.subList(0, LEADERBOARD_MAX_SIZE);
                 // Check if the current user is already in top10
-                if (!isCurrentUserInTopTen(identity.getId(), leaderboardList)) {
-
-                    // Get GaamificationScore for current user
-                    int rank = gamificationService.loadGamification(identity.getId());
-
-                    if (rank > 0) {
-
-
-                        leaderboardInfo = new LeaderboardInfo();
-
-                        // Set score
-                        leaderboardInfo.setScore(rank);
-
-                        // Set username
-                        leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
-
-                        // Set FullName
-                        leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
-
-                        // Set avatar
-                        leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
-
-                        // Set profile URL
-                        leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
-
-                        // Leader
-                        leaderboardList.add(leaderboardInfo);
-
-                    }
-
-                }
-
-                // Build the final leaderboard
+                LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), leaderboardList);
+                // Complete the final leaderboard
+                if (leader != null) leaderboardList.add(leader);
 
                 return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
@@ -202,19 +153,19 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     @GET
     @Path("filter")
-    public Response filter(@Context UriInfo uriInfo, @QueryParam("category") String category, @QueryParam("network") String network) {
+    public Response filter(@Context UriInfo uriInfo, @QueryParam("domain") String domain, @QueryParam("period") String period) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
         if (conversationState != null) {
 
             //Init search criteria
-            GamificationSearch gamificationSearch = new GamificationSearch();
+            LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
-            if (StringUtils.isNotBlank(category) && !category.equalsIgnoreCase("null"))
-                gamificationSearch.setDomain(category);
+            if (StringUtils.isNotBlank(domain) && !domain.equalsIgnoreCase("null"))
+                leaderboardFilter.setDomain(domain);
 
-            if (StringUtils.isNotBlank(network)) gamificationSearch.setNetwork(network);
+            if (StringUtils.isNotBlank(period)) leaderboardFilter.setPeriod(period);
 
             // hold leaderboard flow
             LeaderboardInfo leaderboardInfo = null;
@@ -224,9 +175,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             try {
 
-                List<GamificationContextEntity> gamificationContextEntities = gamificationService.filter(gamificationSearch);
+                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);;
 
-                if (gamificationContextEntities == null) {
+                if (standardLeaderboards == null) {
                     return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
                 }
 
@@ -239,16 +190,12 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
                 Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
 
-                for (GamificationContextEntity game : gamificationContextEntities) {
+                for (StandardLeaderboard leader : standardLeaderboards) {
 
-                    // Compute blackList
-                    populateBlackListedUsers();
 
                     // Load Social identity
-                    identity = identityManager.getIdentity(game.getUsername(), true);
+                    identity = identityManager.getIdentity(leader.getUserSocialId(), true);
 
-                    // Do not add blacklisted user to the leaderboard
-                    if (isBlackListedUser(identity.getRemoteId())) continue;
 
                     leaderboardInfo = new LeaderboardInfo();
 
@@ -257,7 +204,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     leaderboardInfo.setSocialId(identity.getId());
 
                     // Set score
-                    leaderboardInfo.setScore(game.getScore());
+                    leaderboardInfo.setScore(leader.getReputationScore());
 
                     // Set username
                     leaderboardInfo.setRemoteId(identity.getRemoteId());
@@ -271,59 +218,18 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     // Set profile URL
                     leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
 
-
-                    if (gamificationSearch.getNetwork().equalsIgnoreCase("my-connection")) {
-
-                        if ((identity.getId().equalsIgnoreCase(currentIdentity.getId())) || (isInMyConnections(identity, currentIdentity))) {
-                            leaderboardInfoList.add(leaderboardInfo);
-                        }
-
-                    } else {
-                        leaderboardInfoList.add(leaderboardInfo);
-
-                    }
-
+                    leaderboardInfoList.add(leaderboardInfo);
                 }
-
-                leaderboardInfoList = leaderboardInfoList.size()>LEADERBOARD_MAX_SIZE ? leaderboardInfoList.subList(0, LEADERBOARD_MAX_SIZE) : leaderboardInfoList;
                 // Check if the current user is already in top10
-                if (!isCurrentUserInTopTen(currentIdentity.getId(), leaderboardInfoList)) {
-
-                    // Get GaamificationScore for current user
-                    int rank = gamificationService.loadGamification(currentIdentity.getId());
-
-                    if (rank > 0) {
-
-
-                        leaderboardInfo = new LeaderboardInfo();
-
-                        // Set score
-                        leaderboardInfo.setScore(rank);
-
-                        // Set username
-                        leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
-
-                        // Set FullName
-                        leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
-
-                        // Set avatar
-                        leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
-
-                        // Set profile URL
-                        leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
-
-                        // Leader
-                        leaderboardInfoList.add(leaderboardInfo);
-
-                    }
-
-                }
+                LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), leaderboardInfoList);
+                // Complete the final leaderboard
+                if (leader != null) leaderboardInfoList.add(leader);
 
                 return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
             } catch (Exception e) {
 
-                LOG.error("Error filtering leaderbaord by Doamin : {} and by Network {} ", gamificationSearch.getDomain(), gamificationSearch.getNetwork(), e);
+                LOG.error("Error filtering leaderbaord by Doamin : {} and by Period {} ", leaderboardFilter.getDomain(), leaderboardFilter.getPeriod(), e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -341,7 +247,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     @GET
     @Path("stats")
-    public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String username) {
+    public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String userSocialId) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -350,21 +256,20 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             try {
 
-                String userSocialId = null;
-                if (username != null) {
-                    userSocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username, false).getId();
+                if (userSocialId != null) {
+                    userSocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userSocialId, false).getId();
 
                 }
                 //String usersocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false).getId();
 
                 // Find user's stats
-                List<Piechart> pieChart = gamificationService.findStatsByUserId(userSocialId);
+                List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(userSocialId);
 
-                return Response.ok(pieChart, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
             } catch (Exception e) {
 
-                LOG.error("Error building statistics for user {} ", username, e);
+                LOG.error("Error building statistics for user {} ", userSocialId, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
@@ -380,50 +285,42 @@ public class LeaderboardEndpoint implements ResourceContainer {
         }
     }
 
-    private boolean isInMyConnections(Identity gameficationIdentity, Identity myIdentity) {
-
-        Relationship gamificationRelationship = relationshipManager.get(myIdentity, gameficationIdentity);
-
-        if (gamificationRelationship == null) return false;
-
-        return gamificationRelationship.getStatus().name().equalsIgnoreCase(Relationship.Type.CONFIRMED.name());
-    }
-
-    /**
-     * Compute the list of user whithin the black list (user we shouldn't display them on leaderboard screen)
-     */
-    private void populateBlackListedUsers() {
-        try {
-            blackListedUsers = new ArrayList<String>();
-            ListAccess<User> usersBlackList = organizationService.getUserHandler().findUsersByGroupId(BLACK_LISTED_USERS_GROUP);
-            if (null != usersBlackList && usersBlackList.getSize() > 0) {
-                User[] managerUser = usersBlackList.load(0, usersBlackList.getSize());
-                for (User user : managerUser) {
-                    try {
-                        blackListedUsers.add(user.getUserName());
-                    } catch (Exception e) {
-                        LOG.error(e);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("Exceptions in initListUserToDisconnect", e);
-        }
-
-    }
-
-    private boolean isBlackListedUser(String username) {
-
-        // Return true when there is no user in blacklist
-        if (blackListedUsers == null) return false;
-
-        return blackListedUsers.contains(username);
-
-    }
-
     private boolean isCurrentUserInTopTen(String username, List<LeaderboardInfo> leaderboard) {
 
         return leaderboard.stream().map(LeaderboardInfo::getSocialId).anyMatch(username::equals);
+    }
+
+
+    private LeaderboardInfo buildCurrentUserRank (String identityId, List<LeaderboardInfo> leaderboardList ) {
+        LeaderboardInfo leaderboardInfo = null;
+        String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,identityId, false).getId();
+        if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
+
+            // Get GaamificationScore for current user
+            int rank = gamificationService.bluidCurrentUserRank(currentUser);
+
+            if (rank > 0) {
+
+                leaderboardInfo = new LeaderboardInfo();
+
+                // Set score
+                leaderboardInfo.setScore(rank);
+
+                // Set username
+                leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
+
+                // Set FullName
+                leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
+
+                // Set avatar
+                leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
+
+                // Set profile URL
+                leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
+            }
+        }
+        return leaderboardInfo;
+
     }
 
     public static class LeaderboardInfo {

@@ -27,8 +27,8 @@
             <div class="col">
                 <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
                     <div id="app" role="group" class="btn-group">
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('everyone')">Everyone</button>
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('my-connection')">My connections</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1'" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')">By week</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2'" :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('ALL')">All times</button>
                     </div>
                 </div>
             </div>
@@ -149,7 +149,7 @@
         },
         watch: {
             domain() {
-                this.filter("everyone")
+                this.filter("WEEK")
             }
 
         },
@@ -175,7 +175,7 @@
         methods: {
             filter(network) {
                 let self = this
-                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'category': self.domain, 'network': network } })
+                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': network } })
                     .then(response => {
                         this.users = response.data;
 

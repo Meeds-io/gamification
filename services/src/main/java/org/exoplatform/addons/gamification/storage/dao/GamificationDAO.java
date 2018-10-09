@@ -1,7 +1,7 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationContextEntity;
-import org.exoplatform.addons.gamification.service.effective.Piechart;
+import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
@@ -41,6 +41,7 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     }
 
+    //TODO : to be removed
     public GamificationContextEntity findGamificationContextByUsername(String username) throws PersistenceException {
 
         TypedQuery<GamificationContextEntity> query = getEntityManager().createNamedQuery("GamificationUserReputation.findGamificationContextByUsername", GamificationContextEntity.class)
@@ -90,6 +91,8 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
 
     }
 
+
+    // TODO : to drop
     /**
      *
      * @param domain : domain to load
@@ -146,10 +149,10 @@ public class GamificationDAO extends GenericDAOJPAImpl<GamificationContextEntity
         }
     }
 
-    public List<Piechart> findStatsByUserId(String userId) throws PersistenceException {
+    public List<PiechartLeaderboard> findStatsByUserId(String userId) throws PersistenceException {
 
         // TODO : We should load only first 10 users
-        List <Piechart> pieChart = getEntityManager().createNamedQuery("GamificationUserReputation.findStatsByUserId")
+        List <PiechartLeaderboard> pieChart = getEntityManager().createNamedQuery("GamificationUserReputation.findStatsByUserId")
                 .setParameter("userId", userId)
                 .setMaxResults(queryLimitOffset)
                 .getResultList();

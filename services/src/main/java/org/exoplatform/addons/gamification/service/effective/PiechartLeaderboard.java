@@ -2,17 +2,16 @@ package org.exoplatform.addons.gamification.service.effective;
 
 import java.io.Serializable;
 
-public class Piechart implements Serializable {
+public class PiechartLeaderboard extends AbstractLeaderboard implements Serializable {
 
     private String label;
 
     private long value;
 
-    public Piechart() {
-    }
+    public PiechartLeaderboard(String label , long value ) {
 
-    public Piechart(String label, long value) {
         this.label = label;
+
         this.value = value;
     }
 

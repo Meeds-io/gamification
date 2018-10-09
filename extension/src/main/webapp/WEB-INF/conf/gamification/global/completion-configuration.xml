@@ -45,9 +45,4 @@
         <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
     </component>
     <!-- END -->
-    <!-- Purge gamification data Rest Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.rest.PurgeGamificationDataEndPoint</type>
-    </component>
-    <!-- END -->
 </configuration>
