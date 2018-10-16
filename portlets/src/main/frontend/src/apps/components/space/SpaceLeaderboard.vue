@@ -17,9 +17,6 @@
 
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
-                    <!--
-                    <option value="content">Content</option>
-                    -->
                 </select>
             </div>
         </div>
@@ -174,8 +171,9 @@
 
         methods: {
             filter(network) {
+                var url = window.location.pathname
                 let self = this
-                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
+                axios.get(`/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url } })
                     .then(response => {
                         this.users = response.data;
 
@@ -199,7 +197,6 @@
 
                     })
 
-
             },
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
@@ -222,7 +219,6 @@
 
                 jQuery(this).popover("show");
 
-
             },
             isActive(value) {
                 return this.active === value
@@ -240,17 +236,14 @@
 
             currentRank: function (user) {
 
-
                 return user.fullname == 'Your current rank';
 
             }
-
-
-
         },
 
         created() {
-            axios.get(`/rest/gamification/leaderboard/rank/all`)
+            var url = window.location.pathname
+            axios.get(`/rest/gamification/space/leaderboard/overall`, { params: { 'url': url } })
                 .then(response => {
                     this.users = response.data;
                 })
@@ -261,11 +254,9 @@
 
     }
 
-
 </script>
 
 <style scoped>
-
 
     .user-leaderboard-portlet .uiIconViewByChart{
         color: #4d5466!important;

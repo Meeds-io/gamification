@@ -57,6 +57,14 @@
             </depends>
         </module>
     </portlet>
+    <portlet>
+        <name>GamificationSpaceLeaderboard</name>
+        <module>
+            <depends>
+                <module>spaceLeaderboard</module>
+            </depends>
+        </module>
+    </portlet>
     <module>
         <name>manageRules</name>
         <script>
@@ -83,6 +91,13 @@
         <script>
             <minify>false</minify>
             <path>/javascript/leaderboard/leaderboard.bundle.js</path>
+        </script>
+    </module>
+    <module>
+        <name>spaceLeaderboard</name>
+        <script>
+            <minify>false</minify>
+            <path>/javascript/spaceleaderboard/spaceleaderboard.bundle.js</path>
         </script>
     </module>
 

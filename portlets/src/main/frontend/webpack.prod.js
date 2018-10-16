@@ -15,7 +15,7 @@ module.exports = merge(common, {
         badge: "./badge.js",
         reputation: "./reputation.js",
         leaderboard: "./leaderboard.js",
-
+        spaceleaderboard: "./spaceleaderboard.js",
 
     },
     output: {

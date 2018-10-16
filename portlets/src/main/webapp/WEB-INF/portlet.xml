@@ -83,4 +83,16 @@
             <role-link>admin</role-link>
         </security-role-ref>
     </portlet>
+
+    <!-- Space leaderboard : leaderboard -->
+    <portlet>
+        <portlet-name>GamificationSpaceLeaderboard</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.leaderboard.SpaceLeaderboardPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Gamification Space Leaderboard</title>
+        </portlet-info>
+    </portlet>
 </portlet-app>

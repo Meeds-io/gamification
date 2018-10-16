@@ -34,6 +34,26 @@ public class GamificationService {
         this.gamificationHistoryDAO = gamificationHistoryDAO;
     }
 
+    @ExoTransactional
+    public GamificationActionsHistory findLatestActionHistoryBySocialId(String userSocialId) {
+
+        List<GamificationActionsHistory> entities = null;
+
+        try {
+            //--- Get Entity from DB
+            entities = gamificationHistoryDAO.findActionsHistoryByUserId(userSocialId);
+
+            // Return the first element since the underluing API returns entities ordered by insertion date
+            return (entities != null && !entities.isEmpty()) ? entities.get(0) : null;
+
+        } catch (Exception e) {
+            LOG.error("Error to find ActionsHistory entity with the following cretiria [userSocialId:{}]", userSocialId, e);
+        }
+        return null;
+
+    }
+
+
     /**
      * Get actionsHistory entities
      * @param date : filter by date
@@ -49,36 +69,10 @@ public class GamificationService {
             //--- Get Entity from DB
             entities = gamificationHistoryDAO.findActionHistoryByDateBySocialId(date, socialId);
 
-
         } catch (Exception e) {
             LOG.error("Error to find ActionsHistory entities with the following cretiria [socialId:{} / date:{}", socialId, date, e);
         }
         return entities;
-
-    }
-
-    /**
-     * Get latest actionsHistory entitiese
-     * @param socialId : filter by socialId
-     * @return an object of type GamificationActionsHistory
-     */
-    @ExoTransactional
-    public GamificationActionsHistory findLatestActionHistoryBySocialId(String socialId) {
-
-        List<GamificationActionsHistory> entities = null;
-
-        try {
-            //--- Get Entity from DB
-            entities = this.findActionHistoryByDateBySocialId(new Date(), socialId);
-
-            // Return the first element since the underluing API returns entities ordered by insertion date
-            return (entities != null && !entities.isEmpty()) ? entities.get(0) : null;
-
-
-        } catch (Exception e) {
-            LOG.error("Error to find ActionsHistory entities with the following cretiria [socialId:{} / date:{}", socialId, LocalDate.now(), e);
-        }
-        return null;
 
     }
 
@@ -171,7 +165,7 @@ public class GamificationService {
      * @return list of objects of type StandardLeaderboard
      */
     @ExoTransactional
-    public List<StandardLeaderboard> filter(LeaderboardFilter filter) {
+    public List<StandardLeaderboard> filter(LeaderboardFilter filter, boolean isGlobalContext) {
         List<StandardLeaderboard> leaderboard = null;
 
         if (LOG.isDebugEnabled()) {
@@ -188,15 +182,15 @@ public class GamificationService {
                 // Check the period
                 if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), isGlobalContext);
 
 
                 } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), isGlobalContext);
 
                 } else {
-                    leaderboard = gamificationHistoryDAO.findAllActionsHistory();
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistory(isGlobalContext);
                 }
 
             } else {
@@ -207,15 +201,15 @@ public class GamificationService {
                 // Check the period
                 if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), filter.getDomain());
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), filter.getDomain(),isGlobalContext);
 
 
                 } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()),filter.getDomain());
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()),filter.getDomain(), isGlobalContext);
 
                 } else {
-                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain());
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), isGlobalContext);
                 }
 
 

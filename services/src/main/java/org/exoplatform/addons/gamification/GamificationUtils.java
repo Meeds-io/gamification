@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification;
 
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
@@ -8,6 +9,8 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.jgroups.util.DefaultThreadFactory;
 
 import java.util.ArrayList;
@@ -73,6 +76,39 @@ public class GamificationUtils {
         }
 
         return false;
+
+    }
+    public static String extractProfileOwnerFromUrl(String str, String separator) {
+        if (StringUtils.isEmpty(str)) {
+            return str;
+        }
+        if (StringUtils.isEmpty(separator)) {
+            return "";
+        }
+        int pos = str.lastIndexOf(separator);
+        if (pos == -1 || pos == (str.length() - separator.length())) {
+            return "";
+        }
+        return str.substring(pos + separator.length());
+    }
+
+    public static Space extractSpaceNameFromUrl(String url) throws Exception {
+
+        if (StringUtils.isEmpty(url)) {
+            return null;
+        }
+
+        // Get Space by name
+        StringBuffer sb = new StringBuffer();
+        // Build space name
+        String spaceName = (url.split(":spaces:")[1]).split("/")[0];
+        sb.append("/spaces/").append(spaceName);
+
+        // Find Space by GroupId
+        Space space = CommonsUtils.getService(SpaceService.class).getSpaceByGroupId(sb.toString());
+
+        return space;
+
 
     }
 

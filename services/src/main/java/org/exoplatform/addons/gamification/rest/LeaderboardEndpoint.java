@@ -32,11 +32,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
 
-    private final static String BLACK_LISTED_USERS_GROUP = "/leaderboard-blacklist-users";
-
     private final static String YOUR_CURRENT_RANK_MSG = "Your current rank";
-
-    private final static int LEADERBOARD_MAX_SIZE = 10;
 
     private final CacheControl cacheControl;
 
@@ -45,11 +41,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
     protected GamificationService gamificationService = null;
 
     protected RelationshipManager relationshipManager;
-
-    private List<String> blackListedUsers;
-
-    private OrganizationService organizationService;
-
 
     public LeaderboardEndpoint() {
 
@@ -64,9 +55,6 @@ public class LeaderboardEndpoint implements ResourceContainer {
         gamificationService = CommonsUtils.getService(GamificationService.class);
 
         relationshipManager = CommonsUtils.getService(RelationshipManager.class);
-
-        organizationService = CommonsUtils.getService(OrganizationService.class);
-
 
     }
 
@@ -90,7 +78,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             try {
                 // Filter users to add to leaderboard according to filter criteria
-                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter, true);
 
                 if (standardLeaderboards == null) {
                     return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
@@ -175,7 +163,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             try {
 
-                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);;
+                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter,true);
 
                 if (standardLeaderboards == null) {
                     return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();

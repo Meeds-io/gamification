@@ -11,12 +11,14 @@ import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 import javax.servlet.ServletContext;
 import java.time.LocalDate;
@@ -64,7 +66,7 @@ public class DataModelMigration {
                                 long startTime = System.currentTimeMillis();
                                 migrateOldDatamodelentries();
                                 long endTime = System.currentTimeMillis();
-                                LOG.info("=== Migration of Gamiffication datab model is done in " + (endTime - startTime) + " ms");
+                                LOG.info("=== Migration of Gamiffication data model is done in " + (endTime - startTime) + " ms");
                             } catch (Exception e) {
                                 LOG.error("Error while migrating Gamification data model - Cause : " + e.getMessage(), e);
                             }
@@ -85,17 +87,17 @@ public class DataModelMigration {
         try {
             List<GamificationContextEntity> gamification = gamificationDAO.findAll();
             int totalEntries = 0;
-            LOG.info("    Number of gamification entries to process = " + totalEntries);
-            List<GamificationContextEntity> currentPage;
             if (gamification != null) totalEntries = gamification.size();
+            LOG.info("    Number of gamification entries to process = " + totalEntries);
             double userPercent = 0;
             for (GamificationContextEntity entry : gamification) {
-                LOG.info("Migrate gamification entry service=gamification operation=migration parameters=\"user_social_id:{}, global_score:{}, progress:{} %\"", entry.getUsername(), entry.getScore(), userPercent);
                 if (!GamificationUtils.isGamificationDatamodelMigrated(entry.getUsername())) {
                     migrateEntry(entry);
+                    current++;
+                    userPercent = ((double) current / totalEntries) * 100;
                 }
-                current++;
-                userPercent = ((double) current / totalEntries) * 100;
+                LOG.info("Migrate gamification entry service=gamification operation=migration parameters=\"user_social_id:{}, global_score:{}, progress:{}%\"", entry.getUsername(), entry.getScore(), (int)userPercent);
+
             }
 
             // Make migration done only when all records are OK
@@ -108,7 +110,7 @@ public class DataModelMigration {
 
     private void migrateEntry(GamificationContextEntity entry) throws Exception {
 
-        if (GamificationUtils.isBlackListed(entry.getUsername())) {
+        if (GamificationUtils.isBlackListed(CommonsUtils.getService(IdentityManager.class).getIdentity(entry.getUsername(), false).getRemoteId())) {
             return;
         }
         long socialScore;
@@ -137,7 +139,7 @@ public class DataModelMigration {
         // Build new social gamification action history
         actionsHistory = new GamificationActionsHistory();
         actionsHistory.setUserSocialId(entry.getUsername());
-        actionsHistory.setGlobalScore((entry.getScore()) - socialScore);
+        actionsHistory.setGlobalScore(entry.getScore());
         actionsHistory.setActionScore((entry.getScore()) - socialScore);
         actionsHistory.setDomain(MIGRATION_PROCESS_KNOWLEDGE_DOMAIN);
         actionsHistory.setActionTitle(MIGRATION_PROCESS_MIGRATION_KNOWLEDGE_ENTRIES);

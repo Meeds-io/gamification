@@ -45,4 +45,10 @@
         <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
     </component>
     <!-- END -->
+
+    <!-- Space Leaderboard Rest Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint</type>
+    </component>
+    <!-- END -->
 </configuration>

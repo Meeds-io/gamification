@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
@@ -65,7 +66,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         ConversationState conversationState = ConversationState.getCurrent();
 
         // Get profile owner from url
-        String profileOwner = extractProfileOwnerFromUrl(url,"/");
+        String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
 
         long userReputationScore = 0;
 
@@ -113,7 +114,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
 
-        String profilePageOwner = extractProfileOwnerFromUrl(url,"/");
+        String profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
 
         if (conversationState != null) {
             try {
@@ -296,17 +297,5 @@ public class UserReputationEndpoint implements ResourceContainer {
         }
         return "";
     }
-    private static String extractProfileOwnerFromUrl(String str, String separator) {
-        if (StringUtils.isEmpty(str)) {
-            return str;
-        }
-        if (StringUtils.isEmpty(separator)) {
-            return "";
-        }
-        int pos = str.lastIndexOf(separator);
-        if (pos == -1 || pos == (str.length() - separator.length())) {
-            return "";
-        }
-        return str.substring(pos + separator.length());
-    }
+
 }
