@@ -66,7 +66,7 @@ public class DataModelMigration {
                                 long startTime = System.currentTimeMillis();
                                 migrateOldDatamodelentries();
                                 long endTime = System.currentTimeMillis();
-                                LOG.info("=== Migration of Gamiffication data model is done in " + (endTime - startTime) + " ms");
+                                LOG.info("=== Migration of Gamification data model is done in " + (endTime - startTime) + " ms");
                             } catch (Exception e) {
                                 LOG.error("Error while migrating Gamification data model - Cause : " + e.getMessage(), e);
                             }
