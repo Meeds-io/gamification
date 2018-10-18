@@ -27,8 +27,9 @@
             <div class="col">
                 <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
                     <div id="app" role="group" class="btn-group">
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK' " :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')">By week</button>
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'ALL' " :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('ALL')">All times</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK' " :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')">Week</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'MONTH' " :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('MONTH')">Month</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn3';selectedPeriod = 'ALL' " :class="{active: activeBtn === 'btn3' }" v-on:click.prevent="filter('ALL')">All times</button>
                     </div>
                 </div>
             </div>
@@ -441,7 +442,7 @@
 
     .btn-group>.btn {
         padding: 5px 0px;
-        width: 50%;
+        width: 33%;
         text-align: center;
     }
 
