@@ -2,6 +2,8 @@ package org.exoplatform.addons.gamification.service.effective;
 
 public class LeaderboardFilter {
 
+    private int loadCapacity = 10;
+
     private String domain = "all";
 
     private Period period = Period.WEEK;
@@ -9,6 +11,14 @@ public class LeaderboardFilter {
     enum Period { ALL, MONTH, WEEK }
 
     public LeaderboardFilter() {
+    }
+
+    public int getLoadCapacity() {
+        return loadCapacity;
+    }
+
+    public void setLoadCapacity(String loadCapacity) {
+        this.loadCapacity = Integer.parseInt(loadCapacity);
     }
 
     public String getDomain() {

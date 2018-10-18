@@ -87,7 +87,7 @@ public class GamificationService {
                     .findAny()
                     .orElse(null);
 
-            return (leaderboard.indexOf(item)+1);
+            return (leaderboard.indexOf(item));
 
         } catch (Exception e) {
 
@@ -182,15 +182,15 @@ public class GamificationService {
                 // Check the period
                 if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), isGlobalContext);
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), isGlobalContext, filter.getLoadCapacity());
 
 
                 } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), isGlobalContext);
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), isGlobalContext, filter.getLoadCapacity());
 
                 } else {
-                    leaderboard = gamificationHistoryDAO.findAllActionsHistory(isGlobalContext);
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistory(isGlobalContext, filter.getLoadCapacity());
                 }
 
             } else {
@@ -201,15 +201,15 @@ public class GamificationService {
                 // Check the period
                 if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), filter.getDomain(),isGlobalContext);
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusWeeks(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), filter.getDomain(),isGlobalContext, filter.getLoadCapacity());
 
 
                 } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()),filter.getDomain(), isGlobalContext);
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.minusMonths(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()),filter.getDomain(), isGlobalContext,filter.getLoadCapacity());
 
                 } else {
-                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), isGlobalContext);
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), isGlobalContext,filter.getLoadCapacity());
                 }
 
 

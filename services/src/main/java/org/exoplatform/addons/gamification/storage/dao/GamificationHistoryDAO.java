@@ -89,17 +89,18 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     /**
      * Get all ActionHistory records paginated
-     * @param isGlobalContext : : true if call is made in a global context false else
+     * @param isGlobalContext : true if call is made in a global context false else
+     * @param loadCapacity : how many records we load from DB
      * @return list of object of type StandardLeaderboard
      * @throws PersistenceException
      */
-    public List<StandardLeaderboard> findAllActionsHistory(boolean isGlobalContext) throws PersistenceException {
+    public List<StandardLeaderboard> findAllActionsHistory(boolean isGlobalContext, int loadCapacity) throws PersistenceException {
 
         // Build base query
         Query query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllActionsHistory");
 
         if (isGlobalContext) {
-            query.setMaxResults(queryLimitOffset);
+            query.setMaxResults(loadCapacity);
         }
 
         // Execute query
@@ -118,11 +119,13 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     /**
      * Get all ActionHistory records by a given domain
-     * @param domain
+     * @param domain : domain name used to filter returned records
+     * @param isGlobalContext : false when records are filtered based on space true else
+     * @param loadCapacity : how many records we load from DB
      * @return a list of objects of type StandardLeaderboard
      * @throws PersistenceException
      */
-    public List<StandardLeaderboard> findAllActionsHistoryByDomain(String domain, boolean isGlobalContext) throws PersistenceException {
+    public List<StandardLeaderboard> findAllActionsHistoryByDomain(String domain, boolean isGlobalContext, int loadCapacity) throws PersistenceException {
 
         // Build base query
         Query query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllActionsHistoryByDomain")
@@ -130,7 +133,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
         // Compute
         if (isGlobalContext) {
-            query.setMaxResults(queryLimitOffset);
+            query.setMaxResults(loadCapacity);
         }
 
         List<StandardLeaderboard> defaultLeaderboard = query.getResultList();
@@ -171,10 +174,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
      *
      * @param date : date from when we aim to track leaders
      * @param isGlobalContext : true if call is made in a global context false else
+     * @param loadCapacity : how many records we load from DB
      * @return a list of object of type StandardLeaderboard
      * @throws PersistenceException
      */
-    public List<StandardLeaderboard> findActionsHistoryByDate(Date date, boolean isGlobalContext) throws PersistenceException {
+    public List<StandardLeaderboard> findActionsHistoryByDate(Date date, boolean isGlobalContext, int loadCapacity) throws PersistenceException {
 
         // Base query
         Query query = getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByDate");
@@ -184,7 +188,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
         // Compute query based on space context
         if (isGlobalContext) {
-            query.setMaxResults(queryLimitOffset);
+            query.setMaxResults(loadCapacity);
         }
 
         // Execute query
@@ -206,10 +210,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
      * @param date : date from when we aim to track user
      * @param domain : domain we aim to track
      * @param isGlobalContext : true if call is made in a global context false else
+     * @param loadCapacity : how many records we should load from DB
      * @return a list of object of type StandardLraderboard
      * @throws PersistenceException
      */
-    public List<StandardLeaderboard> findActionsHistoryByDateByDomain(Date date, String domain, boolean isGlobalContext) throws PersistenceException {
+    public List<StandardLeaderboard> findActionsHistoryByDateByDomain(Date date, String domain, boolean isGlobalContext, int loadCapacity) throws PersistenceException {
 
         // Build base query
         Query query = getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByDateByDomain")
@@ -218,7 +223,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
         // Set query's condition
         if (isGlobalContext) {
-            query.setMaxResults(queryLimitOffset);
+            query.setMaxResults(loadCapacity);
         }
 
         // Execute query

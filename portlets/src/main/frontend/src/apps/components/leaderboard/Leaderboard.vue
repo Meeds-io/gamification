@@ -3,7 +3,8 @@
         <div class="row">
             <div class="col">
                 <h5 class="mt-0 title">Top users</h5>
-                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" data-original-title="How can I earn points ?">
+                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip"
+                    data-original-title="How can I earn points ?">
                     <i class="uiIconInformation"></i>
                 </a>
             </div>
@@ -27,9 +28,12 @@
             <div class="col">
                 <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
                     <div id="app" role="group" class="btn-group">
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK' " :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')">Week</button>
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'MONTH' " :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('MONTH')">Month</button>
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn3';selectedPeriod = 'ALL' " :class="{active: activeBtn === 'btn3' }" v-on:click.prevent="filter('ALL')">All times</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK';loadCapacity=10"
+                            :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')">Week</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'MONTH';loadCapacity=10 "
+                            :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('MONTH')">Month</button>
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn3';selectedPeriod = 'ALL';loadCapacity=10 "
+                            :class="{active: activeBtn === 'btn3' }" v-on:click.prevent="filter('ALL')">All times</button>
                     </div>
                 </div>
             </div>
@@ -38,25 +42,29 @@
 
             <div class="list-lead col">
                 <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
-                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)"
+                        class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
 
-                            <div class="rank-user">{{index+1}}
-                                </div><avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
+                        <div class="rank-user">{{index+1}}
+                        </div>
+                        <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
                         <div class="desc-user">
                             <a :href="user.profileUrl">{{user.fullname}}</a>
                         </div>
                         <div class="number-user">{{user.score}}
                             <span>Pts</span>
                         </div>
-                           
+
                         <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
-                            <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip"
-                                tabindex="-1" :id="'leaderboard'+index" x-placement="left">
+                            <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)"
+                                v-on:load="onShown(user.remoteId)" role="tooltip" tabindex="-1" :id="'leaderboard'+index"
+                                x-placement="left">
                                 <div class="arrow" style="top: 108px;"></div>
                                 <template>
                                     <div class='chart' id="chart">
 
-                                        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+                                        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+                                            rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
                                             crossorigin="anonymous">
 
                                         <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
@@ -66,19 +74,20 @@
                         </div>
 
                     </div>
-                    <div v-if="user.fullname == 'Your current rank'" v-bind:class="{'current-rank': currentRank(user)}" v-for="(user, index) in users"
-                        class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+                    <div v-if="user.fullname == 'Your current rank'" v-bind:class="{'current-rank': currentRank(user)}"
+                        v-for="(user, index) in users" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
                         <div class="desc-user">
                             {{user.fullname}} :
                         </div>
                         <div class="number-user">{{user.score}}
 
                         </div>
+
+                    </div>
+                    <div class="load-more" v-if="users.length>1">
+                        <b-link href="#" @click.prevent="showMore()">Load More</b-link>
                     </div>
 
-                    <div v-if="!users.length" class="empty-leaderboard">
-                        Coming soon ...
-                    </div>
                 </div>
             </div>
 
@@ -115,7 +124,8 @@
             domain: 'null',
             show: false,
             selectedPeriod: 'WEEK',
-            popoverShow: false
+            popoverShow: false,
+            loadCapacity: 10
 
 
         }
@@ -150,6 +160,7 @@
         },
         watch: {
             domain() {
+                this.loadCapacity=10
                 this.filter()
             }
 
@@ -174,7 +185,7 @@
         },
 
         methods: {
-            filter(network) {
+            filter() {
                 let self = this
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
@@ -186,6 +197,17 @@
 
                     })
 
+            },
+            showMore() {
+                let self = this
+                self.loadCapacity += 10;
+                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'capacity': self.loadCapacity } })
+                    .then(response => {
+                        this.users = response.data;
+                    })
+                    .catch(e => {
+                        console.warn(e)
+                    })
             },
             onShown(username) {
 
@@ -246,8 +268,6 @@
 
             }
 
-
-
         },
 
         created() {
@@ -262,22 +282,21 @@
 
     }
 
-
 </script>
 
 <style scoped>
-
-
-    .user-leaderboard-portlet .uiIconViewByChart{
-        color: #4d5466!important;
+    .user-leaderboard-portlet .uiIconViewByChart {
+        color: #4d5466 !important;
         font-size: 18px;
         top: 9px;
         padding-right: 10px;
         opacity: 0.4;
     }
-    .list-group-item:hover .uiIconViewByChart{
-        opacity:1;
+
+    .list-group-item:hover .uiIconViewByChart {
+        opacity: 1;
     }
+
     .popover__title {
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 24px;
@@ -296,15 +315,18 @@
     .desc-user a {
         color: #4d5466 !important;
     }
-    .desc-user a:hover, .desc-user a:focus {
-         color: #578dc9 !important;
+
+    .desc-user a:hover,
+    .desc-user a:focus {
+        color: #578dc9 !important;
     }
 
     .current-rank .desc-user {
         padding-left: 10px;
         width: 50%;
     }
-    .current-rank{
+
+    .current-rank {
         background: #fbfbfb !important;
         padding: 5px 5px 10px 5px;
     }
@@ -315,14 +337,15 @@
         margin: 0 auto;
         font-weight: bold;
     }
-    .rank-user{
-    font-size: 14px;
-    width: 6%;
-    white-space: nowrap;
-    padding-top: 10px;
-    text-align: center;
-    color:#4d5466;
-}
+
+    .rank-user {
+        font-size: 14px;
+        width: 6%;
+        white-space: nowrap;
+        padding-top: 10px;
+        text-align: center;
+        color: #4d5466;
+    }
 
     .popover__content {
         opacity: 0;
@@ -368,11 +391,6 @@
     .popover__message {
         text-align: center;
     }
-
-
-
-
-
 
     .d-flex {
         display: -ms-flexbox !important;
@@ -433,8 +451,6 @@
     .list-lead {
         padding: 5px 0px !important;
     }
-
-
 
     .col {
         padding: 5px;
@@ -507,7 +523,7 @@
         background-size: 8px 10px;
         border: 1px solid #ced4da;
         border-radius: .25rem;
-      
+
     }
 
     .desc-user {
@@ -609,5 +625,9 @@
         -moz-box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
         box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
         color: #333;
+    }
+    .load-more {
+        float: right;
+        padding: 15px;
     }
 </style>

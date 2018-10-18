@@ -141,7 +141,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     @GET
     @Path("filter")
-    public Response filter(@Context UriInfo uriInfo, @QueryParam("domain") String domain, @QueryParam("period") String period) {
+    public Response filter(@Context UriInfo uriInfo, @QueryParam("domain") String domain, @QueryParam("period") String period, @QueryParam("capacity") String capacity) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -154,6 +154,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
                 leaderboardFilter.setDomain(domain);
 
             if (StringUtils.isNotBlank(period)) leaderboardFilter.setPeriod(period);
+
+            if (StringUtils.isNotBlank(capacity)) leaderboardFilter.setLoadCapacity(capacity);
 
             // hold leaderboard flow
             LeaderboardInfo leaderboardInfo = null;
