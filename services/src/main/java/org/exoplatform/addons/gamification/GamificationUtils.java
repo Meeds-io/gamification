@@ -78,20 +78,33 @@ public class GamificationUtils {
         return false;
 
     }
-    public static String extractProfileOwnerFromUrl(String str, String separator) {
-        if (StringUtils.isEmpty(str)) {
-            return str;
+
+    /**
+     * Build current username from url
+     * @param url : http url
+     * @param separator : seperator to use to build profile's owner
+     * @return username
+     */
+    public static String extractProfileOwnerFromUrl(String url, String separator) {
+        if (StringUtils.isEmpty(url)) {
+            return url;
         }
         if (StringUtils.isEmpty(separator)) {
             return "";
         }
-        int pos = str.lastIndexOf(separator);
-        if (pos == -1 || pos == (str.length() - separator.length())) {
+        int pos = url.lastIndexOf(separator);
+        if (pos == -1 || pos == (url.length() - separator.length())) {
             return "";
         }
-        return str.substring(pos + separator.length());
+        return url.substring(pos + separator.length());
     }
 
+    /**
+     * Build space name from url
+     * @param url : http url
+     * @return username
+     * @throws Exception
+     */
     public static Space extractSpaceNameFromUrl(String url) throws Exception {
 
         if (StringUtils.isEmpty(url)) {
@@ -108,7 +121,6 @@ public class GamificationUtils {
         Space space = CommonsUtils.getService(SpaceService.class).getSpaceByGroupId(sb.toString());
 
         return space;
-
 
     }
 
