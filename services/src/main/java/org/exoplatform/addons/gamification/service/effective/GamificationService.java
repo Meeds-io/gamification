@@ -87,7 +87,7 @@ public class GamificationService {
                     .findAny()
                     .orElse(null);
 
-            return (leaderboard.indexOf(item));
+            return (leaderboard.indexOf(item)+1);
 
         } catch (Exception e) {
 
