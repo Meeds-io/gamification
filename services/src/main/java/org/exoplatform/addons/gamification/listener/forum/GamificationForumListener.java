@@ -16,6 +16,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import java.beans.PropertyChangeEvent;
+import java.time.LocalDate;
 import java.util.List;
 
 @Asynchronous
@@ -84,6 +85,8 @@ public class GamificationForumListener extends ForumEventListener implements Gam
 
                 // Save Gamification Context
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -118,8 +121,9 @@ public class GamificationForumListener extends ForumEventListener implements Gam
         if (ruleDto != null) {
             try {
                 aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId());
-
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
 
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
@@ -197,6 +201,8 @@ public class GamificationForumListener extends ForumEventListener implements Gam
 
                     // Save Gamification Context
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
 
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);

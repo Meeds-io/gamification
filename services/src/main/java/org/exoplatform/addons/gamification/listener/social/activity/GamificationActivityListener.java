@@ -19,6 +19,8 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import java.time.LocalDate;
+
 @Asynchronous
 public class GamificationActivityListener extends ActivityListenerPlugin implements GamificationListener {
 
@@ -74,8 +76,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             if (ruleDto != null) {
                 try {
                     aHistory = build(ruleDto, activity.getPosterId());
-
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -90,8 +93,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 try {
 
                     aHistory = build(ruleDto, activity.getPosterId());
-
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -110,6 +114,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     try {
                         aHistory = build(ruleDto, activity.getStreamId());
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -125,6 +131,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     try {
                         aHistory = build(ruleDto, activity.getPosterId());
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -138,6 +146,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     try {
                         aHistory = build(ruleDto, activity.getStreamId());
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -191,6 +201,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     aHistory = build(ruleDto, activity.getPosterId());
 
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -213,6 +225,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                         aHistory = build(ruleDto, activity.getPosterId());
 
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -258,6 +272,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     aHistory = build(ruleDto, liker);
 
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -272,6 +288,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 try {
                     aHistory = build(ruleDto, activity.getPosterId());
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
 
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
@@ -297,6 +315,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     try {
                         aHistory = build(ruleDto, liker);
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -310,6 +330,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     try {
                         aHistory = build(ruleDto, activity.getPosterId());
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -351,6 +373,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
                     // Save actionHistory
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
@@ -381,6 +405,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                         aHistory = build(ruleDto, activity.getPosterId());
                         // Save actionHistory
                         gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                     } catch (Exception e) {
                         LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                     }
@@ -406,6 +432,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
                 // Save actionHistory
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }

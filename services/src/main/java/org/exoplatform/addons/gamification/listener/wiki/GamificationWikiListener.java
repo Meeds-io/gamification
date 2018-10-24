@@ -18,6 +18,8 @@ import org.exoplatform.wiki.service.PageUpdateType;
 import org.exoplatform.wiki.service.listener.PageWikiListener;
 import org.exoplatform.wiki.utils.WikiConstants;
 
+import java.time.LocalDate;
+
 @Asynchronous
 public class GamificationWikiListener extends PageWikiListener implements GamificationListener {
 
@@ -62,6 +64,8 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actorId,aHistory.getGlobalScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             } catch (Exception e) {
                 LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
             }
@@ -98,9 +102,10 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
             if (ruleDto != null) {
                 try {
                     aHistory = build(ruleDto, actorId);
-
                     // Save GamificationHistory
                     gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),actorId,aHistory.getGlobalScore(),ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
                 } catch (Exception e) {
                     LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
                 }

@@ -16,6 +16,8 @@ import org.exoplatform.social.core.space.SpaceListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import java.time.LocalDate;
+
 @Asynchronous
 public class GamificationSpaceListener extends SpaceListenerPlugin implements GamificationListener {
 
@@ -58,6 +60,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -111,6 +115,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -147,6 +153,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
+                // Gamification simple audit logger
+                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
