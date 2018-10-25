@@ -22,7 +22,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Path("/gamification/leaderboard")
@@ -115,7 +120,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     leaderboardList.add(leaderboardInfo);
                 }
                 // Check if the current user is already in top10
-                LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), leaderboardList);
+                LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), leaderboardFilter.getDomain(),leaderboardList);
                 // Complete the final leaderboard
                 if (leader != null) leaderboardList.add(leader);
 
@@ -211,7 +216,16 @@ public class LeaderboardEndpoint implements ResourceContainer {
                     leaderboardInfoList.add(leaderboardInfo);
                 }
                 // Check if the current user is already in top10
-                LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), leaderboardInfoList);
+                Date date = null;
+                switch (leaderboardFilter.getPeriod()) {
+                    case "WEEK":
+                        date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        break;
+                    case "MONTH":
+                        date = Date.from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        break;
+                }
+                LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), date,leaderboardFilter.getDomain(), leaderboardInfoList);
                 // Complete the final leaderboard
                 if (leader != null) leaderboardInfoList.add(leader);
 
@@ -277,17 +291,20 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     private boolean isCurrentUserInTopTen(String username, List<LeaderboardInfo> leaderboard) {
 
+        if (leaderboard.isEmpty()) return false;
+
         return leaderboard.stream().map(LeaderboardInfo::getSocialId).anyMatch(username::equals);
     }
 
 
-    private LeaderboardInfo buildCurrentUserRank (String identityId, List<LeaderboardInfo> leaderboardList ) {
+    private LeaderboardInfo buildCurrentUserRank (String identityId, Date date, String domain, List<LeaderboardInfo> leaderboardList ) {
+        if (leaderboardList.size() == 0) return null;
         LeaderboardInfo leaderboardInfo = null;
         String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,identityId, false).getId();
         if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
             // Get GaamificationScore for current user
-            int rank = gamificationService.bluidCurrentUserRank(currentUser);
+            int rank = gamificationService.bluidCurrentUserRank(currentUser, date, domain);
 
             if (rank > 0) {
 

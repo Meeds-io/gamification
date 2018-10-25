@@ -49,11 +49,30 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
      * @throws PersistenceException
      */
     public List<StandardLeaderboard> findAllActionsHistoryAgnostic() throws PersistenceException {
-
         List<StandardLeaderboard> defaultLeaderboard = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllActionsHistory")
                 .getResultList();
+        try {
+            return defaultLeaderboard;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find all gamification entries by domain and by type
+     * @param date : date from when we load gamification entries
+     * @param domain : domain filter
+     * @return list of object of type StandardLeaderboard
+     * @throws PersistenceException
+     */
+    public List<StandardLeaderboard> findAllActionsHistoryByDateByDomain(Date date, String domain) throws PersistenceException {
 
         try {
+
+            List<StandardLeaderboard> defaultLeaderboard = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllActionsHistoryByDateByDomain")
+                    .setParameter("date", date)
+                    .setParameter("domain", domain)
+                    .getResultList();
 
             return defaultLeaderboard;
 
@@ -61,6 +80,40 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
             return null;
 
+        }
+    }
+
+    /**
+     * Find all gamification entries by domain
+     * @param domain : domain filter
+     * @return list of object of type StandardLeaderboard
+     * @throws PersistenceException
+     */
+    public List<StandardLeaderboard> findAllActionsHistoryByDomain(String domain) throws PersistenceException {
+        try {
+            List<StandardLeaderboard> defaultLeaderboard = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllActionsHistoryByDomain")
+                                                                             .setParameter("domain", domain)
+                                                                             .getResultList();
+            return defaultLeaderboard;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find all gamification entries by date
+     * @param date : date from when entries are loaded
+     * @return list of object of type StandardLeaderboard
+     * @throws PersistenceException
+     */
+    public List<StandardLeaderboard> findAllActionsHistoryByDate(Date date) throws PersistenceException {
+        try {
+            List<StandardLeaderboard> defaultLeaderboard = getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByDate")
+                    .setParameter("date", date)
+                    .getResultList();
+            return defaultLeaderboard;
+        } catch (NoResultException e) {
+            return null;
         }
     }
 

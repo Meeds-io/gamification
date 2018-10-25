@@ -42,7 +42,7 @@
 
             <div class="list-lead col">
                 <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
-                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)"
+                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId"
                         class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
 
                         <div class="rank-user">{{index+1}}
@@ -74,14 +74,13 @@
                         </div>
 
                     </div>
-                    <div v-if="user.fullname == 'Your current rank'" v-bind:class="{'current-rank': currentRank(user)}"
-                        v-for="(user, index) in users" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
-                        <div class="desc-user">
-                            {{user.fullname}} :
-                        </div>
-                        <div class="number-user">{{user.score}}
-
-                        </div>
+                    <div v-else class="current-rank" >
+                           <div v-if="users.length" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+                                <div class="desc-user">
+                                    {{user.fullname}} :
+                                </div>
+                                <div class="number-user">{{user.score}}</div>
+                            </div>
 
                     </div>
                     <div class="load-more" v-if="users.length>1">

@@ -78,11 +78,24 @@ public class GamificationService {
 
     }
 
-    public int bluidCurrentUserRank (String socialId) {
+    public int bluidCurrentUserRank (String socialId, Date date, String domain) {
         List<StandardLeaderboard> leaderboard = null;
         int rank = 0;
         try {
-            leaderboard = gamificationHistoryDAO.findAllActionsHistoryAgnostic();
+            if (date != null) {
+                if (domain.equalsIgnoreCase("all")) {
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDate(date);
+                } else {
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(date, domain);
+                }
+
+            } else {
+                if (domain.equalsIgnoreCase("all")) {
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryAgnostic();
+                } else {
+                    leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(domain);
+                }
+            }
             // Get username
             StandardLeaderboard item = leaderboard.stream()
                     .filter(g -> socialId.equals(g.getUserSocialId()))
