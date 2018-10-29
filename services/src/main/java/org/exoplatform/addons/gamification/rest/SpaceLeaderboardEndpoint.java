@@ -21,7 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Path("/gamification/space/leaderboard")
@@ -30,6 +35,8 @@ import java.util.List;
 public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
+
+    private final static String YOUR_CURRENT_RANK_MSG = "Your current rank";
 
     private final CacheControl cacheControl;
 
@@ -133,7 +140,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
     }
     @GET
     @Path("filter")
-    public Response filter(@Context UriInfo uriInfo, @QueryParam("domain") String domain, @QueryParam("period") String period, @QueryParam("url") String url ) {
+    public Response filter(@Context UriInfo uriInfo, @QueryParam("domain") String domain, @QueryParam("period") String period, @QueryParam("url") String url, @QueryParam("capacity") String capacity ) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -178,7 +185,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
                     // Load Social identity
                     identity = identityManager.getIdentity(leader.getUserSocialId(), true);
 
-                    if (spaceService.isMember(space, identity.getRemoteId())) {
+                    if (spaceService.isMember(space, identity.getRemoteId()) && leaderboardInfoList.size() < Integer.parseInt(capacity)) {
                         leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
 
                         // Set SocialId
@@ -202,8 +209,21 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
                         leaderboardInfoList.add(leaderboardInfo);
                     }
-                    if (leaderboardInfoList.size() == 10) return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                    //if (leaderboardInfoList.size() == 10) return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
                 }
+                // Check if the current user is already in top10
+                Date date = null;
+                switch (leaderboardFilter.getPeriod()) {
+                    case "WEEK":
+                        date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        break;
+                    case "MONTH":
+                        date = Date.from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        break;
+                }
+                LeaderboardEndpoint.LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), date,leaderboardFilter.getDomain(), leaderboardInfoList);
+                // Complete the final leaderboard
+                if (leader != null) leaderboardInfoList.add(leader);
 
                 return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
@@ -223,5 +243,43 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
                     .entity("Unauthorized user")
                     .build();
         }
+    }
+    private LeaderboardEndpoint.LeaderboardInfo buildCurrentUserRank (String identityId, Date date, String domain, List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList ) {
+        if (leaderboardList.size() == 0) return null;
+        LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+        String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,identityId, false).getId();
+        if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
+
+            // Get GaamificationScore for current user
+            int rank = gamificationService.bluidCurrentUserRank(currentUser, date, domain);
+
+            if (rank > 0) {
+
+                leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+
+                // Set score
+                leaderboardInfo.setScore(rank);
+
+                // Set username
+                leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
+
+                // Set FullName
+                leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
+
+                // Set avatar
+                leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
+
+                // Set profile URL
+                leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
+            }
+        }
+        return leaderboardInfo;
+
+    }
+    private boolean isCurrentUserInTopTen(String username, List<LeaderboardEndpoint.LeaderboardInfo> leaderboard) {
+
+        if (leaderboard.isEmpty()) return false;
+
+        return leaderboard.stream().map(LeaderboardEndpoint.LeaderboardInfo::getSocialId).anyMatch(username::equals);
     }
 }
