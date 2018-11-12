@@ -94,4 +94,16 @@ public interface GamificationConstant {
     String GAMIFICATION_WIKI_ADD_PAGE                                                   = "addWikiPage";
     /** ADD TOPIC IN FORUM */
     String GAMIFICATION_WIKI_UPDATE_PAGE                                                = "updateWikiPage";
+
+    /***************************************************************************************************************************************************/
+    /************************************************** CONSTANTS TO MANAGE TASK GAMIFICATION PROCESS **************************************************/
+    /***************************************************************************************************************************************************/
+    /** CREATE NEW TASK IN TAS ADDON */
+    String GAMIFICATION_TASK_ADDON_CREATE_TASK                                          = "createNewTask";
+    /** COMPLETED TASK IN TAS ADDON ASSIGNED */
+    String GAMIFICATION_TASK_ADDON_COMPLETED_TASK_ASSIGNED                              = "completeTaskAssigned";
+    /** COMPLETED TASK IN TASK ADDON COWORKER */
+    String GAMIFICATION_TASK_ADDON_COMPLETED_TASK_COWORKER                              = "completeTaskCoworker";
+    /** COMMENT TASK IN TASK ADDON */
+    String GAMIFICATION_TASK_ADDON_COMMENT_TASK                                         = "commentTask";
 }

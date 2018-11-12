@@ -123,5 +123,4 @@ public class GamificationUtils {
         return space;
 
     }
-
 }

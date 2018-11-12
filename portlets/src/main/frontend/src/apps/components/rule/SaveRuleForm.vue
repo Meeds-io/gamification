@@ -58,8 +58,7 @@
                                 
                                 <option value="Social">Social</option>
                                 <option value="Knowledge">Knowledge</option>
-                                <option value="Content">Content</option>
-                                <option value="Monitization">Monitization</option>
+                                <option value="Teamwork">Teamwork</option>
                             </b-form-select>
                         </b-form-group>
 

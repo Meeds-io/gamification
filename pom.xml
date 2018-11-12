@@ -73,6 +73,8 @@
         <mysql.version>5.1.23</mysql.version>
         <!-- Juzu Version -->
         <org.juzu.version>1.2.0</org.juzu.version>
+        <!-- Task Version -->
+        <org.addon.task.version>2.2.0-M03</org.addon.task.version>
         <!-- Lombok driver-->
         <lombok.version>1.16.22</lombok.version>
         <!-- Maven Plugin for JS and CSS bundling and Unit Test execution -->
@@ -97,7 +99,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Video Calls extension -->
+            <!-- Import Task addon -->
+            <dependency>
+                <groupId>org.exoplatform.addons.task</groupId>
+                <artifactId>task-management-parent</artifactId>
+                <version>${org.addon.task.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Gamification Calls extension -->
             <dependency>
                 <groupId>org.exoplatform.addons.gamification</groupId>
                 <artifactId>gamification-services</artifactId>

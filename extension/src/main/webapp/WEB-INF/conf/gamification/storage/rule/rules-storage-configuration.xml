@@ -1009,4 +1009,127 @@
         </component-plugin>
     </external-component-plugins>
 
+    <!-- ############################################################################################ -->
+    <!-- ######################## Gamification Rule Config : TASK FLOW ############################## -->
+    <!-- ############################################################################################ -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.CreateNewTask</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>createNewTask</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Create new Task</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>3</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Teamwork</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.CompleteTaskAssigned</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>completeTaskAssigned</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Completed task for assigned</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>5</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Teamwork</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.CompleteTaskCoworker</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>completeTaskCoworker</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Completed task for coworker</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>1</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Teamwork</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.CommentTask</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>commentTask</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Comment a task</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>2</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Teamwork</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 </configuration>

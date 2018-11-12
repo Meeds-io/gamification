@@ -104,6 +104,12 @@
             <artifactId>social-component-service</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- Task -->
+        <dependency>
+            <groupId>org.exoplatform.addons.task</groupId>
+            <artifactId>task-management-services</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>

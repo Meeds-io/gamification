@@ -24,8 +24,6 @@ import java.time.LocalDate;
 public class GamificationWikiListener extends PageWikiListener implements GamificationListener {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationWikiListener.class);
-
-
     protected RuleService ruleService;
     protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
