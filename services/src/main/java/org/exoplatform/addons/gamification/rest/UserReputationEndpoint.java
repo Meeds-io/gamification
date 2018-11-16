@@ -26,6 +26,7 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -240,7 +241,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
            for (ProfileReputation rep : reputationLis) {
                // Compute won badge
-               buildWonBadges(rep.getDomain(), rep.getScore(), allBadges);
+               buildLatestWonBadge(rep.getDomain(), rep.getScore(), allBadges);
            }
 
         }
@@ -249,45 +250,46 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     }
 
-    private void buildWonBadges(String domain, long score, JSONArray userBadges) {
+    private void buildLatestWonBadge(String domain, long score, JSONArray userBadges) {
 
-        // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+        try {
+            // Get available badge within the solution
+            List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+            BadgeDTO badgeDTO = null;
 
-        // A badge
-        JSONObject reputation = null;
-
-        int i = 0;
-        int k = 0;
-        Iterator<BadgeDTO> iterable = allBadges.iterator();
-
-        while(iterable.hasNext()) {
-            BadgeDTO badgeDTO = iterable.next();
-            if (badgeDTO.getNeededScore() < score) {
-
-                reputation = new JSONObject();
-                try {
-
-                    //computte badge's icon
-                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
-                    reputation.put("url", iconUrl);
-                    reputation.put("description", badgeDTO.getDescription());
-                    reputation.put("id", badgeDTO.getId());
-                    reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getDomain());
-                    reputation.put("level", ++k);
-                    reputation.put("startScore", badgeDTO.getNeededScore());
-
-                    reputation.put("endScore", computeBadgeNextLevel(allBadges,i+1));
-
-                    userBadges.put(reputation);
-                    ++i;
-
-                } catch (Exception e) {
-
+            // A badge
+            JSONObject reputation = null;
+            int index = 0;
+            Iterator<BadgeDTO> iterable = allBadges.iterator();
+            while(iterable.hasNext()) {
+                badgeDTO = iterable.next();
+                if (badgeDTO.getNeededScore() < score) {
+                    ++index;
                 }
             }
+            if (index > 0) {
+                badgeDTO = allBadges.get(index - 1);
+                reputation = new JSONObject();
+                //computte badge's icon
+                String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                reputation.put("url", iconUrl);
+                reputation.put("description", badgeDTO.getDescription());
+                reputation.put("id", badgeDTO.getId());
+                reputation.put("title", badgeDTO.getTitle());
+                reputation.put("zone", badgeDTO.getDomain());
+                reputation.put("level", index);
+                reputation.put("startScore", badgeDTO.getNeededScore());
+
+                reputation.put("endScore", computeBadgeNextLevel(allBadges, index));
+
+                userBadges.put(reputation);
+            }
+
+        } catch (Exception e) {
+
         }
+
+
 
     }
     private String computeBadgeNextLevel (List<BadgeDTO> allBadges, int index) {
