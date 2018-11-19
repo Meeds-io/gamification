@@ -181,6 +181,33 @@ public class GamificationForumListener extends ForumEventListener implements Gam
 
     }
 
+    @Override
+    public void openTopic(String userId, String topicId) {
+        GamificationActionsHistory aHistory = null;
+        // To hold GamificationRule
+        RuleDTO ruleDto = null;
+        // Get associated rule : Reward user who send a relationship request
+        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_FORUM_OPEN_TOPIC);
+        // Topic Owner
+        String topicOwner = null;
+        // Process only when an enable rule is found
+        if (ruleDto != null) {
+            try {
+                // Get Topic owner
+                topicOwner = ((Topic)forumService.getObjectNameById(topicId, Utils.TOPIC)).getOwner();
+                if (topicOwner != null && topicOwner.length() != 0) {
+                    aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId());
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
+
+            } catch (Exception e) {
+                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+            }
+        }
+    }
+
     private void processUpdateTopicType(PropertyChangeEvent event, Topic topic) {
 
         // Start gamification process only when a topic is voted

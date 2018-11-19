@@ -23,7 +23,7 @@ public interface GamificationListener extends GamificationConstant {
         GamificationActionsHistory aHistory = null;
 
         // check if the current user is not a bot
-      //  if (isBlackListed(CommonsUtils.getService(IdentityManager.class).getIdentity(actor, false).getId())) {
+        //  if (isBlackListed(CommonsUtils.getService(IdentityManager.class).getIdentity(actor, false).getId())) {
         if (GamificationUtils.isBlackListed(CommonsUtils.getService(IdentityManager.class).getIdentity(actor, false).getRemoteId())) {
             return null;
         }
