@@ -412,11 +412,10 @@
     }
 
     .container-fluid {
-         padding-top: 20px;
-         padding-left: 50px;
-         margin-left: 250px;
-         margin-right: 250px;
-         margin-top: 20px;
+          padding-right: 0%;
+          padding-left: 10%;
+          padding-top: 1%;
+          margin-right: 1%;
     }
 
     .btn {
