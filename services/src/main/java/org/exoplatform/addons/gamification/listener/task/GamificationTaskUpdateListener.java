@@ -45,7 +45,7 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
 
         // New Task has been created
         if (oldTask == null && newTask != null) {
-            createTask( "created");
+            createTask("created");
         }
 
         // Update Task
@@ -84,12 +84,12 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
     }
 
     protected void updateTask(Task before, Task after) {
+        RuleDTO ruleDto = null;
+        String actorId = "";
+        GamificationActionsHistory aHistory = null;
         // Task completed
         if (isDiff(before.isCompleted(), after.isCompleted())) {
-            RuleDTO ruleDto = null;
-            String actorId = "";
 
-            GamificationActionsHistory aHistory = null;
 
             // Get task assigned property
             if (after.getAssignee() != null && after.getAssignee().length() != 0) {
@@ -141,13 +141,43 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                     }
                 }
             }
+        } else { // Update a task regardless le action made by a user
+
+            // Get connected user
+            String actorUsername = ConversationState.getCurrent().getIdentity().getUserId();
+
+            // Compute user id
+            actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
+
+            // Get associated rule
+            ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_TASK_ADDON_UPDATE_TASK);
+
+            // Process only when an enable rule is found
+            if (ruleDto != null) {
+                try {
+                    aHistory = build(ruleDto, actorId);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
+                                    LocalDate.now(),
+                                    actorId,
+                                    aHistory.getGlobalScore(),
+                                    ruleDto.getArea(),
+                                    ruleDto.getTitle(),
+                                    ruleDto.getScore());
+                    // Save GamificationHistory
+                    gamificationProcessor.execute(aHistory);
+                } catch (Exception e) {
+                    LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
+                }
+            }
         }
     }
 
     /**
      * Check whether a task has been updated
+     *
      * @param before : Task data before modification
-     * @param after : Task data after modification
+     * @param after  : Task data after modification
      * @return a boolean if task has been changed false else
      */
     protected boolean isDiff(Object before, Object after) {

@@ -108,4 +108,6 @@ public interface GamificationConstant {
     String GAMIFICATION_TASK_ADDON_COMPLETED_TASK_COWORKER                              = "completeTaskCoworker";
     /** COMMENT TASK IN TASK ADDON */
     String GAMIFICATION_TASK_ADDON_COMMENT_TASK                                         = "commentTask";
+    /** UPDATE TASK IN TASK ADDON */
+    String GAMIFICATION_TASK_ADDON_UPDATE_TASK                                          = "updateTask";
 }
