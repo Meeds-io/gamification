@@ -269,7 +269,23 @@ public class GamificationService {
             reputationScore = gamificationHistoryDAO.findUserReputationScoreBetweenDate(userSocialId,fromDate, toDate);
 
         } catch (Exception e) {
-            LOG.error("Error to find gamification history from user {} from date:{} to dat:{}", userSocialId, fromDate, toDate, e);
+            LOG.error("Error to find gamification history for user {} from date:{} to dat:{}", userSocialId, fromDate, toDate, e);
+        }
+
+        return reputationScore;
+    }
+
+    @ExoTransactional
+    public long findUserReputationScoreByMonth(String userSocialId, Date currentMonth) {
+
+        long reputationScore = 0;
+
+        try {
+            //--- Get Stats
+            reputationScore = gamificationHistoryDAO.findUserReputationScoreByMonth(userSocialId, currentMonth);
+
+        } catch (Exception e) {
+            LOG.error("Error to find gamification history for user {} for current month {} ", userSocialId, currentMonth, e);
         }
 
         return reputationScore;

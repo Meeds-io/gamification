@@ -54,6 +54,10 @@ import java.util.Date;
                 query = "SELECT SUM(g.actionScore) as total FROM GamificationActionsHistory g WHERE g.userSocialId = :userSocialId AND g.date BETWEEN :fromDate AND :toDate"
         ),
         @NamedQuery(
+                name = "GamificationActionsHistory.findUserReputationScoreByMonth",
+                query = "SELECT SUM(g.actionScore) as total FROM GamificationActionsHistory g WHERE g.userSocialId = :userSocialId AND g.date >= :currentMonth"
+        ),
+        @NamedQuery(
                 name = "GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate",
                 query = "SELECT SUM(g.actionScore) as total FROM GamificationActionsHistory g WHERE g.userSocialId = :userSocialId AND g.domain = :domain AND g.date BETWEEN :fromDate AND :toDate"
         )

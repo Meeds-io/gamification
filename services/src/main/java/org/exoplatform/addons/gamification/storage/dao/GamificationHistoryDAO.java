@@ -345,6 +345,22 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
             return reupationScore;
         } catch (NoResultException e) {
             return 0;
+        } catch (Exception e) {
+            LOG.error(e);
+            return 0;
+        }
+    }
+    public long findUserReputationScoreByMonth(String userSocialId, Date currentMonth) throws PersistenceException {
+
+        long reupationScore = (long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByMonth")
+                .setParameter("userSocialId", userSocialId)
+                .setParameter("currentMonth", currentMonth)
+                .getSingleResult();
+
+        try {
+            return reupationScore;
+        } catch (NoResultException e) {
+            return 0;
         }
     }
 

@@ -51,4 +51,10 @@
         <type>org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint</type>
     </component>
     <!-- END -->
+
+    <!-- Gamification API Rest Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
+    </component>
+    <!-- END -->
 </configuration>
