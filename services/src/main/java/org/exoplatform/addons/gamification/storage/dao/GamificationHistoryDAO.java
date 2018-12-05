@@ -335,14 +335,14 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     public long findUserReputationScoreBetweenDate(String userSocialId, Date fromDate, Date toDate) throws PersistenceException {
 
-        long reupationScore = (long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreBetweenDate")
+        Long reupationScore = (Long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreBetweenDate")
                 .setParameter("userSocialId", userSocialId)
                 .setParameter("fromDate", fromDate)
                 .setParameter("toDate", toDate)
                 .getSingleResult();
 
         try {
-            return reupationScore;
+            return reupationScore == null ? 0 : reupationScore;
         } catch (NoResultException e) {
             return 0;
         } catch (Exception e) {
@@ -352,13 +352,13 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
     public long findUserReputationScoreByMonth(String userSocialId, Date currentMonth) throws PersistenceException {
 
-        long reupationScore = (long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByMonth")
+        Long reupationScore = (Long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByMonth")
                 .setParameter("userSocialId", userSocialId)
                 .setParameter("currentMonth", currentMonth)
                 .getSingleResult();
 
         try {
-            return reupationScore;
+            return reupationScore == null ? 0 : reupationScore;
         } catch (NoResultException e) {
             return 0;
         }
@@ -366,7 +366,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     public long findUserReputationScoreByDomainBetweenDate(String userSocialId, String domain, Date fromDate, Date toDate) throws PersistenceException {
 
-        long reupationScore = (long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate")
+        Long reupationScore = (Long) getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate")
                 .setParameter("userSocialId", userSocialId)
                 .setParameter("domain", domain)
                 .setParameter("fromDate", fromDate)
@@ -374,7 +374,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                 .getSingleResult();
 
         try {
-            return reupationScore;
+            return reupationScore == null ? 0 : reupationScore;
         } catch (NoResultException e) {
             return 0;
         }
