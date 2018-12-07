@@ -380,6 +380,21 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
         }
     }
 
+    /** Provided as an API for wallet Addon*/
+    public List<StandardLeaderboard> findAllLeaderboardBetweenDate(Date fromDate, Date toDate) throws PersistenceException {
+
+        Query query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllLeaderboardBetweenDate")
+                .setParameter("fromDate", fromDate)
+                .setParameter("toDate", toDate);
+
+        try {
+            // Execute query
+            return (List<StandardLeaderboard>)query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 
 
 }

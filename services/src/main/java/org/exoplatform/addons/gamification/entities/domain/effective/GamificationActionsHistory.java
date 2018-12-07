@@ -60,7 +60,11 @@ import java.util.Date;
         @NamedQuery(
                 name = "GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate",
                 query = "SELECT SUM(g.actionScore) as total FROM GamificationActionsHistory g WHERE g.userSocialId = :userSocialId AND g.domain = :domain AND g.date BETWEEN :fromDate AND :toDate"
-        )
+        ),
+        @NamedQuery(
+        name = "GamificationActionsHistory.findAllLeaderboardBetweenDate",
+        query = "SELECT new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.userSocialId, SUM(g.actionScore) as total) FROM GamificationActionsHistory g WHERE g.date BETWEEN :fromDate AND :toDate GROUP BY g.userSocialId ORDER BY total DESC"
+),
 
 })
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {

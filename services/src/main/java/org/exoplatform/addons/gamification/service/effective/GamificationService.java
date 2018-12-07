@@ -306,4 +306,21 @@ public class GamificationService {
 
         return reputationScore;
     }
+
+    /** Provided as an API from Wallet addon*/
+    @ExoTransactional
+    public List<StandardLeaderboard> findAllLeaderboardBetweenDate(Date fromDate, Date toDate) {
+
+        List<StandardLeaderboard> list = null;
+
+        try {
+            //--- Get Stats
+            list = gamificationHistoryDAO.findAllLeaderboardBetweenDate(fromDate, toDate);
+
+        } catch (Exception e) {
+            LOG.error("Error to find gamification history from user {} from date:{} to dat:{}",fromDate, toDate, e);
+        }
+
+        return list;
+    }
 }

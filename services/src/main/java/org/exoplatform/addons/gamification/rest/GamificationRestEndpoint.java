@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.rest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -15,15 +16,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.text.ParseException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
+import java.util.List;
 
 @Path("/gamification/api/v1")
 @RolesAllowed("users")
@@ -54,17 +54,16 @@ public class GamificationRestEndpoint implements ResourceContainer {
     public Response getAllPointsByUserId(@QueryParam("userId") String userId) {
         if (StringUtils.isBlank(userId)) {
             LOG.warn("Enable to serve request due to bad request parameter «userId»");
-
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "userId parameter must be specified")).build();
+            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("userId parameter must be specified")).build();
         }
         try {
             Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
             Long earnedXP = gamificationService.findUserReputationBySocialId(identity.getId());
-            return Response.ok(new GamificationPoints().build(userId, earnedXP, "0", "Gamification API is called successfully")).build();
+            return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
 
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} - Gamification public API", userId, e);
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "Error while fetching all earned points")).build();
+            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching all earned points")).build();
         } finally {
 
         }
@@ -86,20 +85,18 @@ public class GamificationRestEndpoint implements ResourceContainer {
     public Response getAllPointsByUserIdByDate(@QueryParam("userId") String userId, @QueryParam("startDate") String startDateEntry, @QueryParam("endDate") String endDateEntry) {
         if (StringUtils.isBlank(userId)) {
             LOG.warn("Enable to serve request due to bad request parameter «userId»");
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "userId parameter must be specified")).build();
+            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("userId parameter must be specified")).build();
         }
         try {
             Date startDate = DateUtils.parseDate(startDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
             Date endDate = DateUtils.parseDate(endDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
 
             if (startDate.after(endDate)) {
-                return Response.ok(new GamificationPoints().build(userId, 0L, "1", "date parameters are not correctly set")).build();
+                return Response.ok(new GamificationPoints().userId(userId).points(0L).code("1").message("date parameters are not correctly set")).build();
             }
             Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
             Long earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), startDate, endDate);
-
-            return Response.ok(new GamificationPoints().build(userId, earnedXP, "0", "Gamification API is called successfully")).build();
-
+            return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
         } catch (ParseException pe) {
             LOG.error("Error to parse parameters {} or {} ", startDateEntry, endDateEntry);
             return Response.serverError()
@@ -108,63 +105,36 @@ public class GamificationRestEndpoint implements ResourceContainer {
                     .build();
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} in the specified period - Gamification public API", userId, e);
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "Error while fetching earned points by period")).build();
+            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching earned points by period")).build();
         } finally {
 
         }
     }
-
-    /**
-     * Return earned points by a user during the current month
-     *
-     * @param userId : user social id
-     * @return : and object of type GamificationPoints
-     */
-    @Path("points/month")
+    @Path("leaderboard/date")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
-    public Response getAllPointsByUserIdAndCurrentMonth(@QueryParam("userId") String userId) {
-        if (StringUtils.isBlank(userId)) {
-            LOG.warn("Enable to serve request due to bad request parameter «userId»");
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "userId parameter must be specified")).build();
-        }
+    public Response getLeaderboardByDate(@Context UriInfo uriInfo, @QueryParam("startDate") String startDateEntry, @QueryParam("endDate") String endDateEntry) {
+
         try {
-            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-            Long earnedXP = gamificationService.findUserReputationScoreByMonth(identity.getId(), (Date.from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant())));
-            return Response.ok(new GamificationPoints().build(userId, earnedXP, "0", "Gamification API is called successfully")).build();
+            Date startDate = DateUtils.parseDate(startDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
+            Date endDate = DateUtils.parseDate(endDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
 
+            if (startDate.after(endDate)) {
+                return Response.ok(new GamificationPoints().code("2").message("Dates parameters are not set correctly")).build();
+            }
+            List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(startDate, endDate);
+            return Response.ok(new GamificationPoints().code("0").leaderboard(leaderboard).message("Gamification API is called successfully")).build();
+
+        } catch (ParseException pe) {
+            LOG.error("Error to parse parameters {} or {} ", startDateEntry, endDateEntry);
+            return Response.serverError()
+                    .cacheControl(cacheControl)
+                    .entity("Error to parse startDate or endDate to Date object please use the following pattern : dd-MM-yyyy")
+                    .build();
         } catch (Exception e) {
-            LOG.error("Error while fetching earned points for user {} in current month- Gamification public API", userId, e);
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "Error while fetching earned points during the current month")).build();
-        } finally {
-
-        }
-    }
-
-    /**
-     * Return earned points by a user during the current week
-     *
-     * @param userId : user social id
-     * @return : : and object of type GamificationPoints
-     */
-    @Path("points/week")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("users")
-    public Response getAllPointsByUserIdAndCurrentWeek(@QueryParam("userId") String userId) {
-        if (StringUtils.isBlank(userId)) {
-            LOG.warn("Enable to serve request due to bad request parameter «userId»");
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "userId parameter must be specified")).build();
-        }
-        try {
-            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-            Long earnedXP = gamificationService.findUserReputationScoreByMonth(identity.getId(), (Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant())));
-            return Response.ok(new GamificationPoints().build(userId, earnedXP, "0", "Gamification API is called successfully")).build();
-
-        } catch (Exception e) {
-            LOG.error("Error while fetching earned points for user {} in current week- Gamification public API", userId, e);
-            return Response.ok(new GamificationPoints().build(userId, 0L, "2", "Error while fetching earned points during the current week")).build();
+            LOG.error("Error while building gloabl leaderboard between dates {} and {} - Gamification public API", startDateEntry, endDateEntry, e);
+            return Response.ok(new GamificationPoints().code("2").message("Error while fetching earned points by period")).build();
         } finally {
 
         }
@@ -175,15 +145,30 @@ public class GamificationRestEndpoint implements ResourceContainer {
         private Long points;
         private String code;
         private String message;
+        private List<StandardLeaderboard> leaderboard;
 
         public GamificationPoints() {
         }
 
-        public GamificationPoints(String userId, Long points, String code, String message) {
+        public GamificationPoints userId(String userId) {
             this.userId = userId;
+            return this;
+        }
+        public GamificationPoints points(Long points) {
             this.points = points;
+            return this;
+        }
+        public GamificationPoints code(String code) {
             this.code = code;
+            return this;
+        }
+        public GamificationPoints message(String message) {
             this.message = message;
+            return this;
+        }
+        public GamificationPoints leaderboard(List<StandardLeaderboard> leaderboard) {
+            this.leaderboard = leaderboard;
+            return this;
         }
 
         public String getCode() {
@@ -206,11 +191,6 @@ public class GamificationRestEndpoint implements ResourceContainer {
             return userId;
         }
 
-        public GamificationPoints build(String userId, Long points, String code, String message) {
-
-            return new GamificationPoints(userId, points, code, message);
-        }
-
         public void setUserId(String userId) {
             this.userId = userId;
         }
@@ -221,6 +201,14 @@ public class GamificationRestEndpoint implements ResourceContainer {
 
         public void setPoints(Long points) {
             this.points = points;
+        }
+
+        public List<StandardLeaderboard> getLeaderboard() {
+            return leaderboard;
+        }
+
+        public void setLeaderboard(List<StandardLeaderboard> leaderboard) {
+            this.leaderboard = leaderboard;
         }
     }
 
