@@ -108,4 +108,8 @@
     .d2b-legend:not(.d2b-vertical) .d2b-legend-item:not(:last-child) {
         margin-right: 0 !important;
     }
+    .space-leaderboard-portlet {
+            padding: 10px 10px 10px 10px;
+            width: 380px;
+        }
 </style>

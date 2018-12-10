@@ -387,11 +387,6 @@
         text-align: center;
     }
 
-
-
-
-
-
     .d-flex {
         display: -ms-flexbox !important;
         display: flex !important;
@@ -412,10 +407,8 @@
     }
 
     .container-fluid {
-          padding-right: 0%;
-          padding-left: 10%;
-          padding-top: 1%;
-          margin-right: 1%;
+         padding-right: 0%;
+         padding-left: 8%;
     }
 
     .btn {
@@ -453,8 +446,6 @@
     .list-lead {
         padding: 5px 0px !important;
     }
-
-
 
     .col {
         padding: 5px;
