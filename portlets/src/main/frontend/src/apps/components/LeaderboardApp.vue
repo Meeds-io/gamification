@@ -110,4 +110,7 @@
     .d2b-legend:not(.d2b-vertical) .d2b-legend-item:not(:last-child) {
         margin-right: 0 !important;
     }
+    .d2b-chart-frame .d2b-breadcrumbs-frame:not(.d2b-vertical).d2b-legend-frame, .d2b-chart-frame .d2b-legend-frame:not(.d2b-vertical).d2b-legend-frame {
+        height: auto !important;
+    }
 </style>
