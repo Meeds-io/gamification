@@ -92,6 +92,14 @@
             <minify>false</minify>
             <path>/javascript/leaderboard/leaderboard.bundle.js</path>
         </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
     </module>
     <module>
         <name>spaceLeaderboard</name>
@@ -99,6 +107,14 @@
             <minify>false</minify>
             <path>/javascript/spaceleaderboard/spaceleaderboard.bundle.js</path>
         </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
     </module>
 
 
