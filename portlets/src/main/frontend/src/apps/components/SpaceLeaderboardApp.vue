@@ -109,7 +109,10 @@
         margin-right: 0 !important;
     }
     .space-leaderboard-portlet {
-            padding: 10px 10px 10px 10px;
-            width: 380px;
-        }
+        padding: 10px 10px 10px 10px;
+        width: 380px;
+    }
+    .d2b-chart-frame .d2b-breadcrumbs-frame:not(.d2b-vertical).d2b-legend-frame, .d2b-chart-frame .d2b-legend-frame:not(.d2b-vertical).d2b-legend-frame {
+        height: auto !important;
+    }
 </style>

@@ -12,10 +12,7 @@
         <div class="row">
             <div class="col">
                 <select v-model="domain" class="custom-select ">
-
                     <option :value="null">Overall</option>
-
-
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
                     <option value="teamwork">Teamwork</option>

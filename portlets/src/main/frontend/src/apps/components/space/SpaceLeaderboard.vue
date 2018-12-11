@@ -14,10 +14,9 @@
                 <select v-model="domain" class="custom-select ">
 
                     <option :value="null">Overall</option>
-
-
                     <option value="social">Social</option>
                     <option value="knowledge">Knowledge</option>
+                    <option value="teamwork">Teamwork</option>
                 </select>
             </div>
         </div>
@@ -53,7 +52,7 @@
                         </div>
 
                         <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
-                            <div class="popover fade show bs-popover-left" @mouseover="onS+hown(user.remoteId)"
+                            <div class="popover fade show bs-popover-left" @mouseover="onShown(user.remoteId)"
                                 v-on:load="onShown(user.remoteId)" role="tooltip" tabindex="-1" :id="'leaderboard'+index"
                                 x-placement="left">
                                 <div class="arrow" style="top: 108px;"></div>
