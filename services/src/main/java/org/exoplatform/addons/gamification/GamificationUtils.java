@@ -28,27 +28,6 @@ public class GamificationUtils {
     //status of gamification migration (true if migration completed successfully)
     public static final String GAMIFICATION_DATAMODEL_MIGRATION_DONE = "GAMIFICATION_DATAMODEL_MIGRATION_DONE";
 
-    private static ExecutorService executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("GAMIFICATION-DATAMODEL-MIGRATION", false, false));;
-
-    public static ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public static boolean isGamificationDatamodelMigrated() {
-        SettingValue<?> setting = CommonsUtils.getService(SettingService.class).get(Context.GLOBAL, Scope.APPLICATION.id(GAMIFICATION_DATAMODEL_MIGRATION_DONE_KEY), GAMIFICATION_DATAMODEL_MIGRATION_DONE);
-        return (setting != null && setting.getValue().equals("true"));
-    }
-
-    public static void setGamificationDatamodelMigrationDone() {
-        CommonsUtils.getService(SettingService.class).set(Context.GLOBAL, Scope.APPLICATION.id(GAMIFICATION_DATAMODEL_MIGRATION_DONE_KEY), GAMIFICATION_DATAMODEL_MIGRATION_DONE, SettingValue.create("true"));
-    }
-
-
-    public static boolean isGamificationDatamodelMigrated(String userName) {
-        SettingValue<?> setting = CommonsUtils.getService(SettingService.class).get(Context.USER.id(userName), Scope.APPLICATION.id(GAMIFICATION_DATAMODEL_MIGRATION_USER_KEY), GAMIFICATION_DATAMODEL_MIGRATION_DONE);
-        return (setting != null && setting.getValue().equals("true"));
-    }
-
     /**
      * Compute the list of user whithin the black list (user we shouldn't display them on leaderboard screen)
      * @param userName : the user social id to check if is already black listed

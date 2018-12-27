@@ -1,6 +1,5 @@
 package org.exoplatform.addons.gamification.rest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
@@ -26,7 +25,6 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 

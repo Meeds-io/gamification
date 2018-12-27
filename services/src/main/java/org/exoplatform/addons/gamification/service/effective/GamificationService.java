@@ -1,9 +1,7 @@
 package org.exoplatform.addons.gamification.service.effective;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.storage.dao.GamificationDAO;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.addons.gamification.storage.dao.GamificationItemDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -19,19 +17,9 @@ public class GamificationService {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationService.class);
 
-    protected final GamificationDAO gamificationDAO;
-
-    protected final GamificationItemDAO gamificationItemDAO;
-
     protected final GamificationHistoryDAO gamificationHistoryDAO;
 
-    public GamificationService(GamificationDAO gamificationDAO,
-                               GamificationItemDAO gamificationItemDAO,
-                               GamificationHistoryDAO gamificationHistoryDAO) {
-
-        this.gamificationDAO = gamificationDAO;
-
-        this.gamificationItemDAO = gamificationItemDAO;
+    public GamificationService(GamificationHistoryDAO gamificationHistoryDAO) {
 
         this.gamificationHistoryDAO = gamificationHistoryDAO;
     }

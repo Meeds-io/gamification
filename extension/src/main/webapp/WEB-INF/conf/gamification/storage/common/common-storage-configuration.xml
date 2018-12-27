@@ -23,21 +23,6 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
-    <!-- Gamification Effective storage (JPA) -->
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.GamificationDAO</type>
-        <init-params>
-            <value-param>
-                <name>query-limit-offset</name>
-                <value>20</value>
-            </value-param>
-        </init-params>
-    </component>
-
-    <!-- Gamification Item Effective storage (JPA) -->
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.GamificationItemDAO</type>
-    </component>
 
     <!-- Gamification Action History storage (JPA) -->
     <component>
@@ -52,21 +37,6 @@
     <!-- Gamification Effective Service -->
     <component>
         <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
-    </component>
-
-    <!-- Gamification Datamodel Migration Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.migration.datamodel.DataModelMigration</type>
-    </component>
-
-    <!-- Gamification Effective Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.migration.GamificationAsyncMigrationService</type>
-    </component>
-
-    <!-- Gamification Migration Service -->
-    <component>
-        <type>org.exoplatform.commons.migration.JPAAsynMigrationService</type>
     </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->

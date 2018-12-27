@@ -1,10 +1,8 @@
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.exoplatform.addons.gamification.storage.listener.AuditingEntityListener;
 
 import javax.persistence.Column;
-import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +12,6 @@ import java.util.Date;
  * last modified by date.
  */
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractAuditingEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 

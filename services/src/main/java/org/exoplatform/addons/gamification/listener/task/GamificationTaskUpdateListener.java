@@ -1,6 +1,5 @@
 package org.exoplatform.addons.gamification.listener.task;
 
-import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.listener.GamificationListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -158,12 +157,12 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                     aHistory = build(ruleDto, actorId);
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
-                                    LocalDate.now(),
-                                    actorId,
-                                    aHistory.getGlobalScore(),
-                                    ruleDto.getArea(),
-                                    ruleDto.getTitle(),
-                                    ruleDto.getScore());
+                            LocalDate.now(),
+                            actorId,
+                            aHistory.getGlobalScore(),
+                            ruleDto.getArea(),
+                            ruleDto.getTitle(),
+                            ruleDto.getScore());
                     // Save GamificationHistory
                     gamificationProcessor.execute(aHistory);
                 } catch (Exception e) {
