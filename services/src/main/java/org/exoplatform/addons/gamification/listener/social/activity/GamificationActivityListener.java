@@ -161,7 +161,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
     @Override
     public void updateActivity(ActivityLifeCycleEvent event) {
-        // Update activity abstract method was modified untill the spec will be provided //
+        // Update activity abstract method was modified untill the spec will be provided
 
     }
 
