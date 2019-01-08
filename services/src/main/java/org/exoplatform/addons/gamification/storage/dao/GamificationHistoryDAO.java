@@ -397,4 +397,43 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
 
 
+    /**
+     * Find actionsHistory by data and domain and date and points
+     * @param userSocialId : userSocialId
+     * @param isGlobalContext : true if call is made in a global context false else
+     * @param loadCapacity : how many records we should load from DB
+     * @return a list of object of type GamificationActionsHistory
+     * @throws PersistenceException
+     */
+    public List<GamificationActionsHistory> findActionsHistoryByUserIdSortedByDate(String userSocialId, boolean  isGlobalContext, int loadCapacity) throws PersistenceException {
+
+        // Build base query
+        Query query = getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByUserIdSortedByDate")
+                .setParameter("userSocialId",userSocialId);
+
+
+        // Set query's condition
+        if (isGlobalContext) {
+            query.setMaxResults(loadCapacity);
+        }
+
+        // Execute query
+        List<GamificationActionsHistory> gamificationActionsHistoryList = query.getResultList();
+
+        try {
+
+            return gamificationActionsHistoryList;
+
+        } catch (NoResultException e) {
+
+            return null;
+
+        }
+    }
+
+
+
+
+
 }
+

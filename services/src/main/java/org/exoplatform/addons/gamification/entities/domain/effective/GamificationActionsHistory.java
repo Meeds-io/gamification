@@ -17,6 +17,13 @@ import java.util.Date;
                 name = "GamificationActionsHistory.findAllActionsHistory",
                 query = "SELECT new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.userSocialId, SUM(g.actionScore) as total) FROM GamificationActionsHistory g GROUP BY g.userSocialId ORDER BY total DESC"
         ),
+
+        @NamedQuery(
+                name = "GamificationActionsHistory.findActionsHistoryByUserIdSortedByDate",
+                query = "SELECT g  FROM GamificationActionsHistory g where g.userSocialId = :userSocialId ORDER BY g.date DESC"
+
+        ),
+
         @NamedQuery(
                 name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
                 query = "SELECT new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.userSocialId, SUM(g.actionScore) as total) FROM GamificationActionsHistory g  WHERE g.date >= :date AND g.domain = :domain GROUP BY g.userSocialId ORDER BY total DESC"

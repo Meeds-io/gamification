@@ -13,6 +13,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 
+import static java.util.Date.*;
+
 public class GamificationService {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationService.class);
@@ -48,8 +50,7 @@ public class GamificationService {
      * Get actionsHistory entities
      * @param date : filter by date
      * @param socialId : filter by socialId
-     * @return List of object of type GamificationActionsHistory
-     */
+
     @ExoTransactional
     public List<GamificationActionsHistory> findActionHistoryByDateBySocialId(Date date, String socialId) {
 
@@ -185,12 +186,12 @@ public class GamificationService {
                 // Check the period
                 if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), isGlobalContext, filter.getLoadCapacity());
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(from(now.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), isGlobalContext, filter.getLoadCapacity());
 
 
                 } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(Date.from(now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant()), isGlobalContext, filter.getLoadCapacity());
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDate(from(now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant()), isGlobalContext, filter.getLoadCapacity());
 
                 } else {
                     leaderboard = gamificationHistoryDAO.findAllActionsHistory(isGlobalContext, filter.getLoadCapacity());
@@ -204,12 +205,12 @@ public class GamificationService {
                 // Check the period
                 if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), filter.getDomain(),isGlobalContext, filter.getLoadCapacity());
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(from(now.with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), filter.getDomain(),isGlobalContext, filter.getLoadCapacity());
 
 
                 } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
 
-                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(Date.from(now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant()),filter.getDomain(), isGlobalContext,filter.getLoadCapacity());
+                    leaderboard = gamificationHistoryDAO.findActionsHistoryByDateByDomain(from(now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant()),filter.getDomain(), isGlobalContext,filter.getLoadCapacity());
 
                 } else {
                     leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), isGlobalContext,filter.getLoadCapacity());
@@ -311,4 +312,29 @@ public class GamificationService {
 
         return list;
     }
+
+
+
+    /** Provided as an API from points n
+    list to  find gamification history from user GamificationInformationsPortlet earned points by date
+    */
+    @ExoTransactional
+    public List<GamificationActionsHistory> findActionsHistoryByUserId(String userId, boolean isGlobalContext, int loadCapacity) {
+
+        List<GamificationActionsHistory> list = null;
+        try {
+            //--- Get List
+            list = gamificationHistoryDAO.findActionsHistoryByUserIdSortedByDate(userId, isGlobalContext,loadCapacity);
+
+        } catch (Exception e) {
+            LOG.error("Error to find gamification history from user {} GamificationInformationsPortlet earn points", e);
+        }
+
+        return list;
+
+    }
+
+
+
+
 }

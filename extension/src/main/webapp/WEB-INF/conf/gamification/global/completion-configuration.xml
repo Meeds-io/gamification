@@ -52,6 +52,12 @@
     </component>
     <!-- END -->
 
+    <!--  Earnbadges Rest Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.GamificationInformationsEndpoint</type>
+    </component>
+    <!-- END -->
+
     <!-- Gamification API Rest Service -->
     <component>
         <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>

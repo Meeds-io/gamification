@@ -6,6 +6,7 @@
     "//": "Option --progress: print compilation progress in percentage",
     "start": "webpack-dashboard webpack-dev-server -d --hot --config webpack.dev.js --watch",
     "dev": "webpack --mode development --config webpack.dev.js",
+    "watch": "webpack --config webpack.dev.js --progress --colors --watch -d",
     "build": "webpack -p --progress --trace-deprecation --config webpack.prod.js"
   },
   "author": "eXo",
