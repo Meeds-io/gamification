@@ -49,7 +49,7 @@ public class GamificationService {
     /**
      * Get actionsHistory entities
      * @param date : filter by date
-     * @param socialId : filter by socialId
+     * @param socialId : filter by socialId*/
 
     @ExoTransactional
     public List<GamificationActionsHistory> findActionHistoryByDateBySocialId(Date date, String socialId) {
