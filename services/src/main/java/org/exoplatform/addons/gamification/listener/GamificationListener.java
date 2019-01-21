@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.service.effective.GamificationService
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import java.util.Date;
@@ -16,12 +17,11 @@ public interface GamificationListener extends GamificationConstant {
 
     Log LOG = ExoLogger.getLogger(GamificationListener.class);
 
-    default public GamificationActionsHistory build(RuleDTO ruleDto, String actor) throws Exception {
+    default GamificationActionsHistory build(RuleDTO ruleDto, String actor, String receiver, String objectId) throws Exception {
 
         GamificationActionsHistory oldHistory = null;
 
         GamificationActionsHistory aHistory = null;
-
         // check if the current user is not a bot
         //  if (isBlackListed(CommonsUtils.getService(IdentityManager.class).getIdentity(actor, false).getId())) {
         if (GamificationUtils.isBlackListed(CommonsUtils.getService(IdentityManager.class).getIdentity(actor, false).getRemoteId())) {
@@ -40,13 +40,13 @@ public interface GamificationListener extends GamificationConstant {
             if (oldHistory != null) {
                 aHistory.setGlobalScore(oldHistory.getGlobalScore() + ruleDto.getScore());
             }
-
             aHistory.setDate(new Date());
             aHistory.setUserSocialId(actor);
             aHistory.setActionTitle(ruleDto.getTitle());
             aHistory.setDomain(ruleDto.getArea());
             aHistory.setActionScore(ruleDto.getScore());
-
+            aHistory.setReceiver(receiver);
+            aHistory.setObjectId(objectId);
             // Set update metadata
             aHistory.setLastModifiedDate(new Date());
             aHistory.setLastModifiedBy("Gamification Inner Process");
@@ -57,6 +57,5 @@ public interface GamificationListener extends GamificationConstant {
 
         return aHistory;
     }
-
 
 }

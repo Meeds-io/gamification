@@ -58,7 +58,7 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId);
+                aHistory = build(ruleDto, actorId,OrganizationIdentityProvider.NAME,page.getActivityId());
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
@@ -99,7 +99,7 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, actorId);
+                    aHistory = build(ruleDto, actorId,OrganizationIdentityProvider.NAME,page.getActivityId());
                     // Save GamificationHistory
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger

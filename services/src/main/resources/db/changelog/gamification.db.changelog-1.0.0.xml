@@ -203,5 +203,12 @@
         </createIndex>
     </changeSet>
 
-
+    <changeSet  author="exo-gamification" id="1.0.0-11">
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="RECEIVER" type="NVARCHAR(200)">
+            </column>
+            <column name="OBJECT_ID" type="NVARCHAR(200)">
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

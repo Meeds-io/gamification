@@ -1,40 +1,42 @@
 <template class="">
+    <table class="uiGrid table table-hover table-striped rule-table" hover striped>
+        <thead>
+        <tr>
+            <th class="rule-name-col"></th>
+            <th class="rule-name-col">Action</th>
+            <th class="rule-desc-col">Date</th>
+            <th class="rule-price-col">Points</th>
+            <th class="rule-enable-col">Domain</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        <tr :key="user.receiver" v-for="(user, index) in users">
 
 
 
+          <td>  <div class="desc-user">
+                <a :href="user.profileUrl"><avatar :size="35" :src="user.avatarUrl"></avatar></a>
+            </div></td>
+          <!--  <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle"  ><a v-bind:href="'/portal/intranet/activity?id='+ user.objectId" >
+                {{ rule.description}}  </a></td>-->
+            <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
+                {{ rule.description}}  </td>
+            <td>{{user.createdDate}}</td>
+            <td>{{user.actionScore}}</td>
+            <td>{{user.domain}}</td>
 
-        <table striped hover class="uiGrid table table-hover table-striped rule-table">
-            <thead>
-            <tr>
-                <th class="rule-name-col"></th>
-                <th class="rule-name-col">Action</th>
-                <th class="rule-desc-col">Date</th>
-                <th class="rule-price-col">Points</th>
-                <th class="rule-enable-col">Domain</th>
-            </tr>
-            </thead>
-            <tbody>
-
-
-            <tr v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId">
-
-                <td><avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar></td>
-                 <td>{{user.actionTitle}}</td>
-                <td>{{user.date}}</td>
-                <td>{{user.actionScore}}</td>
-                <td>{{user.domain}}</td>
-
-            </tr>
-            <div class="load-more" v-if="users.length>1">
-        <b-link href="#" @click.prevent="showMore()">Load More</b-link>
-            </div>
+        </tr>
 
 
+        <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
+            <b-link @click.prevent="showMore()" href="#">Load More</b-link>
+        </div>
 
+        </tbody>
 
-            </tbody>
-
-        </table>
+    </table>
 
 
 
@@ -44,7 +46,6 @@
 
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import { ChartPie } from 'vue-d2b'
     import { Popover } from 'bootstrap-vue/es/components';
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
@@ -53,36 +54,28 @@
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
-
     const initialData = () => {
         return {
-            chartData: [],
-            chartConfig(chart) {
-                chart.donutRatio(0.5)
-            },
-
             users: [],
-            type: '',
-            category: '',
-            connection: 'everyone',
             selected: null,
-            activeBtn: 'btn1',
-            domain: 'null',
             show: false,
-            selectedPeriod: 'WEEK',
-            popoverShow: false,
-            loadCapacity: 10
-
+            loadCapacity: 10,
+            title: '',
+            rules: [],
+            id: null,
+            description: '',
+            actionTitle:'',
 
         }
-    }
+    };
 
     export default {
         data: initialData,
 
+
         components: {
             Avatar,
-            ChartPie,
+
 
         },
         directives: {
@@ -93,12 +86,12 @@
                         content: $('#popover')
                     }).on('mouseenter', function () {
 
-                        popoverShow: true;
+                        true;
 
                     })
                         .on('mouseleave', function () {
 
-                            popoverShow: false;
+                            false;
                         });
                 },
             }
@@ -112,24 +105,12 @@
 
 
         methods: {
-            filter() {
-                let self = this
-                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'capacity': self.loadCapacity } })
-                    .then(response => {
-                        this.users = response.data;
 
-                    })
-                    .catch(e => {
-                        console.warn(e)
-
-                    })
-
-            },
             showMore() {
-                let self = this
+                let self = this;
                 self.loadCapacity += 10;
 
-                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'capacity': self.loadCapacity } })
+                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'capacity': self.loadCapacity} })
                     .then(response => {
                         this.users = response.data;
                     })
@@ -143,9 +124,9 @@
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
                     .on("mouseenter", function () {
-                        popoverShow: true;
+                        true;
                     }).on("mouseleave", function () {
-                    popoverShow: false;
+                    false;
                 });
             },
 
@@ -164,17 +145,11 @@
 
             },
             isActive(value) {
-                return this.active === value
+                return
+                this.active === value
             },
             toggleClass() {
                 this.isActive = !this.isActive;
-            },
-            onLoad() {
-                console.log("Pie chart loading")
-
-            },
-            onOpen() {
-                console.log("Pie chart onOpen")
             },
 
 
@@ -184,6 +159,11 @@
             axios.get(`/rest/gamification/gameficationinformationsboard/history/all`)
                 .then(response => {
                     this.users = response.data;
+                });
+
+               axios.get(`/rest/gamification/rules/all`)
+                .then(response => {
+                    this.rules = response.data;
                 })
                 .catch(e => {
                     this.errors.push(e)
@@ -195,7 +175,7 @@
 </script>
 
 <style scoped>
-    .user-leaderboard-portlet .uiIconViewByChart {
+    .user-GamificationInformations-portlet .uiIconViewByChart {
         color: #4d5466 !important;
         font-size: 18px;
         top: 9px;
@@ -207,20 +187,7 @@
         opacity: 1;
     }
 
-    .popover__title {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-size: 24px;
-        line-height: 36px;
-        text-decoration: none;
-        color: rgb(228, 68, 68);
-        text-align: center;
-        padding: 15px 0;
-    }
 
-    .popover__wrapper {
-        position: relative;
-        display: inline-block;
-    }
 
     .desc-user a {
         color: #4d5466 !important;
@@ -237,60 +204,8 @@
     }
 
 
-
-
-    .popover__content {
-        opacity: 0;
-        visibility: hidden;
-        position: absolute;
-        left: -251px;
-        transform: translateY(10px);
-        background-color: #fff;
-        padding: 1.5rem;
-        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
-        width: 193px;
-        height: 179px;
-        top: -68px;
-        border-radius: 7px;
-    }
-
-    .popover__content:before {
-        position: absolute;
-        z-index: -1;
-        content: "";
-        top: calc(50% - 10px);
-        right: -15px;
-        border-style: solid;
-        border-width: 0 10px 10px;
-        border-color: transparent transparent #fff;
-        transition-duration: .3s;
-        transition-property: transform;
-        -webkit-transform: rotate(90deg);
-        -moz-transform: rotate(90deg);
-        -o-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        transform: rotate(90deg);
-    }
-
-    .popover__wrapper:hover .popover__content {
-        z-index: 10;
-        opacity: 1;
-        visibility: visible;
-        transform: translate(0, -20px);
-        transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
-    }
-
-    .popover__message {
-        text-align: center;
-    }
-
-    .d-flex {
-        display: -ms-flexbox !important;
-        display: flex !important;
-    }
-
-
-    .user-earnbadges-portlet .img-thumbnail {
+    .
+    .user-GamificationInformations-portlet .img-thumbnail {
         width: 40px;
         padding: 0;
         height: 40px;
@@ -299,81 +214,11 @@
         border-radius: .25rem;
     }
 
-    .container-fluid {
-        padding-right: 0px;
-        padding-left: 0px;
-    }
-
-    .btn {
-        color: #4d5466;
-        background-color: #fff;
-        border-color: #e1e8ee;
-        width: 50%;
-    }
-
-    .btn-group .btn:hover {
-        background-color: #f8f8f8;
-        border-color: #e1e8ee;
-        color: #333;
-    }
-
-
-
-    .d-flex {
-        padding: 5px;
-        font-size: 14px;
-        color: #000;
-    }
-
-    .btn-group>.btn+.btn {
-        margin-left: 0px;
-    }
-
-    .btn-group {
-        width: 100%;
-    }
-
-    .btn-group>.btn {
-        padding: 5px 0px;
-        width: 33%;
-        text-align: center;
-    }
-
-    uiBox {
-        padding: 10px 15px;
-    }
-
     h5 {
         text-align: center;
     }
 
-    .btn-toolbar {
-        margin-bottom: 0px;
-    }
 
-
-
-    .vue-d2b-container {
-        width: 239px !important;
-        height: 226px !important;
-    }
-
-    .d2b-tooltip {
-        z-index: 99999999555555 !important;
-    }
-
-    .d2b-chart {
-        width: 219px !important;
-        height: 168px !important;
-    }
-
-    .number-user {
-        font-size: 14px;
-        width: 25%;
-        white-space: nowrap;
-        padding-top: 10px;
-        text-align: center;
-    }
 
     select {
         height: calc(2.25rem + 2px);
@@ -382,51 +227,11 @@
 
     }
 
-    .custom-select {
-        display: inline-block;
-        width: 100%;
-        height: calc(2.25rem + 2px);
-        padding: .375rem 1.75rem .375rem .75rem;
-        line-height: 1.5;
-        color: #495057;
-        vertical-align: middle;
-        background-size: 8px 10px;
-        border: 1px solid #ced4da;
-        border-radius: .25rem;
-
-    }
-
-    .desc-user {
-        width: 55%;
-        text-align: left;
-        white-space: nowrap;
-        overflow: hidden;
-        display: block;
-        text-overflow: ellipsis;
-        padding-top: 10px;
-    }
 
     .desc-user a:hover {
         color: #578dc9;
     }
 
-    .vue-avatar--wrapper {
-        margin: 3px 6px 3px 6px;
-    }
-
-    .list-group-item {
-        padding: 5px;
-        font-size: 14px;
-        color: #4d5466 !important;
-        font-family: helvetica;
-        border: none;
-
-        border-radius: inherit !important;
-    }
-
-    .list-group-item:last-child {
-        border-bottom: 0px !important;
-    }
 
     .list-lead .list-li::after {
         content: "";
@@ -443,19 +248,12 @@
         display: none;
     }
 
-    .list-group-item:hover {
-        background: #fbfbfb;
 
-    }
-
-    .btn-secondary:not(:disabled):not(.disabled).active:focus,
-    .btn-secondary:not(:disabled):not(.disabled):active:focus,
     .show>.btn-secondary.dropdown-toggle:focus {
         box-shadow: none;
     }
 
-    .btn-secondary:not(:disabled):not(.disabled).active,
-    .btn-secondary:not(:disabled):not(.disabled):active,
+
     .show>.btn-secondary.dropdown-toggle {
         background-color: #578dc9;
         border: solid 1px #578dc9;
@@ -499,5 +297,17 @@
     .load-more {
         float: right;
         padding: 15px;
+    }
+    .btn-block {
+        display: block;
+        width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    div#ActivitiesLoader {
+        position: absolute;
     }
 </style>

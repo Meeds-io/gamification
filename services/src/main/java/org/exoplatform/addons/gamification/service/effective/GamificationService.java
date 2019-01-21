@@ -318,7 +318,7 @@ public class GamificationService {
     /** Provided as an API from points n
     list to  find gamification history from user GamificationInformationsPortlet earned points by date
     */
-    @ExoTransactional
+ /*   @ExoTransactional
     public List<GamificationActionsHistory> findActionsHistoryByUserId(String userId, boolean isGlobalContext, int loadCapacity) {
 
         List<GamificationActionsHistory> list = null;
@@ -333,8 +333,26 @@ public class GamificationService {
         return list;
 
     }
+*/
 
 
+/** Provided as an API from points n
+ list to  find gamification history from the GamificationInformationsPortlet's receiver earned points by date
+ */
+   @ExoTransactional
+    public List<GamificationActionsHistory> findActionsHistoryByReceiverId(String Receiver, boolean isGlobalContext, int loadCapacity) {
 
+        List<GamificationActionsHistory> list = null;
+        try {
+            //--- Get List
+            list = gamificationHistoryDAO.findActionsHistoryByReceiverIdSortedByDate(Receiver, isGlobalContext,loadCapacity);
+
+        } catch (Exception e) {
+            LOG.error("Error to find gamification history from user {} GamificationInformationsPortlet earn points", e);
+        }
+
+        return list;
+
+    }
 
 }

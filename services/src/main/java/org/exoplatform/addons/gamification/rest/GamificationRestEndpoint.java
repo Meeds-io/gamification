@@ -84,8 +84,8 @@ public class GamificationRestEndpoint implements ResourceContainer {
             return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("userId parameter must be specified")).build();
         }
         try {
-            Date startDate = DateUtils.parseDate(startDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
-            Date endDate = DateUtils.parseDate(endDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
+            Date startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
+            Date endDate = DateUtils.parseDate(endDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
 
             if (startDate.after(endDate)) {
                 return Response.ok(new GamificationPoints().userId(userId).points(0L).code("1").message("date parameters are not correctly set")).build();
@@ -113,8 +113,8 @@ public class GamificationRestEndpoint implements ResourceContainer {
     public Response getLeaderboardByDate(@Context UriInfo uriInfo, @QueryParam("startDate") String startDateEntry, @QueryParam("endDate") String endDateEntry) {
 
         try {
-            Date startDate = DateUtils.parseDate(startDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
-            Date endDate = DateUtils.parseDate(endDateEntry, new String[]{"yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"});
+            Date startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
+            Date endDate = DateUtils.parseDate(endDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
 
             if (startDate.after(endDate)) {
                 return Response.ok(new GamificationPoints().code("2").message("Dates parameters are not set correctly")).build();

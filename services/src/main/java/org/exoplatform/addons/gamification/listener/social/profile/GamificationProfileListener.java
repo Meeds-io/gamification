@@ -55,7 +55,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHisoty = build(ruleDto, event.getProfile().getId());
+                aHisoty = build(ruleDto, event.getProfile().getId(),"",event.getProfile().getId());
 
                 //Save actionHistoy entry
                 gamificationProcessor.execute(aHisoty);
@@ -85,7 +85,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, event.getProfile().getId());
+                aHistory = build(ruleDto, event.getProfile().getId(),event.getProfile().getId(),event.getPayload().getId());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -123,6 +123,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
 
     }
 
+
     @Override
     public void aboutMeUpdated(ProfileLifeCycleEvent event) {
 
@@ -137,7 +138,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, event.getProfile().getId());
+                aHistory = build(ruleDto,event.getProfile().getId(),event.getSource(),event.getProfile().getIdentity().getId());
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
@@ -149,4 +150,6 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         }
 
     }
+
+
 }

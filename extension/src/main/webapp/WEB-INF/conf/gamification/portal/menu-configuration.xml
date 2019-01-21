@@ -18,4 +18,18 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.platform.common.service.MenuConfiguratorService</target-component>
+        <component-plugin>
+            <name>Gamification Management Plugin</name>
+            <set-method>addNavigation</set-method>
+            <type>org.exoplatform.platform.common.service.plugin.MenuConfiguratorAddNodePlugin</type>
+            <init-params>
+                <value-param>
+                    <name>extended.setup.navigation.file</name>
+                    <value>war:/conf/gamification/portal/setup-navigation.xml</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 </configuration>

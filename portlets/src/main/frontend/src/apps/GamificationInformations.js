@@ -3,4 +3,5 @@ import GamificationInformationsApp from './components/GamificationInformationsAp
 
 new Vue({
     render: h => h(GamificationInformationsApp)
+
 }).$mount('#app')
