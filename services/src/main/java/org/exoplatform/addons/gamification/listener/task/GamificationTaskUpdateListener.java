@@ -69,7 +69,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId,receiver,String.valueOf(event.getData().before().getId()));
+                String ObjectId= String.valueOf(event.getData().before().getId());
+                aHistory = build(ruleDto, actorId,receiver,ObjectId);
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
@@ -102,7 +103,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                 if (ruleDto != null) {
                     try {
                         String receiver= actorId;
-                        aHistory = build(ruleDto, actorId,receiver,event.getData().after().getActivityId());
+                        String eventId= event.getData().after().getActivityId();
+                        aHistory = build(ruleDto, actorId,receiver,eventId);
 
                         // Save GamificationHistory
                         gamificationProcessor.execute(aHistory);

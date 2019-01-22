@@ -48,7 +48,9 @@ public class GamificationTaskCommentListener extends Listener<TaskService, Comme
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = (GamificationActionsHistory) build(ruleDto, actorId,actorId, String.valueOf(event.getData().getId()));
+                String receiver=actorId;
+                String ObjectId= String.valueOf(event.getData().getId());
+                aHistory = (GamificationActionsHistory) build(ruleDto,actorId,receiver,ObjectId );
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
