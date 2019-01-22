@@ -229,7 +229,7 @@ public class GamificationForumListener extends ForumEventListener implements Gam
                 try {
                     String userId= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId();
                    String receiver= userId;
-                    aHistory = build(ruleDto,userId,receiver, (String) event.getPropagationId());
+                    aHistory = build(ruleDto,userId,receiver, topic.getId());
                     // Save Gamification Context
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
