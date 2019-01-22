@@ -1,21 +1,8 @@
 <template class="">
 
-    <b-container fluid >
-        <b-row>
-            <b-col>
-                <b-col class="">
-        <b-form-group horizontal label="Filter" class="Searchcontainer">
-            <b-input-group  >
-                <b-form-input v-model="filter" placeholder="Type to Search " />
-                <b-input-group-append>
-                    <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
-                </b-input-group-append>
-            </b-input-group>
-        </b-form-group>
-                </b-col>
 
-       <table class="uiGrid table table-hover table-striped rule-table" hover striped  :filter="filter"
-           filtered="onFiltered">
+
+       <table class="uiGrid table table-hover table-striped rule-table" hover striped>
 
         <thead>
         <tr>
@@ -56,9 +43,7 @@
         </tbody>
 
     </table>
-    </b-col>
-    </b-row>
-    </b-container>
+
 
 </template>
 
@@ -84,8 +69,7 @@
             rules: [],
             id: null,
             description: '',
-            actionTitle:'',
-            isFiltered: false
+            actionTitle:''
 
 
         }
@@ -118,16 +102,13 @@
                 },
             }
         },
-        localFiltering() {
-            return this.hasProvider ? !!this.noProviderFiltering : true
-        },
+
         watch: {
             domain() {
                 this.loadCapacity=10
             }
 
         },
-
 
         methods: {
 
@@ -145,11 +126,6 @@
 
 
 
-            },
-            props: ['Action', 'Date', 'Points','Domain'],
-            onFiltered (props) {
-                // Trigger pagination to update the number of buttons/pages due to filtering
-                this.totalRows = props.length
             },
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
@@ -234,7 +210,7 @@
     }
 
 
-    .
+
     .user-GamificationInformations-portlet .img-thumbnail {
         width: 40px;
         padding: 0;
@@ -342,13 +318,6 @@
     div#ActivitiesLoader {
         position: absolute;
     }
-    .Searchcontainer {
-        width: 40%;
-        MARGIN-LEFT: auto;
-        ALIGN-SELF: auto;
-        DISPLAY: flex;
-        BACKGROUND: center;
-    }
     .ico-info[data-v-2e935f06] {
         position: relative;
         margin-top: -10px;
@@ -361,5 +330,8 @@
 
         border: 1px solid transparent;
 
+    }
+    .uiGrid.table.table-hover.table-striped.rule-table {
+        margin-left: 30px;
     }
 </style>
