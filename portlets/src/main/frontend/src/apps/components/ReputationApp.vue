@@ -14,6 +14,32 @@
             ReputationBadges,
             ReputationPoints
 
+        },
+
+    methods:{
+        initMenuApp() {
+
+            this.$nextTick(() => {
+                if ($('#myGamificationTab').length) {
+                    return;
+                }
+                if (!$('.userNavigation .item').length) {
+                    setTimeout(this.initMenuApp, 500);
+                    return;
+                }
+                $('.userNavigation').append(` \
+          <li id='myGamificationTab' class='item${this.isMaximized ? ' active' : ''}'> \
+            <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/gamificationInformations'> \
+              <div class='uiIconAppGamification uiIconDefaultApp' /> \
+              <span class='tabName'>My Gamification</span> \
+            </a> \
+          </li>`);
+                $(window).trigger('resize');
+            });
+        },
+},
+        created() {
+            this.initMenuApp();
         }
     }
 </script>

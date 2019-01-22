@@ -68,8 +68,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId,OrganizationIdentityProvider.NAME,String.valueOf(event.getData().before().getId()));
-
+                String receiver = actorId;
+                aHistory = build(ruleDto, actorId,receiver,String.valueOf(event.getData().before().getId()));
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
@@ -101,7 +101,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, actorId,OrganizationIdentityProvider.NAME,event.getData().after().getActivityId());
+                        String receiver= actorId;
+                        aHistory = build(ruleDto, actorId,receiver,event.getData().after().getActivityId());
 
                         // Save GamificationHistory
                         gamificationProcessor.execute(aHistory);
@@ -129,7 +130,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, actorId,OrganizationIdentityProvider.NAME,"");
+                        String receiver = actorId;
+                        aHistory = build(ruleDto, actorId,receiver,"");
 
                         // Save GamificationHistory
                         gamificationProcessor.execute(aHistory);
@@ -154,7 +156,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, actorId,OrganizationIdentityProvider.NAME,"");
+                    String receiver= actorId;
+                    aHistory = build(ruleDto, actorId,receiver,"");
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
                             LocalDate.now(),

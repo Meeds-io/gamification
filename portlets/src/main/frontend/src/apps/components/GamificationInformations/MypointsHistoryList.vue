@@ -1,11 +1,30 @@
 <template class="">
-    <table class="uiGrid table table-hover table-striped rule-table" hover striped>
+
+    <b-container fluid >
+        <b-row>
+            <b-col>
+                <b-col class="">
+        <b-form-group horizontal label="Filter" class="Searchcontainer">
+            <b-input-group  >
+                <b-form-input v-model="filter" placeholder="Type to Search " />
+                <b-input-group-append>
+                    <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
+                </b-input-group-append>
+            </b-input-group>
+        </b-form-group>
+                </b-col>
+
+       <table class="uiGrid table table-hover table-striped rule-table" hover striped  :filter="filter"
+           filtered="onFiltered">
+
         <thead>
         <tr>
             <th class="rule-name-col"></th>
             <th class="rule-name-col">Action</th>
             <th class="rule-desc-col">Date</th>
-            <th class="rule-price-col">Points</th>
+            <th class="rule-price-col" > Points<a data-v-2e935f06="" href="gamification-earn-points" target="_blank" rel="tooltip"
+               data-original-title="How can I earn points ?" class="ico-info actionIco">
+                <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
             <th class="rule-enable-col">Domain</th>
         </tr>
         </thead>
@@ -37,8 +56,9 @@
         </tbody>
 
     </table>
-
-
+    </b-col>
+    </b-row>
+    </b-container>
 
 </template>
 
@@ -65,6 +85,8 @@
             id: null,
             description: '',
             actionTitle:'',
+            isFiltered: false
+
 
         }
     };
@@ -96,6 +118,9 @@
                 },
             }
         },
+        localFiltering() {
+            return this.hasProvider ? !!this.noProviderFiltering : true
+        },
         watch: {
             domain() {
                 this.loadCapacity=10
@@ -120,6 +145,11 @@
 
 
 
+            },
+            props: ['Action', 'Date', 'Points','Domain'],
+            onFiltered (props) {
+                // Trigger pagination to update the number of buttons/pages due to filtering
+                this.totalRows = props.length
             },
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
@@ -253,7 +283,9 @@
         box-shadow: none;
     }
 
-
+    .uiGrid.table.table-hover.table-striped.rule-table {
+        margin-left: 30px;
+    }
     .show>.btn-secondary.dropdown-toggle {
         background-color: #578dc9;
         border: solid 1px #578dc9;
@@ -309,5 +341,25 @@
     }
     div#ActivitiesLoader {
         position: absolute;
+    }
+    .Searchcontainer {
+        width: 40%;
+        MARGIN-LEFT: auto;
+        ALIGN-SELF: auto;
+        DISPLAY: flex;
+        BACKGROUND: center;
+    }
+    .ico-info[data-v-2e935f06] {
+        position: relative;
+        margin-top: -10px;
+        padding: 2px 3px 0;
+        display: block;
+        top: 5px;
+        float: right;
+    }
+    .actionIco[data-v-2e935f06] {
+
+        border: 1px solid transparent;
+
     }
 </style>

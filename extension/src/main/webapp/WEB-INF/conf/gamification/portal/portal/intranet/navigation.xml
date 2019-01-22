@@ -12,4 +12,12 @@
       <page-reference>portal::intranet::gameficationhelp</page-reference>
     </node>
   </page-nodes>
+  <page-nodes>
+    <node>
+      <name>gamificationInformations</name>
+      <label>Gamification Informations</label>
+      <visibility>SYSTEM</visibility>
+      <page-reference>portal::intranet::my-gamification</page-reference>
+    </node>
+  </page-nodes>
 </node-navigation>

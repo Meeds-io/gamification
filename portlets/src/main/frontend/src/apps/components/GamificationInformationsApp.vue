@@ -2,7 +2,7 @@
     <mypoints-history-list></mypoints-history-list>
 
 </template>
-<!--    Earnbadges portlets  -->
+<!--    GamificationInformations portlets  -->
 
 <script>
 
@@ -10,8 +10,35 @@
     export default {
         components:   {
             MypointsHistoryList
-                       }
-                   }
+                       },
+
+        methods:{
+            initMenuApp() {
+
+                this.$nextTick(() => {
+                    if ($('#myGamificationTab').length) {
+                        return;
+                    }
+                    if (!$('.userNavigation .item').length) {
+                        setTimeout(this.initMenuApp, 500);
+                        return;
+                    }
+                    $('.userNavigation').append(` \
+          <li id='myGamificationTab' class='item${this.isMaximized ? ' active' : ''}'> \
+            <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/gamificationInformations'> \
+              <div class='uiIconAppGamification uiIconDefaultApp' /> \
+              <span class='tabName'>My Gamification</span> \
+            </a> \
+          </li>`);
+                    $(window).trigger('resize');
+                });
+            },
+        },
+        created() {
+            this.initMenuApp();
+        }
+
+    }
 
 </script>
 
@@ -108,31 +135,15 @@
     .d2b-chart-frame .d2b-breadcrumbs-frame:not(.d2b-vertical).d2b-legend-frame, .d2b-chart-frame .d2b-legend-frame:not(.d2b-vertical).d2b-legend-frame {
         height: auto !important;
     }
-    .user-earnbadges-portlet {
-        padding: 10px 10px 10px 10px;
-        width: 680px;
-    }
-    .table{
-        position: relative;
-        border-radius: 3px;
-        background: #fff;
-        border-top: 3px solid #d2d6de;
-        margin-bottom: 20px;
-        width:100%;
-        box-shadow: 0 1px 1px rgba(0,0,0,.1);
-        border-top-color: #3c8dbc;
-        margin: 30px auto 0;
-        margin-bottom: 30px;
-
-    }
-
     .table thead th{font-size: 0.9em;}
 
     .table td, .table th{
+
         padding: 8px;
         line-height: 1.42857143;
         vertical-align: top;
         text-align:center;
+
     }
     .table-hover tbody tr:hover{
         cursor: pointer;
