@@ -27,7 +27,7 @@
   <page>
     <name>gameficationhelp</name>
     <title>How to earn gamification points</title>
-    <access-permissions>Everyone</access-permissions>
+    <access-permissions>*:/platform/users</access-permissions>
     <edit-permission>*:/platform/administrators</edit-permission>
     <portlet-application>
       <portlet>
@@ -83,4 +83,56 @@
       <show-application-mode>false</show-application-mode>
     </portlet-application>
   </page>
+
+  <page>
+    <name>my-gamification</name>
+    <title>Gamification Information</title>
+    <access-permissions>*:/platform/users</access-permissions>
+    <edit-permission>*:/platform/administrators</edit-permission>
+    <container id="UIUserNavigationPortlet" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+      <access-permissions>*:/platform/users</access-permissions>
+      <portlet-application>
+        <portlet>
+          <application-ref>platformNavigation</application-ref>
+          <portlet-ref>UIUserNavigationPortlet</portlet-ref>
+        </portlet>
+        <title>User Navigation Portlet</title>
+        <access-permissions>*:/platform/users</access-permissions>
+        <show-info-bar>false</show-info-bar>
+        <show-application-state>true</show-application-state>
+      </portlet-application>
+    </container>
+    <container id="GamificationParentContainer" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+      <access-permissions>*:/platform/users</access-permissions>
+      <container id="top-Gamification-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>top-Gamification-container</name>
+        <access-permissions>*:/platform/users</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+      <container id="GamificationContainer" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
+        <access-permissions>*:/platform/users</access-permissions>
+        <portlet-application>
+          <portlet>
+            <application-ref>gamification-portlets</application-ref>
+            <portlet-ref>GamificationInformationsboard</portlet-ref>
+            <preferences>
+              <preference>
+                <name>walletAppMaximize</name>
+                <value>true</value>
+              </preference>
+            </preferences>
+          </portlet>
+          <title>Wallet</title>
+          <access-permissions>*:/platform/users</access-permissions>
+          <show-info-bar>false</show-info-bar>
+        </portlet-application>
+      </container>
+      <container id="bottom-wallet-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+        <name>bottom-wallet-container</name>
+        <access-permissions>*:/platform/users</access-permissions>
+        <factory-id>addonContainer</factory-id>
+      </container>
+    </container>
+  </page>
+
   </page-set>

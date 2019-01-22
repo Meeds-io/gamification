@@ -17,6 +17,16 @@ import java.util.Date;
                 name = "GamificationActionsHistory.findAllActionsHistory",
                 query = "SELECT new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.userSocialId, SUM(g.actionScore) as total) FROM GamificationActionsHistory g GROUP BY g.userSocialId ORDER BY total DESC"
         ),
+
+      /*  @NamedQuery(
+                name = "GamificationActionsHistory.findActionsHistoryByUserIdSortedByDate",
+                query = "SELECT g  FROM GamificationActionsHistory g where g.userSocialId = :userSocialId ORDER BY g.date DESC"
+
+        ),*/
+        @NamedQuery(
+        name = "GamificationActionsHistory.findActionsHistoryByReceiverIdSortedByDate",
+        query = "SELECT g  FROM GamificationActionsHistory g where g.receiver = :receiver ORDER BY g.date DESC"
+        ),
         @NamedQuery(
                 name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
                 query = "SELECT new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.userSocialId, SUM(g.actionScore) as total) FROM GamificationActionsHistory g  WHERE g.date >= :date AND g.domain = :domain GROUP BY g.userSocialId ORDER BY total DESC"
@@ -24,6 +34,10 @@ import java.util.Date;
         @NamedQuery(
                 name = "GamificationActionsHistory.findActionsHistoryByUserId",
                 query = "SELECT a FROM GamificationActionsHistory a where a.userSocialId = :socialUserId ORDER BY a.globalScore DESC"
+        ),
+        @NamedQuery(
+                name = "GamificationActionsHistory.findActionsHistoryByReceiverId",
+                query = "SELECT a FROM GamificationActionsHistory a where a.receiver = :receiver ORDER BY a.globalScore DESC"
         ),
         @NamedQuery(
                 name = "GamificationActionsHistory.findAllActionsHistoryByDomain",
@@ -98,6 +112,12 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     @Column(name = "ACTION_SCORE", nullable = false)
     private long actionScore;
 
+    @Column(name = "RECEIVER", nullable = false)
+    private String receiver ;
+    @Column(name = "OBJECT_ID", nullable = false)
+    private String objectId;
+
+
     public GamificationActionsHistory() {
     }
 
@@ -165,6 +185,22 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
         this.actionScore = actionScore;
     }
 
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -182,6 +218,8 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
         eb.append(domain, that.domain);
         eb.append(context, that.context);
         eb.append(actionScore, that.actionScore);
+        eb.append(receiver, that.receiver);
+        eb.append(objectId, that.objectId);
         return eb.isEquals();
     }
 
@@ -194,6 +232,8 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
         hcb.append(actionTitle);
         hcb.append(domain);
         hcb.append(actionScore);
+        hcb.append(receiver);
+        hcb.append(objectId);
         return hcb.toHashCode();
     }
 
@@ -207,6 +247,11 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
                 ", domain=" + domain +
                 ", context=" + context +
                 ", action_score=" + actionScore +
+                ", receiver=" + receiver +
+                ", objectId=" + objectId +
                 '}';
     }
+
+
+
 }

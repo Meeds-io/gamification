@@ -56,7 +56,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId);
+                String receiver = actorId;
+                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getId());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -111,7 +112,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId);
+                String receiver = actorId;
+                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getId());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -149,7 +151,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId);
+                String receiver=actorId;
+                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getId());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -189,6 +192,10 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
     public void addPendingUser(SpaceLifeCycleEvent event) {
     }
 
+    @Override
+    public void spaceRegistrationEdited(SpaceLifeCycleEvent event) {
+
+    }
     @Override
     public void spaceBannerEdited(SpaceLifeCycleEvent event) {
     }

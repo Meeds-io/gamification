@@ -24,7 +24,14 @@
                   xmlns="http://www.exoplatform.org/xml/ns/gatein_resources_1_4">
 
     <!-- CSS for Gamification support in Platform -->
-
+    <portlet>
+        <name>GamificationInformationsboard</name>
+        <module>
+            <depends>
+                <module>GamificationInformations</module>
+            </depends>
+        </module>
+    </portlet>
     <portlet>
         <name>GamificationManageRules</name>
         <module>
@@ -71,14 +78,6 @@
             <minify>false</minify>
             <path>/javascript/rule/rule.bundle.js</path>
         </script>
-        <depends>
-            <module>jquery</module>
-            <as>jQuery</as>
-        </depends>
-        <depends>
-            <module>jquery</module>
-            <as>$</as>
-        </depends>
     </module>
     <module>
         <name>manageBadges</name>
@@ -86,14 +85,6 @@
             <minify>false</minify>
             <path>/javascript/badge/badge.bundle.js</path>
         </script>
-        <depends>
-            <module>jquery</module>
-            <as>jQuery</as>
-        </depends>
-        <depends>
-            <module>jquery</module>
-            <as>$</as>
-        </depends>
     </module>
     <module>
         <name>userReputation</name>
@@ -101,14 +92,6 @@
             <minify>false</minify>
             <path>/javascript/reputation/reputation.bundle.js</path>
         </script>
-        <depends>
-            <module>jquery</module>
-            <as>jQuery</as>
-        </depends>
-        <depends>
-            <module>jquery</module>
-            <as>$</as>
-        </depends>
     </module>
     <module>
         <name>userLeaderboard</name>
@@ -140,4 +123,20 @@
             <as>$</as>
         </depends>
     </module>
+    <module>
+        <name>GamificationInformations</name>
+        <script>
+            <minify>false</minify>
+            <path>/javascript/GamificationInformations/GamificationInformations.bundle.js</path>
+        </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
+    </module>
+
 </gatein-resources>

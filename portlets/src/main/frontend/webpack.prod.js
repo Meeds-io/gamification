@@ -15,6 +15,7 @@ module.exports = merge(common, {
         badge: "./badge.js",
         reputation: "./reputation.js",
         leaderboard: "./leaderboard.js",
+        GamificationInformations: "./GamificationInformations.js",
         spaceleaderboard: "./spaceleaderboard.js",
 
     },

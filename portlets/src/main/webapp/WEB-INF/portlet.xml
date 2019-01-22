@@ -68,7 +68,7 @@
         </security-role-ref>
     </portlet>
 
-    <!-- Admin portlet : manage badges -->
+    <!-- Admin portlet : manage GamificationInformationsPortlet -->
     <portlet>
         <portlet-name>GamificationManageBadges</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.admin.badge.ManageBadgesPortlet</portlet-class>
@@ -95,4 +95,16 @@
             <title>Gamification Space Leaderboard</title>
         </portlet-info>
     </portlet>
+
+    <portlet>
+        <portlet-name>GamificationInformationsboard</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.GamificationInformationsPortlet.GamificationInformationsPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Gamification Informations</title>
+        </portlet-info>
+    </portlet>
+
 </portlet-app>

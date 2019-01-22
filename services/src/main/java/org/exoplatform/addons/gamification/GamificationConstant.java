@@ -110,4 +110,13 @@ public interface GamificationConstant {
     String GAMIFICATION_TASK_ADDON_COMMENT_TASK                                         = "commentTask";
     /** UPDATE TASK IN TASK ADDON */
     String GAMIFICATION_TASK_ADDON_UPDATE_TASK                                          = "updateTask";
+
+    /***************************************************************************************************************************************************/
+    /************************************************** CONSTANTS TO MANAGE Kudos**************************************************/
+    /***************************************************************************************************************************************************/
+    /** SEND KUDOS ADDON */
+    String GAMIFICATION_TASK_ADDON_SEND_KUDOS                                          = "sendKudos";
+    /** RECEIVE A KUDOS ADDON */
+    String GAMIFICATION_TASK_ADDON_COMPLETED_RECEIVE_KUDOS                              = "receiveKudos";
+
 }

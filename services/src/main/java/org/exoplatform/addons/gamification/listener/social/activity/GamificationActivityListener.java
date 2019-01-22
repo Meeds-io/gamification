@@ -1,5 +1,4 @@
 package org.exoplatform.addons.gamification.listener.social.activity;
-
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.listener.GamificationListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -14,6 +13,7 @@ import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -33,7 +33,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
     protected GamificationService gamificationService;
     protected ActivityManager activityManager;
 
-
     public GamificationActivityListener() {
         this.ruleService = CommonsUtils.getService(RuleService.class);
         this.gamificationProcessor = CommonsUtils.getService(GamificationProcessor.class);
@@ -43,7 +42,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
         this.activityManager = CommonsUtils.getService(ActivityManager.class);
 
     }
-
     @Override
     public void saveActivity(ActivityLifeCycleEvent event) {
 
@@ -60,10 +58,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
          *  Case 4 : Assign XP to owner of Stream on which an activity has been added (except the user himself)
          *  Case 5 : Assign XP to space's manager  on which an activity has been added
          */
-
         GamificationActionsHistory aHistory = null;
-
-
         // To hold GamificationRule
         RuleDTO ruleDto = null;
 
@@ -75,7 +70,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, activity.getPosterId());
+
+                    aHistory = build(ruleDto, activity.getPosterId(), activity.getPosterId(),activity.getId());
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -91,8 +87,11 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
+                    //String spaceManager = spaceService.getSpaceByPrettyName(identityManager.getIdentity(activity.getStreamId()).getRemoteId()).getManagers()[0];
+                    String spaceManager = spaceService.getSpaceById(identityManager.getIdentity(activity.getStreamId()).getRemoteId()).getManagers()[0];
 
-                    aHistory = build(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId(),spaceManager,activity.getId());
+
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -112,7 +111,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, activity.getStreamId());
+                    aHistory = build(ruleDto,activity.getStreamId(),activity.getStreamId(),activity.getId());
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
                         LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -129,7 +128,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId(),activity.getPosterId(),activity.getId());
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
                         LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -144,7 +143,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, activity.getStreamId());
+                        aHistory = build(ruleDto, activity.getStreamId(),activity.getStreamId(),activity.getId());
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
                         LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -164,7 +163,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
         // Update activity abstract method was modified untill the spec will be provided
 
     }
-
     @Override
     public void saveComment(ActivityLifeCycleEvent event) {
 
@@ -196,9 +194,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
             // Process only when an enable rule is found
             if (ruleDto != null) {
-
+               String receiver= activity.getPosterId();
                 try {
-                    aHistory = build(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId(),receiver,activity.getId());
 
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
@@ -220,9 +218,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
-
+                   String receiver=  activity.getPosterId();
                     try {
-                        aHistory = build(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId(),receiver,activity.getId());
 
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
@@ -234,6 +232,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 }
             }
         }
+
 
 
     }
@@ -269,7 +268,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     // Compute activity's liker
                     String[] likersId = activity.getLikeIdentityIds();
                     String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
-                    aHistory = build(ruleDto, liker);
+                    aHistory = build(ruleDto, liker,liker,activity.getId());
 
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
@@ -286,7 +285,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId(),activity.getStreamId(),activity.getId());
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -313,7 +312,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, liker);
+                        aHistory = build(ruleDto, liker,activity.getPosterId(),activity.getId());
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
                         LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -328,7 +327,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId(),liker,activity.getId());
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
                         LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -347,7 +346,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
         // Target Activity
         ExoSocialActivity activity = event.getSource();
-
+        String[] likersId = activity.getLikeIdentityIds();
+        String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
         /**
          *  Three usescase
          *  Case 1 : Assign XP to user who has a comment liked on his own stream
@@ -369,7 +369,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, activity.getPosterId());
+                    aHistory = build(ruleDto, activity.getPosterId(),liker,activity.getId());
 
                     // Save actionHistory
                     gamificationProcessor.execute(aHistory);
@@ -388,9 +388,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
             } else { // User like a comment on his network's Stream
 
                 // Get comment's owner
-                //String commentOwner = activity.getPosterId();
+                String commentOwner = activity.getPosterId();
                 // Get coment's owner username
-                //String liker = identityManager.getIdentity(commentOwner, false).getRemoteId();
+               // String liker = identityManager.getIdentity(commentOwner, false).getRemoteId();
 
                 // Start build GamificationContext entry
 
@@ -402,7 +402,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 if (ruleDto != null) {
 
                     try {
-                        aHistory = build(ruleDto, activity.getPosterId());
+                        aHistory = build(ruleDto, activity.getPosterId(),commentOwner,activity.getId());
                         // Save actionHistory
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
@@ -424,11 +424,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
         // Process only when an enable rule is found
         if (ruleDto != null) {
 
-            // Compute comment's liker
-            String[] likersId = activity.getLikeIdentityIds();
-            String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
             try {
-                aHistory = build(ruleDto, activity.getPosterId());
+                aHistory = build(ruleDto, activity.getPosterId(),liker,activity.getParentCommentId());
 
                 // Save actionHistory
                 gamificationProcessor.execute(aHistory);

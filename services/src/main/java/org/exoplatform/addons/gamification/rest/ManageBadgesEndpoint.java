@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@Path("/gamification/badges")
+@Path("/gamification/GamificationInformationsPortlet")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("administrators")
 public class ManageBadgesEndpoint implements ResourceContainer {
@@ -82,11 +82,11 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all badges ", e);
+                LOG.error("Error listing all GamificationInformationsPortlet ", e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all badges")
+                        .entity("Error listing all GamificationInformationsPortlet")
                         .build();
             }
 

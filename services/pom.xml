@@ -111,9 +111,7 @@
             <scope>provided</scope>
         </dependency>
         <!-- Test Dependencies -->
-
-
-        <!-- test dependencies-->
+    <!-- test dependencies-->
 
         <dependency>
             <groupId>junit</groupId>
