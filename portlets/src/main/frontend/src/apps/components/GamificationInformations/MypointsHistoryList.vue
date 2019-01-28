@@ -36,11 +36,12 @@
         </tr>
 
 
-        <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
-            <b-link @click.prevent="showMore()" href="#">Load More</b-link>
-        </div>
+
 
         </tbody>
+         <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
+                <b-link @click.prevent="showMore()" href="#">Load More</b-link>
+            </div>
 
     </table>
 
@@ -260,7 +261,8 @@
     }
 
     .uiGrid.table.table-hover.table-striped.rule-table {
-        margin-left: 30px;
+           margin: 2%;
+           max-width: 94%;
     }
     .show>.btn-secondary.dropdown-toggle {
         background-color: #578dc9;
@@ -277,14 +279,6 @@
         height: 50px !important;
     }
 
-    .ico-info {
-        position: relative;
-        margin-top: -37px;
-        padding: 2px 3px 0;
-        display: block;
-        top: 5px;
-        float: right;
-    }
 
     .actionIco {
         border: 1px solid transparent;
@@ -302,10 +296,7 @@
         box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
         color: #333;
     }
-    .load-more {
-        float: right;
-        padding: 15px;
-    }
+
     .btn-block {
         display: block;
         width: 100%;
@@ -315,17 +306,24 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
-    div#ActivitiesLoader {
-        position: absolute;
-    }
-    .ico-info[data-v-2e935f06] {
-        position: relative;
-        margin-top: -10px;
-        padding: 2px 3px 0;
-        display: block;
-        top: 5px;
-        float: right;
-    }
+   div#ActivitiesLoader {
+          display: table-caption;
+          caption-side: bottom;
+   }
+ a.ico-info.actionIco {
+     position: relative;
+     margin-top: -12px;
+     margin-left: -16%;
+     padding: 5px 0px;
+     display: block;
+     margin-right: 5%;
+     top: 5px;
+     float: right;
+ }
+ i.uiIconInformation {
+      color: #999999;
+  }
+
     .actionIco[data-v-2e935f06] {
 
         border: 1px solid transparent;
@@ -333,5 +331,22 @@
     }
     .uiGrid.table.table-hover.table-striped.rule-table {
         margin-left: 30px;
+    }
+    .uiGrid.table tr th {
+        font-weight: bold;
+        padding: 10px 10px;
+        text-align: center;
+    }
+    .vue-avatar--wrapper {
+            margin: 3px 3px;
+            width: 35px !important;
+    		margin: auto;
+        }
+
+
+
+    .uiGrid.table tr td {
+        padding: 5px 15px;
+        text-align: center;
     }
 </style>
