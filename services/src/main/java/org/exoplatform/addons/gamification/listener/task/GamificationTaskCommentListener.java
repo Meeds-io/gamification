@@ -35,12 +35,12 @@ public class GamificationTaskCommentListener extends Listener<TaskService, Comme
 
     @Override
     public void onEvent(Event<TaskService, Comment> event) throws Exception {
-        String actorId  = ConversationState.getCurrent().getIdentity().getUserId();
+        String actorUsername = ConversationState.getCurrent().getIdentity().getUserId();
 
         GamificationActionsHistory aHistory = null;
 
         // Compute user id
-        String actorUsername= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorId, false).getId();
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
         // Get associated rule
         RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_TASK_ADDON_COMMENT_TASK);
@@ -48,9 +48,7 @@ public class GamificationTaskCommentListener extends Listener<TaskService, Comme
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                String receiver=actorId;
-                String ObjectId= String.valueOf(event.getData().getId());
-                aHistory = (GamificationActionsHistory) build(ruleDto,actorId,receiver,ObjectId );
+                aHistory = build(ruleDto, actorId,actorId,event.getData().getTask().getActivityId());
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);

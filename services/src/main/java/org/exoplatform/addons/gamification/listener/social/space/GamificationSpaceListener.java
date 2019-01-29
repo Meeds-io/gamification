@@ -57,7 +57,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getId());
+                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getUrl());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -113,7 +113,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getId());
+                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getUrl());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -152,7 +152,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver=actorId;
-                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getId());
+                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getUrl());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);

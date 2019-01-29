@@ -48,7 +48,6 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
         Identity receiver = event.getPayload().getReceiver();
         // To hold GamificationRule
         RuleDTO ruleDto = null;
-
         // Get associated rule : Reward user who send a relationship request
         ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER);
 
@@ -56,8 +55,7 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
         if (ruleDto != null) {
             try {
 
-                aHistory = build(ruleDto, sender.getId(),receiver.getId(),event.getPayload().getId());
-
+                aHistory = build(ruleDto,receiver.getId(),sender.getId(),"/portal/intranet/profile/"+receiver.getRemoteId());
                 //Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
@@ -76,7 +74,7 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
         if (ruleDto != null) {
             try {
 
-                aHistory = build(ruleDto, receiver.getId(),sender.getId(),event.getPayload().getId());
+                aHistory = build(ruleDto,sender.getId(),receiver.getId(),"/portal/intranet/profile/"+sender.getRemoteId());
 
                 //Save actionHistory entry
                 gamificationProcessor.execute(aHistory);

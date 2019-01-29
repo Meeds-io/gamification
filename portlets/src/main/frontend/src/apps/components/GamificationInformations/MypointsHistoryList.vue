@@ -9,8 +9,8 @@
             <th class="rule-name-col"></th>
             <th class="rule-name-col">Action</th>
             <th class="rule-desc-col">Date</th>
-            <th class="rule-price-col" > Points<a data-v-2e935f06="" href="gamification-earn-points" target="_blank" rel="tooltip"
-               data-original-title="How can I earn points ?" class="ico-info actionIco">
+            <th class="rule-price-col"> Points <a class="ico-info actionIco" data-v-2e935f06="" href="gamification-earn-points" target="_blank" rel="tooltip"
+               data-original-title="How can I earn points ?" >
                 <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
             <th class="rule-enable-col">Domain</th>
         </tr>
@@ -25,10 +25,8 @@
           <td>  <div class="desc-user">
                 <a :href="user.profileUrl"><avatar :size="35" :src="user.avatarUrl"></avatar></a>
             </div></td>
-          <!--  <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle"  ><a v-bind:href="'/portal/intranet/activity?id='+ user.objectId" >
-                {{ rule.description}}  </a></td>-->
             <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
-                {{ rule.description}}  </td>
+                <a v-bind:href="user.objectId" >{{ rule.description}} </a> </td>
             <td>{{user.createdDate}}</td>
             <td>{{user.actionScore}}</td>
             <td>{{user.domain}}</td>
@@ -39,10 +37,10 @@
 
 
         </tbody>
-         <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
-                <b-link @click.prevent="showMore()" href="#">Load More</b-link>
-            </div>
 
+           <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
+               <b-link @click.prevent="showMore()" href="#">Load More</b-link>
+           </div>
     </table>
 
 
@@ -70,7 +68,8 @@
             rules: [],
             id: null,
             description: '',
-            actionTitle:''
+            actionTitle:'',
+            isFiltered: false
 
 
         }
@@ -103,13 +102,16 @@
                 },
             }
         },
-
+        localFiltering() {
+            return this.hasProvider ? !!this.noProviderFiltering : true
+        },
         watch: {
             domain() {
                 this.loadCapacity=10
             }
 
         },
+
 
         methods: {
 
@@ -124,7 +126,6 @@
                     .catch(e => {
                         console.warn(e)
                     })
-
 
 
             },
@@ -181,6 +182,7 @@
 
 </script>
 
+
 <style scoped>
     .user-GamificationInformations-portlet .uiIconViewByChart {
         color: #4d5466 !important;
@@ -189,29 +191,20 @@
         padding-right: 10px;
         opacity: 0.4;
     }
-
     .list-group-item:hover .uiIconViewByChart {
         opacity: 1;
     }
-
-
-
     .desc-user a {
         color: #4d5466 !important;
     }
-
     .desc-user a:hover,
     .desc-user a:focus {
         color: #578dc9 !important;
     }
-
     .current-rank .desc-user {
         padding-left: 10px;
         width: 50%;
     }
-
-
-
     .user-GamificationInformations-portlet .img-thumbnail {
         width: 40px;
         padding: 0;
@@ -220,26 +213,17 @@
         border: 1px solid #dee2e6;
         border-radius: .25rem;
     }
-
     h5 {
         text-align: center;
     }
-
-
-
     select {
         height: calc(2.25rem + 2px);
         font-size: 14px;
         transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-
     }
-
-
     .desc-user a:hover {
         color: #578dc9;
     }
-
-
     .list-lead .list-li::after {
         content: "";
         position: absolute;
@@ -250,40 +234,31 @@
         left: 0;
         display: block;
     }
-
     .list-lead .list-li:last-child::after {
         display: none;
     }
-
-
     .show>.btn-secondary.dropdown-toggle:focus {
         box-shadow: none;
     }
-
     .uiGrid.table.table-hover.table-striped.rule-table {
-           margin: 2%;
-           max-width: 94%;
+        margin: 2%;
+        max-width: 94%;
     }
     .show>.btn-secondary.dropdown-toggle {
         background-color: #578dc9;
         border: solid 1px #578dc9;
         color: #fff;
     }
-
     .custom-select {
         font-size: 14px;
     }
-
     .avatarCircle {
         width: 50px !important;
         height: 50px !important;
     }
-
-
     .actionIco {
         border: 1px solid transparent;
     }
-
     .actionIco:hover {
         background: none;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff0f0f0', GradientType=0);
@@ -296,38 +271,36 @@
         box-shadow: 0 1px 2px 0 rgba(255, 255, 255, 0);
         color: #333;
     }
-
     .btn-block {
         display: block;
-        width: 100%;
+        width: 97%;
         padding-left: 0;
         padding-right: 0;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
-   div#ActivitiesLoader {
-          display: table-caption;
-          caption-side: bottom;
-   }
- a.ico-info.actionIco {
-     position: relative;
-     margin-top: -12px;
-     margin-left: -16%;
-     padding: 5px 0px;
-     display: block;
-     margin-right: 5%;
-     top: 5px;
-     float: right;
- }
- i.uiIconInformation {
-      color: #999999;
-  }
+    div#ActivitiesLoader {
+        display: table-caption;
+        caption-side: bottom;
+    }
+    a.ico-info.actionIco {
+        position: relative;
+        margin-top: -10px;
+        margin-left: -5%;
+        padding: 5px 0px;
+        display: block;
+        margin-right: 5%;
+        top: 5px;
+        float: right;
+    }
+    i.uiIconInformation {
+        color: #999999;
 
+
+    }
     .actionIco[data-v-2e935f06] {
-
         border: 1px solid transparent;
-
     }
     .uiGrid.table.table-hover.table-striped.rule-table {
         margin-left: 30px;
@@ -338,13 +311,10 @@
         text-align: center;
     }
     .vue-avatar--wrapper {
-            margin: 3px 3px;
-            width: 35px !important;
-    		margin: auto;
-        }
-
-
-
+        margin: 3px 3px;
+        width: 35px !important;
+        margin: auto;
+    }
     .uiGrid.table tr td {
         padding: 5px 15px;
         text-align: center;

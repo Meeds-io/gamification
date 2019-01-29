@@ -55,7 +55,8 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHisoty = build(ruleDto, event.getProfile().getId(),"",event.getProfile().getId());
+                String avatar =event.getProfile().getAvatarUrl();
+                aHisoty = build(ruleDto, event.getProfile().getId(),event.getProfile().getId(),"/portal/intranet/profile/"+avatar);
 
                 //Save actionHistoy entry
                 gamificationProcessor.execute(aHisoty);
@@ -86,7 +87,8 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         if (ruleDto != null) {
             try {
                 String receiver =event.getProfile().getId();
-                aHistory = build(ruleDto, event.getProfile().getId(),receiver,event.getPayload().getId());
+                String banner =event.getProfile().getBannerUrl();
+                aHistory = build(ruleDto, event.getProfile().getId(),receiver,"/portal/intranet/profile/"+banner);
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -139,7 +141,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto,event.getProfile().getId(),event.getProfile().getIdentity().getId(),event.getSource());
+                aHistory = build(ruleDto,event.getProfile().getId(),event.getProfile().getIdentity().getId(),"/portal/intranet/profile/"+event.getProfile().getIdentity().getId());
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger

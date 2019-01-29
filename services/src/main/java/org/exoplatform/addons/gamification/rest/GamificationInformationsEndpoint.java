@@ -106,8 +106,6 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
                     gamificationHistoryInfo.setDomain(element.getDomain());
                     // Set Global Score
                     gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
-                    // Set Receiver
-                   // gamificationHistoryInfo.setReceiver(element.getReceiver());
                     // Set event id
                     gamificationHistoryInfo.setObjectId(element.getObjectId());
 
