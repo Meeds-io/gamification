@@ -32,14 +32,10 @@
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.RuleService</type>
     </component>
-
-
     <!-- Rule entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>
     </component>
-
-
     <!-- Gamification Settings : Zone -->
     <component>
         <key>org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry</key>
@@ -263,7 +259,6 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
-    <!--
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
@@ -294,8 +289,6 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
-    -->
-    <!--
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
@@ -326,7 +319,7 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
-    -->
+
     <!-- ############################################################################################ -->
     <!-- ################# Gamification Rule Config : ADD ACTIVITY FLOW ############################# -->
     <!-- ############################################################################################ -->

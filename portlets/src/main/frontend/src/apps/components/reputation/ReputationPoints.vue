@@ -3,7 +3,7 @@
         <h5 class="mt-0">Achievements</h5>
         <div>
 
-            <div class="points"><span>{{reputation.score}} Points</span></div>
+            <a href='/portal/intranet/gamificationInformations/gamificationInformations'><div class="points"><span>{{reputation.score}} Points</span>  </div></a>
         </div>
 
     </section>
