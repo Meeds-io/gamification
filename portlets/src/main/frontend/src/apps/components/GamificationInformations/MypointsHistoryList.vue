@@ -7,7 +7,7 @@
         <thead>
         <tr>
             <th class="rule-name-col"></th>
-            <th class="rule-name-col">Action</th>
+            <th class="rule-name-col">Event</th>
             <th class="rule-desc-col">Date</th>
             <th class="rule-price-col"> Points <a class="ico-info actionIco" data-v-2e935f06="" href="gamification-earn-points" target="_blank" rel="tooltip"
                data-original-title="How can I earn points ?" >
