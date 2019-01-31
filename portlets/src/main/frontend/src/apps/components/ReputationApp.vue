@@ -175,4 +175,8 @@
     .user-reputation-container {
         margin-top: 15px;
     }
+    .iIconDefaultApp{
+
+
+    }
 </style>

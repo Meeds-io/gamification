@@ -36,6 +36,7 @@
     <include name="*.jar"/>
     <include name="*.ear"/>
     <include name="*.klib"/>
+    <include name="*.apk"/>
     <include name="*.swc"/>
     <include name="*.war"/>
     <include name="*.zip"/>
@@ -1750,7 +1751,7 @@
     <property name="artifact.temp.output.gamification-extension:war" value="${artifacts.temp.dir}/gamification_extension_war"/>
     <mkdir dir="${artifact.temp.output.gamification-extension:war}"/>
     <zip destfile="${temp.jar.path.gamification-extension.war}">
-      <zipfileset dir="${artifact.temp.output.gamification-extension:war_exploded}"/>
+      <zipfileset dir="${artifact.output.gamification-extension:war_exploded}"/>
     </zip>
     <copy file="${temp.jar.path.gamification-extension.war}" tofile="${artifact.temp.output.gamification-extension:war}/gamification-extension.war"/>
   </target>
@@ -1775,7 +1776,7 @@
     <property name="artifact.temp.output.gamification-portlets:war" value="${artifacts.temp.dir}/gamification_portlets_war"/>
     <mkdir dir="${artifact.temp.output.gamification-portlets:war}"/>
     <zip destfile="${temp.jar.path.gamification-portlets.war}">
-      <zipfileset dir="${artifact.temp.output.gamification-portlets:war_exploded}"/>
+      <zipfileset dir="${artifact.output.gamification-portlets:war_exploded}"/>
     </zip>
     <copy file="${temp.jar.path.gamification-portlets.war}" tofile="${artifact.temp.output.gamification-portlets:war}/gamification-portlets.war"/>
   </target>

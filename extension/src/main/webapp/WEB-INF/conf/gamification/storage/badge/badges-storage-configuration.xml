@@ -27,28 +27,23 @@
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
     </component>
-
     <!-- Badges Service Layer-->
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
     </component>
-
     <!-- Badge entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
     </component>
-
     <!-- Gamification Settings : Badge -->
     <component>
         <key>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</key>
         <type>org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl</type>
     </component>
-
     <!-- Gamification Service -->
     <component>
         <type>org.exoplatform.addons.gamification.service.effective.GamificationProcessor</type>
     </component>
-
     <!-- ############################################################################################ -->
     <!-- #################### Gamification Badge Config : Social FLOW ############################### -->
     <!-- ############################################################################################ -->
