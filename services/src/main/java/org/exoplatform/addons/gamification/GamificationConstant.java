@@ -15,11 +15,11 @@ public interface GamificationConstant {
     /***************************************************************************************************************************************************/
     /*************************************************** CONSTANTS TO MANAGE COMMENT GAMIFICATION PROCESS **********************************************/
     /***************************************************************************************************************************************************/
-    /** LIKE COMMENT ON USER CONTEXT */
+    /**  COMMENT ON USER CONTEXT */
     String GAMIFICATION_SOCIAL_COMMENT_NETWORK_STREAM                                = "commentOnNetworkStream";
-    /** LIKE COMMENT ON SPACE CONTEXT */
+    /**  COMMENT ON SPACE CONTEXT */
     String GAMIFICATION_SOCIAL_COMMENT_SPACE_STREAM                                  = "commentOnSpaceStream";
-    /** LIKE COMMENT BY A USER */
+    /**  COMMENT BY A USER */
     String GAMIFICATION_SOCIAL_COMMENT_ADD                                           = "addComment";
 
     /***************************************************************************************************************************************************/
@@ -92,9 +92,9 @@ public interface GamificationConstant {
     /***************************************************************************************************************************************************/
     /************************************************** CONSTANTS TO MANAGE WIKI GAMIFICATION PROCESS **************************************************/
     /***************************************************************************************************************************************************/
-    /** ADD POST IN FORUM */
+    /** ADD POST IN WIKI  */
     String GAMIFICATION_WIKI_ADD_PAGE                                                   = "addWikiPage";
-    /** ADD TOPIC IN FORUM */
+    /** ADD TOPIC IN WIKI */
     String GAMIFICATION_WIKI_UPDATE_PAGE                                                = "updateWikiPage";
 
     /***************************************************************************************************************************************************/

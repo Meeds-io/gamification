@@ -13,6 +13,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.task.domain.Comment;
 import org.exoplatform.task.service.TaskService;
+import org.exoplatform.task.util.TaskUtil;
 
 import java.time.LocalDate;
 
@@ -48,7 +49,7 @@ public class GamificationTaskCommentListener extends Listener<TaskService, Comme
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId,actorId,event.getData().getTask().getActivityId());
+                aHistory = build(ruleDto, actorId,actorId, TaskUtil.buildTaskURL(event.getData().getTask()));
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
