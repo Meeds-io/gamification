@@ -179,4 +179,8 @@
 
 
     }
+    uiIconAppGamification:before {
+  content: "\ebdb"!important;
+}
+
 </style>
