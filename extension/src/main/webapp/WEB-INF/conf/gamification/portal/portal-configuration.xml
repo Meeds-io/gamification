@@ -84,7 +84,7 @@
         </component-plugin>
     </external-component-plugins>
 
-    <external-component-plugins>
+   <!-- <external-component-plugins>
         <target-component>org.exoplatform.social.common.router.ExoRouter</target-component>
         <component-plugin>
             <name>addRoutes</name>
@@ -111,5 +111,5 @@
                 </object-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
+    </external-component-plugins> -->
 </configuration>

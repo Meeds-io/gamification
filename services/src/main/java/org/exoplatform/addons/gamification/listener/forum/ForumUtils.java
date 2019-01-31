@@ -7,7 +7,8 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import javax.servlet.http.HttpServletRequest;/*
+import javax.servlet.http.HttpServletRequest;
+/*
  *
  *  * Copyright (C) 2003-2016 eXo Platform SAS.
  *  *

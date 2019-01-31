@@ -23,7 +23,6 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
-
     <import>war:/conf/gamification/storage/common/common-storage-configuration.xml</import>
     <import>war:/conf/gamification/storage/rule/rules-storage-configuration.xml</import>
     <import>war:/conf/gamification/storage/badge/badges-storage-configuration.xml</import>

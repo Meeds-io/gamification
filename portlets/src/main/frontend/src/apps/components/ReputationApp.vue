@@ -31,7 +31,7 @@
           <li id='myGamificationTab' class='item${this.isMaximized ? ' active' : ''}'> \
             <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/gamificationInformations'> \
               <div class='uiIconAppGamification uiIconDefaultApp' /> \
-              <span class='tabName'>My Gamification</span> \
+              <span class='tabName'>My Achievements</span> \
             </a> \
           </li>`);
                 $(window).trigger('resize');
@@ -174,5 +174,9 @@
 
     .user-reputation-container {
         margin-top: 15px;
+    }
+    .iIconDefaultApp{
+
+
     }
 </style>
