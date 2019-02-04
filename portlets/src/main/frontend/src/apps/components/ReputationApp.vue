@@ -30,7 +30,8 @@
                     setTimeout(this.initMenuApp, 500);
                     return;
                 }
-                $('.userNavigation').append(` \  <li id='myGamificationTab' class='item${this.isMaximized ? ' active' : ''}'> \
+                $('.userNavigation').append(` \  
+                <li id='myGamificationTab' class='item${this.isMaximized ? ' active' : ''}'> \
             <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements'>
               <div class='uiIconAppGamification uiIconDefaultApp' /> \
               <span class='tabName'>My Achievements</span> \
