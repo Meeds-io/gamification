@@ -78,6 +78,14 @@
             <minify>false</minify>
             <path>/javascript/rule/rule.bundle.js</path>
         </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
     </module>
     <module>
         <name>manageBadges</name>
@@ -85,6 +93,14 @@
             <minify>false</minify>
             <path>/javascript/badge/badge.bundle.js</path>
         </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
     </module>
     <module>
         <name>userReputation</name>
@@ -92,6 +108,14 @@
             <minify>false</minify>
             <path>/javascript/reputation/reputation.bundle.js</path>
         </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
     </module>
     <module>
         <name>userLeaderboard</name>

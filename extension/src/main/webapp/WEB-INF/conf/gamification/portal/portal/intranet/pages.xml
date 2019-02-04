@@ -85,8 +85,8 @@
   </page>
 
   <page>
-    <name>my-gamification</name>
-    <title>Gamification Information</title>
+    <name>achievements</name>
+    <title>Gamification Achievements</title>
     <access-permissions>*:/platform/users</access-permissions>
     <edit-permission>*:/platform/administrators</edit-permission>
     <container id="UIUserNavigationPortlet" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
@@ -117,7 +117,7 @@
             <portlet-ref>GamificationInformationsboard</portlet-ref>
             <preferences>
               <preference>
-                <name>walletAppMaximize</name>
+                <name>gamificationAppMaximize</name>
                 <value>true</value>
               </preference>
             </preferences>
@@ -127,7 +127,7 @@
           <show-info-bar>false</show-info-bar>
         </portlet-application>
       </container>
-      <container id="bottom-wallet-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
+      <container id="bottom-gamification-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
         <name>bottom-wallet-container</name>
         <access-permissions>*:/platform/users</access-permissions>
         <factory-id>addonContainer</factory-id>

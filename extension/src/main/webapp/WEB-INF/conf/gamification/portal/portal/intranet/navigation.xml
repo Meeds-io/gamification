@@ -14,10 +14,10 @@
   </page-nodes>
   <page-nodes>
     <node>
-      <name>gamificationInformations</name>
-      <label>Gamification Informations</label>
+      <name>achievements</name>
+      <label>Gamification Achievements</label>
       <visibility>SYSTEM</visibility>
-      <page-reference>portal::intranet::my-gamification</page-reference>
+      <page-reference>portal::intranet::achievements</page-reference>
     </node>
   </page-nodes>
 </node-navigation>
