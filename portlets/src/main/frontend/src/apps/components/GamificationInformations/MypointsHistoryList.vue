@@ -2,7 +2,7 @@
 
 
 
-       <table class="uiGrid table table-hover table-striped rule-table" hover striped>
+    <table class="uiGrid table table-hover table-striped rule-table" hover striped>
 
         <thead>
         <tr>
@@ -10,7 +10,7 @@
             <th class="rule-name-col">Event</th>
             <th class="rule-desc-col">Date</th>
             <th class="rule-price-col"> Points <a class="ico-info actionIco" data-v-2e935f06="" href="gamification-earn-points" target="_blank" rel="tooltip"
-               data-original-title="How can I earn points ?" >
+                                                  data-original-title="How can I earn points ?" >
                 <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
             <th class="rule-enable-col">Domain</th>
         </tr>
@@ -22,7 +22,7 @@
 
 
 
-          <td>  <div class="desc-user">
+            <td>  <div class="desc-user">
                 <a :href="user.profileUrl"><avatar :size="35" :src="user.avatarUrl"></avatar></a>
             </div></td>
             <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
@@ -38,23 +38,21 @@
 
         </tbody>
 
-           <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
-               <b-link @click.prevent="showMore()" href="#">Load More</b-link>
-           </div>
+        <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
+            <b-link @click.prevent="showMore()" href="#">Load More</b-link>
+        </div>
     </table>
 
 
 </template>
 
 <script>
-
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import { Popover } from 'bootstrap-vue/es/components';
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar'
-
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -70,19 +68,12 @@
             description: '',
             actionTitle:'',
             isFiltered: false
-
-
         }
     };
-
     export default {
         data: initialData,
-
-
         components: {
             Avatar,
-
-
         },
         directives: {
             mouseover: {
@@ -91,12 +82,9 @@
                         html: true,
                         content: $('#popover')
                     }).on('mouseenter', function () {
-
                         true;
-
                     })
                         .on('mouseleave', function () {
-
                             false;
                         });
                 },
@@ -109,16 +97,11 @@
             domain() {
                 this.loadCapacity=10
             }
-
         },
-
-
         methods: {
-
             showMore() {
                 let self = this;
                 self.loadCapacity += 10;
-
                 axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'capacity': self.loadCapacity} })
                     .then(response => {
                         this.users = response.data;
@@ -126,8 +109,6 @@
                     .catch(e => {
                         console.warn(e)
                     })
-
-
             },
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
@@ -137,7 +118,6 @@
                     false;
                 });
             },
-
             disableByRef() {
                 if (this.disabled) {
                     this.$refs.popover.$emit('enable')
@@ -145,12 +125,8 @@
                     this.$refs.popover.$emit('disable')
                 }
             },
-
             mouseOver() {
-
                 jQuery(this).popover("show");
-
-
             },
             isActive(value) {
                 return
@@ -159,17 +135,13 @@
             toggleClass() {
                 this.isActive = !this.isActive;
             },
-
-
         },
-
         created() {
             axios.get(`/rest/gamification/gameficationinformationsboard/history/all`)
                 .then(response => {
                     this.users = response.data;
                 });
-
-               axios.get(`/rest/gamification/rules/all`)
+            axios.get(`/rest/gamification/rules/all`)
                 .then(response => {
                     this.rules = response.data;
                 })
@@ -177,9 +149,7 @@
                     this.errors.push(e)
                 })
         }
-
     }
-
 </script>
 
 
@@ -296,8 +266,6 @@
     }
     i.uiIconInformation {
         color: #999999;
-
-
     }
     .actionIco[data-v-2e935f06] {
         border: 1px solid transparent;

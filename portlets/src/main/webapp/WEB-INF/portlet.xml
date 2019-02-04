@@ -95,7 +95,7 @@
             <title>Gamification Space Leaderboard</title>
         </portlet-info>
     </portlet>
-
+    <!--  portlet :  GamificationInformationsPortlet -->
     <portlet>
         <portlet-name>GamificationInformationsboard</portlet-name>
         <portlet-class>org.exoplatform.addons.gamification.portlets.GamificationInformationsPortlet.GamificationInformationsPortlet</portlet-class>

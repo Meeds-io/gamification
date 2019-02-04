@@ -13,7 +13,6 @@ import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -391,7 +390,7 @@ if (!parent.getType().equalsIgnoreCase("DEFAULT_ACTIVITY")) return;
                 if (ruleDto != null) {
 
                     try {
-                        aHistory = build(ruleDto, activity.getPosterId(),commentOwner,"/portal/intranet/activity?id="+activity.getId());
+                        aHistory = build(ruleDto, activity.getPosterId(),commentOwner,"/portal/intranet/activity?id="+activity.getParentId());
                         // Save actionHistory
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
@@ -414,7 +413,7 @@ if (!parent.getType().equalsIgnoreCase("DEFAULT_ACTIVITY")) return;
         if (ruleDto != null) {
 
             try {
-                aHistory = build(ruleDto, activity.getPosterId(),liker,"/portal/intranet/activity?id="+activity.getId());
+                aHistory = build(ruleDto, activity.getPosterId(),liker,"/portal/intranet/activity?id="+activity.getParentId());
 
                 // Save actionHistory
                 gamificationProcessor.execute(aHistory);
