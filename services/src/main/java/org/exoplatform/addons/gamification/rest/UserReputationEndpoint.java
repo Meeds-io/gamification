@@ -113,10 +113,13 @@ public class UserReputationEndpoint implements ResourceContainer {
         //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
 
-        String profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
-
         if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
             try {
+
+                if(url!=null){
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                }
 
                 /** This is a fake */
                 JSONArray allBadges = new JSONArray();

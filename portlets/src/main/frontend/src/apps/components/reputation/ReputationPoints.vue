@@ -3,7 +3,9 @@
         <h5 class="mt-0">Achievements</h5>
         <div>
 
-            <a href='/portal/intranet/achievements'><div class="points"><span>{{reputation.score}} Points</span>  </div></a>
+           <div class="points" ><span @click.prevent="gotoLink()">{{reputation.score}} Points</span>  </div>
+
+
         </div>
 
     </section>
@@ -28,6 +30,27 @@
 
     export default {
         data: initialData,
+        isPointsEnabled: false,
+
+        methods: {
+
+            gotoLink() {
+                if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
+                    this.isPointsEnabled = false;
+                    return;
+                }
+                if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
+                    this.isPointsEnabled = false;
+                    return;
+                } else {
+                    this.isPointsEnabled = true;
+
+                    window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
+                }
+
+
+            },
+        },
         created() {
             var url = window.location.pathname
             axios.get(`/rest/gamification/reputation/status`, { params: { 'url': url } })
@@ -38,7 +61,12 @@
                 .catch(e => {
                     this.errors.push(e)
                 })
+
+
+
         }
+
+
     }
 </script>
 
