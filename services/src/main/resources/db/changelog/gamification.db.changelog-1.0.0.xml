@@ -207,7 +207,7 @@
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
             <column name="RECEIVER" type="NVARCHAR(200)">
             </column>
-            <column name="OBJECT_ID" type="NVARCHAR(200)">
+            <column name="OBJECT_ID" type="NVARCHAR(500)">
             </column>
         </addColumn>
     </changeSet>

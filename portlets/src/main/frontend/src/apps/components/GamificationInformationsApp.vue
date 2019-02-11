@@ -5,7 +5,7 @@
 
 
 
-        <tabs
+       <!-- <tabs
                 :tabs="tabs"
                 :currentTab="currentTab"
                 @onClick="handleClick"
@@ -13,9 +13,9 @@
         <div class="content">
 
             <div v-if="currentTab === 'MyPoints'">
-                <mypoints-history-list></mypoints-history-list>
+            -->    <mypoints-history-list></mypoints-history-list>
 
-            </div>
+          <!--  </div>
 
 
 
@@ -24,7 +24,7 @@
                 <MybadgesInformations></MybadgesInformations>
             </div>
 
-    </div>
+    </div>-->
     </div>
 </template>
 <!--    GamificationInformations portlets  -->
@@ -33,25 +33,16 @@
 
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
     import MybadgesInformations from "./GamificationInformations/MybadgesInformations";
-    import Tabs from 'vue-tabs-with-active-line';
-    const TABS = [{
-        title: 'My Points',
-        value: 'MyPoints',
-    }, {
-        title: 'My Badges',
-        value: 'MyBadges',
-    } ];
+
     export default {
 
         components:   {
-            MybadgesInformations,
-            Tabs,
+
             MypointsHistoryList
                        },
         data: () => ({
             isGamificationEnabled: false,
-            tabs: TABS,
-            currentTab: 'MyPoints',
+
         }),
         methods:{
             handleClick(newTab) {

@@ -22,7 +22,6 @@ import java.time.LocalDate;
 public class GamificationSpaceListener extends SpaceListenerPlugin implements GamificationListener {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
-
     protected RuleService ruleService;
     protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
@@ -57,7 +56,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getUrl());
+                aHistory = build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -94,9 +93,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
     public void joined(SpaceLifeCycleEvent event) {
 
         GamificationActionsHistory aHistory = null;
-
-        // Get the created space
-        //Space space = event.getSpace();
         // Get the space's creator username
         String actorUsername = event.getSource();
 
@@ -113,7 +109,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getUrl());
+                aHistory = build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -152,7 +148,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver=actorId;
-                aHistory = build(ruleDto, actorId,receiver,event.getSpace().getUrl());
+                aHistory = build(ruleDto, actorId,receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -190,7 +186,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
 
     @Override
     public void addPendingUser(SpaceLifeCycleEvent event) {
-    }
+}
 
     @Override
     public void spaceRegistrationEdited(SpaceLifeCycleEvent event) {

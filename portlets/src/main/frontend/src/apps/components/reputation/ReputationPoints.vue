@@ -1,10 +1,9 @@
 <template>
     <section>
-        <h5 class="mt-0">Achievements</h5>
+        <h5  class="mt-0">Achievements</h5>
         <div>
 
-           <div class="points" ><span @click.prevent="gotoLink()">{{reputation.score}} Points</span>  </div>
-
+    <div    class="points" ><span><a href ="" @click.prevent="gotoLink()" > {{reputation.score}} Points </a></span> </div>
 
         </div>
 
@@ -98,5 +97,8 @@
 
     .rep-points img {
         float: left;
+    }
+    .active {pointer-events: none;
+        cursor: default;
     }
 </style>
