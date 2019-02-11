@@ -20,4 +20,12 @@
       <page-reference>portal::intranet::achievements</page-reference>
     </node>
   </page-nodes>
+  <page-nodes>
+    <node>
+      <name>achievements/mybadges</name>
+      <label>Gamification Achievements</label>
+      <visibility>SYSTEM</visibility>
+      <page-reference>portal::intranet::achievements::mybadges</page-reference>
+    </node>
+  </page-nodes>
 </node-navigation>

@@ -3,30 +3,65 @@
     <b-container fluid class="p-4" id="reputation-badge-container">
 
         <div>
-            <b-col md="4" class="text-center no-padding" v-for="badge in badges" :key="badge">
-                <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" width="70" height="70" />
 
-                <b-popover :target="'reputation'+badge.id" :placement="'top'" triggers="hover focus" :content="`${badge.description}`">
-                    <div class="level-badges">
-                        {{badge.level}}<br><span>Level</span>
-                    </div>
+            <b-col md="12" class="text-center no-padding" v-for="badge in badges" :key="badge" v-if="badge.zone === 'Social'">
+              <h2> Social Badges</h2>
+                <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" width="70" height="70" />
                     <div class="title-badges">{{badge.title}}</div>
-                    <div class="cat-badges">{{badge.zone}} </div>
-                    <div class="date-badges">{{badge.createdDate}}</div>
-                    <div class="desc-badges">{{badge.description}}</div>
-                    <div class="prog-point">
-                        <div class="first-number">{{badge.startScore}}</div>
-                        <hr class="interval">
-                        <div class="last-number" v-if="badge.endScore == 0" v-bind:class="{'bg-red': bgBadges(badge)}"> ∞
-                            </div>
-                        <div class="last-number" v-else>{{badge.endScore}}</div>
-                    </div>
-                </b-popover>
+
+                 <b-popover :target="'reputation'+badge.id" :placement="'top'" triggers="hover focus" :content="`${badge.description}`">
+                                    <div class="level-badges">
+                                        {{badge.level}}<br><span>Level</span>
+                                    </div>
+                                    <div class="title-badges">{{badge.title}}</div>
+                                    <div class="cat-badges">{{badge.zone}} </div>
+                                    <div class="date-badges">{{badge.createdDate}}</div>
+                                    <div class="desc-badges">{{badge.description}}</div>
+                                    <div class="prog-point">
+                                        <div class="first-number">{{badge.startScore}}</div>
+                                        <hr class="interval">
+                                        <div class="last-number" v-if="badge.endScore == 0" v-bind:class="{'bg-red': bgBadges(badge)}"> ∞
+                                            </div>
+                                        <div class="last-number" v-else>{{badge.endScore}}</div>
+                                    </div>
+                                </b-popover>
             </b-col>
+
+        </div>
+        <div>
+<hr>
+ <b-col md="12" class="text-center no-padding" v-for="badge in badges" :key="badge" v-if="badge.zone === 'Knowledge'">
+   <h2>knowledge Badges</h2>
+
+        <b-img :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" fluid height="70"
+               thumbnail width="70"/>
+                <div class="title-badges">{{badge.title}}</div>
+            <b-popover :content="`${badge.description}`" :placement="'top'" :target="'reputation'+badge.id"
+                       triggers="hover focus">
+                <div class="level-badges">
+                    {{badge.level}}<br><span>Level</span>
+                </div>
+                <div class="title-badges">{{badge.title}}</div>
+                <div class="cat-badges">{{badge.zone}}</div>
+                <div class="date-badges">{{badge.createdDate}}</div>
+                <div class="desc-badges">{{badge.description}}</div>
+                <div class="prog-point">
+                    <div class="first-number">{{badge.startScore}}</div>
+                    <hr class="interval">
+                    <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
+                        ∞
+                    </div>
+                    <div class="last-number" v-else>{{badge.endScore}}</div>
+                </div>
+            </b-popover>
+    </b-col>
+
 
         </div>
 
     </b-container>
+
+
 </template>
 <script>
 
@@ -234,6 +269,9 @@
         width: 91%;
         left: 7px;
     }
+    img#reputation {
+        padding: 10px;
+    }
 
     @media (min-width: 768px) {
 
@@ -244,4 +282,5 @@
             float: left;
         }
     }
+
 </style>

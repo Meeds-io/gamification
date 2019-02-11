@@ -81,7 +81,7 @@ public class GamificationForumListener extends ForumEventListener implements Gam
         if (ruleDto != null) {
             try {
                 String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, post.getOwner(), false).getId();
-                aHistory = build(ruleDto,identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, post.getOwner(), false).getId(),receiver,ForumUtils.createdForumLink(post.toString(),post.getId(),true));
+                aHistory = build(ruleDto,identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, post.getOwner(), false).getId(),receiver,ForumUtils.createdSubForumLink(post.toString(),post.getTopicId(),true));
 
                 // Save Gamification Context
                 gamificationProcessor.execute(aHistory);
@@ -121,7 +121,7 @@ public class GamificationForumListener extends ForumEventListener implements Gam
         if (ruleDto != null) {
             try {
                 String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId();
-                aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(),receiver,ForumUtils.createdForumLink(topic.toString(),topic.getId(),true));
+                aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(),receiver,ForumUtils.createdSubForumLink(topic.toString(),topic.getId(),true));
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
                 LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -200,7 +200,7 @@ public class GamificationForumListener extends ForumEventListener implements Gam
                 if (topicOwner != null && topicOwner.length() != 0) {
                    String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId();
                    // ForumUtils.createdForumLink();
-                    aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId(),receiver,ForumUtils.createdForumLink(topic.toString(),topic.getId(),true));
+                    aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId(),receiver,ForumUtils.createdSubForumLink(topic.toString(),topicId,true));
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
@@ -222,14 +222,14 @@ public class GamificationForumListener extends ForumEventListener implements Gam
             // To hold GamificationRule
             RuleDTO ruleDto = null;
 
-            // Get associated rule : Reward user who send a relationship request
+            // Get associated rule : Reward user who votes in the forum
             ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_FORUM_VOTE_TOPIC);
 
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
                     String receiver =identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId();
-                    aHistory = build(ruleDto,identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(),receiver,ForumUtils.createdForumLink(topic.toString(),topic.getId(),true));
+                    aHistory = build(ruleDto,identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(),receiver,ForumUtils.createdSubForumLink(topic.toString(),topic.getId(),true));
 
                     // Save Gamification Context
                     gamificationProcessor.execute(aHistory);

@@ -1,27 +1,62 @@
 <template>
-    <mypoints-history-list></mypoints-history-list>
+
+    <div id="achivements" class="uiBox">
 
 
+
+
+       <!-- <tabs
+                :tabs="tabs"
+                :currentTab="currentTab"
+                @onClick="handleClick"
+        />
+        <div class="content">
+
+            <div v-if="currentTab === 'MyPoints'">
+            -->    <mypoints-history-list></mypoints-history-list>
+
+          <!--  </div>
+
+
+
+
+            <div v-if="currentTab === 'MyBadges'">
+                <MybadgesInformations></MybadgesInformations>
+            </div>
+
+    </div>-->
+    </div>
 </template>
 <!--    GamificationInformations portlets  -->
 
 <script>
 
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
+    import MybadgesInformations from "./GamificationInformations/MybadgesInformations";
+
     export default {
 
         components:   {
+
             MypointsHistoryList
                        },
+        data: () => ({
+            isGamificationEnabled: false,
 
+        }),
         methods:{
+            handleClick(newTab) {
+                this.currentTab = newTab;
+            },
             maximize() {
-                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements`;
+                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
 
             },
 
             initMenuApp() {
-
+                if (!this.isGamificationEnabled ) {
+                    return;
+                }
                 this.$nextTick(() => {
                     if ($('#myGamificationTab').length) {
                         return;
@@ -32,7 +67,7 @@
                     }
                     $('.userNavigation').append(` \
           <li id='myGamificationTab' class='item active'> \
-            <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements'>
+            <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}'>
               <div class='uiIconAppGamification uiIconDefaultApp' /> \
               <span class='tabName'>My Achievements</span> \
             </a> \
@@ -42,7 +77,18 @@
             },
         },
         created() {
-            this.initMenuApp();
+            if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
+                this.isGamificationEnabled = false;
+                return;
+            }
+            if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
+                this.isGamificationEnabled = false;
+                return;
+            } else {
+                this.isGamificationEnabled = true;
+                this.initMenuApp();
+            }
+
         }
 
     }
@@ -51,6 +97,7 @@
 
 
 <style>
+
     .fade {
         opacity: 1 !important;
     }
@@ -178,5 +225,49 @@
     .uiProfileMenu .userNavigation > .active > a > div, .uiSpaceMenu .spaceMenuTab > .active > a > i {
         color: #578dc9;
     }
+    .card .uiBox {
+
+        border: 1px solid #dedede;
+        border-radius: 7px;
+        background: #fff;
+        float: left;
+        width: 90%;
+        margin: 0 auto;
+        text-align: center;
+        clear: both;
+        position: relative;
+        margin-left: 5%;
+        margin-bottom: 40px;
+    }
+    .row{
+        padding: 17px 0;
+        color: #333333;
+        font-family: helvetica;
+        font-size: 14px;
+        width: 100%;
+        border-bottom: 1px solid #f4f5f5;
+        float: left;
+        margin-left: 0;
+
+    }
+    button.btn.btn-link {
+        text-decoration: none;
+        width: max-content;
+    }
+    .first-col{
+        width: 80%;
+        color: #333333;
+        font-family: helvetica;
+        left: 15px;
+        float: left;
+        position: relative;
+        font-size: 14px;
+        margin-left: 0;
+        text-align: left;
+
+    }
+
+  /*tabs */
+
 
 </style>
