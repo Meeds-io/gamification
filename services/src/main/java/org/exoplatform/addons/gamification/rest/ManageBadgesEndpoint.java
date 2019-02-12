@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-@Path("/gamification/GamificationInformationsPortlet")
+@Path("/gamification/badges")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("administrators")
 public class ManageBadgesEndpoint implements ResourceContainer {
