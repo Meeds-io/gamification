@@ -2,30 +2,32 @@
 
     <div id="achivements" class="uiBox">
 
+
                 <mypoints-history-list></mypoints-history-list>
-      </div>
- 
+
+        </div>
 </template>
 <!--    GamificationInformations portlets  -->
 
 <script>
 
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
- 
-  
+
     export default {
 
         components:   {
+
             MypointsHistoryList,
-       
 
         },
         data: () => ({
             isGamificationEnabled: false,
-           
+
         }),
         methods:{
-          
+            handleClick(newTab) {
+                this.currentTab = newTab;
+            },
             maximize() {
                 window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
 
@@ -245,5 +247,23 @@
 
     }
 
+    /*tabs */
 
+    button.tabs__item {
+        background: transparent;
+        border: none;
+        font-weight: 700;
+        height: 45px;
+        margin: 5px;
+        font-size: 14px;
+        color: #999;
+        border-radius: 2px;
+        padding: 15px;
+        outline: none;
+    }
+    button.tabs__item.tabs__item_active {
+
+        border-bottom: 3px solid #578dc9;
+        color: #4e5467;
+    }
 </style>
