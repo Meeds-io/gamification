@@ -38,6 +38,7 @@
         <dependency>
             <groupId>org.exoplatform.social</groupId>
             <artifactId>social-component-core</artifactId>
+            <version>5.2.0-M12</version>
             <scope>provided</scope>
         </dependency>
 

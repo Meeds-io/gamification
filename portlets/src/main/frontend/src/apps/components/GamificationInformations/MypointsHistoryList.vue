@@ -9,7 +9,7 @@
             <th class="rule-name-col"></th>
             <th class="rule-name-col">Event</th>
             <th class="rule-desc-col">Date</th>
-            <th class="rule-price-col"> Points <a class="ico-info actionIco" data-v-2e935f06="" href="gamification-earn-points" target="_blank" rel="tooltip"
+            <th class="rule-price-col"> Points <a class="ico-info actionIco" data-v-2e935f06="" href="../gamification-earn-points" target="_blank" rel="tooltip"
                                                   data-original-title="How can I earn points ?" >
                 <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
             <th class="rule-enable-col">Domain</th>
@@ -154,6 +154,17 @@
 
 
 <style scoped>
+ .uiGrid.table tr td {
+        padding: 5px 0px;
+        text-align: center;
+    }
+  .uiGrid.table.table-hover.table-striped.rule-table {
+        margin: auto;
+    }
+.uiBox {
+
+        background: transparent;
+    }
     .user-GamificationInformations-portlet .uiIconViewByChart {
         color: #4d5466 !important;
         font-size: 18px;
@@ -210,10 +221,7 @@
     .show>.btn-secondary.dropdown-toggle:focus {
         box-shadow: none;
     }
-    .uiGrid.table.table-hover.table-striped.rule-table {
-        margin: 2%;
-        max-width: 94%;
-    }
+
     .show>.btn-secondary.dropdown-toggle {
         background-color: #578dc9;
         border: solid 1px #578dc9;
@@ -243,7 +251,7 @@
     }
     .btn-block {
         display: block;
-        width: 100%;
+        width: auto;
         padding-left: 0;
         padding-right: 0;
         -webkit-box-sizing: border-box;
@@ -283,8 +291,5 @@
         width: 35px !important;
         margin: auto;
     }
-    .uiGrid.table tr td {
-        padding: 5px 15px;
-        text-align: center;
-    }
+
 </style>

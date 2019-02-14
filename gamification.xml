@@ -1094,24 +1094,24 @@
     <pathelement location="${path.variable.maven_repository}/org/exoplatform/kernel/exo.kernel.container/5.2.0-M07/exo.kernel.container-5.2.0-M07.jar"/>
   </path>
   
-  <path id="library.maven:_org.exoplatform.social:social-component-common:5.2.0-m07.classpath">
-    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-common/5.2.0-M07/social-component-common-5.2.0-M07.jar"/>
+  <path id="library.maven:_org.exoplatform.social:social-component-common:5.2.0-m12.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-common/5.2.0-M12/social-component-common-5.2.0-M12.jar"/>
   </path>
   
-  <path id="library.maven:_org.exoplatform.social:social-component-core-jpa:5.2.0-m07.classpath">
-    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-core-jpa/5.2.0-M07/social-component-core-jpa-5.2.0-M07.jar"/>
+  <path id="library.maven:_org.exoplatform.social:social-component-core-jpa:5.2.0-m12.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-core-jpa/5.2.0-M12/social-component-core-jpa-5.2.0-M12.jar"/>
   </path>
   
-  <path id="library.maven:_org.exoplatform.social:social-component-core:5.2.0-m07.classpath">
-    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-core/5.2.0-M07/social-component-core-5.2.0-M07.jar"/>
+  <path id="library.maven:_org.exoplatform.social:social-component-core:5.2.0-m12.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-core/5.2.0-M12/social-component-core-5.2.0-M12.jar"/>
   </path>
   
-  <path id="library.maven:_org.exoplatform.social:social-component-service:5.2.0-m07.classpath">
-    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-service/5.2.0-M07/social-component-service-5.2.0-M07.jar"/>
+  <path id="library.maven:_org.exoplatform.social:social-component-service:5.2.0-m12.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-service/5.2.0-M12/social-component-service-5.2.0-M12.jar"/>
   </path>
   
   <path id="library.maven:_org.exoplatform.social:social-component-webui:5.2.0-m07.classpath">
-    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-webui/5.2.0-M07/social-component-webui-5.2.0-M07.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/exoplatform/social/social-component-webui/5.2.0-M12/social-component-webui-5.2.0-M12.jar"/>
   </path>
   
   <path id="library.maven:_org.exoplatform.tool:exo.tool.framework.junit:1.2.4-ga.classpath">
