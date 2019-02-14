@@ -5,7 +5,7 @@
 
 
 
-       <!-- <tabs
+        <tabs
                 :tabs="tabs"
                 :currentTab="currentTab"
                 @onClick="handleClick"
@@ -13,18 +13,21 @@
         <div class="content">
 
             <div v-if="currentTab === 'MyPoints'">
-            -->    <mypoints-history-list></mypoints-history-list>
+                <mypoints-history-list></mypoints-history-list>
 
-          <!--  </div>
+            </div>
 
-
-
-
-            <div v-if="currentTab === 'MyBadges'">
+       <!--    <div v-else-if="currentTab === 'MyBadges'">
                 <MybadgesInformations></MybadgesInformations>
             </div>
 
-    </div>-->
+
+
+            <div v-else-if="currentTab === 'Gamificationhelp'">
+                <Gamificationhelp></Gamificationhelp>
+            </div> -->
+
+        </div>
     </div>
 </template>
 <!--    GamificationInformations portlets  -->
@@ -32,17 +35,33 @@
 <script>
 
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
-    import MybadgesInformations from "./GamificationInformations/MybadgesInformations";
+    import MybadgesInformations from "./GamificationInformations/MybadgesInformations"
+    import Gamificationhelp from "./GamificationInformations/Gamificationhelp"
 
+    import Tabs from 'vue-tabs-with-active-line';
+    const TABS = [{
+        title: 'My Points',
+        value: 'MyPoints',
+    }<!--, {
+        title: 'My Badges',
+        value: 'MyBadges',
+    }, {
+        title: 'How to earn points',
+        value: 'Gamificationhelp',
+    }--> ];
     export default {
 
         components:   {
+          //  MybadgesInformations,
+            Tabs,
+            MypointsHistoryList,
+        //    Gamificationhelp,
 
-            MypointsHistoryList
-                       },
+        },
         data: () => ({
             isGamificationEnabled: false,
-
+            tabs: TABS,
+            currentTab: 'MyPoints',
         }),
         methods:{
             handleClick(newTab) {
@@ -267,7 +286,23 @@
 
     }
 
-  /*tabs */
+    /*tabs */
 
+    button.tabs__item {
+        background: transparent;
+        border: none;
+        font-weight: 700;
+        height: 45px;
+        margin: 5px;
+        font-size: 14px;
+        color: #999;
+        border-radius: 2px;
+        padding: 15px;
+        outline: none;
+    }
+    button.tabs__item.tabs__item_active {
 
+        border-bottom: 3px solid #578dc9;
+        color: #4e5467;
+    }
 </style>
