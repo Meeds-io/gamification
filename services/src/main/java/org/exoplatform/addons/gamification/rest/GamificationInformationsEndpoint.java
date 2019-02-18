@@ -2,7 +2,7 @@ package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.effective.*;
+import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -13,7 +13,7 @@ import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
-import org.exoplatform.addons.gamification.listener.*;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,7 +21,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Path("/gamification/gameficationinformationsboard")
@@ -71,15 +70,15 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
                     loadCapacity=Integer.parseInt(capacity);
                 }
                 //find actions History by userid adding a pagination load more capacity filter
-               // List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByUserId(identity.getId(),true,loadCapacity);
-                 List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByReceiverId(identity.getId(),true,loadCapacity);
+                // List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByUserId(identity.getId(),true,loadCapacity);
+                List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByReceiverId(identity.getId(),true,loadCapacity);
                 if (ss == null) {
                     return Response.ok(new ArrayList<>(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
                 }
                 // Build GamificationActionsHistory flow only when the returned list is not null
                 for (GamificationActionsHistory element : ss) {
                     // Load Social identity
-                   // identity = identityManager.getIdentity(element.getUserSocialId(), true);
+                    // identity = identityManager.getIdentity(element.getUserSocialId(), true);
                     identity = identityManager.getIdentity(element.getUserSocialId(), true);
                     Profile profile= identity.getProfile();
                     GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
@@ -256,5 +255,3 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
             this.objectId = objectId;
         }
     }}
-
-
