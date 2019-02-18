@@ -1,97 +1,111 @@
-
 <template>
-
-    <div>
-        <b-container fluid>
-            <b-col sm="12">
+  <div>
+        <div class="container-fluid">
+            <div class="col-sm-12 card">
                 <h5 class="mt-0 ">Manage gamification's rules</h5>
-                <b-form-row>
-                    <b-col class="card">
-                        <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
-                            <b-form-input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
-                            </b-form-input>
+                <form-row>
+                    <div class="card col">
 
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Rule title is required please enter a title {{dismissCountDown}} ...
-                            </b-alert>
-                        </b-form-group>
+                      <form-group id="titleInputGroup">
+                           <label class="col-form-label pt-0">Title:</label>
+                         <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
+                                                      </input>
 
-                        <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
-                            <b-form-textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
-                            </b-form-textarea>
-                        </b-form-group>
-                        <b-form-group id="scoreInputGroup" label="Score:" label-for="scoreInput">
-                            <b-form-input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
-                            </b-form-input>
+
+                             <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                 Rule title is required please enter a title {{dismissCountDown}} ...
+                             </b-alert>
+                             </form-group>
+
+
+
+                        <form id="descriptionInputGroup">
+                          <label class="col-form-label pt-0">Description:</label>
+
+                            <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
+                            </textarea>
+                        </form>
+                        <form id="scoreInputGroup">
+
+                        <label id="scoreInputGroup" for="scoreInput" class="col-form-label pt-0">Score:</label>
+                            <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
+                            </input>
                             <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule score is required please enter a score {{dismissCountDown}} ...
                             </b-alert>
-                        </b-form-group>
-                    </b-col>
-                  
-                    <b-col class="card">
-      
-                        <b-form-group id="startValidityInputGroup" label="Start validity:" label-for="startValidityInput">
-                            <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
-                            <b-alert v-if="formErrors.startValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Rule start validity date is required please enter a date {{dismissCountDown}} ...
-                            </b-alert>
-                        </b-form-group>
-                      
-                        <b-form-group id="endValidityInputGroup" label="End validity:" label-for="endValidityInput">
-                            <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
-                            <b-alert v-if="formErrors.endValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Rule end validity date is required please enter a date {{dismissCountDown}} ...
-                            </b-alert>
-                        </b-form-group>
-                       
-                        <b-form-group id="enableCheckboxGroup">
-                            <b-form-checkbox v-model="rule.enabled">Enable rule</b-form-checkbox>
-                        </b-form-group>
-                       
-                        <b-form-group id="areaSelectboxGroup">
-                            <b-form-select v-model="rule.area" class="mb-3">
+                        </form>
+                    </div>
+
+                    <div class="card col">
+
+                       <form id="startValidityInputGroup">
+                       <label id="startValidityInputGroup" for="startValidityInput" class="col-form-label pt-0">Start validity:</label>
+                           <date-picker name="endValidityDateInput" id="startValidityInput" v-model="rule.startValidity" :config="config" required placeholder="Enter rule's start validity"></date-picker>
+                           <b-alert v-if="formErrors.startValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                               Rule start validity date is required please enter a date {{dismissCountDown}} ...
+                           </b-alert>
+                       </form>
+
+                       <form id="endValidityInputGroup">
+                       <label id="endValidityInputGroup" for="endValidityInput" class="col-form-label pt-0">End validity:</label>
+                           <date-picker name="endValidityDateInput" id="endValidityInput" v-model="rule.endValidity" :config="config" required placeholder="Enter rule's end validity"></date-picker>
+                           <b-alert v-if="formErrors.endValidity" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                               Rule end validity date is required please enter a date {{dismissCountDown}} ...
+                           </b-alert>
+                       </form>
+
+                     <div class="custom-control custom-checkbox custom-control-inline">
+
+                         <label class="checkbox custom-checkbox" id="enableCheckboxGroup">
+                             <input type="checkbox" v-model="rule.enabled"> Enable rule
+                         </label>
+
+                     </div>
+
+                        <form id="areaSelectboxGroup">
+                            <select v-model="rule.area" class="mb-3">
                                 <template slot="first">
-                                    
+
                                     <option :value="null" disabled>-- Please select an area --</option>
                                 </template>
-                                
+
                                 <option value="Social">Social</option>
                                 <option value="Knowledge">Knowledge</option>
                                 <option value="Teamwork">Teamwork</option>
-                            </b-form-select>
-                        </b-form-group>
+                            </select>
+                        </form>
 
-                        <b-row>
+                        <div class="row">
                             <b-col>
                                 <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary" :size="lg">
-                                    {{rule.id ? 'Update' : 'Add'}} rule
-                                </b-button>
+                                                                   {{rule.id ? 'Update' : 'Add'}} rule
+                                                               </b-button>
                             </b-col>
                             <b-col>
-                                <b-button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
+                                <button type="submit" v-if="rule.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</button>
                             </b-col>
-                        </b-row>
-                      
-                    </b-col>
-                </b-form-row>
-             
-            </b-col>
+                        </div>
 
-        </b-container>
+                    </div>
+                </form-row>
+
+            </div>
+
+        </div>
     </div>
 
 </template>
 
+
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import datePicker from 'vue-bootstrap-datetimepicker';
-    import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
-    Vue.use(BootstrapVue);
-    Vue.use(datePicker);
+   import Vue from 'vue'
+      import BootstrapVue from 'bootstrap-vue'
+      import 'bootstrap/dist/css/bootstrap.css'
+      import 'bootstrap-vue/dist/bootstrap-vue.css'
+      import datePicker from 'vue-bootstrap-datetimepicker';
+      import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
+      Vue.use(BootstrapVue);
+      Vue.use(datePicker);
     export default {
         props: ['rule'],
         data() {
@@ -162,8 +176,19 @@
 </script>
 
 <style scoped>
+
+
+.card.col label {
+    display: block;
+}
     form {
         margin-bottom: 24px;
+    }
+    form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -5px;
+        margin-left: -5px;
     }
 
     h5.mt-0 {
