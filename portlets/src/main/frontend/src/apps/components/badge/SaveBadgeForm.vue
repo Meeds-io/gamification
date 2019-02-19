@@ -33,11 +33,11 @@
                             </b-alert>
                         </form-group>
 
-                        <form-group id="iconInputGroup">
-						<label id="Icon:" class="pt-0" label-for="iconInput">Icon:</label>
-                            <input class="custom-file b-form-file" type="file" v-on="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></form>
-                        </input>
-                        </form-group>
+                         <b-form-group id="iconInputGroup" label="Icon:" label-for="iconInput">
+                            <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                        </b-form-group>
+
+
 
 
                     </div>
@@ -294,55 +294,21 @@
         width: max-content;
         margin-top: 2em;
     }
-    .custom-file-label, .custom-file-label:after {
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: .375rem .75rem;
-        line-height: 1.5;
-        color: #495057;
-    }
+
+
+
     .custom-file-label:after {
-        bottom: 0;
-        z-index: 3;
-        display: block;
-        height: 2.25rem;
-        content: "Browse";
-        background-color: #e9ecef;
-        border-left: inherit;
-        border-radius: 0 .25rem .25rem 0;
-    }
-    .custom-file-label, .custom-file-label:after {
         position: absolute;
-        top: 0;
-        right: 0;
-        padding: .375rem .75rem;
-        line-height: 1.5;
-        color: #495057;
+        right: 5px;
+        text-overflow: ellipsis;
     }
-    .custom-file-label {
-        left: 0;
-        z-index: 1;
-        height: calc(2.25rem + 2px);
-        font-weight: 400;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: .25rem;
+
+.custom-file-label {
+    position: relative!important;
+    left: 0;
+    z-index: 1;
+    height: 36px;
+    padding: 0 10px;
     }
-    input.custom-file.b-form-file[data-v-437fce06]:first-of-type {
-        position: relative;
-        float: left;
-        border: #000;
-        padding: .375rem .75rem;
-        line-height: 1.5;
-        color: #495057;
-        left: 0;
-        z-index: 1;
-        height: calc(2.25rem + 2px);
-        font-weight: 400;
-        background-color: #fff;
-        border: 2px solid #e1e8ee;
-        border-radius: 5px;
-        line-height: 20px;
-    }
+
 </style>
