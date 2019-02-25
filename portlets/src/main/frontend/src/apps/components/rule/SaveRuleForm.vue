@@ -242,4 +242,8 @@
     textarea#ruleDescription {
         width: 100%;
     }
+    input[type="checkbox"] {
+        width: auto;
+        margin-bottom: 10px;
+    }
 </style>
