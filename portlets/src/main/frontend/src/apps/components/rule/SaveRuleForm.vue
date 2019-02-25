@@ -8,7 +8,7 @@
 
                       <form-group id="titleInputGroup">
                            <label class="col-form-label pt-0">Title:</label>
-                         <input id="titleInput" class="form-control" type="text" v-model="rule.title" required placeholder="Enter rule's title">
+                         <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
                                                       </input>
 
 
@@ -22,13 +22,13 @@
                         <form id="descriptionInputGroup">
                           <label class="col-form-label pt-0">Description:</label>
 
-                            <textarea id="ruleDescription" v-model="rule.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
+                            <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
                         </form>
                         <form id="scoreInputGroup">
 
                         <label id="scoreInputGroup" for="scoreInput" class="col-form-label pt-0">Score:</label>
-                            <input id="scoreDescription" type="number" v-model="rule.score" class="form-control" required placeholder="Enter rule's score">
+                            <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
                             </input>
                             <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule score is required please enter a score {{dismissCountDown}} ...
@@ -133,12 +133,10 @@
         methods: {
             validateForm() {
                 const errors = {}
-
                 if (!this.rule.title) {
                     errors.title = 'Title is required'
                     this.dismissCountDown = 5
                 }
-
                 if (!this.rule.score) {
                     errors.score = 'Score is required'
                     this.dismissCountDown = 5
@@ -151,9 +149,7 @@
                     errors.endValidity = 'End validity date is required'
                     this.dismissCountDown = 5
                 }
-
                 this.formErrors = errors
-
                 return Object.keys(errors).length === 0
             },
             onImageChanged(event) {
@@ -176,8 +172,6 @@
 </script>
 
 <style scoped>
-
-
 .card.col label {
     display: block;
 }
@@ -190,7 +184,6 @@
         margin-right: -5px;
         margin-left: -5px;
     }
-
     h5.mt-0 {
         color: #4d5466;
         font-family: Helvetica, arial, sans-serif;
@@ -201,7 +194,6 @@
         text-align: center;
         padding: 20px 0px;
     }
-
     label {
         display: inline-block;
         max-width: 100%;
@@ -209,7 +201,6 @@
         font-weight: 700;
         color: #333;
     }
-
     input[type="number"] {
         font-size: 15px;
         height: 40px;
@@ -220,15 +211,14 @@
         max-height: 40px;
         text-overflow: ellipsis;
     }
-
     input[type="number"]:focus:invalid:focus,
     input[type="date"]:focus:invalid:focus {
         border-color: #e9322d;
         -webkit-box-shadow: 0 0 6px #f8b9b7;
         -moz-box-shadow: 0 0 6px #f8b9b7;
         box-shadow: 0 0 6px #f8b9b7;
+            width: 100%;
     }
-
     .card {
         position: relative;
         border-radius: 3px;
@@ -240,12 +230,16 @@
         border-top-color: #3c8dbc;
         margin: 0px 11px;
         padding: 15px;
-
     }
     .require-msg{
         max-width: 100% !important;
         font-size: 14px;
         padding: 10px;
     }
-    
+    input {
+        width: 100%;
+    }
+    textarea#ruleDescription {
+        width: 100%;
+    }
 </style>
