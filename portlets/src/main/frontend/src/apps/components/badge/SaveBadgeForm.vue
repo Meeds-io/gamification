@@ -8,7 +8,7 @@
                     <div class="card">
                         <form-group id="titleInputGroup">
 						<label class="pt-0">Title:</label>
-                            <input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
+                            <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
                             </input>
 
                             <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
@@ -19,13 +19,13 @@
 
                         <div id="descriptionInputGroup">
                          <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
-                            <textarea id="badgeDescription" v-model="badge.description" placeholder="Enter description" :rows="3" :max-rows="6">
+                            <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
                         </div>
 
                         <form-group id="neededScoreInputGroup" >
 						<label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
-                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
+                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
                             </input>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
@@ -33,9 +33,11 @@
                             </b-alert>
                         </form-group>
 
-                         <b-form-group id="iconInputGroup" label="Icon:" label-for="iconInput">
-                            <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                        </b-form-group>
+                         <form-group id="iconInputGroup">
+                         <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
+                         <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+
+                        </form-group>
 
 
 
