@@ -8,7 +8,7 @@
 
                       <form-group id="titleInputGroup">
                            <label class="col-form-label pt-0">Title:</label>
-                         <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
+                         <input id="titleInput" class="form-control" type="text" v-model="rule.title" required placeholder="Enter rule's title">
                                                       </input>
 
 
@@ -22,13 +22,13 @@
                         <form id="descriptionInputGroup">
                           <label class="col-form-label pt-0">Description:</label>
 
-                            <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
+                            <textarea id="ruleDescription" v-model="rule.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
                         </form>
                         <form id="scoreInputGroup">
 
                         <label id="scoreInputGroup" for="scoreInput" class="col-form-label pt-0">Score:</label>
-                            <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
+                            <input id="scoreDescription" type="number" v-model="rule.score" class="form-control" required placeholder="Enter rule's score">
                             </input>
                             <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule score is required please enter a score {{dismissCountDown}} ...
