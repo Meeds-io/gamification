@@ -51,6 +51,8 @@
     import Vue from 'vue'
     import moment from 'moment'
     Vue.prototype.moment = moment
+      import BootstrapVue from 'bootstrap-vue'
+    Vue.use(BootstrapVue);
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     export default {
