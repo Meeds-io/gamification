@@ -13,6 +13,7 @@ import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -61,7 +62,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
         RuleDTO ruleDto = null;
 
         // Add activity on Space Stream : Compute actor reward
-        if (isSpaceActivity(activity)) {
+        if (isSpaceActivity(activity) && !activity.getType().equals("SPACE_ACTIVITY")) {
             // Get associated rule :
             ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM);
 
@@ -87,7 +88,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                 try {
                     String spaceManager = spaceService.getSpaceByPrettyName(identityManager.getIdentity(activity.getStreamId()).getRemoteId()).getManagers()[0];
 
-                    aHistory = build(ruleDto, activity.getPosterId(),spaceManager,"/portal/intranet/activity?id="+activity.getId());
+                    aHistory = build(ruleDto, activity.getPosterId(),identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, spaceManager, false).getId(),"/portal/intranet/activity?id="+activity.getId());
 
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
@@ -99,7 +100,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
         } else { // Comment in the context of User Stream
 
             // User comment on his own Stream : no XP should be assigned
-            if (activity.getPosterId().equalsIgnoreCase(activity.getStreamId())) {
+            if (activity.getPosterId().equalsIgnoreCase(activity.getStreamId()) && !activity.getType().equals("SPACE_ACTIVITY")) {
 
                 // Get associated rule : Reward a user when he add an activity on his own stream
                 ruleDto = ruleService.findEnableRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ADD_ACTIVITY_MY_STREAM);
@@ -116,7 +117,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
                     }
                 }
 
-            } else { // User add an activity on his network's Stream
+            } else if (!activity.getType().equals("SPACE_ACTIVITY")) { // User add an activity on his network's Stream
 
                 // Get associated rule : a user add an activity on the Stream of one of his network
                 ruleDto = ruleService.findEnableRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_ADD_ACTIVITY_NETWORK_STREAM);
@@ -188,7 +189,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin impleme
 
 
 
-        if ((parent != null)) {
+        if ((parent != null) && !parent.getType().equals("SPACE_ACTIVITY")) {
             // Get associated rule :
             ruleDto = ruleService.findEnableRuleByTitle(GamificationListener.GAMIFICATION_SOCIAL_COMMENT_NETWORK_STREAM);
 
