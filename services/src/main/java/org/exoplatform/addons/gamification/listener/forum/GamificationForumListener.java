@@ -187,28 +187,32 @@ public class GamificationForumListener extends ForumEventListener implements Gam
         GamificationActionsHistory aHistory = null;
         Topic topic = new Topic();
         // To hold GamificationRule
-        RuleDTO ruleDto = null;
-        // Get associated rule : Reward user who send a relationship request
-        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_FORUM_OPEN_TOPIC);
-        // Topic Owner
-        String topicOwner = null;
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                // Get Topic owner
-                topicOwner = ((Topic)forumService.getObjectNameById(topicId, Utils.TOPIC)).getOwner();
-                if (topicOwner != null && topicOwner.length() != 0) {
-                   String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId();
-                   // ForumUtils.createdForumLink();
-                    aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId(),receiver,ForumUtils.createdSubForumLink(topic.toString(),topicId,true));
-                    gamificationProcessor.execute(aHistory);
-                    // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+
+            RuleDTO ruleDto = null;
+            // Get associated rule : Reward user who send a relationship request
+            ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_FORUM_OPEN_TOPIC);
+            // Topic Owner
+            String topicOwner = null;
+            // Process only when an enable rule is found
+            if (ruleDto != null) {
+                try {
+                    // Get Topic owner
+                    topicOwner = ((Topic) forumService.getObjectNameById(topicId, Utils.TOPIC)).getOwner();
+
+                    if (topicOwner != null && topicOwner.length() != 0 && (!topicOwner.equals(userId))) {
+
+
+                        // ForumUtils.createdForumLink();
+                        aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false).getId(), identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId(), ForumUtils.createdSubForumLink(topic.toString(), topicId, true));
+                        gamificationProcessor.execute(aHistory);
+                        // Gamification simple audit logger
+                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                    }
+
+                } catch (Exception e) {
+                    LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
 
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
-            }
         }
     }
 

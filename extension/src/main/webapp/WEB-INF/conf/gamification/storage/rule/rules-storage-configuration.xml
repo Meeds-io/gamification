@@ -32,10 +32,14 @@
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.RuleService</type>
     </component>
+
+
     <!-- Rule entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>
     </component>
+
+
     <!-- Gamification Settings : Zone -->
     <component>
         <key>org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry</key>
@@ -85,7 +89,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Post on your own stream</value>
+                    <value>You posted an activity</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -116,7 +120,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Comment a post</value>
+                    <value>You commented a post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -149,7 +153,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Like a comment in a space</value>
+                    <value>You liked a comment</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -179,11 +183,11 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Like a comment on one of your Connections stream</value>
+                    <value>Someone liked your comment</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
-                    <value>1</value>
+                    <value>2</value>
                 </value-param>
                 <value-param>
                     <name>rule-zone</name>
@@ -259,6 +263,7 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
@@ -272,7 +277,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add a comment on a Stream of his network</value>
+                    <value>Someone commented your post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -289,6 +294,8 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+
+
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
@@ -302,7 +309,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>User add a comment on any Space Stream</value>
+                    <value>Someone commented your post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -336,7 +343,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Post an activity in a space</value>
+                    <value>You posted an activity</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -366,7 +373,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Someone posts on your stream</value>
+                    <value>Someone posted on your stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -396,8 +403,9 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>As a space manager, someone posts in your space</value>
+                    <value>Someone posted in a space that you manage</value>
                 </value-param>
+
                 <value-param>
                     <name>rule-score</name>
                     <value>1</value>
@@ -426,7 +434,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Post on someone else's stream</value>
+                    <value>You posted an activity</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -456,7 +464,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Post an activity on your stream</value>
+                    <value>You posted an activity</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -489,7 +497,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Like an activity of one of your connections</value>
+                    <value>You liked a post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -519,7 +527,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Like an activity in a space</value>
+                    <value>You liked a post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -549,7 +557,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Receive a Like in a space</value>
+                    <value>Someone liked your post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -579,7 +587,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Receive a Like on your stream</value>
+                    <value>Someone liked your post</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -612,7 +620,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Set a profile picture</value>
+                    <value>You set your profile picture</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -642,7 +650,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Set a banner on your profile</value>
+                    <value>You added a banner on your profile</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -672,7 +680,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Fill "About me" on your profile</value>
+                    <value>You filled "About me" section on your profile</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -705,7 +713,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Create a new space</value>
+                    <value>You created a new space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -735,7 +743,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Join a space</value>
+                    <value>You joined a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -761,7 +769,7 @@
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>grantUserAsLead</value>
+                    <value>You became a manager of a space</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
@@ -798,7 +806,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Invite someone to connect with you</value>
+                    <value>You invited someone to connect</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -828,7 +836,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Receive a connection request</value>
+                    <value>Someone wants to connect with you</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -861,7 +869,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Post a reply in the forum</value>
+                    <value>You replied in the forum</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -891,7 +899,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Start a new topic in the forum</value>
+                    <value>You started a new topic in the forum</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -921,7 +929,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Vote on a topic</value>
+                    <value>You rated a forum topic</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -951,7 +959,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Visit a topic</value>
+                    <value>Someone visited your topic</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -984,7 +992,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Create wiki Page</value>
+                    <value>You created a wiki page</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1014,7 +1022,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Update wiki Page</value>
+                    <value>You Updated a wiki Page</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1048,7 +1056,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Create new Task</value>
+                    <value>You created a task</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1078,7 +1086,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Completed task for assigned</value>
+                    <value>You Completed an assigned task</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1108,7 +1116,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Completed task for coworker</value>
+                    <value>You completed a task as coworker</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1138,7 +1146,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Comment a task</value>
+                    <value>You commented a task</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1168,7 +1176,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Update a task</value>
+                    <value>You updated a task</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1201,7 +1209,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Send a Kudos</value>
+                    <value>You sent a Kudos</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1231,7 +1239,7 @@
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Receive Kudos</value>
+                    <value>Someone sent you a Kudos</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1240,6 +1248,97 @@
                 <value-param>
                     <name>rule-zone</name>
                     <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.addNPSScore</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>addNPSScore</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>You answered the NPS survey</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>10</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Feedback</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.notAnonymousNPSScore</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>notAnonymousNPSScore</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>You answered the NPS survey unanonymously</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>5</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Feedback</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.commentedNPSScore</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>commentedNPSScore</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>You responded to NPS survey with a comment</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>10</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Feedback</value>
                 </value-param>
                 <value-param>
                     <name>rule-enable</name>

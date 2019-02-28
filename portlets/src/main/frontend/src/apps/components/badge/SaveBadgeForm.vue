@@ -1,58 +1,67 @@
 <template>
 
     <div>
-        <b-container fluid>
-            <b-col sm="12">
+        <div class="container fluid">
+			  <div class="col-sm-12 card">
                 <h5 class="mt-0 ">Manage gamification's badges</h5>
-                <b-form-row>
-                    <b-col class="card">
-                        <b-form-group id="titleInputGroup" label="Title:" label-for="titleInput">
-                            <b-form-input id="titleInput" type="text" v-model="badge.title" required placeholder="Enter badge's title">
-                            </b-form-input>
+                <form-row>
+                    <div class="card">
+                        <form-group id="titleInputGroup">
+						<label class="pt-0">Title:</label>
+                            <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
+                            </input>
 
                             <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
                                 Badge title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
-                        </b-form-group>
+                        </form-group>
 
-                        <b-form-group id="descriptionInputGroup" label="Description:" label-for="descriptionInput">
-                            <b-form-textarea id="badgeDescription" v-model="badge.description" placeholder="Enter description" :rows="3" :max-rows="6">
-                            </b-form-textarea>
-                        </b-form-group>
+                        <div id="descriptionInputGroup">
+                         <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
+                            <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
+                            </textarea>
+                        </div>
 
-                        <b-form-group id="neededScoreInputGroup" label="Needed score:" label-for="neededScoreInput">
-                            <b-form-input id="neededScoreInput" type="number" v-model="badge.neededScore" required placeholder="Enter badge's needed score">
-                            </b-form-input>
+                        <form-group id="neededScoreInputGroup" >
+						<label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
+                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
+                            </input>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
                                 Badge needed score is required please enter a value {{dismissCountDown}} ...
                             </b-alert>
-                        </b-form-group>
+                        </form-group>
 
-                        <b-form-group id="iconInputGroup" label="Icon:" label-for="iconInput">
-                            <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                        </b-form-group>
+                         <form-group id="iconInputGroup">
+                         <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
+                         <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+
+                        </form-group>
 
 
-                    </b-col>
-                    <b-col class="card">
 
-                        <b-form-group id="startValidityDateInputGroup " label="Start Validity Date:" label-for="startValidityDateInput">
+
+                    </div>
+                    <div class="card">
+
+                        <form-group id="startValidityDateInputGroup ">
+						 <label id="startValidityInputGroup" for="startValidityInput" class="col-form-label pt-0">Start Validity Date:</label>
 
                             <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
                                 placeholder="Enter badge's start validity date"></date-picker>
-                        </b-form-group>
+                        </form-group>
 
-                        <b-form-group id="endValidityDateInputGroup" label="End Validity Date:" label-for="endValidityDateInput">
+                        <form-group id="endValidityDateInputGroup">
+						<label id="End Validity Date:" class="col-form-label pt-0" label-for="endValidityDateInput">End Validity Date:</label>
                             <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
-                        </b-form-group>
+                        </form-group>
 
-                        <b-form-group id="domainSelectboxGroup">
-                            <b-form-select v-model="badge.domain" class="mb-3" required>
+                        <form-group id="domainSelectboxGroup">
+                            <select v-model="badge.domain" class="mb-3" required>
                                 <template slot="first">
 
-                                    <option :value="null" disabled>-- Please select a domain --</option>
+                                    <option :value="null" disabled placeholder="Please select a domain"></option>
                                 </template>
 
                                 <option value="Social">Social</option>
@@ -60,16 +69,16 @@
                                 <!--
                                 <option value="Content">Content</option>
                                 -->
-                            </b-form-select>
+                            </select>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                 @dismiss-count-down="countDownChanged">
                                 Domain is required please choice a domain {{dismissCountDown}} ...
                             </b-alert>
-                        </b-form-group>
+                        </form-group>
 
-                        <b-form-group id="enableCheckboxGroup">
+                        <div id="enableCheckboxGroup">
                             <b-form-checkbox v-model="badge.enabled">Enable rule</b-form-checkbox>
-                        </b-form-group>
+                        </div>
 
 
                         <b-row>
@@ -79,20 +88,19 @@
                                     {{badge.id ? 'Update' : 'Add'}} badge
                                 </b-button>
                             </b-col>
-                            <b-col>
-                                <b-button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</b-button>
+                            <div>
+                                <button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</button>
 
-                            </b-col>
+                            </div>
                         </b-row>
-                    </b-col>
-                </b-form-row>
-            </b-col>
+                    </div>
+                </form-row>
+            </div>
 
-        </b-container>
+        </div>
     </div>
 
 </template>
-
 <script>
     import Vue from 'vue'
     import axios from 'axios'
@@ -190,6 +198,14 @@
     form {
         margin-bottom: 24px;
     }
+    .card.col label {
+        display: block;
+    }
+    input.custom-file.b-form-file {
+        display: inline-block;
+        height: calc(2.25rem + 2px);
+        position: relative;
+    }
 
     h5.mt-0 {
         color: #4d5466;
@@ -240,8 +256,13 @@
         border-top-color: #3c8dbc;
         margin: 0px 11px;
         padding: 15px;
+        flex-basis: 0;
+        flex-grow: 1;
+        max-width: 100%;
 
     }
+
+
 
     .require-msg {
         max-width: 100% !important;
@@ -263,4 +284,33 @@
     .close:hover {
         color: #000;
     }
+    .card label {
+    display: block;
+    }
+    form-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .btn-primary {
+        background-color: #476a9c;
+        width: max-content;
+        margin-top: 2em;
+    }
+
+
+
+    .custom-file-label:after {
+        position: absolute;
+        right: 5px;
+        text-overflow: ellipsis;
+    }
+
+.custom-file-label {
+    position: relative!important;
+    left: 0;
+    z-index: 1;
+    height: 36px;
+    padding: 0 10px;
+    }
+
 </style>
