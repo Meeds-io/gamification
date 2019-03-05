@@ -3,7 +3,7 @@
     <b-container fluid class="p-4" id="reputation-badge-container">
 
         <div>
-            <h3> Social Badges</h3>
+            <h3> Social Badges </h3>
 
             <b-col md="12" class="text-center no-padding" :key="badge" v-for="badge in badges" v-if="badge.zone === 'Social'"  >
 
@@ -40,7 +40,7 @@
         <div>
 <hr>
  <b-col md="12" class="text-center no-padding" v-for="badge in badges" :key="badge" v-if="badge.zone === 'Knowledge'">
-   <h4>knowledge Badges</h4>
+   <h3>knowledge Badges</h3>
      <div class="protected content bg-indigo">
          <div class="container text-center no-reveal">
              <div class="box">
@@ -179,6 +179,7 @@
     #reputation-badge-container {
         padding-right: 10px !important;
         padding-left: 10px !important;
+        text-align: center;
     }
 
     .title-badges {
@@ -321,7 +322,7 @@
     .protected .box {
         width: 90px;
         height: 90px;
-        margin: 180px auto 20px;
+        margin: 60px auto 20px;
         border-radius: 100%;
         border: 4px solid white;
         background: white;
@@ -386,6 +387,9 @@
         from {
             transform: rotate(360deg); }
     }
-
+.protected.content.bg-indigo {
+    display: flex;
+    flex-wrap: wrap;
+}
 
 </style>

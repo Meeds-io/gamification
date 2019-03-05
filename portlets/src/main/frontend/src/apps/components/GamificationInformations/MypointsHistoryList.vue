@@ -1,8 +1,7 @@
 <template class="">
 
 
-
-    <table class="uiGrid table table-hover table-striped rule-table" hover striped>
+ <table class="uiGrid table table-hover table-striped rule-table" hover striped>
 
         <thead>
         <tr>
@@ -42,6 +41,7 @@
             <b-link @click.prevent="showMore()" href="#">Load More</b-link>
         </div>
     </table>
+
 
 
 </template>
@@ -160,6 +160,7 @@
     }
   .uiGrid.table.table-hover.table-striped.rule-table {
         margin: auto;
+        width: 99%;
     }
 .uiBox {
 
@@ -278,9 +279,7 @@
     .actionIco[data-v-2e935f06] {
         border: 1px solid transparent;
     }
-    .uiGrid.table.table-hover.table-striped.rule-table {
-        margin-left: 30px;
-    }
+
     .uiGrid.table tr th {
         font-weight: bold;
         padding: 10px 10px;
@@ -291,5 +290,62 @@
         width: 35px !important;
         margin: auto;
     }
+
+    @media (max-width: 769px) {
+        .uiGrid.table tr td {
+            border: transparent;
+            padding: 5px 15px;
+        }
+        .uiGrid.table thead tr:first-child {
+            display: none;
+        }
+        .uiGrid.table tr td {
+            /* padding: 5px 0; */
+            /* text-align: center; */
+            display: inline-flex;
+        }
+
+       .uiGrid.table td:nth-child(2) {
+           width: 70%;
+           padding: initial;
+       }
+       .uiGrid.table td:nth-child(3) {
+           margin-left: 3em;
+           margin-right: 1em;
+       }
+       .uiGrid.table td:nth-child(4) {
+           float: right;
+           position: initial;
+           transform: translateY(-60%);
+           margin-right: 1em;
+           font-weight: bold;
+           color: #666;
+       }
+
+ @media (max-width: 434px) {
+
+       .uiGrid.table td:nth-child(5) {
+           margin-left: 50%;
+           transform: translateX(-50%);
+       }
+       .uiGrid.table td:nth-child(2) {
+           width: 55%;
+           padding: initial;
+       }
+        .uiGrid.table td:nth-child(1) {
+            transform: translateY(50%);
+        }
+ }
+
+       /*second vertion*/
+       /*
+       .uiGrid.table tr td:nth-child(1) {
+           display: table-cell;
+       }
+        .uiGrid.table tr td{
+        display: flex;
+        }
+        */
+      }
 
 </style>
