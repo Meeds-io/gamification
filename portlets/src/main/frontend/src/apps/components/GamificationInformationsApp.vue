@@ -1,8 +1,33 @@
 <template>
- <mypoints-history-list></mypoints-history-list>
+
+    <div id="achivements" class="uiBox">
 
 
 
+
+        <tabs
+                :tabs="tabs"
+                :currentTab="currentTab"
+                @onClick="handleClick"
+        />
+        <div class="content">
+
+            <div v-if="currentTab === 'MyPoints'">
+                <mypoints-history-list></mypoints-history-list>
+
+            </div>
+            <div v-else-if="currentTab === 'MyBadges'">
+                <MybadgesInformations></MybadgesInformations>
+            </div>
+
+            <!--
+
+             <div v-else-if="currentTab === 'Gamificationhelp'">
+                 <Gamificationhelp></Gamificationhelp>
+             </div> -->
+
+        </div>
+    </div>
 </template>
 <!--    GamificationInformations portlets  -->
 
@@ -11,18 +36,28 @@
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
     import MybadgesInformations from "./GamificationInformations/MybadgesInformations"
     //import Gamificationhelp from "./GamificationInformations/Gamificationhelp"
-    import TotalPointsFilter from "./GamificationInformations/TotalPointsFilter"
 
-
+    import Tabs from 'vue-tabs-with-active-line';
+    const TABS = [{
+        title: 'My Points',
+        value: 'MyPoints',
+    }, {
+        title: 'My Badges',
+        value: 'MyBadges',
+    }];
     export default {
 
         components:   {
+            MybadgesInformations,
+            Tabs,
             MypointsHistoryList,
-            TotalPointsFilter
+            //    Gamificationhelp,
+
         },
         data: () => ({
             isGamificationEnabled: false,
-
+            tabs: TABS,
+            currentTab: 'MyPoints',
         }),
         methods:{
             handleClick(newTab) {

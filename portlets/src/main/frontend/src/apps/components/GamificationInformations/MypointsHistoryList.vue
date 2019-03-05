@@ -1,8 +1,9 @@
 <template class="">
 
+<div class="total">
+     <total-points-filter></total-points-filter>
 
-
-    <table class="uiGrid table table-hover table-striped rule-table" hover striped>
+ <table class="uiGrid table table-hover table-striped rule-table" hover striped>
 
         <thead>
         <tr>
@@ -43,6 +44,7 @@
         </div>
     </table>
 
+</div>
 
 </template>
 
@@ -160,6 +162,7 @@
     }
   .uiGrid.table.table-hover.table-striped.rule-table {
         margin: auto;
+        width: 99%;
     }
 .uiBox {
 
@@ -275,12 +278,10 @@
     i.uiIconInformation {
         color: #999999;
     }
-    .actionIco[data-v-2e935f06] {
+    .actionIco {
         border: 1px solid transparent;
     }
-    .uiGrid.table.table-hover.table-striped.rule-table {
-        margin-left: 30px;
-    }
+
     .uiGrid.table tr th {
         font-weight: bold;
         padding: 10px 10px;
@@ -291,5 +292,58 @@
         width: 35px !important;
         margin: auto;
     }
+
+    @media (max-width: 769px) {
+        .uiGrid.table tr td {
+            border: transparent;
+            padding: 5px 15px;
+            background:transparent;
+        }
+        .uiGrid.table thead tr:first-child {
+            display: none;
+        }
+        .uiGrid.table tr td {
+            /* padding: 5px 0; */
+            /* text-align: center; */
+            display: inline-flex;
+        }
+
+       .uiGrid.table td:nth-child(2) {
+           width: 70%;
+           padding: initial;
+       }
+       .uiGrid.table td:nth-child(3) {
+        margin-left: 3.2em;
+        font-size: 0.9em;
+        line-height: initial;
+        margin-right: -2em;
+       }
+       .uiGrid.table td:nth-child(4) {
+           float: right;
+           position: initial;
+           transform: translateY(-60%);
+           margin-right: 1em;
+           font-weight: bold;
+           color: #666;
+       }
+        .uiGrid.table td:nth-child(1) {
+           transform: translateY(35%);
+       }
+
+}
+
+ @media (max-width: 434px) {
+       .uiGrid.table td:nth-child(2) {
+           width: 55%;
+           padding: initial;
+       }
+
+
+ }
+
+
+
+
+
 
 </style>
