@@ -1,5 +1,7 @@
 <template class="">
 
+<div class="total">
+     <total-points-filter></total-points-filter>
 
  <table class="uiGrid table table-hover table-striped rule-table" hover striped>
 
@@ -42,7 +44,7 @@
         </div>
     </table>
 
-
+</div>
 
 </template>
 
@@ -276,7 +278,7 @@
     i.uiIconInformation {
         color: #999999;
     }
-    .actionIco[data-v-2e935f06] {
+    .actionIco {
         border: 1px solid transparent;
     }
 
@@ -295,6 +297,7 @@
         .uiGrid.table tr td {
             border: transparent;
             padding: 5px 15px;
+            background:transparent;
         }
         .uiGrid.table thead tr:first-child {
             display: none;
@@ -310,8 +313,10 @@
            padding: initial;
        }
        .uiGrid.table td:nth-child(3) {
-           margin-left: 3em;
-           margin-right: 1em;
+        margin-left: 3.2em;
+        font-size: 0.9em;
+        line-height: initial;
+        margin-right: -2em;
        }
        .uiGrid.table td:nth-child(4) {
            float: right;
@@ -321,31 +326,24 @@
            font-weight: bold;
            color: #666;
        }
+        .uiGrid.table td:nth-child(1) {
+           transform: translateY(35%);
+       }
+
+}
 
  @media (max-width: 434px) {
-
-       .uiGrid.table td:nth-child(5) {
-           margin-left: 50%;
-           transform: translateX(-50%);
-       }
        .uiGrid.table td:nth-child(2) {
            width: 55%;
            padding: initial;
        }
-        .uiGrid.table td:nth-child(1) {
-            transform: translateY(50%);
-        }
+
+
  }
 
-       /*second vertion*/
-       /*
-       .uiGrid.table tr td:nth-child(1) {
-           display: table-cell;
-       }
-        .uiGrid.table tr td{
-        display: flex;
-        }
-        */
-      }
+
+
+
+
 
 </style>
