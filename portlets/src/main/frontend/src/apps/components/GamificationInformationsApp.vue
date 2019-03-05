@@ -1,24 +1,24 @@
 <template>
+ <mypoints-history-list></mypoints-history-list>
 
-    <div id="achivements" class="uiBox">
 
 
-                <mypoints-history-list></mypoints-history-list>
-
-        </div>
 </template>
 <!--    GamificationInformations portlets  -->
 
 <script>
 
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
+    import MybadgesInformations from "./GamificationInformations/MybadgesInformations"
+    //import Gamificationhelp from "./GamificationInformations/Gamificationhelp"
+    import TotalPointsFilter from "./GamificationInformations/TotalPointsFilter"
+
 
     export default {
 
         components:   {
-
             MypointsHistoryList,
-
+            TotalPointsFilter
         },
         data: () => ({
             isGamificationEnabled: false,
