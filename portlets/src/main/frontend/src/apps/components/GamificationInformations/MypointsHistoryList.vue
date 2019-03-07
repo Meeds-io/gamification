@@ -294,51 +294,73 @@
     }
 
     @media (max-width: 769px) {
-        .uiGrid.table tr td {
-            border: transparent;
-            padding: 5px 15px;
-            background:transparent;
-        }
-        .uiGrid.table thead tr:first-child {
-            display: none;
-        }
-        .uiGrid.table tr td {
-            /* padding: 5px 0; */
-            /* text-align: center; */
-            display: inline-flex;
-        }
-
-       .uiGrid.table td:nth-child(2) {
-           width: 70%;
-           padding: initial;
-       }
-       .uiGrid.table td:nth-child(3) {
-        margin-left: 3.2em;
-        font-size: 0.9em;
-        line-height: initial;
-        margin-right: -2em;
-       }
-       .uiGrid.table td:nth-child(4) {
-           float: right;
-           position: initial;
-           transform: translateY(-60%);
-           margin-right: 1em;
-           font-weight: bold;
-           color: #666;
-       }
-        .uiGrid.table td:nth-child(1) {
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        background-color: transparent;
+    }
+    .uiGrid.table tr td {
+        border: transparent;
+        padding: 5px 15px;
+        background:transparent;
+        display: inline-flex;
+    }
+    .uiGrid.table thead tr:first-child {
+        display: none;
+    }
+    .uiGrid.table td:nth-child(1) {
            transform: translateY(35%);
-       }
+           min-width: 2.5em;
+    }
+
+   .uiGrid.table td:nth-child(2) {
+       width: 70%;
+       padding: initial;
+   }
+   .uiGrid.table td:nth-child(3) {
+    margin-left: 4.7em;
+    font-size: 0.9em;
+    line-height: initial;
+    margin-right: -2em;
+   }
+   .uiGrid.table td:nth-child(4) {
+       float: right;
+       position: initial;
+       transform: translateY(-60%);
+       margin-right: 1em;
+       font-weight: bold;
+       color: #666;
+   }
+
+    .uiGrid.table td:nth-child(5) {
+        font-size: 0.9em;
+        padding-right: 0;
+    }
+   .uiGrid.table td:nth-child(5):before {
+       content: '-';
+       padding-right: 2px;
+   }
+   .vue-avatar--wrapper {
+       zoom: 125%;
+   }
 
 }
 
  @media (max-width: 434px) {
        .uiGrid.table td:nth-child(2) {
            width: 55%;
+           text-align: left;
            padding: initial;
        }
-
-
  }
+  @media (max-width: 370px) {
+    .uiGrid.table td:nth-child(3) {
+         margin-left: 4.5em;
+    }
+ }
+ /* @media (max-width: 370px) {
+    .uiGrid.table td:nth-child(5) {
+        transform: translateX(-50%);
+        margin-left: 50%;
+    }
+}*/
 
 </style>
