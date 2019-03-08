@@ -84,7 +84,9 @@
 
     .vue-avatar--wrapper {
         margin: 3px 6px;
-        width: 40px !important;
+        width: 34px!important;
+        zoom: 100%;
+
     }
 
     .d2b-legend:not(.d2b-vertical) .d2b-legend-icon {
@@ -110,7 +112,7 @@
     }
     .space-leaderboard-portlet {
         padding: 10px 10px 10px 10px;
-        width: 380px;
+        width: 360px;
     }
     .d2b-chart-frame .d2b-breadcrumbs-frame:not(.d2b-vertical).d2b-legend-frame, .d2b-chart-frame .d2b-legend-frame:not(.d2b-vertical).d2b-legend-frame {
         height: auto !important;

@@ -86,7 +86,6 @@
 
     .vue-avatar--wrapper {
         margin: 3px 6px;
-        width: 40px !important;
     }
 
     .d2b-legend:not(.d2b-vertical) .d2b-legend-icon {

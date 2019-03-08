@@ -23,9 +23,9 @@
 
 
 
-            <td>  <div class="desc-user">
-                <a :href="user.profileUrl"><avatar :size="35" :src="user.avatarUrl"></avatar></a>
-            </div></td>
+           <td>  <div class="desc-user">
+                           <a :href="user.profileUrl"> <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar></a>
+                       </div></td>
             <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
                 <a v-bind:href="user.objectId" >{{ rule.description}} </a> </td>
             <td>{{user.createdDate}}</td>
@@ -54,7 +54,7 @@
     import { Popover } from 'bootstrap-vue/es/components';
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
-    import Avatar from 'vue-avatar'
+    import Avatar from 'vue-avatar';
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
