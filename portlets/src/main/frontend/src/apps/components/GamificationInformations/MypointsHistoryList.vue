@@ -1,7 +1,6 @@
 <template class="">
 
-<div class="total">
-     <total-points-filter></total-points-filter>
+
 
  <table class="uiGrid table table-hover table-striped rule-table" hover striped>
 
@@ -44,7 +43,7 @@
         </div>
     </table>
 
-</div>
+
 
 </template>
 
