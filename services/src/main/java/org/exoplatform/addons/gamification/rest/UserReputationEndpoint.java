@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
@@ -15,11 +16,13 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.jboss.util.Null;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.parser.Entity;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -112,7 +115,6 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
-
         if (conversationState != null) {
             String profilePageOwner=conversationState.getIdentity().getUserId();
             try {
@@ -150,7 +152,54 @@ public class UserReputationEndpoint implements ResourceContainer {
                     .build();
         }
     }
+    @GET
+    @Path("badgestry")
+    public Response getBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
+
+        //String s = Util.getViewerId(uriInfo);
+
+        //Identity current = Utils.getOwnerIdentity();
+        ConversationState conversationState = ConversationState.getCurrent();
+        if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
+            try {
+
+                if(url!=null){
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                }
+
+
+
+                /** This is a fake */
+                JSONArray allBadges = new JSONArray();
+
+                // Compute user id
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+
+                allBadges = buildProfileBadges(badgesByDomain);
+
+                return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error loading badges belong to user : {} ",profilePageOwner, e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error loading user's badges")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
+        }
+    }
     @GET
     @Path("badge/{badge}/avatar")
     public Response getSpaceAvatarById(@Context UriInfo uriInfo,
@@ -303,78 +352,89 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
 
-    private void buildWonBadgeslvl(String domain, long score, JSONArray userBadges) {
 
-        // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+    private String computeLevel (List<BadgeDTO> allBadges, int index) {
 
-        // A badge
-        JSONObject reputation = null;
+        if (index >= 0 && index < allBadges.size()) {
+            return String.valueOf(allBadges.get(index).getNeededScore());
+        }
+        return "";
+    }
 
-        int i = 0;
-        int k = 0;
-        Iterator<BadgeDTO> iterable = allBadges.iterator();
 
-        while(iterable.hasNext()) {
-            BadgeDTO badgeDTO = iterable.next();
-            if (badgeDTO.getNeededScore() < score) {
 
-                reputation = new JSONObject();
-                try {
 
-                    //computte badge's icon
-                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
-                    reputation.put("url", iconUrl);
-                    reputation.put("description", badgeDTO.getDescription());
-                    reputation.put("id", badgeDTO.getId());
-                    reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getDomain());
-                    reputation.put("level", ++k);
-                    reputation.put("startScore", badgeDTO.getNeededScore());
+    @GET
+    @Path("/try")
+    public Response getAllBadges(@Context UriInfo uriInfo,@Context HttpServletRequest request, @QueryParam("url") String url) {
 
-                    reputation.put("endScore", computeBadgeNextLevel(allBadges,i+1));
+        ConversationState conversationState = ConversationState.getCurrent();
 
-                    userBadges.put(reputation);
-                    ++i;
+        if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
+
+                if(url!=null){
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                }
+            try 
+                {
+                    Response stream = getUserBadges(uriInfo, request, url);
+
+                List<BadgeDTO> allBadges = badgeService.getAllBadges();
+
+                          if (allBadges == stream) {
+
+                              String entity=String.join(stream.toString(),allBadges.toString());
+                              Response.ResponseBuilder ok = Response.ok(entity, MediaType.APPLICATION_JSON);
+                              ok.cacheControl(cacheControl);
+                              Response response = ok.build();
+
+                              return response;
+
+                          }else{
+                              Response response = Response.ok(allBadges, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+
+                              return response;
+
+                          }
 
                 } catch (Exception e) {
 
-                }
+                LOG.error("Error listing all GamificationInformationsPortlet ", profilePageOwner);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error listing all GamificationInformationsPortlet")
+                        .build();
             }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
         }
 
     }
-    private JSONArray buildProfileBadgeslvl(List<ProfileReputation> reputationLis) {
 
-        JSONArray allBadges = new JSONArray();
 
-        if (reputationLis != null && !reputationLis.isEmpty()) {
 
-            for (ProfileReputation rep : reputationLis) {
-                // Compute won badge
-                buildWonBadgeslvl(rep.getDomain(), rep.getScore(), allBadges);
-            }
 
-        }
 
-        return allBadges;
 
-    }
 
     @GET
-    @Path("badges/all")
-    public Response getUserBadgeslvl(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
+    @Path("won")
+    public Response getallBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
-
-        //String s = Util.getViewerId(uriInfo);
-
-        //Identity current = Utils.getOwnerIdentity();
         ConversationState conversationState = ConversationState.getCurrent();
-
-        String profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
-
         if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
             try {
+
+                if(url!=null){
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                }
 
                 /** This is a fake */
                 JSONArray allBadges = new JSONArray();
@@ -382,9 +442,10 @@ public class UserReputationEndpoint implements ResourceContainer {
                 // Compute user id
                 String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
 
+
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
 
-                allBadges = buildProfileBadgeslvl(badgesByDomain);
+                allBadges = buildProfilBadges(badgesByDomain);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -406,29 +467,36 @@ public class UserReputationEndpoint implements ResourceContainer {
         }
     }
 
-
-
     @GET
-    @Path("/try")
-    public Response getAllBadges(@Context UriInfo uriInfo) {
+    @Path("stats")
+    public Response stat(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
         if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
 
             try {
 
-                List<BadgeDTO> allBadges = badgeService.getAllBadges();
+                if ( url != null) {
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
 
-                return Response.ok(allBadges, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+                }
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+
+                // Find user's stats
+                List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(actorId);
+
+                return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
             } catch (Exception e) {
 
-                LOG.error("Error listing all GamificationInformationsPortlet ", e);
+                LOG.error("Error building statistics for user {} ",profilePageOwner, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)
-                        .entity("Error listing all GamificationInformationsPortlet")
+                        .entity("Error building statistics")
                         .build();
             }
 
@@ -438,9 +506,336 @@ public class UserReputationEndpoint implements ResourceContainer {
                     .entity("Unauthorized user")
                     .build();
         }
+    }
+
+    @GET
+    @Path("otherBadges")
+    public Response getotherBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
+
+        ConversationState conversationState = ConversationState.getCurrent();
+        if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
+            try {
+
+                if(url!=null){
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                }
+
+                /** This is a fake */
+                JSONArray allBadges = new JSONArray();
+
+                // Compute user id
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+
+                allBadges = buildProfilNextBadges(badgesByDomain);
+
+                return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error loading badges belong to user : {} ",profilePageOwner, e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error loading user's badges")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
+        }
+    }
+    private void buildWonBadges(String domain, long score, JSONArray userBadges) {
+
+        // Get available badge within the solution
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+
+        // A badge
+        JSONObject reputation = null;
+
+        int i = 0;
+        int k = 0;
+        Iterator<BadgeDTO> iterable = allBadges.iterator();
+
+        while(iterable.hasNext()) {
+            BadgeDTO badgeDTO = iterable.next();
+            reputation = new JSONObject();
+
+            if (badgeDTO.getNeededScore() < score) {
+
+                try {
+
+                    //computte badge's icon
+                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    reputation.put("url", iconUrl);
+                    reputation.put("description", badgeDTO.getDescription());
+                    reputation.put("id", badgeDTO.getId());
+                    reputation.put("title", badgeDTO.getTitle());
+                    reputation.put("zone", badgeDTO.getDomain());
+                    reputation.put("level", ++k);
+                    reputation.put("startScore", badgeDTO.getNeededScore());
+
+                    reputation.put("endScore", computeBadgeNextLevel(allBadges,i+1));
+
+                    userBadges.put(reputation);
+                    ++i;
+
+                } catch (Exception e) {
+
+                }
+            }else if (badgeDTO.getNeededScore() > score) {
+
+                try {
+
+                    //computte badge's icon
+                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    reputation.put("url", iconUrl);
+                    reputation.put("description", badgeDTO.getDescription());
+                    reputation.put("id", badgeDTO.getId());
+                    reputation.put("title", badgeDTO.getTitle());
+                    reputation.put("zone", badgeDTO.getDomain());
+                    reputation.put("level", ++k);
+                    reputation.put("startScore", badgeDTO.getNeededScore());
+
+                    reputation.put("endScore", computeBadgeNextLevel(allBadges, i + 1));
+
+                    userBadges.put(reputation);
+                    ++i;
+
+                } catch (Exception e) {
+                }
+
+
+            } else if (badgeDTO.getNeededScore() == score) {
+
+                    try {
+
+                        //computte badge's icon
+                        String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                        reputation.put("url", iconUrl);
+                        reputation.put("description", badgeDTO.getDescription());
+                        reputation.put("id", badgeDTO.getId());
+                        reputation.put("title", badgeDTO.getTitle());
+                        reputation.put("zone", badgeDTO.getDomain());
+                        reputation.put("level", ++k);
+                        reputation.put("startScore", badgeDTO.getNeededScore());
+
+                        reputation.put("endScore", computeBadgeNextLevel(allBadges,i+1));
+
+                        userBadges.put(reputation);
+                        ++i;
+
+                    } catch (Exception e) { }
+        }}
+
+    }
+
+    @GET
+    @Path("AllofBadges")
+    public Response getAllofBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
+
+        ConversationState conversationState = ConversationState.getCurrent();
+        if (conversationState != null) {
+            String profilePageOwner=conversationState.getIdentity().getUserId();
+            try {
+
+                if(url!=null){
+                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                }
+
+                /** This is a fake */
+                JSONArray allBadges = new JSONArray();
+
+                // Compute user id
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+
+                allBadges = buildallBadges(badgesByDomain,url);
+
+
+
+                return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
+
+
+            } catch (Exception e) {
+
+                LOG.error("Error loading badges belong to user : {} ",profilePageOwner, e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error loading user's badges")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
+        }
+    }
+    private JSONArray buildProfilNextBadges(List<ProfileReputation> reputationLis) {
+
+        JSONArray allBadges = new JSONArray();
+
+        if (reputationLis != null && !reputationLis.isEmpty()) {
+
+            for (ProfileReputation rep : reputationLis) {
+                // Compute won badge
+                buildnextWinBadges(rep.getDomain(), rep.getScore(), allBadges);
+
+            }
+
+        }
+        return allBadges;
+    }
+    private JSONArray buildallBadges(List<ProfileReputation> reputationLis,@QueryParam("url") String url) {
+        ConversationState conversationState = ConversationState.getCurrent();
+
+        JSONArray allBadges = new JSONArray();
+        String profilePageOwner = conversationState.getIdentity().getUserId();
+
+        //Identity current = Utils.getOwnerIdentity();
+        if(url!=null){
+
+            profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+
+
+        }
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+        if (conversationState != null) {
+            if (reputationLis != null && !reputationLis.isEmpty()) {
+
+                for (ProfileReputation rep : reputationLis) {
+                    // Compute won badge
+                    buildWonBadges(rep.getDomain(), rep.getScore(), allBadges);
+
+                }
+
+            }
+
+
+        }
+        return allBadges;
+
+    }
+        private JSONArray buildProfilBadges(List<ProfileReputation> reputationLis) {
+
+        JSONArray allBadges = new JSONArray();
+
+        if (reputationLis != null && !reputationLis.isEmpty()) {
+
+            for (ProfileReputation rep : reputationLis) {
+                // Compute won badge
+                buildWonBadges(rep.getDomain(), rep.getScore(), allBadges);
+
+
+            }
+
+        }
+
+        return allBadges;
 
     }
 
 
+
+    private void builBadge(String domain, long score, JSONArray userBadges) {
+
+        try {
+            // Get available badge within the solution
+            List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+            BadgeDTO badgeDTO = null;
+
+            // A badge
+            JSONObject reputation = null;
+            int index = 0;
+            Iterator<BadgeDTO> iterable = allBadges.iterator();
+            while(iterable.hasNext()) {
+                badgeDTO = iterable.next();
+                if (badgeDTO.getNeededScore() < score) {
+                    ++index;
+                }else if (badgeDTO.getNeededScore() > score) {
+                    ++index;
+                 }else if (badgeDTO.getNeededScore() == score){
+                    ++index;
+                }
+            }
+            if (index > 0) {
+                badgeDTO = allBadges.get(index - 1);
+                reputation = new JSONObject();
+                //computte badge's icon
+                String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                reputation.put("url", iconUrl);
+                reputation.put("description", badgeDTO.getDescription());
+                reputation.put("id", badgeDTO.getId());
+                reputation.put("title", badgeDTO.getTitle());
+                reputation.put("zone", badgeDTO.getDomain());
+                reputation.put("level", index);
+                reputation.put("startScore", badgeDTO.getNeededScore());
+
+                reputation.put("endScore", computeBadgeNextLevel(allBadges, index));
+
+                userBadges.put(reputation);
+            }
+
+        } catch (Exception e) {
+
+        }
+
+
+
+    }
+    private void buildnextWinBadges(String domain, long score, JSONArray userBadges) {
+
+        // Get available badge within the solution
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+
+        // A badge
+        JSONObject reputation = null;
+
+        int i = 0;
+        int k = 0;
+
+        Iterator<BadgeDTO> iterable = allBadges.iterator();
+
+        while(iterable.hasNext()) {
+            BadgeDTO badgeDTO = iterable.next();
+            if (badgeDTO.getNeededScore() > score) {
+
+                reputation = new JSONObject();
+                try {
+
+                    //computte badge's icon
+                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    reputation.put("url", iconUrl);
+                    reputation.put("description", badgeDTO.getDescription());
+                    reputation.put("id", badgeDTO.getId());
+                    reputation.put("title", badgeDTO.getTitle());
+                    reputation.put("zone", badgeDTO.getDomain());
+                    reputation.put("level", ++k);
+
+                    reputation.put("startScore", badgeDTO.getNeededScore());
+
+                    reputation.put("endScore", computeLevel(allBadges,i+1));
+
+                    userBadges.put(reputation);
+                    ++i;
+
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
+    }
 
 }

@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -56,22 +57,30 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     @GET
     @Path("history/all")
-    public Response getAllLeadersByRank(@Context UriInfo uriInfo, @QueryParam("capacity") String capacity) {
+    public Response getAllLeadersByRank(@Context UriInfo uriInfo, @QueryParam("capacity") String capacity, @QueryParam("url") String url) {
 
         ConversationState conversationState = ConversationState.getCurrent();
+        // Get profile owner from url
+        String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
         if (conversationState != null) {
+            boolean isOwner=false;
             List<GamificationHistoryInfo> historyList = new ArrayList<>();
             Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,conversationState.getIdentity().getUserId(), false);
-
+            String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false).getId();
+            if (actorId.equals(identity.getId()) || conversationState.getIdentity().isMemberOf("/platform/administrators")){
+                isOwner=true;
+            }
             try {
 
                 int loadCapacity=10;
                 if (StringUtils.isNotBlank(capacity)){
                     loadCapacity=Integer.parseInt(capacity);
                 }
+
+
                 //find actions History by userid adding a pagination load more capacity filter
                 // List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByUserId(identity.getId(),true,loadCapacity);
-                List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByReceiverId(identity.getId(),true,loadCapacity);
+                List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByReceiverId(actorId,true,loadCapacity);
                 if (ss == null) {
                     return Response.ok(new ArrayList<>(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
                 }
@@ -81,6 +90,8 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
                     // identity = identityManager.getIdentity(element.getUserSocialId(), true);
                     identity = identityManager.getIdentity(element.getUserSocialId(), true);
                     Profile profile= identity.getProfile();
+
+
                     GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
                     // Set SocialId
                     gamificationHistoryInfo.setSocialId(identity.getId());
@@ -106,11 +117,15 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
                     // Set Global Score
                     gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
                     // Set event id
-                    gamificationHistoryInfo.setObjectId(element.getObjectId());
+                    if(isOwner){
+                        gamificationHistoryInfo.setObjectId(element.getObjectId());
+                    }
+
 
                     // log
-                    historyList.add(gamificationHistoryInfo);
-                }
+                    historyList.add(gamificationHistoryInfo);}
+
+
                 return Response.ok(historyList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
             } catch (Exception e) {
                 LOG.error("Error building My points history ", e);

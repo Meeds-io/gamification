@@ -54,7 +54,9 @@
     import { Popover } from 'bootstrap-vue/es/components';
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
-    import Avatar from 'vue-avatar';
+    import Avatar from 'vue-avatar'
+    import TotalPointsFilter from "./TotalPointsFilter";
+
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -69,12 +71,18 @@
             id: null,
             description: '',
             actionTitle:'',
-            isFiltered: false
+            isFiltered: false,
+            selected: null,
+            activeBtn: 'btn1',
+            domain: 'null',
+            show: false,
+            selectedPeriod: 'ALL',
         }
     };
     export default {
         data: initialData,
         components: {
+            TotalPointsFilter,
             Avatar,
         },
         directives: {
@@ -101,10 +109,24 @@
             }
         },
         methods: {
+            filter() {
+                let self = this
+                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
+                    .then(response => {
+                        this.users = response.data;
+
+                    })
+                    .catch(e => {
+                        console.warn(e)
+
+                    })
+
+            },
             showMore() {
+                var url = window.location.pathname
                 let self = this;
                 self.loadCapacity += 10;
-                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'capacity': self.loadCapacity} })
+                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'capacity': self.loadCapacity,'url': url} })
                     .then(response => {
                         this.users = response.data;
                     })
@@ -139,7 +161,8 @@
             },
         },
         created() {
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`)
+            var url = window.location.pathname
+            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
                 .then(response => {
                     this.users = response.data;
                 });
@@ -294,73 +317,78 @@
     }
 
     @media (max-width: 769px) {
-    .table-striped>tbody>tr:nth-of-type(odd) {
-        background-color: transparent;
-    }
-    .uiGrid.table tr td {
-        border: transparent;
-        padding: 5px 15px;
-        background:transparent;
-        display: inline-flex;
-    }
-    .uiGrid.table thead tr:first-child {
-        display: none;
-    }
-    .uiGrid.table td:nth-child(1) {
+        .uiGrid.table tr td {
+            border: transparent;
+            padding: 5px 15px;
+            background:transparent;
+        }
+        .uiGrid.table thead tr:first-child {
+            display: none;
+        }
+        .uiGrid.table tr td {
+            /* padding: 5px 0; */
+            /* text-align: center; */
+            display: inline-flex;
+        }
+
+       .uiGrid.table td:nth-child(2) {
+           width: 70%;
+           padding: initial;
+       }
+       .uiGrid.table td:nth-child(3) {
+           margin-left: 3em;
+           margin-right: 1em;
+       }
+       .uiGrid.table td:nth-child(4) {
+           float: right;
+           position: initial;
+           transform: translateY(-60%);
+           margin-right: 1em;
+           font-weight: bold;
+           color: #666;
+       }
+        .uiGrid.table td:nth-child(1) {
            transform: translateY(35%);
-           min-width: 2.5em;
-    }
+       }
 
-   .uiGrid.table td:nth-child(2) {
-       width: 70%;
-       padding: initial;
-   }
-   .uiGrid.table td:nth-child(3) {
-    margin-left: 4.7em;
-    font-size: 0.9em;
-    line-height: initial;
-    margin-right: -2em;
-   }
-   .uiGrid.table td:nth-child(4) {
-       float: right;
-       position: initial;
-       transform: translateY(-60%);
-       margin-right: 1em;
-       font-weight: bold;
-       color: #666;
-   }
-
-    .uiGrid.table td:nth-child(5) {
-        font-size: 0.9em;
-        padding-right: 0;
-    }
-   .uiGrid.table td:nth-child(5):before {
-       content: '-';
-       padding-right: 2px;
-   }
-   .vue-avatar--wrapper {
-       zoom: 125%;
-   }
 
 }
 
  @media (max-width: 434px) {
        .uiGrid.table td:nth-child(2) {
            width: 55%;
-           text-align: left;
            padding: initial;
        }
- }
-  @media (max-width: 370px) {
-    .uiGrid.table td:nth-child(3) {
-         margin-left: 4.5em;
-    }
- }
- /* @media (max-width: 370px) {
-    .uiGrid.table td:nth-child(5) {
-        transform: translateX(-50%);
-        margin-left: 50%;
-    }
-}*/
+
+
+       /*second vertion*/
+       /*
+       .uiGrid.table tr td:nth-child(1) {
+           display: table-cell;
+       }
+        .uiGrid.table tr td{
+        display: flex;
+        }
+        */
+      }
+ @media (min-width:1189px) {
+     .col.md2 {
+         position: absolute;
+         margin-top: -90px;
+         transform: translateX(-50%);
+         margin-left: 57%;
+     } }
+
+ @media (max-width:1188px) {
+
+
+     .col.md2 {
+         position: absolute;
+         margin-top: -90px;
+         transform: translateX(-50%);
+         margin-left: 51%;
+     }}
+
+
 
 </style>

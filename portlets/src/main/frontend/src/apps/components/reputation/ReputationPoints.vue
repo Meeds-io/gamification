@@ -29,24 +29,12 @@
 
     export default {
         data: initialData,
-        isPointsEnabled: false,
+        //isPointsEnabled: false,
 
         methods: {
 
             gotoLink() {
-                if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
-                    this.isPointsEnabled = false;
-                    return;
-                }
-                if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
-                    this.isPointsEnabled = false;
-                    return;
-                } else {
-                    this.isPointsEnabled = true;
-
-                    window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
-                }
-
+                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
 
             },
         },

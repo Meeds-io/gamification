@@ -13,7 +13,10 @@
         <div class="content">
 
             <div v-if="currentTab === 'MyPoints'">
+                <total-points-filter></total-points-filter>
+
                 <mypoints-history-list></mypoints-history-list>
+
 
             </div>
             <div v-else-if="currentTab === 'MyBadges'">
@@ -27,6 +30,10 @@
              </div> -->
 
         </div>
+
+
+
+
     </div>
 </template>
 <!--    GamificationInformations portlets  -->
@@ -36,7 +43,7 @@
     import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
     import MybadgesInformations from "./GamificationInformations/MybadgesInformations"
     //import Gamificationhelp from "./GamificationInformations/Gamificationhelp"
-
+    import TotalPointsFilter from "./GamificationInformations/TotalPointsFilter"
     import Tabs from 'vue-tabs-with-active-line';
     const TABS = [{
         title: 'My Points',
@@ -52,6 +59,7 @@
             Tabs,
             MypointsHistoryList,
             //    Gamificationhelp,
+            TotalPointsFilter,
 
         },
         data: () => ({
@@ -92,17 +100,10 @@
             },
         },
         created() {
-            if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
-                this.isGamificationEnabled = false;
-                return;
-            }
-            if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
-                this.isGamificationEnabled = false;
-                return;
-            } else {
+
                 this.isGamificationEnabled = true;
                 this.initMenuApp();
-            }
+
 
         }
 

@@ -185,6 +185,8 @@ public class GamificationForumListener extends ForumEventListener implements Gam
     @Override
     public void openTopic(String userId, String topicId) {
         GamificationActionsHistory aHistory = null;
+        GamificationActionsHistory aHistory1 = null;
+
         Topic topic = new Topic();
         // To hold GamificationRule
 
@@ -199,11 +201,14 @@ public class GamificationForumListener extends ForumEventListener implements Gam
                     // Get Topic owner
                     topicOwner = ((Topic) forumService.getObjectNameById(topicId, Utils.TOPIC)).getOwner();
 
-                    if (topicOwner != null && topicOwner.length() != 0 && (!topicOwner.equals(userId))) {
+                    if (topicOwner != null && topicOwner.length() != 0 && (!topicOwner.equals(userId)) ) {
 
 
+                       String sender= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false).getId();
+                        String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId();
                         // ForumUtils.createdForumLink();
-                        aHistory = build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false).getId(), identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId(), ForumUtils.createdSubForumLink(topic.toString(), topicId, true));
+                        aHistory = build(ruleDto,receiver,receiver, ForumUtils.createdSubForumLink(topic.toString(), topicId, true));
+
                         gamificationProcessor.execute(aHistory);
                         // Gamification simple audit logger
                         LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
