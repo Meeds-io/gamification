@@ -8,7 +8,9 @@ Addon can be installed with addon manager : in eXo Platform folder :
 ./addon install exo-gamification 
 
 Overview
+
 The goals of development and production builds differ greatly. In development, we want strong source mapping and a localhost server with live reloading or hot module replacement. In production, our goals shift to a focus on minified bundles, lighter weight source maps, and optimized assets to improve load time.
+
 
 We will write separate webpack configurations for each environment.
 
@@ -17,6 +19,7 @@ We will have 3 configurtions : * production * development * common
 With the "common" configuration in place, we won’t have to duplicate code within the environment-specific configurations.
 
 In order to merge these configurations together, we’ll use a utility called webpack-merge
+
 
 Steps
 Install webpack-merge
@@ -42,10 +45,13 @@ In Babel, a preset is a set of plugins used to support particular language featu
 To configure babel you have to create the following file .babelrc
 
 Why webpack
+
 Installation webpack
+
 We will be using the following Webpack libraries:
 
 webpack
+
 
 webpack-cli: encapsulates all code related to command line interface handling.
 
