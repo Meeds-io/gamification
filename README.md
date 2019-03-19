@@ -18,7 +18,10 @@ The goals of development and production builds differ greatly. In development, w
 
 We will write separate webpack configurations for each environment.
 
-We will have 3 configurtions : * production * development * common
+We will have 3 configurtions :
+* production 
+* development 
+* common
 
 With the "common" configuration in place, we won’t have to duplicate code within the environment-specific configurations.
 
@@ -46,6 +49,7 @@ automatically determines the Babel plugins and polyfills you need based on your 
 babel-preset-stage-3: any transforms in stage-x presets are changes to the language that haven’t been approved to be part of a release of Javascript (such as ES6/ES2015).
 
 Install babel required modules
+-------------------
 npm install --save-dev babel-core babel-preset-env babel-preset-stage-3
 ===============
 
@@ -75,6 +79,8 @@ webpack-cli:
 ===============
 encapsulates all code related to command line interface handling.
 
-webpack-dev-server: serves a webpack app and updates the browser on changes.
+webpack-dev-server:
+-------------------
+serves a webpack app and updates the browser on changes.
 
            npm install --save-dev webpack webpack-cli webpack-dev-server
