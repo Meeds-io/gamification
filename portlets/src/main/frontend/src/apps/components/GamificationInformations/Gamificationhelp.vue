@@ -1,10 +1,8 @@
 <template>
-<span >
-    <div id="uiHowEarnPoint" >
+    <div id="uiHowEarnPoint">
         <h1 class="how-title">How can I earn points ?</h1>
 
-
-        <div class="tab"><button type="button" class="tablinks active" v-on:click="openCategory(event, 'all')">All Domains</button><button type="button" class="tablinks" v-on:click="openCategory(event, 'soc')" >Social</button><button type="button" class="tablinks" v-on:click="openCategory(event, 'Knowledge')">Knowledge</button><button type="button" class="tablinks" v-on:click="openCategory(event, 'Team')">TeamWork</button></div>
+        <div class="tab"><button class="tablinks active" onclick="openCategory(event, 'all')">All Domains</button><button class="tablinks" onclick="openCategory(event, 'soc')">Social</button><button class="tablinks" onclick="openCategory(event, 'Knowledge')">Knowledge</button><button class="tablinks" onclick="openCategory(event, 'Team')">Team Work</button></div>
 
         <div class="tabcontent" id="all" style="display:block">
             <div class="card card-body"><!-- all elements -->
@@ -17,38 +15,62 @@
                         <div aria-labelledby="headingOne" class="in collapse show" data-parent="#accordionExample" id="collapseOne" style="height: auto;">
                             <div class="card-body">
                                 <div class="alignLeft">
-                                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.zone === 'Knowledge'">
-                                        <h6 class="title clearfix">Knowledge</h6>
+                                    <div class="uiBox"  :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                                        <h6 class="title clearfix">Activities rewards</h6>
 
-                                        <div class="noContent"v-if=" rule.title === user.actionTitle" >
+                                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
                                             <div class="row">
                                                 <div class="first-col">{{ rule.description}}</div>
 
                                                 <div class="second-col">{{ rule.score}} Pts</div>
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
 
+                                <div class="alignLeft">
+                                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                                        <h6 class="title clearfix">Comments rewards</h6>
 
+                                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+
+                                            <div class="row">
+                                                <div class="first-col">{{ rule.description}}</div>
+
+                                                <div class="second-col">{{ rule.score}} Pts</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="clearfix">
-
-
                                     <div class="alignLeft">
-                                        <div class="uiBox">
-                                            <h6 class="title clearfix" >Social </h6>
+                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                                            <h6 class="title clearfix">Other rewards</h6>
 
-                                            <div class="noContent" :key="rule.id" v-for="rule in rules"  v-if="rule.zone === 'Social'">
-                                                <div class="row" v-if=" rule.title === user.actionTitle" >
+                                            <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+
+                                                <div class="row">
                                                     <div class="first-col">{{ rule.description}}</div>
 
                                                     <div class="second-col">{{ rule.score}} Pts</div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alignLeft">
+                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                                            <h6 class="title clearfix">Likes rewards</h6>
+
+                                            <div class="noContent":key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
 
 
+                                                <div class="row">
+                                                    <div class="first-col">{{ rule.description}}</div>
+
+                                                    <div class="second-col">{{ rule.score}} Pts</div>
+                                                </div>
                                                 <!-- page iterator --></div>
                                         </div>
                                     </div>
@@ -65,17 +87,17 @@
                         <div aria-labelledby="headingTwo" class="collapse" data-parent="#accordionExample" id="collapseTwo" style="height:0px;">
                             <div class="card-body">
                                 <div class="alignLeft">
-                                    <div class="uiBox">
-                                        <h6 class="title clearfix">Teamwork</h6>
+                                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Teamwork'">
+                                        <h6 class="title clearfix">Team work</h6>
+
+                                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
 
 
-                                        <div class="noContent" :key="rule.id" v-for="rule in rules"  v-if="rule.zone === 'Teamwork'">
-                                            <div class="row" v-if=" rule.title === user.actionTitle">
+                                            <div class="row">
                                                 <div class="first-col">{{ rule.description}}</div>
 
-                                                <div class="second-col">{{ rule.score}}Pts</div>
+                                                <div class="second-col">{{ rule.score}} Pts</div>
                                             </div>
-
                                         </div>
                                         <!-- page iterator --></div>
                                 </div>
@@ -84,46 +106,93 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header" id="heading3 ">
-                            <h5 class="mb-0"><button aria-controls="collapse3" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapse3 " data-toggle="collapse" type="button">Knowledge</button></h5>
+                        <div class="card-header" id="headingThree">
+                            <h5 class="mb-0"><button aria-controls="collapseThree" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseThree" data-toggle="collapse" type="button">Knowledge</button></h5>
                         </div>
 
-                        <div aria-labelledby="headingThree" class="collapse" data-parent="#accordionExample" id="collapse3" style="height:0px;">
+                        <div aria-labelledby="headingThree" class="collapse" data-parent="#accordionExample" id="collapseThree">
                             <div class="card-body">
-                                <div class="alignLeft">
-                                    <div class="uiBox">
-                                        <h6 class="title clearfix">Knowledge</h6>
+                                <div class="clearfix">
+                                    <div class="alignLeft">
+                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
+                                            <h6 class="title clearfix">Forum</h6>
+
+                                            <div class="noContent">
 
 
-                                        <div class="noContent" :key="rule.id" v-for="rule in rules"  v-if="rule.zone === 'Knowledge'">
-                                            <div class="row" v-if=" rule.title === user.actionTitle">
-                                                <div class="first-col">{{ rule.description}}</div>
+                                                <div class="row">
+                                                    <div class="first-col">{{ rule.description}}</div>
 
-                                                <div class="second-col">{{ rule.score}}Pts</div>
+                                                    <div class="second-col">{{ rule.score}} Pts</div>
+                                                </div>
                                             </div>
-
                                         </div>
-                                        <!-- page iterator --></div>
+                                    </div>
+
+
+                                    <div class="alignLeft">
+                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
+                                            <h6 class="title clearfix">Wiki</h6>
+
+                                            <div class="noContent":key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+
+
+                                                <div class="row">
+                                                    <div class="first-col">{{ rule.description}}</div>
+
+                                                    <div class="second-col">{{ rule.score}} Pts</div>
+                                                </div>
+                                            </div>
+                                            <!-- page iterator --></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
                     <!-- end all elements --></div>
             </div>
         </div>
 
 
-
         <div class="tabcontent" id="soc"><!-- Social -->
-            <div class="card card-body"><!--tSocial -->
-                <div class="card-body">
-                    <div class="alignLeft">
-                        <div class="uiBox">
-                            <h6 class="title clearfix">Social</h6>
+            <div class="card card-body">
+                <div class="alignLeft">
+                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                        <h6 class="title clearfix">Activities rewards</h6>
 
-                            <div class="noContent" :key="rule.id" v-for="rule in rules" v-else--if=" rule.title === user.actionTitle" v-if="rule.zone === 'Social'">
+                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+
+
+                            <div class="row">
+                                <div class="first-col">{{ rule.description}}</div>
+
+                                <div class="second-col">{{ rule.score}} Pts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alignLeft">
+                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                        <h6 class="title clearfix">Comments rewards</h6>
+
+                        <div class="noContent":key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+
+
+                            <div class="row">
+                                <div class="first-col">{{ rule.description}}</div>
+
+                                <div class="second-col">{{ rule.score}} Pts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <div class="alignLeft">
+                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area !=''">
+                            <h6 class="title clearfix">Other rewards</h6>
+                            <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
                                 <div class="row">
                                     <div class="first-col">{{ rule.description}}</div>
 
@@ -132,10 +201,26 @@
 
 
                             </div>
-                            <!-- page iterator --></div>
+                        </div>
+                    </div>
+
+                    <div class="alignLeft">
+                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
+                            <h6 class="title clearfix">Likes rewards</h6>
+
+                            <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+
+
+                                <div class="row">
+                                    <div class="first-col">{{ rule.description}}</div>
+
+                                    <div class="second-col">{{ rule.score}} Pts</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!--end team work--></div>
+                <!-- end Social --></div>
         </div>
 
 
@@ -144,17 +229,17 @@
             <div class="card card-body"><!--team work -->
                 <div class="card-body">
                     <div class="alignLeft">
-                        <div class="uiBox">
-                            <h6 class="title clearfix">TeamWork</h6>
+                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area === 'Teamwork'">
+                            <h6 class="title clearfix">Team work</h6>
 
-                            <div class="noContent" :key="rule.id" v-for="rule in rules"  v-if="rule.zone === 'Teamwork'">
-                                <div class="row" v-if=" rule.title === user.actionTitle">
+                            <div class="noContent">
+
+
+                                <div class="row">
                                     <div class="first-col">{{ rule.description}}</div>
 
                                     <div class="second-col">{{ rule.score}} Pts</div>
                                 </div>
-
-
                             </div>
                             <!-- page iterator --></div>
                     </div>
@@ -163,46 +248,49 @@
         </div>
 
 
-        <div class="tabcontent" id="Knowledge">
-            <div class="card card-body">  <!--knowledge -->
+        <div class="tabcontent" id="Knowledge" >
+            <div class="card card-body"><!--knowledge -->
                 <div class="card-body">
                     <div class="alignLeft">
-                        <div class="uiBox">
-                            <h6 class="title clearfix">Knowledge</h6>
+                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
+                            <h6 class="title clearfix">Forum</h6>
 
-                            <div class="noContent"  :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle" v-else--if="rule.zone === 'Knowledge'" >
+                            <div class="noContent">
                                 <div class="row">
                                     <div class="first-col">{{ rule.description}}</div>
 
                                     <div class="second-col">{{ rule.score}} Pts</div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
 
                     <div class="alignLeft">
-                        <div class="uiBox">
-                            <h6 class="title clearfix"></h6>
+                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
+                            <h6 class="title clearfix">Wiki</h6>
 
+                            <div class="noContent">
+                                <div class="row">
+                                    <div class="first-col">{{ rule.description}}</div>
 
+                                    <div class="second-col">{{ rule.score}} Pts</div>
+                                </div>
+                            </div>
                             <!-- page iterator --></div>
                     </div>
                 </div>
                 <!--end knowledge--></div>
         </div>
-
     </div>
-    </span>
-    </template>
+
+
+</template>
 
 <script>
 
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import axios from 'axios';
-    import datahelp from '../../datahelp';
 
     Vue.use(BootstrapVue);
 
@@ -227,7 +315,8 @@ export default {
 
 
     created() {
-        axios.get(`/rest/gamification/gameficationinformationsboard/history/all`)
+        var url = window.location.pathname
+        axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
             .then(response => {
                 this.users = response.data;
             });
@@ -240,6 +329,9 @@ export default {
             })
     }
        }
+
+
+
 </script>
 
 <style scoped>
