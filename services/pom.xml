@@ -46,11 +46,7 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20140107</version>
-        </dependency>
+
         <!-- Portal & ECMS & Social -->
         <dependency>
             <groupId>org.exoplatform.commons</groupId>
@@ -103,6 +99,15 @@
             <artifactId>social-component-webui</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!--  Dep-->
+        <dependency>
+            <groupId>org.exoplatform.integration</groupId>
+            <artifactId>integ-ecms-social</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>org.exoplatform.social</groupId>
             <artifactId>social-component-service</artifactId>
@@ -202,7 +207,8 @@
             <scope>test</scope>
         </dependency>
 
- <!-- End Test-->
+
+        <!-- End Test-->
     </dependencies>
     <build>
         <resources>

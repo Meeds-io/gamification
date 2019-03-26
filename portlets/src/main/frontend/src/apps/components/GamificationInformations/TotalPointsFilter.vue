@@ -9,8 +9,8 @@
                 <span class="tooltiptext">Tooltip text</span>
             </div>
 
-            <h5 class="mt-0">Total Points</h5>
-            <div class="points" >
+            <h4 class="mt-0 center">Total Points</h4>
+            <div class="points">
                 <span>{{reputation.score}} Points</span> </div>
 
         </div>
@@ -151,6 +151,11 @@
         transform: translateX(-50%);
         margin-left: 50%;
     }
-
+    @media (max-width: 440px){
+        .points {
+            margin:8px -15px !important;
+            font-size: 13px;
+        }
+    }
 
 </style>

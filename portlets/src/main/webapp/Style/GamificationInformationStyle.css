@@ -180,13 +180,19 @@ body
     height: 90px;
     margin: 60px auto 20px;
     border-radius: 100%;
-    border: 4px solid white;
     background: white;
     box-shadow: 0 2px 150px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
     transform: translateZ(0); }
 
+
+@media only screen and  (min-width: 767px)and(max-width: 378px)
+{
+.protected .box {
+margin: 20px !important; }
+
+}
 .protected .box:after {
     content: '';
     display: block;
@@ -339,7 +345,7 @@ svg#line-progress {
 
 #achivements .uiGrid.table tr td {
     padding: 5px 0px;
-    text-align: center;
+
 }
 #achivements .uiGrid.table.table-hover.table-striped.rule-table {
     margin: auto;
@@ -472,6 +478,7 @@ i.uiIconInformation {
     margin: 3px 3px;
     width: 35px !important;
     margin: auto;
+    zoom: 115%;
 }
 
 @media (max-width: 769px) {
@@ -495,7 +502,6 @@ i.uiIconInformation {
     }
     #achivements  .uiGrid.table td:nth-child(3) {
         margin-left: 3em;
-        margin-right: 1em;
     }
     #achivements  .uiGrid.table td:nth-child(4) {
         float: right;
@@ -517,6 +523,11 @@ i.uiIconInformation {
         width: 55%;
         padding: initial;
     }
+
+              #achivements .uiGrid.table td:nth-child(5) {
+                  font-size: 0.9em;
+                  padding: 5px 0px !important;
+              }
 
 
     /*second vertion*/
