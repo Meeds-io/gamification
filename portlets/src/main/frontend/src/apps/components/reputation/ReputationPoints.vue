@@ -3,7 +3,7 @@
         <h5  class="mt-0">Achievements</h5>
         <div>
 
-    <div    class="points" ><span><a href ="" @click.prevent="gotoLink()" > {{reputation.score}} Points </a></span> </div>
+    <div    class="points" ><span><a href ="MyConnection Achivements" @click.prevent="gotoLink()" > {{reputation.score}} Points </a></span> </div>
 
         </div>
 

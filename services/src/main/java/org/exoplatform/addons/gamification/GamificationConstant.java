@@ -111,6 +111,15 @@ public interface GamificationConstant {
     /** UPDATE TASK IN TASK ADDON */
     String GAMIFICATION_TASK_ADDON_UPDATE_TASK                                          = "updateTask";
 
+    /***************************************************************************************************************************************************/
+    /*************************************************** CONSTANTS TO MANAGE Knowledge GAMIFICATION Upload Documents **********************************************/
+    /***************************************************************************************************************************************************/
+    /** UPLOAD AND SHARE DOCUMENT ON USER'S NETWORK CONTEXT */
+    String GAMIFICATION_KNOWLEDGE_SHARE_UPLOAD__DOCUMENT_NETWORK_STREAM                           = "uploaddocumentOnNetworkStream";
+
+
+
+
 
 
 }
