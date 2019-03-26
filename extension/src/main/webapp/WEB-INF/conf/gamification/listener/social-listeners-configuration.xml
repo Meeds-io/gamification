@@ -40,7 +40,7 @@
             <type>org.exoplatform.addons.gamification.listener.social.activity.GamificationActivityListener</type>
         </component-plugin>
     </external-component-plugins>
-    <!-- Spaces -->
+ <!-- Spaces -->
     <external-component-plugins>
         <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
         <component-plugin>
