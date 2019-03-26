@@ -26,7 +26,6 @@
         <version>1.0.x-SNAPSHOT</version>
     </parent>
 
-
     <artifactId>gamification-services</artifactId>
     <packaging>jar</packaging>
     <name>eXo Gamification :: Backend Services</name>
@@ -100,12 +99,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--  Dep-->
-        <dependency>
-            <groupId>org.exoplatform.integration</groupId>
-            <artifactId>integ-ecms-social</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
 
 
         <dependency>
