@@ -62,6 +62,7 @@ options{
     font-size: 14px;
     font-weight: bold;
     padding: 5px 0px;
+    text-align: center;
 }
 .cat-badges {
     font-family: 'open_sansregular';
@@ -92,7 +93,11 @@ options{
     font-weight: normal;
     font-family: 'open_sansregular';
 }
-.prog-point {
+.popover-body {
+    text-align: center;
+}
+
+#reputation-badge-container .prog-point {
     background: #f0f8fe;
     min-height: 46px;
     padding: 5px 5px 2px 5px;
@@ -100,6 +105,15 @@ options{
     border-bottom-right-radius: 7px;
     top: 2px;
     position: relative;
+}
+prog-pointS{
+background: #f0f8fe;
+min-height: 46px;
+padding: 5px 5px 2px 5px;
+border-bottom-left-radius: 7px;
+border-bottom-right-radius: 7px;
+top: 2px;
+position: relative;
 }
 .first-number {
     padding-top: 4px;
@@ -306,6 +320,7 @@ svg#line-progress {
 .popover svg#line-progress {
     margin-top: 14px;
     transform: translateY(-12px);
+    margin-left: -42px;
 }
 
 .popover .prog-pointS .progress-bar {
@@ -316,7 +331,7 @@ svg#line-progress {
 }
 .popover .prog-pointS svg#line-progress {
     height: 10px !important;
-    width: 197px !important;
+    width: 193px !important;
 }
 .last-numberS {
     position: absolute !important;
@@ -337,6 +352,30 @@ svg#line-progress {
 }
 
 
+/* test popover
+
+.popover .prog-point .progress-bar {
+    transform: none;
+    height: 10px !important;
+    width: 197px !important;
+    margin-top: 15px !important;
+}
+.popover .prog-point svg#line-progress {
+    height: 10px !important;
+    width: 197px !important;
+}
+*/
+.prog-point{
+    background: #f0f8fe;
+    min-height: 46px;
+    padding: 5px 5px 2px 5px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    top: 2px;
+    position: relative;
+}
+
+
 /****************************************************************************************************************************************************************************************/
 /************************************************************************************My Points****************************************************************************************************/
 /****************************************************************************************************************************************************************************************/
@@ -345,6 +384,7 @@ svg#line-progress {
 
 #achivements .uiGrid.table tr td {
     padding: 5px 0px;
+    text-align: center;
 
 }
 #achivements .uiGrid.table.table-hover.table-striped.rule-table {
@@ -480,28 +520,34 @@ i.uiIconInformation {
     margin: auto;
     zoom: 115%;
 }
-
+/*
 @media (max-width: 769px) {
     #achivements .uiGrid.table tr td {
         border: transparent;
         padding: 5px 15px;
         background:transparent;
     }
+    #achivements .uiGrid.table {
+        border: 1px solid transparent;
+    }
     #achivements  .uiGrid.table thead tr:first-child {
         display: none;
     }
     #achivements  .uiGrid.table tr td {
-        /* padding: 5px 0; */
-        /* text-align: center; */
+
         display: inline-flex;
+    }
+    #achivements .uiGrid.table td:nth-child(1) {
+        transform: translateY(35%);
     }
 
     #achivements  .uiGrid.table td:nth-child(2) {
         width: 70%;
         padding: initial;
     }
-    #achivements  .uiGrid.table td:nth-child(3) {
-        margin-left: 3em;
+    #achivements .uiGrid.table td:nth-child(3) {
+        font-size: 0.9em;
+        padding-right: 0;
     }
     #achivements  .uiGrid.table td:nth-child(4) {
         float: right;
@@ -511,34 +557,34 @@ i.uiIconInformation {
         font-weight: bold;
         color: #666;
     }
-    #achivements .uiGrid.table td:nth-child(1) {
-        transform: translateY(35%);
+    #achivements .uiGrid.table td:nth-child(5) {
+        font-size: 0.9em;
+        padding: 0;
+        padding-left: 0;
     }
 
 
-}
+
+}*/
 
 @media (max-width: 434px) {
     #achivements .uiGrid.table td:nth-child(2) {
         width: 55%;
         padding: initial;
     }
+    #achivements .uiGrid.table tr td {
 
-              #achivements .uiGrid.table td:nth-child(5) {
-                  font-size: 0.9em;
-                  padding: 5px 0px !important;
-              }
-
-
-    /*second vertion*/
-    /*
-    .uiGrid.table tr td:nth-child(1) {
-        display: table-cell;
+        padding: 5px;
     }
-     .uiGrid.table tr td{
-     display: flex;
-     }
-     */
+
+    #achivements .uiGrid.table td:nth-child(5) {
+      font-size: 0.9em;
+      padding: 5px 0px !important;
+    }
+    .uiGrid.table td:nth-child(3) {
+        margin-left: 3.7em;
+    }
+
 }
 @media (min-width:1189px) {
     #achivements .col.md2 {
@@ -566,55 +612,59 @@ i.uiIconInformation {
     }
 }
 
-@media (max-width: 434px) {
+
+@media (max-width: 769px){
+    .table-striped>tbody>tr:nth-of-type(odd){
+        background-color: transparent !important;
+    }
+    #achivements .uiGrid.table {
+        border: 1px solid transparent;
+    }
+    #achivements  .uiGrid.table thead tr:first-child {
+        display: none;
+    }
     #achivements .uiGrid.table tr td {
+        display: inline-flex;
+        border: transparent;
+        padding: 5px;
+        background:transparent;
+        text-align: start;
+    }
+    #achivements .uiGrid.table thead tr:first-child {
+        display: none;
+    }
+    #achivements .uiGrid.table td:nth-child(1) {
+        transform: translateY(35%);
+    }
 
-        padding: 5px 5px !important;
+    #achivements .uiGrid.table td:nth-child(2) {
+        width: 70%;
+        padding: 5px 10px;
     }
     #achivements .uiGrid.table td:nth-child(3) {
-
-        margin-left: 3.2em !important;
-    }
-}
-
-
-@media (max-width: 769px){
-    #achivements .table-striped>tbody>tr:nth-of-type(odd) {
-        background-color: transparent !important;
+        margin-left: 4.5em;
+        font-size: 0.9em;
+        padding-right: 0;
     }
 
+    #achivements  .uiGrid.table td:nth-child(4) {
+        float: right;
+        position: initial;
+        transform: translateY(-60%);
+        padding-right: 10px;
+        font-weight: bold;
+        color: #666;
+    }
     #achivements .uiGrid.table td:nth-child(5) {
         font-size: 0.9em;
+        padding: 0;
+        padding-left: 0;
     }
-    #achivements .uiGrid.table td:nth-child(3) {
-
-        font-size: 0.9em;
-        margin-left: 3.9em !important;
-    }
-
-    #achivements .uiGrid.table td:nth-child(5):BEFORE {
+    .uiGrid.table td:nth-child(5):BEFORE {
         content: '-';
         margin-right: 2px;
     }
-}
-@media (max-width: 769px){
-    #achivements .table-striped>tbody>tr:nth-of-type(odd) {
-        background-color: transparent !important;
-    }
 
-    #achivements .uiGrid.table td:nth-child(5) {
-        font-size: 0.9em;
-    }
-    #achivements .uiGrid.table td:nth-child(3) {
-
-        font-size: 0.9em;
-        margin-left: 3.9em !important;
-    }
-
-    #achivements .uiGrid.table td:nth-child(5):BEFORE {
-        content: '-';
-        margin-right: 2px;
-    }
 }
 /*GLOBAL*/
 

@@ -77,6 +77,25 @@
         vertical-align:middle;
 
     }
+    @media (max-width: 769px) {
+
+        h4.mt-0.center {
+            position: absolute;
+            left: 4.8em;
+            line-height: 37px;
+            font-weight: bold;
+        }
+        .points span{
+            padding-left: 163px;
+            position: relative;
+            line-height: 44px;
+            vertical-align: middle;
+            font-family: sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    }
+
 
     .rep-points {
         padding: 0px 20px;
@@ -150,11 +169,18 @@
         margin: 1em auto;
         transform: translateX(-50%);
         margin-left: 50%;
+        width: max-content;
     }
     @media (max-width: 440px){
         .points {
             margin:8px -15px !important;
             font-size: 13px;
+        }
+        h4.mt-0.center {
+            position: absolute;
+            left: 3.8em;
+            line-height: 37px;
+            font-weight: bold;
         }
     }
 
