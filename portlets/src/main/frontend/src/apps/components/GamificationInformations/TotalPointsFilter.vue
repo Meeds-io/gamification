@@ -84,11 +84,12 @@
             left: 4.8em;
             line-height: 37px;
             font-weight: bold;
+            color:#333;
         }
         .points span{
             padding-left: 163px;
             position: relative;
-            line-height: 44px;
+            line-height: 43px;
             vertical-align: middle;
             font-family: sans-serif;
             font-size: 16px;
@@ -98,7 +99,7 @@
 
 
     .rep-points {
-        padding: 0px 20px;
+        padding: 0 20px;
         clear: both;
         min-height: 50px;
         margin: 0 auto;
@@ -173,7 +174,7 @@
     }
     @media (max-width: 440px){
         .points {
-            margin:8px -15px !important;
+            margin:4px -15px !important;
             font-size: 13px;
         }
         h4.mt-0.center {
