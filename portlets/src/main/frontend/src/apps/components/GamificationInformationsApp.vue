@@ -20,10 +20,10 @@
 
             </div>
 
-            <!--
+
            <div v-else-if="currentTab === 'Gamificationhelp'">
                <Gamificationhelp></Gamificationhelp>
-           </div>-->
+           </div>
 
            <div v-else-if="currentTab === 'MyBadges'">
                <MybadgesInformations></MybadgesInformations>
@@ -58,10 +58,10 @@
         value: 'MyPoints',
     },
 
-    //,{
-      //  title: 'HEP',
-      //  value: 'Gamificationhelp',
-  //  },
+    {
+       title: 'HEP',
+        value: 'Gamificationhelp',
+    },
 
         {
         title: 'My Badges',
@@ -73,7 +73,7 @@
             MybadgesInformations,
             Tabs,
             MypointsHistoryList,
-            //Gamificationhelp,
+            Gamificationhelp,
             TotalPointsFilter,
 
         },
@@ -115,12 +115,12 @@
         },
         created() {
             if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
-                this.isGamificationEnabled = false;
-                return;
+                this.isGamificationEnabled = true;
+                this.initMenuApp();
             }
             if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
-                this.isGamificationEnabled = false;
-                return;
+                this.isGamificationEnabled = true;
+                this.initMenuApp();
             } else {
                 this.isGamificationEnabled = true;
                 this.initMenuApp();

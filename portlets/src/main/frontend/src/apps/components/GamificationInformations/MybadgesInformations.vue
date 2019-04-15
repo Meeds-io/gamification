@@ -279,7 +279,7 @@
                 .then(response => {
                     this.badges = response.data;
                 })
-            axios.get(`/rest/gamification/reputation/stats`)
+            axios.get(`/rest/gamification/reputation/stats`, { params: { 'url': url }})
                 .then(response => {
                     this.progs = response.data;
                 })

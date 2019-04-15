@@ -72,6 +72,7 @@
                                 <option value="Social">Social</option>
                                 <option value="Knowledge">Knowledge</option>
                                 <option value="Teamwork">Teamwork</option>
+                                <option value="Feedback">Feedback</option>
                             </select>
                         </form>
 

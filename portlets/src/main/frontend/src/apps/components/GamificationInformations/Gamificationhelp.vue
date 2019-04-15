@@ -1,106 +1,80 @@
 <template>
-    <div id="uiHowEarnPoint">
+
+
+            <div id="uiHowEarnPoint">
+
         <h1 class="how-title">How can I earn points ?</h1>
 
-        <div class="tab"><button class="tablinks active" onclick="openCategory(event, 'all')">All Domains</button><button class="tablinks" onclick="openCategory(event, 'soc')">Social</button><button class="tablinks" onclick="openCategory(event, 'Knowledge')">Knowledge</button><button class="tablinks" onclick="openCategory(event, 'Team')">Team Work</button></div>
 
-        <div class="tabcontent" id="all" style="display:block">
-            <div class="card card-body"><!-- all elements -->
+       <div class="tab">
+
+           <button class="tablinks active" v-on:click="openCategory($event,'all')"> All Domains</button>
+
+           <button class="tablinks" v-on:click="openCategory($event, 'soc')">Social</button>
+           <button class="tablinks" v-on:click="openCategory($event, 'Team')">Team Work</button>
+           <button class="tablinks" v-on:click="openCategory($event, 'Know')">Knowledge</button>
+
+       </div>
+
+
+         <div  id="all"  name="all" type="display:block" >
+             <div class="card card-body"><!-- all elements -->
                 <div class="clearfix ">
+
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link collapsed" data-target="#collapseOne" data-toggle="collapse" type="button">Social&nbsp;</button></h5>
                         </div>
 
                         <div aria-labelledby="headingOne" class="in collapse show" data-parent="#accordionExample" id="collapseOne" style="height: auto;">
-                            <div class="card-body">
-                                <div class="alignLeft">
-                                    <div class="uiBox"  :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                                        <h6 class="title clearfix">Activities rewards</h6>
 
-                                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-                                            <div class="row">
+                                <div class="tabcontent" id="soc" name="soc" type="hidden">
+                                <div class="alignright">
+
+                                        <div class="uiBox">
+
+                                        <h6 class="title clearfix">Social Activities</h6>
+
+                                        <div class="noContent">
+                                            <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Social' ">
+
                                                 <div class="first-col">{{ rule.description}}</div>
 
                                                 <div class="second-col">{{ rule.score}} Pts</div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="alignLeft">
-                                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                                        <h6 class="title clearfix">Comments rewards</h6>
-
-                                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-                                            <div class="row">
-                                                <div class="first-col">{{ rule.description}}</div>
-
-                                                <div class="second-col">{{ rule.score}} Pts</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="clearfix">
-                                    <div class="alignLeft">
-                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                                            <h6 class="title clearfix">Other rewards</h6>
-
-                                            <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-                                                <div class="row">
-                                                    <div class="first-col">{{ rule.description}}</div>
-
-                                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="alignLeft">
-                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                                            <h6 class="title clearfix">Likes rewards</h6>
-
-                                            <div class="noContent":key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-
-                                                <div class="row">
-                                                    <div class="first-col">{{ rule.description}}</div>
-
-                                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                                </div>
-                                                <!-- page iterator --></div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+                    </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header" id="headingTwo">
-                            <h5 class="mb-0"><button aria-controls="collapseTwo" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseTwo" data-toggle="collapse" type="button">Team work</button></h5>
+                            <h5 class="mb-0">
+                                <button aria-controls="collapseTwo" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseTwo" data-toggle="collapse" type="button">Team work</button></h5>
                         </div>
 
                         <div aria-labelledby="headingTwo" class="collapse" data-parent="#accordionExample" id="collapseTwo" style="height:0px;">
-                            <div class="card-body">
-                                <div class="alignLeft">
-                                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Teamwork'">
-                                        <h6 class="title clearfix">Team work</h6>
 
-                                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
+                            <div class="tabcontent" id="Team" name="Team" type="hidden">
+                                <div class="alignright">
+                                    <div class="uiBox">
+
+                                        <h6 class="title clearfix">Teamwork Activities</h6>
+
+                                        <div class="noContent">
 
 
-                                            <div class="row">
+                                            <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Teamwork'">
                                                 <div class="first-col">{{ rule.description}}</div>
 
                                                 <div class="second-col">{{ rule.score}} Pts</div>
                                             </div>
                                         </div>
-                                        <!-- page iterator --></div>
+                                        <!-- page iterator -->
                                 </div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -111,40 +85,35 @@
                         </div>
 
                         <div aria-labelledby="headingThree" class="collapse" data-parent="#accordionExample" id="collapseThree">
-                            <div class="card-body">
+
+                            <div class="tabcontent" id="Know" name="Know">
+
                                 <div class="clearfix">
-                                    <div class="alignLeft">
-                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
-                                            <h6 class="title clearfix">Forum</h6>
+
+                                    <div class="alignright">
+
+                                        <div class="uiBox">
+
+                                            <h6 class="title clearfix">Knowledge Activities</h6>
 
                                             <div class="noContent">
 
 
-                                                <div class="row">
+
+
+                                                <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Knowledge'">
+
                                                     <div class="first-col">{{ rule.description}}</div>
 
                                                     <div class="second-col">{{ rule.score}} Pts</div>
                                                 </div>
+
+
                                             </div>
-                                        </div>
                                     </div>
+                                </div>
 
 
-                                    <div class="alignLeft">
-                                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
-                                            <h6 class="title clearfix">Wiki</h6>
-
-                                            <div class="noContent":key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-
-                                                <div class="row">
-                                                    <div class="first-col">{{ rule.description}}</div>
-
-                                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                                </div>
-                                            </div>
-                                            <!-- page iterator --></div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -154,135 +123,8 @@
         </div>
 
 
-        <div class="tabcontent" id="soc"><!-- Social -->
-            <div class="card card-body">
-                <div class="alignLeft">
-                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                        <h6 class="title clearfix">Activities rewards</h6>
 
-                        <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-
-                            <div class="row">
-                                <div class="first-col">{{ rule.description}}</div>
-
-                                <div class="second-col">{{ rule.score}} Pts</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="alignLeft">
-                    <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                        <h6 class="title clearfix">Comments rewards</h6>
-
-                        <div class="noContent":key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-
-                            <div class="row">
-                                <div class="first-col">{{ rule.description}}</div>
-
-                                <div class="second-col">{{ rule.score}} Pts</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="clearfix">
-                    <div class="alignLeft">
-                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area !=''">
-                            <h6 class="title clearfix">Other rewards</h6>
-                            <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-                                <div class="row">
-                                    <div class="first-col">{{ rule.description}}</div>
-
-                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                </div>
-
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alignLeft">
-                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area === 'Social'">
-                            <h6 class="title clearfix">Likes rewards</h6>
-
-                            <div class="noContent" :key="user.receiver" v-for="(user, index) in users" v-if=" rule.title === user.actionTitle">
-
-
-                                <div class="row">
-                                    <div class="first-col">{{ rule.description}}</div>
-
-                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- end Social --></div>
-        </div>
-
-
-
-        <div class="tabcontent" id="Team">
-            <div class="card card-body"><!--team work -->
-                <div class="card-body">
-                    <div class="alignLeft">
-                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area === 'Teamwork'">
-                            <h6 class="title clearfix">Team work</h6>
-
-                            <div class="noContent">
-
-
-                                <div class="row">
-                                    <div class="first-col">{{ rule.description}}</div>
-
-                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                </div>
-                            </div>
-                            <!-- page iterator --></div>
-                    </div>
-                </div>
-                <!--end team work--></div>
-        </div>
-
-
-        <div class="tabcontent" id="Knowledge" >
-            <div class="card card-body"><!--knowledge -->
-                <div class="card-body">
-                    <div class="alignLeft">
-                        <div class="uiBox":key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
-                            <h6 class="title clearfix">Forum</h6>
-
-                            <div class="noContent">
-                                <div class="row">
-                                    <div class="first-col">{{ rule.description}}</div>
-
-                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alignLeft">
-                        <div class="uiBox" :key="rule.id" v-for="rule in rules" v-if="rule.area === 'Knowledge'">
-                            <h6 class="title clearfix">Wiki</h6>
-
-                            <div class="noContent">
-                                <div class="row">
-                                    <div class="first-col">{{ rule.description}}</div>
-
-                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                </div>
-                            </div>
-                            <!-- page iterator --></div>
-                    </div>
-                </div>
-                <!--end knowledge--></div>
-        </div>
     </div>
-
 
 </template>
 
@@ -291,7 +133,7 @@
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import axios from 'axios';
-
+    import _ from 'lodash';
     Vue.use(BootstrapVue);
 
 
@@ -302,14 +144,38 @@ export default {
             users: [],
             description: '',
             actionTitle: '',
-            rules: []
+            rules: [],
+            categoryName:['soc','Know','Team']
+               }
+    },
+    computed: {
+        orderedRules: function () {
+            return _.orderBy(this.rules, ['score','description'], ['asc', 'asc'])
+
+
         }
     },
 
-
     methods: {
 
-        openCategory(evt, categoryName){}
+        openCategory:function ($evt,categoryName){
+
+            var i,tabcontent,tablinks;
+            tabcontent = document.getElementsByClassName('tabcontent');
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = 'none';
+            }
+            tablinks = document.getElementsByClassName('tablinks');
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace('active', '');
+            }
+            document.getElementById(categoryName).style.display = 'block';
+            $evt.currentTarget.className += " active";
+
+
+
+
+        }
 
         },
 
@@ -335,7 +201,7 @@ export default {
 </script>
 
 <style scoped>
-    .how-title {
+    #uiHowEarnPoint .how-title {
         background: #578dc9;
         color: #fff;
         text-align: center;
@@ -346,11 +212,11 @@ export default {
         margin: 0;
     }
 
-    div#multiCollapse3 .alignLeft {
+    #uiHowEarnPoint div#multiCollapse3 alignLeft {
         float: inherit !important;
     }
 
-    header {
+    #uiHowEarnPoint header {
         display: block;
         text-align: center;
         background: #578dc9;
@@ -359,11 +225,12 @@ export default {
         border: none;
     }
 
-    .nav-tabs {
+    #uiHowEarnPoint .nav-tabs {
         border-bottom: none;
     }
 
-    .nav-tabs>.active>a, .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus {
+    #uiHowEarnPoint .nav-tabs>.active>a,
+    .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus {
         color: #578dc9;
         background-color: #fff;
         border: none;
@@ -372,7 +239,7 @@ export default {
     }
 
 
-    .tab button {
+    #uiHowEarnPoint .tab button {
         background: #e1e8ee;
         color: #385989;
         text-align: center;
@@ -387,21 +254,26 @@ export default {
         cursor: pointer;
     }
 
-    .tabcontent {
-        display: none;
+    #uiHowEarnPoint .tabcontent {
         padding: 6px 12px;
-        border: none;
         border-top: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
     }
-
-    .tab button.active {
+    #uiHowEarnPoint #all .tabcontent {
+        padding: 6px 12px;
+        border-top: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+    }
+    #uiHowEarnPoint .tab button.active {
         background: #476a9c;
         color: #f0f0f0;
         border-radius: 20px;
         padding: 5px 10px;
         margin: auto 10px;
     }
-    .tab {
+    #uiHowEarnPoint .tab {
         text-align: center;
         background: #578dc9;
         padding: 10px;
@@ -409,7 +281,7 @@ export default {
 
 
 
-    button.btn.btn-link{
+    #uiHowEarnPoint button.btn.btn-link{
         color:#385989;
         text-align: center;
         font-weight: bold;
@@ -418,37 +290,38 @@ export default {
         border-radius: 20px;
         margin-bottom: 0px;
         transition: none;
+        float:left;
     }
-    #Team button.btn.btn-link.collapsed {
+    #uiHowEarnPoint #Team button.btn.btn-link.collapsed {
         margin-bottom: 70px;
-    }
+        float:left;
 
-    h5 button.btn.btn-link.collapsed {
+    }
+    #uiHowEarnPoint #all button.btn.btn-link.collapsed {
+        margin-bottom: 70px;
+        float:left;
+
+    }
+    #uiHowEarnPoint h5 button.btn.btn-link.collapsed {
         color: #578dc9;
         text-align: center;
         font-weight: bold;
         overflow: hidden;
         text-decoration: none;
-        margin-left: 2%;
+
         border: none;
         background: transparent;
         transition: none;
+        float:left;
+        display: block;
     }
 
 
 
 
 
-    .btn.btn-primary, .btn-primary {
-        outline: none;
-        background: #f8f8f8;
-        color: #476a9c;
-        border-radius: 20px;
-        padding: 5px 10px;
-        margin: auto 10px;
-    }
 
-    button.btn.btn-link.collapsed::after {
+    #uiHowEarnPoint button.btn.btn-link.collapsed::after {
         display: inline-block;
         width: 0;
         height: 0;
@@ -459,9 +332,11 @@ export default {
         border-right: .3em solid transparent;
         border-bottom: 0;
         border-left: .3em solid transparent;
+
+
     }
 
-    button.btn.btn-link::after {
+    #uiHowEarnPoint button.btn.btn-link::after {
         display: inline-block;
         width: 0;
         height: 0;
@@ -472,12 +347,11 @@ export default {
         border-right: .3em solid transparent;
         border-bottom: .3em solid;
         border-left: .3em solid transparent;
+
     }
 
 
-
-
-    .uiBox .title{
+    #uiHowEarnPoint .uiBox .title{
         background: #578dc9;
         text-align: center;
         color: #fff !important;
@@ -498,21 +372,21 @@ export default {
         margin-top: 10px;
     }
 
-    .uiBox {
+    #uiHowEarnPoint .uiBox {
 
         border: 1px solid #dedede;
         border-radius: 7px;
         background: #fff;
         float: left;
         width: 90%;
-        margin: 0 auto;
+        margin: 57px auto;
         text-align: center;
         clear: both;
         position: relative;
         margin-left: 5%;
         margin-bottom: 40px;
     }
-    .row{
+    #uiHowEarnPoint .row{
         padding: 17px 0;
         color: #333333;
         font-family: helvetica;
@@ -523,7 +397,7 @@ export default {
         margin-left: 0;
 
     }
-    .first-col{
+    #uiHowEarnPoint .first-col{
         width: 80%;
         color: #333333;
         font-family: helvetica;
@@ -535,7 +409,7 @@ export default {
         text-align: left;
 
     }
-    .second-col{
+    #uiHowEarnPoint .second-col{
         width: 20%;
         color: #4d5466;
         font-family: helvetica;
@@ -543,28 +417,14 @@ export default {
         float: right;
         font-size: 14px;
     }
-    .noContent .row:last-child{
+    #uiHowEarnPoint .noContent .row:last-child{
         border-bottom:0px;
     }
 
-    @media (max-width: 1024px){
-        #uiHowEarnPoint .alignLeft{
-            margin:0px;
-        }
+
+
+    #uiHowEarnPoint h5 {
+        text-align: center;
+        display: flex;
     }
-    @media (max-width: 480px){
-        #uiHowEarnPoint .alignLeft{
-            margin: 0px;
-            width: 100%;
-        }
-
-        div#Team .alignLeft {
-            float: inherit;
-        }
-        div#collapseTwo .alignLeft {
-            float: inherit;
-        }
-
-    }
-
 </style>
