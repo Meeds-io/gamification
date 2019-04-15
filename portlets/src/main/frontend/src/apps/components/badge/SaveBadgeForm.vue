@@ -58,7 +58,7 @@
                         </form-group>
 
                         <form-group id="domainSelectboxGroup">
-                            <select v-model="badge.domain" class="mb-3" required>
+                            <select v-model="badge.domain" class="mb-4" required>
                                 <template slot="first">
 
                                     <option :value="null" disabled placeholder="Please select a domain"></option>
@@ -96,7 +96,7 @@
 
                             </div>
                         </b-row>
-                    </div>
+                    </div>te
                 </form-row>
             </div>
 
@@ -258,7 +258,7 @@
         width: 100%;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
         border-top-color: #3c8dbc;
-        margin: 0px 11px;
+        margin: 10px auto;
         padding: 15px;
         flex-basis: 0;
         flex-grow: 1;
