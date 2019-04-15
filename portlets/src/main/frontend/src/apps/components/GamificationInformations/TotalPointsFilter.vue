@@ -77,9 +77,29 @@
         vertical-align:middle;
 
     }
+    @media (max-width: 769px) {
+
+        h4.mt-0.center {
+            position: absolute;
+            left: 4.8em;
+            line-height: 37px;
+            font-weight: bold;
+            color:#333;
+        }
+        .points span{
+            padding-left: 163px;
+            position: relative;
+            line-height: 43px;
+            vertical-align: middle;
+            font-family: sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    }
+
 
     .rep-points {
-        padding: 0px 20px;
+        padding: 0 20px;
         clear: both;
         min-height: 50px;
         margin: 0 auto;
@@ -150,11 +170,18 @@
         margin: 1em auto;
         transform: translateX(-50%);
         margin-left: 50%;
+        width: max-content;
     }
     @media (max-width: 440px){
         .points {
-            margin:8px -15px !important;
+            margin:4px -15px !important;
             font-size: 13px;
+        }
+        h4.mt-0.center {
+            position: absolute;
+            left: 3.8em;
+            line-height: 37px;
+            font-weight: bold;
         }
     }
 
