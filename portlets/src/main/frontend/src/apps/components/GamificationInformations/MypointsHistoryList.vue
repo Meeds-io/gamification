@@ -37,10 +37,10 @@
 
 
         </tbody>
-
-        <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block">
-            <b-link @click.prevent="showMore()" href="#">Load More</b-link>
-        </div>
+     <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block" @click="showMore()">
+         Load More
+     </div>
+        
     </table>
 
 
