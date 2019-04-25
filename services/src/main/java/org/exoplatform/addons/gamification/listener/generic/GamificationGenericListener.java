@@ -50,8 +50,12 @@ public class GamificationGenericListener extends Listener<Map<String,String>,Str
             try {
                 String sender= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId, false).getId();
                 String receiver=identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId, false).getId();
-                aHistory = build(ruleDto,sender,receiver,obj);
+                if(senderId != receiverId){
+                    aHistory = build(ruleDto,receiver,receiver,obj);}
+                else {
 
+
+                    aHistory = build(ruleDto,sender,receiver,obj);}
                 // Save Gamification Context
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
