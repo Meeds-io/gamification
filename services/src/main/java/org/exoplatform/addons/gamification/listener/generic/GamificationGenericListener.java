@@ -1,21 +1,23 @@
 package org.exoplatform.addons.gamification.listener.generic;
 
+import java.time.LocalDate;
+import java.util.Map;
+
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.GamificationListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
-import java.time.LocalDate;
-import java.util.Map;
+public class GamificationGenericListener extends Listener<Map<String,String>,String>  {
 
-public class GamificationGenericListener extends Listener<Map<String,String>,String> implements GamificationListener  {
-
+  private static final Log LOG = ExoLogger.getLogger(GamificationGenericListener.class);
 
     protected RuleService ruleService;
     protected GamificationProcessor gamificationProcessor;
@@ -51,11 +53,11 @@ public class GamificationGenericListener extends Listener<Map<String,String>,Str
                 String sender= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId, false).getId();
                 String receiver=identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId, false).getId();
                 if(senderId != receiverId){
-                    aHistory = build(ruleDto,receiver,receiver,obj);}
+                    aHistory = gamificationService.build(ruleDto,receiver,receiver,obj);}
                 else {
 
 
-                    aHistory = build(ruleDto,sender,receiver,obj);}
+                    aHistory = gamificationService.build(ruleDto,sender,receiver,obj);}
                 // Save Gamification Context
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger

@@ -1,7 +1,9 @@
 package org.exoplatform.addons.gamification.listener.social.space;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
+
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.GamificationListener;
+
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
@@ -19,7 +21,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import java.time.LocalDate;
 
 @Asynchronous
-public class GamificationSpaceListener extends SpaceListenerPlugin implements GamificationListener {
+public class GamificationSpaceListener extends SpaceListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
     protected RuleService ruleService;
@@ -56,7 +58,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
+                aHistory = gamificationService.build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -109,7 +111,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver = actorId;
-                aHistory = build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
+                aHistory = gamificationService.build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -148,7 +150,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin implements Ga
         if (ruleDto != null) {
             try {
                 String receiver=actorId;
-                aHistory = build(ruleDto, actorId,receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
+                aHistory = gamificationService.build(ruleDto, actorId,receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);

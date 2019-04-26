@@ -1,7 +1,9 @@
 package org.exoplatform.addons.gamification.listener.social.profile;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
+
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.GamificationListener;
+
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
@@ -18,7 +20,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import java.time.LocalDate;
 
 @Asynchronous
-public class GamificationProfileListener extends ProfileListenerPlugin implements GamificationListener {
+public class GamificationProfileListener extends ProfileListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
 
@@ -55,7 +57,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHisoty = build(ruleDto, event.getProfile().getId(),event.getProfile().getId(),"/portal/intranet/profile/");
+                aHisoty = gamificationService.build(ruleDto, event.getProfile().getId(),event.getProfile().getId(),"/portal/intranet/profile/");
 
                 //Save actionHistoy entry
                 gamificationProcessor.execute(aHisoty);
@@ -86,7 +88,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         if (ruleDto != null) {
             try {
                 String receiver =event.getProfile().getId();
-               aHistory = build(ruleDto, event.getProfile().getId(),receiver,"/portal/intranet/profile/");
+               aHistory = gamificationService.build(ruleDto, event.getProfile().getId(),receiver,"/portal/intranet/profile/");
 
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
@@ -139,7 +141,7 @@ public class GamificationProfileListener extends ProfileListenerPlugin implement
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto,event.getProfile().getId(),event.getProfile().getIdentity().getId(),"/portal/intranet/profile/"+event.getProfile().getIdentity().getId());
+                aHistory = gamificationService.build(ruleDto,event.getProfile().getId(),event.getProfile().getIdentity().getId(),"/portal/intranet/profile/"+event.getProfile().getIdentity().getId());
                 // Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
