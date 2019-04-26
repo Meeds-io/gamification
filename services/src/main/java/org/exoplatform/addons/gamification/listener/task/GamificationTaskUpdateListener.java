@@ -1,13 +1,17 @@
 package org.exoplatform.addons.gamification.listener.task;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
+
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.GamificationListener;
+import org.exoplatform.addons.gamification.listener.wiki.GamificationWikiListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -20,7 +24,8 @@ import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.Set;
 
-public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPayload> implements GamificationListener {
+public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPayload> {
+  private static final Log LOG = ExoLogger.getLogger(GamificationTaskUpdateListener.class);
 
     protected RuleService ruleService;
     protected GamificationProcessor gamificationProcessor;
@@ -68,7 +73,7 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(task));
+                aHistory = gamificationService.build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(task));
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
@@ -100,7 +105,7 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, actorId,actorId, TaskUtil.buildTaskURL(after));
+                        aHistory = gamificationService.build(ruleDto, actorId,actorId, TaskUtil.buildTaskURL(after));
 
                         // Save GamificationHistory
                         gamificationProcessor.execute(aHistory);
@@ -128,7 +133,7 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                 // Process only when an enable rule is found
                 if (ruleDto != null) {
                     try {
-                        aHistory = build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(after));
+                        aHistory = gamificationService.build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(after));
 
                         // Save GamificationHistory
                         gamificationProcessor.execute(aHistory);
@@ -153,7 +158,7 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(after));
+                    aHistory = gamificationService.build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(after));
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
                             LocalDate.now(),

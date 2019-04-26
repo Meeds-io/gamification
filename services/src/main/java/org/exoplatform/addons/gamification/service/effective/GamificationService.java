@@ -1,19 +1,23 @@
 package org.exoplatform.addons.gamification.service.effective;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.commons.api.persistence.ExoTransactional;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
+import static java.util.Date.from;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 
-import static java.util.Date.*;
+import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.GamificationUtils;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 public class GamificationService {
 
@@ -21,9 +25,11 @@ public class GamificationService {
 
     protected final GamificationHistoryDAO gamificationHistoryDAO;
 
-    public GamificationService(GamificationHistoryDAO gamificationHistoryDAO) {
+    private IdentityManager identityManager;
 
+    public GamificationService(IdentityManager identityManager, GamificationHistoryDAO gamificationHistoryDAO) {
         this.gamificationHistoryDAO = gamificationHistoryDAO;
+        this.identityManager = identityManager;
     }
 
     @ExoTransactional
@@ -355,4 +361,50 @@ public class GamificationService {
 
     }
 
+  public GamificationActionsHistory build(RuleDTO ruleDto, String actor, String receiver, String objectId) {
+    GamificationActionsHistory aHistory = null;
+    // check if the current user is not a bot
+    Identity actorIdentity = identityManager.getIdentity(actor, false);
+    if (actorIdentity == null || StringUtils.isBlank(actorIdentity.getRemoteId())) {
+      LOG.warn("Actor {} has earned some points but doesn't have a social identity", actor);
+      return null;
+    }
+    if (actorIdentity.isDeleted()) {
+      LOG.warn("Actor {} has earned some points but is marked as deleted", actor);
+      return null;
+    }
+    if (!actorIdentity.isEnable()) {
+      LOG.warn("Actor {} has earned some points but is marked as disabled", actor);
+      return null;
+    }
+    String actorRemoteId = actorIdentity.getRemoteId();
+    if (GamificationUtils.isBlackListed(actorRemoteId)) {
+      LOG.debug("Actor {} has earned some points but is marked as blacklisted", actor);
+      return null;
+    }
+
+    // Buil only an entry when a rule enable and exist
+    if (ruleDto != null) {
+      aHistory = new GamificationActionsHistory();
+      aHistory.setActionScore(ruleDto.getScore());
+      aHistory.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
+      aHistory.setDate(new Date());
+      aHistory.setUserSocialId(actor);
+      aHistory.setActionTitle(ruleDto.getTitle());
+      aHistory.setDomain(ruleDto.getArea());
+      aHistory.setReceiver(receiver);
+      aHistory.setObjectId(objectId);
+      // Set update metadata
+      aHistory.setLastModifiedDate(new Date());
+      aHistory.setLastModifiedBy("Gamification Inner Process");
+      // Set create metadata
+      aHistory.setCreatedBy("Gamification Inner Process");
+
+    }
+    return aHistory;
+  }
+ 
+  public long computeTotalScore(String actorIdentityId) {
+    return gamificationHistoryDAO.computeTotalScore(actorIdentityId);
+  }
 }

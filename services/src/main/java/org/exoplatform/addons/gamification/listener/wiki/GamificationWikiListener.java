@@ -1,7 +1,9 @@
 package org.exoplatform.addons.gamification.listener.wiki;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
+
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.GamificationListener;
+
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
@@ -21,7 +23,7 @@ import org.exoplatform.wiki.utils.WikiConstants;
 import java.time.LocalDate;
 
 @Asynchronous
-public class GamificationWikiListener extends PageWikiListener implements GamificationListener {
+public class GamificationWikiListener extends PageWikiListener {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationWikiListener.class);
     protected RuleService ruleService;
@@ -58,7 +60,7 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
         // Process only when an enable rule is found
         if (ruleDto != null) {
             try {
-                aHistory = build(ruleDto, actorId,actorId,page.getUrl());
+                aHistory = gamificationService.build(ruleDto, actorId,actorId,page.getUrl());
 
                 // Save GamificationHistory
                 gamificationProcessor.execute(aHistory);
@@ -99,7 +101,7 @@ public class GamificationWikiListener extends PageWikiListener implements Gamifi
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    aHistory = build(ruleDto, actorId,actorId,page.getUrl());
+                    aHistory = gamificationService.build(ruleDto, actorId,actorId,page.getUrl());
                     // Save GamificationHistory
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger

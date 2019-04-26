@@ -1,7 +1,9 @@
 package org.exoplatform.addons.gamification.listener.social.relationship;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
+
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.GamificationListener;
+
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
@@ -19,7 +21,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import java.time.LocalDate;
 
 @Asynchronous
-public class GamificationRelationshipListener extends RelationshipListenerPlugin implements GamificationListener {
+public class GamificationRelationshipListener extends RelationshipListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationRelationshipListener.class);
 
@@ -55,7 +57,7 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
         if (ruleDto != null) {
             try {
 
-                aHistory = build(ruleDto,receiver.getId(),sender.getId(),"/portal/intranet/profile/"+receiver.getRemoteId());
+                aHistory = gamificationService.build(ruleDto,receiver.getId(),sender.getId(),"/portal/intranet/profile/"+receiver.getRemoteId());
                 //Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
                 // Gamification simple audit logger
@@ -74,7 +76,7 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
         if (ruleDto != null) {
             try {
 
-                aHistory = build(ruleDto,sender.getId(),receiver.getId(),"/portal/intranet/profile/"+sender.getRemoteId());
+                aHistory = gamificationService.build(ruleDto,sender.getId(),receiver.getId(),"/portal/intranet/profile/"+sender.getRemoteId());
 
                 //Save actionHistory entry
                 gamificationProcessor.execute(aHistory);
