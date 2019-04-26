@@ -81,7 +81,7 @@ import java.util.Date;
         ),
         @NamedQuery(
                     name = "GamificationActionsHistory.computeTotalScore",
-                    query = "SELECT SUM(g.actionScore) FROM GamificationActionsHistory a where a.userSocialId = :socialUserId"
+                    query = "SELECT SUM(a.actionScore) FROM GamificationActionsHistory a where a.userSocialId = :socialUserId"
         )
 })
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
