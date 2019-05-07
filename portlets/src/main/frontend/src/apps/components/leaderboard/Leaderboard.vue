@@ -543,7 +543,7 @@
         color: #4d5466 !important;
         font-family: helvetica;
         border: none;
-
+        background: #ffffff;
         border-radius: inherit !important;
     }
 
@@ -622,5 +622,11 @@
     .load-more {
         float: right;
         padding: 15px;
+        color: #578dc9;
+        font-weight: bold;
+    }
+    .load-more:hover {
+        color: #578dc9ba;
+        cursor: pointer;
     }
 </style>
