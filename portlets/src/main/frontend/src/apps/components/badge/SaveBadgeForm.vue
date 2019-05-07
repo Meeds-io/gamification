@@ -2,40 +2,40 @@
 
     <div>
         <div class="container fluid">
-			  <div class="col-sm-12 card">
+            <div class="col-sm-12 card">
                 <h5 class="mt-0 ">Manage gamification's badges</h5>
                 <form-row>
                     <div class="card">
                         <form-group id="titleInputGroup">
-						<label class="pt-0">Title:</label>
+                            <label class="pt-0">Title:</label>
                             <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
                             </input>
 
                             <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                @dismiss-count-down="countDownChanged">
+                                     @dismiss-count-down="countDownChanged">
                                 Badge title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </form-group>
 
                         <div id="descriptionInputGroup">
-                         <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
+                            <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
                             <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
                         </div>
 
                         <form-group id="neededScoreInputGroup" >
-						<label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
+                            <label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
                             <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
                             </input>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                @dismiss-count-down="countDownChanged">
+                                     @dismiss-count-down="countDownChanged">
                                 Badge needed score is required please enter a value {{dismissCountDown}} ...
                             </b-alert>
                         </form-group>
 
-                         <form-group id="iconInputGroup">
-                         <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
-                         <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                        <form-group id="iconInputGroup">
+                            <label id="iconInput" label-for="iconInput" class="pt-0 "> Icon: </label>
+                            <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
 
                         </form-group>
 
@@ -46,14 +46,14 @@
                     <div class="card">
 
                         <form-group id="startValidityDateInputGroup ">
-						 <label id="startValidityInputGroup" for="startValidityInput" class="col-form-label pt-0">Start Validity Date:</label>
+                            <label id="startValidityInputGroup" for="startValidityInput" class="col-form-label pt-0">Start Validity Date:</label>
 
                             <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
-                                placeholder="Enter badge's start validity date"></date-picker>
+                                         placeholder="Enter badge's start validity date"></date-picker>
                         </form-group>
 
                         <form-group id="endValidityDateInputGroup">
-						<label id="End Validity Date:" class="col-form-label pt-0" label-for="endValidityDateInput">End Validity Date:</label>
+                            <label id="End Validity Date:" class="col-form-label pt-0" label-for="endValidityDateInput">End Validity Date:</label>
                             <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
                         </form-group>
 
@@ -74,7 +74,7 @@
                                 -->
                             </select>
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                @dismiss-count-down="countDownChanged">
+                                     @dismiss-count-down="countDownChanged">
                                 Domain is required please choice a domain {{dismissCountDown}} ...
                             </b-alert>
                         </form-group>
@@ -96,7 +96,7 @@
 
                             </div>
                         </b-row>
-                    </div>te
+                    </div>
                 </form-row>
             </div>
 
@@ -289,7 +289,7 @@
         color: #000;
     }
     .card label {
-    display: block;
+        display: block;
     }
     form-row {
         display: flex;
@@ -309,12 +309,12 @@
         text-overflow: ellipsis;
     }
 
-.custom-file-label {
-    position: relative!important;
-    left: 0;
-    z-index: 1;
-    height: 36px;
-    padding: 0 10px;
+    .custom-file-label {
+        position: relative!important;
+        left: 0;
+        z-index: 1;
+        height: 36px;
+        padding: 0 10px;
     }
 
 </style>
