@@ -90,37 +90,29 @@
         url('/gamification-portlets/skin/fonts/opensans-semibold-webfont.woff') format('woff');
         font-weight: normal;
         font-style: normal;
-
     }
-
     @font-face {
         font-family: 'open_sansbold';
         src: url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff2') format('woff2'),
         url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff') format('woff');
         font-weight: normal;
         font-style: normal;
-
     }
-
     @font-face {
         font-family: 'open_sansregular';
         src: url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff2') format('woff2'),
         url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff') format('woff');
         font-weight: normal;
         font-style: normal;
-
     }
-
     #user-reputation-portlet .img-thumbnail {
         border-radius: 50%;
         height: 60px;
     }
-
     #reputation-badge-container {
         padding-right: 10px !important;
         padding-left: 10px !important;
     }
-
     .title-badges {
         color: #333333;
         font-family: 'open_sanssemibold';
@@ -128,27 +120,23 @@
         font-weight: bold;
         padding: 5px 0px;
     }
-
     .cat-badges {
         font-family: 'open_sansregular';
         color: #333333;
         font-size: 11px;
     }
-
     .date-badges {
         font-family: 'open_sansregular';
         color: #333333;
         font-size: 11px;
         padding-bottom: 5px;
     }
-
     .desc-badges {
         padding: 0px 15px;
         font-family: 'open_sansregular';
         color: #333333;
         padding-bottom: 12px;
     }
-
     .level-badges {
         background: #4f6998;
         padding: 14px 14px 6px;
@@ -161,13 +149,11 @@
         border-radius: 50%;
         font-family: 'open_sansbold';
     }
-
     .level-badges span {
         font-size: 9px;
         font-weight: normal;
         font-family: 'open_sansregular';
     }
-
     .prog-point {
         background: #f0f8fe;
         min-height: 46px;
@@ -177,7 +163,6 @@
         top: 2px;
         position: relative;
     }
-
     .first-number {
         padding-top: 4px;
         border-radius: 50%;
@@ -195,7 +180,6 @@
         line-height: 27px;
         text-align: center;
     }
-
     .last-number {
         font-size: 14px;
         float: left;
@@ -215,7 +199,6 @@
         position: relative;
         padding: 1px;
     }
-
     .bg-red {
         background: #fd7e14;
         border: none;
@@ -224,7 +207,6 @@
         font-size: 20px;
         top: 1px;
     }
-
     .interval {
         height: 2px;
         background: #60a352;
@@ -234,9 +216,7 @@
         width: 91%;
         left: 7px;
     }
-
     @media (min-width: 768px) {
-
         .col-md-4 {
             -ms-flex: 0 0 33.333333%;
             flex: 0 0 33.333333%;
