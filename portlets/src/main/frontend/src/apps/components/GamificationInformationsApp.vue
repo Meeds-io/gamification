@@ -21,10 +21,10 @@
             </div>
 
 
-            <div v-else-if="currentTab === 'Gamificationhelp'">
-                <Gamificationhelp></Gamificationhelp>
+            <!-- <div v-else-if="currentTab === 'Gamificationhelp'">
+               <Gamificationhelp></Gamificationhelp>
             </div>
-
+-->
             <div v-else-if="currentTab === 'MyBadges'">
                 <MybadgesInformations></MybadgesInformations>
             </div>
@@ -58,10 +58,10 @@
         value: 'MyPoints',
     },
 
-        {
-            title: 'HEP',
-            value: 'Gamificationhelp',
-        },
+        //{
+          //  title: 'HEP',
+          //  value: 'Gamificationhelp',
+     //  },
 
         {
             title: 'My Badges',
