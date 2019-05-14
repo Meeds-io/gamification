@@ -15,56 +15,57 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
-public class GamificationGenericListener extends Listener<Map<String,String>,String>  {
 
-  private static final Log LOG = ExoLogger.getLogger(GamificationGenericListener.class);
 
-    protected RuleService ruleService;
-    protected GamificationProcessor gamificationProcessor;
-    protected IdentityManager identityManager;
-    protected GamificationService gamificationService;
+    public class GamificationGenericListener extends Listener<Map<String,String>,String>   {
 
-    public GamificationGenericListener(RuleService ruleService,
+        private static final Log LOG = ExoLogger.getLogger(GamificationGenericListener.class);
+        protected RuleService ruleService;
+        protected GamificationProcessor gamificationProcessor;
+        protected IdentityManager identityManager;
+        protected GamificationService gamificationService;
+
+        public GamificationGenericListener(RuleService ruleService,
                                            GamificationProcessor gamificationProcessor,
                                            IdentityManager identityManager,
                                            GamificationService gamificationService) {
-        this.ruleService = ruleService;
-        this.gamificationProcessor = gamificationProcessor;
-        this.identityManager = identityManager;
-        this.gamificationService = gamificationService;
-    }
+            this.ruleService = ruleService;
+            this.gamificationProcessor = gamificationProcessor;
+            this.identityManager = identityManager;
+            this.gamificationService = gamificationService;
+        }
 
-    @Override
-    public void onEvent(Event<Map<String, String>, String> event) throws Exception {
-        GamificationActionsHistory aHistory = null;
+        @Override
+        public void onEvent(Event<Map<String, String>, String> event) throws Exception {
+            GamificationActionsHistory aHistory = null;
 
-        RuleDTO ruleDto = null;
+            RuleDTO ruleDto = null;
 
-        String ruleTitle=(String) event.getSource().get("ruleTitle");
-        String senderId=(String) event.getSource().get("senderId");
-        String receiverId=(String) event.getSource().get("receiverId");
-        String obj=(String) event.getSource().get("object");
+            String ruleTitle=(String) event.getSource().get("ruleTitle");
+            String senderId=(String) event.getSource().get("senderId");
+            String receiverId=(String) event.getSource().get("receiverId");
+            String obj=(String) event.getSource().get("object");
 
-        ruleDto = ruleService.findEnableRuleByTitle(ruleTitle);
+            ruleDto = ruleService.findEnableRuleByTitle(ruleTitle);
 
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                String sender= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId, false).getId();
-                String receiver=identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId, false).getId();
-                if(senderId != receiverId){
-                    aHistory = gamificationService.build(ruleDto,receiver,receiver,obj);}
-                else {
+            // Process only when an enable rule is found
+            if (ruleDto != null) {
+                try {
+                    String sender= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId, false).getId();
+                    String receiver=identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId, false).getId();
+                    if(senderId != receiverId){
+                        aHistory = gamificationService.build(ruleDto,receiver,receiver,obj);}
+                    else {
 
 
-                    aHistory = gamificationService.build(ruleDto,sender,receiver,obj);}
-                // Save Gamification Context
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+                        aHistory = gamificationService.build(ruleDto,sender,receiver,obj);}
+                    // Save Gamification Context
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                } catch (Exception e) {
+                    LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+                }
             }
         }
     }
-}

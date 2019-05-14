@@ -64,8 +64,6 @@
                 return badge.endScore == 0;
 
             }
-
-
         },
 
         created() {

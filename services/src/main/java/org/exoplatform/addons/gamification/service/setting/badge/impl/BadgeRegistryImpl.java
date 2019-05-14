@@ -114,7 +114,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
             fileItem = fileService.writeFile(fileItem);
 
-           iconFiledId = fileItem.getFileInfo().getId();
+            iconFiledId = fileItem.getFileInfo().getId();
 
         } catch (Exception e) {
 

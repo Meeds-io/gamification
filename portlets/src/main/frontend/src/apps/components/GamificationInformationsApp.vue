@@ -21,10 +21,6 @@
             </div>
 
 
-            <div v-else-if="currentTab === 'Gamificationhelp'">
-                <Gamificationhelp></Gamificationhelp>
-            </div>
-
             <div v-else-if="currentTab === 'MyBadges'">
                 <MybadgesInformations></MybadgesInformations>
             </div>
@@ -48,7 +44,7 @@
     import GamificationInformationStyle from  '../../../../webapp/Style/GamificationInformationStyle.css'
 
     import MybadgesInformations from "./GamificationInformations/MybadgesInformations"
-    import Gamificationhelp from "./GamificationInformations/Gamificationhelp"
+    import Gamificationhelp from "./gamificationearnpoints/Gamificationhelp"
 
 
     import TotalPointsFilter from "./GamificationInformations/TotalPointsFilter"
@@ -57,12 +53,6 @@
         title: 'My Points',
         value: 'MyPoints',
     },
-
-        {
-            title: 'HEP',
-            value: 'Gamificationhelp',
-        },
-
         {
             title: 'My Badges',
             value: 'MyBadges',
@@ -73,7 +63,6 @@
             MybadgesInformations,
             Tabs,
             MypointsHistoryList,
-            Gamificationhelp,
             TotalPointsFilter,
 
         },

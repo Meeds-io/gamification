@@ -63,26 +63,27 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
         // To hold GamificationRule
         RuleDTO ruleDto = null;
 
-   if((!activity.getType().equalsIgnoreCase("LINK_ACTIVITY"))){
 
-       ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_KNOWLEDGE_SHARE_UPLOAD__DOCUMENT_NETWORK_STREAM);
+        if((!activity.getType().equals("SPACE_ACTIVITY") )){
+            if( !activity.getType().equalsIgnoreCase("LINK_ACTIVITY")){
+            ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_KNOWLEDGE_SHARE_UPLOAD__DOCUMENT_NETWORK_STREAM);
 
 
-       if (ruleDto != null){
+            if (ruleDto != null){
                 try {
                     aHistory = gamificationService.build(ruleDto, activity.getPosterId(),activity.getPosterId(),"/portal/intranet/activity?id="+activity.getId());
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
                     LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                    } catch (Exception e) {
+                } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }
             }
-        }
+        }}
 
 
         // Add activity on Space Stream : Compute actor reward
-        if (isSpaceActivity(activity) && !activity.getType().equals("SPACE_ACTIVITY")) {
+      else  if (isSpaceActivity(activity) && !activity.getType().equals("SPACE_ACTIVITY")) {
             // Get associated rule :
             ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM);
 

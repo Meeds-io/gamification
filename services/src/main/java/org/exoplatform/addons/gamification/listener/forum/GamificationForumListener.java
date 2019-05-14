@@ -55,22 +55,6 @@ public class GamificationForumListener extends ForumEventListener {
     @Override
     public void addPost(Post post) {
         Forum forum;
-        /**
-         // Compute Activity
-         String activityId = forumService.getActivityIdForOwnerId(post.getTopicId());
-
-         //
-         if (Utils.isEmpty(activityId)) {
-         ExoSocialActivity forumPostActivity = activityManager.getActivity(activityId);
-
-         //
-         if (forumPostActivity == null) {
-
-         }
-
-         }
-         */
-
         GamificationActionsHistory aHistory = null;
 
         // To hold GamificationRule
@@ -95,12 +79,8 @@ public class GamificationForumListener extends ForumEventListener {
         }
 
     }
-
-
     @Override
     public void updatePost(Post post) {
-
-
     }
 
     @Override
@@ -112,7 +92,6 @@ public class GamificationForumListener extends ForumEventListener {
     public void addTopic(Topic topic) {
 
         GamificationActionsHistory aHistory = null;
-
         // To hold GamificationRule
         RuleDTO ruleDto = null;
 

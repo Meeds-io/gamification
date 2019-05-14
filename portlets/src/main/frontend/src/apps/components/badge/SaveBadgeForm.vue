@@ -34,7 +34,7 @@
                         </form-group>
 
                         <form-group id="iconInputGroup">
-                            <label id="iconInput" label-for="iconInput" class="pt-0 "> Icon: </label>
+                            <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
                             <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
 
                         </form-group>
@@ -96,7 +96,7 @@
 
                             </div>
                         </b-row>
-                    </div>
+                    </div>te
                 </form-row>
             </div>
 
