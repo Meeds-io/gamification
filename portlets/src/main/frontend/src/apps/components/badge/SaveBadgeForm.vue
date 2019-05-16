@@ -3,7 +3,15 @@
     <div>
         <div class="container fluid">
             <div class="col-sm-12 card">
-                <h5 class="mt-0 ">Manage gamification's badges</h5>
+
+                <div>
+                    <div class="btn" id="headingOne">
+                        <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add rule</button></h5>
+                    </div>
+
+                    <div aria-labelledby="headingOne" class="in collapse show" data-parent="#accordionExample" id="collapseOne" style="height: auto;">
+                        <div class="card-body">
+
                 <form-row>
                     <div class="card">
                         <form-group id="titleInputGroup">
@@ -96,8 +104,11 @@
 
                             </div>
                         </b-row>
-                    </div>te
+                    </div>
                 </form-row>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -253,11 +264,9 @@
         position: relative;
         border-radius: 3px;
         background: #ffffff;
-        border-top: 3px solid #d2d6de;
         margin-bottom: 20px;
         width: 100%;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        border-top-color: #3c8dbc;
         margin: 10px auto;
         padding: 15px;
         flex-basis: 0;
@@ -317,4 +326,34 @@
         padding: 0 10px;
     }
 
+
+    div#headingOne:hover {
+        background: transparent;
+    }
+    button.btn.btn-link.primary.collapsed, button.btn.btn-link.primary {
+        background: #3c8dbc;
+        color: white;
+        padding: 5px 10px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        text-decoration: none;
+    }
+    button.btn.btn-link.primary{
+        background: #3c8dbc;
+    }
+    .col-sm-12.card {
+        position: relative;
+        border-radius: 3px;
+        background: #ffffff;
+        margin-bottom: 20px;
+        width: 100%;
+        box-shadow: none;
+        margin: 0 auto;
+        padding: 0;
+        border: none;
+    }
+    .collapse {
+        top: 15px;
+    }
 </style>

@@ -3,7 +3,7 @@
         <b-row>
             <b-col sm="12">
 
-                <table class=" uiGrid table table-hover table-striped badge-table">
+                <table class=" uiGrid table table-hover badge-table">
                     <thead>
                     <tr>
 
@@ -72,11 +72,9 @@
         position: relative;
         border-radius: 3px;
         background: #fff;
-        border-top: 3px solid #d2d6de;
         margin-bottom: 20px;
         width: 96%;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
-        border-top-color: #3c8dbc;
         margin: 30px auto 0;
         margin-bottom: 30px;
     }
@@ -99,5 +97,14 @@
 
     .table-striped>tbody>tr:nth-of-type(odd) {
         background-color: #f9f9f9;
+    }
+    .uiGrid.table td, .uiGrid.table th {
+        border-left: none;
+    }
+    .uiGrid.table thead {
+        border: 1px solid #e1e8ee;
+    }
+    .uiGrid.table {
+        border: none;
     }
 </style>

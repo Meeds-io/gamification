@@ -3,7 +3,7 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12" >
-                <b-col md="6" class="my-1">
+                <!-- <b-col md="6" class="my-1">
                     <b-form-group horizontal label="Filter" class="mb-0">
                       <b-input-group>
                         <b-form-input v-model="filter" placeholder="Type to Search" />
@@ -12,9 +12,9 @@
                         </b-input-group-append>
                       </b-input-group>
                     </b-form-group>
-                  </b-col>
+                  </b-col> -->
 
-                <table striped hover class="uiGrid table table-hover table-striped rule-table">
+                <table striped hover class="uiGrid table table-hover rule-table">
                     <thead>
                         <tr>
                
@@ -84,11 +84,11 @@
         position: relative;
         border-radius: 3px;
         background: #fff;
-        border-top: 3px solid #d2d6de;
+
         margin-bottom: 20px;
         width: 96%;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
-        border-top-color: #3c8dbc;
+
         margin: 30px auto 0;
         margin-bottom: 30px;
 
@@ -101,6 +101,7 @@
         line-height: 1.42857143;
         vertical-align: top;
         text-align:center;
+        border: none;
     }
     .table-hover tbody tr:hover{
         cursor: pointer;

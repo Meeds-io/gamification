@@ -138,4 +138,15 @@
         margin: 0 auto;
         top: 10px;
     }
+    section {
+        background: white;
+        margin: 14px;
+        border: 1px solid #cccccc;
+        border-radius: 0 0 3px 3px;
+        box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
+        -webkit-border-radius: 0 0 3px 3px;
+        -moz-border-radius: 0 0 3px 3px;
+        -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
+        -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
+    }
 </style>
