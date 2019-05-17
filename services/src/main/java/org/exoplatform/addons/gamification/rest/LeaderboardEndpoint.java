@@ -299,31 +299,35 @@ public class LeaderboardEndpoint implements ResourceContainer {
     private LeaderboardInfo buildCurrentUserRank (String identityId, Date date, String domain, List<LeaderboardInfo> leaderboardList ) {
         if (leaderboardList.size() == 0) return null;
         LeaderboardInfo leaderboardInfo = null;
-        String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,identityId, false).getId();
-        if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
+        try {
+            String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,identityId, false).getId();
+            if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
-            // Get GaamificationScore for current user
-            int rank = gamificationService.bluidCurrentUserRank(currentUser, date, domain);
+                // Get GaamificationScore for current user
+                int rank = gamificationService.bluidCurrentUserRank(currentUser, date, domain);
 
-            if (rank > 0) {
+                if (rank > 0) {
 
-                leaderboardInfo = new LeaderboardInfo();
+                    leaderboardInfo = new LeaderboardInfo();
 
-                // Set score
-                leaderboardInfo.setScore(rank);
+                    // Set score
+                    leaderboardInfo.setScore(rank);
 
-                // Set username
-                leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
+                    // Set username
+                    leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
 
-                // Set FullName
-                leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
+                    // Set FullName
+                    leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
 
-                // Set avatar
-                leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
+                    // Set avatar
+                    leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
 
-                // Set profile URL
-                leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
+                    // Set profile URL
+                    leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
+                }
             }
+        } catch (Exception e) {
+            LOG.error("Error building Rank for user {} ", identityId, e);
         }
         return leaderboardInfo;
 
