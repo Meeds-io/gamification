@@ -67,17 +67,29 @@ public class UserReputationEndpoint implements ResourceContainer {
     public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
         ConversationState conversationState = ConversationState.getCurrent();
+        long userReputationScore = 0;
 
         // Get profile owner from url
         String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+        if(profileOwner.equals("profile")){
+            profileOwner= conversationState.getIdentity().getUserId();
+        }
 
-        long userReputationScore = 0;
+
 
         if (conversationState != null) {
             try {
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false).getId();
+
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false);
+
+                if(id==null){
+                    profileOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false);
+                }
+
+                String actorId = id.getId();
 
                 JSONObject reputation = new JSONObject();
 
@@ -122,6 +134,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if(url!=null){
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
                 }
 
                 /** This is a fake */
@@ -130,7 +145,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 // Compute user id
                 Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
 
-                if(id==null || profilePageOwner.equals("profile")){
+                if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
                     id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
                 }
@@ -174,6 +189,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if(url!=null){
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
                 }
 
 
@@ -182,7 +200,16 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+                if(id==null){
+                    profilePageOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                }
+
+                String actorId = id.getId();
+
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
 
@@ -382,6 +409,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if(url!=null){
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
                 }
             try 
                 {
@@ -441,13 +471,24 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if(url!=null){
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
                 }
 
                 /** This is a fake */
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+                if(id==null){
+                    profilePageOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                }
+
+                String actorId = id.getId();
 
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
@@ -487,9 +528,20 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if ( url != null) {
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
 
                 }
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+                if(id==null){
+                    profilePageOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                }
+
+                String actorId = id.getId();
 
 
                 // Find user's stats
@@ -526,13 +578,23 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if(url!=null){
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
                 }
 
                 /** This is a fake */
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+                if(id==null){
+                    profilePageOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                }
+
+                String actorId = id.getId();
 
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
@@ -654,13 +716,23 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 if(url!=null){
                     profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
+                    if(profilePageOwner.equals("profile")){
+                        profilePageOwner= conversationState.getIdentity().getUserId();
+                    }
                 }
 
                 /** This is a fake */
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+                if(id==null){
+                    profilePageOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                }
+
+                String actorId = id.getId();
 
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
@@ -712,12 +784,21 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         //Identity current = Utils.getOwnerIdentity();
         if(url!=null){
-
             profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
-
+            if(profilePageOwner.equals("profile")){
+                profilePageOwner= conversationState.getIdentity().getUserId();
+            }
 
         }
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+        Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+        if(id==null){
+            profilePageOwner= conversationState.getIdentity().getUserId();
+            id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+        }
+
+        String actorId = id.getId();
+
         if (conversationState != null) {
             if (reputationLis != null && !reputationLis.isEmpty()) {
 
