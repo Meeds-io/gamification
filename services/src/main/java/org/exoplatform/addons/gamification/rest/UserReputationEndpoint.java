@@ -14,6 +14,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.jboss.util.Null;
@@ -127,7 +128,13 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false).getId();
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+
+                if(id==null || profilePageOwner.equals("profile")){
+                    profilePageOwner= conversationState.getIdentity().getUserId();
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                }
+                String actorId = id.getId();
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
 
