@@ -57,9 +57,11 @@ public class GamificationTaskCommentListener extends Listener<TaskService, Comme
                 aHistory = gamificationService.build(ruleDto, actorId,actorId, TaskUtil.buildTaskURL(event.getData().getTask()));
 
                 // Save GamificationHistory
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                if(aHistory!=null) {
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
             } catch (Exception e) {
                 LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
             }

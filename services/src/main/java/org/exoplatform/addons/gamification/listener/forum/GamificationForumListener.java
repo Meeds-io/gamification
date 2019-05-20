@@ -70,9 +70,11 @@ public class GamificationForumListener extends ForumEventListener {
                 aHistory = gamificationService.build(ruleDto,identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, post.getOwner(), false).getId(),receiver,ForumUtils.createdSubForumLink(post.toString(),post.getTopicId(),true));
 
                 // Save Gamification Context
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                if(aHistory!=null) {
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -103,10 +105,11 @@ public class GamificationForumListener extends ForumEventListener {
             try {
                 String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId();
                 aHistory = gamificationService.build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(),receiver,ForumUtils.createdSubForumLink(topic.toString(),topic.getId(),true));
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-
+                if(aHistory!=null) {
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -189,10 +192,11 @@ public class GamificationForumListener extends ForumEventListener {
                         String receiver= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId();
                         // ForumUtils.createdForumLink();
                         aHistory = gamificationService.build(ruleDto,receiver,receiver, ForumUtils.createdSubForumLink(topic.toString(), topicId, true));
-
-                        gamificationProcessor.execute(aHistory);
-                        // Gamification simple audit logger
-                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                        if(aHistory!=null) {
+                            gamificationProcessor.execute(aHistory);
+                            // Gamification simple audit logger
+                            LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                        }
                     }
 
                 } catch (Exception e) {
@@ -218,14 +222,15 @@ public class GamificationForumListener extends ForumEventListener {
             // Process only when an enable rule is found
             if (ruleDto != null) {
                 try {
-                    String receiver =identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId();
-                    aHistory = gamificationService.build(ruleDto,identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(),receiver,ForumUtils.createdSubForumLink(topic.toString(),topic.getId(),true));
+                    String receiver = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId();
+                    aHistory = gamificationService.build(ruleDto, identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topic.getOwner(), false).getId(), receiver, ForumUtils.createdSubForumLink(topic.toString(), topic.getId(), true));
 
                     // Save Gamification Context
+                    if(aHistory!=null){
                     gamificationProcessor.execute(aHistory);
                     // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
                 } catch (Exception e) {
                     LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
                 }

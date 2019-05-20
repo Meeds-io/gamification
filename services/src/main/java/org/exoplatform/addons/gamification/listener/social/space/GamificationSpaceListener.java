@@ -61,9 +61,11 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
                 aHistory = gamificationService.build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                if(aHistory!=null) {
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -114,9 +116,11 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
                 aHistory = gamificationService.build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                if(aHistory!=null) {
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
@@ -153,9 +157,11 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
                 aHistory = gamificationService.build(ruleDto, actorId,receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
                 // Save actionHistory entry
-                gamificationProcessor.execute(aHistory);
-                // Gamification simple audit logger
-                LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(),aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                if(aHistory!=null) {
+                    gamificationProcessor.execute(aHistory);
+                    // Gamification simple audit logger
+                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
+                }
             } catch (Exception e) {
                 LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
             }
