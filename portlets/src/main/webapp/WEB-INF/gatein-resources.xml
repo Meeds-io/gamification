@@ -72,6 +72,16 @@
             </depends>
         </module>
     </portlet>
+
+    <portlet>
+        <name>GamificationEarnpointsboard</name>
+        <module>
+            <depends>
+                <module>gamificationearnpoints</module>
+            </depends>
+        </module>
+    </portlet>
+
     <module>
         <name>manageRules</name>
         <script>
@@ -152,6 +162,22 @@
         <script>
             <minify>false</minify>
             <path>/javascript/GamificationInformations/GamificationInformations.bundle.js</path>
+        </script>
+        <depends>
+            <module>jquery</module>
+            <as>jQuery</as>
+        </depends>
+        <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
+    </module>
+
+    <module>
+        <name>gamificationearnpoints</name>
+        <script>
+            <minify>false</minify>
+            <path>/javascript/earnpoints/earnpoints.bundle.js</path>
         </script>
         <depends>
             <module>jquery</module>

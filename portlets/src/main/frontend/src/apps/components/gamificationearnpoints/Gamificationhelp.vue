@@ -8,8 +8,9 @@
                 <!-- Tabulation of domains -->
        <div class="tab">
 
+          <button class="tablinks active">   <a href="gamification-earn-points">All Elements </a> </button>
 
-           <button class="tablinks active" v-on:click="openCategory($event, 'soc')">Social</button>
+           <button class="tablinks" v-on:click="openCategory($event, 'soc')">Social</button>
            <button class="tablinks" v-on:click="openCategory($event, 'Team')">Team Work</button>
            <button class="tablinks" v-on:click="openCategory($event, 'Know')">Knowledge</button>
            <button class="tablinks" v-on:click="openCategory($event, 'feed')">Feedback</button>
@@ -521,5 +522,24 @@ export default {
     #uiHowEarnPoint h5 {
         text-align: center;
         display: flex;
+    }
+
+    #uiHowEarnPoint  a:active, a:hover {
+        outline-width: 0;
+    }
+
+    #uiHowEarnPoint  a, a:hover, a:focus {
+        text-decoration: none;
+
+        color: #f0f0f0;
+    }
+    #uiHowEarnPoint  a{
+        text-decoration: none;
+
+        color: #385989;
+    }
+    #uiHowEarnPoint button.tablinks.active a {
+        text-decoration: none;
+        color: #e7eef9;
     }
 </style>
