@@ -1,28 +1,28 @@
 <template>
 
 
-            <div id="uiHowEarnPoint">
+    <div id="uiHowEarnPoint">
 
         <h1 class="how-title">How can I earn points ?</h1>
 
-                <!-- Tabulation of domains -->
-       <div class="tab">
+        <!-- Tabulation of domains -->
+        <div class="tab">
 
-          <button class="tablinks active">   <a href="gamification-earn-points">All Elements </a> </button>
+            <button class="tablinks active">   <a href="gamification-earn-points">All Elements </a> </button>
 
-           <button class="tablinks" v-on:click="openCategory($event, 'soc')">Social</button>
-           <button class="tablinks" v-on:click="openCategory($event, 'Team')">Team Work</button>
-           <button class="tablinks" v-on:click="openCategory($event, 'Know')">Knowledge</button>
-           <button class="tablinks" v-on:click="openCategory($event, 'feed')">Feedback</button>
-           <button class="tablinks" v-on:click="openCategory($event, 'reward')">Reward</button>
-
-
-
-       </div>
+            <button class="tablinks" v-on:click="openCategory($event, 'soc')">Social</button>
+            <button class="tablinks" v-on:click="openCategory($event, 'Team')">Team Work</button>
+            <button class="tablinks" v-on:click="openCategory($event, 'Know')">Knowledge</button>
+            <button class="tablinks" v-on:click="openCategory($event, 'feed')">Feedback</button>
+            <button class="tablinks" v-on:click="openCategory($event, 'reward')">Reward</button>
 
 
-         <div  >
-             <div class="card card-body">
+
+        </div>
+
+
+        <div  >
+            <div class="card card-body">
                 <div class="clearfix ">
                     <!-- Social Domain Rules -->
 
@@ -33,10 +33,10 @@
 
                         <div aria-labelledby="headingOne" class="in collapse show"  id="collapseOne" style="height: auto;">
 
-                                <div class="tabcontent" id="soc" name="soc" type="hidden">
+                            <div class="tabcontent" id="soc" name="soc" type="hidden">
                                 <div class="alignright">
 
-                                        <div class="uiBox">
+                                    <div class="uiBox">
 
                                         <h6 class="title clearfix">Social Activities</h6>
 
@@ -49,9 +49,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </div>
 
                     <div class="card">
@@ -80,8 +80,8 @@
                                             </div>
                                         </div>
                                         <!-- page iterator -->
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
@@ -120,8 +120,8 @@
 
 
                                             </div>
+                                        </div>
                                     </div>
-                                </div>
 
 
                                 </div>
@@ -231,66 +231,66 @@
     Vue.use(BootstrapVue);
 
 
-export default {
+    export default {
 
-    data() {
-        return {
-            users: [],
-            description: '',
-            actionTitle: '',
-            rules: [],
-            categoryName:['soc','Know','Team','feed']
-               }
-    },
-    computed: {
-        orderedRules: function () {
-            return _.orderBy(this.rules, ['score','description'], ['asc', 'asc'])
-
-
-        }
-    },
-
-    methods: {
-
-        openCategory:function ($evt,categoryName){
-
-            var i,tabcontent,tablinks;
-            tabcontent = document.getElementsByClassName('tabcontent');
-            for (i = 0; i < tabcontent.length; i++) {
-
-                tabcontent[i].style.display = 'none';
+        data() {
+            return {
+                users: [],
+                description: '',
+                actionTitle: '',
+                rules: [],
+                categoryName:['soc','Know','Team','feed']
             }
-            tablinks = document.getElementsByClassName('tablinks');
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace('active', '');
+        },
+        computed: {
+            orderedRules: function () {
+                return _.orderBy(this.rules, ['score','description'], ['asc', 'asc'])
+
+
+            }
+        },
+
+        methods: {
+
+            openCategory:function ($evt,categoryName){
+
+                var i,tabcontent,tablinks;
+                tabcontent = document.getElementsByClassName('tabcontent');
+                for (i = 0; i < tabcontent.length; i++) {
+
+                    tabcontent[i].style.display = 'none';
+                }
+                tablinks = document.getElementsByClassName('tablinks');
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace('active', '');
+                    document.getElementById(categoryName).style.display = 'block';
+                }
                 document.getElementById(categoryName).style.display = 'block';
+                $evt.currentTarget.className += " active";
+
+
+
+
             }
-            document.getElementById(categoryName).style.display = 'block';
-            $evt.currentTarget.className += " active";
-
-
-
-
-        }
 
         },
 
 
-    created() {
-        var url = window.location.pathname
-        axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
-            .then(response => {
-                this.users = response.data;
-            });
-        axios.get(`/rest/gamification/rules/all`)
-            .then(response => {
-                this.rules = response.data;
-            })
-            .catch(e => {
-                this.errors.push(e)
-            })
+        created() {
+            var url = window.location.pathname
+            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
+                .then(response => {
+                    this.users = response.data;
+                });
+            axios.get(`/rest/gamification/rules/all`)
+                .then(response => {
+                    this.rules = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        }
     }
-       }
 
 
 
@@ -302,7 +302,7 @@ export default {
         color: #fff;
         text-align: center;
         font-size: 26px;
-        font-family: myriad pro;
+        font-family: myriad pro, sans-serif;
         padding: 15px 0px;
         font-weight: normal;
         margin: 0;
@@ -366,7 +366,7 @@ export default {
         background: #476a9c;
         color: #f0f0f0;
         border-radius: 20px;
-        padding: 5px 10px;
+        padding: 6px 10px;
         margin: auto 10px;
     }
     #uiHowEarnPoint .tab {
@@ -387,6 +387,7 @@ export default {
         margin-bottom: 0px;
         transition: none;
         float:left;
+        outline: none;
     }
     #uiHowEarnPoint #Team button.btn.btn-link.collapsed {
         margin-bottom: 70px;
@@ -411,12 +412,6 @@ export default {
         float:left;
         display: block;
     }
-
-
-
-
-
-
     #uiHowEarnPoint button.btn.btn-link.collapsed::after {
         display: inline-block;
         width: 0;
@@ -542,4 +537,9 @@ export default {
         text-decoration: none;
         color: #e7eef9;
     }
+    #uiHowEarnPoint button.btn.btn-link{
+
+        display: none;
+    }
+
 </style>
