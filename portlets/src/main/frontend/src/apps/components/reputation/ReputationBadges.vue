@@ -1,10 +1,9 @@
 <template>
 
     <b-container fluid class="p-4" id="reputation-badge-container">
-
         <div>
             <b-col md="4" class="text-center no-padding" v-for="badge in badges" :key="badge">
-                <b-img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" width="70" height="70" />
+                <img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" width="70" height="70" />
 
                 <b-popover :target="'reputation'+badge.id" :placement="'top'" triggers="hover focus" :content="`${badge.description}`">
                     <div class="level-badges">
@@ -18,12 +17,11 @@
                         <div class="first-number">{{badge.startScore}}</div>
                         <hr class="interval">
                         <div class="last-number" v-if="badge.endScore == 0" v-bind:class="{'bg-red': bgBadges(badge)}"> ∞
-                            </div>
+                        </div>
                         <div class="last-number" v-else>{{badge.endScore}}</div>
                     </div>
                 </b-popover>
             </b-col>
-
         </div>
 
     </b-container>
@@ -90,16 +88,16 @@
         font-style: normal;
     }
     @font-face {
-        font-family: 'open_sansbold';
-        src: url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff2') format('woff2'),
-        url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff') format('woff');
+        font-family: 'open_sansregular';
+        src: url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff2') format('woff2'),
+        url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff') format('woff');
         font-weight: normal;
         font-style: normal;
     }
     @font-face {
-        font-family: 'open_sansregular';
-        src: url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff2') format('woff2'),
-        url('/gamification-portlets/skin/fonts/opensans-regular-webfont.woff') format('woff');
+        font-family: 'open_sansbold';
+        src: url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff2') format('woff2'),
+        url('/gamification-portlets/skin/fonts/opensans-bold-webfont.woff') format('woff');
         font-weight: normal;
         font-style: normal;
     }
