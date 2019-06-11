@@ -31,50 +31,8 @@
     <edit-permission>*:/platform/administrators</edit-permission>
     <portlet-application>
       <portlet>
-        <application-ref>presentation</application-ref>
-        <portlet-ref>SingleContentViewer</portlet-ref>
-        <preferences>
-          <preference>
-            <name>workspace</name>
-            <value>collaboration</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>nodeIdentifier</name>
-            <value>/sites/intranet/web contents/site artifacts/How can I earn points ?</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>ShowPrintAction</name>
-            <value>false</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>ShowTitle</name>
-            <value>false</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>ShowDate</name>
-            <value>false</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>ShowOptionBar</name>
-            <value>false</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>ContextEnable</name>
-            <value>true</value>
-            <read-only>false</read-only>
-          </preference>
-          <preference>
-            <name>ParameterName</name>
-            <value>content-id</value>
-            <read-only>false</read-only>
-          </preference>
-        </preferences>
+        <application-ref>gamification-portlets</application-ref>
+        <portlet-ref>GamificationEarnpointsboard</portlet-ref>
       </portlet>
       <title>Detail</title>
       <access-permissions>Everyone</access-permissions>
@@ -135,4 +93,8 @@
     </container>
   </page>
 
-  </page-set>
+
+
+
+
+</page-set>

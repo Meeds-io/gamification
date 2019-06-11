@@ -107,4 +107,16 @@
         </portlet-info>
     </portlet>
 
+
+    <portlet>
+        <portlet-name>GamificationEarnpointsboard</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.earnpoints.EarnPointsPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Gamification How To Earn Points</title>
+        </portlet-info>
+    </portlet>
+
 </portlet-app>
