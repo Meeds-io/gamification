@@ -115,9 +115,7 @@ options{
     top: 2px;
     position: relative;
 }
-.prog-pointS .first-number {
-    top: -3px;
-}
+
 .first-number {
     padding-top: 4px;
     border-radius: 50%;
