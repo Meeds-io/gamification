@@ -4,9 +4,9 @@
             <div class="col-sm-12 card">
 
                 <div>
-                    <div class="btn" id="headingOne">
+                  <!--  <div class="btn" id="headingOne">
                         <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add rule</button></h5>
-                    </div>
+                    </div> -->
 
                     <div aria-labelledby="headingOne" class="in collapse show" data-parent="#accordionExample" id="collapseOne" style="height: auto;">
                         <div class="card-body">

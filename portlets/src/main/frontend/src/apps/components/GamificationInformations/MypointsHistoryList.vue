@@ -1,10 +1,6 @@
 <template class="">
-
-
-
  <table class="uiGrid table table-hover table-striped rule-table" hover striped>
-
-        <thead>
+    <thead>
         <tr>
             <th class="rule-name-col"></th>
             <th class="rule-name-col">Event</th>

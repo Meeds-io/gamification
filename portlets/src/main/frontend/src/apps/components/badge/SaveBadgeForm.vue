@@ -5,9 +5,9 @@
             <div class="col-sm-12 card">
 
                 <div>
-                    <div class="btn" id="headingOne">
-                        <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add rule</button></h5>
-                    </div>
+                  <!--  <div class="btn" id="headingOne">
+                        <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add badge</button></h5>
+                    </div> -->
 
                     <div aria-labelledby="headingOne" class="in collapse show" data-parent="#accordionExample" id="collapseOne" style="height: auto;">
                         <div class="card-body">
@@ -88,7 +88,7 @@
                         </form-group>
 
                         <div id="enableCheckboxGroup">
-                            <b-form-checkbox v-model="badge.enabled">Enable rule</b-form-checkbox>
+                            <b-form-checkbox v-model="badge.enabled">Enable badge</b-form-checkbox>
                         </div>
 
 
