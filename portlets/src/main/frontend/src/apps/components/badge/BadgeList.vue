@@ -3,10 +3,9 @@
         <b-row>
             <b-col sm="12">
 
-                <table class=" uiGrid table table-hover table-striped badge-table">
+                <table class=" uiGrid table table-hover badge-table">
                     <thead>
                     <tr>
-
                         <th class="badge-title-col">Title</th>
                         <th class="badge-desc-col">Description</th>
                         <th class="badge-nedded-score-col">Needed Score</th>
@@ -23,7 +22,7 @@
                         <td class="badge-desc-col">{{badge.description}}</td>
                         <td class="badge-needed-score-col">{{badge.neededScore}}</td>
                         <td class="badge-domain-col">{{badge.domain}}</td>
-                        <td class="badge-icon-col"><b-img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/></td>
+                        <td class="badge-icon-col"><img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/></td>
                         <td class="badge-status-col">{{badge.enabled}}</td>
                         <td class="badge-created-date-col">{{badge.createdBy}}</td>
                         <td class="center actionContainer">
@@ -72,11 +71,9 @@
         position: relative;
         border-radius: 3px;
         background: #fff;
-        border-top: 3px solid #d2d6de;
         margin-bottom: 20px;
         width: 96%;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
-        border-top-color: #3c8dbc;
         margin: 30px auto 0;
         margin-bottom: 30px;
     }
@@ -99,5 +96,14 @@
 
     .table-striped>tbody>tr:nth-of-type(odd) {
         background-color: #f9f9f9;
+    }
+    .uiGrid.table td, .uiGrid.table th {
+        border-left: none;
+    }
+    .uiGrid.table thead {
+        border: 1px solid #e1e8ee;
+    }
+    .uiGrid.table {
+        border: none;
     }
 </style>
