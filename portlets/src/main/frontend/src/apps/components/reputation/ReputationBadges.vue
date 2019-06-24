@@ -175,10 +175,10 @@
         position: relative;
         z-index: 10;
         top: 7px;
-        width: 30px;
-        height: 30px;
+        width: 33px;
+        height: 33px;
         padding: 1px;
-        line-height: 27px;
+        line-height: 29px;
         text-align: center;
     }
     .last-number {
