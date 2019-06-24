@@ -18,7 +18,12 @@
                         <hr class="interval">
                         <div class="last-number" v-if="badge.endScore == 0" v-bind:class="{'bg-red': bgBadges(badge)}"> ∞
                         </div>
-                        <div class="last-number" v-else>{{badge.endScore}}</div>
+                        <div class="last-number" v-else>
+
+                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+
+                        </div>
                     </div>
                 </b-popover>
             </b-col>
