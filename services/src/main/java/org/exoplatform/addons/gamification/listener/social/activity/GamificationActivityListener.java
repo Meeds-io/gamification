@@ -125,6 +125,9 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                  }
              }
          }
+
+
+         
         } else { // Comment in the context of User Stream
 
             // User comment on his own Stream : no XP should be assigned

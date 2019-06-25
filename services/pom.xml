@@ -185,6 +185,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+
         <dependency>
             <groupId>org.exoplatform.gatein.portal</groupId>
             <artifactId>exo.portal.component.test.jcr</artifactId>

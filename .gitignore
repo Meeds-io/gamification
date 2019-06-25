@@ -15,6 +15,9 @@
 *.ear
 *.sar
 *.class
+*.bundle.js.map
+*.bundle.js
+
 
 # Maven 
 target/
@@ -47,3 +50,5 @@ node/
 node_modules/
 package-lock.json
 etc/
+# Munified files
+webapp/javascript
