@@ -1,9 +1,7 @@
 <template>
-
     <div>
         <div class="container fluid">
             <div class="col-sm-12 card">
-
                 <div>
                   <!--  <div class="btn" id="headingOne">
                         <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add badge</button></h5>
@@ -47,9 +45,6 @@
 
                         </form-group>
 
-
-
-
                     </div>
                     <div class="card">
 
@@ -65,7 +60,7 @@
                             <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
                         </form-group>
 
-                        <form-group id="domainSelectboxGroup">
+                        <form id="domainSelectboxGroup">
                             <select v-model="badge.domain" class="mb-4" required>
                                 <template slot="first">
 
@@ -85,7 +80,7 @@
                                      @dismiss-count-down="countDownChanged">
                                 Domain is required please choice a domain {{dismissCountDown}} ...
                             </b-alert>
-                        </form-group>
+                        </form>
 
                         <div id="enableCheckboxGroup">
                             <b-form-checkbox v-model="badge.enabled">Enable badge</b-form-checkbox>
