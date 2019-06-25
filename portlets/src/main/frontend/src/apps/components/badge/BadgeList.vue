@@ -20,7 +20,12 @@
                     <tr v-for="badge in badges" track-by="id" v-on:click.prevent="onEdit(badge)">
                         <td class="badge-title-col">{{badge.title}}</td>
                         <td class="badge-desc-col">{{badge.description}}</td>
-                        <td class="badge-needed-score-col">{{badge.neededScore}}</td>
+                        <td class="badge-needed-score-col">
+                            <div v-if="badge.neededScore >=1000">{{badge.neededScore/1000}} K</div>
+                            <div v-if="badge.neededScore <1000"> {{badge.neededScore}}</div>
+
+                        </td>
+
                         <td class="badge-domain-col">{{badge.domain}}</td>
                         <td class="badge-icon-col"><img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/></td>
                         <td class="badge-status-col">{{badge.enabled}}</td>

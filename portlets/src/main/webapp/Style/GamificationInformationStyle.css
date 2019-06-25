@@ -127,10 +127,10 @@ options{
     position: relative;
     z-index: 10;
     top: 7px;
-    width: 30px;
-    height: 30px;
+    width: 33px;
+    height: 33px;
     padding: 1px;
-    line-height: 27px;
+    line-height: 29px;
     text-align: center;
 }
 .last-number {
@@ -154,13 +154,19 @@ options{
 }
 
 .bg-red {
+    position: absolute;
+    right: 0;
+    bottom: 0;
     background: #fd7e14;
     border: none;
-    width: 35px;
-    height: 35px;
-    font-size: 20px;
-    top: 1px;
+    width: 40px;
+    height: 41px;
+    font-size: 26px;
+    line-height: 35px;
+    top: 3px;
+    border: 3px solid #ecbd96fa;
 }
+
 .interval {
     height: 2px;
     background: #60a352;
@@ -793,3 +799,7 @@ button.tabs__item.tabs__item_active {
     border-bottom: 3px solid #578dc9;
     color: #4e5467;
 }
+/*
+.prog-pointS:last-child .first-number {
+    font-size: 10px;
+} */

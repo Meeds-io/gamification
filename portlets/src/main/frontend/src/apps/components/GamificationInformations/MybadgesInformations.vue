@@ -17,12 +17,16 @@
                                     <div class="cat-badges">{{badge.domain}}</div>
                                     <div class="desc-badges">{{badge.description}}</div>
                                     <div class="prog-point">
-                                        <div class="first-number">{{badge.startScore}}</div>
+                                        <div class="first-number">{{badge.startScore}}
+                                            <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
+                                            <div v-if="badge.startScore <1000"> {{badge.startScore}}</div></div>
                                         <hr class="interval">
                                         <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
                                             ∞
                                         </div>
-                                        <div class="last-number" v-else>{{badge.endScore}}
+                                        <div class="last-number" v-else>
+                                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
                                         </div>
                                     </div>
                                 </b-popover>
@@ -52,7 +56,10 @@
                                 <div class="desc-badges">{{badge.description}}</div>
 
                                 <div class="prog-pointS">
-                                    <div class="first-number">{{badge.startScore}}</div>
+                                    <div class="first-number">
+                                        <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
+                                        <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                    </div>
 
                                     <progress-bar
                                             :id="'rep'+badge.id"
@@ -68,7 +75,9 @@
                                         ∞
                                     </div>
 
-                                    <div class="last-numberS" v-else>{{badge.endScore}}</div>
+                                    <div class="last-numberS" v-else> <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                        <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                    </div>
                                 </div>
                             </b-popover>
                         </div>
@@ -98,12 +107,17 @@
                             <div class="cat-badges">{{badge.domain}}</div>
                             <div class="desc-badges">{{badge.description}}</div>
                             <div class="prog-point">
-                                <div class="first-number">{{badge.startScore}}</div>
+                                <div class="first-number">
+                                    <div v-if="badge.startScore >=1000"> {{badge.startScore/1000}} K</div>
+                                    <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                </div>
                                 <hr class="interval">
                                 <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
                                     ∞
                                 </div>
-                                <div class="last-number" v-else>{{badge.endScore}}
+                                <div class="last-number" v-else> <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                    <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+
                                 </div>
                             </div>
                         </b-popover>
@@ -129,7 +143,10 @@
                             <div class="desc-badges">{{badge.description}}</div>
 
                             <div class="prog-pointS">
-                                <div class="first-number">{{badge.startScore}}</div>
+                                <div class="first-number">
+                                    <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
+                                    <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                </div>
 
                                 <progress-bar
                                         :id="'rep'+badge.id"
@@ -145,7 +162,9 @@
                                     ∞
                                 </div>
 
-                                <div class="last-numberS" v-else>{{badge.endScore}}</div>
+                                <div class="last-numberS" v-else> <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                    <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                </div>
                             </div>
                             </b-popover>
                         </div>
@@ -189,6 +208,7 @@
             height () {
                 return this.defaultOptions.layout.height
             },
+
             striped: true,
             animate: true
         },

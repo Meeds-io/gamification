@@ -183,6 +183,10 @@
             line-height: 37px;
             font-weight: bold;
         }
+        .points span {
+            line-height: 50px;
+        }
+
     }
 
 </style>
