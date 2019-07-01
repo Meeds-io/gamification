@@ -1,14 +1,12 @@
 <template>
     <div>
-
-        <div class="col-sm-12 card">
-
+        <div class="col-sm-12 fluid">
             <div class="btn" id="headingOne">
-
-                <button aria-controls="collapseOne" aria-expanded="false" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add Rule</button>
-
+                <h5 class="mb-0">
+                    <button aria-controls="collapseOne" aria-expanded="false" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">Add rule</button>
+                </h5>
             </div>
-            <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px;top: 80px;">
+            <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px;top: 100px; border: none;">
 
                 <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 560px; z-index:1000000; position: relative; top: 20%; left: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%;">
                     <!--  <div tabindex="-1" style="position: fixed; z-index: 10000; top: 0px; left: 0px; width: 1284px; height: 377px;" class="uiPopupWrapper"> </div> -->
@@ -21,15 +19,12 @@
                             <label class="col-form-label pt-0">Title:</label>
                             <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
                             </input>
-
                             <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                 Rule title is required please enter a title {{dismissCountDown}} ...
                             </b-alert>
                         </form>
-
                         <form id="descriptionInputGroup">
                             <label class="col-form-label pt-0">Description:</label>
-
                             <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
                         </form>
@@ -42,7 +37,6 @@
                                 Rule score is required please enter a score {{dismissCountDown}} ...
                             </b-alert>
                         </form>
-
                         <label class="switch">
                             <input type="checkbox" v-model="rule.enabled" >
                             <span class="slider round"></span>
@@ -63,7 +57,7 @@
                         <div class="row">
                             <b-col>
                                 <b-button class="btn-primary" type="submit" v-on:click.prevent="onSubmit" >
-                                    {{rule.id ? 'Update' : 'Add'}} rule
+                                    {{rule.id ? 'Update' : 'Add'}}
                                 </b-button>
                             </b-col>
                         </div>
@@ -170,6 +164,9 @@
     .card.col label {
         display: block;
     }
+    .col-sm-11.fluid {
+        top: 10px;
+    }
     form {
         margin-bottom: 24px;
     }
@@ -267,9 +264,9 @@
     button.btn.btn-link.primary.collapsed, button.btn.btn-link.primary, btn{
         background: #3c8dbc;
         color: white;
-        padding: 5px 10px;
+        padding: 5px 25px;
         position: absolute;
-        right: 10px;
+        right: 42px;;
         top: 10px;
         text-decoration: none;
     }
@@ -300,7 +297,7 @@
         width: 100%;
         min-width: 100%;
         z-index: 100;
-        padding: 2px 20px;
+        padding: 11px 20px;
     }
     /* switch test */
     .switch {
@@ -308,7 +305,8 @@
         display: inline-block;
         width: 150px;
         height: 50px;
-        zoom: 50%;
+        bottom: 45px;
+        zoom: 40%;
     }
     .switch input {display:none;}
     .slider {
