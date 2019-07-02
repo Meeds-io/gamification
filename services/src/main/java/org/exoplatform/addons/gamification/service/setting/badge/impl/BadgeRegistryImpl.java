@@ -1,7 +1,9 @@
 package org.exoplatform.addons.gamification.service.setting.badge.impl;
 
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
 import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
 import org.exoplatform.commons.file.model.FileItem;
@@ -25,6 +27,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
     private BadgeService badgeService;
     private FileService fileService;
+    private DomainService domainService;
 
     public BadgeRegistryImpl(FileService fileService) {
 
@@ -49,6 +52,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
     public void start() {
 
         badgeService = CommonsUtils.getService(BadgeService.class);
+
         try {
             // Processing registered rules
 
@@ -69,17 +73,15 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
     private void store(BadgeConfig badgeConfig) {
 
-
+        domainService = CommonsUtils.getService(DomainService.class);
         BadgeDTO badgeDTO = new BadgeDTO();
-
         badgeDTO.setTitle(badgeConfig.getTitle());
         badgeDTO.setDescription(badgeConfig.getDescription());
         badgeDTO.setDomain(badgeConfig.getDomain());
+        badgeDTO.setDomainDTO(domainService.findDomainByTitle(badgeConfig.getDomain()));
         badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
-
         badgeDTO.setNeededScore(badgeConfig.getNeededScore());
         badgeDTO.setEnabled(badgeConfig.isEnable());
-
         badgeDTO.setLastModifiedDate(LocalDate.now().toString());
         badgeDTO.setLastModifiedBy("Gamification");
         badgeDTO.setCreatedBy("Gamification");

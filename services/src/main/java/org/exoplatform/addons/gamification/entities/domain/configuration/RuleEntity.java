@@ -19,12 +19,24 @@ import java.util.Objects;
                 query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled "
         ),
         @NamedQuery(
+                name = "Rule.getAllRulesByDomain",
+                query = "SELECT rule FROM Rule rule where rule.area = :domain "
+        ),
+        @NamedQuery(
+                name = "Rule.getAllRulesWithNullDomain",
+                query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL "
+        ),
+        @NamedQuery(
                 name = "Rule.findEnabledRuleByTitle",
                 query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle and rule.isEnabled = true"
         ),
         @NamedQuery(
                 name = "Rule.findRuleByTitle",
                 query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle"
+        ),
+        @NamedQuery(
+                name = "Rule.getDomainList",
+                query = "SELECT rule.area  FROM Rule rule GROUP BY rule.area"
         ),
         @NamedQuery(
                 name = "Rule.deleteRuleByTitle",
@@ -54,6 +66,10 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "AREA", unique = false, nullable = false)
     protected String area;
+
+    @ManyToOne
+    @JoinColumn(name = "DOMAIN_ID")
+    private DomainEntity domainEntity;
 
     @Column(name = "ENABLED", nullable = false)
     protected boolean isEnabled;
@@ -107,6 +123,14 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public DomainEntity getDomainEntity() {
+        return domainEntity;
+    }
+
+    public void setDomainEntity(DomainEntity domainEntity) {
+        this.domainEntity = domainEntity;
     }
 
     @Override

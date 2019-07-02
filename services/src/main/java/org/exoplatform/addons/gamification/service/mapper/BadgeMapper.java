@@ -12,8 +12,10 @@ import java.util.stream.Collectors;
 public class BadgeMapper {
 
     private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private DomainMapper domainMapper;
 
-    public BadgeMapper() {
+    public BadgeMapper(DomainMapper domainMapper) {
+        this.domainMapper=domainMapper;
     }
 
     public BadgeDTO badgeToBadgeDTO(BadgeEntity badge) {
@@ -56,6 +58,7 @@ public class BadgeMapper {
                 if (badgeDTO.getLastModifiedDate() != null) {
                     badge.setLastModifiedDate(formatter.parse(badgeDTO.getLastModifiedDate()));
                 }
+                badge.setDomainEntity(domainMapper.domainDTOToDomain(badgeDTO.getDomainDTO()));
                 return badge;
             }
 

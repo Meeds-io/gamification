@@ -12,8 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
+import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -27,9 +30,12 @@ public class GamificationService {
 
     private IdentityManager identityManager;
 
-    public GamificationService(IdentityManager identityManager, GamificationHistoryDAO gamificationHistoryDAO) {
+    private DomainMapper domainMapper;
+
+    public GamificationService(IdentityManager identityManager, GamificationHistoryDAO gamificationHistoryDAO, DomainMapper domainMapper) {
         this.gamificationHistoryDAO = gamificationHistoryDAO;
         this.identityManager = identityManager;
+        this.domainMapper = domainMapper;
     }
 
     @ExoTransactional
@@ -392,6 +398,9 @@ public class GamificationService {
       aHistory.setUserSocialId(actor);
       aHistory.setActionTitle(ruleDto.getTitle());
       aHistory.setDomain(ruleDto.getArea());
+      if(ruleDto.getDomainDTO()!=null){
+          aHistory.setDomainEntity(domainMapper.domainDTOToDomain(ruleDto.getDomainDTO()));
+      }
       aHistory.setReceiver(receiver);
       aHistory.setObjectId(objectId);
       // Set update metadata

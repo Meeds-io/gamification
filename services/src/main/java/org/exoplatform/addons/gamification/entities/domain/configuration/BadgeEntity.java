@@ -46,7 +46,17 @@ import java.util.Objects;
         @NamedQuery(
                 name = "GamificationBadge.deleteBadgeById",
                 query = "DELETE FROM GamificationBadge badge WHERE badge.id = :badgeId "
+        ),
+
+        @NamedQuery(
+                name = "GamificationBadge.getAllBadgesWithNullDomain",
+                query = "SELECT badge FROM GamificationBadge badge where badge.domainEntity IS NULL "
+        ),
+        @NamedQuery(
+                name = "GamificationBadge.getDomainList",
+                query = "SELECT badge.domain  FROM GamificationBadge badge GROUP BY badge.domain"
         )
+
 })
 public class BadgeEntity extends AbstractAuditingEntity implements Serializable {
 
@@ -86,6 +96,10 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
 
     @Column(name = "DOMAIN", nullable = false)
     protected String domain;
+
+    @ManyToOne
+    @JoinColumn(name = "DOMAIN_ID")
+    private DomainEntity domainEntity;
 
     public BadgeEntity() {
     }
@@ -161,6 +175,16 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     public void setIconFileId(long iconFileId) {
         this.iconFileId = iconFileId;
     }
+
+
+    public DomainEntity getDomainEntity() {
+        return domainEntity;
+    }
+
+    public void setDomainEntity(DomainEntity domainEntity) {
+        this.domainEntity = domainEntity;
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -26,4 +26,5 @@
     <import>war:/conf/gamification/storage/common/common-storage-configuration.xml</import>
     <import>war:/conf/gamification/storage/rule/rules-storage-configuration.xml</import>
     <import>war:/conf/gamification/storage/badge/badges-storage-configuration.xml</import>
+    <import>war:/conf/gamification/storage/domain/domains-storage-configuration.xml</import>
 </configuration>

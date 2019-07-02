@@ -2,8 +2,11 @@ package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -28,13 +31,15 @@ public class GamificationRestEndpoint implements ResourceContainer {
     private final CacheControl cacheControl;
     private GamificationService gamificationService;
     private IdentityManager identityManager;
+    private DomainService domainService;
 
-    public GamificationRestEndpoint(GamificationService gamificationService, IdentityManager identityManager) {
+    public GamificationRestEndpoint(GamificationService gamificationService, IdentityManager identityManager, DomainService domainService) {
         this.cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
         cacheControl.setNoStore(true);
         this.gamificationService = gamificationService;
         this.identityManager = identityManager;
+        this.domainService = domainService;
     }
 
     /**
@@ -60,8 +65,6 @@ public class GamificationRestEndpoint implements ResourceContainer {
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} - Gamification public API", userId, e);
             return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching all earned points")).build();
-        } finally {
-
         }
 
     }
@@ -102,8 +105,6 @@ public class GamificationRestEndpoint implements ResourceContainer {
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} in the specified period - Gamification public API", userId, e);
             return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching earned points by period")).build();
-        } finally {
-
         }
     }
     @Path("leaderboard/date")
@@ -131,9 +132,29 @@ public class GamificationRestEndpoint implements ResourceContainer {
         } catch (Exception e) {
             LOG.error("Error while building gloabl leaderboard between dates {} and {} - Gamification public API", startDateEntry, endDateEntry, e);
             return Response.ok(new GamificationPoints().code("2").message("Error while fetching earned points by period")).build();
-        } finally {
-
         }
+
+    }
+
+    /**
+     * Return all domains
+     *
+     * @return : list of all domains
+     */
+    @Path("domains")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("users")
+    public Response getAllDomains() {
+
+        try {
+            return Response.ok(domainService.getAllDomains()).build();
+
+        } catch (Exception e) {
+            LOG.error("Error while fetching All Domains", e);
+            return Response.serverError().entity("Error while fetching all domains").build();
+        }
+
     }
 
     public static class GamificationPoints {

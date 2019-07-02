@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,8 @@ public class BadgeDTO implements Serializable {
     protected int neededScore;
 
     protected String domain;
+
+    private DomainDTO domainDTO;
 
     //protected String icon;
 
@@ -79,6 +82,8 @@ public class BadgeDTO implements Serializable {
         }
 
         this.domain = badgeEntity.getDomain();
+
+        this.domainDTO = ((badgeEntity.getDomainEntity() == null) ? null : new DomainDTO(badgeEntity.getDomainEntity()));
 
         this.iconFileId = badgeEntity.getIconFileId();
 
@@ -199,11 +204,20 @@ public class BadgeDTO implements Serializable {
     }
 
     public String getDomain() {
+        if(this.domainDTO!=null) return this.domainDTO.getTitle();
         return domain;
     }
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public DomainDTO getDomainDTO() {
+        return domainDTO;
+    }
+
+    public void setDomainDTO(DomainDTO domainDTO) {
+        this.domainDTO = domainDTO;
     }
 
     @Override

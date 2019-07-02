@@ -1,5 +1,8 @@
 package org.exoplatform.addons.gamification.service.setting.zone.impl;
 
+import org.exoplatform.addons.gamification.service.configuration.BadgeService;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry;
 import org.exoplatform.addons.gamification.service.setting.zone.model.ZoneConfig;
 import org.exoplatform.commons.api.settings.SettingService;
@@ -11,6 +14,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +26,11 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
 
     private final Map<String, ZoneConfig> zoneMap;
 
-    public ZoneRegistryImpl() {
+    private DomainService domainService;
+
+    public ZoneRegistryImpl(DomainService domainService) {
         this.zoneMap = new HashMap<String, ZoneConfig>();
+        this.domainService= domainService;
     }
 
     @Override
@@ -39,15 +46,41 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
     @Override
     public void start() {
 
-        for (ZoneConfig zone : zoneMap.values()) {
-            CommonsUtils.getService(SettingService.class).set(Context.GLOBAL, Scope.GLOBAL.id(null), (GAMIFICATION_PREFERENCES + zone.getZoneName()), SettingValue.create(zone.getZoneName()));
+        try {
+            // Processing registered domains
 
+            for (ZoneConfig domain : zoneMap.values()) {
+                DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
+                if (domainDTO == null) {
+                    store(domain);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error when processing Domains ", e);
         }
+
 
     }
 
     @Override
     public void stop() {
 
+    }
+
+    private void store(ZoneConfig zoneConfig) {
+
+        DomainDTO domainDTO = new DomainDTO();
+        domainDTO.setTitle(zoneConfig.getZoneName());
+        domainDTO.setDescription(zoneConfig.getZoneDescription());
+        domainDTO.setLastModifiedDate(LocalDate.now().toString());
+        domainDTO.setLastModifiedBy("Gamification");
+        domainDTO.setCreatedBy("Gamification");
+        domainDTO.setCreatedDate(LocalDate.now().toString());
+        try {
+            domainDTO.setPriority(Integer.parseInt(zoneConfig.getZonePriority()));
+        } catch (Exception e) {
+            domainDTO.setPriority(10);
+        }
+        domainService.addDomain(domainDTO);
     }
 }

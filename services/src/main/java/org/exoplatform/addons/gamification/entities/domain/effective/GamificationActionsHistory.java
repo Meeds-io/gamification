@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.entities.domain.effective;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
@@ -82,6 +83,19 @@ import java.util.Date;
         @NamedQuery(
                     name = "GamificationActionsHistory.computeTotalScore",
                     query = "SELECT SUM(a.actionScore) FROM GamificationActionsHistory a where a.userSocialId = :socialUserId"
+        ),
+
+        @NamedQuery(
+                name = "GamificationActionsHistory.getAllPointsByDomain",
+                query = "SELECT g FROM GamificationActionsHistory g where g.domain = :domain "
+        ),
+        @NamedQuery(
+                name = "GamificationActionsHistory.getAllPointsWithNullDomain",
+                query = "SELECT g FROM GamificationActionsHistory g where g.domainEntity IS NULL "
+        ),
+        @NamedQuery(
+                name = "GamificationActionsHistory.getDomainList",
+                query = "SELECT g.domain FROM GamificationActionsHistory g GROUP BY g.domain"
         )
 })
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
@@ -119,6 +133,10 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     private String receiver ;
     @Column(name = "OBJECT_ID", nullable = false)
     private String objectId;
+
+    @ManyToOne
+    @JoinColumn(name = "DOMAIN_ID")
+    private DomainEntity domainEntity;
 
 
     public GamificationActionsHistory() {
@@ -203,6 +221,13 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
         this.objectId = objectId;
     }
 
+    public DomainEntity getDomainEntity() {
+        return domainEntity;
+    }
+
+    public void setDomainEntity(DomainEntity domainEntity) {
+        this.domainEntity = domainEntity;
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -161,4 +161,34 @@ public class BadgeService {
 
 
     }
+
+
+    /**
+     * Get all Rules by with null DomainDTO from DB
+     * @return RuleDTO list
+     */
+    @ExoTransactional
+    public List<BadgeDTO> getAllBadgesWithNullDomain() throws Exception{
+        try {
+            List<BadgeEntity> rules =  badgeStorage.getAllBadgesWithNullDomain();
+            if (rules != null) {
+                return badgeMapper.badgesToBadgeDTOs(rules);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Badges",e);
+            throw (e);
+        }
+        return null;
+    }
+
+
+    /**
+     * Get all Domains from Rules from DB
+     * @return String list
+     */
+    @ExoTransactional
+    public List<String> getDomainListFromBadges() {
+        return badgeStorage.getDomainList();
+    }
 }

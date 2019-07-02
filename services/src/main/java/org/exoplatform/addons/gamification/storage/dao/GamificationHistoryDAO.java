@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.entities.domain.effective.Gamificatio
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
@@ -471,5 +472,45 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       return 0;
     }
   }
+
+
+    @ExoTransactional
+    public List<GamificationActionsHistory> getAllPointsByDomain(String domain) throws PersistenceException {
+
+        TypedQuery<GamificationActionsHistory> query = getEntityManager().createNamedQuery("GamificationActionsHistory.getAllPointsByDomain", GamificationActionsHistory.class)
+                .setParameter("domain", domain);
+
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
+
+
+    @ExoTransactional
+    public List<GamificationActionsHistory> getAllPointsWithNullDomain() throws PersistenceException {
+
+        TypedQuery<GamificationActionsHistory> query = getEntityManager().createNamedQuery("GamificationActionsHistory.getAllPointsWithNullDomain", GamificationActionsHistory.class);
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
+
+    @ExoTransactional
+    public List<String>  getDomainList() throws PersistenceException {
+        TypedQuery<String> query = getEntityManager().createNamedQuery("GamificationActionsHistory.getDomainList", String.class);
+
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
 
 }

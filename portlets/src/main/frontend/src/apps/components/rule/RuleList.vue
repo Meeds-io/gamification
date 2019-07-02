@@ -21,7 +21,7 @@
                             <th class="rule-name-col">Title</th>
                             <th class="rule-desc-col">Description</th>
                             <th class="rule-price-col">score</th>
-                            <th class="rule-area-col">Area</th>
+                            <th class="rule-area-col">Domain</th>
                             <th class="rule-enable-col">Enabled</th>
                             <th class="rule-action-col">Action</th>
                         </tr>

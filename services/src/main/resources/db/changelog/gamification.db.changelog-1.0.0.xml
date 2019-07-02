@@ -211,4 +211,50 @@
             </column>
         </addColumn>
     </changeSet>
+
+
+    <changeSet author="exo-gamification" id="1.0.0-12" runOnChange="true">
+        <createTable tableName="GAMIFICATION_DOMAIN">
+            <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)"/>
+            <column name="DESCRIPTION" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="PRIORITY" type="INT"/>
+            <column name="CREATED_BY" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_DATE" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LAST_MODIFIED_BY" type="varchar(200)"/>
+            <column name="LAST_MODIFIED_DATE" type="timestamp"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet  author="exo-gamification" id="1.0.0-13">
+        <addColumn tableName="GAMIFICATION_RULE">
+            <column name="DOMAIN_ID" type="BIGINT">
+                <constraints foreignKeyName="FK_GAMIFICATION_RULES_DOMAIN" references="GAMIFICATION_DOMAIN(ID)" />
+            </column>
+        </addColumn>
+        <addColumn tableName="GAMIFICATION_BADGES">
+            <column name="DOMAIN_ID" type="BIGINT">
+                <constraints foreignKeyName="FK_GAMIFICATION_BADGES_DOMAIN" references="GAMIFICATION_DOMAIN(ID)" />
+            </column>
+        </addColumn>
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="DOMAIN_ID" type="BIGINT">
+                <constraints foreignKeyName="FK_GAMIFICATION_ACTIONS_HISTORY_DOMAIN" references="GAMIFICATION_DOMAIN(ID)" />
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
+
+

@@ -40,40 +40,12 @@
     </component>
 
 
-    <!-- Gamification Settings : Zone -->
-    <component>
-        <key>org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry</key>
-        <type>org.exoplatform.addons.gamification.service.setting.zone.impl.ZoneRegistryImpl</type>
-    </component>
     <!-- Gamification Settings : Rule -->
     <component>
         <key>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</key>
         <type>org.exoplatform.addons.gamification.service.setting.rule.impl.RuleRegistryImpl</type>
     </component>
 
-    <!-- Gamification zones : Social  zone -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry</target-component>
-        <component-plugin>
-            <name>social.zone</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.zone.model.ZoneConfig</type>
-            <init-params>
-                <value-param>
-                    <name>zone-name</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
-                    <name>zone-description</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
-                    <name>zone-priority</name>
-                    <value>1</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
 
     <!-- Gamification Rule Config -->
     <external-component-plugins>
@@ -1218,97 +1190,6 @@
                 <value-param>
                     <name>rule-zone</name>
                     <value>Teamwork</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
- 
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
-            <name>rule.addNPSScore</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>addNPSScore</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You answered the NPS survey</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>10</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Feedback</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
-            <name>rule.notAnonymousNPSScore</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>notAnonymousNPSScore</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You answered the NPS survey unanonymously</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>5</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Feedback</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
-            <name>rule.commentedNPSScore</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>commentedNPSScore</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You responded to NPS survey with a comment</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>10</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Feedback</value>
                 </value-param>
                 <value-param>
                     <name>rule-enable</name>

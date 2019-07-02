@@ -10,7 +10,10 @@ import java.util.stream.Collectors;
 
 public class RuleMapper {
 
-    public RuleMapper() {
+    private DomainMapper domainMapper;
+
+    public RuleMapper(DomainMapper domainMapper) {
+        this.domainMapper=domainMapper;
     }
 
     public RuleDTO ruleToRuleDTO(RuleEntity rule) {
@@ -37,6 +40,7 @@ public class RuleMapper {
             rule.setCreatedBy(ruleDTO.getCreatedBy());
             rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
             rule.setLastModifiedDate(ruleDTO.getLastModifiedDate());
+            rule.setDomainEntity(domainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
 
             return rule;
         }

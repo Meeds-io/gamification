@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.service.setting.rule.impl;
 
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
@@ -30,6 +31,8 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
     private final Map<String, RuleConfig> ruleMap;
 
     protected RuleService ruleService;
+
+    private DomainService domainService;
 
     public RuleRegistryImpl() {
         this.ruleMap = new HashMap<String, RuleConfig>();
@@ -82,20 +85,26 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
      */
     private void store(RuleConfig ruleConfig) {
 
+        domainService = CommonsUtils.getService(DomainService.class);
 
-        RuleDTO ruleDto = new RuleDTO();
+        try {
+            RuleDTO ruleDto = new RuleDTO();
 
-        ruleDto.setTitle(ruleConfig.getTitle());
-        ruleDto.setScore(ruleConfig.getScore());
-        ruleDto.setEnabled(ruleConfig.isEnable());
-        ruleDto.setLastModifiedDate(new Date());
-        ruleDto.setLastModifiedBy("Gamification");
-        ruleDto.setCreatedBy("Gamification");
-        ruleDto.setArea(ruleConfig.getZone());
-        ruleDto.setDescription(ruleConfig.getDescription());
-        ruleDto.setCreatedDate(new Date());
+            ruleDto.setTitle(ruleConfig.getTitle());
+            ruleDto.setScore(ruleConfig.getScore());
+            ruleDto.setEnabled(ruleConfig.isEnable());
+            ruleDto.setLastModifiedDate(new Date());
+            ruleDto.setLastModifiedBy("Gamification");
+            ruleDto.setCreatedBy("Gamification");
+            ruleDto.setArea(ruleConfig.getZone());
+            ruleDto.setDomainDTO(domainService.findDomainByTitle(ruleConfig.getZone()));
+            ruleDto.setDescription(ruleConfig.getDescription());
+            ruleDto.setCreatedDate(new Date());
 
-        CommonsUtils.getService(RuleService.class).addRule(ruleDto);
+            CommonsUtils.getService(RuleService.class).addRule(ruleDto);
+        } catch (Exception e) {
+            LOG.error("Error when saving Rule ", e);
+        }
 
     }
 

@@ -5,10 +5,12 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.DomainE
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RuleDTO implements Serializable {
+public class DomainDTO implements Serializable {
 
+    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     protected Long id;
 
@@ -16,40 +18,34 @@ public class RuleDTO implements Serializable {
 
     protected String description;
 
-    protected int score;
-
-    protected String area;
-
-    private DomainDTO domainDTO;
-
-    //protected boolean isEnabled;
-    protected boolean enabled;
+    protected int priority;
 
     private String createdBy;
 
-    private Date createdDate;
+    private String createdDate;
 
     private String lastModifiedBy;
 
-    private Date lastModifiedDate;
+    private String lastModifiedDate;
 
-    public RuleDTO() {
+
+
+    public DomainDTO() {
 
     }
 
-    public RuleDTO(RuleEntity rule) {
-        this.id = rule.getId();
-        this.title = rule.getTitle();
-        this.description = rule.getDescription();
-        this.score = rule.getScore();
-        this.area = rule.getArea();
-        this.domainDTO = ((rule.getDomainEntity() == null) ? null : new DomainDTO(rule.getDomainEntity()));
-        this.enabled = rule.isEnabled();
-        this.createdBy = rule.getCreatedBy();
-        this.createdDate = rule.getCreatedDate();
-        this.lastModifiedBy = rule.getLastModifiedBy();
-        this.lastModifiedDate = rule.getLastModifiedDate();
-
+    public DomainDTO(DomainEntity domainEntity) {
+        this.id = domainEntity.getId();
+        this.title = domainEntity.getTitle();
+        this.description = domainEntity.getDescription();
+        this.createdBy = domainEntity.getCreatedBy();
+        this.priority = domainEntity.getPriority();
+        if (domainEntity.getCreatedDate() != null) {
+            this.createdDate = formatter.format(domainEntity.getCreatedDate());
+        }
+        if (domainEntity.getLastModifiedDate() != null) {
+            this.lastModifiedDate = formatter.format(domainEntity.getLastModifiedDate());
+        }
     }
 
     public Long getId() {
@@ -76,37 +72,12 @@ public class RuleDTO implements Serializable {
         this.description = description;
     }
 
-    public int getScore() {
-        return score;
+    public int getPriority() {
+        return priority;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public String getArea() {
-        if(this.domainDTO!=null)return this.domainDTO.getTitle();
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
-
-    public DomainDTO getDomainDTO() {
-        return domainDTO;
-    }
-
-    public void setDomainDTO(DomainDTO domainDTO) {
-        this.domainDTO = domainDTO;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public String getCreatedBy() {
@@ -118,11 +89,11 @@ public class RuleDTO implements Serializable {
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -135,11 +106,11 @@ public class RuleDTO implements Serializable {
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    public Date getLastModifiedDate() {
+    public String getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
+    public void setLastModifiedDate(String lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
@@ -149,8 +120,6 @@ public class RuleDTO implements Serializable {
         return "RuleDTO{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", score='" + score + '\'' +
-                ", area='" + area + '\'' +
                 ", createdBy=" + createdBy +
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +
