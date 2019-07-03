@@ -1,21 +1,22 @@
 <template>
     <div>
         <div class="col-sm-12 fluid">
-            <div class="btn" id="headingOne">
-                <h5 class="mb-0">
-                    <button aria-controls="collapseOne" aria-expanded="false" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">Add rule</button>
-                </h5>
-            </div>
-            <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px;top: 100px; border: none;">
 
-                <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 560px; z-index:1000000; position: relative; top: 20%; left: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%;">
-                    <!--  <div tabindex="-1" style="position: fixed; z-index: 10000; top: 0px; left: 0px; width: 1284px; height: 377px;" class="uiPopupWrapper"> </div> -->
-                    <div class="popupHeader ClearFix">
-                        <a class="uiIconClose pull-right"  aria-controls="collapseOne" aria-expanded="false" data-target="#collapseOne" data-toggle="collapse" aria-hidden="true" data-dismiss="modal" ></a>
-                        <span class="PopupTitle popupTitle">Add Rule</span>
-                    </div>
-                    <div class="PopupContent popupContent">
-                        <form id="titleInputGroup">
+            <div class="btn" id="headingOne">
+
+                <button aria-controls="collapseOne" aria-expanded="false" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add Rule</button>
+
+            </div>
+            <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px;top:-15px;">
+                <div class="card-body">
+                    <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 560px; z-index:1000000; position: relative; top: 20%; left: auto; margin: 0 auto 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                        <!-- <div tabindex="-1" style="position: fixed; z-index: 10000; top: 0px; left: 0px; width: 1284px; height: 377px;" class="uiPopupWrapper"> </div> -->
+                        <div class="popupHeader ClearFix">
+                            <a class="uiIconClose pull-right"  aria-controls="collapseOne" aria-expanded="false" data-target="#collapseOne" data-toggle="collapse" aria-hidden="true" data-dismiss="modal" ></a>
+                            <span class="PopupTitle popupTitle">Add Rule</span>
+                        </div>
+                        <div class="PopupContent popupContent">
+                            <form id="titleInputGroup">
                             <label class="col-form-label pt-0">Title:</label>
                             <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
                             </input>
@@ -72,6 +73,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
 
