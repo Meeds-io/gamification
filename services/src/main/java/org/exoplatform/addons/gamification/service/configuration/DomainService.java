@@ -31,14 +31,14 @@ public class DomainService {
      * Return all domains within the DB
      * @return a list of DomainDTO
      */
-    public List<DomainDTO> getAllDomains() throws NoResultException{
+    public List<DomainDTO> getAllDomains() {
         try {
             //--- load all Domains
             List<DomainEntity> badges = domainStorage.findAll();
             if (badges != null) {
                 return domainMapper.domainssToDomainDTOs(badges);
             }else{
-                throw (new NoResultException());
+                return null;
             }
 
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class DomainService {
      * @return an instance DomainDTO
      */
     @ExoTransactional
-    public DomainDTO findDomainByTitle(String domainTitle) throws NoResultException {
+    public DomainDTO findDomainByTitle(String domainTitle) {
 
         try {
             //--- Get Entity from DB
@@ -62,7 +62,7 @@ public class DomainService {
             if (entity != null) {
                 return domainMapper.domainToDomainDTO(entity);
             }else{
-                throw (new NoResultException());
+                return null;
             }
 
         } catch (Exception e) {
