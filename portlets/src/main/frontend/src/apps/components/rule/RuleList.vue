@@ -26,7 +26,8 @@
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
                         </td>
 
-                        <td style="max-width: 115px;"><div v-if="editedrule.id !== rule.id">{{rule.domainDTO.title}}</div>
+                        <td style="max-width: 115px;">
+                            <div v-if="editedrule.id !== rule.id && rule.domainDTO != null">{{rule.domainDTO.title}}</div>
                             <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO" class="mb-2" style="max-width: 115px;margin: 0px auto;height: 35px;" required>
                                 <option :value="null" disabled style="max-width: 115px">-- Please select an area --</option>
                                 <option v-for="option in domains" v-bind:value="option">
