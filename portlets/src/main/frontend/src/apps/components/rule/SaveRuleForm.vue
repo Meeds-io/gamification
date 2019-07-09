@@ -17,52 +17,52 @@
                         </div>
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
-                            <label class="col-form-label pt-0">Title:</label>
-                            <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
-                            </input>
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Rule title is required please enter a title {{dismissCountDown}} ...
-                            </b-alert>
-                        </form>
-                        <form id="descriptionInputGroup">
-                            <label class="col-form-label pt-0">Description:</label>
-                            <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
+                                <label class="col-form-label pt-0">Title:</label>
+                                <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
+                                </input>
+                                <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                    Rule title is required please enter a title {{dismissCountDown}} ...
+                                </b-alert>
+                            </form>
+                            <form id="descriptionInputGroup">
+                                <label class="col-form-label pt-0">Description:</label>
+                                <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
-                        </form>
-                        <form id="scoreInputGroup">
+                            </form>
+                            <form id="scoreInputGroup">
 
-                            <label id="scoreInputGroup" for="scoreInput" class="col-form-label pt-0">Score:</label>
-                            <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
-                            </input>
-                            <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Rule score is required please enter a score {{dismissCountDown}} ...
-                            </b-alert>
-                        </form>
-                        <label class="switch">
-                            <input type="checkbox" v-model="rule.enabled" >
-                            <span class="slider round"></span>
-                            <span class="absolute-no">NO</span>
-                        </label>
-                        <form id="areaSelectboxGroup">
-                            <select v-model="rule.domainDTO" class="mb-4">
-                                <option :value="null" disabled>-- Please select an area --</option>
-                                <option v-for="option in domains" v-bind:value="option">
-                                    {{ option.title }}
-                                </option>
-                            </select>
-                        </form>
-                        <div class="row">
-                            <b-col>
-                                <b-button class="btn-primary" type="submit" v-on:click.prevent="onSubmit" >
-                                    {{rule.id ? 'Update' : 'Add'}}
-                                </b-button>
-                            </b-col>
+                                <label id="scoreInputGroup" for="scoreInput" class="col-form-label pt-0">Score:</label>
+                                <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
+                                </input>
+                                <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                    Rule score is required please enter a score {{dismissCountDown}} ...
+                                </b-alert>
+                            </form>
+                            <label class="switch">
+                                <input type="checkbox" v-model="rule.enabled" >
+                                <span class="slider round"></span>
+                                <span class="absolute-no">NO</span>
+                            </label>
+                            <form id="areaSelectboxGroup">
+                                <select v-model="rule.domainDTO" class="mb-4">
+                                    <option :value="null" disabled>-- Please select an area --</option>
+                                    <option v-for="option in domains" v-bind:value="option">
+                                        {{ option.title }}
+                                    </option>
+                                </select>
+                            </form>
+                            <div class="row">
+                                <b-col>
+                                    <b-button class="btn-primary" type="submit" v-on:click.prevent="onSubmit" >
+                                        {{rule.id ? 'Update' : 'Add'}}
+                                    </b-button>
+                                </b-col>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
 
@@ -103,7 +103,7 @@
                 this.formErrors = {}
                 this.selectedFile = undefined
                 this.selectedFileName = this.rule.imageName
-                },
+            },
             'rule.domainDTO'() {
                 this.rule.area = this.rule.domainDTO.title
             }
@@ -141,8 +141,10 @@
             confirm() {
                 this.$modals.confirm({
                     message: 'Confirm?',
-                    onApprove: () => { },
-                    onCancel: () => { },
+                    onApprove: () => {
+                    },
+                    onCancel: () => {
+                    },
                 });
             },
             createRule(ruleDTO) {
@@ -155,9 +157,9 @@
                     })
                 //this.resetRuleInForm()
             }
-    }
+        }
+        }
 </script>
-
 <style scoped>
     .card.col label {
         display: block;
@@ -234,21 +236,7 @@
         width: auto;
         margin-bottom: 10px;
     }
-    /* button.btn.btn-link, h5.mb-0 {
-         color: #3c8dbc;
-         background: transparent;
-         border: 1px solid lightblue;
-         border-radius: 50%;
-         font-weight: bolder;
-         text-decoration: none;
-         position: absolute;
-         top: 10px;
-     }
-     h5.mb-0:hover, h5.mb-0:focus{
-         color: #3c8dbc;
-         background: transparent;
-         border: 1px solid blue;
-     }*/
+
     div#headingOne:hover {
         background: transparent;
     }

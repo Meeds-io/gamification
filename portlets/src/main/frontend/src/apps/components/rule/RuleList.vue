@@ -26,9 +26,9 @@
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
                         </td>
 
-                        <td style="max-width: 165px;"><div v-if="editedrule.id !== rule.id">{{rule.domainDTO.title}}</div>
-                            <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO" class="mb-4" style="height: 38px;" required>
-                                <option :value="null" disabled>-- Please select an area --</option>
+                        <td style="max-width: 115px;"><div v-if="editedrule.id !== rule.id">{{rule.domainDTO.title}}</div>
+                            <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO" class="mb-2" style="max-width: 115px;margin: 0px auto;height: 35px;" required>
+                                <option :value="null" disabled style="max-width: 115px">-- Please select an area --</option>
                                 <option v-for="option in domains" v-bind:value="option">
                                     {{ option.title }}
                                 </option>
@@ -131,6 +131,11 @@
         margin: 30px auto 0;
         margin-bottom: 30px;
     }
+
+    .uiGrid.table tr td {
+        padding: 5px;
+        vertical-align: inherit;
+    }
     .table thead th{font-size: 0.9em;}
     .table td, .table th{
         padding: 8px;
@@ -146,6 +151,9 @@
     td input {
         max-width: min-content;
     }
+    input[type="text"] {
+        height: 35px;
+    }
     td.rule-needed-score-col input {
         width: 60px;
         text-align: center;
@@ -153,6 +161,7 @@
     td select {
         word-wrap: normal;
         max-width: min-content;
+        border: Solid 2px #e1e8ee;
     }
     input.rule-desc-col {
         min-width: 98%;
