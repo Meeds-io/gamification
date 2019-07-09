@@ -75,7 +75,7 @@ public class DomainMigrationService implements Startable {
                         }
                     }
                 }
-
+                rulesmigrationDone=true;
                 List<RuleDTO> rules = ruleService.getAllRulesWithNullDomain();
                 if (rules != null && rules.size() > 0) {
                     entitiesToMigrate = true;
@@ -85,6 +85,8 @@ public class DomainMigrationService implements Startable {
                             entitiesToMigrate = true;
                             rule.setDomainDTO(domainDTO);
                             ruleService.updateRule(rule);
+                        }else{
+                            rulesmigrationDone=false;
                         }
                     }
                 }
@@ -94,7 +96,7 @@ public class DomainMigrationService implements Startable {
                 } else {
                     LOG.info("=== No rules to migrate");
                 }
-                rulesmigrationDone=true;
+
             } catch (Exception e) {
                 LOG.error("Error when migration Rules ", e);
             }
@@ -119,7 +121,7 @@ public class DomainMigrationService implements Startable {
                         }
                     }
                 }
-
+                badgesMigrationDone=true;
                 List<BadgeDTO> badges = badgeService.getAllBadgesWithNullDomain();
                 if (badges != null && badges.size() > 0) {
                     entitiesToMigrate = true;
@@ -129,6 +131,8 @@ public class DomainMigrationService implements Startable {
                             entitiesToMigrate = true;
                             badge.setDomainDTO(domainDTO);
                             badgeService.updateBadge(badge);
+                        }else{
+                            badgesMigrationDone=false;
                         }
                     }
                 }
@@ -138,7 +142,7 @@ public class DomainMigrationService implements Startable {
                 } else {
                     LOG.info("=== No badges to migrate");
                 }
-                badgesMigrationDone=true;
+
             } catch (Exception e) {
                 LOG.error("Error when migration badges ", e);
             }
@@ -164,7 +168,7 @@ public class DomainMigrationService implements Startable {
                         }
                     }
                 }
-
+                pointsMigrationDone=true;
                 List<GamificationActionsHistory> points = gamificationHistoryDAO.getAllPointsWithNullDomain();
                 if (points != null && points.size() > 0) {
                     for (GamificationActionsHistory point : points) {
@@ -173,6 +177,8 @@ public class DomainMigrationService implements Startable {
                             entitiesToMigrate = true;
                             point.setDomainEntity(domainMapper.domainDTOToDomain(domainDTO));
                             gamificationHistoryDAO.update(point);
+                        }else{
+                            pointsMigrationDone=false;
                         }
                     }
                 }
@@ -182,7 +188,7 @@ public class DomainMigrationService implements Startable {
                 } else {
                     LOG.info("=== No Points to migrate");
                 }
-                pointsMigrationDone=true;
+
             } catch (Exception e) {
                 LOG.error("Error when migration Points ", e);
             }

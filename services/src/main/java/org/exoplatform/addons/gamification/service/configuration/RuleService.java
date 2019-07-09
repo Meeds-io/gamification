@@ -55,7 +55,7 @@ public class RuleService {
      * @return an instance of RuleDTO
      */
     @ExoTransactional
-    public RuleDTO findRuleByTitle (String ruleTitle) throws EntityNotFoundException {
+    public RuleDTO findRuleByTitle (String ruleTitle) {
 
         try {
             //--- Get Entity from DB
@@ -64,7 +64,7 @@ public class RuleService {
             if (entity != null ) {
                 return ruleMapper.ruleToRuleDTO(entity);
             }else{
-                throw (new EntityNotFoundException());
+                return null;
             }
 
         } catch (Exception e) {
@@ -80,14 +80,14 @@ public class RuleService {
      * @return RuleDTO list
      */
 
-    public List<RuleDTO> getAllRules() throws NoResultException {
+    public List<RuleDTO> getAllRules() {
         try {
             //--- load all Rules
             List<RuleEntity> rules =  ruleDAO.getAllRules();
             if (rules != null) {
                 return ruleMapper.rulesToRoleDTOs(rules);
             }else{
-                throw (new NoResultException());
+                return null;
             }
 
         } catch (Exception e) {
@@ -101,14 +101,14 @@ public class RuleService {
      * @return RuleDTO list
      */
     @ExoTransactional
-    public List<RuleDTO> getAllRulesByDomain(String domain)  throws NoResultException{
+    public List<RuleDTO> getAllRulesByDomain(String domain){
         try {
             //--- load all Rules by Domain
             List<RuleEntity> rules =  ruleDAO.getAllRulesByDomain(domain);
             if (rules != null) {
                 return ruleMapper.rulesToRoleDTOs(rules);
             }else{
-                throw (new NoResultException());
+                return null;
             }
         } catch (Exception e) {
             LOG.error("Error to find Rules",e);
@@ -121,13 +121,13 @@ public class RuleService {
      * @return RuleDTO list
      */
     @ExoTransactional
-    public List<RuleDTO> getAllRulesWithNullDomain()  throws NoResultException{
+    public List<RuleDTO> getAllRulesWithNullDomain(){
         try {
             List<RuleEntity> rules =  ruleDAO.getAllRulesWithNullDomain();
             if (rules != null) {
                 return ruleMapper.rulesToRoleDTOs(rules);
             }else{
-                throw (new NoResultException());
+                return null;
             }
 
         } catch (Exception e) {
