@@ -26,22 +26,13 @@
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
                         </td>
 
-                        <td style="max-width: 165px;"><div v-if="editedrule.id !== rule.id">{{rule.area}}</div>
-                            <select type="text" v-if="editedrule.id === rule.id" v-model="rule.area" class="mb-4" style="height: 38px;" required>
-                                <template slot="first">
-                                    <option :value="null" disabled></option>
-                                </template>
-
-
-
-                                <option value="Social">Social</option>
-                                <option value="Knowledge">Knowledge</option>
-                                <option value="Teamwork">Teamwork</option>
-                                <option value="Feedback">Feedback</option>
-                                <option value="Reward">Reward</option>
-                                <!--<option value="Content">Content</option>-->
-                            </select>
-
+                        <td style="max-width: 165px;"><div v-if="editedrule.id !== rule.id">{{rule.domainDTO.title}}</div>
+                            <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO" class="mb-4" style="height: 38px;" required>
+                                <option :value="null" disabled>-- Please select an area --</option>
+                                <option v-for="option in domains" v-bind:value="option">
+                                    {{ option.title }}
+                                </option>
+                           </select>
                         <td>
                             <div v-if="editedrule.id !== rule.id">
 
@@ -102,7 +93,7 @@
     Vue.use(BootstrapVue);
     Vue.prototype.moment = moment
     export default {
-        props: ['rules'],
+        props: ['rules','domains'],
         data() {
             return {
                 formErrors: {},

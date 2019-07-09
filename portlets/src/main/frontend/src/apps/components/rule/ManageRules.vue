@@ -5,8 +5,8 @@
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
 
-        <save-rule-form :rule="ruleInForm" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
-        <rule-list  :rules="rules" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></rule-list>
+        <save-rule-form :rule="ruleInForm" :domains="domains" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
+        <rule-list  :rules="rules"  :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></rule-list>
 
     </section>
 </template>
@@ -34,7 +34,8 @@
             addSuccess: false,
             addError: false,
             updateMessage: '',
-            rules: []
+            rules: [],
+            domains: []
         }
     }
     export default {
@@ -101,6 +102,14 @@
                     this.addError=true
                     this.errors.push(e)
                 })
+
+                                axios.get(`/rest/gamification/api/v1/domains`)
+                    .then(response => {
+                        this.domains = response.data;
+                    })
+                    .catch(e => {
+                        this.errors.push(e)
+                    })
         }
     }
 </script>
