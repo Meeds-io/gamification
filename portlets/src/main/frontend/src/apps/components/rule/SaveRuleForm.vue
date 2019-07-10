@@ -23,6 +23,7 @@
                                 <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                     Rule title is required please enter a title {{dismissCountDown}} ...
                                 </b-alert>
+
                             </form>
                             <form id="descriptionInputGroup">
                                 <label class="col-form-label pt-0">Description:</label>
