@@ -51,12 +51,14 @@
             onSaveClicked (rule) {
 
                 this.updateRule(rule)
+
             },
             onRuleCreated(rule) {
                 this.addSuccess=true
                 this.updateMessage='added'
                 this.rules.push(rule)
                 this.resetRuleInForm()
+
             },
             onRuleFail(rule) {
                 this.addError=true

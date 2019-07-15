@@ -14,8 +14,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="rule in rules" track-by="id" v-on:click.prevent="onEdit(rule)">
-
+                    <tr v-for="rule in rules">
                         <td> <div v-if="editedrule.id !== rule.id">{{rule.title}} </div>
                             <input type="text" v-if="editedrule.id === rule.id" class="rule-title-col" v-model="rule.title"style="width: 130px; min-width: 98%;">
                         </td>
@@ -25,10 +24,9 @@
                         <td><div v-if="editedrule.id !== rule.id">{{rule.score}}</div>
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
                         </td>
-
                         <td style="max-width: 115px;">
                             <div v-if="editedrule.id !== rule.id && rule.domainDTO != null">{{rule.domainDTO.title}}</div>
-                            <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO" class="mb-2" style="max-width: 115px;margin: 0px auto;height: 35px;" required>
+                            <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO"  style="max-width: 115px;margin: 0px auto;height: 35px;" required>
                                 <option :value="null" disabled style="max-width: 115px">-- Please select an area --</option>
                                 <option v-for="option in domains" v-bind:value="option">
                                     {{ option.title }}
@@ -36,16 +34,11 @@
                            </select>
                         <td>
                             <div v-if="editedrule.id !== rule.id">
-
-
                                 <label class="switch">
                                     <input type="checkbox" v-model="rule.enabled">
                                     <span class="slider round"></span>
                                     <span class="absolute-no">NO</span>
                                 </label>
-
-                                <!--  <input type="checkbox" id="checkbox" v-model="rule.enabled">
-                               <label for="checkbox">{{rule.enabled}}</label>-->
                             </div>
                             <div v-else style="padding-top: 10px;">
                                 <label class="switch" v-on:click ="rule.enabled = !rule.enabled">
@@ -69,16 +62,14 @@
                                 <i class="uiIconSave uiIconLightGray"></i></a>
                             <a href="#" v-if="editedrule.id === rule.id" v-on:click.stop="onCancel(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Cancel" v-b-tooltip.hover title="Cancel">
-                                <i class="uiIcon uiIconStatus-canceled uiIconLightGray"></i></a>
+                                <i class="uiIcon uiIconClose uiIconBlue"></i></a>
                         </td>
                     </tr>
-
                     <tr v-if="!rules.length">
-                        <td colspan="5" class="p-y-3 text-xs-center">
+                        <td colspan="6" class="p-y-3 text-xs-center" style="cursor: auto; background-color:white;">
                             <strong>You should add some rules!</strong>
                         </td>
                     </tr>
-
                     </tbody>
                 </table>
             </b-col>
@@ -129,7 +120,7 @@
         margin-bottom: 20px;
         width: 96%;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
-        margin: 30px auto 0;
+        margin: 14px auto 0;
         margin-bottom: 30px;
     }
 
@@ -154,6 +145,7 @@
     }
     input[type="text"] {
         height: 35px;
+        margin: auto;
     }
     td.rule-needed-score-col input {
         width: 60px;
@@ -161,8 +153,9 @@
     }
     td select {
         word-wrap: normal;
-        max-width: min-content;
         border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        margin: auto;
     }
     input.rule-desc-col {
         min-width: 98%;
@@ -256,5 +249,12 @@
     input.rule-needed-score-col{
         max-width: 60px;
         text-align: center;
+    }
+    i.uiIconClose.uiIconBlue {
+    zoom: 133%;
+    height: 100%;
+    vertical-align: super;
+    color: #578dc9;
+    line-height: inherit;
     }
 </style>
