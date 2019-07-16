@@ -2,13 +2,11 @@
     <div>
         <div class="col-sm-12 fluid">
 
-            <div class="btn" id="headingOne">
+            <div class="pull-right" id="headingOne">
 
-                <button aria-controls="collapseOne" aria-expanded="false" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add Rule</button>
+                <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add rule</button>
             </div>
-
-            <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;/* top:-90px; */ ">
-
+            <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
                 <div class="card-body">
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                         <div class="popupHeader ClearFix">
@@ -53,19 +51,20 @@
                             </form>
 
 
-                            <form id="areaSelectboxGroup">
+                           <!-- <form id="areaSelectboxGroup">
                                 <label class="col-form-label pt-0">Domain :</label>
                                 <select v-model="rule.domainDTO" class="mb-4">
-                                    <option :value="null" disabled>-- Please select an area --</option>
+                                    <option disabled value="" selected style="display: inherit !important;">Select your Domain</option>
+
                                     <option v-for="option in domains" v-bind:value="option">
                                         {{ option.title }}
                                     </option>
                                 </select>
-                            </form>
+                            </form>-->
                             <div class="row">
                                 <b-col>
-                                    <button type="submit" v-on:click.prevent="onCancel" class="btn secondary pull-right" data-target="#collapseOne" data-toggle="collapse" aria-hidden="true" data-dismiss="modal">Cancel</button>
-                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit" >
+                                    <button type="submit" v-on:click.prevent="onCancel" class="btn secondary pull-right" >Cancel</button>
+                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
                                         {{rule.id ? 'Update' : 'Confirm'}}
                                     </b-button>
 
@@ -105,6 +104,7 @@
                 dismissSecs: 5,
                 dismissCountDown: 0,
                 date: new Date(),
+                isShown: true,
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
@@ -147,9 +147,12 @@
             onSubmit() {
                 if (this.validateForm()) {
                     this.createRule(this.rule)
-                    this.SaveRuleForm.update()
-                    this.SaveRuleForm.cancel()
+                    this.collapseButton()
                 }
+
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
@@ -181,9 +184,7 @@
     .card-body label {
         display: block;
     }
-    .col-sm-11.fluid {
-        top: 10px;
-    }
+
     form {
         margin-bottom: 24px;
     }
@@ -192,6 +193,12 @@
         flex-wrap: wrap;
         margin-right: -5px;
         margin-left: -5px;
+    }
+    button.btn.btn-primary {
+        margin: 15px 12px 5px;
+    }
+    .btn-primary:focus, .btn-primary.focus {
+        box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
     }
     label {
         display: inline-block;
@@ -238,29 +245,16 @@
     }
     div#headingOne:hover {
         background: transparent;
+        transition: all .5s;
     }
     div#headingOne {
         box-shadow: none;
-    }
-    .btn {
-        display: inline-block;
-        padding: 1.5rem;
-    }
-    button.btn.btn-link.primary.collapsed, button.btn.btn-link.primary, btn{
-        background: #3c8dbc;
-        color: white;
-        padding: 7px 25px;
-        position: absolute;
-        right: 42px;;
-        top: 12px;
-        text-decoration: none;
-    }
-    button.btn.btn-link.primary{
-        background: #3c8dbc;
+        transition: all .5s;
     }
     button.btn.secondary {
-        padding: 6px 25px;
+        padding: 8px 20px;
         border: Solid 2px #e1e8ee;
+        margin: 15px 12px 5px;
     }
     .col-sm-12.card {
         position: relative;
@@ -276,11 +270,7 @@
     .collapse {
         top: 15px;
     }
-    .btn.btn-primary, .btn-primary {
-        padding: 7px 20px;
-        margin: 0 5px;
-        background: #578dc9;
-    }
+
     div#collapseOne {
 
         /* position: fixed;
@@ -399,6 +389,10 @@
          bottom: 0;
          margin: 0;
          background-color: rgba(0, 0, 0, 0.3);
-     } */
+     }
+*/
+    .collapse.show.out {
+        display: none;
+    }
 
 </style>

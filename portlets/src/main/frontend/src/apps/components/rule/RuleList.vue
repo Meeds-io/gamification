@@ -33,7 +33,7 @@
                                 </option>
                            </select>
                         <td>
-                            <div v-if="editedrule.id !== rule.id">
+                            <div v-if="editedrule.id === rule.id">
                                 <label class="switch">
                                     <input type="checkbox" v-model="rule.enabled">
                                     <span class="slider round"></span>
@@ -113,6 +113,9 @@
 </script>
 
 <style scoped>
+    .container-fluid {
+        display: table;
+    }
     .table{
         position: relative;
         border-radius: 3px;

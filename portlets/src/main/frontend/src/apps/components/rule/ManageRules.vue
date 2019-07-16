@@ -82,8 +82,12 @@
             updateRule(ruleDTO) {
                 axios.put(`/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
-                        this.addSuccess=true;
+                        this.addSuccess=true
                         this.updateMessage='updated'
+                        this.rules.push(rule)
+                        this.resetRuleInForm()
+
+
                             .catch(e => {
                                 this.addError=true
                                 this.errors.push(e)
