@@ -3,11 +3,123 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
         xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+
     <component>
-        <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
+        <type>org.exoplatform.commons.persistence.impl.EntityManagerService
+        </type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint</type>
+    </component>
+
+    <!-- Badges Service Layer-->
+    <component>
+        <key>org.exoplatform.addons.gamification.service.configuration.BadgeService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
+    </component>
+
+    <!-- Gamification Effective Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
+    </component>
+
+    <!-- Rules Service Layer-->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.configuration.RuleService</type>
+    </component>
+    <component>
+        <type>org.exoplatform.services.rest.impl.ProvidersRegistry</type>
     </component>
     <component>
         <type>org.exoplatform.services.rest.impl.RequestHandlerImpl</type>
+    </component>
+    <component>
+        <type>org.exoplatform.services.rest.impl.RequestDispatcher</type>
+    </component>
+    <component>
+        <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
+    </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
+    </component>
+    <!-- Badge entity Mapper -->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
+    </component>
+
+
+    <component>
+        <key>org.exoplatform.commons.api.persistence.DataInitializer</key>
+        <type>org.exoplatform.commons.persistence.impl.LiquibaseDataInitializer
+        </type>
+        <init-params>
+            <value-param>
+                <name>liquibase.datasource</name>
+                <value>exo-jpa_portal</value>
+            </value-param>
+            <value-param>
+                <name>liquibase.contexts</name>
+                <value>production</value>
+            </value-param>
+        </init-params>
+    </component>
+
+    <component>
+        <key>org.exoplatform.services.jdbc.DataSourceProvider</key>
+        <type>org.exoplatform.services.jdbc.impl.DataSourceProviderImpl</type>
+    </component>
+
+
+
+    <component>
+        <type>org.exoplatform.services.cms.impl.DMSConfiguration</type>
+        <component-plugins>
+            <component-plugin>
+                <name>dmsconfiguration.plugin</name>
+                <set-method>addPlugin</set-method>
+                <type>org.exoplatform.services.cms.impl.DMSRepositoryConfiguration
+                </type>
+                <description>DMS Repository configuration</description>
+                <init-params>
+                    <value-param>
+                        <name>systemWorkspace</name>
+                        <value>portal-test</value>
+                    </value-param>
+                </init-params>
+            </component-plugin>
+        </component-plugins>
+    </component>
+
+
+    <component>
+        <key>org.exoplatform.services.log.LogConfigurationInitializer</key>
+        <type>org.exoplatform.services.log.LogConfigurationInitializer</type>
+        <init-params>
+            <value-param>
+                <name>logger</name>
+                <value>org.slf4j.Logger</value>
+            </value-param>
+            <value-param>
+                <name>configurator</name>
+                <value>org.exoplatform.services.log.impl.Log4JConfigurator</value>
+            </value-param>
+            <properties-param>
+                <name>properties</name>
+                <description>Log4J properties</description>
+                <property name="log4j.rootLogger" value="INFO, stdout" />
+
+                <property name="log4j.appender.stdout" value="org.apache.log4j.ConsoleAppender" />
+                <property name="log4j.appender.stdout.threshold" value="DEBUG" />
+                <property name="log4j.appender.stdout.layout" value="org.apache.log4j.PatternLayout" />
+                <property name="log4j.appender.stdout.layout.ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} *%-5p* [%t] %c{1}: %m (%F, line %L) %n" />
+                <property name="log4j.appender.file" value="org.apache.log4j.FileAppender" />
+                <property name="log4j.appender.file.File" value="target/container.log" />
+                <property name="log4j.appender.file.layout" value="org.apache.log4j.PatternLayout" />
+                <property name="log4j.appender.file.layout.ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} *%-5p* [%t] %c{1}: %m (%F, line %L) %n" />
+
+            </properties-param>
+        </init-params>
     </component>
     <component>
         <key>org.exoplatform.services.database.HibernateService</key>
@@ -331,6 +443,41 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+
+
+
+    <!-- Bind datasource -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.naming.InitialContextInitializer</target-component>
+        <component-plugin>
+            <name>bind.datasource</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.services.naming.BindReferencePlugin</type>
+            <init-params>
+                <value-param>
+                    <name>bind-name</name>
+                    <value>exo-jpa_portal</value>
+                </value-param>
+                <value-param>
+                    <name>class-name</name>
+                    <value>javax.sql.DataSource</value>
+                </value-param>
+                <value-param>
+                    <name>factory</name>
+                    <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
+                </value-param>
+                <properties-param>
+                    <name>ref-addresses</name>
+                    <description>ref-addresses</description>
+                    <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+                    <property name="url" value="jdbc:hsqldb:mem:db1" />
+                    <property name="username" value="sa" />
+                    <property name="password" value="" />
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
     <external-component-plugins>
         <target-component>org.exoplatform.services.rest.impl.RequestHandlerImpl</target-component>
         <component-plugin>
@@ -345,6 +492,7 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
+
 
 
 </configuration>

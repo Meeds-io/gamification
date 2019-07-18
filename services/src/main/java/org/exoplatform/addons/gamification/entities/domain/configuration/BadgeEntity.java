@@ -217,4 +217,16 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
                 ", description='" + description + '\'' +
                 "}";
     }
+
+    public BadgeEntity(Long id,String title, String description, int neededScore, long iconFileId, Date startValidityDate, Date endValidityDate, boolean enabled, String domain) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.neededScore = neededScore;
+        this.iconFileId = iconFileId;
+        this.startValidityDate = startValidityDate;
+        this.endValidityDate = endValidityDate;
+        this.enabled = enabled;
+        this.domain = domain;
+    }
 }
