@@ -2,18 +2,16 @@
     <div>
         <div class="col-sm-12 fluid">
 
-            <div class="btn" id="headingOne">
+            <div class="pull-right" id="headingOne">
 
-                <button aria-controls="collapseOne" aria-expanded="false" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add Rule</button>
+                <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add rule</button>
             </div>
-
-            <div aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;/* top:-90px; */ ">
-
+            <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
                 <div class="card-body">
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                         <div class="popupHeader ClearFix">
 
-                            <a class="uiIconClose pull-right"  aria-controls="collapseOne" aria-expanded="false" data-target="#collapseOne" data-toggle="collapse" aria-hidden="true" data-dismiss="modal" ></a>
+                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()" ></a>
 
                             <span class="PopupTitle popupTitle">Add Rule</span>
                         </div>
@@ -51,24 +49,23 @@
                                 <span class="absolute-no">NO</span>
                                </label>
                             </form>
-
-
                             <form id="areaSelectboxGroup">
                                 <label class="col-form-label pt-0">Domain :</label>
-                                <select v-model="rule.domainDTO" class="mb-4">
-                                    <option :value="null" disabled>-- Please select an area --</option>
-                                    <option v-for="option in domains" v-bind:value="option">
-                                        {{ option.title }}
-                                    </option>
-                                </select>
+                                    <select v-model="rule.domainDTO" class="mb-4">
+                                        <option value="" disabled selected >Select your Domain</option>
+                                        <option v-for="option in domains" v-bind:value="option">
+                                            {{ option.title }}
+                                        </option>
+                                    </select>
                             </form>
+
+
                             <div class="row">
                                 <b-col>
-                                    <button type="submit" v-on:click.prevent="onCancel" class="btn secondary pull-right" data-target="#collapseOne" data-toggle="collapse" aria-hidden="true" data-dismiss="modal">Cancel</button>
-                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit" >
+                                    <button type="submit" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
+                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
                                         {{rule.id ? 'Update' : 'Confirm'}}
                                     </b-button>
-
                                 </b-col>
                             </div>
                         </div>
@@ -105,6 +102,7 @@
                 dismissSecs: 5,
                 dismissCountDown: 0,
                 date: new Date(),
+                isShown: false,
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
@@ -147,9 +145,12 @@
             onSubmit() {
                 if (this.validateForm()) {
                     this.createRule(this.rule)
-                    this.SaveRuleForm.update()
-                    this.SaveRuleForm.cancel()
+                    this.collapseButton()
                 }
+
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
@@ -181,23 +182,26 @@
     .card-body label {
         display: block;
     }
-    .col-sm-11.fluid {
-        top: 10px;
-    }
     form {
         margin-bottom: 24px;
     }
     form-row {
-        display: flex;t
+        display: flex;
         flex-wrap: wrap;
         margin-right: -5px;
         margin-left: -5px;
+    }
+    div#headingOne button.btn.btn-primary {
+        margin: 15px 12px 5px;
+    }
+    .btn-primary:focus, .btn-primary.focus {
+        box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
     }
     label {
         display: inline-block;
         max-width: 100%;
         margin-bottom: 5px;
-        font-weight: 700;
+        font-weight: 500;
         color: #333;
     }
     input[type="number"] {
@@ -238,29 +242,19 @@
     }
     div#headingOne:hover {
         background: transparent;
+        transition: all .5s;
     }
     div#headingOne {
         box-shadow: none;
-    }
-    .btn {
-        display: inline-block;
-        padding: 1.5rem;
-    }
-    button.btn.btn-link.primary.collapsed, button.btn.btn-link.primary, btn{
-        background: #3c8dbc;
-        color: white;
-        padding: 7px 25px;
-        position: absolute;
-        right: 42px;;
-        top: 12px;
-        text-decoration: none;
-    }
-    button.btn.btn-link.primary{
-        background: #3c8dbc;
+        transition: all .5s;
     }
     button.btn.secondary {
-        padding: 6px 25px;
-        border: Solid 2px #e1e8ee;
+
+        padding: 8px 25px;
+        margin-left: 25px;
+        border: 2px solid #e1e8ee !important;
+        color: #4d5466;
+        background-color: transparent !important;
     }
     .col-sm-12.card {
         position: relative;
@@ -276,11 +270,7 @@
     .collapse {
         top: 15px;
     }
-    .btn.btn-primary, .btn-primary {
-        padding: 7px 20px;
-        margin: 0 5px;
-        background: #578dc9;
-    }
+
     div#collapseOne {
 
         /* position: fixed;
@@ -307,10 +297,10 @@
     .uiSwitchBtn {
         position: relative;
         display: inline-block;
-        width: 150px;
-        height: 40px;
-        bottom: 5px;
-        zoom: 40%;
+        width: 185px;
+        height: 66px;
+        zoom: 30%;
+
     }
     .uiSwitchBtn input {display:none;}
     .slider {
@@ -321,7 +311,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #e6e6e6;
+        background-color: #f2f2f2;
         -webkit-transition: .4s;
         transition: .4s;
     }
@@ -329,10 +319,10 @@
         position: absolute;
         z-index: 2;
         content: "";
-        height: 35px;
-        width: 35px;
-        left: 2px;
-        bottom: 5px;
+        height: 45px;
+        width: 45px;
+        left: 10px;
+        bottom: 11px;
         background-color: darkgrey;
         -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
@@ -344,34 +334,51 @@
         left: 0;
         z-index: 1;
         content: "YES";
-        font-size: 33px;
+        font-size: 37px;
         text-align: left !important;
-        line-height: 45px;
+        line-height: 65px;
         padding-left: 0;
-        width: 125px;
-        color: #fff;
-        height: 39px;
+        width: 185px;
+        height: 66px !important;
+        color: #f9f9f9;
+        background-color: #477ab3;
+        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
+        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
+        -webkit-box-shadow: inset 0px 3px 5px #224469;
+        -moz-box-shadow: inset 0px 3px 5px #224469;
+        box-shadow: inset 0px 3px 5px #224469;
+        -webkit-border-top-left-radius: 9px;
+        -moz-border-radius-topleft: 9px;
+        border-top-left-radius: 9px;
+        -webkit-border-bottom-left-radius: 9px;
+        -moz-border-radius-bottomleft: 9px;
+        border-bottom-left-radius: 9px;
+        height: 57px;
         border-radius: 100px;
         background-color: #578dc9;
-        -webkit-transform: translateX(-160px);
-        -ms-transform: translateX(-160px);
-        transform: translateX(-160px);
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
         transition: all 0.4s ease-in-out;
     }
     input:checked + .slider:after {
         -webkit-transform: translateX(0px);
         -ms-transform: translateX(0px);
         transform: translateX(0px);
-
         padding-left: 25px;
     }
     input:checked + .slider:before {
         background-color: #fff;
     }
     input:checked + .slider:before {
-        -webkit-transform: translateX(160px);
-        -ms-transform: translateX(160px);
-        transform: translateX(160px);
+        -webkit-transform: translateX(115px);
+        -ms-transform: translateX(115px);
+        transform: translateX(115px);
     }
     /* Rounded sliders */
     .slider.round {
@@ -385,11 +392,21 @@
         left: 0;
         color: darkgrey;
         text-align: right !important;
-        font-size: 28px;
-        width: calc(100% - 40px);
-        height: 84px;
-        line-height: 51px;
+        font-size: 45px;
+        width: calc(100% - 25px);
+        line-height: 70px;
         cursor: pointer;
+    }
+    input.rule-needed-score-col{
+        max-width: 60px;
+        text-align: center;
+    }
+    i.uiIconClose.uiIconBlue {
+        zoom: 133%;
+        height: 100%;
+        vertical-align: super;
+        color: #578dc9;
+        line-height: inherit;
     }
     /* div#collapseOne .card {
          position: relative;
@@ -399,6 +416,10 @@
          bottom: 0;
          margin: 0;
          background-color: rgba(0, 0, 0, 0.3);
-     } */
+     }
+*/
+    .collapse.show.out {
+        display: none;
+    }
 
 </style>

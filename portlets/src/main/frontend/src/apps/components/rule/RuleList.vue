@@ -17,6 +17,8 @@
                     <tr v-for="rule in rules">
                         <td> <div v-if="editedrule.id !== rule.id">{{rule.title}} </div>
                             <input type="text" v-if="editedrule.id === rule.id" class="rule-title-col" v-model="rule.title"style="width: 130px; min-width: 98%;">
+
+
                         </td>
                         <td class="rule-desc-col"><div v-if="editedrule.id !== rule.id">{{rule.description}}</div>
                             <input type="text" v-if="editedrule.id === rule.id" v-model="rule.description"style="width: 130px;min-width: 98%;">
@@ -33,7 +35,7 @@
                                 </option>
                            </select>
                         <td>
-                            <div v-if="editedrule.id !== rule.id">
+                            <div v-if="editedrule.id === rule.id">
                                 <label class="switch">
                                     <input type="checkbox" v-model="rule.enabled">
                                     <span class="slider round"></span>
@@ -113,6 +115,9 @@
 </script>
 
 <style scoped>
+    .container-fluid {
+        display: table;
+    }
     .table{
         position: relative;
         border-radius: 3px;
@@ -164,8 +169,8 @@
     .switch {
         position: relative;
         display: inline-block;
-        width: 150px;
-        height: 50px;
+        width: 185px;
+        height: 66px;
         zoom: 30%;
     }
     .switch input {display:none;}
@@ -185,10 +190,10 @@
         position: absolute;
         z-index: 2;
         content: "";
-        height: 65px;
-        width: 54px;
-        left: 2px;
-        bottom: -1px;
+        height: 45px;
+        width: 45px;
+        left: 10px;
+        bottom: 11px;
         background-color: darkgrey;
         -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
@@ -200,18 +205,36 @@
         left: 0;
         z-index: 1;
         content: "YES";
-        font-size: 45px;
+        font-size: 37px;
         text-align: left !important;
-        line-height: 51px;
+        line-height: 65px;
         padding-left: 0;
-        width: 130px;
-        color: #fff;
-        height: 50px;
+        width: 185px;
+        height: 66px !important;
+        color: #f9f9f9;
+        background-color: #477ab3;
+        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
+        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
+        -webkit-box-shadow: inset 0px 3px 5px #224469;
+        -moz-box-shadow: inset 0px 3px 5px #224469;
+        box-shadow: inset 0px 3px 5px #224469;
+        -webkit-border-top-left-radius: 9px;
+        -moz-border-radius-topleft: 9px;
+        border-top-left-radius: 9px;
+        -webkit-border-bottom-left-radius: 9px;
+        -moz-border-radius-bottomleft: 9px;
+        border-bottom-left-radius: 9px;
+        height: 57px;
         border-radius: 100px;
         background-color: #578dc9;
-        -webkit-transform: translateX(-160px);
-        -ms-transform: translateX(-160px);
-        transform: translateX(-160px);
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
         transition: all 0.4s ease-in-out;
     }
     input:checked + .slider:after {
@@ -224,9 +247,9 @@
         background-color: #fff;
     }
     input:checked + .slider:before {
-        -webkit-transform: translateX(160px);
-        -ms-transform: translateX(160px);
-        transform: translateX(160px);
+        -webkit-transform: translateX(115px);
+        -ms-transform: translateX(115px);
+        transform: translateX(115px);
     }
     /* Rounded sliders */
     .slider.round {
@@ -240,10 +263,9 @@
         left: 0;
         color: darkgrey;
         text-align: right !important;
-        font-size: 40px;
+        font-size: 45px;
         width: calc(100% - 25px);
-        height: 84px;
-        line-height: 51px;
+        line-height: 70px;
         cursor: pointer;
     }
     input.rule-needed-score-col{

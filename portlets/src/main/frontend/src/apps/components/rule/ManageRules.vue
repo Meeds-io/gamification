@@ -1,7 +1,6 @@
 <template>
     <section>
-
-        <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successfully</b-alert>
+        <b-alert v-if="addSuccess" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">Rule {{updateMessage}} successfully</b-alert>
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
 
@@ -35,7 +34,9 @@
             addError: false,
             updateMessage: '',
             rules: [],
-            domains: []
+            domains: [],
+            dismissSecs: 5,
+            dismissCountDown: 0,
         }
     }
     export default {
@@ -45,6 +46,23 @@
         },
         data: initialData,
         methods: {
+            validateForm() {
+                const errors = {}
+                if (this.addSuccess=true) {
+                    errors.title = 'success'
+                    this.dismissCountDown = 5
+                }
+                if (this.addError=true) {
+                    errors.title = 'error'
+                    this.dismissCountDown = 5
+                }
+
+                this.formErrors = errors
+                return Object.keys(errors).length === 0
+            },
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
             resetRuleInForm() {
                 this.ruleInForm = initialData().ruleInForm
             },
@@ -82,8 +100,12 @@
             updateRule(ruleDTO) {
                 axios.put(`/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
-                        this.addSuccess=true;
+                        this.addSuccess=true
                         this.updateMessage='updated'
+                        this.rules.push(rule)
+                        this.resetRuleInForm()
+
+
                             .catch(e => {
                                 this.addError=true
                                 this.errors.push(e)
