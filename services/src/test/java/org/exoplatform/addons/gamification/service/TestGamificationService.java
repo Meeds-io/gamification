@@ -14,6 +14,10 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 
 public class TestGamificationService extends AbstractServiceTest {
+  
+   protected Class<?> getComponentClass() {
+    return GamificationService.class;
+  }
   private static final String    GAMIFICATION_DOMAIN = "TeamWork";
 
   private static final String    RULE_NAME           = "Update a new Task";
@@ -25,7 +29,7 @@ public class TestGamificationService extends AbstractServiceTest {
   private static final String    TEST_USER_SENDER    = "1";
 
   /* Link to the activity stream */
-  private static final String    TEST_LINK_ACTIVITY  = "/portal/intranet//activity?id=245590";
+  private static final String    TEST_LINK_ACTIVITY  = "/portal/intranet/activity?id=245590";
 
   private static final String    TEST_GLOBAL_SCORE   = "245590";
 
