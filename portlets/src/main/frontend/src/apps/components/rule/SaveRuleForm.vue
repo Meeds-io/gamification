@@ -138,7 +138,7 @@
             },
             onCancel() {
                 this.$emit('cancel')
-                this.SaveRuleForm.cancel()
+
             },
             onSubmit() {
                 if (this.validateForm()) {
