@@ -47,6 +47,10 @@
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
     </component>
+    <!-- Domain entity Mapper -->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.mapper.DomainMapper</type>
+    </component>
 
 
     <component>
