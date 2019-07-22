@@ -31,7 +31,7 @@ public class RuleService {
      * @return an instance of RuleDTO
      */
     @ExoTransactional
-    public RuleDTO findEnableRuleByTitle (String ruleTitle) throws EntityNotFoundException {
+    public RuleDTO findEnableRuleByTitle (String ruleTitle) {
 
         try {
             //--- Get Entity from DB
@@ -40,7 +40,7 @@ public class RuleService {
             if (entity != null ) {
                 return ruleMapper.ruleToRuleDTO(entity);
             }else{
-                throw (new EntityNotFoundException());
+                return null;
             }
 
         } catch (Exception e) {
