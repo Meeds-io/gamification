@@ -1,6 +1,5 @@
 <template>
     <section>
-
         <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successfully</b-alert>
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
@@ -35,7 +34,9 @@
             addError: false,
             updateMessage: '',
             rules: [],
-            domains: []
+            domains: [],
+            dismissSecs: 5,
+            dismissCountDown: 0,
         }
     }
     export default {
@@ -49,16 +50,13 @@
                 this.ruleInForm = initialData().ruleInForm
             },
             onSaveClicked (rule) {
-
                 this.updateRule(rule)
-
             },
             onRuleCreated(rule) {
                 this.addSuccess=true
                 this.updateMessage='added'
                 this.rules.push(rule)
                 this.resetRuleInForm()
-
             },
             onRuleFail(rule) {
                 this.addError=true
@@ -67,7 +65,6 @@
             },
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId)
-
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
                     .then(response => {
                         this.rules.splice(index, 1)
@@ -82,8 +79,9 @@
             updateRule(ruleDTO) {
                 axios.put(`/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
-                        this.addSuccess=true;
+                        this.addSuccess=true
                         this.updateMessage='updated'
+                        this.rules.push(rule)
                             .catch(e => {
                                 this.addError=true
                                 this.errors.push(e)
@@ -94,7 +92,6 @@
                     })
             }
         },
-
         created() {
             axios.get(`/rest/gamification/rules/all`)
                 .then(response => {
@@ -104,14 +101,13 @@
                     this.addError=true
                     this.errors.push(e)
                 })
-
-                                axios.get(`/rest/gamification/api/v1/domains`)
-                    .then(response => {
-                        this.domains = response.data;
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+            axios.get(`/rest/gamification/api/v1/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
     }
 </script>
