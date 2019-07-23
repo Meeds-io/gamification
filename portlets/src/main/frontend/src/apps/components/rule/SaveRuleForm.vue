@@ -1,9 +1,7 @@
 <template>
     <div>
         <div class="col-sm-12 fluid">
-
             <div class="pull-right" id="headingOne">
-
                 <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add rule</button>
             </div>
             <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
@@ -71,23 +69,14 @@
             </div>
         </div>
     </div>
-
-
-
-
 </template>
-
-
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    //import datePicker from 'vue-bootstrap-datetimepicker';
-    //   import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
     import axios from 'axios';
-    // Vue.use(datePicker);
     export default {
         props: ['rule','domains'],
         data: function (){
@@ -262,24 +251,16 @@
         top: 15px;
     }
     div#collapseOne {
-        /* position: fixed;
-        /* width: 100%; */
-        /* min-width: 100%;
-        z-index: 1000000;
-        /* margin: 0 auto;
-        margin-left: 50%;
-        transform: translateX(-50%); */
-        position: fixed; /* Stay in place */
-        z-index: 10000; /* Sit on top */
-
+        position: fixed;
+        z-index: 10000;
         left: 0;
         top: 0;
         bottom: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
     }
     /* switch test */
     .uiSwitchBtn {
@@ -412,5 +393,4 @@
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
         color: #333;
     }
-
 </style>

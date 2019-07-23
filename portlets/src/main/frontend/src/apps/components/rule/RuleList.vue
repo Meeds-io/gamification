@@ -48,7 +48,6 @@
                                     <span class="slider round"></span>
                                     <span class="absolute-no">NO</span>
                                 </label>
-                                <!-- <span class="uiCheckbox"><input type="checkbox" checked="" name="isDocumentTemplate" class="checkbox" id="isDocumentTemplate"><span>Check me out</span></span>-->
                             </div>
                         </td>
                         <td class="center actionContainer">
