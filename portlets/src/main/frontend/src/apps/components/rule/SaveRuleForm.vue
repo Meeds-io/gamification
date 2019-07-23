@@ -1,9 +1,7 @@
 <template>
     <div>
         <div class="col-sm-12 fluid">
-
             <div class="pull-right" id="headingOne">
-
                 <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add rule</button>
             </div>
             <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
@@ -40,26 +38,23 @@
                                 </b-alert>
                             </b-form>
                             <form>
-
                                 <label class="col-form-label pt-0">Enable:</label>
-                               <label class="uiSwitchBtn">
+                                <label class="uiSwitchBtn">
 
-                                <input type="checkbox" v-model="rule.enabled" >
-                                <span class="slider round"></span>
-                                <span class="absolute-no">NO</span>
-                               </label>
+                                    <input type="checkbox" v-model="rule.enabled" >
+                                    <span class="slider round"></span>
+                                    <span class="absolute-no">NO</span>
+                                </label>
                             </form>
                             <form id="areaSelectboxGroup">
                                 <label class="col-form-label pt-0">Domain :</label>
-                                    <select v-model="rule.domainDTO" class="mb-4">
-                                        <option value="" disabled selected >Select your Domain</option>
-                                        <option v-for="option in domains" v-bind:value="option">
-                                            {{ option.title }}
-                                        </option>
-                                    </select>
+                                <select v-model="rule.domainDTO" class="mb-4" required>
+                                    <option value="null" disabled selected >Select your Domain</option>
+                                    <option v-for="option in domains" v-bind:value="option">
+                                        {{ option.title }}
+                                    </option>
+                                </select>
                             </form>
-
-
                             <div class="row">
                                 <b-col>
                                     <button type="submit" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
@@ -74,23 +69,14 @@
             </div>
         </div>
     </div>
-
-
-
-
 </template>
-
-
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    //import datePicker from 'vue-bootstrap-datetimepicker';
-    //   import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
     import axios from 'axios';
-    // Vue.use(datePicker);
     export default {
         props: ['rule','domains'],
         data: function (){
@@ -110,6 +96,7 @@
                 dynamicAreas: []
             }
         },
+
         watch: {
             'rule.id'() {
                 this.formErrors = {}
@@ -140,7 +127,7 @@
             },
             onCancel() {
                 this.$emit('cancel')
-                this.SaveRuleForm.cancel()
+
             },
             onSubmit() {
                 if (this.validateForm()) {
@@ -148,6 +135,9 @@
                     this.collapseButton()
                 }
 
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             collapseButton() {
                 this.isShown = !this.isShown;
@@ -175,7 +165,7 @@
                 //this.resetRuleInForm()
             }
         }
-        }
+    }
 </script>
 
 <style scoped>
@@ -217,14 +207,7 @@
     form#areaSelectboxGroup {
         margin-bottom: 0px;
     }
-    input[type="number"]:focus:invalid:focus,
-    input[type="date"]:focus:invalid:focus {
-        border-color: #e9322d;
-        -webkit-box-shadow: 0 0 6px #f8b9b7;
-        -moz-box-shadow: 0 0 6px #f8b9b7;
-        box-shadow: 0 0 6px #f8b9b7;
-        width: 100%;
-    }
+
     .require-msg{
         max-width: 100% !important;
         font-size: 14px;
@@ -236,6 +219,8 @@
         width: 100%;
         font-size: 15px;
     }
+
+
     input[type="checkbox"] {
         width: auto;
         margin-bottom: 10px;
@@ -249,7 +234,6 @@
         transition: all .5s;
     }
     button.btn.secondary {
-
         padding: 8px 25px;
         margin-left: 25px;
         border: 2px solid #e1e8ee !important;
@@ -270,28 +254,17 @@
     .collapse {
         top: 15px;
     }
-
     div#collapseOne {
-
-        /* position: fixed;
-        /* width: 100%; */
-        /* min-width: 100%;
-        z-index: 1000000;
-        /* margin: 0 auto;
-        margin-left: 50%;
-        transform: translateX(-50%); */
-
-        position: fixed; /* Stay in place */
-        z-index: 10000; /* Sit on top */
-      /*  padding-top: 100px; /* Location of the box */
+        position: fixed;
+        z-index: 10000;
         left: 0;
         top: 0;
         bottom: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
     }
     /* switch test */
     .uiSwitchBtn {
@@ -300,7 +273,6 @@
         width: 185px;
         height: 66px;
         zoom: 30%;
-
     }
     .uiSwitchBtn input {display:none;}
     .slider {
@@ -408,18 +380,21 @@
         color: #578dc9;
         line-height: inherit;
     }
-    /* div#collapseOne .card {
-         position: relative;
-         top: 0;
-         left: 0;
-         right: 0;
-         bottom: 0;
-         margin: 0;
-         background-color: rgba(0, 0, 0, 0.3);
-     }
-*/
     .collapse.show.out {
         display: none;
     }
 
+    .uiPopup .popupContent select, .modal.uiPopup .popupContent select {
+        outline: none;
+        border: 2px solid #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+    }
+    select:focus{
+        border-color: #a6bad6;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
+        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 5px #c9d5e6;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
+        color: #333;
+    }
 </style>

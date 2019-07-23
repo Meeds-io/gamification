@@ -1,7 +1,6 @@
 <template>
     <section>
-        <b-alert v-if="addSuccess" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">Rule {{updateMessage}} successfully</b-alert>
-
+        <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successfully</b-alert>
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
 
         <save-rule-form :rule="ruleInForm" :domains="domains" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
@@ -67,16 +66,13 @@
                 this.ruleInForm = initialData().ruleInForm
             },
             onSaveClicked (rule) {
-
                 this.updateRule(rule)
-
             },
             onRuleCreated(rule) {
                 this.addSuccess=true
                 this.updateMessage='added'
                 this.rules.push(rule)
                 this.resetRuleInForm()
-
             },
             onRuleFail(rule) {
                 this.addError=true
@@ -85,7 +81,6 @@
             },
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId)
-
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
                     .then(response => {
                         this.rules.splice(index, 1)
@@ -103,9 +98,6 @@
                         this.addSuccess=true
                         this.updateMessage='updated'
                         this.rules.push(rule)
-                        this.resetRuleInForm()
-
-
                             .catch(e => {
                                 this.addError=true
                                 this.errors.push(e)
@@ -116,7 +108,6 @@
                     })
             }
         },
-
         created() {
             axios.get(`/rest/gamification/rules/all`)
                 .then(response => {
@@ -126,18 +117,16 @@
                     this.addError=true
                     this.errors.push(e)
                 })
-
-                                axios.get(`/rest/gamification/api/v1/domains`)
-                    .then(response => {
-                        this.domains = response.data;
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+            axios.get(`/rest/gamification/api/v1/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
     }
 </script>
-
 <style scoped>
     .alert-success {
         color: #315b73;

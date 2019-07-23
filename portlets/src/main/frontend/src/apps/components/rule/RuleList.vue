@@ -29,11 +29,11 @@
                         <td style="max-width: 115px;">
                             <div v-if="editedrule.id !== rule.id && rule.domainDTO != null">{{rule.domainDTO.title}}</div>
                             <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO"  style="max-width: 115px;margin: 0px auto;height: 35px;" required>
-                                <option :value="null" disabled style="max-width: 115px">-- Please select an area --</option>
-                                <option v-for="option in domains" v-bind:value="option">
+                                <option :value="null" disabled style="max-width: 115px;">Select Your Domain</option>
+                                <option v-for="option in domains" v-bind:value="option" style="max-width: 115px">
                                     {{ option.title }}
                                 </option>
-                           </select>
+                            </select>
                         <td>
                             <div v-if="editedrule.id === rule.id">
                                 <label class="switch">
@@ -42,16 +42,14 @@
                                     <span class="absolute-no">NO</span>
                                 </label>
                             </div>
-                            <div v-else style="padding-top: 10px;">
+                            <div v-else>
                                 <label class="switch" v-on:click ="rule.enabled = !rule.enabled">
                                     <input type="checkbox" v-model="rule.enabled">
                                     <span class="slider round"></span>
                                     <span class="absolute-no">NO</span>
                                 </label>
-                                <!-- <span class="uiCheckbox"><input type="checkbox" checked="" name="isDocumentTemplate" class="checkbox" id="isDocumentTemplate"><span>Check me out</span></span>-->
                             </div>
                         </td>
-
                         <td class="center actionContainer">
                             <a href="#" v-if="editedrule.id !== rule.id" v-on:click.stop="onEdit(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
@@ -128,7 +126,6 @@
         margin: 14px auto 0;
         margin-bottom: 30px;
     }
-
     .uiGrid.table tr td {
         padding: 5px;
         vertical-align: inherit;
@@ -161,6 +158,7 @@
         border: Solid 2px #e1e8ee;
         border-radius: 5px;
         margin: auto;
+        outline: none;
     }
     input.rule-desc-col {
         min-width: 98%;
@@ -172,6 +170,7 @@
         width: 185px;
         height: 66px;
         zoom: 30%;
+        top: 0.4rem;
     }
     .switch input {display:none;}
     .slider {
@@ -273,10 +272,12 @@
         text-align: center;
     }
     i.uiIconClose.uiIconBlue {
-    zoom: 133%;
-    height: 100%;
-    vertical-align: super;
-    color: #578dc9;
-    line-height: inherit;
+        zoom: 163%;
+        vertical-align: super;
+        opacity: 1;
+        line-height: inherit;
+    }
+    i.uiIconSave.uiIconLightGray {
+        left: -4px;
     }
 </style>
