@@ -1,134 +1,104 @@
 <template>
     <div>
-        <div class="container fluid">
-            <div class="col-sm-12 card">
-                <div>
-                  <!--  <div class="btn" id="headingOne">
-                        <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link primary" data-target="#collapseOne" data-toggle="collapse" type="button">add badge</button></h5>
-                    </div> -->
+        <div class="col-sm-12 fluid">
+            <div class="pull-right" id="headingOne">
+                <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add badge</button>
+            </div>
+            <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
+                <div class="card-body">
+                    <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                         <div class="popupHeader ClearFix">
+                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()" ></a>
+                            <span class="PopupTitle popupTitle">Add Badge</span>
+                         </div>
+                        <div class="PopupContent popupContent">
 
-                    <div aria-labelledby="headingOne" class="in collapse show" data-parent="#accordionExample" id="collapseOne" style="height: auto;">
-                        <div class="card-body">
+                            <form id="titleInputGroup">
+                                <label class="pt-0">Title:</label>
+                                <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
+                                </input>
 
-                <form-row>
-                    <div class="card">
-                        <form-group id="titleInputGroup">
-                            <label class="pt-0">Title:</label>
-                            <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
-                            </input>
+                                <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    Badge title is required please enter a title {{dismissCountDown}} ...
+                                </b-alert>
+                            </form>
 
-                            <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                     @dismiss-count-down="countDownChanged">
-                                Badge title is required please enter a title {{dismissCountDown}} ...
-                            </b-alert>
-                        </form-group>
-
-                        <div id="descriptionInputGroup">
-                            <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
-                            <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
-                            </textarea>
-                        </div>
-
-                        <form-group id="neededScoreInputGroup" >
-                            <label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
-                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
-                            </input>
-                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                     @dismiss-count-down="countDownChanged">
-                                Badge needed score is required please enter a value {{dismissCountDown}} ...
-                            </b-alert>
-                        </form-group>
-
-                        <form-group id="iconInputGroup">
-                            <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
-                            <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-
-                        </form-group>
-
-                    </div>
-                    <div class="card">
-
-                        <form-group id="startValidityDateInputGroup ">
-                            <label id="startValidityInputGroup" for="startValidityInput" class="col-form-label pt-0">Start Validity Date:</label>
-
-                            <date-picker name="startValidityDateInput" id="startValidityDateInput" v-model="badge.startValidityDate" :config="config"
-                                         placeholder="Enter badge's start validity date"></date-picker>
-                        </form-group>
-
-                        <form-group id="endValidityDateInputGroup">
-                            <label id="End Validity Date:" class="col-form-label pt-0" label-for="endValidityDateInput">End Validity Date:</label>
-                            <date-picker name="endValidityDateInput" id="endValidityDateInput" v-model="badge.endValidityDate" :config="config" placeholder="Enter badge's start validity date"></date-picker>
-                        </form-group>
-
-                        <form id="domainSelectboxGroup">
-                            <!--<select v-model="badge.domain" class="mb-4" required>
-                                <template slot="first">
-
-                                    <option :value="null" disabled placeholder="Please select a domain"></option>
-                                </template>
-
-                                <option value="Social">Social</option>
-                                <option value="Knowledge">Knowledge</option>
-                                <option value="Teamwork">Teamwork</option>
-                                <option value="Feedback">Feedback</option>
-
-                                &lt;!&ndash;
-                                <option value="Content">Content</option>
-                                &ndash;&gt;
-                            </select>-->
-
-                            <select v-model="badge.domainDTO" class="mb-4">
-                                <option :value="null" disabled>-- Please select an area --</option>
-                                <option v-for="option in domains" v-bind:value="option">
-                                    {{ option.title }}
-                                </option>
-                            </select>
-
-                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                     @dismiss-count-down="countDownChanged">
-                                Domain is required please choice a domain {{dismissCountDown}} ...
-                            </b-alert>
-                        </form>
-
-                        <div id="enableCheckboxGroup">
-                            <b-form-checkbox v-model="badge.enabled">Enable badge</b-form-checkbox>
-                        </div>
-
-
-                        <b-row>
-                            <b-col>
-
-                                <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
-                                    {{badge.id ? 'Update' : 'Add'}} badge
-                                </b-button>
-                            </b-col>
-                            <div>
-                                <button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</button>
-
+                            <div id="descriptionInputGroup">
+                                <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
+                                <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
+                    </textarea>
                             </div>
-                        </b-row>
-                    </div>
-                </form-row>
+                            <form id="neededScoreInputGroup" >
+                                <label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
+                                <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
+                                </input>
+                                <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    Badge needed score is required please enter a value {{dismissCountDown}} ...
+                                </b-alert>
+                            </form>
+                            <form id="iconInputGroup">
+                                <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
+                                <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                            </form>
+
+                            <form id="domainSelectboxGroup">
+                                <select v-model="badge.domain" class="mb-4" required>
+                                    <template slot="first">
+
+                                        <option :value="null" disabled placeholder="Please select a domain"></option>
+                                    </template>
+
+                                    <option value="Social">Social</option>
+                                    <option value="Knowledge">Knowledge</option>
+                                    <option value="Teamwork">Teamwork</option>
+                                    <option value="Feedback">Feedback</option>
+
+                                </select>
+                                <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    Domain is required please choice a domain {{dismissCountDown}} ...
+                                </b-alert>
+                            </form>
+
+                            <label class="col-form-label pt-0">Enable:</label>
+                            <label class="uiSwitchBtn">
+
+                                <input type="checkbox" v-model="badge.enabled" >
+                                <span class="slider round"></span>
+                                <span class="absolute-no">NO</span>
+                            </label>
+
+                            <b-row style="display: inherit;">
+                                <b-col>
+
+                                    <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
+                                        {{badge.id ? 'Update' : 'Add'}} badge
+                                    </b-button>
+                                </b-col>
+                                <div style="width: max-content;margin-top: 2em;padding: 2px 20px;">
+                                    <button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</button>
+                                </div>
+                            </b-row>
                         </div>
+                    </div>
+                </div>
+
                     </div>
                 </div>
             </div>
 
-        </div>
-    </div>
-
 </template>
 <script>
-
     import Vue from 'vue'
     import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import datePicker from 'vue-bootstrap-datetimepicker'
-    import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
+    // import datePicker from 'vue-bootstrap-datetimepicker'
+    // import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
-    Vue.use(datePicker);
-
+    //  Vue.use(datePicker);
     export default {
         props: ['badge'],
         data: function () {
@@ -139,15 +109,14 @@
                 dismissSecs: 5,
                 dismissCountDown: 0,
                 date: new Date(),
+                isShown: false,
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
                 },
-                dynamicRules: [],
-                domains: []
+                dynamicRules: []
             }
         },
-
         watch: {
             'badge.id'() {
                 this.formErrors = {}
@@ -158,12 +127,10 @@
         methods: {
             validateForm() {
                 const errors = {}
-
                 if (!this.badge.title) {
                     errors.title = 'Title is required'
                     this.dismissCountDown = 5
                 }
-
                 if (!this.badge.neededScore) {
                     errors.neededScore = 'Needed score is required'
                     this.dismissCountDown = 5
@@ -173,14 +140,11 @@
                     this.dismissCountDown = 5
                 }
                 this.formErrors = errors
-
                 return Object.keys(errors).length === 0
             },
-
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
                 this.selectedFileName = event.target.files[0].name
-
             },
             onCancel() {
                 this.$emit('cancel')
@@ -189,7 +153,9 @@
                 if (this.validateForm()) {
                     this.$emit('submit', this.badge)
                 }
-
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
@@ -201,22 +167,9 @@
                     onCancel: () => { },
                 });
             },
-
-
         },
-
         created() {
-            axios.get(`/rest/gamification/api/v1/domains`)
-                    .then(response => {
-                        this.domains = response.data;
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-
         }
-
-
     }
 </script>
 
@@ -227,12 +180,20 @@
     .card.col label {
         display: block;
     }
+    div#headingOne button.btn.btn-primary {
+        margin: 15px 12px 5px;
+    }
+    .btn-primary:focus, .btn-primary.focus {
+        box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
+    }
+    .collapse.show.out {
+        display: none;
+    }
     input.custom-file.b-form-file {
         display: inline-block;
         height: calc(2.25rem + 2px);
         position: relative;
     }
-
     h5.mt-0 {
         color: #4d5466;
         font-family: Helvetica, arial, sans-serif;
@@ -243,7 +204,6 @@
         text-align: center;
         padding: 20px 0px;
     }
-
     label {
         display: inline-block;
         max-width: 100%;
@@ -251,7 +211,6 @@
         font-weight: 700;
         color: #333;
     }
-
     input[type="number"] {
         font-size: 15px;
         height: 40px;
@@ -262,7 +221,6 @@
         max-height: 40px;
         text-overflow: ellipsis;
     }
-
     input[type="number"]:focus:invalid:focus,
     input[type="date"]:focus:invalid:focus {
         border-color: #e9322d;
@@ -270,7 +228,6 @@
         -moz-box-shadow: 0 0 6px #f8b9b7;
         box-shadow: 0 0 6px #f8b9b7;
     }
-
     .card {
         position: relative;
         border-radius: 3px;
@@ -283,17 +240,12 @@
         flex-basis: 0;
         flex-grow: 1;
         max-width: 100%;
-
     }
-
-
-
     .require-msg {
         max-width: 100% !important;
         font-size: 14px;
         padding: 10px;
     }
-
     .close {
         float: right;
         font-size: 21px;
@@ -304,31 +256,31 @@
         filter: alpha(opacity=20);
         cursor: pointer;
     }
-
     .close:hover {
         color: #000;
     }
     .card label {
         display: block;
     }
-    form-row {
+    form {
         display: flex;
         flex-wrap: wrap;
     }
-    .btn-primary {
-        background-color: #476a9c;
-        width: max-content;
-        margin-top: 2em;
+    button.btn.secondary {
+        padding: 8px 25px;
+        margin-left: 25px;
+        border: 2px solid #e1e8ee !important;
+        color: #4d5466;
+        background-color: transparent !important;
     }
-
-
-
+    div#headingOne:hover {
+        background: transparent;
+    }
     .custom-file-label:after {
         position: absolute;
         right: 5px;
         text-overflow: ellipsis;
     }
-
     .custom-file-label {
         position: relative!important;
         left: 0;
@@ -336,8 +288,6 @@
         height: 36px;
         padding: 0 10px;
     }
-
-
     div#headingOne:hover {
         background: transparent;
     }
@@ -366,5 +316,132 @@
     }
     .collapse {
         top: 15px;
+    }
+    div#collapseOne {
+        position: absolute;
+        width: 100%;
+        min-width: 100%;
+        z-index: 100;
+        padding: 2px 20px;
+    }
+    /* switch test */
+    .uiSwitchBtn {
+        position: relative;
+        display: inline-block;
+        width: 185px;
+        height: 66px;
+        zoom: 30%;
+    }
+    .uiSwitchBtn input {display:none;}
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f2f2f2;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+    .slider:before {
+        position: absolute;
+        z-index: 2;
+        content: "";
+        height: 45px;
+        width: 45px;
+        left: 10px;
+        bottom: 11px;
+        background-color: darkgrey;
+        -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+        -webkit-transition: .4s;
+        transition: all 0.4s ease-in-out;
+    }
+    .slider:after {
+        position: absolute;
+        left: 0;
+        z-index: 1;
+        content: "YES";
+        font-size: 37px;
+        text-align: left !important;
+        line-height: 65px;
+        padding-left: 0;
+        width: 185px;
+        height: 66px !important;
+        color: #f9f9f9;
+        background-color: #477ab3;
+        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
+        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
+        -webkit-box-shadow: inset 0px 3px 5px #224469;
+        -moz-box-shadow: inset 0px 3px 5px #224469;
+        box-shadow: inset 0px 3px 5px #224469;
+        -webkit-border-top-left-radius: 9px;
+        -moz-border-radius-topleft: 9px;
+        border-top-left-radius: 9px;
+        -webkit-border-bottom-left-radius: 9px;
+        -moz-border-radius-bottomleft: 9px;
+        border-bottom-left-radius: 9px;
+        height: 57px;
+        border-radius: 100px;
+        background-color: #578dc9;
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
+        transition: all 0.4s ease-in-out;
+    }
+    input:checked + .slider:after {
+        -webkit-transform: translateX(0px);
+        -ms-transform: translateX(0px);
+        transform: translateX(0px);
+        padding-left: 25px;
+    }
+    input:checked + .slider:before {
+        background-color: #fff;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(115px);
+        -ms-transform: translateX(115px);
+        transform: translateX(115px);
+    }
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 100px;
+    }
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    .absolute-no {
+        position: absolute;
+        left: 0;
+        color: darkgrey;
+        text-align: right !important;
+        font-size: 45px;
+        width: calc(100% - 25px);
+        line-height: 70px;
+        cursor: pointer;
+    }
+    .collapse.show.out {
+        display: none;
+    }
+
+    .uiPopup .popupContent select, .modal.uiPopup .popupContent select {
+        outline: none;
+        border: 2px solid #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+    }
+    select:focus{
+        border-color: #a6bad6;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
+        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 5px #c9d5e6;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
+        color: #333;
     }
 </style>
