@@ -1,7 +1,6 @@
 <template>
     <section>
         <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successfully</b-alert>
-
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
 
         <save-rule-form :rule="ruleInForm" :domains="domains" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
@@ -46,6 +45,23 @@
         },
         data: initialData,
         methods: {
+            validateForm() {
+                const errors = {}
+                if (this.addSuccess=true) {
+                    errors.title = 'success'
+                    this.dismissCountDown = 5
+                }
+                if (this.addError=true) {
+                    errors.title = 'error'
+                    this.dismissCountDown = 5
+                }
+
+                this.formErrors = errors
+                return Object.keys(errors).length === 0
+            },
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
             resetRuleInForm() {
                 this.ruleInForm = initialData().ruleInForm
             },

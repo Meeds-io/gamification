@@ -134,6 +134,10 @@
                     this.createRule(this.rule)
                     this.collapseButton()
                 }
+
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             collapseButton() {
                 this.isShown = !this.isShown;

@@ -31,6 +31,7 @@
         <class>org.exoplatform.commons.search.domain.IndexingOperation</class>
         <class>org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity</class>
         <class>org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity</class>
+        <class>org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity</class>
 
 
         <properties>

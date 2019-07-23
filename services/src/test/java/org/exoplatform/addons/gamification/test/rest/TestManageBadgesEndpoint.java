@@ -46,6 +46,7 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
       badgeDTO.setLastModifiedBy("root");
       badgeDTO.setIcon(null);
       badgeDTO.setDomain("Knowledge");
+      badgeDTO.setDomainDTO(null);
       badgeDTO.setTitle("Knowledgeable" + i);
       badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
     }
