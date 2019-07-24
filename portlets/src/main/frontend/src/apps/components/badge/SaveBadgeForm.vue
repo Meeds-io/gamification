@@ -38,24 +38,19 @@
                                     Badge needed score is required please enter a value {{dismissCountDown}} ...
                                 </b-alert>
                             </form>
-                            <form id="iconInputGroup">
+                         <!--   <form id="iconInputGroup">
                                 <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
                                 <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                            </form>
+                            </form> -->
 
                             <form id="domainSelectboxGroup">
-                                <select v-model="badge.domain" class="mb-4" required>
-                                    <template slot="first">
-
-                                        <option :value="null" disabled placeholder="Please select a domain"></option>
-                                    </template>
-
-                                    <option value="Social">Social</option>
-                                    <option value="Knowledge">Knowledge</option>
-                                    <option value="Teamwork">Teamwork</option>
-                                    <option value="Feedback">Feedback</option>
-
+                                <select v-model="badge.domainDTO" class="mb-4">
+                                    <option :value="null" disabled>Select your Domain</option>
+                                    <option v-for="option in domains" v-bind:value="option">
+                                        {{ option.title }}
+                                    </option>
                                 </select>
+
                                 <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
                                     Domain is required please choice a domain {{dismissCountDown}} ...
@@ -73,13 +68,12 @@
                             <b-row style="display: inherit;">
                                 <b-col>
 
-                                    <b-button type="submit" v-on:click.prevent="onSubmit" class="btn btn-primary">
-                                        {{badge.id ? 'Update' : 'Add'}} badge
+                                    <button type="submit" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
+                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
+                                        {{badge.id ? 'Update' : 'Add'}}
                                     </b-button>
                                 </b-col>
-                                <div style="width: max-content;margin-top: 2em;padding: 2px 20px;">
-                                    <button type="submit" v-if="badge.id" v-on:click.prevent="onCancel" class="btn btn-secondary">Cancel</button>
-                                </div>
+
                             </b-row>
                         </div>
                     </div>
@@ -95,10 +89,7 @@
     import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    // import datePicker from 'vue-bootstrap-datetimepicker'
-    // import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
-    //  Vue.use(datePicker);
     export default {
         props: ['badge'],
         data: function () {
@@ -114,7 +105,8 @@
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
                 },
-                dynamicRules: []
+                dynamicRules: [],
+                domains: []
             }
         },
         watch: {
@@ -151,7 +143,8 @@
             },
             onSubmit() {
                 if (this.validateForm()) {
-                    this.$emit('submit', this.badge)
+                    this.createBadge(this.badge)
+                    this.collapseButton()
                 }
             },
             collapseButton() {
@@ -169,6 +162,13 @@
             },
         },
         created() {
+            axios.get(`/rest/gamification/api/v1/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
     }
 </script>
@@ -318,11 +318,16 @@
         top: 15px;
     }
     div#collapseOne {
-        position: absolute;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        bottom: 0;
         width: 100%;
-        min-width: 100%;
-        z-index: 100;
-        padding: 2px 20px;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
     }
     /* switch test */
     .uiSwitchBtn {

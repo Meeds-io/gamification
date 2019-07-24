@@ -72,6 +72,9 @@
     }
 </script>
 <style scoped>
+    .container-fluid {
+        display: table;
+    }
     .table {
         position: relative;
         border-radius: 3px;
