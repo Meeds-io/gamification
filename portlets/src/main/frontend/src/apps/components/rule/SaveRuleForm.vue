@@ -139,9 +139,6 @@
             collapseButton() {
                 this.isShown = !this.isShown;
             },
-            collapseButton() {
-                this.isShown = !this.isShown;
-            },
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },

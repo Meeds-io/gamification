@@ -65,6 +65,13 @@
             onEdit(badge) {
                 this.$emit('edit', badge)
             },
+            onSave(badge) {
+                this.$emit('save', badge);
+                this.editedbadge= {};
+            },
+            onCancel(badge) {
+                this.editedbadge= {};
+            },
             onRemove(id, title) {
                 this.$emit('remove', id, title)
             }

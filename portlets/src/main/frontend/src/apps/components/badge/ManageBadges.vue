@@ -1,12 +1,12 @@
 <template>
     <section>
 
-        <b-alert v-if="addSuccess" variant="success" show dismissible>Badge {{updateMessage}} successully </b-alert>
+        <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successully</b-alert>
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
 
         <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeAction" v-on:cancel="resetBadgeInForm"></save-badge-form>
-        <badge-list :badges="badges" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
+        <badge-list :badges="badges" v-on:edit="onEditClicked" v-on:remove="onRemoveClicked"></badge-list>
     </section>
 </template>
 <script>
@@ -51,8 +51,8 @@
             resetBadgeInForm() {
                 this.badgeInForm = initialData().badgeInForm
             },
-            onSaveClicked(badge) {
-                this.updateBadge(badge)
+            onEditClicked(badge) {
+                this.badgeInForm = { ...badge }
             },
             onBadgeAction(badge) {
                 const index = this.badges.findIndex((p) => p.id === badge.id)
@@ -78,7 +78,6 @@
                     this.resetBadgeInForm()
                 }
             },
-
             createBadge(badgeDTO) {
                 const formData = new FormData();
                 formData.append('file', badgeDTO.icon)
@@ -95,6 +94,32 @@
                         .then(response => {
                             this.addSuccess = true
                             this.updateMessage = 'added'
+                        })
+                        .catch(e => {
+                            this.addError = true
+                            this.errors.push(e)
+                        })
+                })
+                    .catch(e => {
+                        console.log("Error")
+                    })
+            },
+            updateBadge(badgeDTO) {
+                const formData = new FormData();
+                formData.append('file', badgeDTO.icon)
+                const MAX_RANDOM_NUMBER = 100000;
+                const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                    badgeDTO.uploadId=uploadId
+                    axios.put(`/rest/gamification/badges/update`, badgeDTO)
+                        .then(response => {
+                            this.addSuccess = true;
+                            this.updateMessage = 'updated'
                         })
                         .catch(e => {
                             this.addError = true

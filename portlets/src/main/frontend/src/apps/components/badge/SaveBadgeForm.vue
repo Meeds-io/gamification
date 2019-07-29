@@ -38,10 +38,10 @@
                                     Badge needed score is required please enter a value {{dismissCountDown}} ...
                                 </b-alert>
                             </form>
-                         <!--   <form id="iconInputGroup">
+                             <form id="iconInputGroup">
                                 <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
                                 <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                            </form> -->
+                            </form>
 
                             <form id="domainSelectboxGroup">
                                 <select v-model="badge.domainDTO" class="mb-4">
@@ -82,7 +82,6 @@
                     </div>
                 </div>
             </div>
-
 </template>
 <script>
     import Vue from 'vue'
