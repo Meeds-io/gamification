@@ -210,6 +210,10 @@
         max-width: 100% !important;
         font-size: 14px;
     }
+    msg.alert-dismissible.alert-danger {
+        display: -webkit-inline-box;
+        width: auto;
+    }
     input {
         width: 100%;
     }

@@ -20,12 +20,12 @@
 
                                 <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
-                                    Badge title is required please enter a title {{dismissCountDown}} ...
+                                    Badge title is required please enter a title {{dismissCountDown}}
                                 </b-alert>
                             </form>
 
                             <div id="descriptionInputGroup">
-                                <label class="col-form-label pt-0" id="descriptionInput">Description:</label>
+                                <label class="pt-0" id="descriptionInput">Description:</label>
                                 <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
                     </textarea>
                             </div>
@@ -35,15 +35,16 @@
                                 </input>
                                 <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
-                                    Badge needed score is required please enter a value {{dismissCountDown}} ...
+                                    Badge needed score is required please enter a value {{dismissCountDown}}
                                 </b-alert>
                             </form>
                              <form id="iconInputGroup">
                                 <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
                                 <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
                             </form>
-
+                            <label class="pt-0">Domain:</label>
                             <form id="domainSelectboxGroup">
+
                                 <select v-model="badge.domainDTO" class="mb-4">
                                     <option :value="null" disabled>Select your Domain</option>
                                     <option v-for="option in domains" v-bind:value="option">
@@ -51,13 +52,9 @@
                                     </option>
                                 </select>
 
-                                <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    Domain is required please choice a domain {{dismissCountDown}} ...
-                                </b-alert>
                             </form>
 
-                            <label class="col-form-label pt-0">Enable:</label>
+                            <label class="pt-0">Enabled:</label>
                             <label class="uiSwitchBtn">
 
                                 <input type="checkbox" v-model="badge.enabled" >
@@ -70,7 +67,7 @@
 
                                     <button type="cancel" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
                                     <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
-                                        {{badge.id ? 'Update' : 'Add'}}
+                                        {{badge.id ? 'Update' : 'Confirm'}}
                                     </button>
                                 </b-col>
 
@@ -237,9 +234,9 @@
         padding: 20px 0px;
     }
     label {
-        display: inline-block;
+        display: block;
         max-width: 100%;
-        margin-bottom: 5px;
+        margin: 5px 0;
         font-weight: 700;
         color: #333;
     }
@@ -276,7 +273,10 @@
     .require-msg {
         max-width: 100% !important;
         font-size: 14px;
-        padding: 10px;
+    }
+    msg.alert-dismissible.alert-danger {
+        display: -webkit-inline-box;
+        width: auto;
     }
     .close {
         float: right;
