@@ -12,7 +12,7 @@
                         <th class="badge-domain-col">Domain</th>
                         <th class="badge-icon-col">Icon</th>
                         <th class="badge-status-col">Status</th>
-                        <th class="badge-created-by-col">Created by</th>
+
                         <th class="badge-action-col">Action</th>
                     </tr>
                     </thead>
@@ -29,7 +29,7 @@
                         <td class="badge-domain-col">{{badge.domain}}</td>
                         <td class="badge-icon-col"><img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/></td>
                         <td class="badge-status-col">{{badge.enabled}}</td>
-                        <td class="badge-created-date-col">{{badge.createdBy}}</td>
+
                         <td class="center actionContainer">
                             <a href="#" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">

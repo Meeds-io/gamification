@@ -139,6 +139,7 @@
             collapseButton() {
                 this.isShown = !this.isShown;
             },
+
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
@@ -195,7 +196,7 @@
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
-        border: 2px solid #e1e8ee;
+        border: 1px solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
         max-height: 40px;
@@ -233,7 +234,7 @@
     button.btn.secondary {
         padding: 8px 25px;
         margin-left: 25px;
-        border: 2px solid #e1e8ee !important;
+        border: 1px solid #e1e8ee !important;
         color: #4d5466;
         background-color: transparent !important;
     }

@@ -4,7 +4,7 @@
             <div class="pull-right" id="headingOne">
                 <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add badge</button>
             </div>
-            <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
+            <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne"  style="height: 0px; transition: inherit;">
                 <div class="card-body">
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                          <div class="popupHeader ClearFix">
@@ -68,10 +68,10 @@
                             <b-row style="display: inherit;">
                                 <b-col>
 
-                                    <button type="submit" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
-                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
+                                    <button type="cancel" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
+                                    <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
                                         {{badge.id ? 'Update' : 'Add'}}
-                                    </b-button>
+                                    </button>
                                 </b-col>
 
                             </b-row>
@@ -88,7 +88,10 @@
     import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
+    // import datePicker from 'vue-bootstrap-datetimepicker'
+    // import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
+    //  Vue.use(datePicker);
     export default {
         props: ['badge'],
         data: function () {
@@ -98,14 +101,13 @@
                 selectedFileName: '',
                 dismissSecs: 5,
                 dismissCountDown: 0,
-                date: new Date(),
                 isShown: false,
+                date: new Date(),
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
                 },
-                dynamicRules: [],
-                domains: []
+                dynamicRules: []
             }
         },
         watch: {
@@ -113,6 +115,10 @@
                 this.formErrors = {}
                 this.selectedFile = undefined
                 this.selectedFileName = this.badge.imageName
+            }
+            ,
+            'badge.domainDTO'() {
+                this.badge.domain = this.badge.domainDTO.title
             }
         },
         methods: {
@@ -126,12 +132,39 @@
                     errors.neededScore = 'Needed score is required'
                     this.dismissCountDown = 5
                 }
-                if (!this.badge.domain) {
-                    errors.domain = 'Domain required'
-                    this.dismissCountDown = 5
-                }
+
                 this.formErrors = errors
                 return Object.keys(errors).length === 0
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
+            },
+            createBadge(badgeDTO) {
+                const formData = new FormData();
+                formData.append('file', badgeDTO.icon)
+                const MAX_RANDOM_NUMBER = 100000;
+                const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                    badgeDTO.uploadId=uploadId
+                    axios.post(`/rest/gamification/badges/add`, badgeDTO)
+                        .then(response => {
+                            this.addSuccess = true
+                            this.updateMessage = 'added'
+                            this.$emit('submit', this.badge)
+                        })
+                        .catch(e => {
+                            this.addError = true
+                            this.errors.push(e)
+                        })
+                })
+                    .catch(e => {
+                        console.log("Error")
+                    })
             },
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
@@ -145,10 +178,9 @@
                     this.createBadge(this.badge)
                     this.collapseButton()
                 }
+
             },
-            collapseButton() {
-                this.isShown = !this.isShown;
-            },
+
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
@@ -171,6 +203,7 @@
         }
     }
 </script>
+
 
 <style scoped>
     form {
@@ -214,7 +247,7 @@
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
-        border: 2px solid #e1e8ee;
+        border: 1px solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
         max-height: 40px;

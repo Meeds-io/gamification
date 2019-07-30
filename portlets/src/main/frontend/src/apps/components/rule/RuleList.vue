@@ -15,13 +15,14 @@
                     </thead>
                     <tbody>
                     <tr v-for="rule in rules">
+
+                        <td class="rule-desc-col"><div v-if="editedrule.id !== rule.id">{{rule.description}}</div>
+                            <input type="text" v-if="editedrule.id === rule.id" v-model="rule.description"style="width: 130px;min-width: 98%;">
+                        </td>
                         <td> <div v-if="editedrule.id !== rule.id">{{rule.title}} </div>
                             <input type="text" v-if="editedrule.id === rule.id" class="rule-title-col" v-model="rule.title"style="width: 130px; min-width: 98%;">
 
 
-                        </td>
-                        <td class="rule-desc-col"><div v-if="editedrule.id !== rule.id">{{rule.description}}</div>
-                            <input type="text" v-if="editedrule.id === rule.id" v-model="rule.description"style="width: 130px;min-width: 98%;">
                         </td>
                         <td><div v-if="editedrule.id !== rule.id">{{rule.score}}</div>
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
