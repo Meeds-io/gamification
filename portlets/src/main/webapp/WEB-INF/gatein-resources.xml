@@ -30,6 +30,12 @@
             <depends>
                 <module>GamificationInformations</module>
             </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
+            </depends>
         </module>
     </portlet>
     <portlet>
@@ -38,6 +44,13 @@
             <depends>
                 <module>manageRules</module>
             </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
+            </depends>
+
         </module>
     </portlet>
     <portlet>
@@ -45,6 +58,12 @@
         <module>
             <depends>
                 <module>manageBadges</module>
+            </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
             </depends>
         </module>
     </portlet>
@@ -54,6 +73,12 @@
             <depends>
                 <module>userReputation</module>
             </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
+            </depends>
         </module>
     </portlet>
     <portlet>
@@ -61,6 +86,12 @@
         <module>
             <depends>
                 <module>userLeaderboard</module>
+            </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
             </depends>
         </module>
     </portlet>
@@ -70,6 +101,12 @@
             <depends>
                 <module>spaceLeaderboard</module>
             </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
+            </depends>
         </module>
     </portlet>
 
@@ -78,6 +115,12 @@
         <module>
             <depends>
                 <module>gamificationearnpoints</module>
+            </depends>
+            <depends>
+                <module>vue</module>
+            </depends>
+            <depends>
+                <module>eXoVueI18n</module>
             </depends>
         </module>
     </portlet>
@@ -140,6 +183,10 @@
         <depends>
             <module>jquery</module>
             <as>$</as>
+        </depends>
+
+        <depends>
+            <module>eXoVueI18n</module>
         </depends>
     </module>
     <module>

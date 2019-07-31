@@ -33,6 +33,10 @@
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
+        <supported-locale>en</supported-locale>
+        <supported-locale>fr</supported-locale>
+        <supported-locale>ar</supported-locale>
+
         <portlet-info>
             <title>Gamification Leaderboard </title>
         </portlet-info>
