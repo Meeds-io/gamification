@@ -36,6 +36,7 @@
             addError: false,
             updateMessage: '',
             badges: []
+,
         }
     }
     export default {
@@ -98,7 +99,7 @@
                         .then(response => {
                             this.addSuccess = true;
                             this.updateMessage = 'updated'
-                            this.badge.push(badge)
+                            this.badges.push(badge)
                         })
                         .catch(e => {
                             this.addError = true
@@ -109,18 +110,15 @@
                         console.log("Error")
                     })
             },
-            getAllBadges() {
-                axios.get(`/rest/gamification/badges/all`)
-                    .then(response => {
-                        this.badges = response.data;
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-            }
         },
         created() {
-           this.getAllBadges()
+            axios.get(`/rest/gamification/badges/all`)
+                .then(response => {
+                    this.badges = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
     }
 

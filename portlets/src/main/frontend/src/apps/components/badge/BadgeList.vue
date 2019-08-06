@@ -6,7 +6,6 @@
                 <table class=" uiGrid table table-hover badge-table">
                     <thead>
                     <tr>
-
                         <th class="badge-title-col">Title</th>
                         <th class="badge-desc-col">Description</th>
                         <th class="badge-nedded-score-col">Needed Score</th>
@@ -28,7 +27,10 @@
                             <input class="badge-desc-col" type="text" v-if="editedbadge.id === badge.id" v-model="badge.description" style="min-width: 98%;">
                         </td>
                         <td class="badge-needed-score-col">
-                            <div v-if="editedbadge.id !== badge.id">{{badge.neededScore}}</div>
+                            <div v-if="editedbadge.id !== badge.id">
+                                <div v-if="badge.neededScore >=1000">{{badge.neededScore/1000}} K</div>
+                                <div v-if="badge.neededScore <1000"> {{badge.neededScore}}</div>
+                            </div>
                             <input  class="badge-needed-score-col" type="text" v-if="editedbadge.id === badge.id" v-model="badge.neededScore">
                         </td>
                         <td class="badge-domain-col" style="max-width: 165px;">
@@ -81,7 +83,7 @@
                             <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedbadge.id === badge.id" v-on:click.stop="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedbadge.id === badge.id"  v-on:click.stop.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Save">
                                 <i class="uiIconSave uiIconLightGray"></i></a>
                             <a href="#" v-if="editedbadge.id === badge.id" v-on:click.prevent="onCancel(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
@@ -128,6 +130,7 @@
         },
         methods: {
             onEdit(badge) {
+                this.badge=badge;
                 this.editedbadge=badge;
                 //this.$emit('edit', badge)
             },
@@ -135,7 +138,6 @@
                 this.$emit('save', badge);
                 this.editedbadge= {};
             },
-
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
                 this.selectedFileName = event.target.files[0].name
