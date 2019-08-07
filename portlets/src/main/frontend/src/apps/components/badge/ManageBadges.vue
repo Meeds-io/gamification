@@ -112,10 +112,16 @@
             },
         },
         created() {
-
             axios.get(`/rest/gamification/badges/all`)
                 .then(response => {
                     this.badges = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+            axios.get(`/rest/gamification/api/v1/domains`)
+                .then(response => {
+                    this.domains = response.data;
                 })
                 .catch(e => {
                     this.errors.push(e)

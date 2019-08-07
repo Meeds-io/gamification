@@ -7,10 +7,10 @@
             <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne"  style="height: 0px; transition: inherit;">
                 <div class="card-body">
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
-                         <div class="popupHeader ClearFix">
-                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()" ></a>
+                        <div class="popupHeader ClearFix">
+                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()" ></a>
                             <span class="PopupTitle popupTitle">Add Badge</span>
-                         </div>
+                        </div>
                         <div class="PopupContent popupContent">
 
                             <form id="titleInputGroup">
@@ -38,7 +38,7 @@
                                     Badge needed score is required please enter a value {{dismissCountDown}}
                                 </b-alert>
                             </form>
-                             <form id="iconInputGroup">
+                            <form id="iconInputGroup">
                                 <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
                                 <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
                             </form>
@@ -76,9 +76,9 @@
                     </div>
                 </div>
 
-                    </div>
-                </div>
             </div>
+        </div>
+    </div>
 </template>
 <script>
     import Vue from 'vue'
@@ -129,7 +129,6 @@
                     errors.neededScore = 'Needed score is required'
                     this.dismissCountDown = 5
                 }
-
                 this.formErrors = errors
                 return Object.keys(errors).length === 0
             },
@@ -175,9 +174,7 @@
                     this.createBadge(this.badge)
                     this.collapseButton()
                 }
-
             },
-
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },

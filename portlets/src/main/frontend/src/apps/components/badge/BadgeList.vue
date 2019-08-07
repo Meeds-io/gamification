@@ -85,7 +85,7 @@
                         </td>
                     </tr>
                     <tr v-if="!badges.length">
-                        <td colspan="9" class="p-y-3 text-xs-center">
+                        <td colspan="9" class="p-y-3 text-xs-center" style="cursor: auto; background-color:white;">
                             <strong>You should add some badges!</strong>
                         </td>
                     </tr>
