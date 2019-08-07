@@ -20,7 +20,7 @@
                     <tr v-for="badge in badges" track-by="id">
                         <td class="badge-title-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
-                            <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.title"style="width: 130px;">
+                            <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.title"style="width: 130px;min-width: 98%;">
                         </td>
                         <td class="badge-desc-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.description}}</div>
@@ -33,27 +33,20 @@
                             </div>
                             <input  class="badge-needed-score-col" type="text" v-if="editedbadge.id === badge.id" v-model="badge.neededScore">
                         </td>
-                        <td class="badge-domain-col" style="max-width: 165px;">
-                            <div v-if="editedbadge.id !== badge.id">{{badge.domain}}</div>
+                        <td style="max-width: 115px;">
+                            <div v-if="editedbadge.id !== badge.id && badge.domainDTO != null">{{badge.domainDTO.title}}</div>
 
-                            <select type="text" v-if="editedbadge.id === badge.id" v-model="badge.domain" class="mb-4" style="height: 38px;" required>
-                                <template slot="first">
-
-                                    <option :value="null" disabled></option>
-                                </template>
-
-                                <option value="Social">Social</option>
-                                <option value="Knowledge">Knowledge</option>
-                                <option value="Teamwork">Teamwork</option>
-                                <option value="Feedback">Feedback</option>
-
-                                <!--<option value="Content">Content</option>-->
-                            </select>
+                                <select  v-if="editedbadge.id === badge.id" v-model="badge.domainDTO"  style="max-width: 115px;margin: 0px auto;height: 35px;" required>
+                                    <option :value="null" disabled>Select your Domain</option>
+                                    <option v-for="option in domains" v-bind:value="option">
+                                        {{ option.title }}
+                                    </option>
+                                </select>
                         </td>
                         <td id="iconInputGroup">
                             <div v-if="editedbadge.id !== badge.id"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
-                                <div v-if="editedbadge.id === badge.id"> <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                            <div v-if="editedbadge.id === badge.id"> <b-form-file v-model="badge.icon" placeholder="+" accept="image/jpeg, image/png, image/gif"></b-form-file>
                             </div>
                         </td>
                         <td class="badge-status-col">
@@ -83,12 +76,12 @@
                             <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedbadge.id === badge.id"  v-on:click.stop.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedbadge.id === badge.id"  v-on:click.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Save">
                                 <i class="uiIconSave uiIconLightGray"></i></a>
                             <a href="#" v-if="editedbadge.id === badge.id" v-on:click.prevent="onCancel(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Cancel" v-b-tooltip.hover title="Cancel">
-                                <i class="uiIcon uiIconStatus-canceled uiIconLightGray"></i></a>
+                                <i class="uiIcon uiIconClose uiIconBlue"></i></a>
                         </td>
                     </tr>
                     <tr v-if="!badges.length">
@@ -112,7 +105,7 @@
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     export default {
-        props: ['badges'],
+        props: ['badges','domains'],
         data() {
             return {
                 formErrors: {},
@@ -148,7 +141,17 @@
             onRemove(id, title) {
                 this.$emit('remove', id, title);
             }
+        },
+        created() {
+            axios.get(`/rest/gamification/api/v1/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
         }
+
     }
 </script>
 <style scoped>
@@ -165,11 +168,9 @@
         margin: 30px auto 0;
         margin-bottom: 30px;
     }
-
     .table thead th {
         font-size: 0.9em;
     }
-
     .table td,
     .table th {
         padding: 8px;
@@ -177,11 +178,9 @@
         vertical-align: top;
         text-align: center;
     }
-
     .table-hover tbody tr:hover {
         cursor: pointer;
     }
-
     .table-striped>tbody>tr:nth-of-type(odd) {
         background-color: #f9f9f9;
     }
@@ -194,7 +193,6 @@
     .uiGrid.table {
         border: none;
     }
-
     /* switch test */
     .switch {
         position: relative;
@@ -299,4 +297,51 @@
         line-height: 70px;
         cursor: pointer;
     }
+
+    select.mb-4 {
+        max-width: 115px;
+        margin: 0px auto;
+        height: 35px;
+    }
+    i.uiIconClose.uiIconBlue {
+        zoom: 163%;
+        vertical-align: super;
+        opacity: 1;
+        line-height: inherit;
+    }
+    i.uiIconSave.uiIconLightGray {
+        left: -4px;
+    }
+
+    /* input icon */
+    .custom-file {
+        position: relative;
+        display: inline-block;
+        width: 40%;
+        height: 38px;
+        margin-bottom: 0;
+    }
+    td#iconInputGroup {
+        max-width: 145px;
+    }
+    td#iconInputGroup input {
+        width: auto;
+        max-width: 65px;
+    }
+    input.badge-needed-score-col {
+        width: 60px;
+        text-align: center;
+    }
+
+    input[type="file"],  .custom-file-input {
+        max-width: 65px !important;
+        width: 65px !important;
+    }
+
+    /*
+    .custom-file-label::after {
+    content: "+" !important;
+    border-radius: 50%;
+    }
+     */
 </style>

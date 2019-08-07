@@ -211,6 +211,7 @@
     }
     div#headingOne button.btn.btn-primary {
         margin: 15px 12px 5px;
+        border-radius: 3px;
     }
     .btn-primary:focus, .btn-primary.focus {
         box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
@@ -301,7 +302,7 @@
     button.btn.secondary {
         padding: 8px 25px;
         margin-left: 25px;
-        border: 2px solid #e1e8ee !important;
+        border: 1px solid #e1e8ee !important;
         color: #4d5466;
         background-color: transparent !important;
     }
@@ -334,6 +335,9 @@
     }
     button.btn.btn-link.primary{
         background: #3c8dbc;
+    }
+    button.btn-primary.pull-right {
+        border-radius: 3px;
     }
     .col-sm-12.card {
         position: relative;

@@ -1,12 +1,11 @@
 <template>
     <section>
-
         <b-alert v-if="addSuccess" variant="success" show dismissible>Badge {{updateMessage}} successully </b-alert>
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
 
         <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeCreated" v-on:cancel="resetBadgeInForm"></save-badge-form>
-        <badge-list :badges="badges" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
+        <badge-list :badges="badges" :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
     </section>
 </template>
 <script>
@@ -35,7 +34,8 @@
             addSuccess: false,
             addError: false,
             updateMessage: '',
-            badges: []
+            badges: [],
+            domains: []
 ,
         }
     }
@@ -112,6 +112,7 @@
             },
         },
         created() {
+
             axios.get(`/rest/gamification/badges/all`)
                 .then(response => {
                     this.badges = response.data;
@@ -119,6 +120,7 @@
                 .catch(e => {
                     this.errors.push(e)
                 })
+
         }
     }
 
