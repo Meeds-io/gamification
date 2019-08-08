@@ -46,20 +46,20 @@
                         <td id="iconInputGroup">
                             <div v-if="editedbadge.id !== badge.id"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
-                            <div v-if="editedbadge.id === badge.id"> <b-form-file v-model="badge.icon" placeholder="+" accept="image/jpeg, image/png, image/gif"></b-form-file>
+                            <div v-if="editedbadge.id === badge.id" style="max-width: 70px;"> <b-form-file v-model="badge.icon" placeholder="+" accept="image/jpeg, image/png, image/gif" style="width: 75px; max-width: 75px;"></b-form-file>
                             </div>
                         </td>
                         <td class="badge-status-col">
-                            <div v-if="editedbadge.id !== badge.id">
+                            <div v-if="editedbadge.id === badge.id">
                                 <label class="switch" >
                                     <input type="checkbox" v-model="badge.enabled">
                                     <span class="slider round"></span>
                                     <span class="absolute-no">NO</span>
                                 </label>
                             </div>
-                            <div v-if="editedbadge.id === badge.id">
+                            <div v-if="editedbadge.id !== badge.id">
                                 <label class="switch" v-on:click ="badge.enabled = !badge.enabled">
-                                    <input type="checkbox" >
+                                    <input type="checkbox" v-model="badge.enabled">
                                     <span class="slider round"></span>
                                     <span class="absolute-no">NO</span>
                                 </label>
@@ -76,7 +76,7 @@
                             <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedbadge.id === badge.id"  v-on:click.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedbadge.id === badge.id" v-on:click.stop.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Save">
                                 <i class="uiIconSave uiIconLightGray"></i></a>
                             <a href="#" v-if="editedbadge.id === badge.id" v-on:click.prevent="onCancel(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
@@ -111,7 +111,8 @@
                 formErrors: {},
                 selectedFile: undefined,
                 selectedFileName: '',
-                editedbadge : {}
+                editedbadge : {},
+                isEnabled: false
             }
         },
         watch: {
@@ -309,9 +310,6 @@
         opacity: 1;
         line-height: inherit;
     }
-    i.uiIconSave.uiIconLightGray {
-        left: -4px;
-    }
 
     /* input icon */
     .custom-file {
@@ -337,7 +335,29 @@
         max-width: 65px !important;
         width: 65px !important;
     }
-
+    input#__BVID__8{
+        max-width: 65px !important;
+        width: 65px !important;
+    }
+    .table td {
+        vertical-align: middle;
+    }
+    /*edit Mode */
+    td input {
+        max-width: min-content;
+    }
+    input[type="text"] {
+        height: 35px;
+        margin: auto;
+    }
+    .custom-file-input:lang(en) ~ .custom-file-label::after {
+        content: "Browse";
+        display: none !important;
+    }
+    td#iconInputGroup input {
+        max-width: 70px;
+        width: 70px;
+    }
     /*
     .custom-file-label::after {
     content: "+" !important;

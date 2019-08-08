@@ -4,7 +4,7 @@
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
 
-        <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeCreated" v-on:cancel="resetBadgeInForm"></save-badge-form>
+        <save-badge-form :badge="badgeInForm" :domains="domains" v-on:submit="onBadgeCreated" v-on:failAdd="onBadgeFail" v-on:cancel="resetBadgeInForm"></save-badge-form>
         <badge-list :badges="badges" :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
     </section>
 </template>
@@ -58,6 +58,11 @@
                 this.badges.push(badge)
                 this.resetBadgeInForm()
             },
+            onBadgeFail(rule) {
+                this.addError=true
+                this.errors.push(e)
+                this.resetBadgeInForm()
+            },
             onBadgeAction(badge) {
                 const index = this.badges.findIndex((p) => p.id === badge.id)
                 if (index !== -1) {
@@ -100,7 +105,7 @@
                             this.addSuccess = true;
                             this.updateMessage = 'updated'
                             this.badges.push(badge)
-                        })
+
                         .catch(e => {
                             this.addError = true
                             this.errors.push(e)
@@ -109,7 +114,8 @@
                     .catch(e => {
                         console.log("Error")
                     })
-            },
+                })
+            }
         },
         created() {
             axios.get(`/rest/gamification/badges/all`)
@@ -129,7 +135,6 @@
 
         }
     }
-
 </script>
 <style>
     section {
