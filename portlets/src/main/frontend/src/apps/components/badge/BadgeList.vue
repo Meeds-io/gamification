@@ -43,11 +43,11 @@
                                     </option>
                                 </select>
                         </td>
-                        <td id="iconInputGroup">
+                        <td id="iconInputGroup" style="max-width: 80px;">
                             <div v-if="editedbadge.id !== badge.id"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
-                            <div v-if="editedbadge.id === badge.id" style="max-width: 70px;"> <b-form-file v-model="badge.icon" placeholder="+" accept="image/jpeg, image/png, image/gif" style="width: 75px; max-width: 75px;"></b-form-file>
-                            </div>
+                            <!-- <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon" style="display:compact;" placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40" ></b-form-file> -->
+                            <input  v-if="editedbadge.id === badge.id" v-on:click="onImageChanged" :v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif"  type="file">
                         </td>
                         <td class="badge-status-col">
                             <div v-if="editedbadge.id === badge.id">
@@ -65,7 +65,7 @@
                                 </label>
                             </div>
                         </td>
-                        <!--  <td class="badge-created-date-col">
+                        <!--<td class="badge-created-date-col">
                               <span v-if="editedbadge.id !== badge.id">{{badge.createdBy}}</span>
                               <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.createdBy" style="width: 55px;"></td> -->
                         <td class="center actionContainer">
@@ -358,10 +358,34 @@
         max-width: 70px;
         width: 70px;
     }
+    input#__BVID__8 {
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+    }
+    .custom-file-label {
+        overflow: auto;
+    }
+    input[type="file"] {
+        width: 70px !important;
+    }
+
+    input[type="file"], input[type="image"], input[type="submit"], input[type="reset"], input[type="button"], input[type="radio"], input[type="checkbox"] {
+        width: 70px !important;
+    }
+
     /*
     .custom-file-label::after {
     content: "+" !important;
     border-radius: 50%;
     }
      */
+    .custom-file-input:lang(en) ~ .custom-file-label::after {
+        content: "+" !important;
+        height: 35px;
+    }
+    .c-file-input {
+        position: relative;
+        width: 70px;
+    }
 </style>
