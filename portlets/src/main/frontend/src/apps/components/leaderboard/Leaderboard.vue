@@ -3,10 +3,11 @@
         <div class="row">
             <div class="col">
                 <h5 class="mt-0 title">{{ this.$t('exoplatform.gamification.leaderboard.title') }}</h5>
-                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip"
-                   data-original-title="How can I earn points ?">
+                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') ">
+
                     <i class="uiIconInformation"></i>
                 </a>
+
             </div>
         </div>
         <div class="row">
@@ -35,9 +36,9 @@
         </div>
         <div class="row">
 
-            <div class="list-lead col">
+            <div class="list-lead col" :Yourcurrentrank=" this.$t('exoplatform.gamification.leaderboard.rank')">
                 <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
-                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId"
+                    <div v-if="user.fullname != 'Yourcurrentrank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId"
                          class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
 
                         <div class="rank-user">{{index+1}}
@@ -123,7 +124,7 @@
             selectedPeriod: 'WEEK',
             locale: 'lang',
             popoverShow: false,
-            loadCapacity: 10
+            loadCapacity: 10,
 
 
         }
@@ -261,7 +262,7 @@
             currentRank: function (user) {
 
 
-                return user.fullname == 'Your current rank';
+                return user.fullname == 'Yourcurrentrank';
 
             }
 
