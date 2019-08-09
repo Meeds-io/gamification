@@ -33,7 +33,7 @@
                             </div>
                             <input  class="badge-needed-score-col" type="text" v-if="editedbadge.id === badge.id" v-model="badge.neededScore">
                         </td>
-                        <td style="max-width: 115px;">
+                        <td style="max-width: 105px;">
                             <div v-if="editedbadge.id !== badge.id && badge.domainDTO != null">{{badge.domainDTO.title}}</div>
 
                                 <select  v-if="editedbadge.id === badge.id" v-model="badge.domainDTO"  style="max-width: 115px;margin: 0px auto;height: 35px;" required>
@@ -43,31 +43,31 @@
                                     </option>
                                 </select>
                         </td>
-                        <td id="iconInputGroup" style="max-width: 80px;">
+                        <td id="iconInputGroup" style="max-width: 100px;">
                             <div v-if="editedbadge.id !== badge.id"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
-                            <!-- <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon" style="display:compact;" placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40" ></b-form-file> -->
-                            <input  v-if="editedbadge.id === badge.id" v-on:click="onImageChanged" :v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif"  type="file">
-                        </td>
-                        <td class="badge-status-col">
-                            <div v-if="editedbadge.id === badge.id">
-                                <label class="switch" >
-                                    <input type="checkbox" v-model="badge.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">NO</span>
-                                </label>
-                            </div>
-                            <div v-if="editedbadge.id !== badge.id">
-                                <label class="switch" v-on:click ="badge.enabled = !badge.enabled">
-                                    <input type="checkbox" v-model="badge.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">NO</span>
-                                </label>
-                            </div>
-                        </td>
-                        <!--<td class="badge-created-date-col">
-                              <span v-if="editedbadge.id !== badge.id">{{badge.createdBy}}</span>
-                              <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.createdBy" style="width: 55px;"></td> -->
+                             <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon" style="display:compact;" placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40" ></b-form-file>
+                            <!--  <input  v-if="editedbadge.id === badge.id" @change="change"  placeholder="+" accept="image/jpeg, image/png, image/gif"  type="file"> -->
+                         </td>
+                         <td class="badge-status-col">
+                             <div v-if="editedbadge.id === badge.id">
+                                 <label class="switch" >
+                                     <input type="checkbox" v-model="badge.enabled">
+                                     <span class="slider round"></span>
+                                     <span class="absolute-no">NO</span>
+                                 </label>
+                             </div>
+                             <div v-if="editedbadge.id !== badge.id">
+                                 <label class="switch" v-on:click ="badge.enabled = !badge.enabled">
+                                     <input type="checkbox" v-model="badge.enabled">
+                                     <span class="slider round"></span>
+                                     <span class="absolute-no">NO</span>
+                                 </label>
+                             </div>
+                         </td>
+                         <!--<td class="badge-created-date-col">
+                               <span v-if="editedbadge.id !== badge.id">{{badge.createdBy}}</span>
+                               <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.createdBy" style="width: 55px;"></td> -->
                         <td class="center actionContainer">
                             <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
@@ -141,6 +141,9 @@
             },
             onRemove(id, title) {
                 this.$emit('remove', id, title);
+            },
+            change() {
+                console.log('filechange');
             }
         },
         created() {
@@ -358,7 +361,7 @@
         max-width: 70px;
         width: 70px;
     }
-    input#__BVID__8 {
+   /* input#__BVID__8 {
         width: 40px;
         height: 40px;
         overflow: hidden;
@@ -379,7 +382,7 @@
     content: "+" !important;
     border-radius: 50%;
     }
-     */
+
     .custom-file-input:lang(en) ~ .custom-file-label::after {
         content: "+" !important;
         height: 35px;
@@ -387,5 +390,15 @@
     .c-file-input {
         position: relative;
         width: 70px;
+    } */
+    .custom-file {
+        margin-left: 58px !important;
+    }
+    .custom-file-input {
+        width: 50px;
+        max-width: 50px;
+    }
+    td.badge-title-col {
+        max-width: 300px;
     }
 </style>
