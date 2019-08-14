@@ -1,12 +1,11 @@
 <template>
     <section>
-
         <b-alert v-if="addSuccess" variant="success" show dismissible>Badge {{updateMessage}} successully </b-alert>
 
         <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
 
-        <save-badge-form :badge="badgeInForm" v-on:submit="onBadgeCreated" v-on:cancel="resetBadgeInForm"></save-badge-form>
-        <badge-list :badges="badges" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
+        <save-badge-form :badge="badgeInForm" :domains="domains" v-on:submit="onBadgeCreated" v-on:failAdd="onBadgeFail" v-on:cancel="resetBadgeInForm"></save-badge-form>
+        <badge-list :badges="badges" :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
     </section>
 </template>
 <script>
@@ -35,7 +34,9 @@
             addSuccess: false,
             addError: false,
             updateMessage: '',
-            badges: []
+            badges: [],
+            domains: []
+,
         }
     }
     export default {
@@ -55,6 +56,11 @@
                 this.addSuccess=true
                 this.updateMessage='added'
                 this.badges.push(badge)
+                this.resetBadgeInForm()
+            },
+            onBadgeFail(rule) {
+                this.addError=true
+                this.errors.push(e)
                 this.resetBadgeInForm()
             },
             onBadgeAction(badge) {
@@ -98,8 +104,8 @@
                         .then(response => {
                             this.addSuccess = true;
                             this.updateMessage = 'updated'
-                            this.badge.push(badge)
-                        })
+                            this.badges.push(badge)
+
                         .catch(e => {
                             this.addError = true
                             this.errors.push(e)
@@ -108,22 +114,27 @@
                     .catch(e => {
                         console.log("Error")
                     })
-            },
-            getAllBadges() {
-                axios.get(`/rest/gamification/badges/all`)
-                    .then(response => {
-                        this.badges = response.data;
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
+                })
             }
         },
         created() {
-           this.getAllBadges()
+            axios.get(`/rest/gamification/badges/all`)
+                .then(response => {
+                    this.badges = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+            axios.get(`/rest/gamification/api/v1/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+
         }
     }
-
 </script>
 <style>
     section {
