@@ -3,12 +3,12 @@
     <thead>
         <tr>
             <th class="rule-name-col"></th>
-            <th class="rule-name-col">Event</th>
-            <th class="rule-desc-col">Date</th>
-            <th class="rule-price-col"> Points <a class="ico-info actionIco" data-v-2e935f06="" href="../gamification-earn-points" target="_blank" rel="tooltip"
-                                                  data-original-title="How can I earn points ?" >
+            <th class="rule-name-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Event') }}</th>
+            <th class="rule-desc-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Date') }}</th>
+            <th class="rule-price-col"> {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }} <a class="ico-info actionIco" data-v-2e935f06="" href="../gamification-earn-points" target="_blank" rel="tooltip"
+                                                  :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') " >
                 <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
-            <th class="rule-enable-col">Domain</th>
+            <th class="rule-enable-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Domain') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -22,10 +22,17 @@
                            <a :href="user.profileUrl"> <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar></a>
                        </div></td>
             <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
-                <a v-bind:href="user.objectId" >{{ rule.description}} </a> </td>
+                <a v-bind:href="user.objectId" >
+
+                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`) }}
+
+                </a> </td>
+
+
+
             <td>{{user.createdDate}}</td>
             <td>{{user.actionScore}}</td>
-            <td>{{user.domain}}</td>
+            <td>{{ $t(`exoplatform.gamification.gamificationinformation.domain.${user.domain}`) }}</td>
 
         </tr>
 
@@ -34,7 +41,7 @@
 
         </tbody>
      <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block" @click="showMore()">
-         Load More
+         {{ this.$t('exoplatform.gamification.leaderboard.showMore') }}
      </div>
         
     </table>
@@ -50,10 +57,11 @@
     import axios from 'axios';
     import Avatar from 'vue-avatar'
     import TotalPointsFilter from "./TotalPointsFilter";
-
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
+
+
     const initialData = () => {
         return {
             users: [],

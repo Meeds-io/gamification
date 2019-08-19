@@ -90,7 +90,6 @@
     </div>
 </template>
 <script>
-
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
     import { ChartPie } from 'vue-d2b'
@@ -98,21 +97,15 @@
     import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar';
-    import VueI18n from 'vue-i18n';
-
-    Vue.use(VueI18n);
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
-
     const initialData = () => {
         return {
-
             chartData: [],
             chartConfig(chart) {
                 chart.donutRatio(0.5)
             },
-
             users: [],
             type: '',
             category: '',
@@ -127,16 +120,14 @@
             loadCapacity: 10,
 
 
+
         }
     }
-
     export default {
         data: initialData,
-
         components: {
             Avatar,
             ChartPie,
-
         },
         directives: {
             mouseover: {
@@ -145,12 +136,9 @@
                         html: true,
                         content: $('#popover')
                     }).on('mouseenter', function () {
-
                         popoverShow: true;
-
                     })
                         .on('mouseleave', function () {
-
                             popoverShow: false;
                         });
                 },
@@ -161,7 +149,6 @@
                 this.loadCapacity=10
                 this.filter()
             }
-
         },
         mounted: function () {
             jQuery(".pop").popover({ trigger: "hover", html: true, animation: false })
@@ -179,22 +166,17 @@
                     }
                 }, 300);
             });
-
         },
-
         methods: {
             filter() {
                 let self = this
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
                         this.users = response.data;
-
                     })
                     .catch(e => {
                         console.warn(e)
-
                     })
-
             },
             showMore() {
                 let self = this
@@ -208,19 +190,14 @@
                     })
             },
             onShown(username) {
-
                 window.dispatchEvent(new Event('resize'));
                 axios.get(`/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
                     .then(response => {
                         this.chartData = response.data;
-
                     })
                     .catch(e => {
                         console.warn(e)
-
                     })
-
-
             },
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
@@ -230,7 +207,6 @@
                     popoverShow: false;
                 });
             },
-
             disableByRef() {
                 if (this.disabled) {
                     this.$refs.popover.$emit('enable')
@@ -238,12 +214,8 @@
                     this.$refs.popover.$emit('disable')
                 }
             },
-
             mouseOver() {
-
                 jQuery(this).popover("show");
-
-
             },
             isActive(value) {
                 return this.active === value
@@ -253,21 +225,14 @@
             },
             onLoad() {
                 console.log("Pie chart loading")
-
             },
             onOpen() {
                 console.log("Pie chart onOpen")
             },
-
             currentRank: function (user) {
-
-
                 return user.fullname == 'Yourcurrentrank';
-
             }
-
         },
-
         created() {
             axios.get(`/rest/gamification/leaderboard/rank/all`)
                 .then(response => {
@@ -277,9 +242,7 @@
                     this.errors.push(e)
                 })
         }
-
     }
-
 </script>
 
 <style scoped>
@@ -290,11 +253,9 @@
         padding-right: 10px;
         opacity: 0.4;
     }
-
     .list-group-item:hover .uiIconViewByChart {
         opacity: 1;
     }
-
     .popover__title {
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         font-size: 24px;
@@ -304,38 +265,31 @@
         text-align: center;
         padding: 15px 0;
     }
-
     .popover__wrapper {
         position: relative;
         display: inline-block;
     }
-
     .desc-user a {
         color: #4d5466 !important;
     }
-
     .desc-user a:hover,
     .desc-user a:focus {
         color: #578dc9 !important;
     }
-
     .current-rank .desc-user {
         padding-left: 10px;
         width: 50%;
     }
-
     .current-rank {
         background: #fbfbfb !important;
         padding: 5px 5px 10px 5px;
     }
-
     .current-rank .number-user {
         padding-left: 10px;
         width: 50%;
         margin: 0 auto;
         font-weight: bold;
     }
-
     .rank-user {
         font-size: 14px;
         width: 6%;
@@ -344,7 +298,6 @@
         text-align: center;
         color: #4d5466;
     }
-
     .popover__content {
         opacity: 0;
         visibility: hidden;
@@ -359,7 +312,6 @@
         top: -68px;
         border-radius: 7px;
     }
-
     .popover__content:before {
         position: absolute;
         z-index: -1;
@@ -377,7 +329,6 @@
         -ms-transform: rotate(90deg);
         transform: rotate(90deg);
     }
-
     .popover__wrapper:hover .popover__content {
         z-index: 10;
         opacity: 1;
@@ -385,21 +336,16 @@
         transform: translate(0, -20px);
         transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
     }
-
     .popover__message {
         text-align: center;
     }
-
     .d-flex {
         display: -ms-flexbox !important;
         display: flex !important;
     }
-
-
     .user-leaderboard-portlet .row {
         margin-left: 0px !important;
     }
-
     .user-leaderboard-portlet .img-thumbnail {
         width: 40px;
         padding: 0;
@@ -408,93 +354,74 @@
         border: 1px solid #dee2e6;
         border-radius: .25rem;
     }
-
     .container-fluid {
         padding-right: 0px;
         padding-left: 0px;
     }
-
     .btn {
         color: #4d5466;
         background-color: #fff;
         border-color: #e1e8ee;
         width: 50%;
     }
-
     .btn-group .btn:hover {
         background-color: #f8f8f8;
         border-color: #e1e8ee;
         color: #333;
     }
-
     .empty-leaderboard {
         text-align: center;
         color: #578dc9;
     }
-
     .d-flex {
         padding: 5px;
         font-size: 14px;
         color: #000;
     }
-
     .btn-group>.btn+.btn {
         margin-left: 0px;
     }
-
     .btn-group {
         width: 100%;
     }
-
     .list-lead {
         padding: 5px 0px !important;
     }
-
     .col {
         padding: 5px;
     }
-
     .btn-group>.btn {
         padding: 5px 0px;
         width: 33%;
         text-align: center;
     }
-
     uiBox {
         padding: 10px 15px;
     }
-
     h5 {
         text-align: center;
     }
-
     .btn-toolbar {
         margin-bottom: 0px;
     }
-
     .chart {
         width: 239px !important;
         height: 226px !important;
     }
-
     .d2b-chart-frame {
         width: 239px !important;
     }
-
     .vue-d2b-container {
         width: 239px !important;
         height: 226px !important;
     }
-
     .d2b-tooltip {
         z-index: 99999999555555 !important;
     }
-
     .d2b-chart {
         width: 219px !important;
         height: 168px !important;
     }
-
     .number-user {
         font-size: 14px;
         width: 25%;
@@ -502,14 +429,11 @@
         padding-top: 10px;
         text-align: center;
     }
-
     select {
         height: calc(2.25rem + 2px);
         font-size: 14px;
         transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-
     }
-
     .custom-select {
         display: inline-block;
         width: 100%;
@@ -521,9 +445,7 @@
         background-size: 8px 10px;
         border: 1px solid #ced4da;
         border-radius: .25rem;
-
     }
-
     .desc-user {
         width: 55%;
         text-align: left;
@@ -533,15 +455,12 @@
         text-overflow: ellipsis;
         padding-top: 10px;
     }
-
     .desc-user a:hover {
         color: #578dc9;
     }
-
     .vue-avatar--wrapper {
         margin: 3px 6px 3px 6px;
     }
-
     .list-group-item {
         padding: 5px;
         font-size: 14px;
@@ -551,11 +470,9 @@
         background: #ffffff;
         border-radius: inherit !important;
     }
-
     .list-group-item:last-child {
         border-bottom: 0px !important;
     }
-
     .list-lead .list-li::after {
         content: "";
         position: absolute;
@@ -566,22 +483,17 @@
         left: 0;
         display: block;
     }
-
     .list-lead .list-li:last-child::after {
         display: none;
     }
-
     .list-group-item:hover {
         background: #fbfbfb;
-
     }
-
     .btn-secondary:not(:disabled):not(.disabled).active:focus,
     .btn-secondary:not(:disabled):not(.disabled):active:focus,
     .show>.btn-secondary.dropdown-toggle:focus {
         box-shadow: none;
     }
-
     .btn-secondary:not(:disabled):not(.disabled).active,
     .btn-secondary:not(:disabled):not(.disabled):active,
     .show>.btn-secondary.dropdown-toggle {
@@ -589,16 +501,13 @@
         border: solid 1px #578dc9;
         color: #fff;
     }
-
     .custom-select {
         font-size: 14px;
     }
-
     .avatarCircle {
         width: 50px !important;
         height: 50px !important;
     }
-
     .ico-info {
         position: relative;
         margin-top: -37px;
@@ -607,11 +516,9 @@
         top: 5px;
         float: right;
     }
-
     .actionIco {
         border: 1px solid transparent;
     }
-
     .actionIco:hover {
         background: none;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff0f0f0', GradientType=0);

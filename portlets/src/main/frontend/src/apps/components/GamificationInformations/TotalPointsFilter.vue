@@ -9,9 +9,9 @@
                 <span class="tooltiptext">Tooltip text</span>
             </div>
 
-            <h4 class="mt-0 center">Total Points</h4>
+            <h4 class="mt-0 center">{{ this.$t('exoplatform.gamification.gamificationinformation.Total') }}</h4>
             <div class="points">
-                <span>{{reputation.score}} Points</span> </div>
+                <span>{{reputation.score}} {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }}</span> </div>
 
         </div>
 
@@ -30,6 +30,7 @@
             reputation: {
                 score: null,
                 selectedPeriod: 'ALL',
+                locale: 'lang',
 
             },
 
