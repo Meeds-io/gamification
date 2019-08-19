@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import SpaceLeaderboardApp from './components/SpaceLeaderboardApp.vue'
 
 new Vue({

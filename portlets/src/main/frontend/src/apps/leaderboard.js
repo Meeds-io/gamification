@@ -1,6 +1,4 @@
-import Vue from 'vue'
 import LeaderboardApp from './components/LeaderboardApp.vue'
-
 
 
 $(document).ready(() => {

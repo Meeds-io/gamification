@@ -3,8 +3,6 @@
     <div id="achivements" class="uiBox">
 
 
-
-
         <tabs
                 :tabs="tabs"
                 :currentTab="currentTab"
@@ -13,6 +11,9 @@
         <div class="content">
 
             <div v-if="currentTab === 'MyPoints'">
+
+
+
                 <total-points-filter></total-points-filter>
 
                 <mypoints-history-list></mypoints-history-list>
@@ -49,14 +50,19 @@
 
     import TotalPointsFilter from "./GamificationInformations/TotalPointsFilter"
     import Tabs from 'vue-tabs-with-active-line';
+
     const TABS = [{
-        title: 'My Points',
-        value: 'MyPoints',
+        title: "MyPoints",
+        value: "MyPoints",
     },
         {
-            title: 'My Badges',
+            title: 'MyBadges',
             value: 'MyBadges',
         }];
+    const initialData = () => {
+        return {
+
+        }}
     export default {
 
         components:   {
@@ -64,6 +70,7 @@
             Tabs,
             MypointsHistoryList,
             TotalPointsFilter,
+
 
         },
         data: () => ({
@@ -75,11 +82,13 @@
             handleClick(newTab) {
                 this.currentTab = newTab;
             },
+
             maximize() {
                 window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
 
             },
             initMenuApp() {
+
                 if (!this.isGamificationEnabled ) {
                     return;
                 }
@@ -95,12 +104,15 @@
           <li id='myGamificationTab' class='item active'> \
             <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}'>
               <div class='uiIconAppGamification uiIconDefaultApp' /> \
-              <span class='tabName'>My Achievements</span> \
+              <span class='tabName'>
+                   My achievements
+               </span> \
             </a> \
           </li>`);
                     $(window).trigger('resize');
                 });
             },
+
         },
         created() {
             if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
@@ -115,6 +127,9 @@
                 this.initMenuApp();
             }
         }
+
+
+
 
     }
 
