@@ -118,6 +118,9 @@
             locale: 'lang',
             popoverShow: false,
             loadCapacity: 10,
+
+
+
         }
     }
     export default {

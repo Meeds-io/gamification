@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
 import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
+import org.exoplatform.commons.file.services.NameSpaceService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -29,10 +30,8 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
     private FileService fileService;
     private DomainService domainService;
 
-    public BadgeRegistryImpl(FileService fileService) {
-
+    public BadgeRegistryImpl(FileService fileService, NameSpaceService nameSpaceService) {
         this.badgesMap = new HashMap<String, BadgeConfig>();
-
         this.fileService = fileService;
     }
 
