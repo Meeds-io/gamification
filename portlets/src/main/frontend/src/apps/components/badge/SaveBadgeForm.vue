@@ -8,7 +8,7 @@
                 <div class="card-body">
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                         <div class="popupHeader ClearFix">
-                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()" ></a>
+                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton(), onCancel()" ></a>
                             <span class="PopupTitle popupTitle">Add Badge</span>
                         </div>
                         <div class="PopupContent popupContent">
@@ -40,7 +40,11 @@
                             </form>
                             <form id="iconInputGroup">
                                 <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
-                                <b-form-file v-model="badge.icon" placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                                <b-form-file id="iconInput" v-model="badge.icon"  class="form-control" required  placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
+                                <b-alert v-if="formErrors.icon" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    Badge icon is required please enter a badge {{dismissCountDown}}
+                                </b-alert>
                             </form>
                             <label class="pt-0">Domain:</label>
                             <form id="domainSelectboxGroup">
@@ -123,6 +127,10 @@
                 const errors = {}
                 if (!this.badge.title) {
                     errors.title = 'Title is required'
+                    this.dismissCountDown = 5
+                }
+                if (!this.badge.icon) {
+                    errors.icon = 'Needed icon is required'
                     this.dismissCountDown = 5
                 }
                 if (!this.badge.neededScore) {

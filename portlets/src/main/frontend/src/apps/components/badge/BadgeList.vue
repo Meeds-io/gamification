@@ -373,4 +373,15 @@
     td.badge-title-col {
         max-width: 300px;
     }
+    img.m-1 {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+    }
+    label.custom-file-label::after {
+        content: '+'!important;
+        height: 35px;
+        width: 35px;
+        border-radius: 50%;
+    }
 </style>
