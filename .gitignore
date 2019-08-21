@@ -48,7 +48,6 @@ rebel.xml
 # Webpack
 node/
 node_modules/
-package-lock.json
 etc/
 # Munified files
 webapp/javascript
