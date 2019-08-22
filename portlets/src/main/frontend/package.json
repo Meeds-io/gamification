@@ -7,7 +7,9 @@
     "start": "webpack-dashboard webpack-dev-server -d --hot --config webpack.dev.js --watch",
     "dev": "webpack --mode development --config webpack.dev.js",
     "watch": "webpack --config webpack.dev.js --progress --colors --watch -d",
-    "build": "webpack -p --progress --trace-deprecation --config webpack.prod.js"
+    "build": "webpack -p --progress --trace-deprecation --config webpack.prod.js",
+    "lint": "eslint --fix ./src/apps/*.js  ./src/apps/**/*.js ./src/apps/components/**/*.vue ./src/apps/components/**/**/*.vue",
+    "eslint-check": "eslint --print-config . | eslint-config-prettier-check"
   },
   "author": "eXo",
   "license": "LGPL",
@@ -19,6 +21,14 @@
     "babel-preset-es2015": "^6.24.1",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.11",
+    "eslint": "^5.10.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-jest": "^22.1.2",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "jest-runner-eslint": "^0.5.0",
     "html-webpack-plugin": "^3.2.0",
     "vue-loader": "^14.2.2",
     "vue-template-compiler": "^2.5.16",
@@ -35,11 +45,11 @@
     "vue-avatar": "^2.1.4",
     "vue-bootstrap-datetimepicker": "^4.1.3",
     "vue-d2b": "^1.0.11",
+    "vue-i18n": "^7.8.1",
     "vue-image-compare": "^0.6.1",
     "vue-moment": "^3.2.0",
     "vue-table-component": "^1.9.2",
     "vue-tabs-with-active-line": "^1.1.4",
-    "vue-i18n": "8.1.1",
     "vuejs-progress-bar": "^1.0.9"
   }
 }

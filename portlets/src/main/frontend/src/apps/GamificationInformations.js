@@ -1,6 +1,5 @@
+import Vue from 'vue'
 import GamificationInformationsApp from './components/GamificationInformationsApp.vue'
-
-
 
 $(document).ready(() => {
     const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language;
