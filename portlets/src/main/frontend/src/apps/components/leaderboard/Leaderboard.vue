@@ -36,9 +36,9 @@
         </div>
         <div class="row">
 
-            <div class="list-lead col" :Yourcurrentrank=" this.$t('exoplatform.gamification.leaderboard.rank')">
+            <div class="list-lead col">
                 <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
-                    <div v-if="user.fullname != 'Yourcurrentrank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId"
+                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId"
                          class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
 
                         <div class="rank-user">{{index+1}}
@@ -73,7 +73,7 @@
                     <div v-else class="current-rank" >
                         <div v-if="users.length" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
                             <div class="desc-user">
-                                {{user.fullname}} :
+                                {{ getRankLabel() }}
                             </div>
                             <div class="number-user">{{user.score}}</div>
                         </div>
@@ -118,9 +118,6 @@
             locale: 'lang',
             popoverShow: false,
             loadCapacity: 10,
-
-
-
         }
     }
     export default {
@@ -229,8 +226,8 @@
             onOpen() {
                 console.log("Pie chart onOpen")
             },
-            currentRank: function (user) {
-                return user.fullname == 'Yourcurrentrank';
+            getRankLabel: function () {
+                return this.$t('exoplatform.gamification.leaderboard.rank');
             }
         },
         created() {
