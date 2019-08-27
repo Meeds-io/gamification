@@ -50,8 +50,8 @@
             <depends>
                 <module>eXoVueI18n</module>
             </depends>
-
         </module>
+
     </portlet>
     <portlet>
         <name>GamificationManageBadges</name>
@@ -139,6 +139,12 @@
             <module>jquery</module>
             <as>$</as>
         </depends>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
+        </depends>
     </module>
     <module>
         <name>manageBadges</name>
@@ -153,6 +159,12 @@
         <depends>
             <module>jquery</module>
             <as>$</as>
+        </depends>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
         </depends>
     </module>
     <module>
@@ -169,6 +181,12 @@
             <module>jquery</module>
             <as>$</as>
         </depends>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
+        </depends>
     </module>
     <module>
         <name>userLeaderboard</name>
@@ -184,7 +202,9 @@
             <module>jquery</module>
             <as>$</as>
         </depends>
-
+        <depends>
+            <module>vue</module>
+        </depends>
         <depends>
             <module>eXoVueI18n</module>
         </depends>
@@ -203,6 +223,12 @@
             <module>jquery</module>
             <as>$</as>
         </depends>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
+        </depends>
     </module>
     <module>
         <name>GamificationInformations</name>
@@ -217,6 +243,12 @@
         <depends>
             <module>jquery</module>
             <as>$</as>
+        </depends>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
         </depends>
     </module>
 
@@ -233,6 +265,12 @@
         <depends>
             <module>jquery</module>
             <as>$</as>
+        </depends>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
         </depends>
     </module>
 
