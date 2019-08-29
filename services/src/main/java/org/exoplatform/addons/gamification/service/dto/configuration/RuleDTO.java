@@ -1,7 +1,5 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 
 import java.io.Serializable;
@@ -117,7 +115,6 @@ public class RuleDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -134,7 +131,6 @@ public class RuleDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public Date getLastModifiedDate() {
         return lastModifiedDate;
     }
