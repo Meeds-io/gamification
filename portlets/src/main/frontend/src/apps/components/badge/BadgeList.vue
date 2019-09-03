@@ -47,7 +47,6 @@
                             <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
                              <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40" ></b-form-file>
-                            <!--  <input  v-if="editedbadge.id === badge.id" @change="change"  placeholder="+" accept="image/jpeg, image/png, image/gif"  type="file"> -->
                          </td>
                          <td class="badge-status-col">
                              <div v-if="editedbadge.id === badge.id" style="z-index: 10;">
@@ -65,15 +64,12 @@
                                  </label>
                              </div>
                          </td>
-                         <!--<td class="badge-created-date-col">
-                               <span v-if="editedbadge.id !== badge.id">{{badge.createdBy}}</span>
-                               <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.createdBy" style="width: 55px;"></td> -->
                         <td class="center actionContainer"  style="z-index: 10;">
                             <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
                                 <i class="uiIconDelete uiIconLightGray"></i>
                             </a>
-                            <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
                             <a href="#" v-if="editedbadge.id === badge.id" v-on:click.stop.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
@@ -123,14 +119,15 @@
             }
         },
         methods: {
-            onEdit(badge) {
-                this.badge=badge;
-                this.editedbadge=badge;
-                //this.$emit('edit', badge)
-            },
+
             onSave(badge) {
                 this.$emit('save', badge);
                 this.editedbadge= {};
+            },
+            onEdit(badge) {
+                //this.$emit('edit', badge)
+                this.badge=badge;
+                this.editedbadge=badge;
             },
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
