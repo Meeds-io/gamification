@@ -21,8 +21,6 @@
                         </td>
                         <td> <div v-if="editedrule.id !== rule.id">{{rule.title}} </div>
                             <input type="text" v-if="editedrule.id === rule.id" class="rule-title-col" v-model="rule.title"style="width: 130px; min-width: 98%;">
-
-
                         </td>
                         <td><div v-if="editedrule.id !== rule.id">{{rule.score}}</div>
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
@@ -52,16 +50,16 @@
                             </div>
                         </td>
                         <td class="center actionContainer">
-                            <a href="#" v-if="editedrule.id !== rule.id" v-on:click.stop="onEdit(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedrule.id !== rule.id" v-on:click.prevent.stop="onEdit(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
                             <a href="#" v-if="editedrule.id !== rule.id" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
                                 <i class="uiIconDelete uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedrule.id === rule.id" v-on:click.stop="onSave(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedrule.id === rule.id" v-on:click.prevent.stop="onSave(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Save">
                                 <i class="uiIconSave uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedrule.id === rule.id" v-on:click.stop="onCancel(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedrule.id === rule.id" v-on:click.prevent.stop="onCancel(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Cancel" v-b-tooltip.hover title="Cancel">
                                 <i class="uiIcon uiIconClose uiIconBlue"></i></a>
                         </td>
@@ -99,15 +97,15 @@
                 this.rule=rule;
                 this.editedrule=rule;
             },
+            onRemove(id, title) {
+                this.$emit('remove', id, title)
+            },
             onSave(rule) {
                 this.$emit('save', rule);
                 this.editedrule= {};
             },
             onCancel(rule) {
                 this.editedrule= {};
-            },
-            onRemove(id, title) {
-                this.$emit('remove', id, title)
             }
         }
     }
@@ -164,7 +162,7 @@
     input.rule-desc-col {
         min-width: 98%;
     }
-    /* switch test */
+    /* switch */
     .switch {
         position: relative;
         display: inline-block;
