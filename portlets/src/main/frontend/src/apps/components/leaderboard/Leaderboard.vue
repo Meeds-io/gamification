@@ -24,17 +24,11 @@
             <div class="col">
                 <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
                     <div id="app" role="group" class="btn-group">
-                        <button @click="activeBtn = 'btn1'selectedPeriod = 'WEEK';loadCapacity=10"
-                                class="btn btn-secondary"
-                                type="button"
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK';loadCapacity=10"
                                 :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')"> {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.WEEK') }}</button>
-                        <button @click="activeBtn = 'btn2'selectedPeriod = 'MONTH';loadCapacity=10 "
-                                class="btn btn-secondary"
-                                type="button"
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'MONTH';loadCapacity=10 "
                                 :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('MONTH')"> {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.MONTH') }}</button>
-                        <button @click="activeBtn = 'btn3'selectedPeriod = 'ALL';loadCapacity=10 "
-                                class="btn btn-secondary"
-                                type="button"
+                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn3';selectedPeriod = 'ALL';loadCapacity=10 "
                                 :class="{active: activeBtn === 'btn3' }" v-on:click.prevent="filter('ALL')">{{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.ALL') }}</button>
                     </div>
                 </div>
@@ -98,11 +92,11 @@
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import {ChartPie} from 'vue-d2b'
-    import {Image, Popover} from 'bootstrap-vue/es/components';
+    import { ChartPie } from 'vue-d2b'
+    import { Popover } from 'bootstrap-vue/es/components';
+    import { Image } from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar';
-
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -125,7 +119,7 @@
             popoverShow: false,
             loadCapacity: 10,
         }
-    };
+    }
     export default {
         data: initialData,
         components: {
@@ -139,17 +133,17 @@
                         html: true,
                         content: $('#popover')
                     }).on('mouseenter', function () {
-                        true;
+                        popoverShow: true;
                     })
                         .on('mouseleave', function () {
-                            false;
+                            popoverShow: false;
                         });
                 },
             }
         },
         watch: {
             domain() {
-                this.loadCapacity = 10;
+                this.loadCapacity=10
                 this.filter()
             }
         },
@@ -172,7 +166,7 @@
         },
         methods: {
             filter() {
-                let self = this;
+                let self = this
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
                         this.users = response.data;
@@ -182,7 +176,7 @@
                     })
             },
             showMore() {
-                let self = this;
+                let self = this
                 self.loadCapacity += 10;
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'capacity': self.loadCapacity } })
                     .then(response => {
@@ -197,9 +191,6 @@
                 axios.get(`/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
                     .then(response => {
                         this.chartData = response.data;
-                        for (let i = 0; i < this.chartData.length; i++) {
-                            this.chartData[i].label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.chartData[i].label}`)
-                        }
                     })
                     .catch(e => {
                         console.warn(e)
@@ -208,9 +199,9 @@
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
                     .on("mouseenter", function () {
-                        true;
+                        popoverShow: true;
                     }).on("mouseleave", function () {
-                    false;
+                    popoverShow: false;
                 });
             },
             disableByRef() {
