@@ -1,7 +1,5 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-import java.util.List;
-
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
@@ -11,8 +9,8 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import java.util.List;
 
 public class DomainService {
 
@@ -97,7 +95,7 @@ public class DomainService {
      * @return DomainDTO object
      */
     @ExoTransactional
-    public DomainDTO updateBadge (DomainDTO domainDTO) throws PersistenceException  {
+    public DomainDTO updateDomain(DomainDTO domainDTO) throws PersistenceException {
 
         DomainEntity domainEntity = null;
 
