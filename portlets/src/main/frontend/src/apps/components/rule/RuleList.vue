@@ -166,9 +166,9 @@
     .switch {
         position: relative;
         display: inline-block;
-        width: 185px;
-        height: 66px;
-        zoom: 30%;
+        width: 53px;
+        height: 32px;
+       /* zoom: 30%; */
         top: 0.4rem;
     }
     .switch input {display:none;}
@@ -176,10 +176,12 @@
         position: absolute;
         cursor: pointer;
         overflow: hidden;
-        top: 0;
+        top: 5px;
         left: 0;
         right: 0;
         bottom: 0;
+        width: 60px;
+        height: 20px;
         background-color: #f2f2f2;
         -webkit-transition: .4s;
         transition: .4s;
@@ -188,10 +190,10 @@
         position: absolute;
         z-index: 2;
         content: "";
-        height: 45px;
-        width: 45px;
-        left: 10px;
-        bottom: 11px;
+        height: 14px;
+        width: 14px;
+        left: 5px;
+        bottom: 3px;
         background-color: darkgrey;
         -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
@@ -200,15 +202,15 @@
     }
     .slider:after {
         position: absolute;
-        left: 0;
+        left: -20px;
         z-index: 1;
         content: "YES";
-        font-size: 37px;
-        text-align: left !important;
-        line-height: 65px;
+        font-size: 13px;
+        text-align: left!important;
+        line-height: 19px;
         padding-left: 0;
-        width: 185px;
-        height: 66px !important;
+        width: 95px;
+        height: 26px!important;
         color: #f9f9f9;
         background-color: #477ab3;
         background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
@@ -243,11 +245,14 @@
     }
     input:checked + .slider:before {
         background-color: #fff;
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
     }
     input:checked + .slider:before {
-        -webkit-transform: translateX(115px);
-        -ms-transform: translateX(115px);
-        transform: translateX(115px);
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
     }
     /* Rounded sliders */
     .slider.round {
@@ -258,12 +263,12 @@
     }
     .absolute-no {
         position: absolute;
-        left: 0;
-        color: darkgrey;
+        left: 27px;
+        color: DarkGrey;
         text-align: right !important;
-        font-size: 45px;
+        font-size: 16px;
         width: calc(100% - 25px);
-        line-height: 70px;
+        line-height: 30px;
         cursor: pointer;
     }
     input.rule-needed-score-col{
