@@ -2,6 +2,12 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12">
+                
+                <div class="uiSearchForm uiSearchInput searchWithIcon">
+                         <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
+                             <i class="uiIconSearch uiIconLightGray"></i></a>
+                         <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
+                </div>
                 <table striped hover class="uiGrid table table-hover rule-table">
                     <thead>
                     <tr>
@@ -14,7 +20,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="rule in rules">
+                    <tr v-for="rule in filteredRules">
 
                         <td class="rule-desc-col"><div v-if="editedrule.id !== rule.id">{{rule.description}}</div>
                             <input type="text" v-if="editedrule.id === rule.id" v-model="rule.description"style="width: 130px;min-width: 98%;">
@@ -87,11 +93,23 @@
         props: ['rules','domains'],
         data() {
             return {
+                search: '',
                 formErrors: {},
                 editedrule : {},
                 isEnabled: false
             }
         },
+          computed: {
+    filteredRules() {
+      return this.rules.filter(item => {
+         return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          || item.score.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          )
+      })
+      }
+    },
         methods: {
             onEdit(rule) {
                 this.rule=rule;

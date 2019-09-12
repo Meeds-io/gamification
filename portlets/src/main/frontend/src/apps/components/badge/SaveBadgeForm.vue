@@ -93,7 +93,7 @@
     Vue.use(BootstrapVue);
     //  Vue.use(datePicker);
     export default {
-        props: ['badge'],
+        props: ['badge','domains'],
         data: function () {
             return {
                 formErrors: {},
@@ -193,15 +193,6 @@
                 });
             },
         },
-        created() {
-            axios.get(`/rest/gamification/api/v1/domains`)
-                .then(response => {
-                    this.domains = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        }
     }
 </script>
 
