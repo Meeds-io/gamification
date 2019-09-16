@@ -355,10 +355,10 @@
     .table td {
         vertical-align: middle;
     }
-    /*edit Mode */
+    /*edit Mode
     td input {
         max-width: min-content;
-    }
+    } */
     input[type="text"] {
         height: 35px;
         margin: auto;
@@ -380,7 +380,7 @@
         max-width: 50px;
     }
     td.badge-title-col {
-        max-width: 300px;
+        max-width: 210px;
     }
     img.m-1 {
         border-radius: 50%;
@@ -396,10 +396,12 @@
     .uiSearchInput.searchWithIcon {
         display: flex;
         position: absolute;
-        top: -50px;
-        left: 37px;
+        margin-left: 23px;
+        top: -45px;
     }
-    .uiIconSearch.uiIconLightGray {
-        position: absolute;
+    i.uiIconSearch.uiIconLightGray {
+        position: relative;
+        float: left;
+        left: -18px;
     }
 </style>
