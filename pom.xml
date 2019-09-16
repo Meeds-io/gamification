@@ -30,7 +30,7 @@
 
     <groupId>org.exoplatform.addons.gamification</groupId>
     <artifactId>gamification</artifactId>
-    <version>1.0.x-SNAPSHOT</version>
+    <version>1.1.x-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>eXo Gamification</name>
     <description>eXo Gamification extension</description>
