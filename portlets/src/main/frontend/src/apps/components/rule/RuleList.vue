@@ -2,11 +2,11 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12">
-                
                 <div class="uiSearchForm uiSearchInput searchWithIcon">
-                         <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
-                             <i class="uiIconSearch uiIconLightGray"></i></a>
-                         <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
+                     <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
+                         <i class="uiIconSearch uiIconLightGray"></i>
+                     </a>
+                     <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
                 </div>
                 <table striped hover class="uiGrid table table-hover rule-table">
                     <thead>
@@ -301,5 +301,14 @@
     }
     i.uiIconSave.uiIconLightGray {
         left: -4px;
+    }
+    .uiSearchInput.searchWithIcon {
+        display: flex;
+        position: absolute;
+        top: -50px;
+        left: 37px;
+    }
+    .uiIconSearch.uiIconLightGray {
+        position: absolute;
     }
 </style>

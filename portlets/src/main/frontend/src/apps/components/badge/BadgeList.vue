@@ -3,9 +3,10 @@
         <b-row>
             <b-col sm="12">
                 <div class="uiSearchForm uiSearchInput searchWithIcon">
-                         <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
-                             <i class="uiIconSearch uiIconLightGray"></i></a>
-                         <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
+                 <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
+                     <i class="uiIconSearch uiIconLightGray"></i>
+                 </a>
+                  <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
                 </div>
                 <table class=" uiGrid table table-hover badge-table">
                     <thead>
@@ -391,5 +392,14 @@
         height: 35px;
         width: 35px;
         border-radius: 50%;
+    }
+    .uiSearchInput.searchWithIcon {
+        display: flex;
+        position: absolute;
+        top: -50px;
+        left: 37px;
+    }
+    .uiIconSearch.uiIconLightGray {
+        position: absolute;
     }
 </style>
