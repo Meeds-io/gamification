@@ -311,6 +311,5 @@
     i.uiIconSearch.uiIconLightGray {
         position: relative;
         float: left;
-        left: -18px;
     }
 </style>
