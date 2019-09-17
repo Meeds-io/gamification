@@ -1,5 +1,13 @@
 package org.exoplatform.addons.gamification.rest;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -7,13 +15,6 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-
-import javax.annotation.security.RolesAllowed;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.Date;
-import java.util.List;
 
 @Path("/gamification/domains")
 @Produces(MediaType.APPLICATION_JSON)
@@ -163,7 +164,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
     @DELETE
     @Path("/delete")
-    public Response deleteDomain(@Context UriInfo uriInfo, @QueryParam("id") Long id) {
+    public Response deleteDomain(@Context UriInfo uriInfo, @QueryParam("domainTitle") String domainTitle) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -173,13 +174,13 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
             try {
                 //--- Remove the domain
-                domainService.deleteDomain(id);
+                domainService.deletedomain(domainTitle);
 
-                return Response.ok().cacheControl(cacheControl).entity("Domain " + id + " has been removed successfully ").build();
+                return Response.ok().cacheControl(cacheControl).entity("Domain " + domainTitle  + " has been removed successfully ").build();
 
             } catch (Exception e) {
 
-                LOG.error("Error deleting domain {} by {} ", id, currentUserName, e);
+                LOG.error("Error deleting domain {} by {} ", domainTitle, currentUserName, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)

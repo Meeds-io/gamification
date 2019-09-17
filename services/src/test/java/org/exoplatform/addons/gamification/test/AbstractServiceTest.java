@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.*;
 
@@ -15,11 +16,16 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.mock.GamificationMockHttpServletRequest;
 import org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint;
+import org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
+import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -84,6 +90,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected ManageBadgesEndpoint        manageBadgesEndpoint;
 
+  protected ManageDomainsEndpoint       manageDomainsEndpoint;
+
   protected RequestHandlerImpl          requestHandler;
 
   protected SessionProvider             sessionProvider;
@@ -98,11 +106,22 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected BadgeDTO                    badgeDTO;
 
+  protected DomainDTO                   domainDTO;
+
   protected BadgeService                badgeService;
+
+  protected DomainService               domainService;
 
   protected BadgeDAO                    badgeStorage;
 
+  protected DomainDAO                   domainStorage;
+
+
   protected BadgeMapper                 badgeMapper;
+
+  protected DomainMapper                 domainMapper;
+
+
 
   private static SessionProviderService sessionProviderService;
 
@@ -118,16 +137,22 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     badgeService = CommonsUtils.getService(BadgeService.class);
     entityManagerService = CommonsUtils.getService(EntityManagerService.class);
     badgeDTO = CommonsUtils.getService(BadgeDTO.class);
+    domainDTO= CommonsUtils.getService(DomainDTO.class);
     manageBadgesEndpoint = CommonsUtils.getService(ManageBadgesEndpoint.class);
+    manageDomainsEndpoint = CommonsUtils.getService(ManageDomainsEndpoint.class);
+
 
     requestHandler = getContainer().getComponentInstanceOfType(RequestHandlerImpl.class);
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
     this.badgeStorage = CommonsUtils.getService(BadgeDAO.class);
     this.badgeMapper = CommonsUtils.getService(BadgeMapper.class);
+    this.domainStorage = CommonsUtils.getService(DomainDAO.class);
+    this.badgeMapper = CommonsUtils.getService(BadgeMapper.class);
+    this.domainMapper=CommonsUtils.getService(DomainMapper.class);
 
     ExoContainer container = getContainer();
-    binder = (ResourceBinder) container.getComponentInstanceOfType(ResourceBinder.class);
-    RequestHandlerImpl requestHandler = (RequestHandlerImpl) container.getComponentInstanceOfType(RequestHandlerImpl.class);
+    binder = container.getComponentInstanceOfType(ResourceBinder.class);
+    RequestHandlerImpl requestHandler = container.getComponentInstanceOfType(RequestHandlerImpl.class);
 
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
     launcher = new ResourceLauncher(requestHandler);
@@ -165,17 +190,34 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return type.cast(o);
   }
 
-  protected static interface Invoker {
-    Object invoke(Object[] args);
-  }
-
   public ContainerResponse getResponse(String method, String restPath, String input) throws Exception {
-    byte[] jsonData = input.getBytes("UTF-8");
+    byte[] jsonData = input.getBytes(StandardCharsets.UTF_8);
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + jsonData.length);
 
     return service(method, restPath, "", h, jsonData);
+  }
+
+  /**
+   * Compare number of comments.
+   *
+   * @param activityList
+   * @param responseEntity
+   * @param numberOfComments
+   */
+  protected void compareNumberOfComments(List<ExoSocialActivity> activityList,
+                                         ActivityRestListOut responseEntity,
+                                         int numberOfComments) {
+    List<ActivityRestOut> entityList =
+                                     (List<ActivityRestOut>) responseEntity.get(ActivityRestListOut.Field.ACTIVITIES.toString());
+    ActivityManager activityManager = getContainer().getComponentInstanceOfType(ActivityManager.class);
+    for (int i = 0; i < entityList.size(); i++) {
+      ExoSocialActivity activity = activityList.get(i);
+      int commentNumber = Math.min(numberOfComments, activityManager.getCommentsWithListAccess(activity).getSize());
+      ActivityRestOut entity = entityList.get(i);
+      assertEquals("entity.getComments().size() must return: " + commentNumber, commentNumber, entity.getComments().size());
+    }
   }
 
   protected <T extends BaseEntity> T getBaseEntity(Object data, Class<T> clazz) throws Exception {
@@ -537,25 +579,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   }
 
-  /**
-   * Compare number of comments.
-   *
-   * @param activityList
-   * @param responseEntity
-   * @param numberOfComments
-   */
-  protected void compareNumberOfComments(List<ExoSocialActivity> activityList,
-                                         ActivityRestListOut responseEntity,
-                                         int numberOfComments) {
-    List<ActivityRestOut> entityList =
-                                     (List<ActivityRestOut>) responseEntity.get(ActivityRestListOut.Field.ACTIVITIES.toString());
-    ActivityManager activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-    for (int i = 0; i < entityList.size(); i++) {
-      ExoSocialActivity activity = activityList.get(i);
-      int commentNumber = Math.min(numberOfComments, activityManager.getCommentsWithListAccess(activity).getSize());
-      ActivityRestOut entity = entityList.get(i);
-      assertEquals("entity.getComments().size() must return: " + commentNumber, commentNumber, entity.getComments().size());
-    }
+  protected interface Invoker {
+    Object invoke(Object[] args);
   }
 
   /**
