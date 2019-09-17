@@ -1,16 +1,18 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
-import java.util.List;
 
 public class DomainService {
 
@@ -25,6 +27,11 @@ public class DomainService {
 
     }
 
+    public DomainService() {
+        this.domainStorage = CommonsUtils.getService(DomainDAO.class);
+        this.domainMapper = CommonsUtils.getService(DomainMapper.class);
+
+    }
     /**
      * Return all domains within the DB
      * @return a list of DomainDTO
@@ -32,9 +39,9 @@ public class DomainService {
     public List<DomainDTO> getAllDomains() {
         try {
             //--- load all Domains
-            List<DomainEntity> badges = domainStorage.findAll();
-            if (badges != null) {
-                return domainMapper.domainssToDomainDTOs(badges);
+            List<DomainEntity> domains = domainStorage.findAll();
+            if (domains != null) {
+                return domainMapper.domainssToDomainDTOs(domains);
             }else{
                 return null;
             }
@@ -55,7 +62,7 @@ public class DomainService {
 
         try {
             //--- Get Entity from DB
-            DomainEntity entity = domainStorage.findBadgeByTitle(domainTitle);
+            DomainEntity entity = domainStorage.findDomainByTitle(domainTitle);
             //--- Convert Entity to DTO
             if (entity != null) {
                 return domainMapper.domainToDomainDTO(entity);
@@ -134,6 +141,15 @@ public class DomainService {
 
 
     }
+    @ExoTransactional
+    public void deletedomain (String domainTitle)  throws Exception{
 
+        try {
+            domainStorage.deleteDomainByTitle(domainTitle);
+        } catch (Exception e) {
+            LOG.error("Error to delete rule with title {}", domainTitle, e);
+            throw(e);
+        }
+    }
 
 }

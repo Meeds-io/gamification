@@ -1,10 +1,11 @@
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+
+import javax.persistence.*;
+
+import org.exoplatform.commons.api.persistence.ExoEntity;
 
 @Entity(name = "GamificationDomain")
 @ExoEntity
@@ -14,9 +15,14 @@ import java.util.Objects;
                 name = "GamificationDomain.getAllDomains",
                 query = "SELECT domain FROM GamificationDomain domain "
         ),
+
         @NamedQuery(
                 name = "GamificationDomain.findDomainByTitle",
                 query = "SELECT domain FROM GamificationDomain domain where domain.title = :domainTitle"
+        ),
+        @NamedQuery(
+                name = "GamificationDomain.deleteDomainByTitle",
+                query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle "
         )
 })
 public class DomainEntity extends AbstractAuditingEntity implements Serializable {
@@ -71,6 +77,7 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
 
     @Override
     public boolean equals(Object o) {
