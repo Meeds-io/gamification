@@ -63,7 +63,7 @@ public class DomainService {
 
         try {
             //--- Get Entity from DB
-            DomainEntity entity = domainStorage.findBadgeByTitle(domainTitle);
+            DomainEntity entity = domainStorage.findDomainByTitle(domainTitle);
             //--- Convert Entity to DTO
             if (entity != null) {
                 return domainMapper.domainToDomainDTO(entity);
