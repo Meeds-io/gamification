@@ -11,7 +11,6 @@
                         <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')"
                                name="keyword" type="text" v-model="search" value="">
                     </div>
-
                     <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                          data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
                         <div class="card-body">
