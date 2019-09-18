@@ -2,7 +2,12 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12">
-
+                <div class="uiSearchForm uiSearchInput searchWithIcon">
+                 <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
+                     <i class="uiIconSearch uiIconLightGray"></i>
+                 </a>
+                  <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
+                </div>
                 <table class=" uiGrid table table-hover badge-table">
                     <thead>
                     <tr>
@@ -17,7 +22,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="badge in badges" track-by="id">
+                    <tr v-for="badge in filteredBadges" track-by="id">
                         <td class="badge-title-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
                             <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.title"style="width: 130px;min-width: 98%;">
@@ -97,6 +102,7 @@
 <script>
     import Vue from 'vue'
     import moment from 'moment'
+    import axios from 'axios';
     Vue.prototype.moment = moment
     import BootstrapVue from 'bootstrap-vue'
     Vue.use(BootstrapVue);
@@ -106,6 +112,7 @@
         props: ['badges','domains'],
         data() {
             return {
+                search: '',
                 formErrors: {},
                 selectedFile: undefined,
                 selectedFileName: '',
@@ -145,15 +152,17 @@
                 console.log('filechange');
             }
         },
-        created() {
-            axios.get(`/rest/gamification/api/v1/domains`)
-                .then(response => {
-                    this.domains = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        }
+                  computed: {
+    filteredBadges() {
+      return this.badges.filter(item => {
+         return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+          )
+      })
+      }
+    }
     }
 </script>
 <style scoped>
@@ -349,10 +358,10 @@
     .table td {
         vertical-align: middle;
     }
-    /*edit Mode */
+    /*edit Mode
     td input {
         max-width: min-content;
-    }
+    } */
     input[type="text"] {
         height: 35px;
         margin: auto;
@@ -374,7 +383,7 @@
         max-width: 50px;
     }
     td.badge-title-col {
-        max-width: 300px;
+        max-width: 210px;
     }
     img.m-1 {
         border-radius: 50%;
@@ -387,4 +396,27 @@
         width: 35px;
         border-radius: 50%;
     }
+    .uiSearchInput.searchWithIcon {
+        display: flex;
+        position: absolute;
+        margin-left: 23px;
+        top: -45px;
+    }
+    i.uiIconSearch.uiIconLightGray {
+        position: relative;
+        float: left;
+    }
+    @media (max-width: 416px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 18%;
+            margin-left: 5px;
+        }
+    }
+    @media (max-width: 340px){
+        .uiSearchInput.searchWithIcon {
+            max-width: 12%;
+            margin-left: 5px;
+        }
+    }
+
 </style>
