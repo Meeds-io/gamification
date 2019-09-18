@@ -46,8 +46,7 @@
                         <td id="iconInputGroup" style="max-width: 100px;">
                             <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
-                             <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40" ></b-form-file>
-                            <!--  <input  v-if="editedbadge.id === badge.id" @change="change"  placeholder="+" accept="image/jpeg, image/png, image/gif"  type="file"> -->
+                             <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40"></b-form-file>
                          </td>
                          <td class="badge-status-col">
                              <div v-if="editedbadge.id === badge.id" style="z-index: 10;">
@@ -65,15 +64,12 @@
                                  </label>
                              </div>
                          </td>
-                         <!--<td class="badge-created-date-col">
-                               <span v-if="editedbadge.id !== badge.id">{{badge.createdBy}}</span>
-                               <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.createdBy" style="width: 55px;"></td> -->
                         <td class="center actionContainer"  style="z-index: 10;">
                             <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
                                 <i class="uiIconDelete uiIconLightGray"></i>
                             </a>
-                            <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
                             <a href="#" v-if="editedbadge.id === badge.id" v-on:click.stop.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
@@ -123,14 +119,14 @@
             }
         },
         methods: {
-            onEdit(badge) {
-                this.badge=badge;
-                this.editedbadge=badge;
-                //this.$emit('edit', badge)
-            },
             onSave(badge) {
                 this.$emit('save', badge);
                 this.editedbadge= {};
+            },
+            onEdit(badge) {
+                //this.$emit('edit', badge)
+                this.badge=badge;
+                this.editedbadge=badge;
             },
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
@@ -155,7 +151,6 @@
                     this.errors.push(e)
                 })
         }
-
     }
 </script>
 <style scoped>
@@ -182,6 +177,9 @@
         vertical-align: top;
         text-align: center;
     }
+    .uiGrid.table tr td {
+        padding: 5px;
+    }
     .table-hover tbody tr:hover {
         cursor: pointer;
     }
@@ -197,111 +195,115 @@
     .uiGrid.table {
         border: none;
     }
-    /* switch test */
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 185px;
-        height: 66px;
-        zoom: 30%;
-        top: 0.4rem;
-    }
-    .switch input {display:none;}
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        overflow: hidden;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #f2f2f2;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
-    .slider:before {
-        position: absolute;
-        z-index: 2;
-        content: "";
-        height: 45px;
-        width: 45px;
-        left: 10px;
-        bottom: 11px;
-        background-color: darkgrey;
-        -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-        -webkit-transition: .4s;
-        transition: all 0.4s ease-in-out;
-    }
-    .slider:after {
-        position: absolute;
-        left: 0;
-        z-index: 1;
-        content: "YES";
-        font-size: 37px;
-        text-align: left !important;
-        line-height: 65px;
-        padding-left: 0;
-        width: 185px;
-        height: 66px !important;
-        color: #f9f9f9;
-        background-color: #477ab3;
-        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
-        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
-        background-repeat: repeat-x;
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
-        -webkit-box-shadow: inset 0px 3px 5px #224469;
-        -moz-box-shadow: inset 0px 3px 5px #224469;
-        box-shadow: inset 0px 3px 5px #224469;
-        -webkit-border-top-left-radius: 9px;
-        -moz-border-radius-topleft: 9px;
-        border-top-left-radius: 9px;
-        -webkit-border-bottom-left-radius: 9px;
-        -moz-border-radius-bottomleft: 9px;
-        border-bottom-left-radius: 9px;
-        height: 57px;
-        border-radius: 100px;
-        background-color: #578dc9;
-        -webkit-transform: translateX(-190px);
-        -ms-transform: translateX(-190px);
-        transform: translateX(-190px);
-        transition: all 0.4s ease-in-out;
-    }
-    input:checked + .slider:after {
-        -webkit-transform: translateX(0px);
-        -ms-transform: translateX(0px);
-        transform: translateX(0px);
-        padding-left: 25px;
-    }
-    input:checked + .slider:before {
-        background-color: #fff;
-    }
-    input:checked + .slider:before {
-        -webkit-transform: translateX(115px);
-        -ms-transform: translateX(115px);
-        transform: translateX(115px);
-    }
-    /* Rounded sliders */
-    .slider.round {
-        border-radius: 100px;
-    }
-    .slider.round:before {
-        border-radius: 50%;
-    }
-    .absolute-no {
-        position: absolute;
-        left: 0;
-        color: darkgrey;
-        text-align: right !important;
-        font-size: 45px;
-        width: calc(100% - 25px);
-        line-height: 70px;
-        cursor: pointer;
-    }
-
+    /* switch */
+       .switch {
+           position: relative;
+           display: inline-block;
+           width: 53px;
+           height: 32px;
+          /* zoom: 30%; */
+           top: 0.4rem;
+       }
+       .switch input {display:none;}
+       .slider {
+           position: absolute;
+           cursor: pointer;
+           overflow: hidden;
+           top: 5px;
+           left: 0;
+           right: 0;
+           bottom: 0;
+           width: 60px;
+           height: 20px;
+           background-color: #f2f2f2;
+           -webkit-transition: .4s;
+           transition: .4s;
+       }
+       .slider:before {
+           position: absolute;
+           z-index: 2;
+           content: "";
+           height: 14px;
+           width: 14px;
+           left: 5px;
+           bottom: 3px;
+           background-color: darkgrey;
+           -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+           -webkit-transition: .4s;
+           transition: all 0.4s ease-in-out;
+       }
+       .slider:after {
+           position: absolute;
+           left: -20px;
+           z-index: 1;
+           content: "YES";
+           font-size: 13px;
+           text-align: left!important;
+           line-height: 19px;
+           padding-left: 0;
+           width: 95px;
+           height: 26px!important;
+           color: #f9f9f9;
+           background-color: #477ab3;
+           background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
+           background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
+           background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
+           background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
+           background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
+           background-repeat: repeat-x;
+           filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
+           -webkit-box-shadow: inset 0px 3px 5px #224469;
+           -moz-box-shadow: inset 0px 3px 5px #224469;
+           box-shadow: inset 0px 3px 5px #224469;
+           -webkit-border-top-left-radius: 9px;
+           -moz-border-radius-topleft: 9px;
+           border-top-left-radius: 9px;
+           -webkit-border-bottom-left-radius: 9px;
+           -moz-border-radius-bottomleft: 9px;
+           border-bottom-left-radius: 9px;
+           height: 57px;
+           border-radius: 100px;
+           background-color: #578dc9;
+           -webkit-transform: translateX(-190px);
+           -ms-transform: translateX(-190px);
+           transform: translateX(-190px);
+           transition: all 0.4s ease-in-out;
+       }
+       input:checked + .slider:after {
+           -webkit-transform: translateX(0px);
+           -ms-transform: translateX(0px);
+           transform: translateX(0px);
+           padding-left: 25px;
+       }
+       input:checked + .slider:before {
+           background-color: #fff;
+           -webkit-transform: translateX(38px);
+           -ms-transform: translateX(38px);
+           transform: translateX(38px);
+       }
+       input:checked + .slider:before {
+           -webkit-transform: translateX(38px);
+           -ms-transform: translateX(38px);
+           transform: translateX(38px);
+       }
+       /* Rounded sliders */
+       .slider.round {
+           border-radius: 100px;
+       }
+       .slider.round:before {
+           border-radius: 50%;
+       }
+       .absolute-no {
+           position: absolute;
+           left: 27px;
+           color: DarkGrey;
+           text-align: right !important;
+           font-size: 16px;
+           width: calc(100% - 25px);
+           line-height: 30px;
+           cursor: pointer;
+       }
     select.mb-4 {
         max-width: 115px;
         margin: 0px auto;
@@ -313,7 +315,6 @@
         opacity: 1;
         line-height: inherit;
     }
-
     /* input icon */
     .custom-file {
         position: relative;
@@ -333,7 +334,6 @@
         width: 60px;
         text-align: center;
     }
-
     input[type="file"],  .custom-file-input {
         max-width: 65px !important;
         width: 65px !important;
