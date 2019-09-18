@@ -4,8 +4,6 @@
         <b-row>
             <b-col sm="12">
                 <div>
-
-
                     <div class="uiSearchForm uiSearchInput searchWithIcon">
                         <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
                             <i class="uiIconSearch uiIconLightGray"></i>
@@ -294,6 +292,7 @@
             margin-left: 5px;
         }
     }
+
     .card-body label {
         display: block;
     }
