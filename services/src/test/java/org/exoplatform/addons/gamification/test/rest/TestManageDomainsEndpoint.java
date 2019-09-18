@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.json.JSONWriter;
+import org.junit.Test;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
@@ -22,8 +25,6 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.rest.wadl.research.HTTPMethods;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.json.JSONWriter;
-import org.junit.Test;
 
 public class TestManageDomainsEndpoint extends AbstractServiceTest {
 
@@ -56,7 +57,6 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
 
     try {
       startSessionAs("root");
-
       populateData();
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);

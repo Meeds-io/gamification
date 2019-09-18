@@ -1,16 +1,18 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceException;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceException;
-import java.util.List;
 
 public class DomainService {
 
@@ -24,6 +26,12 @@ public class DomainService {
         this.domainMapper = domainMapper;
 
     }
+
+  public DomainService() {
+    this.domainStorage = CommonsUtils.getService(DomainDAO.class);
+    this.domainMapper = CommonsUtils.getService(DomainMapper.class);
+
+  }
 
     /**
      * Return all domains within the DB
