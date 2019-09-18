@@ -13,7 +13,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     public DomainDAO() {
     }
 
-    public DomainEntity findBadgeByTitle(String domainTitle) throws PersistenceException {
+    public DomainEntity findDomainByTitle(String domainTitle) throws PersistenceException {
 
         TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle", DomainEntity.class)
                 .setParameter("domainTitle", domainTitle);
@@ -23,6 +23,12 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
         } catch (NoResultException e) {
             return null;
         }
+
+    }
+    public int deleteDomainByTitle(String domainTitle) throws PersistenceException {
+        return getEntityManager().createNamedQuery("GamificationDomain.deleteDomainByTitle")
+                .setParameter("domainTitle", domainTitle)
+                .executeUpdate();
 
     }
 

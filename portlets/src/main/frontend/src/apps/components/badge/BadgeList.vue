@@ -51,7 +51,9 @@
                         <td id="iconInputGroup" style="max-width: 100px;">
                             <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
+
                              <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40"></b-form-file>
+
                          </td>
                          <td class="badge-status-col">
                              <div v-if="editedbadge.id === badge.id" style="z-index: 10;">
@@ -126,6 +128,7 @@
             }
         },
         methods: {
+
             onSave(badge) {
                 this.$emit('save', badge);
                 this.editedbadge= {};

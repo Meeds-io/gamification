@@ -24,6 +24,13 @@
                 <label xml:lang="fr">Gérer les badges</label>
                 <page-reference>group::/platform/administrators::badges</page-reference>
             </node>
+            <node>
+                <uri>domains</uri>
+                <name>domains</name>
+                <label xml:lang="en">Manage Domains</label>
+                <label xml:lang="fr">Gérer les domaines</label>
+                <page-reference>group::/platform/administrators::domains</page-reference>
+            </node>
         </node>
     </page-nodes>
 </node-navigation>
