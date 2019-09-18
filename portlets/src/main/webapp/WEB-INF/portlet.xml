@@ -72,6 +72,22 @@
         </security-role-ref>
     </portlet>
 
+    <!-- Admin portlet : manage domains -->
+    <portlet>
+        <portlet-name>GamificationManageDomains</portlet-name>
+        <portlet-class>org.exoplatform.addons.gamification.portlets.admin.domain.ManageDomainsPortlet</portlet-class>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Gamification Manage domains</title>
+        </portlet-info>
+        <security-role-ref>
+            <role-name>admin</role-name>
+            <role-link>admin</role-link>
+        </security-role-ref>
+    </portlet>
+
     <!-- Admin portlet : manage GamificationInformationsPortlet -->
     <portlet>
         <portlet-name>GamificationManageBadges</portlet-name>

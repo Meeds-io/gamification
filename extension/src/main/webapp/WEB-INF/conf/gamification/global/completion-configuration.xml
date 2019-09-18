@@ -27,7 +27,11 @@
         <type>org.exoplatform.addons.gamification.rest.ManageRulesEndpoint</type>
     </component>
     <!-- END -->
-
+    <!-- Domains Rest Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint</type>
+    </component>
+    <!-- END -->
     <!-- Badges Rest Service -->
     <component>
         <type>org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint</type>
