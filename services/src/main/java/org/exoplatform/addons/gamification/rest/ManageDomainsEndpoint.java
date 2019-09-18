@@ -16,187 +16,157 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 
-@Path("/gamification/domains")
+@Path("/gamification")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("administrators")
 public class ManageDomainsEndpoint implements ResourceContainer {
 
-    private static final Log LOG = ExoLogger.getLogger(ManageDomainsEndpoint.class);
+  private static final Log   LOG           = ExoLogger.getLogger(ManageDomainsEndpoint.class);
 
-    private final CacheControl cacheControl;
+  private final CacheControl cacheControl;
 
-    protected DomainService domainService = null;
+  protected DomainService    domainService = null;
 
-    public ManageDomainsEndpoint() {
+  public ManageDomainsEndpoint() {
 
-        this.cacheControl = new CacheControl();
+    this.cacheControl = new CacheControl();
 
-        cacheControl.setNoCache(true);
+    cacheControl.setNoCache(true);
 
-        cacheControl.setNoStore(true);
+    cacheControl.setNoStore(true);
 
-        domainService = CommonsUtils.getService(DomainService.class);
+    domainService = CommonsUtils.getService(DomainService.class);
 
+  }
+
+  @GET
+  @Path("/domains")
+  public Response getAllDomains(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+
+    ConversationState conversationState = ConversationState.getCurrent();
+
+    if (conversationState != null) {
+      try {
+        List<DomainDTO> allDomains = domainService.getAllDomains();
+
+        return Response.ok().cacheControl(cacheControl).entity(allDomains).build();
+
+      } catch (Exception e) {
+
+        LOG.error("Error listing all domains ", e);
+
+        return Response.serverError().cacheControl(cacheControl).entity("Error listing all domains").build();
+      }
+
+    } else {
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
+  }
 
-    @GET
-    @Path("/all")
-    public Response getAllDomains(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+  @POST
+  @Consumes({ MediaType.APPLICATION_JSON })
+  @Path("/domains")
+  public Response addDomain(@Context SecurityContext securityContext, @Context UriInfo uriInfo, DomainDTO domainDTO) {
 
-        ConversationState conversationState = ConversationState.getCurrent();
+    ConversationState conversationState = ConversationState.getCurrent();
 
-        if (conversationState != null) {
-            try {
-                List<DomainDTO> allDomains = domainService.getAllDomains();
+    if (conversationState != null) {
 
-                return Response.ok().cacheControl(cacheControl).entity(allDomains).build();
+      String currentUserName = conversationState.getIdentity().getUserId();
 
-            } catch (Exception e) {
+      try {
+        // Compute domain's data
+        domainDTO.setId(null);
+        domainDTO.setCreatedBy(currentUserName);
+        domainDTO.setLastModifiedBy(currentUserName);
+        domainDTO.setLastModifiedDate(String.valueOf(new Date()));
 
-                LOG.error("Error listing all domains ", e);
+        // --- Add domain
+        domainDTO = domainService.addDomain(domainDTO);
 
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error listing all domains")
-                        .build();
-            }
+        return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
 
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
+      } catch (Exception e) {
 
+        LOG.error("Error adding new domain {} by {} ", domainDTO.getTitle(), currentUserName, e);
 
+        return Response.serverError().cacheControl(cacheControl).entity("Error adding new domain").build();
+
+      }
+
+    } else {
+
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-    @POST
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Path("/add")
-    public Response addDomain(@Context SecurityContext securityContext, @Context UriInfo uriInfo, DomainDTO domainDTO) {
+  }
 
-        ConversationState conversationState = ConversationState.getCurrent();
+  @PUT
+  @Path("/domains/{id}")
+  public Response updateDomain(@Context UriInfo uriInfo,
+                               @Context HttpServletRequest request,
+                               @PathParam("id") Long id,
+                               DomainDTO domainDTO) {
 
-        if (conversationState != null) {
+    ConversationState conversationState = ConversationState.getCurrent();
 
-            String currentUserName = conversationState.getIdentity().getUserId();
+    if (conversationState != null) {
 
-            try {
-                // Compute domain's data
-                domainDTO.setId(null);
-                domainDTO.setCreatedBy(currentUserName);
-                domainDTO.setLastModifiedBy(currentUserName);
-                domainDTO.setLastModifiedDate(String.valueOf(new Date()));
+      String currentUserName = conversationState.getIdentity().getUserId();
+      try {
+        domainDTO.setId(null);
+        domainDTO.setCreatedBy(currentUserName);
+        domainDTO.setLastModifiedBy(currentUserName);
+        domainDTO.setLastModifiedDate(String.valueOf(new Date()));
 
+        // --- Add domain
+        domainDTO = domainService.updateDomain(domainDTO);
 
-                //--- Add domain
-                domainDTO = domainService.addDomain(domainDTO);
+        return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
 
-                return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
+      } catch (Exception e) {
 
-            } catch (Exception e) {
+        LOG.error("Error updating domain {} by {} ", domainDTO.getTitle(), currentUserName, e);
 
-                LOG.error("Error adding new domain {} by {} ", domainDTO.getTitle(), currentUserName, e);
+        return Response.serverError().cacheControl(cacheControl).entity("Error updating a domain").build();
+      }
 
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error adding new domain")
-                        .build();
+    } else {
 
-            }
-
-
-        } else {
-
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-    @PUT
-    @Path("/update")
-    public Response updateDomain(@Context UriInfo uriInfo, @Context HttpServletRequest request, DomainDTO domainDTO) {
+  }
 
-        ConversationState conversationState = ConversationState.getCurrent();
+  @DELETE
+  @Path("/domains/{id}")
+  public Response deleteRule(@Context UriInfo uriInfo, @PathParam("id") Long id) {
 
-        if (conversationState != null) {
+    ConversationState conversationState = ConversationState.getCurrent();
 
-            String currentUserName = conversationState.getIdentity().getUserId();
-            try {
-                domainDTO.setId(null);
-                domainDTO.setCreatedBy(currentUserName);
-                domainDTO.setLastModifiedBy(currentUserName);
-                domainDTO.setLastModifiedDate(String.valueOf(new Date()));
+    if (conversationState != null) {
 
+      String currentUserName = conversationState.getIdentity().getUserId();
 
-                //--- Add domain
-                domainDTO = domainService.updateDomain(domainDTO);
+      try {
+        // --- Remove the rule
+        domainService.deleteDomain(id);
 
+        return Response.ok().cacheControl(cacheControl).entity("Domain " + id + " has been removed successfully ").build();
 
-                return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
+      } catch (Exception e) {
 
-            } catch (Exception e) {
+        LOG.error("Error deleting Domain {} by {} ", id, currentUserName, e);
 
-                LOG.error("Error updating domain {} by {} ", domainDTO.getTitle(), currentUserName, e);
+        return Response.serverError().cacheControl(cacheControl).entity("Error deleting a Domain").build();
 
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error updating a domain")
-                        .build();
-            }
+      }
 
-        } else {
+    } else {
 
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
-
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-
-    @DELETE
-    @Path("/delete")
-    public Response deleteDomain(@Context UriInfo uriInfo, @QueryParam("domainTitle") String domainTitle) {
-
-        ConversationState conversationState = ConversationState.getCurrent();
-
-        if (conversationState != null) {
-
-            String currentUserName = conversationState.getIdentity().getUserId();
-
-            try {
-                //--- Remove the domain
-                domainService.deletedomain(domainTitle);
-
-                return Response.ok().cacheControl(cacheControl).entity("Domain " + domainTitle  + " has been removed successfully ").build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error deleting domain {} by {} ", domainTitle, currentUserName, e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error deleting a domain")
-                        .build();
-
-            }
-
-        } else {
-
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
-
-    }
+  }
 }
