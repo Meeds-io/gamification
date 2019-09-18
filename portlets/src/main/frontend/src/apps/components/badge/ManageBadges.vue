@@ -1,8 +1,21 @@
 <template>
     <section>
-        <b-alert v-if="addSuccess" variant="success" show dismissible>Badge {{updateMessage}} successully </b-alert>
+ <b-alert v-if="addSuccess"
+                 :show="dismissCountDown"
+                 dismissible
+                 fade
+                 variant="success"
+                 @dismiss-count-down="countDownChanged">
+            Badge {{updateMessage}} successully
+            </b-alert>
 
-        <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a badge</b-alert>
+        <b-alert v-if="addError"
+        show="dismissCountDown"
+         dismissible
+         fade
+        variant="danger"
+         @dismiss-count-down="countDownChanged">
+         An error happen when adding a badge </b-alert>
 
         <save-badge-form :badge="badgeInForm" :domains="domains" v-on:submit="onBadgeCreated" v-on:failAdd="onBadgeFail" v-on:cancel="resetBadgeInForm"></save-badge-form>
         <badge-list :badges="badges" :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
@@ -25,6 +38,9 @@
                 description: '',
                 neededScore: null,
                 icon: null,
+                dismissSecs: 5,
+                dismissCountDown: 0,
+                showDismissibleAlert: false,
                 domain: '',
                 enabled: null,
                 createdDate: null,
@@ -46,6 +62,7 @@
         },
         data: initialData,
         methods: {
+
             resetBadgeInForm() {
                 this.badgeInForm = initialData().badgeInForm
             },
@@ -57,12 +74,18 @@
                 this.updateMessage='added'
                 this.badges.push(badge)
                 this.resetBadgeInForm()
+                this.dismissCountDown = 5
             },
             onBadgeFail(rule) {
                 this.addError=true
                 this.errors.push(e)
                 this.resetBadgeInForm()
+                this.dismissCountDown = 5
             },
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
+
             onBadgeAction(badge) {
                 const index = this.badges.findIndex((p) => p.id === badge.id)
                 if (index !== -1) {
@@ -105,6 +128,7 @@
                             this.addSuccess = true;
                             this.updateMessage = 'updated'
                             this.badges.push(badge)
+                            this.dismissCountDown = 5
 
                         .catch(e => {
                             this.addError = true

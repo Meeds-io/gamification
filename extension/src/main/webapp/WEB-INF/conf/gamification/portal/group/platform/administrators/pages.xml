@@ -40,7 +40,7 @@
     </page>
     <page>
         <name>badges</name>
-        <title>Gamification Manage Rules</title>
+        <title>Gamification Manage Badges</title>
         <access-permissions>manager:/platform/administrators</access-permissions>
         <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
@@ -49,6 +49,21 @@
                 <portlet-ref>GamificationManageBadges</portlet-ref>
             </portlet>
             <title>Gamification Manage Badges</title>
+            <access-permissions>*:/platform/administrators</access-permissions>
+            <show-info-bar>false</show-info-bar>
+        </portlet-application>
+    </page>
+    <page>
+        <name>domains</name>
+        <title>Gamification Manage Domains</title>
+        <access-permissions>manager:/platform/administrators</access-permissions>
+        <edit-permission>manager:/platform/administrators</edit-permission>
+        <portlet-application>
+            <portlet>
+                <application-ref>gamification-portlets</application-ref>
+                <portlet-ref>GamificationManageDomains</portlet-ref>
+            </portlet>
+            <title>Gamification Manage Domains</title>
             <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
         </portlet-application>
