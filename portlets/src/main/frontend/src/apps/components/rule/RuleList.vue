@@ -312,4 +312,20 @@
         position: relative;
         float: left;
     }
+
+    @media (max-width: 416px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 18%;
+            margin-left: 5px;
+        }
+    }
+    @media (max-width: 340px){
+        .uiSearchInput.searchWithIcon {
+            max-width: 12%;
+            margin-left: 5px;
+        }
+    }
+
+
+
 </style>
