@@ -4,7 +4,8 @@
             <div class="pull-right" id="headingOne">
                 <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary"
                         data-target="#collapseOne" data-toggle="collapse" type="button"
-                        v-on:click.prevent="collapseButton()">Add Domain
+                        v-on:click.prevent="collapseButton()">{{
+                    this.$t('exoplatform.gamification.gamificationinformation.domain.popupadd') }}
                 </button>
             </div>
             <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
@@ -16,9 +17,8 @@
 
                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()"></a>
 
-                            <span class="PopupTitle popupTitle"> Add Domain</span>
+                            <span class="PopupTitle popupTitle"> {{ this.$t('exoplatform.gamification.gamificationinformation.domain.popupadd') }}</span>
                         </div>
-
 
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
@@ -55,11 +55,13 @@
                             <div class="row">
                                 <b-col>
                                     <button class="btn secondary pull-right" type="submit"
-                                            v-on:click.prevent="collapseButton(), onCancel()">Cancel
+                                            v-on:click.prevent="collapseButton(), onCancel()">{{
+                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                     </button>
                                     <b-button class="btn-primary pull-right" type="submit"
                                               v-on:click.prevent="onSubmit()">
-                                        {{domain.id ? 'Update' : 'Confirm'}}
+                                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+
                                     </b-button>
                                 </b-col>
                             </div>
@@ -150,7 +152,7 @@
             },
 
             createDomain(domainDTO) {
-                axios.post(`/rest/gamification/domains/add`, domainDTO)
+                axios.post(`/rest/gamification/domains`, domainDTO)
                     .then(response => {
                         this.$emit('sucessAdd', this.domain)
                     })

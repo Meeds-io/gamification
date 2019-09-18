@@ -17,29 +17,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-
 @Application(defaultController = ManageDomainsController.class)
 @Portlet
 
-@Stylesheets(
-        {
-                @Stylesheet(value = "/org/exoplatform/addons/gamification/portlets/admin/domain/assets/global.css", location = AssetLocation.APPLICATION, id = "global")
-        }
+@Stylesheets({
+    @Stylesheet(value = "/org/exoplatform/addons/gamification/portlets/admin/domain/assets/global.css", location = AssetLocation.APPLICATION, id = "global") }
 
 )
-@Bindings(
-        {
-                @Binding(value = org.exoplatform.services.organization.OrganizationService.class),
-                @Binding(value = DomainService.class),
+@Bindings({ @Binding(value = org.exoplatform.services.organization.OrganizationService.class),
+    @Binding(value = DomainService.class),
 
+})
 
-        }
-)
-
-@Less(value = {"global.less"}, minify = true)
+@Less(value = { "global.less" }, minify = true)
 @Assets("*")
 package org.exoplatform.addons.gamification.portlets.admin.domain;
-
 
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 

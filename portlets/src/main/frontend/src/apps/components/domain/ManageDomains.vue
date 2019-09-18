@@ -115,13 +115,13 @@
             },
             onDomainFail(domain) {
                 this.addError = true;
-                this.errors.push(e);
+                // this.errors.push(e);
                 this.resetDomainInForm()
             },
-            onRemoveClicked(domainId, domainTitle) {
+            onRemoveClicked(domainId) {
                 const index = this.domains.findIndex((p) => p.id === domainId);
 
-                axios.delete(`/rest/gamification/domains/delete`, {params: {'domainTitle': domainTitle}})
+                axios.delete(`/rest/gamification/domains/` + domainId)
                     .then(response => {
                         this.domains.splice(index, 1)
                     })
@@ -134,7 +134,7 @@
             },
 
             updateDomain(domainDTO) {
-                axios.put(`/rest/gamification/domains/update`, domainDTO)
+                axios.put(`/rest/gamification/domains/` + domainDTO.id, domainDTO)
                     .then(response => {
                         this.addSuccess = true;
                         this.updateMessage = 'updated';
@@ -150,7 +150,7 @@
             }
         },
         created() {
-            axios.get(`/rest/gamification/domains/all`)
+            axios.get(`/rest/gamification/domains`)
                 .then(response => {
                     this.domains = response.data;
                 })

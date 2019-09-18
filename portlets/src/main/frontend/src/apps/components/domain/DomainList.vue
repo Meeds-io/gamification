@@ -15,10 +15,9 @@
 
                                     <a class="uiIconClose pull-right" v-on:click.prevent="collapseButtonn(domain)"></a>
 
-                                    <span class="PopupTitle popupTitle">Edit domain</span>
+                                    <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.domain.popupedit') }}</span>
                                 </div>
                                 <div class="PopupContent popupContent">
-
 
                                     <form id="titleInputGroup">
                                         <label class="col-form-label pt-0">{{
@@ -57,11 +56,15 @@
                                     <div class="row">
                                         <b-col>
                                             <button class="btn secondary pull-right" type="submit"
-                                                    v-on:click.prevent="collapseButtonn(domain), onCancel()">Cancel
+                                                    v-on:click.prevent="collapseButtonn(domain), onCancel()">{{
+                                                this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                                                }}
                                             </button>
                                             <b-button class="btn-primary pull-right" type="submit"
                                                       v-on:click.prevent="onSave(domain),collapseButtonn(domain)">
-                                                {{editedDomain.id ? 'Update' : 'Confirm'}}
+                                                {{
+                                                this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                                                }}
                                             </b-button>
                                         </b-col>
                                     </div>
