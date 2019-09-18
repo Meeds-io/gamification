@@ -4,8 +4,13 @@
         <b-row>
             <b-col sm="12">
                 <div>
-
-
+                    <div class="uiSearchForm uiSearchInput searchWithIcon">
+                        <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
+                            <i class="uiIconSearch uiIconLightGray"></i>
+                        </a>
+                        <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')"
+                               name="keyword" type="text" v-model="search" value="">
+                    </div>
                     <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                          data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
                         <div class="card-body">
@@ -93,11 +98,11 @@
                         <tbody>
 
 
-                        <tr v-for="domain in domains">
+                        <tr v-for="domain in filteredDomains">
 
                             <td>
-                                <div v-if="domain.title !=editedDomain.title "> {{
-                                    $t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`) }}
+                                <div v-if="domain.title !=editedDomain.title ">
+                                    {{$t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`) }}
                                 </div>
                                 <div v-else>{{domain.title}}</div>
                             </td>
@@ -139,7 +144,6 @@
                         </tbody>
                     </table>
 
-
                 </div>
             </b-col>
         </b-row>
@@ -161,6 +165,7 @@
         props: ['domains', 'domain'],
         data() {
             return {
+                search: '',
                 id: null,
                 isEnabled: false,
                 SaveDomainForm: '',
@@ -178,8 +183,18 @@
             }
         },
 
-
+        computed: {
+            filteredDomains() {
+                return this.domains.filter(item => {
+                    return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                        || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                    )
+                })
+            }
+        },
         methods: {
+
+
             onRemove(id) {
 
                 this.$emit('remove', id);
@@ -252,6 +267,31 @@
 </script>
 
 <style scoped>
+    .uiSearchInput.searchWithIcon {
+        display: flex;
+        position: absolute;
+        margin-left: 2%;
+        margin-top: 18px;
+    }
+
+    i.uiIconSearch.uiIconLightGray {
+        position: relative;
+        float: left;
+    }
+
+    @media (max-width: 416px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 18%;
+            margin-left: 5px;
+        }
+    }
+
+    @media (max-width: 340px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 12%;
+            margin-left: 5px;
+        }
+    }
 
     .card-body label {
         display: block;
@@ -561,9 +601,7 @@
     }
 
     /*edit Mode */
-    td input {
-        max-width: min-content;
-    }
+
 
     input[type="text"] {
         height: 35px;
