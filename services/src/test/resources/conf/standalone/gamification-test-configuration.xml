@@ -12,12 +12,23 @@
     <component>
         <type>org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint</type>
     </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint</type>
+    </component>
 
     <!-- Badges Service Layer-->
     <component>
         <key>org.exoplatform.addons.gamification.service.configuration.BadgeService</key>
         <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
     </component>
+
+    <!-- DOmains Service Layer-->
+
+    <component>
+        <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.DomainService</type>
+    </component>
+
 
     <!-- Gamification Effective Service -->
     <component>
@@ -43,10 +54,15 @@
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
     </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.DomainDAO</type>
+    </component>
     <!-- Badge entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
     </component>
+
     <!-- Domain entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.DomainMapper</type>
@@ -102,7 +118,7 @@
         <init-params>
             <value-param>
                 <name>logger</name>
-                <value>org.slf4j.Logger</value>
+                <value>org.slf4j.L?utf8=?&q=gam&type=&language=ogger</value>
             </value-param>
             <value-param>
                 <name>configurator</name>

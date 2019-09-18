@@ -1,7 +1,21 @@
 <template>
     <section>
-        <b-alert v-if="addSuccess" variant="success" show dismissible>Rule {{updateMessage}} successfully</b-alert>
-        <b-alert v-if="addError" variant="danger" show dismissible>An error happen when adding a rule</b-alert>
+     <b-alert v-if="addSuccess"
+                     :show="dismissCountDown"
+                     dismissible
+                     fade
+                     variant="success"
+                     @dismiss-count-down="countDownChanged">
+                <i class="uiIconSuccess"></i> Rule {{updateMessage}} successfully
+                </b-alert>
+
+        <b-alert v-if="addError"
+        class="alert alert-danger"
+          :show="dismissCountDown"
+          dismissible
+          fade
+          variant="danger"
+          @dismiss-count-down="countDownChanged"><i class="uiIconError"></i>  An error happen when adding a rule</b-alert>
 
         <save-rule-form :rule="ruleInForm" :domains="domains" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
         <rule-list  :rules="rules"  :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></rule-list>
@@ -68,17 +82,22 @@
             onSaveClicked (rule) {
                 this.updateRule(rule)
             },
+
             onRuleCreated(rule) {
                 this.addSuccess=true
                 this.updateMessage='added'
                 this.rules.push(rule)
                 this.resetRuleInForm()
+                this.dismissCountDown = 5
             },
+
             onRuleFail(rule) {
                 this.addError=true
                 this.errors.push(e)
                 this.resetRuleInForm()
+                this.dismissCountDown = 5
             },
+
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId)
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
@@ -98,6 +117,7 @@
                         this.addSuccess=true
                         this.updateMessage='updated'
                         this.rules.push(rule)
+                        this.dismissCountDown = 5
                             .catch(e => {
                                 this.addError=true
                                 this.errors.push(e)
