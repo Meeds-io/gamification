@@ -246,6 +246,7 @@
     div#headingOne {
         box-shadow: none;
         transition: all .5s;
+        margin-right: 1%;
     }
 
     button.btn.secondary {
