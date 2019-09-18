@@ -1,0 +1,36 @@
+<div class="container">
+  <div id="domains-management">
+    <h2>Manage domain</h2>
+
+    <div class="col-md-12">
+      {{messageGamification}}
+
+
+
+      <table class="uiGrid table table-hover table-striped">
+
+        <!--Table titles -->
+        <tr>
+
+          <td class="center">#</td>
+          <td class="center">Title</td>
+          <td class="center">Description</td>
+
+        </tr>
+        <!-- Table data-->
+        <!-- Table data-->
+        <tr v-for="(domain,key) in domains" v-bind:item="domain" v-bind:key="domain.id" v-if="domain.length > 0">
+          <td class="center">{{domain.id}}</td>
+          <td class="center">{{domain.title}}</td>
+          <td class="center">{{domain.description}}</td>
+
+        </tr>
+        <tr v-if="rule.length  == 0">
+          <td class="empty center" colspan="5">Vide</td>
+        </tr>
+      </table>
+
+    </div>
+
+  </div>
+</div>
