@@ -8,7 +8,8 @@
                         <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
                             <i class="uiIconSearch uiIconLightGray"></i>
                         </a>
-                        <input name="keyword" placeholder="search" type="text" v-model="search" value="">
+                        <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')"
+                               name="keyword" type="text" v-model="search" value="">
                     </div>
 
                     <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
