@@ -15,6 +15,8 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 @Path("/gamification")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +29,8 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
   protected DomainService    domainService = null;
 
+  protected IdentityManager identityManager                = null;
+
   public ManageDomainsEndpoint() {
 
     this.cacheControl = new CacheControl();
@@ -36,6 +40,8 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     cacheControl.setNoStore(true);
 
     domainService = CommonsUtils.getService(DomainService.class);
+
+    identityManager = CommonsUtils.getService(IdentityManager.class);
 
   }
 
@@ -122,6 +128,11 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
         // --- Add domain
         domainDTO = domainService.updateDomain(domainDTO);
+
+        // Compute user id
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName, false).getId();
+        LOG.info("service=gamification operation=edit-domain parameters=\"user_social_id:{},domain_id:{},domain_title:{},domain_description:{}\"", actorId, domainDTO.getId(), domainDTO.getTitle(), domainDTO.getDescription());
+
 
         return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
 

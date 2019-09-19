@@ -24,6 +24,8 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.upload.UploadResource;
 import org.exoplatform.upload.UploadService;
 
@@ -52,6 +54,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
   protected UploadService         uploadService                = null;
 
+  protected IdentityManager       identityManager                = null;
+
   public ManageBadgesEndpoint() {
 
     this.cacheControl = new CacheControl();
@@ -67,6 +71,9 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     fileService = CommonsUtils.getService(FileService.class);
 
     uploadService = CommonsUtils.getService(UploadService.class);
+
+    identityManager = CommonsUtils.getService(IdentityManager.class);
+
 
   }
 
@@ -231,8 +238,12 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         badgeDTO.setLastModifiedBy(currentUserName);
         badgeDTO.setLastModifiedDate(formatter.format(new Date()));
 
-        // --- Add rule
+        // --- Update rule
         badgeDTO = badgeService.updateBadge(badgeDTO);
+
+        // Compute user id
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName, false).getId();
+        LOG.info("service=gamification operation=edit-badge parameters=\"user_social_id:{},badge_id:{},badge_title:{},badge_description:{}\"", actorId, badgeDTO.getId(), badgeDTO.getTitle(), badgeDTO.getDescription());
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
 
