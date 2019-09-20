@@ -2,7 +2,10 @@
     <div>
         <div class="col-sm-12 fluid">
             <div class="pull-right" id="headingOne">
-                <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button"  v-on:click.prevent="collapseButton()">Add rule</button>
+                <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary"
+                        data-target="#collapseOne" data-toggle="collapse" type="button"
+                        v-on:click.prevent="collapseButton()">{{$t(`exoplatform.gamification.addrule`) }}
+                </button>
             </div>
             <div aria-labelledby="headingOne" class="collapse show" :class="isShown ? '' : 'out'" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
                 <div class="card-body">
@@ -11,55 +14,79 @@
 
                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton()" ></a>
 
-                            <span class="PopupTitle popupTitle">Add Rule</span>
+                            <span class="PopupTitle popupTitle">{{this.$t(`exoplatform.gamification.addrule`) }}</span>
                         </div>
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
-                                <label class="col-form-label pt-0">Title:</label>
-                                <input id="titleInput" type="text" v-model="rule.title" required placeholder="Enter rule's title">
-                                </input>
-                                <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                    Rule title is required please enter a title {{dismissCountDown}}
-                                </b-alert>
+                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.gamificationinformation.Event`)
+                                    }}:</label>
+
+
+                                <select class="mb-4 select-event" required v-model="rule.title">
+                                    <option disabled selected value="null">
+                                        {{$t(`exoplatform.gamification.selectevent`)}}
+                                    </option>
+                                    <option v-bind:value="option" v-for="option in rules">
+                                        {{
+                                        $t(`exoplatform.gamification.gamificationinformation.rule.title.${option.title}`,option.title)
+                                        }}
+                                    </option>
+                                </select>
+
+
+                                <!--  <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                      Rule title is required please enter a title {{dismissCountDown}}
+                                  </b-alert>-->
 
                             </form>
                             <form id="descriptionInputGroup">
-                                <label class="col-form-label pt-0">Description:</label>
+                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.gamificationinformation.domain.Description`)
+                                    }}:</label>
                                 <textarea id="ruleDescription" v-model="rule.description" placeholder="Enter description" :rows="3" :max-rows="6">
                             </textarea>
                             </form>
                             <b-form id="scoreInputGroup">
 
-                                <label id="scoreInputGroup" for="scoreInput" class="col-form-label pt-0">Score:</label>
+                                <label class="col-form-label pt-0" for="scoreInput" id="scoreInputGroup">{{$t(`exoplatform.gamification.score`)
+                                    }}:</label>
                                 <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
 
                                 <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                    Rule score is required please enter a score {{dismissCountDown}}
+                                    Rule score is required please enter a score
                                 </b-alert>
                             </b-form>
-                            <form>
-                                <label class="col-form-label pt-0">Enable:</label>
+                            <form class="switch">
+                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`) }}:</label>
                                 <label class="uiSwitchBtn">
 
                                     <input type="checkbox" v-model="rule.enabled" >
                                     <span class="slider round"></span>
-                                    <span class="absolute-no">NO</span>
+                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
                                 </label>
-                            </form>
-                            <form id="areaSelectboxGroup">
-                                <label class="col-form-label pt-0">Domain :</label>
-                                <select v-model="rule.domainDTO" class="mb-4" required>
-                                    <option value="null" disabled selected >Select your Domain</option>
+
+                                <label class="col-form-label pt-0" style="margin-left: 20%">{{$t(`exoplatform.gamification.gamificationinformation.Domain`)
+                                    }}:</label>
+                                <select required v-model="rule.domainDTO">
+                                    <option disabled selected value="null">{{$t(`exoplatform.gamification.selectdM`)}}
+                                    </option>
                                     <option v-for="option in domains" v-bind:value="option">
-                                        {{ option.title }}
+                                        {{
+                                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
+                                        }}
                                     </option>
                                 </select>
                             </form>
+
                             <div class="row">
                                 <b-col>
-                                    <button type="submit" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
-                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit(), showAlert()">
-                                        {{rule.id ? 'Update' : 'Confirm'}}
+                                    <button class="btn secondary pull-right" type="submit"
+                                            v-on:click.prevent="collapseButton(), onCancel()">{{
+                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                                    </button>
+                                    <b-button class="btn-primary pull-right" type="submit"
+                                              v-on:click.prevent="onSubmit()">
+                                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+
                                     </b-button>
                                 </b-col>
                             </div>
@@ -75,10 +102,11 @@
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    Vue.use(BootstrapVue);
     import axios from 'axios';
+
+    Vue.use(BootstrapVue);
     export default {
-        props: ['rule','domains'],
+        props: ['rule', 'domains', 'rules'],
         data: function (){
             return {
                 SaveRuleForm:'',
@@ -99,30 +127,33 @@
 
         watch: {
             'rule.id'() {
-                this.formErrors = {}
-                this.selectedFile = undefined
+                this.formErrors = {};
+                this.selectedFile = undefined;
                 this.selectedFileName = this.rule.imageName
             },
             'rule.domainDTO'() {
                 this.rule.area = this.rule.domainDTO.title
+            },
+            'rule.ruleDTO'() {
+                this.rule.title = this.rule.ruleDTO.title
             }
         },
         methods: {
             validateForm() {
-                const errors = {}
-                if (!this.rule.title) {
-                    errors.title = 'Title is required'
-                    this.dismissCountDown = 5
-                }
+                const errors = {};
+                // if (!this.rule.title) {
+                //errors.title = 'Title is required'
+                //this.dismissCountDown = 5
+                //}
                 if (!this.rule.score) {
-                    errors.score = 'Score is required'
+                    errors.score = 'Score is required';
                     this.dismissCountDown = 5
                 }
-                this.formErrors = errors
+                this.formErrors = errors;
                 return Object.keys(errors).length === 0
             },
             onImageChanged(event) {
-                this.selectedFile = event.target.files[0]
+                this.selectedFile = event.target.files[0];
                 this.selectedFileName = event.target.files[0].name
             },
             onCancel() {
@@ -131,11 +162,23 @@
             },
             onSubmit() {
                 if (this.validateForm()) {
-                    this.createRule(this.rule)
+                    this.isShown = !this.isShown;
+
+                    this.createRule(this.rule);
                     this.collapseButton()
                 }
+                if (this.isShown) {
+                    this.closeAlert(".alert")
+                }
+            },
+            closeAlert(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 4000);
 
             },
+
+
             collapseButton() {
                 this.isShown = !this.isShown;
             },
@@ -222,6 +265,12 @@
         font-size: 15px;
     }
 
+    button, [type="button"], [type="reset"], [type="submit"] {
+        -webkit-appearance: button;
+        align-content: stretch;
+        padding: 8px 25px;
+        margin-left: 500px;
+    }
 
     input[type="checkbox"] {
         width: auto;
@@ -271,11 +320,10 @@
      /* switch */
           .uiSwitchBtn {
               position: relative;
-              display: inline-block;
+              display: inline-block !important;
               width: 60px;
               height: 29px;
-             /* zoom: 30%; */
-              top: 0.4rem;
+              margin-left: 20px;
           }
           .uiSwitchBtn input {display:none;}
           .slider {
@@ -397,6 +445,7 @@
         border: 2px solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
+        margin-left: 20px;
     }
     select:focus{
         border-color: #a6bad6;
@@ -404,5 +453,14 @@
         -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 5px #c9d5e6;
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
         color: #333;
+    }
+
+    label.col-form-label.pt-0 {
+        display: inline-block;
+    }
+
+    select.mb-4.select-event {
+        margin: 0 !important;
+        width: 100%;
     }
 </style>

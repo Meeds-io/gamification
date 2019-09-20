@@ -134,11 +134,9 @@
                             </td>
 
                         </tr>
-                        <tr v-if="!domains.length">
-                            <td class="alert alert-warning" colspan="6" style="cursor: auto; background-color:white;">
-                                <i class="uiIconWarning"></i> <strong>{{
-                                $t(`exoplatform.gamification.gamificationinformation.domain.warning.adddomains`)
-                                }}</strong>
+                        <tr v-if="!domains.length || !filteredDomains.length " v-model="search">
+                            <td class="empty center" colspan="6">
+                                {{$t(`exoplatform.gamification.gamificationinformation.domain.warning.add.domains`) }}
                             </td>
                         </tr>
                         </tbody>
@@ -267,18 +265,24 @@
 </script>
 
 <style scoped>
-    .uiSearchInput.searchWithIcon {
-        display: flex;
-        position: absolute;
-        margin-left: 2%;
-        margin-top: 18px;
+    .uiSearchInput .advancedSearch, .uiSearchInput .AdvancedSearch {
+        position: relative;
+        right: 25px;
+        top: 10px;
     }
 
     i.uiIconSearch.uiIconLightGray {
         position: relative;
         float: left;
+        margin-right: 1%;
     }
 
+    .uiSearchInput.searchWithIcon {
+        display: flex;
+        margin-left: 70%;
+        margin-top: 19px;
+        position: static;
+    }
     @media (max-width: 416px) {
         .uiSearchInput.searchWithIcon {
             max-width: 18%;

@@ -2,39 +2,119 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12">
-                <div class="uiSearchForm uiSearchInput searchWithIcon">
-                     <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
-                         <i class="uiIconSearch uiIconLightGray"></i>
-                     </a>
-                     <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
+                <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlert()">
+                    <button aria-label="Close" class="close" data-dismiss="alert"
+                            style="line-height: 27px; margin-right: 5px;" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <i class="uiIconSuccess"></i>
+                    {{this.$t('exoplatform.gamification.successdelete')}}
                 </div>
+                <div class="uiSearchForm uiSearchInput searchWithIcon">
+
+                    <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')"
+                           name="keyword" type="text" v-model="search" value="">
+                    <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
+                        <i class="uiIconSearch uiIconLightGray"></i>
+                    </a>
+
+
+                </div>
+
+                <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
+                     data-parent="#accordionExample" id="collapseTwo" style=" transition: inherit;">
+
+                    <div class="card-body">
+                        <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm"
+                             style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                            <div class="popupHeader ClearFix">
+                                <div class="PopupTitle popupTitle" id="confirmLabel">{{
+                                    this.$t('exoplatform.gamification.Confirmation') }}
+                                </div>
+
+                                <a class="uiIconClose pull-right" v-on:click.prevent="collapseConfirm(rule)"></a>
+
+                                <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
+                            </div>
+                            <div class="PopupContent popupContent">
+                                <div class="media">
+                                    <div class="pull-left">
+                                        <i class="uiIconColorQuestion"></i>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="msg"> {{ this.$t('exoplatform.gamification.areyousure.deleterule')
+                                            }}</p>
+                                    </div>
+                                </div>
+                                <div class="uiAction uiActionBorder">
+                                    <b-col>
+                                        <button class="btn cancel pull-right" type="submit"
+                                                v-on:click.prevent="collapseConfirm(rule), onCancel()">{{
+                                            this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                                            }}
+                                        </button>
+
+                                        <b-button class="btn-primary pull-right" type="submit"
+                                                  v-on:click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
+                                            {{
+                                            this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                                            }}
+                                        </b-button>
+                                    </b-col>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <table striped hover class="uiGrid table table-hover rule-table">
                     <thead>
                     <tr>
-                        <th class="rule-desc-col">Description</th>
-                        <th class="rule-name-col">Title</th>
-                        <th class="rule-price-col">score</th>
-                        <th class="rule-area-col">Domain</th>
-                        <th class="rule-enable-col">Enabled</th>
-                        <th class="rule-action-col">Action</th>
+                        <th class="rule-name-col">{{$t(`exoplatform.gamification.gamificationinformation.Event`) }}</th>
+
+                        <th class="rule-desc-col">
+                            {{$t(`exoplatform.gamification.gamificationinformation.domain.Description`) }}
+                        </th>
+                        <th class="rule-price-col">{{$t(`exoplatform.gamification.score`) }}</th>
+                        <th class="rule-area-col">{{$t(`exoplatform.gamification.gamificationinformation.Domain`) }}
+                        </th>
+                        <th class="rule-enable-col">{{$t(`exoplatform.gamification.enabled`) }}</th>
+                        <th class="rule-action-col">{{$t(`exoplatform.gamification.action`)}}</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="rule in filteredRules">
 
-                        <td class="rule-desc-col"><div v-if="editedrule.id !== rule.id">{{rule.description}}</div>
-                            <input type="text" v-if="editedrule.id === rule.id" v-model="rule.description"style="width: 130px;min-width: 98%;">
+
+                        <td>
+                            <div v-if="editedrule.id !== rule.id"> {{
+                                $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`,rule.title)
+                                }}
+                            </div>
+                            <input class="rule-title-col" style="width: 130px; min-width: 98%;" type="text"
+                                   v-if="editedrule.id === rule.id" v-model="rule.title">
                         </td>
-                        <td> <div v-if="editedrule.id !== rule.id">{{rule.title}} </div>
-                            <input type="text" v-if="editedrule.id === rule.id" class="rule-title-col" v-model="rule.title"style="width: 130px; min-width: 98%;">
+                        <td class="rule-desc-col">
+                            <div v-if="editedrule.id !== rule.id">{{
+                                $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`,rule.description)
+                                }}
+                            </div>
+                            <input style="width: 130px;min-width: 98%;" type="text" v-if="editedrule.id === rule.id"
+                                   v-model="rule.description">
                         </td>
                         <td><div v-if="editedrule.id !== rule.id">{{rule.score}}</div>
                             <input  class="rule-needed-score-col" type="text" v-if="editedrule.id === rule.id" v-model="rule.score">
                         </td>
                         <td style="max-width: 115px;">
-                            <div v-if="editedrule.id !== rule.id && rule.domainDTO != null">{{rule.domainDTO.title}}</div>
+                            <div v-if="editedrule.id !== rule.id && rule.domainDTO != null">{{
+                                $t(`exoplatform.gamification.gamificationinformation.domain.${rule.domainDTO.title}`,rule.domainDTO.title)
+                                }}
+                            </div>
                             <select v-if="editedrule.id === rule.id" v-model="rule.domainDTO"  style="max-width: 115px;margin: 0px auto;height: 35px;" required>
-                                <option :value="null" disabled style="max-width: 115px;">Select Your Domain</option>
+                                <option :value="null" disabled style="max-width: 115px;">
+                                    {{$t(`exoplatform.gamification.selectdM`)}}
+                                </option>
                                 <option v-for="option in domains" v-bind:value="option" style="max-width: 115px">
                                     {{ option.title }}
                                 </option>
@@ -44,14 +124,14 @@
                                 <label class="switch">
                                     <input type="checkbox" v-model="rule.enabled">
                                     <span class="slider round"></span>
-                                    <span class="absolute-no">NO</span>
+                                    <span class="absolute-no">{{$t(`exoplatform.gamification.YES`)}}</span>
                                 </label>
                             </div>
                             <div v-else>
                                 <label class="switch" v-on:click ="rule.enabled = !rule.enabled">
                                     <input type="checkbox" v-model="rule.enabled">
                                     <span class="slider round"></span>
-                                    <span class="absolute-no">NO</span>
+                                    <span class="absolute-no">{{$t(`exoplatform.gamification.YES`)}}</span>
                                 </label>
                             </div>
                         </td>
@@ -59,9 +139,12 @@
                             <a href="#" v-if="editedrule.id !== rule.id" v-on:click.prevent.stop="onEdit(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Edit">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedrule.id !== rule.id" v-on:click.prevent.stop="onRemove(rule.id,rule.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
+
+                            <a class="actionIcon" data-placement="bottom" href="#" rel="tooltip" v-if="rule.id"
+                               v-on:click.prevent="collapseConfirm(rule)"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
-                                <i class="uiIconDelete uiIconLightGray"></i></a>
+                                <i class="uiIconDelete uiIconLightGray"></i>
+                            </a>
                             <a href="#" v-if="editedrule.id === rule.id" v-on:click.prevent.stop="onSave(rule)" data-placement="bottom" rel="tooltip" class="actionIcon"
                                data-original-title="Edit" v-b-tooltip.hover title="Save">
                                 <i class="uiIconSave uiIconLightGray"></i></a>
@@ -70,15 +153,18 @@
                                 <i class="uiIcon uiIconClose uiIconBlue"></i></a>
                         </td>
                     </tr>
-                    <tr v-if="!rules.length">
-                        <td colspan="6" class="p-y-3 text-xs-center" style="cursor: auto; background-color:white;">
-                            <strong>You should add some rules!</strong>
+                    <tr v-if="!rules.length || !filteredRules.length  " v-model="search">
+
+                        <td class="empty center" colspan="6"> {{$t(`exoplatform.gamification.ErrorRulesMsg`)}}
+
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </b-col>
+
         </b-row>
+
     </b-container>
 </template>
 <script>
@@ -87,8 +173,9 @@
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
     import moment from 'moment'
+
     Vue.use(BootstrapVue);
-    Vue.prototype.moment = moment
+    Vue.prototype.moment = moment;
     export default {
         props: ['rules','domains'],
         data() {
@@ -96,6 +183,8 @@
                 search: '',
                 formErrors: {},
                 editedrule : {},
+                isdeleted: false,
+                isShown: false,
                 isEnabled: false
             }
         },
@@ -116,7 +205,8 @@
                 this.editedrule=rule;
             },
             onRemove(id, title) {
-                this.$emit('remove', id, title)
+                this.$emit('remove', id, title);
+                this.isdeleted = true
             },
             onSave(rule) {
                 this.$emit('save', rule);
@@ -124,12 +214,51 @@
             },
             onCancel(rule) {
                 this.editedrule= {};
+            },
+            collapseConfirm(rule) {
+                this.rule = rule;
+                this.isShown = !this.isShown;
+                if (this.isShown) {
+                    this.closeAlert(".alert")
+                }
+            },
+            closeAlert(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 4000);
+
             }
         }
     }
 </script>
 
 <style scoped>
+    .uiSearchInput.searchWithIcon {
+        display: flex;
+        flex-direction: row-reverse;
+        float: right;
+        margin-top: 18px;
+    }
+
+    i.uiIconSearch.uiIconLightGray {
+        position: relative;
+        float: left;
+    }
+
+    @media (max-width: 416px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 45%;
+            margin-left: 5px;
+        }
+    }
+
+    @media (max-width: 340px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 35%;
+            margin-left: 5px;
+
+        }
+    }
     .container-fluid {
         display: table;
     }
@@ -218,6 +347,27 @@
         -webkit-transition: .4s;
         transition: all 0.4s ease-in-out;
     }
+
+    .collapse.show.out {
+        display: none;
+    }
+
+    .collapse {
+        top: 15px;
+    }
+
+    div#collapseTwo {
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
     .slider:after {
         position: absolute;
         left: -20px;
@@ -261,6 +411,7 @@
         transform: translateX(0px);
         padding-left: 25px;
     }
+
     input:checked + .slider:before {
         background-color: #fff;
         -webkit-transform: translateX(38px);
@@ -302,30 +453,37 @@
     i.uiIconSave.uiIconLightGray {
         left: -4px;
     }
-    .uiSearchInput.searchWithIcon {
-        display: flex;
+
+    button.btn.cancel.pull-right {
+        border: 1px solid #e1e8ee !important;
+        color: #4d5466;
+        background: transparent !important;
+    }
+
+    .collapse.show.out {
+        display: none;
+    }
+
+    .collapse {
+        top: 15px;
+    }
+
+    div#collapseTwo {
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .alert-success {
         position: absolute;
-        margin-left: 23px;
-        top: -45px;
+        top: 11% !important;
+        margin: auto 0.5% !important;
     }
-    i.uiIconSearch.uiIconLightGray {
-        position: relative;
-        float: left;
-    }
-
-    @media (max-width: 416px) {
-        .uiSearchInput.searchWithIcon {
-            max-width: 18%;
-            margin-left: 5px;
-        }
-    }
-    @media (max-width: 340px){
-        .uiSearchInput.searchWithIcon {
-            max-width: 12%;
-            margin-left: 5px;
-        }
-    }
-
-
-
 </style>

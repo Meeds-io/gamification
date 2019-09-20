@@ -1,21 +1,23 @@
 <template>
     <section>
-     <b-alert v-if="addSuccess"
-                     :show="dismissCountDown"
-                     dismissible
-                     fade
-                     variant="success"
-                     @dismiss-count-down="countDownChanged">
-                <i class="uiIconSuccess"></i> Rule {{updateMessage}} successfully
-                </b-alert>
 
-        <b-alert v-if="addError"
-        class="alert alert-danger"
-          :show="dismissCountDown"
-          dismissible
-          fade
-          variant="danger"
-          @dismiss-count-down="countDownChanged"><i class="uiIconError"></i>  An error happen when adding a rule</b-alert>
+
+        <div class="alert alert-success" v-if="isadded || addSuccess" v-on:="closeAlert()">
+
+            <i class="uiIconSuccess"></i>
+            {{this.$t('exoplatform.gamification.rule')}} {{updateMessage}}
+            {{this.$t('exoplatform.gamification.successfully')}}
+        </div>
+
+
+        <alert @dismiss-count-down="countDownChanged"
+               class="alert alert-danger"
+               :show="dismissCountDown"
+               dismissible
+               fade
+               variant="danger"
+               v-if="addError"><i class="uiIconError"></i> {{this.$t('exoplatform.gamification.errorrule')}}
+        </alert>
 
         <save-rule-form :rule="ruleInForm" :domains="domains" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
         <rule-list  :rules="rules"  :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></rule-list>
@@ -30,6 +32,7 @@
     import axios from 'axios';
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
+
     Vue.use(BootstrapVue);
     const initialData = () => {
         return {
@@ -48,10 +51,10 @@
             updateMessage: '',
             rules: [],
             domains: [],
-            dismissSecs: 5,
-            dismissCountDown: 0,
+            isadded: false,
+            isShown: false,
         }
-    }
+    };
     export default {
         components: {
             RuleList,
@@ -60,17 +63,17 @@
         data: initialData,
         methods: {
             validateForm() {
-                const errors = {}
+                const errors = {};
                 if (this.addSuccess=true) {
-                    errors.title = 'success'
+                    errors.title = 'success';
                     this.dismissCountDown = 5
                 }
                 if (this.addError=true) {
-                    errors.title = 'error'
+                    errors.title = 'error';
                     this.dismissCountDown = 5
                 }
 
-                this.formErrors = errors
+                this.formErrors = errors;
                 return Object.keys(errors).length === 0
             },
             countDownChanged(dismissCountDown) {
@@ -80,33 +83,35 @@
                 this.ruleInForm = initialData().ruleInForm
             },
             onSaveClicked (rule) {
-                this.updateRule(rule)
+                this.updateRule(rule);
+                this.isShown = !this.isShown;
             },
 
             onRuleCreated(rule) {
-                this.addSuccess=true
-                this.updateMessage='added'
-                this.rules.push(rule)
+                this.isadded = true;
+                this.addSuccess = true;
+                this.updateMessage = 'added';
+                this.rules.push(rule);
                 this.resetRuleInForm()
-                this.dismissCountDown = 5
+
             },
 
             onRuleFail(rule) {
-                this.addError=true
-                this.errors.push(e)
-                this.resetRuleInForm()
+                this.addError = true;
+                this.errors.push(e);
+                this.resetRuleInForm();
                 this.dismissCountDown = 5
             },
 
             onRemoveClicked(ruleId, ruleTitle) {
-                const index = this.rules.findIndex((p) => p.id === ruleId)
+                const index = this.rules.findIndex((p) => p.id === ruleId);
                 axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
                     .then(response => {
                         this.rules.splice(index, 1)
                     })
                     .catch(e => {
                         this.errors.push(e)
-                    })
+                    });
                 if (ruleId === this.ruleInForm.id) {
                     this.resetRuleInForm()
                 }
@@ -114,12 +119,12 @@
             updateRule(ruleDTO) {
                 axios.put(`/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
-                        this.addSuccess=true
-                        this.updateMessage='updated'
-                        this.rules.push(rule)
+                        this.addSuccess = true;
+                        this.updateMessage = 'updated';
+                        this.rules.push(rule);
                         this.dismissCountDown = 5
                             .catch(e => {
-                                this.addError=true
+                                this.addError = true;
                                 this.errors.push(e)
                             })
                     })
@@ -134,9 +139,9 @@
                     this.rules = response.data;
                 })
                 .catch(e => {
-                    this.addError=true
+                    this.addError = true;
                     this.errors.push(e)
-                })
+                });
             axios.get(`/rest/gamification/api/v1/domains`)
                 .then(response => {
                     this.domains = response.data;
@@ -149,12 +154,11 @@
 </script>
 <style scoped>
     .alert-success {
-        color: #315b73;
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-        margin: 0 auto;
-        top: 10px;
+        position: fixed;
+        top: 22% !important;
+        margin: auto 0.5% !important;
     }
+
     section {
         background: white;
         margin: 14px;
