@@ -9,68 +9,94 @@
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                         <div class="popupHeader ClearFix">
                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton(), onCancel()" ></a>
-                            <span class="PopupTitle popupTitle">Add Badge</span>
+                            <span class="PopupTitle popupTitle">  {{ this.$t('exoplatform.gamification.addbadge')}}</span>
                         </div>
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
-                                <label class="pt-0">Title:</label>
+                                <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
                                 <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
                                 </input>
 
-                                <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    Badge title is required please enter a title {{dismissCountDown}}
-                                </b-alert>
+                                <div :show="dismissCountDown" @dismissed="dismissCountdown=0" class="require-msg"
+                                     dismissible v-if="formErrors.title" variant="danger"
+                                     @dismiss-count-down="countDownChanged">
+                                    {{ this.$t('exoplatform.gamification.Badgetitle')}} {{dismissCountDown}}
+                                </div>
                             </form>
 
                             <div id="descriptionInputGroup">
-                                <label class="pt-0" id="descriptionInput">Description:</label>
+                                <label class="pt-0" id="descriptionInput">{{
+                                    this.$t('exoplatform.gamification.gamificationinformation.domain.Description')
+                                    }}:</label>
                                 <textarea id="badgeDescription" v-model="badge.description" class="form-control" placeholder="Enter description" :rows="3" :max-rows="6">
                     </textarea>
                             </div>
                             <form id="neededScoreInputGroup" >
-                                <label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
+                                <label class="pt-0" id="Needed" label-for="neededScoreInput">{{
+                                    this.$t('exoplatform.gamification.score')}}:</label>
                                 <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
                                 </input>
-                                <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    Badge needed score is required please enter a value {{dismissCountDown}}
-                                </b-alert>
+                                <div :show="dismissCountDown" @dismissed="dismissCountdown=0" class="require-msg"
+                                     dismissible v-if="formErrors.neededScore" variant="danger"
+                                     @dismiss-count-down="countDownChanged">
+                                    {{ this.$t('exoplatform.gamification.Badgedescription')}} {{dismissCountDown}}
+                                </div>
                             </form>
                             <form id="iconInputGroup">
-                                <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
-                                <b-form-file id="iconInput" v-model="badge.icon"  class="form-control" required  placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                                <b-alert v-if="formErrors.icon" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    Badge icon is required please enter a badge {{dismissCountDown}}
-                                </b-alert>
+                                <form-file accept="image/jpeg, image/png, image/gif" class="form-control" id="iconInput"
+                                           placeholder="Choose a file..." required v-model="badge.icon"></form-file>
+
                             </form>
-                            <label class="pt-0">Domain:</label>
+
+                            <form id="iconInputGroup">
+
+                                <label class="pt-0" for="iconInput"> {{ this.$t('exoplatform.gamification.icon')}}
+                                    : </label>
+
+                                <input accept="image/jpeg, image/png, image/gif"
+                                       id="iconInput" name="badge.icon"
+                                       placeholder="+" type="file">
+                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
+                                     @dismissed="dismissCountdown=0" class="require-msg" dismissible
+                                     v-if="formErrors.icon"
+                                     variant="danger">
+                                    {{$t('exoplatform.gamification.badgealerticon')}} {{dismissCountDown}}
+                                </div>
+                            </form>
+                            <label class="pt-0">{{ this.$t('exoplatform.gamification.gamificationinformation.Domain')
+                                }}:</label>
                             <form id="domainSelectboxGroup">
 
                                 <select v-model="badge.domainDTO" class="mb-4">
-                                    <option :value="null" disabled>Select your Domain</option>
+                                    <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain')
+                                        }}
+                                    </option>
                                     <option v-for="option in domains" v-bind:value="option">
-                                        {{ option.title }}
+                                        {{
+                                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
+                                        }}
                                     </option>
                                 </select>
 
                             </form>
 
-                            <label class="pt-0">Enabled:</label>
+                            <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
                             <label class="uiSwitchBtn">
 
                                 <input type="checkbox" v-model="badge.enabled" >
                                 <span class="slider round"></span>
-                                <span class="absolute-no">NO</span>
+                                <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO')}}</span>
                             </label>
 
                             <b-row style="display: inherit;">
                                 <b-col>
 
-                                    <button type="cancel" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
+                                    <button class="btn secondary pull-right" type="cancel"
+                                            v-on:click.prevent="collapseButton(), onCancel()">{{
+                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                                    </button>
                                     <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit(), showAlert()">
-                                        {{badge.id ? 'Update' : 'Confirm'}}
+                                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
                                     </button>
                                 </b-col>
 
@@ -112,8 +138,8 @@
         },
         watch: {
             'badge.id'() {
-                this.formErrors = {}
-                this.selectedFile = undefined
+                this.formErrors = {};
+                this.selectedFile = undefined;
                 this.selectedFileName = this.badge.imageName
             }
             ,
@@ -123,20 +149,20 @@
         },
         methods: {
             validateForm() {
-                const errors = {}
+                const errors = {};
                 if (!this.badge.title) {
-                    errors.title = 'Title is required'
+                    errors.title = 'Title is required';
                     this.dismissCountDown = 5
                 }
                 if (!this.badge.icon) {
-                    errors.icon = 'Needed icon is required'
+                    errors.icon = 'Needed icon is required';
                     this.dismissCountDown = 5
                 }
                 if (!this.badge.neededScore) {
-                    errors.neededScore = 'Needed score is required'
+                    errors.neededScore = 'Needed score is required';
                     this.dismissCountDown = 5
                 }
-                this.formErrors = errors
+                this.formErrors = errors;
                 return Object.keys(errors).length === 0
             },
             collapseButton() {
@@ -144,7 +170,7 @@
             },
             createBadge(badgeDTO) {
                 const formData = new FormData();
-                formData.append('file', badgeDTO.icon)
+                formData.append('file', badgeDTO.icon);
                 const MAX_RANDOM_NUMBER = 100000;
                 const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
                 axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
@@ -153,15 +179,15 @@
                             'Content-Type': 'multipart/form-data'
                         }
                     }).then(response => {
-                    badgeDTO.uploadId=uploadId
+                    badgeDTO.uploadId = uploadId;
                     axios.post(`/rest/gamification/badges/add`, badgeDTO)
                         .then(response => {
-                            this.addSuccess = true
-                            this.updateMessage = 'added'
+                            this.addSuccess = true;
+                            this.updateMessage = 'added';
                             this.$emit('submit', this.badge)
                         })
                         .catch(e => {
-                            this.addError = true
+                            this.addError = true;
                             this.errors.push(e)
                         })
                 })
@@ -170,7 +196,7 @@
                     })
             },
             onImageChanged(event) {
-                this.selectedFile = event.target.files[0]
+                this.selectedFile = event.target.files[0];
                 this.selectedFileName = event.target.files[0].name
             },
             onCancel() {
@@ -178,7 +204,7 @@
             },
             onSubmit() {
                 if (this.validateForm()) {
-                    this.createBadge(this.badge)
+                    this.createBadge(this.badge);
                     this.collapseButton()
                 }
             },
