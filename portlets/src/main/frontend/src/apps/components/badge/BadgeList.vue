@@ -2,11 +2,67 @@
     <b-container fluid>
         <b-row>
             <b-col sm="12">
+                <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlertt()">
+                    <button aria-label="Close" class="close" data-dismiss="alert"
+                            style="line-height: 27px; margin-right: 5px;" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <i class="uiIconSuccess"></i>
+                    {{this.$t('exoplatform.gamification.badge.successdelete')}}
+                </div>
+
                 <div class="uiSearchForm uiSearchInput searchWithIcon">
                  <a title="" class="advancedSearch" rel="tooltip" data-placement="bottom" >
                      <i class="uiIconSearch uiIconLightGray"></i>
                  </a>
                   <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
+                </div>
+
+                <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
+                     data-parent="#accordionExample" id="collapseTwo" style=" transition: inherit;">
+
+                    <div class="card-body">
+                        <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm"
+                             style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                            <div class="popupHeader ClearFix">
+                                <div class="PopupTitle popupTitle" id="confirmLabel">{{
+                                    this.$t('exoplatform.gamification.Confirmation') }}
+                                </div>
+
+                                <a class="uiIconClose pull-right" v-on:click.prevent="collapseConfirm(badge)"></a>
+
+                                <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
+                            </div>
+                            <div class="PopupContent popupContent">
+                                <div class="media">
+                                    <div class="pull-left">
+                                        <i class="uiIconColorQuestion"></i>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="msg"> {{ this.$t('exoplatform.gamification.areyousure.deletebadge')
+                                            }}</p>
+                                    </div>
+                                </div>
+                                <div class="uiAction uiActionBorder">
+                                    <b-col>
+                                        <button class="btn cancel pull-right" type="submit"
+                                                v-on:click.prevent="collapseConfirm(badge), onCancel()">{{
+                                            this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                                            }}
+                                        </button>
+
+                                        <b-button class="btn-primary pull-right" type="submit"
+                                                  v-on:click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
+                                            {{
+                                            this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                                            }}
+                                        </b-button>
+                                    </b-col>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <table class=" uiGrid table table-hover badge-table">
                     <thead>
@@ -22,7 +78,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="badge in filteredBadges" track-by="id">
+                    <tr v-for="badge in filteredBadges">
                         <td class="badge-title-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
                             <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.title"style="width: 130px;min-width: 98%;">
@@ -72,7 +128,8 @@
                              </div>
                          </td>
                         <td class="center actionContainer"  style="z-index: 10;">
-                            <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onRemove(badge.id,badge.title)" data-placement="bottom" rel="tooltip" class="actionIcon"
+                            <a class="actionIcon" data-placement="bottom" href="#" rel="tooltip" v-if="badge.id"
+                               v-on:click.prevent="collapseConfirm(badge)"
                                data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
                                 <i class="uiIconDelete uiIconLightGray"></i>
                             </a>
@@ -87,9 +144,8 @@
                                 <i class="uiIcon uiIconClose uiIconBlue"></i></a>
                         </td>
                     </tr>
-                    <tr v-if="!badges.length">
-                        <td colspan="9" class="p-y-3 text-xs-center" style="cursor: auto; background-color:white;">
-                            <strong>You should add some badges!</strong>
+                    <tr v-if="!badges.length || !filteredBadges.length  " v-model="search">
+                        <td class="empty center" colspan="7"> {{$t(`exoplatform.gamification.ErrorBadgesMsg`)}}
                         </td>
                     </tr>
                     </tbody>
@@ -117,7 +173,20 @@
                 selectedFile: undefined,
                 selectedFileName: '',
                 editedbadge : {},
-                isEnabled: false
+                isEnabled: false,
+                isdeleted: false,
+                isShown: false,
+            }
+        },
+        computed: {
+            filteredBadges() {
+                return this.badges.filter(item => {
+                    return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                        || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                        || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                        || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                    )
+                })
             }
         },
         watch: {
@@ -147,22 +216,27 @@
             },
             onRemove(id, title) {
                 this.$emit('remove', id, title);
+                this.isdeleted = true
             },
             change() {
                 console.log('filechange');
+            },
+            collapseConfirm(badge) {
+                this.badge = badge;
+                this.isShown = !this.isShown;
+                if (this.isShown) {
+                    this.closeAlertt(".alert")
+                }
+            },
+            closeAlertt(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 8000);
+
             }
+
         },
-                  computed: {
-    filteredBadges() {
-      return this.badges.filter(item => {
-         return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-          || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-          || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
-          || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-          )
-      })
-      }
-    }
+
     }
 </script>
 <style scoped>
@@ -398,25 +472,55 @@
     }
     .uiSearchInput.searchWithIcon {
         display: flex;
-        position: absolute;
-        margin-left: 23px;
-        top: -45px;
+        flex-direction: row-reverse;
+        float: right;
+        margin-top: 18px;
     }
+
     i.uiIconSearch.uiIconLightGray {
         position: relative;
         float: left;
     }
+
     @media (max-width: 416px) {
         .uiSearchInput.searchWithIcon {
-            max-width: 18%;
-            margin-left: 5px;
-        }
-    }
-    @media (max-width: 340px){
-        .uiSearchInput.searchWithIcon {
-            max-width: 12%;
+            max-width: 45%;
             margin-left: 5px;
         }
     }
 
+    @media (max-width: 340px) {
+        .uiSearchInput.searchWithIcon {
+            max-width: 35%;
+            margin-left: 5px;
+
+        }
+    }
+    .collapse.show.out {
+        display: none;
+    }
+
+    .collapse {
+        top: 15px;
+    }
+
+    div#collapseTwo {
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .alert-success {
+        position: fixed;
+        margin-top: 124px !important;
+        margin-left: 38%;
+        transform: translateX(-50%);
+    }
 </style>
