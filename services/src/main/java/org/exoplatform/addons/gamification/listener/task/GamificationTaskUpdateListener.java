@@ -3,10 +3,8 @@ package org.exoplatform.addons.gamification.listener.task;
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.listener.wiki.GamificationWikiListener;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -20,7 +18,6 @@ import org.exoplatform.task.service.TaskPayload;
 import org.exoplatform.task.service.TaskService;
 import org.exoplatform.task.util.TaskUtil;
 
-import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -28,13 +25,11 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
   private static final Log LOG = ExoLogger.getLogger(GamificationTaskUpdateListener.class);
 
     protected RuleService ruleService;
-    protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
     protected GamificationService gamificationService;
 
-    public GamificationTaskUpdateListener(RuleService ruleService, GamificationProcessor gamificationProcessor, IdentityManager identityManager, GamificationService gamificationService) {
+    public GamificationTaskUpdateListener(RuleService ruleService, IdentityManager identityManager, GamificationService gamificationService) {
         this.ruleService = ruleService;
-        this.gamificationProcessor = gamificationProcessor;
         this.identityManager = identityManager;
         this.gamificationService = gamificationService;
     }
@@ -63,27 +58,11 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
     protected void createTask(Task task) {
 
         String actorUsername = ConversationState.getCurrent().getIdentity().getUserId();
-        GamificationActionsHistory aHistory = null;
 
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
-        // Get associated rule
-        RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_TASK_ADDON_CREATE_TASK);
 
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                aHistory = gamificationService.build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(task));
-                // Save GamificationHistory
-                if(aHistory!=null) {
-                    gamificationProcessor.execute(aHistory);
-                    // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                }
-            } catch (Exception e) {
-                LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
-            }
-        }
+        gamificationService.createHistory(GAMIFICATION_TASK_ADDON_CREATE_TASK, actorId,actorId,TaskUtil.buildTaskURL(task));
 
     }
 
@@ -100,24 +79,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
                 // Compute user id
                 actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, after.getAssignee(), false).getId();
 
-                // Get associated rule
-                ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_TASK_ADDON_COMPLETED_TASK_ASSIGNED);
+                gamificationService.createHistory(GAMIFICATION_TASK_ADDON_COMPLETED_TASK_ASSIGNED, actorId,actorId, TaskUtil.buildTaskURL(after));
 
-                // Process only when an enable rule is found
-                if (ruleDto != null) {
-                    try {
-                        aHistory = gamificationService.build(ruleDto, actorId,actorId, TaskUtil.buildTaskURL(after));
-
-                        // Save GamificationHistory
-                        if(aHistory!=null) {
-                            gamificationProcessor.execute(aHistory);
-                            // Gamification simple audit logger
-                            LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                        }
-                    } catch (Exception e) {
-                        LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
-                    }
-                }
             }
 
             // Manage coworker
@@ -125,29 +88,11 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
             // Get task assigned property
             if (cowrokers == null) return;
 
-            // Get associated rule
-            ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_TASK_ADDON_COMPLETED_TASK_COWORKER);
-
             Iterator<String> coworker = cowrokers.iterator();
             while (coworker.hasNext()) {
                 // Compute user id
                 actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, coworker.next(), false).getId();
-
-                // Process only when an enable rule is found
-                if (ruleDto != null) {
-                    try {
-                        aHistory = gamificationService.build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(after));
-
-                        // Save GamificationHistory
-                        if(aHistory!=null) {
-                            gamificationProcessor.execute(aHistory);
-                            // Gamification simple audit logger
-                            LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                        }
-                    } catch (Exception e) {
-                        LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
-                    }
-                }
+                gamificationService.createHistory(GAMIFICATION_TASK_ADDON_COMPLETED_TASK_COWORKER, actorId,actorId,TaskUtil.buildTaskURL(after));
             }
         } else { // Update a task regardless le action made by a user
 
@@ -157,29 +102,8 @@ public class GamificationTaskUpdateListener extends Listener<TaskService, TaskPa
             // Compute user id
             actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-            // Get associated rule
-            ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_TASK_ADDON_UPDATE_TASK);
+            gamificationService.createHistory(GAMIFICATION_TASK_ADDON_UPDATE_TASK, actorId,actorId,TaskUtil.buildTaskURL(after));
 
-            // Process only when an enable rule is found
-            if (ruleDto != null) {
-                try {
-                    aHistory = gamificationService.build(ruleDto, actorId,actorId,TaskUtil.buildTaskURL(after));
-                    if(aHistory!=null){
-                        // Save GamificationHistory
-                        gamificationProcessor.execute(aHistory);
-                        // Gamification simple audit logger
-                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
-                                LocalDate.now(),
-                                actorId,
-                                aHistory.getGlobalScore(),
-                                ruleDto.getArea(),
-                                ruleDto.getTitle(),
-                                ruleDto.getScore());
-                    }
-                } catch (Exception e) {
-                    LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
-                }
-            }
         }
     }
 

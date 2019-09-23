@@ -64,6 +64,10 @@
                     <value>You posted an activity</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addActivity</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>15</value>
                 </value-param>
@@ -96,6 +100,10 @@
                     <value>You uploaded a new document</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>uploaddocumentOnNetworkStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>15</value>
                 </value-param>
@@ -126,6 +134,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You commented a post</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>addComment</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -161,6 +173,10 @@
                     <value>You liked a comment</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>likeCommentOnspaceStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>2</value>
                 </value-param>
@@ -191,6 +207,10 @@
                     <value>Someone liked your comment</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>likeCommentOnNetworkStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>2</value>
                 </value-param>
@@ -219,6 +239,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Like a comment</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>likeComment</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -254,6 +278,10 @@
                     <value>Comment a post</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addComment</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>1</value>
                 </value-param>
@@ -283,6 +311,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Someone commented your post</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>commentOnNetworkStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -315,6 +347,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Someone commented your post</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>commentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -351,6 +387,10 @@
                     <value>You posted an activity</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addActivityOnSpaceStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>15</value>
                 </value-param>
@@ -381,6 +421,10 @@
                     <value>Someone posted on your stream</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addActivityOnNetworkStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>1</value>
                 </value-param>
@@ -409,6 +453,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Someone posted in a space that you manage</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>addActivityOnSpaceStreamTarget</value>
                 </value-param>
 
                 <value-param>
@@ -442,6 +490,10 @@
                     <value>You posted an activity</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addActivityTargetUserStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>15</value>
                 </value-param>
@@ -470,6 +522,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You posted an activity</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>addActivityOnMyStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -505,6 +561,10 @@
                     <value>You liked a post</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>likeActivityOnNetworkStream</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>1</value>
                 </value-param>
@@ -533,6 +593,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You liked a post</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>likeActivityOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -565,6 +629,10 @@
                     <value>Someone liked your post</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>likeActivityOnSpaceStreamTarget</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>2</value>
                 </value-param>
@@ -593,6 +661,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Someone liked your post</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>likeActivityTargetUserStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -628,6 +700,10 @@
                     <value>You set your profile picture</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addUserProfileAvatar</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>7</value>
                 </value-param>
@@ -658,6 +734,10 @@
                     <value>You added a banner on your profile</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addUserProfileBanner</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>5</value>
                 </value-param>
@@ -686,6 +766,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You filled "About me" section on your profile</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>addUserProfileAboutMe</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -721,6 +805,10 @@
                     <value>You created a new space</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addSpace</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>5</value>
                 </value-param>
@@ -751,6 +839,10 @@
                     <value>You joined a space</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>joinSpace</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>5</value>
                 </value-param>
@@ -774,11 +866,15 @@
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>You became a manager of a space</value>
+                    <value>becomeSpaceManager</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
                     <value>Become a space manager</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>becomeSpaceManager</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -814,6 +910,10 @@
                     <value>You invited someone to connect</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>sendRelationshipRequest</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>3</value>
                 </value-param>
@@ -842,6 +942,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Someone wants to connect with you</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>receiveRelationshipRequest</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -877,6 +981,10 @@
                     <value>You replied in the forum</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addForumPost</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>5</value>
                 </value-param>
@@ -905,6 +1013,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You started a new topic in the forum</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>addForumTopic</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -937,6 +1049,10 @@
                     <value>You rated a forum topic</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>voteForumTopic</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>2</value>
                 </value-param>
@@ -965,6 +1081,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>Someone visited your topic</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>openForumTopic</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1000,6 +1120,10 @@
                     <value>You created a wiki page</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>addWikiPage</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>5</value>
                 </value-param>
@@ -1028,6 +1152,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You Updated a wiki Page</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>updateWikiPage</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1064,6 +1192,10 @@
                     <value>You created a task</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>createNewTask</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>3</value>
                 </value-param>
@@ -1092,6 +1224,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You Completed an assigned task</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>completeTaskAssigned</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -1124,6 +1260,10 @@
                     <value>You completed a task as coworker</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>completeTaskCoworker</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>1</value>
                 </value-param>
@@ -1154,6 +1294,10 @@
                     <value>You commented a task</value>
                 </value-param>
                 <value-param>
+                    <name>rule-event</name>
+                    <value>commentTask</value>
+                </value-param>
+                <value-param>
                     <name>rule-score</name>
                     <value>2</value>
                 </value-param>
@@ -1182,6 +1326,10 @@
                 <value-param>
                     <name>rule-description</name>
                     <value>You updated a task</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>updateTask</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>

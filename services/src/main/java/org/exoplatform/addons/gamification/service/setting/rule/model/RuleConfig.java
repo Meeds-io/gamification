@@ -11,6 +11,8 @@ public class RuleConfig extends BaseComponentPlugin {
 
     private String description;
 
+    private String event;
+
     private int score;
 
     private String zone;
@@ -32,6 +34,14 @@ public class RuleConfig extends BaseComponentPlugin {
 
         if (descriptionParam != null) {
             description = descriptionParam.getValue();
+        }
+
+        ValueParam eventParam = params.getValueParam("rule-event");
+
+        if (eventParam != null) {
+            event = eventParam.getValue();
+        }else{
+            event=title;
         }
 
         ValueParam scoreParam = params.getValueParam("rule-score");
@@ -74,4 +84,9 @@ public class RuleConfig extends BaseComponentPlugin {
     public boolean isEnable() {
         return enable;
     }
+
+    public String getEvent() {
+        return event;
+    }
+
 }

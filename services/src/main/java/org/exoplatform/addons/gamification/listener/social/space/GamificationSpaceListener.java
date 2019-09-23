@@ -5,8 +5,6 @@ import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.Asynchronous;
@@ -18,21 +16,17 @@ import org.exoplatform.social.core.space.SpaceListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import java.time.LocalDate;
-
 @Asynchronous
 public class GamificationSpaceListener extends SpaceListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
     protected RuleService ruleService;
-    protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
     protected SpaceService spaceService;
     protected GamificationService gamificationService;
 
     public GamificationSpaceListener() {
         this.ruleService = CommonsUtils.getService(RuleService.class);
-        this.gamificationProcessor = CommonsUtils.getService(GamificationProcessor.class);
         this.identityManager = CommonsUtils.getService(IdentityManager.class);
         this.spaceService = CommonsUtils.getService(SpaceService.class);
         this.gamificationService = CommonsUtils.getService(GamificationService.class);
@@ -41,35 +35,13 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     @Override
     public void spaceCreated(SpaceLifeCycleEvent event) {
 
-        GamificationActionsHistory aHistory = null;
-
-        // Get the created space
-        //Space space = event.getSpace();
         // Get the space's creator username
         String actorUsername = event.getSource();
 
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-        // Get associated rule
-        RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_ADD);
-
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                String receiver = actorId;
-                aHistory = gamificationService.build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
-
-                // Save actionHistory entry
-                if(aHistory!=null) {
-                    gamificationProcessor.execute(aHistory);
-                    // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                }
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
-            }
-        }
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_SPACE_ADD, actorId, actorId,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
     }
 
@@ -96,35 +68,14 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     @Override
     public void joined(SpaceLifeCycleEvent event) {
 
-        GamificationActionsHistory aHistory = null;
         // Get the space's creator username
         String actorUsername = event.getSource();
 
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-        // To hold GamificationRule
-        RuleDTO ruleDto = null;
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_SPACE_JOIN, actorId, actorId,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
 
-        // Get associated rule :
-        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_JOIN);
-
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                String receiver = actorId;
-                aHistory = gamificationService.build(ruleDto, actorId, receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
-
-                // Save actionHistory entry
-                if(aHistory!=null) {
-                    gamificationProcessor.execute(aHistory);
-                    // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                }
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
-            }
-        }
     }
 
     @Override
@@ -134,8 +85,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     @Override
     public void grantedLead(SpaceLifeCycleEvent event) {
 
-        GamificationActionsHistory aHistory = null;
-
         // Get the created space
         //Space space = event.getSpace();
         // Get the space's creator username
@@ -144,28 +93,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-        // To hold GamificationRule
-        RuleDTO ruleDto = null;
-
-        // Get associated rule :
-        ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD);
-
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                String receiver=actorId;
-                aHistory = gamificationService.build(ruleDto, actorId,receiver,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
-
-                // Save actionHistory entry
-                if(aHistory!=null) {
-                    gamificationProcessor.execute(aHistory);
-                    // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                }
-            } catch (Exception e) {
-                LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
-            }
-        }
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD, actorId,actorId,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
     }
 
     @Override

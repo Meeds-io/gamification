@@ -5,8 +5,6 @@ import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.effective.GamificationProcessor;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.log.ExoLogger;
@@ -20,21 +18,17 @@ import org.exoplatform.wiki.service.PageUpdateType;
 import org.exoplatform.wiki.service.listener.PageWikiListener;
 import org.exoplatform.wiki.utils.WikiConstants;
 
-import java.time.LocalDate;
-
 @Asynchronous
 public class GamificationWikiListener extends PageWikiListener {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationWikiListener.class);
     protected RuleService ruleService;
-    protected GamificationProcessor gamificationProcessor;
     protected IdentityManager identityManager;
     protected GamificationService gamificationService;
 
-    public GamificationWikiListener(RuleService ruleService, GamificationProcessor gamificationProcessor, IdentityManager identityManager, GamificationService gamificationService) {
+    public GamificationWikiListener(RuleService ruleService, IdentityManager identityManager, GamificationService gamificationService) {
 
         this.ruleService = ruleService;
-        this.gamificationProcessor = gamificationProcessor;
         this.identityManager = identityManager;
         this.gamificationService = gamificationService;
     }
@@ -54,24 +48,8 @@ public class GamificationWikiListener extends PageWikiListener {
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-        // Get associated rule
-        RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_WIKI_ADD_PAGE);
+        gamificationService.createHistory(GAMIFICATION_WIKI_ADD_PAGE, actorId,actorId,page.getUrl());
 
-        // Process only when an enable rule is found
-        if (ruleDto != null) {
-            try {
-                aHistory = gamificationService.build(ruleDto, actorId,actorId,page.getUrl());
-
-                // Save GamificationHistory
-                if(aHistory!=null) {
-                    gamificationProcessor.execute(aHistory);
-                    // Gamification simple audit logger
-                    LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                }
-            } catch (Exception e) {
-                LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
-            }
-        }
     }
 
     @Override
@@ -86,10 +64,6 @@ public class GamificationWikiListener extends PageWikiListener {
                 && (wikiUpdateType.equals(PageUpdateType.ADD_PAGE)
                 || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_CONTENT)
                 || wikiUpdateType.equals(PageUpdateType.EDIT_PAGE_CONTENT_AND_TITLE))) {
-            //saveActivity(wikiType, wikiOwner, pageId, page, wikiUpdateType);
-            String username = ConversationState.getCurrent().getIdentity().getUserId();
-
-            GamificationActionsHistory aHistory = null;
 
             // Get the space's creator username
             String actorUsername = ConversationState.getCurrent().getIdentity().getUserId();
@@ -97,23 +71,8 @@ public class GamificationWikiListener extends PageWikiListener {
             // Compute user id
             String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
 
-            // Get associated rule
-            RuleDTO ruleDto = ruleService.findEnableRuleByTitle(GAMIFICATION_WIKI_UPDATE_PAGE);
+            gamificationService.createHistory(GAMIFICATION_WIKI_UPDATE_PAGE, actorId,actorId,page.getUrl());
 
-            // Process only when an enable rule is found
-            if (ruleDto != null) {
-                try {
-                    aHistory = gamificationService.build(ruleDto, actorId,actorId,page.getUrl());
-                    // Save GamificationHistory
-                    if(aHistory!=null) {
-                        gamificationProcessor.execute(aHistory);
-                        // Gamification simple audit logger
-                        LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), actorId, aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getTitle(), ruleDto.getScore());
-                    }
-                } catch (Exception e) {
-                    LOG.error("Error processing the following ActionHistory entry {}", aHistory, e);
-                }
-            }
         }
     }
 }

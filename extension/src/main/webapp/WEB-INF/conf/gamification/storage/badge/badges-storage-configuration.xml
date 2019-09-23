@@ -40,10 +40,7 @@
         <key>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</key>
         <type>org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl</type>
     </component>
-    <!-- Gamification Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.effective.GamificationProcessor</type>
-    </component>
+
     <!-- ############################################################################################ -->
     <!-- #################### Gamification Badge Config : Social FLOW ############################### -->
     <!-- ############################################################################################ -->

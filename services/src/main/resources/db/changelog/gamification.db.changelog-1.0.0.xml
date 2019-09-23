@@ -255,6 +255,14 @@
         </addColumn>
     </changeSet>
 
+
+    <changeSet  author="exo-gamification" id="1.0.0-14">
+        <addColumn tableName="GAMIFICATION_RULE">
+            <column name="EVENT" type="NVARCHAR(70)">
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
 
 

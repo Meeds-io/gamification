@@ -91,6 +91,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
             try {
                 // Compute rule's data
                 ruleDTO.setId(null);
+                ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
                 ruleDTO.setCreatedBy(currentUserName);
                 ruleDTO.setLastModifiedBy(currentUserName);
                 ruleDTO.setLastModifiedDate(new Date());

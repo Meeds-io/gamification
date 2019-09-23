@@ -31,12 +31,20 @@ import java.util.Objects;
                 query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle and rule.isEnabled = true"
         ),
         @NamedQuery(
+                name = "Rule.findEnabledRulesByEvent",
+                query = "SELECT rule FROM Rule rule where rule.event = :event and rule.isEnabled = true"
+        ),
+        @NamedQuery(
                 name = "Rule.findRuleByTitle",
                 query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle"
         ),
         @NamedQuery(
                 name = "Rule.getDomainList",
                 query = "SELECT rule.area  FROM Rule rule GROUP BY rule.area"
+        ),
+        @NamedQuery(
+                name = "Rule.getEventList",
+                query = "SELECT rule.event  FROM Rule rule GROUP BY rule.event"
         ),
         @NamedQuery(
                 name = "Rule.deleteRuleByTitle",
@@ -66,6 +74,10 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "AREA", unique = false, nullable = false)
     protected String area;
+
+
+    @Column(name = "EVENT", unique = false, nullable = false)
+    protected String event;
 
     @ManyToOne
     @JoinColumn(name = "DOMAIN_ID")
@@ -131,6 +143,14 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setDomainEntity(DomainEntity domainEntity) {
         this.domainEntity = domainEntity;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
     }
 
     @Override

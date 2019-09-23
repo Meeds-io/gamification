@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.service.effective;
 
 import static java.util.Date.from;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_FORUM_ADD_TOPIC;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
@@ -11,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.listener.forum.ForumUtils;
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
@@ -20,7 +23,9 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationService {
 
@@ -32,10 +37,14 @@ public class GamificationService {
 
     private DomainMapper domainMapper;
 
-    public GamificationService(IdentityManager identityManager, GamificationHistoryDAO gamificationHistoryDAO, DomainMapper domainMapper) {
+    private RuleService ruleService;
+
+
+    public GamificationService(IdentityManager identityManager, GamificationHistoryDAO gamificationHistoryDAO, DomainMapper domainMapper,RuleService ruleService) {
         this.gamificationHistoryDAO = gamificationHistoryDAO;
         this.identityManager = identityManager;
         this.domainMapper = domainMapper;
+        this.ruleService = ruleService;
     }
 
     @ExoTransactional
@@ -366,6 +375,30 @@ public class GamificationService {
         return list;
 
     }
+
+  public void createHistory(String event, String sender,String receiver, String object){
+      GamificationActionsHistory aHistory = null;
+      List<RuleDTO> ruleDtos = null;
+      // Get associated rules
+      ruleDtos = ruleService.findEnabledRulesByEvent(event);
+
+      // Process only when an enable rules are found
+      if (ruleDtos != null) {
+
+              for(RuleDTO ruleDto: ruleDtos){
+                  try {
+                  aHistory = build(ruleDto, sender,receiver, object);
+                  if(aHistory!=null) {
+                      saveActionHistory(aHistory);
+                      // Gamification simple audit logger
+                      LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"", LocalDate.now(), aHistory.getUserSocialId(), aHistory.getGlobalScore(), ruleDto.getArea(), ruleDto.getEvent(), ruleDto.getScore());
+                  }
+              } catch (Exception e) {
+                  LOG.error("Error to process gamification for Rule {}", ruleDto.getTitle(), e);
+              }
+              }
+      }
+  }
 
   public GamificationActionsHistory build(RuleDTO ruleDto, String actor, String receiver, String objectId) {
     GamificationActionsHistory aHistory = null;
