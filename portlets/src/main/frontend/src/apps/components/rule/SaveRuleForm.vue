@@ -84,11 +84,11 @@
                                             v-on:click.prevent="collapseButton(), onCancel()">{{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                     </button>
-                                    <b-button class="btn-primary pull-right" type="submit"
+                                    <button class="btn-primary pull-right" type="submit"
                                               v-on:click.prevent="onSubmit()">
                                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
 
-                                    </b-button>
+                                    </button>
                                 </b-col>
                             </div>
                         </div>
@@ -292,17 +292,11 @@
         color: #4d5466;
         background-color: transparent !important;
     }
-    .col-sm-12.card {
-        position: relative;
-        border-radius: 3px;
-        background: #ffffff;
-        margin-bottom: 20px;
-        width: 100%;
-        box-shadow: none;
-        margin: 0 auto;
-        padding: 0;
-        border: none;
+    button.btn-primary.pull-right {
+        border-radius: 0.25rem;
     }
+
+
     .collapse {
         top: 15px;
     }
@@ -464,4 +458,5 @@
         margin: 0 !important;
         width: 100%;
     }
+
 </style>

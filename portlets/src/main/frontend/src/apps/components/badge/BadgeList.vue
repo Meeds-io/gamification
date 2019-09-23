@@ -18,6 +18,23 @@
                   <input type="text" v-model="search" name="keyword" value="" placeholder="Search">
                 </div>
 
+                <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
+                   <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
+                         <i class="uiIconFilter uiIconLightGray"></i>
+                   </a>
+                     <ul class="dropdown-menu">
+
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true">Enabled</a>
+                         </li>
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false">Disabled</a>
+                         </li>
+
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null"> All</a>
+                         </li>
+
+                 </ul>
+             </div>
+
                 <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                      data-parent="#accordionExample" id="collapseTwo" style=" transition: inherit;">
 
@@ -176,6 +193,7 @@
                 isEnabled: false,
                 isdeleted: false,
                 isShown: false,
+                enabledFilter: null,
             }
         },
         computed: {
@@ -184,8 +202,9 @@
                     return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                        || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                    )
+                        || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
+                        && (this.enabledFilter === null || item.enabled === this.enabledFilter)
+
                 })
             }
         },
@@ -522,5 +541,11 @@
         margin-top: 124px !important;
         margin-left: 38%;
         transform: translateX(-50%);
+    }
+    .filterWithIcon {
+        display: flex;
+        flex-direction: row-reverse;
+        float: right;
+        margin-top: 18px;
     }
 </style>

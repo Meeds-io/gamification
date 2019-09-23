@@ -15,7 +15,6 @@
                             <form id="titleInputGroup">
                                 <label class="pt-0">Title:</label>
                                 <input id="titleInput" type="text" v-model="badge.title" class="form-control" required placeholder="Enter badge's title">
-                                </input>
 
                                 <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
@@ -31,22 +30,26 @@
                             <form id="neededScoreInputGroup" >
                                 <label id="Needed" label-for="neededScoreInput" class="pt-0">score:</label>
                                 <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
-                                </input>
+
                                 <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
                                     Badge needed score is required please enter a value {{dismissCountDown}}
                                 </b-alert>
                             </form>
-                            <form id="iconInputGroup">
-                                <label id="iconInput" label-for="iconInput" class="pt-0"> Icon: </label>
-                                <b-form-file id="iconInput" v-model="badge.icon"  class="form-control" required  placeholder="Choose a file..." accept="image/jpeg, image/png, image/gif"></b-form-file>
-                                <b-alert v-if="formErrors.icon" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                          <form id="iconInputGroup">
+                                <label for="iconInput"  class="pt-0"> Icon: </label>
+
+                              <input type="file"
+                                     id="iconInput" name="badge.icon"
+                                     accept="image/jpeg, image/png, image/gif" placeholder="+">
+                          </form>
+                              <!--    <b-alert v-if="formErrors.icon" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
                                     Badge icon is required please enter a badge {{dismissCountDown}}
-                                </b-alert>
-                            </form>
-                            <label class="pt-0">Domain:</label>
+                                </b-alert>-->
+
                             <form id="domainSelectboxGroup">
+                            <label class="pt-0">Domain:</label>
 
                                 <select v-model="badge.domainDTO" class="mb-4">
                                     <option :value="null" disabled>Select your Domain</option>
@@ -54,8 +57,9 @@
                                         {{ option.title }}
                                     </option>
                                 </select>
-
                             </form>
+                            <form id="enabled">
+
 
                             <label class="pt-0">Enabled:</label>
                             <label class="uiSwitchBtn">
@@ -64,6 +68,7 @@
                                 <span class="slider round"></span>
                                 <span class="absolute-no">NO</span>
                             </label>
+                            </form>
 
                             <b-row style="display: inherit;">
                                 <b-col>
@@ -88,10 +93,7 @@
     import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    // import datePicker from 'vue-bootstrap-datetimepicker'
-    // import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
-    //  Vue.use(datePicker);
     export default {
         props: ['badge','domains'],
         data: function () {
@@ -328,11 +330,9 @@
         top: 10px;
         text-decoration: none;
     }
-    button.btn.btn-link.primary{
-        background: #3c8dbc;
-    }
+
     button.btn-primary.pull-right {
-        border-radius: 3px;
+        border-radius: 0.25rem;
     }
     .col-sm-12.card {
         position: relative;
@@ -365,9 +365,7 @@
            position: relative;
            display: inline-block;
            width: 60px;
-           height: 29px;
-          /* zoom: 30%; */
-           top: 0.4rem;
+           height: 55px;
        }
        .uiSwitchBtn input {display:none;}
        .slider {
@@ -486,4 +484,24 @@
         box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 5px #c9d5e6;
         color: #333;
     }
+    input#iconInput {
+        width: 100%;
+        font-size: 15px;
+        height: 40px;
+        padding: 0 10px;
+        border: 1px solid #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        max-height: 40px;
+        text-overflow: ellipsis;
+    }
+    label.pt-0 {
+        display: inline-block;
+        width: 100%;
+    }
+    form#domainSelectboxGroup, form#enabled {
+        display: inline-block;
+    }
+
+
 </style>
