@@ -6,17 +6,20 @@
             {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
         </div>
 
-        <b-alert v-if="addError"
-                 @dismiss-count-down="countDownChanged"
+        <b-alert @dismiss-count-down="countDownChanged"
                  dismissible
                  fade
                  show="dismissCountDown"
+                 v-if="addError"
                  variant="danger">
             {{this.$t('exoplatform.gamification.errorbadge')}}
         </b-alert>
 
-        <save-badge-form :badge="badgeInForm" :domains="domains" v-on:submit="onBadgeCreated" v-on:failAdd="onBadgeFail" v-on:cancel="resetBadgeInForm"></save-badge-form>
-        <badge-list :badges="badges" :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
+        <save-badge-form :badge="badgeInForm" :domains="domains" v-on:cancel="resetBadgeInForm"
+                         v-on:failAdd="onBadgeFail"
+                         v-on:submit="onBadgeCreated"></save-badge-form>
+        <badge-list :badges="badges" :domains="domains" v-on:remove="onRemoveClicked"
+                    v-on:save="onSaveClicked"></badge-list>
     </section>
 </template>
 <script>
@@ -98,7 +101,7 @@
             },
             onRemoveClicked(badgeId, badgeTitle) {
                 const index = this.badges.findIndex((p) => p.id === badgeId);
-                axios.delete(`/rest/gamification/badges/delete`, { params: { 'badgeTitle': badgeTitle } })
+                axios.delete(`/rest/gamification/badges/delete`, {params: {'badgeTitle': badgeTitle}})
                     .then(response => {
                         this.badges.splice(index, 1)
                     })

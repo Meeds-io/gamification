@@ -51,7 +51,6 @@
                                             this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
                                             }}
                                         </button>
-
                                         <b-button class="btn-primary pull-right" type="submit"
                                                   v-on:click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
                                             {{
@@ -86,11 +85,13 @@
                     <tr v-for="badge in filteredBadges">
                         <td class="badge-title-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
-                            <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.title"style="width: 130px;min-width: 98%;">
+                            <input style="width: 130px;min-width: 98%;" type="text" v-if="editedbadge.id === badge.id"
+                                   v-model="badge.title">
                         </td>
                         <td class="badge-desc-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.description}}</div>
-                            <input class="badge-desc-col" type="text" v-if="editedbadge.id === badge.id" v-model="badge.description" style="min-width: 98%;">
+                            <input class="badge-desc-col" style="min-width: 98%;" type="text"
+                                   v-if="editedbadge.id === badge.id" v-model="badge.description">
                         </td>
                         <td class="badge-needed-score-col">
                             <div v-if="editedbadge.id !== badge.id">
@@ -102,16 +103,19 @@
                         <td style="max-width: 105px;">
                             <div v-if="editedbadge.id !== badge.id && badge.domainDTO != null">{{badge.domainDTO.title}}</div>
 
-                            <select  v-if="editedbadge.id === badge.id" v-model="badge.domainDTO"  style="max-width: 115px;margin: 0px auto;height: 35px;" required>
+                            <select required style="max-width: 115px;margin: 0px auto;height: 35px;"
+                                    v-if="editedbadge.id === badge.id" v-model="badge.domainDTO">
                                 <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain') }}
                                 </option>
-                                <option v-for="option in domains" v-bind:value="option">
+                                <option v-bind:value="option" v-for="option in domains">
                                     {{ option.title }}
                                 </option>
                             </select>
                         </td>
                         <td id="iconInputGroup" style="max-width: 100px;">
-                            <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
+                            <div style="z-index: 0;" v-if="editedbadge.id !== badge.id"><img
+                                    :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail"
+                                    class="m-1" fluid height="40" thumbnail width="40"/>
                             </div>
 
                             <b-form-file accept="image/jpeg, image/png, image/gif" class="m-1" height="40"
@@ -136,19 +140,26 @@
                             </div>
                         </td>
                         <td class="center actionContainer"  style="z-index: 10;">
-                            <a class="actionIcon" data-placement="bottom" href="#" rel="tooltip" v-if="badge.id"
-                               v-on:click.prevent="collapseConfirm(badge)"
-                               data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
+                            <a class="actionIcon" data-original-title="Supprimer" data-placement="bottom" href="#"
+                               rel="tooltip"
+                               title="Supprimer"
+                               v-b-tooltip.hover v-if="badge.id" v-on:click.prevent="collapseConfirm(badge)">
                                 <i class="uiIconDelete uiIconLightGray"></i>
                             </a>
-                            <a href="#" v-if="editedbadge.id !== badge.id" v-on:click.prevent.stop="onEdit(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
-                               data-original-title="Edit" v-b-tooltip.hover title="Edit">
+                            <a class="actionIcon" data-original-title="Edit" data-placement="bottom" href="#"
+                               rel="tooltip" title="Edit"
+                               v-b-tooltip.hover v-if="editedbadge.id !== badge.id"
+                               v-on:click.prevent.stop="onEdit(badge)">
                                 <i class="uiIconEdit uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedbadge.id === badge.id" v-on:click.stop.prevent="onSave(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
-                               data-original-title="Edit" v-b-tooltip.hover title="Save">
+                            <a class="actionIcon" data-original-title="Edit" data-placement="bottom" href="#"
+                               rel="tooltip" title="Save"
+                               v-b-tooltip.hover v-if="editedbadge.id === badge.id"
+                               v-on:click.stop.prevent="onSave(badge)">
                                 <i class="uiIconSave uiIconLightGray"></i></a>
-                            <a href="#" v-if="editedbadge.id === badge.id" v-on:click.prevent="onCancel(badge)" data-placement="bottom" rel="tooltip" class="actionIcon"
-                               data-original-title="Cancel" v-b-tooltip.hover title="Cancel">
+                            <a class="actionIcon" data-original-title="Cancel" data-placement="bottom" href="#"
+                               rel="tooltip" title="Cancel"
+                               v-b-tooltip.hover v-if="editedbadge.id === badge.id"
+                               v-on:click.prevent="onCancel(badge)">
                                 <i class="uiIcon uiIconClose uiIconBlue"></i></a>
                         </td>
                     </tr>
