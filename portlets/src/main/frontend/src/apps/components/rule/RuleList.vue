@@ -89,11 +89,11 @@
 
                         <td>
                             <div v-if="editedrule.id !== rule.id"> {{
-                                $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`,rule.title)
+                                $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`,rule.event)
                                 }}
                             </div>
                             <input class="rule-title-col" style="width: 130px; min-width: 98%;" type="text"
-                                   v-if="editedrule.id === rule.id" v-model="rule.title">
+                                   v-if="editedrule.id === rule.id" v-model="rule.event">
                         </td>
                         <td class="rule-desc-col">
                             <div v-if="editedrule.id !== rule.id">{{

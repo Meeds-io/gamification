@@ -19,7 +19,7 @@
                v-if="addError"><i class="uiIconError"></i> {{this.$t('exoplatform.gamification.errorrule')}}
         </alert>
 
-        <save-rule-form :rule="ruleInForm" :domains="domains" v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
+        <save-rule-form :rule="ruleInForm" :domains="domains" :events="events"  v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
         <rule-list  :rules="rules"  :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></rule-list>
 
     </section>
@@ -41,7 +41,7 @@
                 title: '',
                 description: '',
                 score: null,
-                enabled: null,
+                enabled: true,
                 area: '',
                 lastModifiedBy: '',
                 lastModifiedDate: null
@@ -51,6 +51,7 @@
             updateMessage: '',
             rules: [],
             domains: [],
+            events: [],
             isadded: false,
             isShown: false,
         }
@@ -145,6 +146,13 @@
             axios.get(`/rest/gamification/api/v1/domains`)
                 .then(response => {
                     this.domains = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                });
+            axios.get(`/rest/gamification/api/v1/events`)
+                .then(response => {
+                    this.events = response.data;
                 })
                 .catch(e => {
                     this.errors.push(e)

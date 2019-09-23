@@ -29,6 +29,8 @@ public class RuleDTO implements Serializable {
 
     private String lastModifiedBy;
 
+    private String event;
+
     private Date lastModifiedDate;
 
     public RuleDTO() {
@@ -47,6 +49,7 @@ public class RuleDTO implements Serializable {
         this.createdDate = rule.getCreatedDate();
         this.lastModifiedBy = rule.getLastModifiedBy();
         this.lastModifiedDate = rule.getLastModifiedDate();
+        this.event = rule.getEvent();
 
     }
 
@@ -139,6 +142,13 @@ public class RuleDTO implements Serializable {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
 
     @Override
     public String toString() {

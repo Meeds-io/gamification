@@ -93,6 +93,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
             ruleDto.setTitle(ruleConfig.getTitle());
             ruleDto.setScore(ruleConfig.getScore());
             ruleDto.setEnabled(ruleConfig.isEnable());
+            ruleDto.setEvent(ruleConfig.getEvent());
             ruleDto.setLastModifiedDate(new Date());
             ruleDto.setLastModifiedBy("Gamification");
             ruleDto.setCreatedBy("Gamification");

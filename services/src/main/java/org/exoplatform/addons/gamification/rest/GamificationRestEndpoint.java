@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.rest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
@@ -32,14 +33,16 @@ public class GamificationRestEndpoint implements ResourceContainer {
     private GamificationService gamificationService;
     private IdentityManager identityManager;
     private DomainService domainService;
+    private RuleService ruleService;
 
-    public GamificationRestEndpoint(GamificationService gamificationService, IdentityManager identityManager, DomainService domainService) {
+    public GamificationRestEndpoint(GamificationService gamificationService, IdentityManager identityManager, DomainService domainService, RuleService ruleService) {
         this.cacheControl = new CacheControl();
         cacheControl.setNoCache(true);
         cacheControl.setNoStore(true);
         this.gamificationService = gamificationService;
         this.identityManager = identityManager;
         this.domainService = domainService;
+        this.ruleService = ruleService;
     }
 
     /**
@@ -153,6 +156,28 @@ public class GamificationRestEndpoint implements ResourceContainer {
         } catch (Exception e) {
             LOG.error("Error while fetching All Domains", e);
             return Response.serverError().entity("Error while fetching all domains").build();
+        }
+
+    }
+
+
+    /**
+     * Return all events
+     *
+     * @return : list of all events
+     */
+    @Path("events")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("users")
+    public Response getAllEvents() {
+
+        try {
+            return Response.ok(ruleService.getAllEvents()).build();
+
+        } catch (Exception e) {
+            LOG.error("Error while fetching All Events", e);
+            return Response.serverError().entity("Error while fetching all events").build();
         }
 
     }

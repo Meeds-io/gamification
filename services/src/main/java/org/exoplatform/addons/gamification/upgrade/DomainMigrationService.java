@@ -20,12 +20,14 @@ import org.exoplatform.commons.api.settings.SettingService;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DomainMigrationService implements Startable {
 
     private static final Log LOG = ExoLogger.getLogger(DomainMigrationService.class);
     public final static String GAMIFICATION_DATA_VERSION = "gamifictaionDataVertion";
     public final static int DOMAIN_MIGRATION_DATA_VERSION = 1;
+    public final static int RULES_EVENT_MIGRATION_DATA_VERSION = 2;
 
 
 
@@ -196,6 +198,43 @@ public class DomainMigrationService implements Startable {
                 setDataversion(DOMAIN_MIGRATION_DATA_VERSION);
                 long endTime = System.currentTimeMillis();
                 LOG.info("=== Domains Migration done in " + (endTime - glStartTime) + " ms");
+            }
+        }
+
+        if(getDataversion() < RULES_EVENT_MIGRATION_DATA_VERSION) {
+            long startTime = System.currentTimeMillis();
+
+            try {
+                LOG.info("=== Start migration of Rules");
+                boolean rulesmigrationDone=false;
+                List<RuleDTO> rules = ruleService.getAllRules();
+                if (rules != null && rules.size() > 0) {
+                    List<RuleDTO> noEvents = rules.stream().filter(rule -> rule.getEvent()==null).collect(Collectors.toList());
+                    if(noEvents.size() == 0) {
+                        rulesmigrationDone = true;
+                    }else{
+                        for(RuleDTO rule: noEvents){
+                            rule.setEvent(rule.getTitle());
+                            ruleService.updateRule(rule);
+                        }
+                        rules = ruleService.getAllRules();
+                        noEvents = rules.stream().filter(rule -> rule.getEvent()==null).collect(Collectors.toList());
+                        if(noEvents.size() == 0) {
+                            rulesmigrationDone = true;
+                        }
+                    }
+
+                }
+                long endTime = System.currentTimeMillis();
+                if (rulesmigrationDone) {
+                    setDataversion(RULES_EVENT_MIGRATION_DATA_VERSION);
+                    LOG.info("=== Migration of Rules is done in " + (endTime - startTime) + " ms");
+                } else {
+                    LOG.info("=== No rules to migrate");
+                }
+
+            } catch (Exception e) {
+                LOG.error("Error when migration Rules ", e);
             }
         }
     }

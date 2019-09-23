@@ -50,6 +50,30 @@ public class RuleService {
     }
 
     /**
+     * Find enable RuleEntity by title
+     * @param ruleTitle : rule's title param
+     * @return an instance of RuleDTO
+     */
+    @ExoTransactional
+    public List<RuleDTO> findEnabledRulesByEvent (String ruleTitle) {
+
+        try {
+            //--- Get Entity from DB
+            List<RuleEntity> entities = ruleDAO.findEnabledRulesByEvent(ruleTitle);
+            //--- Convert Entity to DTO
+            if (entities != null ) {
+                return ruleMapper.rulesToRoleDTOs(entities);
+            }else{
+                return null;
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find enable Rule entity with title : {}",ruleTitle,e);
+            throw e;
+        }
+    }
+
+    /**
      * Find a RuleEntity by title
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
@@ -79,7 +103,7 @@ public class RuleService {
      * Get all Rules from DB
      * @return RuleDTO list
      */
-
+    @ExoTransactional
     public List<RuleDTO> getAllRules() {
         try {
             //--- load all Rules
@@ -132,6 +156,19 @@ public class RuleService {
 
         } catch (Exception e) {
             LOG.error("Error to find Rules",e);
+            throw(e);
+        }
+    }
+    /**
+     * Get all Events from rules
+     * @return RuleDTO list
+     */
+    @ExoTransactional
+    public List<String> getAllEvents(){
+        try {
+            return ruleDAO.getAllEvents();
+        } catch (Exception e) {
+            LOG.error("Error to find Events",e);
             throw(e);
         }
     }

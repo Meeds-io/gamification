@@ -22,13 +22,13 @@
                                     }}:</label>
 
 
-                                <select class="mb-4 select-event" required v-model="rule.title">
+                                <select class="mb-4 select-event" required v-model="rule.event">
                                     <option disabled selected value="null">
                                         {{$t(`exoplatform.gamification.selectevent`)}}
                                     </option>
-                                    <option v-bind:value="option" v-for="option in rules">
+                                    <option v-bind:value="option" v-for="option in events">
                                         {{
-                                        $t(`exoplatform.gamification.gamificationinformation.rule.title.${option.title}`,option.title)
+                                        $t(`exoplatform.gamification.gamificationinformation.rule.title.${option}`,option)
                                         }}
                                     </option>
                                 </select>
@@ -39,6 +39,7 @@
                                   </b-alert>-->
 
                             </form>
+
                             <form id="descriptionInputGroup">
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.gamificationinformation.domain.Description`)
                                     }}:</label>
@@ -106,7 +107,7 @@
 
     Vue.use(BootstrapVue);
     export default {
-        props: ['rule', 'domains', 'rules'],
+        props: ['rule', 'domains', 'events'],
         data: function (){
             return {
                 SaveRuleForm:'',

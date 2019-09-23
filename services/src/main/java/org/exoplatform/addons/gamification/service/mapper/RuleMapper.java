@@ -37,6 +37,7 @@ public class RuleMapper {
             rule.setDescription(ruleDTO.getDescription());
             rule.setArea(ruleDTO.getArea());
             rule.setEnabled(ruleDTO.isEnabled());
+            rule.setEvent(ruleDTO.getEvent());
             rule.setCreatedBy(ruleDTO.getCreatedBy());
             rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
             rule.setLastModifiedDate(ruleDTO.getLastModifiedDate());
