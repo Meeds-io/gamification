@@ -1,13 +1,9 @@
 <template>
     <section>
- <b-alert v-if="addSuccess"
-                 :show="dismissCountDown"
-                 dismissible
-                 fade
-                 variant="success"
-                 @dismiss-count-down="countDownChanged">
-            Badge {{updateMessage}} successully
-            </b-alert>
+        <div class="alert alert-success" v-if="isadded || addSuccess" v-on:="closeAlert()">
+            <i class="uiIconSuccess"></i>
+     {{this.$t('exoplatform.gamification.badge')}} {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
+        </div>
 
         <b-alert v-if="addError"
         show="dismissCountDown"
@@ -15,7 +11,7 @@
          fade
         variant="danger"
          @dismiss-count-down="countDownChanged">
-         An error happen when adding a badge </b-alert>
+            {{this.$t('exoplatform.gamification.errorbadge')}} </b-alert>
 
         <save-badge-form :badge="badgeInForm" :domains="domains" v-on:submit="onBadgeCreated" v-on:failAdd="onBadgeFail" v-on:cancel="resetBadgeInForm"></save-badge-form>
         <badge-list :badges="badges" :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></badge-list>
@@ -45,7 +41,9 @@
                 enabled: null,
                 createdDate: null,
                 lastModifiedBy: '',
-                lastModifiedDate: null
+                lastModifiedDate: null,
+                isadded: false,
+                isShown: false,
             },
             addSuccess: false,
             addError: false,
@@ -70,11 +68,11 @@
                 this.updateBadge(badge)
             },
             onBadgeCreated(badge) {
+                this.isadded = true;
                 this.addSuccess=true
                 this.updateMessage='added'
                 this.badges.push(badge)
                 this.resetBadgeInForm()
-                this.dismissCountDown = 5
             },
             onBadgeFail(rule) {
                 this.addError=true
