@@ -41,7 +41,10 @@
 
                                   <input type="file"
                                          id="iconInput" name="badge.icon"
-                                         accept="image/jpeg, image/png, image/gif" placeholder="+" v-on:badge.icon >
+                                         accept="image/jpeg, image/png, image/gif"
+                                         placeholder="+"
+                                         @change="onFilePicked">
+                                         
                               </form>
                             <!--    <b-alert v-if="formErrors.icon" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                        @dismiss-count-down="countDownChanged">
@@ -71,7 +74,7 @@
                                 <b-col>
 
                                     <button type="cancel" v-on:click.prevent="collapseButton(), onCancel()" class="btn secondary pull-right" >Cancel</button>
-                                    <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit(), showAlert()">
+                                    <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onSubmit()">
                                         {{badge.id ? 'Update' : 'Confirm'}}
                                     </button>
                                 </b-col>
@@ -101,6 +104,10 @@
                 dismissSecs: 5,
                 dismissCountDown: 0,
                 isShown: false,
+                imageName: '',
+  				imageFile: '',
+                  imageUrl: '',
+                  uploadId:'',
                 date: new Date(),
                 config: {
                     format: 'YYYY-MM-DD',
@@ -117,7 +124,7 @@
             }
             ,
             'badge.domainDTO'() {
-                this.badge.domain = this.badge.domainDTO.title
+                // this.badge.domain = this.badge.domainDTO.title
             }
         },
         methods: {
@@ -142,19 +149,8 @@
                 this.isShown = !this.isShown;
             },
             createBadge(badgeDTO) {
-                console.log(badgeDTO.icon)
-                const formData = new FormData();
-                formData.append('file', badgeDTO.icon)
-                const MAX_RANDOM_NUMBER = 100000;
-                const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
-                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then(response => {
-                    badgeDTO.uploadId=uploadId
-                    axios.post(`/rest/gamification/badges/add`, badgeDTO)
+                if(this.uploadId!='')badgeDTO.uploadId=this.uploadId
+                axios.post(`/rest/gamification/badges/add`, badgeDTO)
                         .then(response => {
                             this.addSuccess = true
                             this.updateMessage = 'added'
@@ -164,10 +160,6 @@
                             this.addError = true
                             this.errors.push(e)
                         })
-                })
-                    .catch(e => {
-                        console.log("Error")
-                    })
             },
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0]
@@ -182,6 +174,49 @@
                     this.collapseButton()
                 }
             },
+            
+    getFormData(files) {
+      const data = new FormData();
+      [...files].forEach((file) => {
+        data.append('data', file, file.name); // currently only one file at a time
+      });
+      return data;
+    },
+
+
+               onFilePicked (e) {
+  			const files = e.target.files
+  			if(files[0] !== undefined) {
+  				this.imageName = files[0].name
+  				if(this.imageName.lastIndexOf('.') <= 0) {
+  					return
+  				}
+  				const fr = new FileReader ()
+  				fr.readAsDataURL(files[0])
+  				fr.addEventListener('load', () => {
+  					this.imageUrl = fr.result
+  					this.imageFile = files[0]
+          })
+
+                const MAX_RANDOM_NUMBER = 100000;
+      const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+      console.log(uploadId);
+      const form = this.getFormData(files);
+       axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                      this.uploadId=uploadId
+                                })
+  			} else {
+  				this.imageName = ''
+  				this.imageFile = ''
+  				this.imageUrl = ''
+  			}
+  		},
+
 
             confirm() {
                 this.$modals.confirm({
