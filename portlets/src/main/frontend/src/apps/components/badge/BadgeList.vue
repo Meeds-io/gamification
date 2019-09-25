@@ -19,6 +19,23 @@
                            name="keyword" type="text" v-model="search" value="">
                 </div>
 
+                <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
+
+                    <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
+                       {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
+                    </a>
+                     <ul class="dropdown-menu">
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
+                         </li>
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false,filerlabel='disabled'">{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</a>
+                         </li>
+
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null,filerlabel='all'">{{$t(`exoplatform.gamification.all`,"All")}} </a>
+                         </li>
+
+                 </ul>
+             </div>
+
                 <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                      data-parent="#accordionExample" id="collapseTwo" style=" transition: inherit;">
 
@@ -31,8 +48,6 @@
                                 </div>
 
                                 <a class="uiIconClose pull-right" v-on:click.prevent="collapseConfirm(badge)"></a>
-
-                                <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
                             </div>
                             <div class="PopupContent popupContent">
                                 <div class="media">
@@ -51,12 +66,15 @@
                                             this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
                                             }}
                                         </button>
-                                        <b-button class="btn-primary pull-right" type="submit"
+
+
+                                        <button class="btn-primary pull-right" type="submit"
+
                                                   v-on:click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
                                             {{
                                             this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
                                             }}
-                                        </b-button>
+                                        </button>
                                     </b-col>
                                 </div>
 
@@ -67,6 +85,8 @@
                 <table class=" uiGrid table table-hover badge-table">
                     <thead>
                     <tr>
+
+                        <th class="badge-icon-col">{{ this.$t('exoplatform.gamification.icon')}}</th>
                         <th class="badge-title-col">{{ this.$t('exoplatform.gamification.title') }}</th>
                         <th class="badge-desc-col">{{
                             this.$t('exoplatform.gamification.gamificationinformation.domain.Description') }}
@@ -75,14 +95,22 @@
                         <th class="badge-domain-col">{{
                             this.$t('exoplatform.gamification.gamificationinformation.Domain') }}
                         </th>
-                        <th class="badge-icon-col">{{ this.$t('exoplatform.gamification.icon')}}</th>
+                        
                         <th class="badge-status-col">{{ this.$t('exoplatform.gamification.status')}}</th>
                         <!--    <th class="badge-created-by-col">Created by</th> -->
                         <th class="badge-action-col">{{ this.$t('exoplatform.gamification.action')}}</th>
+
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="badge in filteredBadges">
+                        <td id="iconInputGroup" style="max-width: 100px;">
+                            <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
+                            </div>
+
+                            <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40"></b-form-file>
+
+                        </td>
                         <td class="badge-title-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
                             <input style="width: 130px;min-width: 98%;" type="text" v-if="editedbadge.id === badge.id"
@@ -112,33 +140,26 @@
                                 </option>
                             </select>
                         </td>
-                        <td id="iconInputGroup" style="max-width: 100px;">
-                            <div style="z-index: 0;" v-if="editedbadge.id !== badge.id"><img
-                                    :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail"
-                                    class="m-1" fluid height="40" thumbnail width="40"/>
-                            </div>
 
-                            <b-form-file accept="image/jpeg, image/png, image/gif" class="m-1" height="40"
-                                         placeholder="+" v-if="editedbadge.id === badge.id" v-model="badge.icon"
-                                         width="40"></b-form-file>
 
-                        </td>
-                        <td class="badge-status-col">
-                            <div style="z-index: 10;" v-if="editedbadge.id === badge.id">
-                                <label class="switch">
-                                    <input type="checkbox" v-model="badge.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
-                                </label>
-                            </div>
-                            <div v-if="editedbadge.id !== badge.id">
-                                <label class="switch" v-on:click="badge.enabled = !badge.enabled">
-                                    <input type="checkbox" v-model="badge.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
-                                </label>
-                            </div>
-                        </td>
+                         <td class="badge-status-col">
+                             <div v-if="editedbadge.id === badge.id">
+                                 <label class="switch">
+                                     <input type="checkbox" v-model="badge.enabled">
+                                     <span class="slider round"></span>
+                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
+                                 </label>
+                             </div>
+                             <div v-else>
+                                 <label class="switch" v-on:click="badge.enabled = !badge.enabled">
+                                     <input type="checkbox" v-model="badge.enabled">
+                                     <span class="slider round"></span>
+                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
+                                 </label>
+                             </div>
+
+                         </td>
+
                         <td class="center actionContainer"  style="z-index: 10;">
                             <a class="actionIcon" data-original-title="Supprimer" data-placement="bottom" href="#"
                                rel="tooltip"
@@ -195,6 +216,10 @@
                 isEnabled: false,
                 isdeleted: false,
                 isShown: false,
+                enabledFilter: null,
+                filerlabel:"all",
+                editedEnabled: null,
+                enabledMessage:"",
             }
         },
         computed: {
@@ -203,8 +228,9 @@
                     return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                        || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                    )
+                        || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
+                        && (this.enabledFilter === null || item.enabled === this.enabledFilter)
+
                 })
             }
         },
@@ -464,7 +490,7 @@
         max-width: min-content;
     } */
     input[type="text"] {
-        height: 35px;
+        height: 40px;
         margin: auto;
     }
     .custom-file-input:lang(en) ~ .custom-file-label::after {
@@ -547,5 +573,27 @@
         margin-top: 124px !important;
         margin-left: 38%;
         transform: translateX(-50%);
+    }
+    .filterWithIcon {
+        display: flex;
+        flex-direction: row-reverse;
+        float: right;
+        margin: 10px;
+        font-size: 15px;
+        height: 40px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        max-height: 40px;
+        text-overflow: ellipsis;
+        margin-top: 18px;
+    }
+    button.btn.cancel.pull-right {
+        border: 1px solid #e1e8ee !important;
+        color: #4d5466;
+        background: transparent !important;
+    }
+    button.btn-primary.pull-right {
+        border-radius: 0.25rem;
     }
 </style>

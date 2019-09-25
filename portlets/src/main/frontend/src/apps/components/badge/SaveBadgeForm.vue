@@ -18,11 +18,13 @@
                         </div>
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
+
                                 <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
                                 <input class="form-control" id="titleInput" placeholder="Enter badge's title" required
                                        type="text"
                                        v-model="badge.title">
                                 </input>
+
 
                                 <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
                                      @dismissed="dismissCountdown=0"
@@ -41,44 +43,34 @@
                                           v-model="badge.description">
                     </textarea>
                             </div>
-                            <form id="neededScoreInputGroup">
-                                <label class="pt-0" id="Needed" label-for="neededScoreInput">{{
-                                    this.$t('exoplatform.gamification.score')}}:</label>
-                                <input class="form-control" id="neededScoreInput"
-                                       placeholder="Enter badge's needed score"
-                                       required type="number" v-model="badge.neededScore">
-                                </input>
-                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                     @dismissed="dismissCountdown=0"
-                                     class="require-msg" dismissible v-if="formErrors.neededScore"
-                                     variant="danger">
-                                    {{ this.$t('exoplatform.gamification.Badgedescription')}} {{dismissCountDown}}
-                                </div>
+
+                            <form id="neededScoreInputGroup" >
+                                <label id="Needed" label-for="neededScoreInput" class="pt-0">Score:</label>
+                                <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
+
+                                <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    Badge needed score is required please enter a value {{dismissCountDown}}
+                                </b-alert>
                             </form>
-                            <form id="iconInputGroup">
-                                <form-file accept="image/jpeg, image/png, image/gif" class="form-control" id="iconInput"
-                                           placeholder="Choose a file..." required v-model="badge.icon"></form-file>
+                           <form id="iconInputGroup">
+                                  <label for="iconInput"  class="pt-0"> Icon: </label>
 
-                            </form>
+                                  <input type="file"
+                                         id="iconInput" name="badge.icon"
+                                         accept="image/jpeg, image/png, image/gif"
+                                         placeholder="+"
+                                         @change="onFilePicked">
+                                         
+                              </form>
+                            <!--    <b-alert v-if="formErrors.icon" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                       @dismiss-count-down="countDownChanged">
+                                  Badge icon is required please enter a badge {{dismissCountDown}}
+                              </b-alert>-->
 
-                            <form id="iconInputGroup">
 
-                                <label class="pt-0" for="iconInput"> {{ this.$t('exoplatform.gamification.icon')}}
-                                    : </label>
-
-                                <input accept="image/jpeg, image/png, image/gif"
-                                       id="iconInput" name="badge.icon"
-                                       placeholder="+" type="file">
-                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                     @dismissed="dismissCountdown=0" class="require-msg" dismissible
-                                     v-if="formErrors.icon"
-                                     variant="danger">
-                                    {{$t('exoplatform.gamification.badgealerticon')}} {{dismissCountDown}}
-                                </div>
-                            </form>
-                            <label class="pt-0">{{ this.$t('exoplatform.gamification.gamificationinformation.Domain')
-                                }}:</label>
                             <form id="domainSelectboxGroup">
+                                <label class="pt-0">Domain:</label>
 
                                 <select class="mb-4" v-model="badge.domainDTO">
                                     <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain')
@@ -90,8 +82,8 @@
                                         }}
                                     </option>
                                 </select>
-
                             </form>
+
 
                             <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
                             <label class="uiSwitchBtn">
@@ -100,6 +92,7 @@
                                 <span class="slider round"></span>
                                 <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO')}}</span>
                             </label>
+
 
                             <b-row style="display: inherit;">
                                 <b-col>
@@ -111,6 +104,7 @@
                                     <button class="btn-primary pull-right" type="submit"
                                             v-on:click.prevent="onSubmit(), showAlert()">
                                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+
                                     </button>
                                 </b-col>
 
@@ -128,10 +122,7 @@
     import axios from 'axios'
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
-    // import datePicker from 'vue-bootstrap-datetimepicker'
-    // import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css';
     Vue.use(BootstrapVue);
-    //  Vue.use(datePicker);
     export default {
         props: ['badge', 'domains'],
         data: function () {
@@ -142,6 +133,10 @@
                 dismissSecs: 5,
                 dismissCountDown: 0,
                 isShown: false,
+                imageName: '',
+  				imageFile: '',
+                  imageUrl: '',
+                  uploadId:'',
                 date: new Date(),
                 config: {
                     format: 'YYYY-MM-DD',
@@ -158,7 +153,7 @@
             }
             ,
             'badge.domainDTO'() {
-                this.badge.domain = this.badge.domainDTO.title
+                // this.badge.domain = this.badge.domainDTO.title
             }
         },
         methods: {
@@ -168,10 +163,12 @@
                     errors.title = 'Title is required';
                     this.dismissCountDown = 5
                 }
+
                 if (!this.badge.icon) {
                     errors.icon = 'Needed icon is required';
                     this.dismissCountDown = 5
                 }
+
                 if (!this.badge.neededScore) {
                     errors.neededScore = 'Needed score is required';
                     this.dismissCountDown = 5
@@ -183,18 +180,10 @@
                 this.isShown = !this.isShown;
             },
             createBadge(badgeDTO) {
-                const formData = new FormData();
-                formData.append('file', badgeDTO.icon);
-                const MAX_RANDOM_NUMBER = 100000;
-                const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
-                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then(response => {
-                    badgeDTO.uploadId = uploadId;
-                    axios.post(`/rest/gamification/badges/add`, badgeDTO)
+
+                if(this.uploadId!='')badgeDTO.uploadId=this.uploadId
+                axios.post(`/rest/gamification/badges/add`, badgeDTO)
+
                         .then(response => {
                             this.addSuccess = true;
                             this.updateMessage = 'added';
@@ -204,10 +193,6 @@
                             this.addError = true;
                             this.errors.push(e)
                         })
-                })
-                    .catch(e => {
-                        console.log("Error")
-                    })
             },
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0];
@@ -222,9 +207,50 @@
                     this.collapseButton()
                 }
             },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
+            
+    getFormData(files) {
+      const data = new FormData();
+      [...files].forEach((file) => {
+        data.append('data', file, file.name); // currently only one file at a time
+      });
+      return data;
+    },
+
+
+               onFilePicked (e) {
+  			const files = e.target.files
+  			if(files[0] !== undefined) {
+  				this.imageName = files[0].name
+  				if(this.imageName.lastIndexOf('.') <= 0) {
+  					return
+  				}
+  				const fr = new FileReader ()
+  				fr.readAsDataURL(files[0])
+  				fr.addEventListener('load', () => {
+  					this.imageUrl = fr.result
+  					this.imageFile = files[0]
+          })
+
+                const MAX_RANDOM_NUMBER = 100000;
+      const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+      console.log(uploadId);
+      const form = this.getFormData(files);
+       axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                      this.uploadId=uploadId
+                                })
+  			} else {
+  				this.imageName = ''
+  				this.imageFile = ''
+  				this.imageUrl = ''
+  			}
+  		},
+
+
             confirm() {
                 this.$modals.confirm({
                     message: 'Confirm?',
@@ -234,7 +260,7 @@
                     },
                 });
             },
-        },
+        }
     }
 </script>
 
@@ -251,6 +277,7 @@
     div#headingOne button.btn.btn-primary {
         margin: 15px 12px 5px;
         border-radius: 3px;
+
     }
 
     .btn-primary:focus, .btn-primary.focus {
@@ -393,12 +420,8 @@
         text-decoration: none;
     }
 
-    button.btn.btn-link.primary {
-        background: #3c8dbc;
-    }
-
     button.btn-primary.pull-right {
-        border-radius: 3px;
+        border-radius: 0.25rem;
     }
 
     .col-sm-12.card {
@@ -435,14 +458,10 @@
         position: relative;
         display: inline-block;
         width: 60px;
-        height: 29px;
-        /* zoom: 30%; */
-        top: 0.4rem;
-    }
 
-    .uiSwitchBtn input {
-        display: none;
+        height: 55px;
     }
+    .uiSwitchBtn input {display:none;}
 
     .slider {
         position: absolute;
@@ -478,32 +497,17 @@
         position: absolute;
         left: -20px;
         z-index: 1;
-        content: "YES";
-        font-size: 13px;
-        text-align: left !important;
+        content: "yes";
+        font-size: 16px;
+        text-align: left!important;
         line-height: 19px;
         padding-left: 0;
         width: 95px;
-        height: 26px !important;
+        height: 26px!important;
         color: #f9f9f9;
         background-color: #477ab3;
-        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
-        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
-        background-repeat: repeat-x;
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
-        -webkit-box-shadow: inset 0px 3px 5px #224469;
-        -moz-box-shadow: inset 0px 3px 5px #224469;
-        box-shadow: inset 0px 3px 5px #224469;
-        -webkit-border-top-left-radius: 9px;
-        -moz-border-radius-topleft: 9px;
-        border-top-left-radius: 9px;
-        -webkit-border-bottom-left-radius: 9px;
-        -moz-border-radius-bottomleft: 9px;
-        border-bottom-left-radius: 9px;
-        height: 57px;
+
+
         border-radius: 100px;
         background-color: #578dc9;
         -webkit-transform: translateX(-190px);
@@ -570,4 +574,25 @@
         box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
         color: #333;
     }
+    input#iconInput {
+        width: 100%;
+        font-size: 15px;
+        height: 40px;
+        padding: 0 10px;
+        border: 1px solid #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        max-height: 40px;
+        text-overflow: ellipsis;
+    }
+    label.pt-0 {
+        display: inline-block;
+        width: 100%;
+    }
+    form#domainSelectboxGroup, form#enabled {
+        display: inline-block;
+    }
+
+
+
 </style>

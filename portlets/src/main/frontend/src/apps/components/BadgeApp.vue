@@ -12,25 +12,22 @@
     }
 </script>
 
-
 <style>
-    .UIToolbarContainer .uiDropdownWithIcon > a {
-        color: #4d5466 !important;
-    }
 
-    a, a:hover, a:focus {
-        color: inherit;
-        text-decoration: none;
+    .UIToolbarContainer .uiDropdownWithIcon>a {
+        color: #ffffff !important;
     }
-
-    a {
-        color: none;
-        text-decoration: none;
-        background-color: transparent;
-        -webkit-text-decoration-skip: objects;
-    }
-
-    .alert {
+     a, a:hover, a:focus {
+          color: inherit;
+          text-decoration: none;
+     }
+     a{
+         text-decoration: none;
+         background-color: transparent;
+         -webkit-text-decoration-skip: objects;
+     }
+    .alert{
+develop
         max-width: 98%;
         margin: 0 auto;
         top: 7px;

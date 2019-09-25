@@ -15,6 +15,7 @@
             {{this.$t('exoplatform.gamification.errorbadge')}}
         </b-alert>
 
+
         <save-badge-form :badge="badgeInForm" :domains="domains" v-on:cancel="resetBadgeInForm"
                          v-on:failAdd="onBadgeFail"
                          v-on:submit="onBadgeCreated"></save-badge-form>
@@ -44,7 +45,7 @@
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 domain: '',
-                enabled: null,
+                enabled: true,
                 createdDate: null,
                 lastModifiedBy: '',
                 lastModifiedDate: null,
@@ -71,6 +72,7 @@
             },
             onSaveClicked(badge) {
                 this.updateBadge(badge)
+                this.isShown = !this.isShown;
             },
             onBadgeCreated(badge) {
                 this.isadded = true;
@@ -78,15 +80,18 @@
                 this.updateMessage = 'added';
                 this.badges.push(badge);
                 this.resetBadgeInForm()
+                this. collapseButton()
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             onBadgeFail(rule) {
-                this.addError = true;
-                this.errors.push(e);
-                this.resetBadgeInForm();
-                this.dismissCountDown = 5
-            },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
+
+                this.addError=true
+                this.errors.push(e)
+                this.resetBadgeInForm()
+
+
             },
             onBadgeAction(badge) {
                 const index = this.badges.findIndex((p) => p.id === badge.id);
@@ -130,8 +135,11 @@
                             this.updateMessage = 'updated';
                             this.badges.push(badge);
                             this.dismissCountDown = 5
+
+
                                 .catch(e => {
-                                    this.addError = true;
+                                    this.addError = true
+
                                     this.errors.push(e)
                                 })
                         })
@@ -171,4 +179,8 @@
         -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
         -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
     }
+    .collapse.show.out {
+        display: none;
+    }
+
 </style>
