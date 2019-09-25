@@ -13,7 +13,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQueries({
         @NamedQuery(
                 name = "GamificationDomain.getAllDomains",
-                query = "SELECT domain FROM GamificationDomain domain "
+                query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false"
         ),
 
         @NamedQuery(
@@ -22,7 +22,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         ),
         @NamedQuery(
                 name = "GamificationDomain.deleteDomainByTitle",
-                query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle "
+                query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle"
         )
 })
 public class DomainEntity extends AbstractAuditingEntity implements Serializable {
@@ -41,6 +41,13 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
 
     @Column(name = "PRIORITY")
     protected int priority;
+
+
+    @Column(name = "DELETED", nullable = false)
+    protected boolean isDeleted;
+
+    @Column(name = "ENABLED", nullable = false)
+    protected boolean isEnabled;
 
 
     public DomainEntity() {
@@ -78,6 +85,21 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
         this.priority = priority;
     }
 
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
 
     @Override
     public boolean equals(Object o) {

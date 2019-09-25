@@ -44,6 +44,9 @@ public class BadgeDTO implements Serializable {
 
     private String uploadId;
 
+    protected boolean deleted;
+
+
     public BadgeDTO() {
     }
 
@@ -66,6 +69,8 @@ public class BadgeDTO implements Serializable {
             this.endValidityDate = formatter.format(badgeEntity.getEndValidityDate());
         }
         this.enabled = badgeEntity.isEnabled();
+
+        this.deleted = badgeEntity.isDeleted();
 
         this.description = badgeEntity.getDescription();
 
@@ -220,6 +225,14 @@ public class BadgeDTO implements Serializable {
         this.domainDTO = domainDTO;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "BadgeDTO{" +
@@ -234,6 +247,8 @@ public class BadgeDTO implements Serializable {
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +
                 ", lastModifiedDate=" + lastModifiedDate +
+                ", deleted=" + deleted +
+                ", enabled=" + enabled +
                 "}";
     }
 }

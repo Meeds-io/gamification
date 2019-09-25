@@ -262,21 +262,21 @@ public class ManageBadgesEndpoint implements ResourceContainer {
   }
 
   @DELETE
-  @Path("/delete")
-  public Response deleteBadge(@Context UriInfo uriInfo, @QueryParam("badgeTitle") String badgeTitle) {
+  @Path("/delete/{id}")
+  public Response deleteBadge(@Context UriInfo uriInfo, @PathParam("id") Long id) {
 
     ConversationState conversationState = ConversationState.getCurrent();
 
     if (conversationState != null) {
       try {
         // --- Remove the rule
-        badgeService.deleteBadge(badgeTitle);
+        badgeService.deleteBadge(id);
 
-        return Response.ok("Deleted " + badgeTitle, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+        return Response.ok("Deleted " + id, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
       } catch (Exception e) {
 
-        LOG.error("Error deleting badge {} by {} ", badgeTitle, conversationState.getIdentity().getUserId(), e);
+        LOG.error("Error deleting badge {} by {} ", id, conversationState.getIdentity().getUserId(), e);
 
         return Response.status(HTTPStatus.INTERNAL_ERROR).cacheControl(cacheControl).build();
       }

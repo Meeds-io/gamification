@@ -23,6 +23,8 @@ public class RuleDTO implements Serializable {
     //protected boolean isEnabled;
     protected boolean enabled;
 
+    protected boolean deleted;
+
     private String createdBy;
 
     private Date createdDate;
@@ -50,6 +52,7 @@ public class RuleDTO implements Serializable {
         this.lastModifiedBy = rule.getLastModifiedBy();
         this.lastModifiedDate = rule.getLastModifiedDate();
         this.event = rule.getEvent();
+        this.deleted = rule.isDeleted();
 
     }
 
@@ -102,10 +105,6 @@ public class RuleDTO implements Serializable {
         this.domainDTO = domainDTO;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -150,6 +149,18 @@ public class RuleDTO implements Serializable {
         this.event = event;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "RuleDTO{" +
@@ -161,6 +172,8 @@ public class RuleDTO implements Serializable {
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +
                 ", lastModifiedDate=" + lastModifiedDate +
+                ", deleted=" + deleted +
+                ", enabled=" + enabled +
                 "}";
     }
 }

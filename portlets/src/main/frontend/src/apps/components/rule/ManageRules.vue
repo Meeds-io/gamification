@@ -106,7 +106,7 @@
 
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId);
-                axios.delete(`/rest/gamification/rules/delete`, { params: { 'ruleTitle': ruleTitle } })
+                axios.delete(`/rest/gamification/rules/delete/`+ruleId)
                     .then(response => {
                         this.rules.splice(index, 1)
                     })

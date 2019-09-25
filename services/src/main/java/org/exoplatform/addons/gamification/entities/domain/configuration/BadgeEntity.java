@@ -13,27 +13,27 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(
                 name = "GamificationBadge.getAllBadges",
-                query = "SELECT badge FROM GamificationBadge badge ORDER BY badge.iconFileId ASC "
+                query = "SELECT badge FROM GamificationBadge badge   WHERE badge.isDeleted = false ORDER BY badge.iconFileId ASC "
         ),
         @NamedQuery(
                 name = "GamificationBadge.findBadgeByDomain",
-                query = "SELECT badge FROM GamificationBadge badge WHERE badge.domain = :badgeDomain ORDER BY badge.neededScore ASC"
+                query = "SELECT badge FROM GamificationBadge badge WHERE badge.domain = :badgeDomain  ORDER BY badge.neededScore ASC"
         ),
         @NamedQuery(
                 name = "GamificationBadge.findEnabledBadgeByDomain",
-                query = "SELECT badge FROM GamificationBadge badge WHERE (badge.domain = :badgeDomain) AND (badge.enabled = true) ORDER BY badge.neededScore ASC"
+                query = "SELECT badge FROM GamificationBadge badge WHERE (badge.domain = :badgeDomain) AND (badge.enabled = true) AND badge.isDeleted = false ORDER BY badge.neededScore ASC"
         ),
         @NamedQuery(
                 name = "GamificationBadge.getEnabledBadges",
-                query = "SELECT badge FROM GamificationBadge badge where badge.enabled = :isEnabled "
+                query = "SELECT badge FROM GamificationBadge badge where badge.enabled = :isEnabled AND badge.isDeleted = false"
         ),
         @NamedQuery(
                 name = "GamificationBadge.getValidBadges",
-                query = "SELECT badge FROM GamificationBadge badge where (badge.startValidityDate BETWEEN :stDate AND :edDate) AND (badge.endValidityDate BETWEEN :stDate AND :edDate) "
+                query = "SELECT badge FROM GamificationBadge badge where (badge.startValidityDate BETWEEN :stDate AND :edDate) AND (badge.endValidityDate BETWEEN :stDate AND :edDate) AND badge.isDeleted = 0"
         ),
         @NamedQuery(
                 name = "GamificationBadge.findBadgeByNeededScore",
-                query = "SELECT badge FROM GamificationBadge badge where badge.neededScore = :neededScore"
+                query = "SELECT badge FROM GamificationBadge badge where badge.neededScore = :neededScore  AND badge.isDeleted = false"
         ),
         @NamedQuery(
                 name = "GamificationBadge.findBadgeByTitle",
@@ -41,16 +41,16 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "GamificationBadge.deleteBadgeByTitle",
-                query = "DELETE FROM GamificationBadge badge WHERE badge.title = :badgeTitle "
+                query = "DELETE FROM GamificationBadge badge WHERE badge.title = :badgeTitle"
         ),
         @NamedQuery(
                 name = "GamificationBadge.deleteBadgeById",
-                query = "DELETE FROM GamificationBadge badge WHERE badge.id = :badgeId "
+                query = "DELETE FROM GamificationBadge badge WHERE badge.id = :badgeId"
         ),
 
         @NamedQuery(
                 name = "GamificationBadge.getAllBadgesWithNullDomain",
-                query = "SELECT badge FROM GamificationBadge badge where badge.domainEntity IS NULL "
+                query = "SELECT badge FROM GamificationBadge badge where badge.domainEntity IS NULL"
         ),
         @NamedQuery(
                 name = "GamificationBadge.getDomainList",
@@ -100,6 +100,10 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     @ManyToOne
     @JoinColumn(name = "DOMAIN_ID")
     private DomainEntity domainEntity;
+
+
+    @Column(name = "DELETED", nullable = false)
+    protected boolean isDeleted;
 
     public BadgeEntity() {
     }
@@ -185,6 +189,13 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         this.domainEntity = domainEntity;
     }
 
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 
     @Override
     public boolean equals(Object o) {

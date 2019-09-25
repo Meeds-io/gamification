@@ -174,8 +174,8 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
 
     @DELETE
-    @Path("/delete")
-    public Response deleteRule(@Context UriInfo uriInfo, @QueryParam("ruleTitle") String ruleTitle) {
+    @Path("/delete/{id}")
+    public Response deleteRule(@Context UriInfo uriInfo, @PathParam("id") Long id) {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -185,13 +185,12 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
             try {
                 //--- Remove the rule
-                ruleService.deleteRule(ruleTitle);
-
-                return Response.ok().cacheControl(cacheControl).entity("Rule " + ruleTitle + " has been removed successfully ").build();
+                ruleService.deleteRule(id);
+                return Response.ok().cacheControl(cacheControl).entity("Rule " + id + " has been removed successfully ").build();
 
             } catch (Exception e) {
 
-                LOG.error("Error deleting rule {} by {} ", ruleTitle, currentUserName, e);
+                LOG.error("Error deleting rule {} by {} ", id, currentUserName, e);
 
                 return Response.serverError()
                         .cacheControl(cacheControl)

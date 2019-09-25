@@ -9,6 +9,8 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public class BadgeService {
@@ -67,6 +69,25 @@ public class BadgeService {
     }
 
     /**
+     * Return all badges within the DB
+     * @return a list of BadgeDTO
+     */
+    public List<BadgeDTO> getAllBadgesbyDomain() {
+        try {
+            //--- load all Rules
+            List<BadgeEntity> badges = badgeStorage.getAllBadges();
+            if (badges != null) {
+                return badgeMapper.badgesToBadgeDTOs(badges);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Badges", e.getMessage());
+        }
+        return null;
+
+    }
+
+    /**
      * Add Badge to DB
      * @param badgeDTO : an object of type RuleDTO
      * @return BadgeDTO object
@@ -77,8 +98,17 @@ public class BadgeService {
         BadgeEntity badgeEntity = null;
 
         try {
-
-            badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
+            badgeEntity = badgeStorage.findBadgeByTitle(badgeDTO.getTitle());
+            if(badgeEntity==null){
+                badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
+            }else if(badgeEntity.isDeleted()){
+                Long id = badgeEntity.getId();
+                badgeEntity = badgeMapper.badgeDTOToBadge(badgeDTO);
+                badgeEntity.setId(id);
+                badgeEntity = badgeStorage.update(badgeEntity);
+            }else{
+                throw(new EntityExistsException());
+            }
 
         } catch (Exception e) {
             LOG.error("Error to create badge with title {}", badgeDTO.getTitle() , e);
@@ -109,18 +139,26 @@ public class BadgeService {
     }
 
     /**
-     * Delete a BadgeEntity using the title
-     * @param badgeTitle : badge title
+     * Delete a BadgeEntity using the id
+     * @param id : badge id
      */
     @ExoTransactional
-    public void deleteBadge (String badgeTitle) {
+    public void deleteBadge (Long id) {
 
         try {
 
-            badgeStorage.deleteBadgeByTitle(badgeTitle);
+            BadgeEntity badgeEntity = badgeStorage.find(id);
+            if(badgeEntity!=null){
+                badgeEntity.setDeleted(true);
+                badgeStorage.update(badgeEntity);
+            }else{
+                LOG.warn("Badge {} not Found",id);
+                throw(new EntityNotFoundException());
+            }
+
 
         } catch (Exception e) {
-            LOG.error("Error to delete badge with title {}", badgeTitle, e);
+            LOG.error("Error to delete badge with title {}", id, e);
         }
 
 

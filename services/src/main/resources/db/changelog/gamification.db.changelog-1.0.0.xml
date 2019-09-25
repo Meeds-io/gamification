@@ -129,24 +129,7 @@
                                  initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
                                  referencedColumnNames="ID" referencedTableName="GAMIFICATION_USER_REPUTATION"/>
     </changeSet>
-    <!--
-        <changeSet author="exo-gamification" id="1.0.0-6" runOnChange="true">
-            <loadData tableName="GAMIFICATION_BADGES" file="db/changelog/GamificationInformationsPortlet-init-data.csv" encoding="UTF-8">
-                <column name="ID" type="STRING"/>
-                <column name="TITLE" type="STRING"/>
-                <column name="DESCRIPTION" type="STRING"/>
-                <column name="NEEDED_SCORE" type="NUMERIC"/>
-                <column name="ICON" type="STRING"/>
-                <column name="ENABLED" type="BOOLEAN"/>
-                <column name="VALIDITY_DATE_START" type="DATE"/>
-                <column name="VALIDITY_DATE_END" type="DATE"/>
-                <column name="CREATED_BY" type="STRING"/>
-                <column name="CREATED_DATE" type="DATE"/>
-                <column name="LAST_MODIFIED_BY" type="STRING"/>
-                <column name="LAST_MODIFIED_DATE" type="DATE"/>
-            </loadData>
-        </changeSet>
-    -->
+
     <changeSet author="exo-gamification" id="1.0.0-7" runOnChange="true">
         <createIndex tableName="GAMIFICATION_CONTEXT_ITEMS" indexName="IDX_GAME_CONTEXT_ITEM_01">
             <column name="GAMIFICATION_USER_ID"/>
@@ -259,6 +242,29 @@
     <changeSet  author="exo-gamification" id="1.0.0-14">
         <addColumn tableName="GAMIFICATION_RULE">
             <column name="EVENT" type="NVARCHAR(70)">
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet  author="exo-gamification" id="1.0.0-15">
+        <addColumn tableName="GAMIFICATION_DOMAIN">
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean = "true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="GAMIFICATION_DOMAIN">
+            <column name="DELETED" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="GAMIFICATION_RULE">
+            <column name="DELETED" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="GAMIFICATION_BADGES">
+            <column name="DELETED" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>

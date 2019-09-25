@@ -51,6 +51,15 @@
                                 </div>
                             </form>
 
+                            <form>
+                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
+                                <label class="uiSwitchBtn">
+                                    <input type="checkbox" v-model="domain.enabled" >
+                                    <span class="slider round"></span>
+                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
+                                </label>
+                            </form>
+
 
                             <div class="row">
                                 <b-col>

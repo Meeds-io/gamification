@@ -15,6 +15,7 @@ import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,10 +73,12 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         DomainDTO domainDTO = new DomainDTO();
         domainDTO.setTitle(zoneConfig.getZoneName());
         domainDTO.setDescription(zoneConfig.getZoneDescription());
-        domainDTO.setLastModifiedDate(LocalDate.now().toString());
+        domainDTO.setLastModifiedDate(new Date());
         domainDTO.setLastModifiedBy("Gamification");
+        domainDTO.setEnabled(true);
+        domainDTO.setDeleted(false);
         domainDTO.setCreatedBy("Gamification");
-        domainDTO.setCreatedDate(LocalDate.now().toString());
+        domainDTO.setCreatedDate(new Date());
         try {
             domainDTO.setPriority(Integer.parseInt(zoneConfig.getZonePriority()));
         } catch (Exception e) {

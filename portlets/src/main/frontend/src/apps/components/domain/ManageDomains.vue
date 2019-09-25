@@ -5,10 +5,9 @@
                class="success alert alert-success"
                dismissible
                fade
-               v-if="addSuccess" variant="success"><i class="uiIconSuccess"></i>Domain {{updateMessage}} successfully
+               v-if="addSuccess" variant="success"><i class="uiIconSuccess"></i>{{updateMessage}}
         </alert>
-        <alert class="alert alert-error" data-auto-dismiss="5000" v-if="addError"><i class="uiIconError"></i>An error
-            happen when adding a domain
+        <alert class="alert alert-error" data-auto-dismiss="5000" v-if="addError"><i class="uiIconError"></i> {{errorMessage}}
         </alert>
 
 
@@ -16,7 +15,7 @@
                           v-on:failAdd="onDomainFail" v-on:sucessAdd="onDomainCreated"></save-domain-form>
 
         <domain-list :domain="domainInForm" :domains="domains" v-on:failAdd="onDomainFail" v-on:remove="onRemoveClicked"
-                     v-on:sucessAdd="onDomainUpdated" v-on:update="onSaveClicked">
+                     v-on:sucessAdd="onDomainUpdated" v-on:edit="onSaveClicked">
 
 
         </domain-list>
@@ -38,7 +37,7 @@
         return {
             domainInForm: {
                 id: null,
-
+                enabled:true,
                 title: '',
                 description: '',
 
@@ -47,6 +46,7 @@
             addSuccess: false,
             addError: false,
             updateMessage: '',
+            errorMessage:'',
             domains: [],
             dismissSecs: 5,
             dismissCountDown: 0,
@@ -99,7 +99,7 @@
             },
             onDomainCreated(domain) {
                 this.addSuccess = true;
-                this.updateMessage = 'added';
+                this.updateMessage = this.$t('exoplatform.gamification.message.domain.added',"Domain added successfully");
                 this.domains.push(domain);
                 this.resetDomainInForm();
                 this.dismissCountDown = 5
@@ -107,7 +107,7 @@
             },
             onDomainUpdated(domain) {
                 this.addSuccess = true;
-                this.updateMessage = 'updated';
+                this.updateMessage = this.$t('exoplatform.gamification.message.domain.updated',"Domain updated successfully");
                 this.domains.push(domain);
                 this.resetDomainInForm();
                 this.dismissCountDown = 5
@@ -115,6 +115,7 @@
             },
             onDomainFail(domain) {
                 this.addError = true;
+                this.errorMessage= this.$t('exoplatform.gamification.message.domain.fail',"An error happen when adding a domain"); 
                 // this.errors.push(e);
                 this.resetDomainInForm()
             },
