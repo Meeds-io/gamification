@@ -81,6 +81,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
         badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
         badgeDTO.setNeededScore(badgeConfig.getNeededScore());
         badgeDTO.setEnabled(badgeConfig.isEnable());
+        badgeDTO.setDeleted(false);
         badgeDTO.setLastModifiedDate(LocalDate.now().toString());
         badgeDTO.setLastModifiedBy("Gamification");
         badgeDTO.setCreatedBy("Gamification");

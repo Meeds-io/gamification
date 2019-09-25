@@ -25,19 +25,9 @@
     <external-component-plugins>
         <target-component>org.exoplatform.services.listener.ListenerService</target-component>
         <component-plugin>
-            <name>exo.task.taskCreation</name>
+            <name>exo.gamification.domain.action</name>
             <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.task.GamificationTaskUpdateListener</type>
-        </component-plugin>
-        <component-plugin>
-            <name>exo.task.taskUpdate</name>
-            <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.task.GamificationTaskUpdateListener</type>
-        </component-plugin>
-        <component-plugin>
-            <name>exo.task.taskCommentCreation</name>
-            <set-method>addListener</set-method>
-            <type>org.exoplatform.addons.gamification.listener.task.GamificationTaskCommentListener</type>
+            <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
         </component-plugin>
     </external-component-plugins>
 </configuration>

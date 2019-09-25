@@ -44,7 +44,7 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
       domainDTO.setDescription("description");
       domainDTO.setTitle("Knowledgeable" + i);
       domainDTO.setLastModifiedBy("root");
-      domainDTO.setLastModifiedDate(String.valueOf(new Date()));
+      domainDTO.setLastModifiedDate(new Date());
       domainStorage.create(domainMapper.domainDTOToDomain(domainDTO));
     }
   }

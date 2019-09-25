@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.DomainE
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DomainDTO implements Serializable {
 
@@ -19,12 +20,15 @@ public class DomainDTO implements Serializable {
 
     private String createdBy;
 
-    private String createdDate;
+    private Date createdDate;
 
     private String lastModifiedBy;
 
-    private String lastModifiedDate;
+    private Date lastModifiedDate;
 
+    protected boolean deleted;
+
+    protected boolean enabled;
 
 
     public DomainDTO() {
@@ -37,12 +41,12 @@ public class DomainDTO implements Serializable {
         this.description = domainEntity.getDescription();
         this.createdBy = domainEntity.getCreatedBy();
         this.priority = domainEntity.getPriority();
-        if (domainEntity.getCreatedDate() != null) {
-            this.createdDate = formatter.format(domainEntity.getCreatedDate());
-        }
-        if (domainEntity.getLastModifiedDate() != null) {
-            this.lastModifiedDate = formatter.format(domainEntity.getLastModifiedDate());
-        }
+        this.priority = domainEntity.getPriority();
+        this.deleted = domainEntity.isDeleted();
+        this.enabled = domainEntity.isEnabled();
+        this.createdDate = domainEntity.getCreatedDate();
+        this.lastModifiedDate = domainEntity.getLastModifiedDate();
+
     }
 
     public Long getId() {
@@ -85,11 +89,11 @@ public class DomainDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -101,14 +105,29 @@ public class DomainDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public String getLastModifiedDate() {
+    public Date getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(String lastModifiedDate) {
+    public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public String toString() {
@@ -119,6 +138,8 @@ public class DomainDTO implements Serializable {
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +
                 ", lastModifiedDate=" + lastModifiedDate +
+                ", deleted=" + deleted +
+                ", enabled=" + enabled +
                 "}";
     }
 }

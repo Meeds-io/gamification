@@ -9,6 +9,7 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import java.util.List;
@@ -45,6 +46,30 @@ public class RuleService {
 
         } catch (Exception e) {
             LOG.error("Error to find enable Rule entity with title : {}",ruleTitle,e);
+            throw e;
+        }
+    }
+
+    /**
+     * Get RuleEntity by id
+     * @param id : rule's id param
+     * @return an instance of RuleDTO
+     */
+    @ExoTransactional
+    public RuleDTO findRuleById (Long id) {
+
+        try {
+            //--- Get Entity from DB
+            RuleEntity entity = ruleDAO.find(id);
+            //--- Convert Entity to DTO
+            if (entity != null ) {
+                return ruleMapper.ruleToRuleDTO(entity);
+            }else{
+                return null;
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Rule entity with id : {}",id,e);
             throw e;
         }
     }
@@ -184,12 +209,14 @@ public class RuleService {
     }
 
     @ExoTransactional
-    public void deleteRule (String ruleTitle)  throws Exception{
+    public void deleteRule (Long id)  throws Exception{
 
         try {
-            ruleDAO.deleteRuleByTitle(ruleTitle);
+            RuleEntity ruleEntity = ruleDAO.find(id);
+            ruleEntity.setDeleted(true);
+            ruleDAO.update(ruleEntity);
         } catch (Exception e) {
-            LOG.error("Error to delete rule with title {}", ruleTitle, e);
+            LOG.error("Error to delete rule with id {}", id, e);
             throw(e);
         }
     }
@@ -205,11 +232,19 @@ public class RuleService {
         RuleEntity ruleEntity = null;
 
         try {
-
-            ruleEntity = ruleDAO.create(ruleMapper.ruleDTOToRule(ruleDTO));
-
+            ruleEntity = ruleDAO.findRuleByTitle(ruleDTO.getTitle());
+            if(ruleEntity==null){
+                ruleEntity = ruleDAO.create(ruleMapper.ruleDTOToRule(ruleDTO));
+            }else if(ruleEntity.isDeleted()){
+                Long id = ruleEntity.getId();
+                ruleEntity = ruleMapper.ruleDTOToRule(ruleDTO);
+                ruleEntity.setId(id);
+                ruleEntity = ruleDAO.update(ruleEntity);
+            }else{
+                throw(new EntityExistsException());
+            }
         } catch (Exception e) {
-            LOG.error("Error to delete rule with title {}", ruleDTO.getTitle() , e);
+            LOG.error("Error to add rule with title {}", ruleDTO.getTitle() , e);
             throw(e);
         }
 

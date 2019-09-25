@@ -2,6 +2,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceException;
 
@@ -11,6 +12,7 @@ import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
@@ -20,16 +22,18 @@ public class DomainService {
 
     protected final DomainDAO domainStorage;
     protected final DomainMapper domainMapper;
+    protected final ListenerService listenerService;
 
-    public DomainService(DomainDAO domainDAO, DomainMapper domainMapper) {
+/*    public DomainService(DomainDAO domainDAO, DomainMapper domainMapper, ListenerService listenerService) {
         this.domainStorage = domainDAO;
         this.domainMapper = domainMapper;
-
-    }
+        this.listenerService = listenerService;
+    }*/
 
   public DomainService() {
     this.domainStorage = CommonsUtils.getService(DomainDAO.class);
     this.domainMapper = CommonsUtils.getService(DomainMapper.class);
+    this.listenerService = CommonsUtils.getService(ListenerService.class);
 
   }
 
@@ -40,7 +44,7 @@ public class DomainService {
     public List<DomainDTO> getAllDomains() {
         try {
             //--- load all Domains
-            List<DomainEntity> badges = domainStorage.findAll();
+            List<DomainEntity> badges = domainStorage.getAllDomains();
             if (badges != null) {
                 return domainMapper.domainssToDomainDTOs(badges);
             }else{
@@ -89,12 +93,23 @@ public class DomainService {
         DomainEntity domainEntity = null;
 
         try {
-            domainEntity = domainStorage.create(domainMapper.domainDTOToDomain(domainDTO));
-            return domainMapper.domainToDomainDTO(domainEntity);
+            domainEntity = domainStorage.findDomainByTitle(domainDTO.getTitle());
+            if(domainEntity==null){
+                domainEntity = domainStorage.create(domainMapper.domainDTOToDomain(domainDTO));
+            }else if(domainEntity.isDeleted()){
+                Long id = domainEntity.getId();
+                domainEntity = domainMapper.domainDTOToDomain(domainDTO);
+                domainEntity.setId(id);
+                domainEntity = domainStorage.update(domainEntity);
+            }else{
+                throw(new EntityExistsException());
+            }
+
         } catch (Exception e) {
             LOG.error("Error to create badge with title {}", domainDTO.getTitle() , e);
             throw(e);
         }
+        return domainMapper.domainToDomainDTO(domainEntity);
     }
 
     /**
@@ -103,12 +118,19 @@ public class DomainService {
      * @return DomainDTO object
      */
     @ExoTransactional
-    public DomainDTO updateDomain(DomainDTO domainDTO) throws PersistenceException {
+    public DomainDTO updateDomain(DomainDTO domainDTO) throws Exception {
 
         DomainEntity domainEntity = null;
 
         try {
+            Boolean oldValue = domainStorage.find(domainDTO.getId()).isEnabled();
             domainEntity = domainStorage.update(domainMapper.domainDTOToDomain(domainDTO));
+            if(oldValue&&!domainDTO.isEnabled() ){
+                listenerService.broadcast("exo.gamification.domain.action", domainEntity, "disable");
+            }
+            if(!oldValue&&domainDTO.isEnabled() ){
+                listenerService.broadcast("exo.gamification.domain.action", domainEntity, "enable");
+            }
             return domainMapper.domainToDomainDTO(domainEntity);
 
         } catch (Exception e) {
@@ -124,12 +146,14 @@ public class DomainService {
      * @param id : domain id
      */
     @ExoTransactional
-    public void deleteDomain (Long id) throws EntityNotFoundException{
+    public void deleteDomain (Long id) throws Exception {
 
         try {
             DomainEntity domainEntity = domainStorage.find(id);
             if(domainEntity!=null){
-                domainStorage.delete(domainEntity);
+                domainEntity.setDeleted(true);
+                domainStorage.update(domainEntity);
+                listenerService.broadcast("exo.gamification.domain.action", domainEntity, "delete");
             }else{
                 LOG.warn("Domain {} not Found",id);
                 throw(new EntityNotFoundException());

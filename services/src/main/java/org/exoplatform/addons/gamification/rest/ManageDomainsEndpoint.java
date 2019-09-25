@@ -86,7 +86,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
         domainDTO.setId(null);
         domainDTO.setCreatedBy(currentUserName);
         domainDTO.setLastModifiedBy(currentUserName);
-        domainDTO.setLastModifiedDate(String.valueOf(new Date()));
+        domainDTO.setLastModifiedDate(new Date());
 
         // --- Add domain
         domainDTO = domainService.addDomain(domainDTO);
@@ -121,12 +121,10 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
       String currentUserName = conversationState.getIdentity().getUserId();
       try {
-        domainDTO.setId(null);
-        domainDTO.setCreatedBy(currentUserName);
         domainDTO.setLastModifiedBy(currentUserName);
-        domainDTO.setLastModifiedDate(String.valueOf(new Date()));
+        domainDTO.setLastModifiedDate(new Date());
 
-        // --- Add domain
+        // --- Update domain
         domainDTO = domainService.updateDomain(domainDTO);
 
         // Compute user id

@@ -12,15 +12,15 @@ import java.util.Objects;
 @NamedQueries({
         @NamedQuery(
                 name = "Rule.getAllRules",
-                query = "SELECT rule FROM Rule rule "
+                query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false"
         ),
         @NamedQuery(
                 name = "Rule.getEnabledRules",
-                query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled "
+                query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false"
         ),
         @NamedQuery(
                 name = "Rule.getAllRulesByDomain",
-                query = "SELECT rule FROM Rule rule where rule.area = :domain "
+                query = "SELECT rule FROM Rule rule where rule.area = :domain AND rule.isDeleted = false"
         ),
         @NamedQuery(
                 name = "Rule.getAllRulesWithNullDomain",
@@ -32,7 +32,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.findEnabledRulesByEvent",
-                query = "SELECT rule FROM Rule rule where rule.event = :event and rule.isEnabled = true"
+                query = "SELECT rule FROM Rule rule where rule.event = :event and rule.isEnabled = true AND rule.isDeleted = false"
         ),
         @NamedQuery(
                 name = "Rule.findRuleByTitle",
@@ -44,7 +44,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.getEventList",
-                query = "SELECT rule.event  FROM Rule rule GROUP BY rule.event"
+                query = "SELECT rule.event  FROM Rule rule  GROUP BY rule.event"
         ),
         @NamedQuery(
                 name = "Rule.deleteRuleByTitle",
@@ -85,6 +85,9 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "ENABLED", nullable = false)
     protected boolean isEnabled;
+
+    @Column(name = "DELETED", nullable = false)
+    protected boolean isDeleted;
 
     public RuleEntity() {
     }
@@ -151,6 +154,14 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setEvent(String event) {
         this.event = event;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     @Override

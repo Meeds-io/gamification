@@ -1,4 +1,5 @@
 import BadgeApp from './components/BadgeApp.vue'
+
 $(document).ready(() => {
     const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language;
     const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`;
@@ -15,3 +16,8 @@ $(document).ready(() => {
         }
     });
 });
+
+
+
+
+

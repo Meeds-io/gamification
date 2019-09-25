@@ -41,13 +41,9 @@ public class DomainMapper {
             domain.setDescription(domainDTO.getDescription());
             domain.setCreatedBy(domainDTO.getCreatedBy());
             domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
-            if (domainDTO.getLastModifiedDate() != null) {
-                try {
-                    domain.setLastModifiedDate(formatter.parse(domainDTO.getLastModifiedDate()));
-                } catch (ParseException e) {
-                    LOG.warn("Cannot parse the domain {} last modified date", domain.getId(), e);
-                }
-            }
+            domain.setDeleted(domainDTO.isDeleted());
+            domain.setEnabled(domainDTO.isEnabled());
+            domain.setLastModifiedDate(domainDTO.getLastModifiedDate());
             return domain;
         }
     }

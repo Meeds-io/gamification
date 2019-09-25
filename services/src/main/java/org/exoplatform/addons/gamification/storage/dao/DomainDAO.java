@@ -8,6 +8,8 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.DomainE
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
+import java.util.List;
+
 public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements GenericDAO<DomainEntity, Long> {
 
     public DomainDAO() {
@@ -20,6 +22,17 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
 
         try {
             return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
+    public List<DomainEntity> getAllDomains() throws PersistenceException {
+
+        TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.getAllDomains", DomainEntity.class);
+
+        try {
+            return query.getResultList();
         } catch (NoResultException e) {
             return null;
         }

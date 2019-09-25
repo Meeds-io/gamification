@@ -49,6 +49,7 @@ public class BadgeMapper {
                     badge.setEndValidityDate(formatter.parse(badgeDTO.getEndValidityDate()));
                 }
                 badge.setEnabled(badgeDTO.isEnabled());
+                badge.setDeleted(badgeDTO.isDeleted());
                 badge.setCreatedBy(badgeDTO.getCreatedBy());
                 if (badgeDTO.getCreatedDate() != null) {
                     badge.setCreatedDate(formatter.parse(badgeDTO.getCreatedDate()));
