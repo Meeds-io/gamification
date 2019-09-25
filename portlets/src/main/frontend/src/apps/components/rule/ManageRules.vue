@@ -19,8 +19,10 @@
                v-if="addError"><i class="uiIconError"></i> {{this.$t('exoplatform.gamification.errorrule')}}
         </alert>
 
+
         <save-rule-form :rule="ruleInForm" :domains="domains" :events="events"  v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
-        <rule-list  :rules="rules"  :domains="domains" v-on:save="onSaveClicked" v-on:remove="onRemoveClicked"></rule-list>
+        <rule-list :domain="domain" :domains="domains" :events="events" :rule="ruleInForm" :rules="rules"
+                   v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></rule-list>
 
     </section>
 </template>
@@ -51,6 +53,7 @@
             updateMessage: '',
             rules: [],
             domains: [],
+            domain: '',
             events: [],
             isadded: false,
             isShown: false,

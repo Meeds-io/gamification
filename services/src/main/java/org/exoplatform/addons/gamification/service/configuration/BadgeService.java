@@ -100,11 +100,17 @@ public class BadgeService {
         try {
             badgeEntity = badgeStorage.findBadgeByTitle(badgeDTO.getTitle());
             if(badgeEntity==null){
+                if(!badgeDTO.getDomainDTO().isEnabled()){
+                    badgeDTO.setEnabled(false);
+                }
                 badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
             }else if(badgeEntity.isDeleted()){
                 Long id = badgeEntity.getId();
                 badgeEntity = badgeMapper.badgeDTOToBadge(badgeDTO);
                 badgeEntity.setId(id);
+                if(!badgeDTO.getDomainDTO().isEnabled()){
+                    badgeDTO.setEnabled(false);
+                }
                 badgeEntity = badgeStorage.update(badgeEntity);
             }else{
                 throw(new EntityExistsException());
@@ -128,7 +134,9 @@ public class BadgeService {
         BadgeEntity badgeEntity = null;
 
         try {
-
+            if(!badgeDTO.getDomainDTO().isEnabled()){
+                badgeDTO.setEnabled(false);
+            }
             badgeEntity = badgeStorage.update(badgeMapper.badgeDTOToBadge(badgeDTO));
 
         } catch (Exception e) {
