@@ -11,17 +11,15 @@
   }
 </script>
 
-
 <style>
-    .UIToolbarContainer .uiDropdownWithIcon>a{
-         color: #4d5466 !important;
-     }
+    .UIToolbarContainer .uiDropdownWithIcon>a {
+        color: #ffffff !important;
+    }
      a, a:hover, a:focus {
           color: inherit;
           text-decoration: none;
      }
      a{
-         color: none;
          text-decoration: none;
          background-color: transparent;
          -webkit-text-decoration-skip: objects;

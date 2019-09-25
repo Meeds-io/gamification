@@ -19,17 +19,17 @@
                 </div>
 
                 <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
-                   <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                         <i class="uiIconFilter uiIconLightGray"></i>
-                   </a>
+
+                    <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
+                       {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
+                    </a>
                      <ul class="dropdown-menu">
-
-                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true">Enabled</a>
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
                          </li>
-                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false">Disabled</a>
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false,filerlabel='disabled'">{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</a>
                          </li>
 
-                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null"> All</a>
+                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null,filerlabel='all'">{{$t(`exoplatform.gamification.all`,"All")}} </a>
                          </li>
 
                  </ul>
@@ -47,8 +47,6 @@
                                 </div>
 
                                 <a class="uiIconClose pull-right" v-on:click.prevent="collapseConfirm(badge)"></a>
-
-                                <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
                             </div>
                             <div class="PopupContent popupContent">
                                 <div class="media">
@@ -68,12 +66,12 @@
                                             }}
                                         </button>
 
-                                        <b-button class="btn-primary pull-right" type="submit"
+                                        <button class="btn-primary pull-right" type="submit"
                                                   v-on:click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
                                             {{
                                             this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
                                             }}
-                                        </b-button>
+                                        </button>
                                     </b-col>
                                 </div>
 
@@ -84,18 +82,25 @@
                 <table class=" uiGrid table table-hover badge-table">
                     <thead>
                     <tr>
-                        <th class="badge-title-col">Title</th>
+                        <th class="badge-icon-col">Icon</th>
+                        <th class="badge-title-col">Badge</th>
                         <th class="badge-desc-col">Description</th>
                         <th class="badge-nedded-score-col">Needed Score</th>
                         <th class="badge-domain-col">Domain</th>
-                        <th class="badge-icon-col">Icon</th>
-                        <th class="badge-status-col">Status</th>
+                        <th class="badge-status-col">Enabled</th>
                         <!--    <th class="badge-created-by-col">Created by</th> -->
-                        <th class="badge-action-col">Action</th>
+                        <th class="badge-action-col">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="badge in filteredBadges">
+                        <td id="iconInputGroup" style="max-width: 100px;">
+                            <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
+                            </div>
+
+                            <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40"></b-form-file>
+
+                        </td>
                         <td class="badge-title-col">
                             <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
                             <input type="text" v-if="editedbadge.id === badge.id" v-model="badge.title"style="width: 130px;min-width: 98%;">
@@ -121,28 +126,23 @@
                                 </option>
                             </select>
                         </td>
-                        <td id="iconInputGroup" style="max-width: 100px;">
-                            <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
-                            </div>
 
-                             <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40"></b-form-file>
-
-                         </td>
                          <td class="badge-status-col">
-                             <div v-if="editedbadge.id === badge.id" style="z-index: 10;">
-                                 <label class="switch" >
+                             <div v-if="editedbadge.id === badge.id">
+                                 <label class="switch">
                                      <input type="checkbox" v-model="badge.enabled">
                                      <span class="slider round"></span>
-                                     <span class="absolute-no">NO</span>
+                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
                                  </label>
                              </div>
-                             <div v-if="editedbadge.id !== badge.id">
-                                 <label class="switch" v-on:click ="badge.enabled = !badge.enabled">
+                             <div v-else>
+                                 <label class="switch" v-on:click="badge.enabled = !badge.enabled">
                                      <input type="checkbox" v-model="badge.enabled">
                                      <span class="slider round"></span>
-                                     <span class="absolute-no">NO</span>
+                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
                                  </label>
                              </div>
+
                          </td>
                         <td class="center actionContainer"  style="z-index: 10;">
                             <a class="actionIcon" data-placement="bottom" href="#" rel="tooltip" v-if="badge.id"
@@ -194,6 +194,9 @@
                 isdeleted: false,
                 isShown: false,
                 enabledFilter: null,
+                filerlabel:"all",
+                editedEnabled: null,
+                enabledMessage:"",
             }
         },
         computed: {
@@ -456,7 +459,7 @@
         max-width: min-content;
     } */
     input[type="text"] {
-        height: 35px;
+        height: 40px;
         margin: auto;
     }
     .custom-file-input:lang(en) ~ .custom-file-label::after {
@@ -546,6 +549,22 @@
         display: flex;
         flex-direction: row-reverse;
         float: right;
+        margin: 10px;
+        font-size: 15px;
+        height: 40px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        max-height: 40px;
+        text-overflow: ellipsis;
         margin-top: 18px;
+    }
+    button.btn.cancel.pull-right {
+        border: 1px solid #e1e8ee !important;
+        color: #4d5466;
+        background: transparent !important;
+    }
+    button.btn-primary.pull-right {
+        border-radius: 0.25rem;
     }
 </style>

@@ -2,15 +2,15 @@
     <section>
         <div class="alert alert-success" v-if="isadded || addSuccess" v-on:="closeAlert()">
             <i class="uiIconSuccess"></i>
-     {{this.$t('exoplatform.gamification.badge')}} {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
+            {{this.$t('exoplatform.gamification.badge')}} {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
         </div>
 
         <b-alert v-if="addError"
-        show="dismissCountDown"
-         dismissible
-         fade
-        variant="danger"
-         @dismiss-count-down="countDownChanged">
+                 show="dismissCountDown"
+                 dismissible
+                 fade
+                 variant="danger"
+                 @dismiss-count-down="countDownChanged">
             {{this.$t('exoplatform.gamification.errorbadge')}} </b-alert>
 
         <save-badge-form :badge="badgeInForm" :domains="domains" v-on:submit="onBadgeCreated" v-on:failAdd="onBadgeFail" v-on:cancel="resetBadgeInForm"></save-badge-form>
@@ -38,7 +38,7 @@
                 dismissCountDown: 0,
                 showDismissibleAlert: false,
                 domain: '',
-                enabled: null,
+                enabled: true,
                 createdDate: null,
                 lastModifiedBy: '',
                 lastModifiedDate: null,
@@ -50,7 +50,7 @@
             updateMessage: '',
             badges: [],
             domains: []
-,
+            ,
         }
     }
     export default {
@@ -66,6 +66,7 @@
             },
             onSaveClicked(badge) {
                 this.updateBadge(badge)
+                this.isShown = !this.isShown;
             },
             onBadgeCreated(badge) {
                 this.isadded = true;
@@ -73,15 +74,15 @@
                 this.updateMessage='added'
                 this.badges.push(badge)
                 this.resetBadgeInForm()
+                this. collapseButton()
+            },
+            collapseButton() {
+                this.isShown = !this.isShown;
             },
             onBadgeFail(rule) {
                 this.addError=true
                 this.errors.push(e)
                 this.resetBadgeInForm()
-                this.dismissCountDown = 5
-            },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
             },
 
             onBadgeAction(badge) {
@@ -128,14 +129,14 @@
                             this.badges.push(badge)
                             this.dismissCountDown = 5
 
-                        .catch(e => {
-                            this.addError = true
-                            this.errors.push(e)
+                                .catch(e => {
+                                    this.addError = true
+                                    this.errors.push(e)
+                                })
                         })
-                })
-                    .catch(e => {
-                        console.log("Error")
-                    })
+                        .catch(e => {
+                            console.log("Error")
+                        })
                 })
             }
         },
@@ -170,4 +171,8 @@
         -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
         -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
     }
+    .collapse.show.out {
+        display: none;
+    }
+
 </style>
