@@ -163,10 +163,11 @@
             },
             onSubmit() {
                 if (this.validateForm()) {
+                    this.collapseButton();
                     this.isShown = !this.isShown;
 
                     this.createRule(this.rule);
-                    this.collapseButton()
+
                 }
                 if (this.isShown) {
                     this.closeAlert(".alert")

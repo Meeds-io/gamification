@@ -17,26 +17,24 @@
                 <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
                     <i class="uiIconSearch uiIconLightGray"></i>
                 </a>
-
             </div>
 
-              <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
+            <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
                 <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                    <i class="uiIconFilter uiIconLightGray"></i>
+                    {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
                 </a>
                 <ul class="dropdown-menu">
 
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true">Enabled</a>
+                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
                     </li>
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false">Disabled</a>
+                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false,filerlabel='disabled'">{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</a>
                     </li>
 
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null"> All</a>
+                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null,filerlabel='all'">{{$t(`exoplatform.gamification.all`,"All")}} </a>
                     </li>
 
                 </ul>
             </div>
-
 
             <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                  data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
@@ -289,7 +287,10 @@ export default {
             isShown: false,
             isShowndeleted: false,
             enabledFilter: null,
-            isEnabled: false
+            isEnabled: false,
+            editedEnabled: null,
+            enabledMessage:"",
+            filerlabel:"all",
         }
     },
 
@@ -933,5 +934,28 @@ label.col-form-label.pt-0 {
 select.mb-4.select-event {
     margin: 0 !important;
     width: 100%;
+}
+.filterWithIcon{
+    display: flex;
+    flex-direction: row-reverse;
+    float: right;
+    margin: 10px;
+    font-size: 15px;
+    height: 35px;
+    border: Solid 2px #e1e8ee;
+    border-radius: 5px;
+    box-shadow: none;
+    width: 90px;
+    text-overflow: ellipsis;
+    margin-top: 18px;
+}
+.action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
+    box-shadow: none;
+    border: none;
+    text-decoration: none;
+    margin: auto;
+    width: 100%;
+    border-radius: 3px;
+    background-color: transparent;
 }
 </style>

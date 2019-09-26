@@ -403,6 +403,7 @@
         border: none;
         text-decoration: none;
         margin: auto;
+        width: 100%;
         border-radius: 3px;
         background-color: transparent;
     }

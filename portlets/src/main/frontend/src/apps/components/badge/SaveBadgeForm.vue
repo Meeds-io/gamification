@@ -226,6 +226,12 @@ export default {
                 onCancel: () => {},
             });
         },
+        closeAlert(item) {
+            setTimeout(function () {
+                $(item).fadeOut('fast')
+            }, 4000);
+
+        },
     }
 }
 </script>

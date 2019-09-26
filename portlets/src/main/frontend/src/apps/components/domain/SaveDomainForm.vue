@@ -150,6 +150,7 @@
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
             },
+
             confirm() {
                 this.$modals.confirm({
                     message: 'Confirm?',
@@ -159,7 +160,12 @@
                     },
                 });
             },
+            closeAlert(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 4000);
 
+            },
             createDomain(domainDTO) {
                 axios.post(`/rest/gamification/domains`, domainDTO)
                     .then(response => {

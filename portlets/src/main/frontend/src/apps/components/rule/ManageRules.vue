@@ -166,8 +166,10 @@
 <style scoped>
     .alert-success {
         position: fixed;
-        top: 22% !important;
-        margin: auto 0.5% !important;
+        max-width: 40%;
+        margin: 10px !important;
+        position: fixed;
+        top: 41% !important;
     }
 
     section {

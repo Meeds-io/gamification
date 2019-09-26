@@ -725,13 +725,22 @@
         float: right;
         margin: 10px;
         font-size: 15px;
-        height: 40px;
+        height: 35px;
         border: Solid 2px #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
-        max-height: 40px;
+        width: 90px;
         text-overflow: ellipsis;
         margin-top: 18px;
+    }
+    .action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
+        box-shadow: none;
+        border: none;
+        text-decoration: none;
+        margin: auto;
+        width: 100%;
+        border-radius: 3px;
+        background-color: transparent;
     }
     button.btn.cancel.pull-right {
         border: 1px solid #e1e8ee !important;

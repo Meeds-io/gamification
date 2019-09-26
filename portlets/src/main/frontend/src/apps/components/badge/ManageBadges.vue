@@ -162,4 +162,10 @@ section {
 .collapse.show.out {
     display: none;
 }
+.alert-success {
+    max-width: 40%;
+    margin: 10px !important;
+    position: fixed;
+    top: 41% !important;
+}
 </style>
