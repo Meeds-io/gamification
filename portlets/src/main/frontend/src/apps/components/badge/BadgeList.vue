@@ -1,3 +1,22 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <template>
     <b-container fluid>
         <b-row>
@@ -8,14 +27,13 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <i class="uiIconSuccess"></i>
-                    {{this.$t('exoplatform.gamification.badge.successdelete')}}
                 </div>
 
                 <div class="uiSearchForm uiSearchInput searchWithIcon">
                     <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
                         <i class="uiIconSearch uiIconLightGray"></i>
                     </a>
-                    <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')"
+                    <input :placeholder="''"
                            name="keyword" type="text" v-model="search" value="">
                 </div>
 
@@ -35,6 +53,111 @@
 
                  </ul>
              </div>
+
+                         <div :class="isEditShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
+                 data-parent="#accordionExample" id="collapseThree" style="height: 0px; transition: inherit;">
+                <div class="card-body">
+                    <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm"
+                         style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                        <div class="popupHeader ClearFix">
+                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseEditButton(), onCancel()"></a>
+                            <span class="PopupTitle popupTitle">  {{ this.$t('exoplatform.gamification.editbadge',"Edit badge")}}</span>
+                        </div>
+                        <div class="PopupContent popupContent">
+                            <form id="titleInputGroup">
+
+                                <label class="pt-0">{{ this.$t('exoplatform.gamification.title',"Title") }}:</label>
+                                <input class="form-control" id="titleInput" placeholder="Enter badge's title" required
+                                       type="text"
+                                       v-model="editedbadge.title">
+                                </input>
+
+
+                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
+                                     @dismissed="dismissCountdown=0"
+                                     class="require-msg" dismissible v-if="formErrors.title"
+                                     variant="danger">
+                                    {{ this.$t('exoplatform.gamification.Badgetitle',"Badge Title")}} {{dismissCountDown}}
+                                </div>
+                            </form>
+
+                            <div id="descriptionInputGroup">
+                                <label class="pt-0" id="descriptionInput">{{
+                                    this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description")
+                                    }}:</label>
+                                <textarea :max-rows="6" :rows="3" class="form-control"
+                                          id="badgeDescription" placeholder="Enter description"
+                                          v-model="editedbadge.description">
+                    </textarea>
+                            </div>
+
+                            <form id="neededScoreInputGroup" >
+                                <label id="Needed" label-for="neededScoreInput" class="pt-0">Score:</label>
+                                <input id="neededScoreInput" type="number" v-model="editedbadge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
+
+                                <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    Badge needed score is required please enter a value {{dismissCountDown}}
+                                </b-alert>
+                            </form>
+                            <form id="iconInputGroup">
+                                  <label for="iconInput"  class="pt-0"> Icon: </label>
+
+                                  <input type="file"
+                                         id="iconInput" name="badge.icon"
+                                         accept="image/jpeg, image/png, image/gif"
+                                         placeholder="+"
+                                         @change="onFilePicked">
+                                         
+                              </form> 
+
+                            <form id="domainSelectboxGroup">
+                                <label class="pt-0">Domain:</label>
+
+                                <select class="mb-4" v-model="editedbadge.domainDTO">
+                                    <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain','Select domain')
+                                        }}
+                                    </option>
+                                    <option v-bind:value="option" v-for="option in domains">
+                                        {{
+                                        $t('exoplatform.gamification.gamificationinformation.domain.${option.title}',option.title)
+                                        }}
+                                    </option>
+                                </select>
+                            </form>
+
+
+
+                             <form id="enabledswittch">
+                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
+                                <label class="uiSwitchBtn">
+                                    <input type="checkbox" v-model="editedbadge.enabled" >
+                                    <span class="slider round"></span>
+                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
+                                </label>
+                            </form>
+ 
+
+                            <b-row style="display: inherit;">
+                                <b-col>
+
+                                    <button class="btn secondary pull-right" type="cancel"
+                                            v-on:click.prevent="collapseEditButton(), onCancel()">{{
+                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel',"cancel") }}
+                                    </button>
+                                    <button class="btn-primary pull-right" type="submit"
+                                            v-on:click.prevent="onSave">
+                                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm',"confirm") }}
+
+                                    </button>
+                                </b-col>
+
+                            </b-row>
+                        </div>
+                    </div> 
+                </div>
+
+            </div>
 
                 <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                      data-parent="#accordionExample" id="collapseTwo" style=" transition: inherit;">
@@ -105,83 +228,50 @@
                     <tbody>
                     <tr v-for="badge in filteredBadges">
                         <td id="iconInputGroup" style="max-width: 100px;">
-                            <div v-if="editedbadge.id !== badge.id"  style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
+                            <div   style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
-
-                            <b-form-file v-if="editedbadge.id === badge.id" v-model="badge.icon"  placeholder="+" accept="image/jpeg, image/png, image/gif" class="m-1"  width="40" height="40"></b-form-file>
 
                         </td>
                         <td class="badge-title-col">
-                            <div v-if="editedbadge.id !== badge.id">{{badge.title}}</div>
-                            <input style="width: 130px;min-width: 98%;" type="text" v-if="editedbadge.id === badge.id"
-                                   v-model="badge.title">
+                            <div>{{badge.title}}</div>
                         </td>
                         <td class="badge-desc-col">
-                            <div v-if="editedbadge.id !== badge.id">{{badge.description}}</div>
-                            <input class="badge-desc-col" style="min-width: 98%;" type="text"
-                                   v-if="editedbadge.id === badge.id" v-model="badge.description">
+                            <div>{{badge.description}}</div>
                         </td>
                         <td class="badge-needed-score-col">
-                            <div v-if="editedbadge.id !== badge.id">
+                            <div>
                                 <div v-if="badge.neededScore >=1000">{{badge.neededScore/1000}} K</div>
                                 <div v-if="badge.neededScore <1000"> {{badge.neededScore}}</div>
                             </div>
-                            <input  class="badge-needed-score-col" type="text" v-if="editedbadge.id === badge.id" v-model="badge.neededScore">
                         </td>
                         <td style="max-width: 105px;">
-                            <div v-if="editedbadge.id !== badge.id && badge.domainDTO != null">{{badge.domainDTO.title}}</div>
-
-                            <select required style="max-width: 115px;margin: 0px auto;height: 35px;"
-                                    v-if="editedbadge.id === badge.id" v-model="badge.domainDTO">
-                                <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain') }}
-                                </option>
-                                <option v-bind:value="option" v-for="option in domains">
-                                    {{ option.title }}
-                                </option>
-                            </select>
+                            <div v-if="badge.domainDTO != null">{{badge.domainDTO.title}}</div>
                         </td>
 
 
                          <td class="badge-status-col">
-                             <div v-if="editedbadge.id === badge.id">
+                             <div>
                                  <label class="switch">
-                                     <input type="checkbox" v-model="badge.enabled">
+                                     <input type="checkbox" disabled v-model="badge.enabled">
                                      <span class="slider round"></span>
-                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
+                                     <span class="absolute-no">{{$t('exoplatform.gamification.NO')}}</span>
                                  </label>
                              </div>
-                             <div v-else>
-                                 <label class="switch" v-on:click="badge.enabled = !badge.enabled">
-                                     <input type="checkbox" v-model="badge.enabled">
-                                     <span class="slider round"></span>
-                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
-                                 </label>
-                             </div>
-
                          </td>
 
                         <td class="center actionContainer"  style="z-index: 10;">
+
+                            <a aria-controls="collapseThree" aria-expanded="true" data-target="#collapseThree"
+                               data-toggle="collapse" href="" v-on:click.prevent="collapseEditButton(badge)"> <i
+                                    class="uiIconEdit uiIconLightGray"></i></a>
                             <a class="actionIcon" data-original-title="Supprimer" data-placement="bottom" href="#"
                                rel="tooltip"
                                title="Supprimer"
                                v-b-tooltip.hover v-if="badge.id" v-on:click.prevent="collapseConfirm(badge)">
                                 <i class="uiIconDelete uiIconLightGray"></i>
                             </a>
-                            <a class="actionIcon" data-original-title="Edit" data-placement="bottom" href="#"
-                               rel="tooltip" title="Edit"
-                               v-b-tooltip.hover v-if="editedbadge.id !== badge.id"
-                               v-on:click.prevent.stop="onEdit(badge)">
-                                <i class="uiIconEdit uiIconLightGray"></i></a>
-                            <a class="actionIcon" data-original-title="Edit" data-placement="bottom" href="#"
-                               rel="tooltip" title="Save"
-                               v-b-tooltip.hover v-if="editedbadge.id === badge.id"
-                               v-on:click.stop.prevent="onSave(badge)">
-                                <i class="uiIconSave uiIconLightGray"></i></a>
-                            <a class="actionIcon" data-original-title="Cancel" data-placement="bottom" href="#"
-                               rel="tooltip" title="Cancel"
-                               v-b-tooltip.hover v-if="editedbadge.id === badge.id"
-                               v-on:click.prevent="onCancel(badge)">
-                                <i class="uiIcon uiIconClose uiIconBlue"></i></a>
+
+
                         </td>
                     </tr>
                     <tr v-if="!badges.length || !filteredBadges.length  " v-model="search">
@@ -201,6 +291,7 @@
     import BootstrapVue from 'bootstrap-vue'
     import 'bootstrap/dist/css/bootstrap.css'
     import 'bootstrap-vue/dist/bootstrap-vue.css'
+     import axios from 'axios'
 
     Vue.prototype.moment = moment;
     Vue.use(BootstrapVue);
@@ -216,6 +307,7 @@
                 isEnabled: false,
                 isdeleted: false,
                 isShown: false,
+                isEditShown: false,
                 enabledFilter: null,
                 filerlabel:"all",
                 editedEnabled: null,
@@ -242,15 +334,13 @@
             }
         },
         methods: {
-            onSave(badge) {
-                this.$emit('save', badge);
+            onSave() {
+
+                this.$emit('save', this.editedbadge);
                 this.editedbadge= {};
+                this.isEditShown = !this.isEditShown;
             },
-            onEdit(badge) {
-                //this.$emit('edit', badge)
-                this.badge=badge;
-                this.editedbadge=badge;
-            },
+
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0];
                 this.selectedFileName = event.target.files[0].name
@@ -272,11 +362,57 @@
                     this.closeAlertt(".alert")
                 }
             },
+            collapseEditButton(badge) {
+                this.badge = badge;
+                this.editedbadge=badge;
+                this.isEditShown = !this.isEditShown;
+            },
             closeAlertt(item) {
                 setTimeout(function () {
                     $(item).fadeOut('fast')
                 }, 8000);
-            }
+            } ,         
+    getFormData(files) {
+      const data = new FormData();
+      [...files].forEach((file) => {
+        data.append('data', file, file.name); // currently only one file at a time
+      });
+      return data;
+    },
+
+
+               onFilePicked (e) {
+  			const files = e.target.files
+  			if(files[0] !== undefined) {
+  				this.imageName = files[0].name
+  				if(this.imageName.lastIndexOf('.') <= 0) {
+  					return
+  				}
+  				const fr = new FileReader ()
+  				fr.readAsDataURL(files[0])
+  				fr.addEventListener('load', () => {
+  					this.imageUrl = fr.result
+  					this.imageFile = files[0]
+          })
+
+                const MAX_RANDOM_NUMBER = 100000;
+      const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+      console.log(uploadId);
+      const form = this.getFormData(files);
+       axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(response => {
+                      this.editedbadge.uploadId=uploadId
+                                })
+  			} else {
+  				this.imageName = ''
+  				this.imageFile = ''
+  				this.imageUrl = ''
+  			}
+  		}
         },
     }
 </script>
@@ -323,7 +459,7 @@
         border: none;
     }
     /* switch */
-    .switch {
+    .switch, .uiSwitchBtn {
         position: relative;
         display: inline-block;
         width: 53px;
@@ -331,8 +467,12 @@
         /* zoom: 30%; */
         top: 0.4rem;
     }
+    label.uiSwitchBtn {
+        width: 60px !important;
+    }
 
-    .switch input {
+
+    .switch input, .uiSwitchBtn input {
         display: none;
     }
 
@@ -445,7 +585,7 @@
     }
     select.mb-4 {
         max-width: 115px;
-        margin: 0px auto;
+        margin: 10px auto;
         height: 35px;
     }
     i.uiIconClose.uiIconBlue {
@@ -472,15 +612,6 @@
     input.badge-needed-score-col {
         width: 60px;
         text-align: center;
-    }
-    input[type="file"],  .custom-file-input {
-        max-width: 65px !important;
-        width: 65px !important;
-        overflow: hidden;
-    }
-    input#__BVID__8{
-        max-width: 65px !important;
-        width: 65px !important;
     }
     .table td {
         vertical-align: middle;
@@ -568,6 +699,20 @@
         background-color: rgba(0, 0, 0, 0.4);
     }
 
+        div#collapseThree {
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+
     .alert-success {
         position: fixed;
         margin-top: 124px !important;
@@ -595,5 +740,21 @@
     }
     button.btn-primary.pull-right {
         border-radius: 0.25rem;
+    }
+
+    button.btn.secondary.pull-right {
+        padding: 8px 25px;
+        margin-left: 25px;
+        border: 1px solid #e1e8ee !important;
+        color: #4d5466;
+        background-color: transparent !important;
+    }
+    div#collapseThree label {
+        font-weight: 600;
+        margin-right: 20px;
+    }
+    form#domainSelectboxGroup, form#enabledswittch {
+        width: 40%;
+        display: inline-block;
     }
 </style>
