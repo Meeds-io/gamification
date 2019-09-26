@@ -15,8 +15,9 @@
 </script>
 
 <style scoped>
-    .UIToolbarContainer .uiDropdownWithIcon > a {
-        color: #4d5466 !important;
+
+    .UIToolbarContainerDark .uiDropdownWithIcon > a {
+        color: #ffffff !important;
     }
 
     a, a:hover, a:focus {
