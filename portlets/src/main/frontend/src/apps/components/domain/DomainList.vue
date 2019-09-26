@@ -1,21 +1,18 @@
 <template>
-
     <b-container fluid>
         <b-row>
             <b-col sm="12">
                 <div>
                     <div class="uiSearchForm uiSearchInput searchWithIcon">
+                        <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search','Search')"
+                               name="keyword" type="text" v-model="search" value="">
                         <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
                             <i class="uiIconSearch uiIconLightGray"></i>
                         </a>
-                        <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search','Search')"
-                               name="keyword" type="text" v-model="search" value="">
                     </div>
-
-                    
               <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
                 <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                    <i class="uiIconFilter uiIconLightGray">{{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}</i>
+                    {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
                 </a>
                 <ul class="dropdown-menu">
 
@@ -30,7 +27,12 @@
                 </ul>
             </div>
 
-
+                    <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlert()">
+                        <button aria-label="Close" class="close" data-dismiss="alert" style="line-height: 27px; margin-right: 5px;" type="button">
+                        </button>
+                        <i class="uiIconSuccess"></i>
+                        {{this.$t('exoplatform.gamification.domain.successdelete')}}
+                    </div>
                     <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                          data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
 
@@ -58,11 +60,11 @@
                                             }}
                                     </button>
 
-                                    <b-button class="btn-primary pull-right" type="submit" v-on:click.prevent="onRemove(editedDomain.id),collapseButtonn(domain,true)">
+                                    <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onRemove(editedDomain.id),collapseButtonn(domain,true)">
                                         {{
                                             this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
                                             }}
-                                    </b-button>
+                                    </button>
                                 </b-col>
                             </div>
 
@@ -112,7 +114,6 @@
                                             <i class="uiIconError"></i> {{ this.$t('exoplatform.gamification.message.domain.description.required',"Domain description is required please enter a description") }} {{dismissCountDown}}
                                         </div>
                                     </form>
-
                             <form>
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
                                 <label class="uiSwitchBtn">
@@ -120,7 +121,7 @@
                                     <span class="slider round"></span>
                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
                                 </label>
-                                <div>{{enabledMessage}}</div>
+                                <div class="error">{{enabledMessage}}</div>
                             </form>
                                     <div class="row">
                                         <b-col>
@@ -129,12 +130,12 @@
                                                 this.$t('exoplatform.gamification.gamificationinformation.domain.cancel',"Cancel")
                                                 }}
                                             </button>
-                                            <b-button class="btn-primary pull-right" type="submit"
+                                            <button class="btn-primary pull-right" type="submit"
                                                       v-on:click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)">
                                                 {{
                                                 this.$t('exoplatform.gamification.gamificationinformation.domain.confirm',"Confirm")
                                                 }}
-                                            </b-button>
+                                            </button>
                                         </b-col>
                                     </div>
                                 </div>
@@ -244,6 +245,7 @@
                 enabledFilter: null,
                 filerlabel:"all",
                 confirm: false,
+                isdeleted: false,
                 config: {
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
@@ -283,6 +285,7 @@
             onRemove(id) {
 
                 this.$emit('remove', id);
+                this.isdeleted = true
 
 
             },
@@ -332,6 +335,9 @@
                 this.editedDomain = domain;
                 this.editedEnabled = domain.enabled;
                 this.isShown = !this.isShown;
+                if (this.isShown) {
+                    this.closeAlertt(".alert")
+                }
             },
 
             countDownChanged(dismissCountDown) {
@@ -346,7 +352,12 @@
                     },
                 });
             },
+            closeAlert(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 4000);
 
+            }
 
         }
     }
@@ -354,34 +365,47 @@
 </script>
 
 <style scoped>
+
     .uiSearchInput .advancedSearch, .uiSearchInput .AdvancedSearch {
-        position: relative;
-        right: 25px;
-        top: 10px;
+        display: block;
+        position: absolute;
+        right: 5px;
+        cursor: pointer;
     }
 
     i.uiIconSearch.uiIconLightGray {
         position: relative;
         float: left;
-        margin-right: 1%;
     }
-
     .uiSearchInput.searchWithIcon {
         display: flex;
-        margin-left: 70%;
-        margin-top: 19px;
-        position: static;
+        flex-direction: row-reverse;
+        float: right;
+        margin-top: 18px;
     }
 
-    
-.filterWithIcon {
-    display: flex;
-    flex-direction: row-reverse;
-    float: right;
-    margin-top: 18px;
-}
-
-
+    .filterWithIcon{
+        display: flex;
+        flex-direction: row-reverse;
+        float: right;
+        margin: 10px;
+        font-size: 15px;
+        height: 35px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        width: 90px;
+        text-overflow: ellipsis;
+        margin-top: 18px;
+    }
+    .action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
+        box-shadow: none;
+        border: none;
+        text-decoration: none;
+        margin: auto;
+        border-radius: 3px;
+        background-color: transparent;
+    }
     @media (max-width: 416px) {
         .uiSearchInput.searchWithIcon {
             max-width: 18%;
@@ -418,12 +442,19 @@
     .btn-primary:focus, .btn-primary.focus {
         box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
     }
-
+    button.btn-primary.pull-right {
+        border-radius: 0.25rem;
+        height: 44px;
+    }
+    button.btn-primary.pull-right:hover {
+        background: #476a9c;
+        color: #f9f9f9 !important;
+    }
     label {
         display: inline-block;
         max-width: 100%;
         margin-bottom: 5px;
-        font-weight: 500;
+        font-weight: 600;
         color: #333;
     }
 
@@ -866,5 +897,27 @@
         align-content: stretch;
         padding: 8px 25px;
         margin-left: 500px;
+
+    }
+    .UIToolbarContainer .uiDropdownWithIcon > a {
+        color: #ffffff !important;
+    }
+    button.btn.cancel.pull-right {
+        border: 1px solid #e1e8ee !important;
+        color: #4d5466;
+        background: transparent !important;
+    }
+    button.btn.cancel.pull-right:hover, button.btn-primary.pull-right:hover{
+        color: #4d5466;
+    }
+    div#collapseTwo button[data-v-52f850bc], [type="button"], [type="reset"], [type="submit"]{
+        margin-left: 1rem;
+        height: 44px;
+    }
+    .alert-success {
+        position: fixed;
+        margin-top: 124px !important;
+        margin-left: 38%;
+        transform: translateX(-50%);
     }
 </style>
