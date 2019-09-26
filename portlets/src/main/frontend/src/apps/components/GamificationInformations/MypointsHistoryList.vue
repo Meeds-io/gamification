@@ -24,7 +24,7 @@
             <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
                 <a v-bind:href="user.objectId" >
 
-                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`) }}
+                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`,rule.title) }}
 
                 </a> </td>
 
@@ -32,7 +32,7 @@
 
             <td>{{user.createdDate}}</td>
             <td>{{user.actionScore}}</td>
-            <td>{{ $t(`exoplatform.gamification.gamificationinformation.domain.${user.domain}`) }}</td>
+            <td>{{ $t(`exoplatform.gamification.gamificationinformation.domain.${user.domain}`,user.domain) }}</td>
 
         </tr>
 
@@ -52,11 +52,11 @@
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import { Popover } from 'bootstrap-vue/es/components';
-    import { Image } from 'bootstrap-vue/es/components';
+    import {Image, Popover} from 'bootstrap-vue/es/components';
     import axios from 'axios';
     import Avatar from 'vue-avatar'
     import TotalPointsFilter from "./TotalPointsFilter";
+
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -112,7 +112,7 @@
         },
         methods: {
             filter() {
-                let self = this
+                let self = this;
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
                         this.users = response.data;
@@ -125,7 +125,7 @@
 
             },
             showMore() {
-                var url = window.location.pathname
+                var url = window.location.pathname;
                 let self = this;
                 self.loadCapacity += 10;
                 axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'capacity': self.loadCapacity,'url': url} })
@@ -155,7 +155,7 @@
                 jQuery(this).popover("show");
             },
             isActive(value) {
-                return
+                return;
                 this.active === value
             },
             toggleClass() {
@@ -163,7 +163,7 @@
             },
         },
         created() {
-            var url = window.location.pathname
+            var url = window.location.pathname;
             axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
                 .then(response => {
                     this.users = response.data;
