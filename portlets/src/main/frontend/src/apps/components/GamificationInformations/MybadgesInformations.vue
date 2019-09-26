@@ -89,7 +89,6 @@
                 </div>
 
             </b-col>
-
         </div><br><hr><div>
 
         <h3> {{ this.$t(`badges.knowledge`,badges.knowledge) }} </h3>
