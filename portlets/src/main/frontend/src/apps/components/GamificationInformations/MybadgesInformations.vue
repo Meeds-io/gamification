@@ -3,33 +3,36 @@
     <b-container fluid class="p-4" id="reputation-badge-container">
 
         <div>
-            <h3> Social Badges </h3>
+            <h3> {{ this.$t(`badges.social`,badges.social) }} </h3>
             <b-col md="12" class="text-center no-padding" >
                 <div class="protected content bg-indigo" :key="prog" v-for="prog in progs" v-if="prog.label=== 'Social'" >
                     <div class="container text-center no-reveal" :key="badge" v-for="badge in badges" v-if="badge.zone === 'Social'" >
                         <div class="box" v-if=" prog.value > badge.startScore">
                             <img :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" fluid height="200px" thumbnail width="200px"/>
-                                <b-popover :content="`${badge.description}`" :placement="'top'" :target="'reputation'+badge.id"
-                                           triggers="hover focus">
-                                    <div class="level-badges">{{badge.level}}<br><span>Level</span>
+                            <b-popover :content="`${badge.description}`" :placement="'top'"
+                                       :target="'reputation'+badge.id"
+                                       triggers="hover focus">
+                                <div class="level-badges">{{badge.level}}<br><span>Level</span>
+                                </div>
+                                <div class="title-badges">{{badge.title}}</div>
+                                <div class="cat-badges">{{badge.domain}}</div>
+                                <div class="desc-badges">{{badge.description}}</div>
+                                <div class="prog-point">
+                                    <div class="first-number">{{badge.startScore}}
+                                        <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
+                                        <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
                                     </div>
-                                    <div class="title-badges">{{badge.title}}</div>
-                                    <div class="cat-badges">{{badge.domain}}</div>
-                                    <div class="desc-badges">{{badge.description}}</div>
-                                    <div class="prog-point">
-                                        <div class="first-number">{{badge.startScore}}
-                                            <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
-                                            <div v-if="badge.startScore <1000"> {{badge.startScore}}</div></div>
-                                        <hr class="interval">
-                                        <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
-                                            ∞
-                                        </div>
-                                        <div class="last-number" v-else>
-                                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
-                                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
-                                        </div>
+                                    <hr class="interval">
+                                    <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}"
+                                         v-if="badge.endScore == 0">
+                                        ∞
                                     </div>
-                                </b-popover>
+                                    <div class="last-number" v-else>
+                                        <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                        <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                    </div>
+                                </div>
+                            </b-popover>
                         </div>
 
                         <div class="box" v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore " :id="'rep'+badge.id">
@@ -89,7 +92,7 @@
 
         </div><br><hr><div>
 
-        <h3> Knowledge Badges </h3>
+        <h3> {{ this.$t(`badges.knowledge`,badges.knowledge) }} </h3>
 
         <b-col md="12" class="text-center no-padding" :key="prog" v-for="prog in progs" v-if="prog.label=== 'Knowledge'">
             <div class="protected content bg-indigo" >
@@ -97,7 +100,7 @@
                     <div class="box" v-if=" prog.value > badge.startScore ">
                         <img :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" fluid height="200px"
 
-                               thumbnail width="200px"/>
+                             thumbnail width="200px"/>
                         <div class="title-badge">{{badge.title}}</div>
                         <b-popover :content="`${badge.description}`" :placement="'top'" :target="'reputation'+badge.id"
                                    triggers="hover focus">
@@ -157,7 +160,7 @@
                                         :options="defaultOptions"
                                         :value=" (prog.value * 100)/((badge.endScore))"
 
-                                 />
+                                />
                                 <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
                                     ∞
                                 </div>
@@ -166,22 +169,22 @@
                                     <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
                                 </div>
                             </div>
-                            </b-popover>
-                        </div>
+                        </b-popover>
                     </div>
                 </div>
-            </b-col>
-        </div>
+            </div>
+        </b-col>
+    </div>
     </b-container>
 </template>
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import { Popover } from 'bootstrap-vue/es/components';
-    import { Image } from 'bootstrap-vue/es/components';
+    import {Image, Popover} from 'bootstrap-vue/es/components';
     import ProgressBar from 'vuejs-progress-bar'
-    Vue.use(ProgressBar)
     import axios from 'axios';
+
+    Vue.use(ProgressBar);
     Vue.use(BootstrapVue);
     Vue.use(Popover);
     Vue.use(Image);
@@ -192,7 +195,7 @@
             value: '',
             defaultOptions: Object,
         }
-    }
+    };
     export default {
         data: initialData,
         computed: {
@@ -225,7 +228,7 @@
                 return badge.endScore == 0 ;
             },
             mergeDefaultOptionsWithProp: function (options) {
-                var result = this.defaultOptions
+                var result = this.defaultOptions;
                 for (var option in options)
                 {
                     if (options[option] !== null && typeof(options[option]) === 'object') {
@@ -270,19 +273,19 @@
             }
         },
         created() {
-            var url = window.location.pathname
-            console.log(url)
+            var url = window.location.pathname;
+            console.log(url);
             axios.get(`/rest/gamification/reputation/AllofBadges`, { params: { 'url': url } })
                 .then(response => {
                     this.badges = response.data;
-                })
+                });
             axios.get(`/rest/gamification/reputation/stats`, { params: { 'url': url }})
                 .then(response => {
                     this.progs = response.data;
                 })
                 .catch(e => {
                     this.errors.push(e)
-                })
+                });
             this.defaultOptions = {
                 text: {
                     color: '#FFFFFF',
@@ -311,5 +314,6 @@
                     type: 'line'
                 }}
         }
+
     }
 </script>
