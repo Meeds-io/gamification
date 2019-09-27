@@ -81,6 +81,11 @@
             <groupId>org.exoplatform.commons</groupId>
             <artifactId>commons-file-storage</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.exoplatform.commons</groupId>
+            <artifactId>commons-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- Lombok -->
         <!--
         <dependency>
@@ -199,8 +204,6 @@
             <artifactId>social-component-core-jpa</artifactId>
             <scope>test</scope>
         </dependency>
-
-
         <!-- End Test-->
     </dependencies>
     <build>
