@@ -28,6 +28,10 @@
     <name>eXo Gamification :: Backend Services</name>
     <description>eXo Gamification services</description>
 
+    <properties>
+        <exo.test.coverage.ratio>0.00</exo.test.coverage.ratio>
+    </properties>
+
     <dependencies>
         <!-- Others third party -->
         <dependency>
