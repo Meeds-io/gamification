@@ -53,7 +53,7 @@
                                             }}</p>
                                 </div>
                             </div>
-                            <div class="uiAction uiActionBorder">
+                            <div class="uiAction uiActionBorder pull-right" style="float: right">
                                 <b-col>
                                     <button class="btn cancel pull-right" type="submit" v-on:click.prevent="collapseButtonn(domain,true), onCancel()">{{
                                             this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
@@ -131,7 +131,7 @@
                                                 }}
                                             </button>
                                             <button class="btn-primary pull-right" type="submit"
-                                                      v-on:click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)">
+                                                      v-on:click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)" style="margin-left: 500px;">
                                                 {{
                                                 this.$t('exoplatform.gamification.gamificationinformation.domain.confirm',"Confirm")
                                                 }}
@@ -391,7 +391,7 @@
         margin: 10px;
         font-size: 15px;
         height: 35px;
-        border: Solid 2px #e1e8ee;
+        border: 2px Solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
         width: 90px;
@@ -511,7 +511,7 @@
 
     button.btn.secondary {
         padding: 8px 25px;
-        margin-left: 25px;
+        margin: 0 25px;;
         border: 1px solid #e1e8ee !important;
         color: #4d5466;
         background-color: transparent !important;
@@ -897,7 +897,7 @@
         -webkit-appearance: button;
         align-content: stretch;
         padding: 8px 25px;
-        margin-left: 500px;
+        /* margin-left: 500px; */
 
     }
     .UIToolbarContainer .uiDropdownWithIcon > a {
@@ -912,9 +912,10 @@
         color: #4d5466;
     }
     div#collapseTwo button[data-v-52f850bc], [type="button"], [type="reset"], [type="submit"]{
-        margin-left: 1rem;
         height: 44px;
+
     }
+
     .alert-success {
         position: fixed;
         margin-top: 124px !important;

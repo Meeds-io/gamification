@@ -1,9 +1,6 @@
 <template>
     <section>
-
-
         <div class="alert alert-success" v-if="isadded || addSuccess" v-on:="closeAlert()">
-
             <i class="uiIconSuccess"></i>
             {{this.$t('exoplatform.gamification.rule')}} {{updateMessage}}
             {{this.$t('exoplatform.gamification.successfully')}}

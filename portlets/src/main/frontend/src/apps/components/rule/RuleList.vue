@@ -4,7 +4,7 @@
         <b-col sm="12">
             <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlert()">
                 <button aria-label="Close" class="close" data-dismiss="alert" style="line-height: 27px; margin-right: 5px;" type="button">
-                    <span aria-hidden="true">&times;</span>
+
                 </button>
                 <i class="uiIconSuccess"></i>
                 {{this.$t('exoplatform.gamification.successdelete')}}
@@ -91,10 +91,11 @@
                                     Rule score is required please enter a score
                                 </b-alert>
                             </b-form>
-                            <form class="switch">
+                            <form class="switchEnabled">
                                 <label class="col-form-label pt-0" max-rows="6">{{$t(`exoplatform.gamification.enabled`)
                                     }}:</label>
-                                <label class="uiSwitchBtn">
+
+                                <label class="switch">
 
                                     <input :disabled="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" type="checkbox" v-model="editedrule.enabled">
                                     <span class="slider round"></span>
@@ -102,7 +103,8 @@
 
 
                                 </label>
-
+                            </form>
+                            <form id="domainSelectboxGroup">
 
                                 <label class="col-form-label pt-0" style="margin-left: 20%">{{$t(`exoplatform.gamification.gamificationinformation.Domain`)
                                     }}:</label>
@@ -125,7 +127,7 @@
                                         }}
                                     </button>
                                     <button class="btn-primary pull-right" type="submit"
-                                            v-on:click.prevent="onSave(editedrule),collapseButtonn(editedrule)">
+                                            v-on:click.prevent="onSave(editedrule),collapseButtonn(editedrule)" style="margin-left: 500px;">
                                         {{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
                                         }}
@@ -145,10 +147,6 @@
                     <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm2"
                          style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                         <div class="popupHeader ClearFix">
-                            <div class="PopupTitle popupTitle" id="confirmLabel">{{
-                                this.$t('exoplatform.gamification.Confirmation') }}
-                            </div>
-
                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseConfirm(rule)"></a>
 
                             <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
@@ -171,7 +169,7 @@
                                     </button>
 
                                     <button class="btn-primary pull-right" type="submit"
-                                            v-on:click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
+                                            v-on:click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)" style="margin-left: 0 !important; margin-right: 9px;">
                                         {{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
                                         }}
@@ -462,7 +460,7 @@ td.rule-needed-score-col input {
 
 td select {
     word-wrap: normal;
-    border: Solid 2px #e1e8ee;
+    border: 2px Solid #e1e8ee;
     border-radius: 5px;
     margin: auto;
     outline: none;
@@ -718,7 +716,7 @@ button, [type="button"], [type="reset"], [type="submit"] {
     -webkit-appearance: button;
     align-content: stretch;
     padding: 8px 25px;
-    margin-left: 500px;
+   /* margin-left: 500px; */
 }
 
 input[type="checkbox"] {
@@ -927,9 +925,6 @@ select:focus {
     color: #333;
 }
 
-label.col-form-label.pt-0 {
-    display: inline-block;
-}
 
 select.mb-4.select-event {
     margin: 0 !important;
@@ -942,7 +937,7 @@ select.mb-4.select-event {
     margin: 10px;
     font-size: 15px;
     height: 35px;
-    border: Solid 2px #e1e8ee;
+    border: 2px Solid #e1e8ee;
     border-radius: 5px;
     box-shadow: none;
     width: 90px;
@@ -957,5 +952,13 @@ select.mb-4.select-event {
     width: 100%;
     border-radius: 3px;
     background-color: transparent;
+}
+form.switchEnabled, form#domainSelectboxGroup {
+    display: inline-block;
+    min-width: 40%;
+}
+button.btn-primary.pull-right {
+    border-radius: 0.25rem;
+    height: 44px;
 }
 </style>
