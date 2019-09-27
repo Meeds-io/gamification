@@ -2,7 +2,7 @@
 <div>
     <div class="col-sm-12 fluid">
         <div class="pull-right" id="headingOne">
-            <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button" v-on:click.prevent="collapseButton()">Add badge
+            <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button" v-on:click.prevent="collapseButton()"> {{ this.$t('exoplatform.gamification.addbadge')}}
             </button>
         </div>
         <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
@@ -16,7 +16,7 @@
                         <form id="titleInputGroup">
 
                             <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
-                            <input class="form-control" id="titleInput" placeholder="Enter badge's title" required type="text" v-model="badge.title">
+                            <input class="form-control" id="titleInput" :placeholder="$t('badge.title.placeholder','Enter badge title')" required type="text" v-model="badge.title">
                             </input>
 
                             <div :show="dismissCountDown" @dismiss-count-down="countDownChanged" @dismissed="dismissCountdown=0" class="require-msg" dismissible v-if="formErrors.title" variant="danger">
@@ -28,27 +28,27 @@
                             <label class="pt-0" id="descriptionInput">{{
                                     this.$t('exoplatform.gamification.gamificationinformation.domain.Description')
                                     }}:</label>
-                            <textarea :max-rows="6" :rows="3" class="form-control" id="badgeDescription" placeholder="Enter description" v-model="badge.description">
+                            <textarea :max-rows="6" :rows="3" class="form-control" id="badgeDescription" :placeholder="$t('badge.description.placeholder','Enter description')" v-model="badge.description">
                     </textarea>
                         </div>
 
                         <form id="neededScoreInputGroup">
-                            <label id="Needed" label-for="neededScoreInput" class="pt-0">Score:</label>
-                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
+                            <label id="Needed" label-for="neededScoreInput" class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score')}}:</label>
+                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required  :placeholder="$t('badge.score.placeholder','Enter badge needed score')">
 
                             <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                Badge needed score is required please enter a value {{dismissCountDown}}
+                                {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}} {{dismissCountDown}}
                             </b-alert>
                         </form>
                         <form id="iconInputGroup">
-                            <label for="iconInput" class="pt-0"> Icon: </label>
+                            <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon')}}: </label>
 
                             <input type="file" id="iconInput" name="badge.icon" accept="image/jpeg, image/png, image/gif" placeholder="+" @change="onFilePicked">
 
                         </form>
 
                         <form id="domainSelectboxGroup">
-                            <label class="pt-0">Domain:</label>
+                            <label class="pt-0">{{$t('exoplatform.gamification.gamificationinformation.Domain')}}:</label>
 
                             <select class="mb-4" v-model="badge.domainDTO">
                                 <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain')
