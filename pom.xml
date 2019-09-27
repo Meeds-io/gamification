@@ -30,7 +30,7 @@
 
     <groupId>org.exoplatform.addons.gamification</groupId>
     <artifactId>gamification</artifactId>
-    <version>1.1.x-SNAPSHOT</version>
+    <version>1.2.x-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>eXo Gamification</name>
     <description>eXo Gamification extension</description>
@@ -59,7 +59,7 @@
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
         <org.exoplatform.depmgt.version>13</org.exoplatform.depmgt.version>
-        <org.exoplatform.platform.version>5.3.0-M22</org.exoplatform.platform.version>
+        <org.exoplatform.platform.version>5.3.x-SNAPSHOT</org.exoplatform.platform.version>
         <!-- for tests -->
         <junit.version>4.12</junit.version>
         <!-- Liquibase stack -->
@@ -69,12 +69,10 @@
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <profile.liquibase/>
-        <!-- MySQL driver-->
-        <mysql.version>5.1.23</mysql.version>
         <!-- Juzu Version -->
         <org.juzu.version>1.2.0</org.juzu.version>
         <!-- Task Version -->
-        <org.addon.task.version>2.2.0-M03</org.addon.task.version>
+        <org.addon.task.version>2.3.x-SNAPSHOT</org.addon.task.version>
         <!-- Lombok driver-->
         <lombok.version>1.16.22</lombok.version>
         <!-- Maven Plugin for JS and CSS bundling and Unit Test execution -->
