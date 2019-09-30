@@ -170,10 +170,11 @@
         color: #315b73;
         background-color: #d4edda;
         border-color: #c3e6cb;
-        max-width: 40%;
-        margin: 10px !important;
-        position: fixed;
         top: 28% !important;
+        position: fixed;
+        margin: 40px !important;
+        top: 100px !important;
+
     }
 
     section {

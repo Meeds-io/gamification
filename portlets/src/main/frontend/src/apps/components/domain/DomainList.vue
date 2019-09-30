@@ -27,7 +27,7 @@
                 </ul>
             </div>
 
-                    <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlert()">
+                    <div class="alert alert-success" v-if="isdeleted" v-on:="onRemovealertclose()">
                         <button aria-label="Close" class="close" data-dismiss="alert" style="line-height: 27px; margin-right: 5px;" type="button">
                         </button>
                         <i class="uiIconSuccess"></i>
@@ -267,7 +267,7 @@
 
          watch: {
             'editedDomain.enabled'() {
-                console.log(this.editedEnabled)
+                console.log(this.editedEnabled);
                 if(this.editedEnabled!=this.editedDomain.enabled){
                     if(this.editedDomain.enabled==true){
                         this.enabledMessage=this.$t(`exoplatform.gamification.domain.warning.enable`,"*All related rules and badges will be enabled")
@@ -283,9 +283,30 @@
 
 
             onRemove(id) {
-
+                if (this.validateForm()) {
+                    this.isShown = !this.isShown;
+                }
                 this.$emit('remove', id);
-                this.isdeleted = true
+                this.isdeleted = true;
+
+                if (this.isShown) {
+                    this.closeAlert(".alert")
+                }
+
+
+            },
+
+
+            onRemovealertclose() {
+                if (this.validateForm()) {
+                    this.isShown = !this.isShown;
+                }
+                this.isdeleted = true;
+
+                if (this.isShown) {
+                    this.isdeleted = true;
+                    this.closeAlert(".alert")
+                }
 
 
             },
@@ -305,6 +326,32 @@
                 this.domain = domain;
                 this.editedDomain = domain;
             },
+            onSubmit() {
+                if (this.validateForm()) {
+                    this.isShown = !this.isShown;
+
+                    this.createDomain(this.domain);
+                    this.collapseButton()
+                }
+                if (this.isShown) {
+                    this.closeAlert(".alert")
+                }
+            },
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
+            closeAlert(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 4000);
+
+            },
+
+
+
+
+
+
             validateForm() {
                 const errors = {};
                 if (!this.editedDomain.title) {
@@ -331,7 +378,7 @@
 
             },
             collapseButtonn(domain,confirm) {
-                this.confirm=confirm
+                this.confirm = confirm;
                 this.editedDomain = domain;
                 this.editedEnabled = domain.enabled;
                 this.isShown = !this.isShown;
