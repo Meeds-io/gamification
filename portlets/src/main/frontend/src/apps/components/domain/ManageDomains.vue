@@ -170,8 +170,10 @@
         color: #315b73;
         background-color: #d4edda;
         border-color: #c3e6cb;
-        margin: 0 auto;
-        top: 10px;
+        top: 28% !important;
+        position: fixed;
+        margin: 40px !important;
+        top: 100px !important;
     }
 
     section {

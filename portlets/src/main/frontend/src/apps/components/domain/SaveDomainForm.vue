@@ -135,11 +135,26 @@
                 this.$emit('cancel')
 
             },
+
+
             onSubmit() {
                 if (this.validateForm()) {
+                    this.isShown = !this.isShown;
+
                     this.createDomain(this.domain);
                     this.collapseButton()
                 }
+                if (this.isShown) {
+                    this.closeAlert(".alert")
+                }
+            },
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
+            closeAlert(item) {
+                setTimeout(function () {
+                    $(item).fadeOut('fast')
+                }, 4000);
 
             },
             collapseButton() {
