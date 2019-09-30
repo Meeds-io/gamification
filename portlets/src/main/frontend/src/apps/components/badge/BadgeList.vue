@@ -3,10 +3,6 @@
         <b-row>
             <b-col sm="12">
                 <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlertt()">
-                    <button aria-label="Close" class="close" data-dismiss="alert"
-                            style="line-height: 27px; margin-right: 5px;" type="button">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                     <i class="uiIconSuccess"></i>
                 </div>
 
@@ -410,9 +406,6 @@
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
         margin: 30px auto 0;
         margin-bottom: 30px;
-    }
-    .table thead th {
-        font-size: 0.9em;
     }
     .table td,
     .table th {

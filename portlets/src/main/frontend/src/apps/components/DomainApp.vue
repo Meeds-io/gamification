@@ -68,5 +68,20 @@
     .dropdown-menu {
         font-size: inherit;
     }
+    .uiCompanyNavigationPortlet .title, .uiSpaceNavigationPortlet .title {
+        font-size: 15px;
+    }
+    .uiBreadcumbsNavigationPortlet .uiBreadcumbsNavigations .navItemSelected {
+        font-size: 14px;
+    }
+    table.uiGrid.table.table-hover.uiGrid.table tr th {
+        font-size: 16px;
+    }
+    .uiGrid.table td {
+        font-size: 15px;
+    }
+    .uiSpaceNavigationPortlet .searchInput:before {
+        top: 27px;
+    }
 
 </style>
