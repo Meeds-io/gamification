@@ -65,4 +65,14 @@
         <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
     </component>
     <!-- END -->
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.api.settings.ExoFeatureService</target-component>
+        <component-plugin>
+            <name>gamification</name>
+            <set-method>addFeaturePlugin</set-method>
+            <type>org.exoplatform.addons.gamification.plugin.GamificationFeaturePlugin</type>
+        </component-plugin>
+    </external-component-plugins>
+
 </configuration>

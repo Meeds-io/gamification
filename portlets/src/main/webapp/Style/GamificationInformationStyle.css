@@ -730,6 +730,11 @@ i.uiIconInformation {
 .uiIconAppGamification:before {
     content: "\ebdb"!important;
 }
+
+.uiIconAppachievements:before {
+    content: "\ebdb"!important;
+}
+
 .uiProfileMenu .userNavigation > .active > a > span, .uiSpaceMenu .spaceMenuTab > .active > a > span {
     color: #578dc9;
 }

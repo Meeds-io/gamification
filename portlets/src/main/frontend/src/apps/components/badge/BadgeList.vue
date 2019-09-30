@@ -1,22 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <template>
     <b-container fluid>
         <b-row>
@@ -40,7 +21,7 @@
                 <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
 
                     <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                       {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
+                       {{$t(`exoplatform.gamification.${filerlabel}`,filerlabel)}}
                     </a>
                      <ul class="dropdown-menu">
                          <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
@@ -61,13 +42,13 @@
                          style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
                         <div class="popupHeader ClearFix">
                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseEditButton(), onCancel()"></a>
-                            <span class="PopupTitle popupTitle">  {{ this.$t('exoplatform.gamification.editbadge',"Edit badge")}}</span>
+                            <span class="PopupTitle popupTitle">  {{ $t('exoplatform.gamification.editbadge',"Edit badge")}}</span>
                         </div>
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
 
-                                <label class="pt-0">{{ this.$t('exoplatform.gamification.title',"Title") }}:</label>
-                                <input class="form-control" id="titleInput" placeholder="Enter badge's title" required
+                                <label class="pt-0">{{$t('exoplatform.gamification.title',"Title") }}:</label>
+                                <input class="form-control" id="titleInput"  required
                                        type="text"
                                        v-model="editedbadge.title">
                                 </input>
@@ -92,16 +73,16 @@
                             </div>
 
                             <form id="neededScoreInputGroup" >
-                                <label id="Needed" label-for="neededScoreInput" class="pt-0">Score:</label>
+                                <label id="Needed" label-for="neededScoreInput" class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score')}}:</label>
                                 <input id="neededScoreInput" type="number" v-model="editedbadge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
 
                                 <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0"
                                          @dismiss-count-down="countDownChanged">
-                                    Badge needed score is required please enter a value {{dismissCountDown}}
+                                    {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}} {{dismissCountDown}}
                                 </b-alert>
                             </form>
                             <form id="iconInputGroup">
-                                  <label for="iconInput"  class="pt-0"> Icon: </label>
+                                  <label for="iconInput"  class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon')}}: </label>
 
                                   <input type="file"
                                          id="iconInput" name="badge.icon"
@@ -112,7 +93,7 @@
                               </form> 
 
                             <form id="domainSelectboxGroup">
-                                <label class="pt-0">Domain:</label>
+                                <label class="pt-0">>{{$t('exoplatform.gamification.gamificationinformation.Domain')}}:</label>
 
                                 <select class="mb-4" v-model="editedbadge.domainDTO">
                                     <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain','Select domain')
@@ -233,10 +214,10 @@
 
                         </td>
                         <td class="badge-title-col">
-                            <div>{{badge.title}}</div>
+                            <div>{{ $t(`badge.title.${badge.title}`,badge.title) }}</div>
                         </td>
                         <td class="badge-desc-col">
-                            <div>{{badge.description}}</div>
+                            <div>{{$t(`badge.description.${badge.title}`,badge.description)}}</div>
                         </td>
                         <td class="badge-needed-score-col">
                             <div>
@@ -245,7 +226,7 @@
                             </div>
                         </td>
                         <td style="max-width: 105px;">
-                            <div v-if="badge.domainDTO != null">{{badge.domainDTO.title}}</div>
+                            <div v-if="badge.domainDTO != null">{{$t(`exoplatform.gamification.gamificationinformation.domain.${badge.domainDTO.title}`,badge.domainDTO.title)}}</div>
                         </td>
 
 
@@ -317,10 +298,10 @@
         computed: {
             filteredBadges() {
                 return this.badges.filter(item => {
-                    return (item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                        || item.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                    return (this.$t(`badge.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1
+                        || this.$t(`badge.title.${item.title}`,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                        || item.domainDTO.title.toLowerCase().indexOf(this.search.toLowerCase()) > -1)
+                        || this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.domainDTO.title}`,item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1)
                         && (this.enabledFilter === null || item.enabled === this.enabledFilter)
 
                 })
@@ -725,13 +706,22 @@
         float: right;
         margin: 10px;
         font-size: 15px;
-        height: 40px;
+        height: 35px;
         border: Solid 2px #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
-        max-height: 40px;
+        width: 90px;
         text-overflow: ellipsis;
         margin-top: 18px;
+    }
+    .action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
+        box-shadow: none;
+        border: none;
+        text-decoration: none;
+        margin: auto;
+        width: 100%;
+        border-radius: 3px;
+        background-color: transparent;
     }
     button.btn.cancel.pull-right {
         border: 1px solid #e1e8ee !important;

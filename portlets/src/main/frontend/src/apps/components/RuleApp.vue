@@ -14,8 +14,20 @@
 </script>
 
 <style>
-    .UIToolbarContainer .uiDropdownWithIcon>a {
-        color: #ffffff !important;
+
+    .UIToolbarContainer .NormalContainerBlock .ToolbarContainer .TRContainer {
+        background: #fff;
+    }
+    .UIToolbarContainerDark .uiDropdownWithIcon > a, .UIToolbarContainer .uiDropdownWithIcon > a > i {
+        color: #4d5466 !important;
+    }
+    .UIToolbarContainerDark .uiDropdownWithIcon.dropdown > a:hover,
+    .UIToolbarContainerDark .uiHelpPLFToolbarPortlet > a:hover,
+    .UIToolbarContainerDark .uiDropdownWithIcon.dropdown.open > a,
+    .UIToolbarContainerDark .uiHelpPLFToolbarPortlet.open > a{
+        background: none;
+        border-bottom: solid 3px #578dc9;
+        box-sizing: border-box;
     }
       a, a:hover, a:focus {
            color: inherit;

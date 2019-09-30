@@ -81,56 +81,8 @@
         methods:{
             handleClick(newTab) {
                 this.currentTab = newTab;
-            },
-
-            maximize() {
-                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
-
-            },
-            initMenuApp() {
-
-                if (!this.isGamificationEnabled ) {
-                    return;
-                }
-                this.$nextTick(() => {
-                    if ($('#myGamificationTab').length) {
-                        return;
-                    }
-                    if (!$('.userNavigation .item').length) {
-                        setTimeout(this.initMenuApp, 500);
-                        return;
-                    }
-                    $('.userNavigation').append(` \
-          <li id='myGamificationTab' class='item active'> \
-            <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}'>
-              <div class='uiIconAppGamification uiIconDefaultApp' /> \
-              <span class='tabName'>
-                   My achievements
-               </span> \
-            </a> \
-          </li>`);
-                    $(window).trigger('resize');
-                });
-            },
-
-        },
-        created() {
-            if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
-                this.isGamificationEnabled = true;
-                this.initMenuApp();
             }
-            if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
-                this.isGamificationEnabled = true;
-                this.initMenuApp();
-            } else {
-                this.isGamificationEnabled = true;
-                this.initMenuApp();
-            }
-        }
-
-
-
-
+        }    
     }
 
 </script>
