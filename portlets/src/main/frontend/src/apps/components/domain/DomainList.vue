@@ -765,11 +765,6 @@
         padding: 5px;
         vertical-align: inherit;
     }
-
-    .table thead th {
-        font-size: 0.9em;
-    }
-
     .table td, .table th {
         padding: 8px;
         line-height: 1.42857143;
