@@ -72,7 +72,7 @@
         <!-- Juzu Version -->
         <org.juzu.version>1.2.0</org.juzu.version>
         <!-- Task Version -->
-        <org.addon.task.version>2.3.x-SNAPSHOT</org.addon.task.version>
+        <addon.exo.tasks.version>3.0.x-SNAPSHOT</addon.exo.tasks.version>
         <!-- Lombok driver-->
         <lombok.version>1.16.22</lombok.version>
         <!-- Maven Plugin for JS and CSS bundling and Unit Test execution -->
@@ -101,7 +101,7 @@
             <dependency>
                 <groupId>org.exoplatform.addons.task</groupId>
                 <artifactId>task-management-parent</artifactId>
-                <version>${org.addon.task.version}</version>
+                <version>${addon.exo.tasks.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
