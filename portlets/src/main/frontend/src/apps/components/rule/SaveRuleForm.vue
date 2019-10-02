@@ -52,9 +52,9 @@
                                     }}:</label>
                                 <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
 
-                                <b-alert v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                <div class="alert alert-danger require-msg"  v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
                                     Rule score is required please enter a score
-                                </b-alert>
+                                </div>
                             </b-form>
                             <form class="switch">
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`) }}:</label>
