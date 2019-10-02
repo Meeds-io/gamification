@@ -6,9 +6,9 @@
         {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
     </div>
 
-    <b-alert @dismiss-count-down="countDownChanged" dismissible fade show="dismissCountDown" v-if="addError" variant="danger">
+    <div class="alert alert-danger require-msg"   @dismiss-count-down="countDownChanged" dismissible fade show="dismissCountDown" v-if="addError" variant="danger">
         {{this.$t('exoplatform.gamification.errorbadge')}}
-    </b-alert>
+    </div>
 
     <save-badge-form :badge="badgeInForm" :domains="domains" v-on:cancel="resetBadgeInForm" v-on:failAdd="onBadgeFail" v-on:submit="onBadgeCreated"></save-badge-form>
     <badge-list :badges="badges" :domains="domains" v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></badge-list>

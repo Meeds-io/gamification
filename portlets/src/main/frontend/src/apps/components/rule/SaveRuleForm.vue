@@ -53,7 +53,7 @@
                                 <input id="scoreDescription" type="number" v-model="rule.score" required placeholder="Enter rule's score">
 
                                 <div class="alert alert-danger require-msg"  v-if="formErrors.score" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                    Rule score is required please enter a score
+                                    {{$t(`exoplatform.gamification.rule.score.required`) }}
                                 </div>
                             </b-form>
                             <form class="switch">

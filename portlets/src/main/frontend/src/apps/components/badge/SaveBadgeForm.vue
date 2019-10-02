@@ -36,9 +36,9 @@
                             <label id="Needed" label-for="neededScoreInput" class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score')}}:</label>
                             <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required  :placeholder="$t('badge.score.placeholder','Enter badge needed score')">
 
-                            <b-alert v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}} {{dismissCountDown}}
-                            </b-alert>
+                            <div class="alert alert-danger require-msg"  v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
+                                {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}}
+                            </div>
                         </form>
                         <form id="iconInputGroup">
                             <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon')}}: </label>
