@@ -177,6 +177,9 @@ export default {
                 this.createBadge(this.badge);
                 this.collapseButton()
             }
+            if (this.isShown) {
+                this.closeAlert(".alert")
+            }
         },
 
         getFormData(files) {

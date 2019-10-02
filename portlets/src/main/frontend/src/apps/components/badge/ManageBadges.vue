@@ -71,7 +71,6 @@ export default {
             this.updateMessage = 'added';
             this.badges.push(badge);
             this.resetBadgeInForm()
-            this.collapseButton()
         },
         collapseButton() {
             this.isShown = !this.isShown;
