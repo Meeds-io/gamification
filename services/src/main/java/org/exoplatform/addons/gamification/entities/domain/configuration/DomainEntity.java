@@ -30,7 +30,8 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="SEQ_GAMIFICATION_DOMAIN_ID", sequenceName="SEQ_GAMIFICATION_DOMAIN_ID")
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="SEQ_GAMIFICATION_DOMAIN_ID")
     protected Long id;
 
     @Column(name = "TITLE", unique = true, nullable = false)

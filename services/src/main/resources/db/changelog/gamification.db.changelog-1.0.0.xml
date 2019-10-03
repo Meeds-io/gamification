@@ -269,6 +269,11 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-16" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_GAMIFICATION_RULE_ID" startValue="1"/>
+        <createSequence sequenceName="SEQ_GAMIFICATION_DOMAIN_ID" startValue="1"/>
+    </changeSet>
+
 </databaseChangeLog>
 
 
