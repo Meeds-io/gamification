@@ -45,7 +45,7 @@
 
                             <a class="uiIconClose pull-right" v-on:click.prevent="collapseButtonn(rule)"></a>
 
-                            <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.domain.popupedit') }}</span>
+                            <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.rule.popupedit') }}</span>
                         </div>
                         <div class="PopupContent popupContent">
                             <form id="titleInputGroup">
