@@ -85,11 +85,11 @@
                                 <input id="scoreDescription" placeholder="Enter rule's score" required type="number"
                                        v-model="editedrule.score">
 
-                                <b-alert :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                         @dismissed="dismissCountdown=0" class="require-msg" dismissible
+                                <div class="alert alert-danger require-msg"   :show="dismissCountDown" @dismiss-count-down="countDownChanged"
+                                         @dismissed="dismissCountdown=0" dismissible
                                          v-if="formErrors.score" variant="danger">
                                     Rule score is required please enter a score
-                                </b-alert>
+                                </div>
                             </b-form>
                             <form class="switchEnabled">
                                 <label class="col-form-label pt-0" max-rows="6">{{$t(`exoplatform.gamification.enabled`)
@@ -426,6 +426,11 @@ i.uiIconSearch.uiIconLightGray {
     padding: 5px;
     vertical-align: inherit;
 }
+
+.table thead th {
+    font-size: 0.9em;
+}
+
 .table td,
 .table th {
     padding: 8px;
