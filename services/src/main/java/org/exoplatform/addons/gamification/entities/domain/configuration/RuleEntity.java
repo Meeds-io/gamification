@@ -60,7 +60,8 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="SEQ_GAMIFICATION_RULE_ID", sequenceName="SEQ_GAMIFICATION_RULE_ID")
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="SEQ_GAMIFICATION_RULE_ID")
     protected Long id;
 
     @Column(name = "TITLE", unique = true, nullable = false)
