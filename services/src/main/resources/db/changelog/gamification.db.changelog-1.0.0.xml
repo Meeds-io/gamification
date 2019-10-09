@@ -274,6 +274,13 @@
         <createSequence sequenceName="SEQ_GAMIFICATION_DOMAIN_ID" startValue="1"/>
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-17">
+        <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
+                        columnName="USER_SOCIAL_ID"
+                        newDataType="NVARCHAR(200)"
+                        />
+    </changeSet>
+
 </databaseChangeLog>
 
 

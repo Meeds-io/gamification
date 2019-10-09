@@ -102,8 +102,8 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     private static final long serialVersionUID = 1L;
 
     @Id
-    @SequenceGenerator(name="SEQ_GAMIFICATION_ACTIONS_HISTORY_ID", sequenceName="SEQ_GAMIFICATION_ACTIONS_HISTORY_ID")
-    @GeneratedValue(strategy= GenerationType.IDENTITY, generator="SEQ_GAMIFICATION_ACTIONS_HISTORY_ID")
+    @SequenceGenerator(name="SEQ_GAMIFICATION_SCORE_HISTORY_ID", sequenceName="SEQ_GAMIFICATION_SCORE_HISTORY_ID")
+    @GeneratedValue(strategy= GenerationType.AUTO, generator="SEQ_GAMIFICATION_SCORE_HISTORY_ID")
     @Column(name = "ID")
     protected Long id;
 
