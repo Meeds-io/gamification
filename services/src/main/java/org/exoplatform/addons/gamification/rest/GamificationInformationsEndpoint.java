@@ -72,7 +72,8 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
                                                               conversationState.getIdentity().getUserId(),
                                                               false);
-      String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false).getId();
+      Identity actorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false);
+      String actorId = actorIdentity != null ? actorIdentity.getId() : identity.getId();
       if (actorId.equals(identity.getId()) || conversationState.getIdentity().isMemberOf("/platform/administrators")) {
         isOwner = true;
       }
