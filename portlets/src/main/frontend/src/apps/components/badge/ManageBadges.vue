@@ -95,7 +95,7 @@ export default {
         },
         onRemoveClicked(badgeId, badgeTitle) {
             const index = this.badges.findIndex((p) => p.id === badgeId);
-            axios.delete(`/rest/gamification/badges/delete` + badgeId)
+            axios.delete(`/rest/gamification/badges/delete/` + badgeId)
                 .then(response => {
                     this.badges.splice(index, 1)
                 })
