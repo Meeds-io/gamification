@@ -16,9 +16,7 @@
 
         },
        data: () => ({
-           isGamificationEnabled: false,
-            tabs: TABS,
-            currentTab: 'MyPoints',
+            currentTab: 'MyPoints'
         }),
         methods:{
             handleClick(newTab) {
@@ -27,46 +25,8 @@
             maximize() {
                 window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
 
-            },
-
-            initMenuApp() {
-                if (!this.isGamificationEnabled ) {
-                    return;
-                }
-                this.$nextTick(() => {
-                    if ($('#myGamificationTab').length) {
-                        return;
-                    }
-                    if (!$('.userNavigation .item').length) {
-                        setTimeout(this.initMenuApp, 500);
-                        return;
-                    }
-                    $('.userNavigation').append(` \
-          <li id='myGamificationTab' class='item${this.isMaximized ? ' active' : ''}'> \
-            <a href='${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}'>
-              <div class='uiIconAppGamification uiIconDefaultApp' /> \
-              <span class='tabName'>My Achievements</span> \
-            </a> \
-          </li>`);
-                    $(window).trigger('resize');
-                });
-            },
-        },
-        created() {
-            if ((!eXo && eXo.env) || !eXo.env.portal || !eXo.env.portal.userName || !eXo.env.portal.userName.length) {
-                this.isGamificationEnabled = false;
-                return;
             }
-            if (eXo.env.portal.profileOwner && eXo.env.portal.profileOwner !== eXo.env.portal.userName) {
-                this.isGamificationEnabled = false;
-                return;
-            } else {
-                this.isGamificationEnabled = true;
-                this.initMenuApp();
-            }
-
         }
-
 
     }
 </script>
@@ -174,23 +134,6 @@
     .user-reputation-container {
         margin-top: 15px;
     }
-    .uiIconAppGamification:before {
-        content: "\ebdb"!important;
-    }
-    .uiProfileMenu .userNavigation > .active > a > span, .uiSpaceMenu .spaceMenuTab > .active > a > span {
-        color: #578dc9;
-    }
-    .uiProfileMenu .userNavigation > .active > a, .uiProfileMenu .userNavigation > .active > a:hover, .uiSpaceMenu .spaceMenuTab > .active > a, .uiSpaceMenu .spaceMenuTab > .active > a:hover {
-        background: #ffffff;
-        background-image: none;
-        color: #578dc9;
-        border-bottom: 4px solid #578dc9;
-        border-radius: 0;
-        box-shadow: none;
-    }
-    .uiProfileMenu .userNavigation > .active > a > div, .uiSpaceMenu .spaceMenuTab > .active > a > i {
-        color: #578dc9;
-    }
-
+  
 
 </style>
