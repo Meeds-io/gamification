@@ -8,31 +8,24 @@
             <uri>gamification</uri>
             <name>gamification</name>
             <label>Gamification</label>
-            <label xml:lang="en">Gamification</label>
-            <label xml:lang="fr">Gamification</label>
+            <label>Gamification</label>
             <page-reference>group::/platform/administrators::gamification</page-reference>
             <node>
                 <uri>rules</uri>
                 <name>rules</name>
-                <label>Manage Rules</label>
-                <label xml:lang="en">Manage rules</label>
-                <label xml:lang="fr">Gérer les règles</label>
+                <label>#{gamification.intranet.rulesManagement}</label>
                 <page-reference>group::/platform/administrators::rules</page-reference>
             </node>
             <node>
                 <uri>badges</uri>
                 <name>badges</name>
-                <label>Manage Badges</label>
-                <label xml:lang="en">Manage Badges</label>
-                <label xml:lang="fr">Gérer les badges</label>
+                <label>#{gamification.intranet.badgesManagement}</label>
                 <page-reference>group::/platform/administrators::badges</page-reference>
             </node>
             <node>
                 <uri>domains</uri>
                 <name>domains</name>
-                <label>Manage Domains</label>
-                <label xml:lang="en">Manage Domains</label>
-                <label xml:lang="fr">Gérer les domaines</label>
+                <label>#{gamification.intranet.domainsManagement}</label>
                 <page-reference>group::/platform/administrators::domains</page-reference>
             </node>
         </node>
