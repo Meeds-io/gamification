@@ -791,4 +791,8 @@
     margin-top: 11px;
     margin-right: 12px;
     }
+    .btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
+}
 </style>

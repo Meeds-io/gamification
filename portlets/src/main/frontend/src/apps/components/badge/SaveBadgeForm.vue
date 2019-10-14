@@ -584,4 +584,8 @@ form#domainSelectboxGroup,
 form#enabled {
     display: inline-block;
 }
+.btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
+}
 </style>
