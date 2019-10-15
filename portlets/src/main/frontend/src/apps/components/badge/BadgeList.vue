@@ -45,7 +45,7 @@
                                      @dismissed="dismissCountdown=0"
                                      class="require-msg" dismissible v-if="formErrors.title"
                                      variant="danger">
-                                    {{ this.$t('exoplatform.gamification.Badgetitle',"Badge Title is required please enter a valu")}} {{dismissCountDown}}
+                                    {{ this.$t('exoplatform.gamification.Badgetitle',"Badge Title is required please enter a value")}} {{dismissCountDown}}
                                 </div>
                             </form>
 
