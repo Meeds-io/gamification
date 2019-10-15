@@ -329,39 +329,6 @@
                 this.isEditShown = !this.isEditShown;               
             },
 
-            validateForm() {
-                const errors = {};
-                if (!this.editedbadge.neededScore) {
-                    errors.neededScore = 'Needed Score is required';
-                    this.dismissCountDown = 5
-                }
-
-                if (!this.editedbadge.title) {
-                    errors.title = 'Title is required';
-                    this.dismissCountDown = 5
-                }
-
-                
-                if (!this.editedbadge.description) {
-                    errors.description = 'Description is required';
-                    this.dismissCountDown = 5
-                }
-
-                if (!this.editedbadge.domainDTO) {
-                    errors.domainDTO = 'Domain is required';
-                    this.dismissCountDown = 5
-                }
-
-                if (!this.editedbadge.uploadId) {
-                    errors.uploadId = 'Icon is required';
-                    this.dismissCountDown = 5
-                }
-                
-                this.formErrors = errors;
-                return Object.keys(errors).length === 0
-            },
-
-            
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0];
                 this.selectedFileName = event.target.files[0].name
@@ -371,7 +338,6 @@
             },
             onRemove(id, title) {
                 this.$emit('remove', id, title);
-                //this.isdeleted = true
             },
             change() {
                 console.log('filechange');
@@ -785,14 +751,14 @@
         display: inline-block;
     }
     .filter-bar{
-    display: flex;
-    flex-direction: row-reverse;
-    float: right;
-    margin-top: 11px;
-    margin-right: 12px;
+        display: flex;
+        flex-direction: row-reverse;
+        float: right;
+        margin-top: 11px;
+        margin-right: 12px;
     }
     .btn-primary.disabled, .btn-primary:disabled {
-     background-color: #afc9e5; 
-     background-image: none;
-}
+        background-color: #afc9e5; 
+        background-image: none;
+    }
 </style>

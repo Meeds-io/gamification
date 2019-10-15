@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="alert alert-success"  style="display: inline-block" v-if="isadded || addSuccess" v-on:="closeAlert()">
+    <div class="alert alert-success"  v-if="isadded || addSuccess" v-on:="closeAlert()">
         <i class="uiIconSuccess"></i>
         {{this.$t('exoplatform.gamification.badge')}}
         {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
@@ -22,8 +22,7 @@ import BadgeList from './BadgeList'
 import SaveBadgeForm from './SaveBadgeForm'
 import BootstrapVue from 'bootstrap-vue'
 import axios from 'axios';
-//import 'bootstrap/dist/css/bootstrap.css'
-//import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 
 Vue.use(BootstrapVue);
 const initialData = () => {
@@ -177,6 +176,7 @@ section {
     transform: translateX(-50%);
     max-width: 40%;
     margin: 10px !important;
+    display: inline-block;
 }
 
 </style>
