@@ -84,7 +84,7 @@
                                             v-on:click.prevent="collapseButton(), onCancel()">{{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                     </button>
-                                    <button class="btn-primary pull-right" type="submit"
+                                    <button class="btn-primary pull-right" type="submit" :disabled='isDisabled' 
                                               v-on:click.prevent="onSubmit()">
                                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
 
@@ -139,19 +139,14 @@
                 this.rule.title = this.rule.ruleDTO.title
             }
         },
-        methods: {
-            validateForm() {
-                const errors = {};
-                // if (!this.rule.title) {
-                //errors.title = 'Title is required'
-                //this.dismissCountDown = 5
-                //}
-                if (!this.rule.score) {
-                    errors.score = 'Score is required';
-                    this.dismissCountDown = 5
+        computed: {
+         isDisabled: function(){
+                return !(this.isNotEmpty(this.rule.event)&&this.isNotEmpty(this.rule.score)&&this.rule.domainDTO!=null)
                 }
-                this.formErrors = errors;
-                return Object.keys(errors).length === 0
+        },
+        methods: {
+            isNotEmpty(str){
+              return(str!=null&&str!="")
             },
             onImageChanged(event) {
                 this.selectedFile = event.target.files[0];
@@ -162,13 +157,10 @@
 
             },
             onSubmit() {
-                if (this.validateForm()) {
                     this.collapseButton();
                     this.isShown = !this.isShown;
 
                     this.createRule(this.rule);
-
-                }
                 if (this.isShown) {
                     this.closeAlert(".alert")
                 }
@@ -297,7 +289,6 @@
         border-radius: 0.25rem;
     }
 
-
     .collapse {
         top: 15px;
     }
@@ -313,114 +304,115 @@
         background-color: rgb(0,0,0);
         background-color: rgba(0,0,0,0.4);
     }
+
      /* switch */
-          .uiSwitchBtn {
-              position: relative;
-              display: inline-block !important;
-              width: 60px;
-              height: 29px;
-              margin-left: 20px;
-          }
-          .uiSwitchBtn input {display:none;}
-          .slider {
-              position: absolute;
-              cursor: pointer;
-              overflow: hidden;
-              top: 5px;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              width: 60px;
-              height: 20px;
-              background-color: #f2f2f2;
-              -webkit-transition: .4s;
-              transition: .4s;
-          }
-          .slider:before {
-              position: absolute;
-              z-index: 2;
-              content: "";
-              height: 14px;
-              width: 14px;
-              left: 5px;
-              bottom: 3px;
-              background-color: darkgrey;
-              -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-              box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-              -webkit-transition: .4s;
-              transition: all 0.4s ease-in-out;
-          }
-          .slider:after {
-              position: absolute;
-              left: -20px;
-              z-index: 1;
-              content: "YES";
-              font-size: 13px;
-              text-align: left!important;
-              line-height: 19px;
-              padding-left: 0;
-              width: 95px;
-              height: 26px!important;
-              color: #f9f9f9;
-              background-color: #477ab3;
-              background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
-              background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
-              background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
-              background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
-              background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
-              background-repeat: repeat-x;
-              filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
-              -webkit-box-shadow: inset 0px 3px 5px #224469;
-              -moz-box-shadow: inset 0px 3px 5px #224469;
-              box-shadow: inset 0px 3px 5px #224469;
-              -webkit-border-top-left-radius: 9px;
-              -moz-border-radius-topleft: 9px;
-              border-top-left-radius: 9px;
-              -webkit-border-bottom-left-radius: 9px;
-              -moz-border-radius-bottomleft: 9px;
-              border-bottom-left-radius: 9px;
-              height: 57px;
-              border-radius: 100px;
-              background-color: #578dc9;
-              -webkit-transform: translateX(-190px);
-              -ms-transform: translateX(-190px);
-              transform: translateX(-190px);
-              transition: all 0.4s ease-in-out;
-          }
-          input:checked + .slider:after {
-              -webkit-transform: translateX(0px);
-              -ms-transform: translateX(0px);
-              transform: translateX(0px);
-              padding-left: 25px;
-          }
-          input:checked + .slider:before {
-              background-color: #fff;
-              -webkit-transform: translateX(38px);
-              -ms-transform: translateX(38px);
-              transform: translateX(38px);
-          }
-          input:checked + .slider:before {
-              -webkit-transform: translateX(38px);
-              -ms-transform: translateX(38px);
-              transform: translateX(38px);
-          }
-          /* Rounded sliders */
-          .slider.round {
-              border-radius: 100px;
-          }
-          .slider.round:before {
-              border-radius: 50%;
-          }
-          .absolute-no {
-              position: absolute;
-              left: 27px;
-              color: DarkGrey;
-              text-align: right !important;
-              font-size: 16px;
-             /* width: calc(100% - 25px); */
-              line-height: 30px;
-              cursor: pointer;
-          }
+    .uiSwitchBtn {
+        position: relative;
+        display: inline-block !important;
+        width: 60px;
+        height: 29px;
+        margin-left: 20px;
+    }
+    .uiSwitchBtn input {display:none;}
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        overflow: hidden;
+        top: 5px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 60px;
+        height: 20px;
+        background-color: #f2f2f2;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+    .slider:before {
+        position: absolute;
+        z-index: 2;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 5px;
+        bottom: 3px;
+        background-color: darkgrey;
+        -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+        -webkit-transition: .4s;
+        transition: all 0.4s ease-in-out;
+    }
+    .slider:after {
+        position: absolute;
+        left: -20px;
+        z-index: 1;
+        content: "YES";
+        font-size: 13px;
+        text-align: left!important;
+        line-height: 19px;
+        padding-left: 0;
+        width: 95px;
+        height: 26px!important;
+        color: #f9f9f9;
+        background-color: #477ab3;
+        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
+        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
+        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
+        background-repeat: repeat-x;
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
+        -webkit-box-shadow: inset 0px 3px 5px #224469;
+        -moz-box-shadow: inset 0px 3px 5px #224469;
+        box-shadow: inset 0px 3px 5px #224469;
+        -webkit-border-top-left-radius: 9px;
+        -moz-border-radius-topleft: 9px;
+        border-top-left-radius: 9px;
+        -webkit-border-bottom-left-radius: 9px;
+        -moz-border-radius-bottomleft: 9px;
+        border-bottom-left-radius: 9px;
+        height: 57px;
+        border-radius: 100px;
+        background-color: #578dc9;
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
+        transition: all 0.4s ease-in-out;
+    }
+    input:checked + .slider:after {
+        -webkit-transform: translateX(0px);
+        -ms-transform: translateX(0px);
+        transform: translateX(0px);
+        padding-left: 25px;
+    }
+    input:checked + .slider:before {
+        background-color: #fff;
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
+    }
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 100px;
+    }
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    .absolute-no {
+        position: absolute;
+        left: 27px;
+        color: DarkGrey;
+        text-align: right !important;
+        font-size: 16px;
+        /* width: calc(100% - 25px); */
+        line-height: 30px;
+        cursor: pointer;
+    }
     input.rule-needed-score-col{
         max-width: 60px;
         text-align: center;
@@ -458,6 +450,11 @@
     select.mb-4.select-event {
         margin: 0 !important;
         width: 100%;
+    }
+
+    .btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
     }
 
 </style>

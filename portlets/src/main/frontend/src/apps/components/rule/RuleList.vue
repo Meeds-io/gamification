@@ -19,22 +19,13 @@
                 </a>
             </div>
 
-            <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
-                <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                    {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
-                </a>
-                <ul class="dropdown-menu">
-
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
-                    </li>
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false,filerlabel='disabled'">{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</a>
-                    </li>
-
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null,filerlabel='all'">{{$t(`exoplatform.gamification.all`,"All")}} </a>
-                    </li>
-
-                </ul>
-            </div>
+            <div class="filter-bar" >
+                 <select class="mb-4" v-model="enabledFilter">
+                    <option :value=null>{{$t(`exoplatform.gamification.all`,"All")}}</option>
+                    <option :value=true>{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</option>
+                    <option :value=false>{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</option>
+                 </select>
+             </div>
 
             <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
                  data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
@@ -63,11 +54,6 @@
                                         }}
                                     </option>
                                 </select>
-
-
-                                <!--  <b-alert v-if="formErrors.title" :show="dismissCountDown" dismissible variant="danger" class="require-msg" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                      Rule title is required please enter a title {{dismissCountDown}}
-                                  </b-alert>-->
 
                             </form>
 
@@ -126,7 +112,7 @@
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
                                         }}
                                     </button>
-                                    <button class="btn-primary pull-right" type="submit"
+                                    <button class="btn-primary pull-right" type="submit" :disabled='isBottonDisabled'
                                             v-on:click.prevent="onSave(editedrule),collapseButtonn(editedrule)" style="margin-left: 500px;">
                                         {{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
@@ -236,12 +222,9 @@
 
                         <td class="center actionContainer">
 
-
                             <a aria-controls="collapseTwo" aria-expanded="true" data-target="#collapseTwo"
                                data-toggle="collapse" href="" v-on:click.prevent="collapseButtonn(rule)"> <i
                                     class="uiIconEdit uiIconLightGray"></i></a>
-
-
                             <a class="actionIcon" data-placement="bottom" href="#" rel="tooltip" v-on:click.prevent="collapseConfirm(rule)" data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
                                 <i class="uiIconDelete uiIconLightGray"></i>
                             </a>
@@ -307,18 +290,17 @@ export default {
         isDisabled() {
             // evaluate whatever you need to determine disabled here...
             this.disabled = false;
-
             return !this.domain.enabled;
-
         },
 
         isEnabled() {
             // evaluate whatever you need to determine disabled here...
             this.disabled = true;
             return this.domain.enabled;
-
+        }        ,
+        isBottonDisabled: function(){
+             return !(this.isNotEmpty(this.editedrule.event)&&this.isNotEmpty(this.editedrule.score)&&this.editedrule.domainDTO!=null)
         }
-
 
     },
 
@@ -328,6 +310,9 @@ export default {
             this.rule = rule;
             this.editedrule = rule;
         },
+        isNotEmpty(str){
+              return(str!=null&&str!="")
+            },
         onRemove(id, title) {
             this.$emit('remove', id, title);
             this.isdeleted = true
@@ -348,26 +333,18 @@ export default {
         },
 
         onSubmit(rule) {
-            if (this.validateForm()) {
-                this.updateDomain(this.editedrule);
-
-                this.collapseButtonn(rule)
-            }
-
+            this.updateDomain(this.editedrule);
+            this.collapseButtonn(rule)
         },
         collapseButtonn(rule) {
             this.editedrule = rule;
             this.isShown = !this.isShown;
-
         },
         closeAlert(item) {
             setTimeout(function () {
                 $(item).fadeOut('fast')
             }, 4000);
-
         }
-
-
     }
 }
 </script>
@@ -444,10 +421,6 @@ i.uiIconSearch.uiIconLightGray {
     cursor: pointer;
 }
 
-/*edit Mode
-    td input {
-        max-width: min-content;
-    }*/
 input[type="text"] {
     height: 35px;
     margin: auto;
@@ -960,5 +933,17 @@ form.switchEnabled, form#domainSelectboxGroup {
 button.btn-primary.pull-right {
     border-radius: 0.25rem;
     height: 44px;
+}
+
+    .filter-bar{
+    display: flex;
+    flex-direction: row-reverse;
+    float: right;
+    margin-top: 21px;
+    margin-right: 12px;
+    }
+    .btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
 }
 </style>
