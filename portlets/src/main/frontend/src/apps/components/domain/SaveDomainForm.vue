@@ -27,12 +27,6 @@
                                 <input id="titleInput" placeholder="Enter domain's title" required type="text"
                                        v-model="domain.title">
                                 </input>
-                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                     @dismissed="dismissCountdown=0" class="alert alert-error" dismissible
-                                     v-if="formErrors.title" variant="danger">
-                                    <i class="uiIconError"></i> Domain title is required please enter a title
-                                    {{dismissCountDown}}
-                                </div>
 
                             </form>
                             <form id="descriptionInputGroup">
@@ -42,13 +36,6 @@
                                 <textarea :max-rows="6" :rows="3" id="domainDescription" placeholder="Enter description"
                                           v-model="domain.description">
                             </textarea>
-
-                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                     @dismissed="dismissCountdown=0" class="alert alert-error" dismissible
-                                     v-if="formErrors.description" variant="danger">
-                                    <i class="uiIconError"></i> Domain description is required please enter a
-                                    description {{dismissCountDown}}
-                                </div>
                             </form>
 
                             <form>
@@ -67,7 +54,7 @@
                                             v-on:click.prevent="collapseButton(), onCancel()">{{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                     </button>
-                                    <button class="btn-primary pull-right" type="submit"
+                                    <button class="btn-primary pull-right" type="submit" :disabled='isDisabled'
                                               v-on:click.prevent="onSubmit()">
                                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
 
@@ -96,7 +83,6 @@
 
         data: function () {
             return {
-                SaveDomainForm: '',
                 formErrors: {},
                 dismissSecs: 5,
                 dismissCountDown: 0,
@@ -116,41 +102,24 @@
             },
 
         },
+        computed: {
+            isDisabled: function(){
+                return (this.domain.title==null||this.domain.title=="")
+            }
+        },
         methods: {
-            validateForm() {
-                const errors = {};
-                if (!this.domain.title) {
-                    errors.title = 'Title is required';
-                    this.dismissCountDown = 5
-                }
-                if (!this.domain.description) {
-                    errors.title = 'Description is required';
-                    this.dismissCountDown = 5
-                }
-                this.formErrors = errors;
-                return Object.keys(errors).length === 0
-            },
+
 
             onCancel() {
                 this.$emit('cancel')
-
             },
-
 
             onSubmit() {
-                if (this.validateForm()) {
                     this.isShown = !this.isShown;
-
                     this.createDomain(this.domain);
-                    this.collapseButton()
-                }
-                if (this.isShown) {
-                    this.closeAlert(".alert")
-                }
+                    this.collapseButton()           
             },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
+
             closeAlert(item) {
                 setTimeout(function () {
                     $(item).fadeOut('fast')
@@ -162,10 +131,6 @@
 
             },
 
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
-
             confirm() {
                 this.$modals.confirm({
                     message: 'Confirm?',
@@ -175,12 +140,7 @@
                     },
                 });
             },
-            closeAlert(item) {
-                setTimeout(function () {
-                    $(item).fadeOut('fast')
-                }, 4000);
 
-            },
             createDomain(domainDTO) {
                 axios.post(`/rest/gamification/domains`, domainDTO)
                     .then(response => {
@@ -309,16 +269,16 @@
         background-color: rgba(0, 0, 0, 0.4);
     }
 
-    /* switch test */
-    .uiSwitchBtn {
+    /* switch */
+    .switch {
         position: relative;
         display: inline-block;
-        width: 185px;
-        height: 66px;
-        zoom: 30%;
+        width: 53px;
+        height: 32px;
+        top: 0.4rem;
     }
 
-    .uiSwitchBtn input {
+    .switch input {
         display: none;
     }
 
@@ -326,10 +286,12 @@
         position: absolute;
         cursor: pointer;
         overflow: hidden;
-        top: 0;
+        top: 5px;
         left: 0;
         right: 0;
         bottom: 0;
+        width: 60px;
+        height: 20px;
         background-color: #f2f2f2;
         -webkit-transition: .4s;
         transition: .4s;
@@ -339,10 +301,10 @@
         position: absolute;
         z-index: 2;
         content: "";
-        height: 45px;
-        width: 45px;
-        left: 10px;
-        bottom: 11px;
+        height: 14px;
+        width: 14px;
+        left: 5px;
+        bottom: 3px;
         background-color: darkgrey;
         -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
@@ -350,17 +312,18 @@
         transition: all 0.4s ease-in-out;
     }
 
+
     .slider:after {
         position: absolute;
-        left: 0;
+        left: -20px;
         z-index: 1;
         content: "YES";
-        font-size: 37px;
+        font-size: 13px;
         text-align: left !important;
-        line-height: 65px;
+        line-height: 19px;
         padding-left: 0;
-        width: 185px;
-        height: 66px !important;
+        width: 95px;
+        height: 26px !important;
         color: #f9f9f9;
         background-color: #477ab3;
         background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
@@ -388,21 +351,24 @@
         transition: all 0.4s ease-in-out;
     }
 
-    input:checked + .slider:after {
+    input:checked+.slider:after {
         -webkit-transform: translateX(0px);
         -ms-transform: translateX(0px);
         transform: translateX(0px);
         padding-left: 25px;
     }
 
-    input:checked + .slider:before {
+    input:checked+.slider:before {
         background-color: #fff;
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
     }
 
-    input:checked + .slider:before {
-        -webkit-transform: translateX(115px);
-        -ms-transform: translateX(115px);
-        transform: translateX(115px);
+    input:checked+.slider:before {
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
     }
 
     /* Rounded sliders */
@@ -416,12 +382,12 @@
 
     .absolute-no {
         position: absolute;
-        left: 0;
-        color: darkgrey;
+        left: 27px;
+        color: DarkGrey;
         text-align: right !important;
-        font-size: 45px;
+        font-size: 16px;
         width: calc(100% - 25px);
-        line-height: 70px;
+        line-height: 30px;
         cursor: pointer;
     }
 
@@ -470,5 +436,10 @@
         width: 100%;
         font-size: 15px;
     }
+
+    .btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
+}
 
 </style>
