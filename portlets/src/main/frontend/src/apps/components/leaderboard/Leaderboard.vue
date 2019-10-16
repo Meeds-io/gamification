@@ -210,7 +210,7 @@ export default {
                 .then(response => {
                     this.chartData = response.data;
                     for (let i = 0; i < this.chartData.length; i++) {
-                        this.chartData[i].label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.chartData[i].label}`)
+                        this.chartData[i].label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.chartData[i].label}`,this.chartData[i].label)
                     }
                 })
                 .catch(e => {
