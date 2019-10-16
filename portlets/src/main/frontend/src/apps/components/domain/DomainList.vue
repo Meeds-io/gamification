@@ -10,22 +10,13 @@
                             <i class="uiIconSearch uiIconLightGray"></i>
                         </a>
                     </div>
-              <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
-                <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                    {{$t(`exoplatform.gamification..${filerlabel}`,filerlabel)}}
-                </a>
-                <ul class="dropdown-menu">
-
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
-                    </li>
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false,filerlabel='disabled'">{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</a>
-                    </li>
-
-                    <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null,filerlabel='all'">{{$t(`exoplatform.gamification.all`,"All")}} </a>
-                    </li>
-
-                </ul>
-            </div>
+                    <div class="filter-bar" >
+                         <select  v-model="enabledFilter">
+                                        <option :value=null>{{$t(`exoplatform.gamification.all`,"All")}}</option>
+                                        <option :value=true>{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</option>
+                                        <option :value=false>{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</option>
+                          </select>
+                    </div>
 
                     <div class="alert alert-success" v-if="isdeleted" v-on:="onRemovealertclose()">
                         <button aria-label="Close" class="close" data-dismiss="alert" style="line-height: 27px; margin-right: 5px;" type="button">
@@ -90,13 +81,6 @@
                                         <input id="titleInput" placeholder="Enter domain's title" required type="text"
                                                v-model="editedDomain.title">
                                         </input>
-                                        <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                             @dismissed="dismissCountdown=0" class="alert alert-error" dismissible
-                                             v-if="formErrors.title" variant="danger">
-                                            <i class="uiIconError"></i> {{ this.$t('exoplatform.gamification.message.domain.title.required',"Domain title is required please enter a title") }}
-                                            {{dismissCountDown}}
-                                        </div>
-
                                     </form>
 
 
@@ -106,13 +90,8 @@
                                             }} :</label>
                                         <textarea :max-rows="6" :rows="3" id="domainDescription"
                                                   placeholder="Enter description" v-model="editedDomain.description">
-                            </textarea>
+                                        </textarea>
 
-                                        <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                             @dismissed="dismissCountdown=0" class="alert alert-error" dismissible
-                                             v-if="formErrors.description" variant="danger">
-                                            <i class="uiIconError"></i> {{ this.$t('exoplatform.gamification.message.domain.description.required',"Domain description is required please enter a description") }} {{dismissCountDown}}
-                                        </div>
                                     </form>
                             <form>
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
@@ -123,21 +102,21 @@
                                 </label>
                                 <div class="error">{{enabledMessage}}</div>
                             </form>
-                                    <div class="row">
-                                        <b-col>
-                                            <button class="btn secondary pull-right" type="submit"
-                                                    v-on:click.prevent="collapseButtonn(editedDomain,false), onCancel()">{{
-                                                this.$t('exoplatform.gamification.gamificationinformation.domain.cancel',"Cancel")
-                                                }}
-                                            </button>
-                                            <button class="btn-primary pull-right" type="submit"
-                                                      v-on:click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)" style="margin-left: 500px;">
-                                                {{
-                                                this.$t('exoplatform.gamification.gamificationinformation.domain.confirm',"Confirm")
-                                                }}
-                                            </button>
-                                        </b-col>
-                                    </div>
+                                    
+                            <div class="row">
+                                <b-col>
+                                    <button class="btn secondary pull-right" type="submit"
+                                            v-on:click.prevent="collapseButtonn(editedDomain,false), onCancel()">{{
+                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                                    </button>
+                                    <button class="btn-primary pull-right" type="submit" :disabled='isDisabled'
+                                              v-on:click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)" style="margin-left: 500px;">
+                                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+
+                                    </button>
+                                </b-col>
+                            </div>
+
                                 </div>
                             </div>
                         </div>
@@ -262,6 +241,9 @@
                         && (this.enabledFilter === null || item.enabled === this.enabledFilter)
                     )
                 })
+            },
+            isDisabled: function(){
+                return (this.editedDomain.title==null||this.editedDomain.title=="")
             }
         },
 
@@ -281,42 +263,24 @@
         },
         methods: {
 
-
             onRemove(id) {
-                if (this.validateForm()) {
-                    this.isShown = !this.isShown;
-                }
+
+                this.isShown = !this.isShown;
                 this.$emit('remove', id);
                 this.isdeleted = true;
-
-                if (this.isShown) {
-                    this.closeAlert(".alert")
-                }
-
-
             },
 
 
             onRemovealertclose() {
-                if (this.validateForm()) {
-                    this.isShown = !this.isShown;
-                }
-                this.isdeleted = true;
-
+               this.isShown = !this.isShown; 
+               this.isdeleted = true;
                 if (this.isShown) {
                     this.isdeleted = true;
-                    this.closeAlert(".alert")
                 }
-
-
             },
             onSave(domain) {
-
-                if (this.validateForm()) {
-
-                    this.$emit('edit', domain);
-                    this.editedDomain = domain;
-                }
+                this.$emit('edit', domain);
+                this.editedDomain = domain;
             },
             onCancel(editedDomain) {
                 this.editedDomain = {};
@@ -327,19 +291,11 @@
                 this.editedDomain = domain;
             },
             onSubmit() {
-                if (this.validateForm()) {
-                    this.isShown = !this.isShown;
+                this.isShown = !this.isShown;
+                this.createDomain(this.domain);
+                this.collapseButton()
+            },
 
-                    this.createDomain(this.domain);
-                    this.collapseButton()
-                }
-                if (this.isShown) {
-                    this.closeAlert(".alert")
-                }
-            },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
             closeAlert(item) {
                 setTimeout(function () {
                     $(item).fadeOut('fast')
@@ -347,49 +303,20 @@
 
             },
 
-
-
-
-
-
-            validateForm() {
-                const errors = {};
-                if (!this.editedDomain.title) {
-                    errors.title = $t(`exoplatform.gamification.gamificationinformation.domain.errors.title`);
-                    this.dismissCountDown = 5
-                }
-                if (!this.editedDomain.description) {
-                    errors.title = $t(`exoplatform.gamification.gamificationinformation.domain.errors.description`);
-                    this.dismissCountDown = 5
-                }
-                this.formErrors = errors;
-                return Object.keys(errors).length === 0
-            },
-
             showAlert() {
                 this.dismissCountDown = this.dismissSecs
             },
             onSubmit(domain) {
-                if (this.validateForm()) {
-                    this.updateDomain(this.editedDomain);
-
-                    this.collapseButtonn(domain)
-                }
-
+                this.updateDomain(this.editedDomain);
+                this.collapseButtonn(domain)
             },
             collapseButtonn(domain,confirm) {
                 this.confirm = confirm;
                 this.editedDomain = domain;
                 this.editedEnabled = domain.enabled;
                 this.isShown = !this.isShown;
-                if (this.isShown) {
-                    this.closeAlertt(".alert")
-                }
             },
 
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
             confirm() {
                 this.$modals.confirm({
                     message: 'Confirm?',
@@ -399,13 +326,6 @@
                     },
                 });
             },
-            closeAlert(item) {
-                setTimeout(function () {
-                    $(item).fadeOut('fast')
-                }, 4000);
-
-            }
-
         }
     }
 
@@ -597,218 +517,13 @@
         background-color: rgb(0, 0, 0);
         background-color: rgba(0, 0, 0, 0.4);
     }
-
-    /* switch test */
-    .uiSwitchBtn {
-        position: relative;
-        display: inline-block;
-        width: 185px;
-        height: 66px;
-        zoom: 30%;
-    }
-
-    .uiSwitchBtn input {
-        display: none;
-    }
-
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        overflow: hidden;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #f2f2f2;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
-
-    .slider:before {
-        position: absolute;
-        z-index: 2;
-        content: "";
-        height: 45px;
-        width: 45px;
-        left: 10px;
-        bottom: 11px;
-        background-color: darkgrey;
-        -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
-        -webkit-transition: .4s;
-        transition: all 0.4s ease-in-out;
-    }
-
-    .slider:after {
-        position: absolute;
-        left: 0;
-        z-index: 1;
-        content: "YES";
-        font-size: 37px;
-        text-align: left !important;
-        line-height: 65px;
-        padding-left: 0;
-        width: 185px;
-        height: 66px !important;
-        color: #f9f9f9;
-        background-color: #477ab3;
-        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
-        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
-        background-repeat: repeat-x;
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
-        -webkit-box-shadow: inset 0px 3px 5px #224469;
-        -moz-box-shadow: inset 0px 3px 5px #224469;
-        box-shadow: inset 0px 3px 5px #224469;
-        -webkit-border-top-left-radius: 9px;
-        -moz-border-radius-topleft: 9px;
-        border-top-left-radius: 9px;
-        -webkit-border-bottom-left-radius: 9px;
-        -moz-border-radius-bottomleft: 9px;
-        border-bottom-left-radius: 9px;
-        height: 57px;
-        border-radius: 100px;
-        background-color: #578dc9;
-        -webkit-transform: translateX(-190px);
-        -ms-transform: translateX(-190px);
-        transform: translateX(-190px);
-        transition: all 0.4s ease-in-out;
-    }
-
-    input:checked + .slider:after {
-        -webkit-transform: translateX(0px);
-        -ms-transform: translateX(0px);
-        transform: translateX(0px);
-        padding-left: 25px;
-    }
-
-    input:checked + .slider:before {
-        background-color: #fff;
-    }
-
-    input:checked + .slider:before {
-        -webkit-transform: translateX(115px);
-        -ms-transform: translateX(115px);
-        transform: translateX(115px);
-    }
-
-    /* Rounded sliders */
-    .slider.round {
-        border-radius: 100px;
-    }
-
-    .slider.round:before {
-        border-radius: 50%;
-    }
-
-    .absolute-no {
-        position: absolute;
-        left: 0;
-        color: darkgrey;
-        text-align: right !important;
-        font-size: 45px;
-        width: calc(100% - 25px);
-        line-height: 70px;
-        cursor: pointer;
-    }
-
-    input.domain-needed-score-col {
-        max-width: 60px;
-        text-align: center;
-    }
-
-    i.uiIconClose.uiIconBlue {
-        zoom: 133%;
-        height: 100%;
-        vertical-align: super;
-        color: #578dc9;
-        line-height: inherit;
-    }
-
-    .collapse.show.out {
-        display: none;
-    }
-
-    .uiPopup .popupContent select, .modal.uiPopup .popupContent select {
-        outline: none;
-        border: 2px solid #e1e8ee;
-        border-radius: 5px;
-        box-shadow: none;
-    }
-
-    select:focus {
-        border-color: #a6bad6;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
-        -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 5px #c9d5e6;
-        color: #333;
-    }
-
-    .container-fluid {
-        display: table;
-    }
-
-    .table {
-        position: relative;
-        border-radius: 3px;
-        background: #fff;
-        margin-bottom: 20px;
-        width: 96%;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-        margin: 14px auto 0;
-        margin-bottom: 30px;
-    }
-
-    .uiGrid.table tr td {
-        padding: 5px;
-        vertical-align: inherit;
-    }
-    .table td, .table th {
-        padding: 8px;
-        line-height: 1.42857143;
-        vertical-align: top;
-        text-align: center;
-        border: none;
-    }
-
-    .table-hover tbody tr:hover {
-        cursor: pointer;
-    }
-
-    /*edit Mode */
-
-
-    input[type="text"] {
-        height: 35px;
-        margin: auto;
-    }
-
-    td.domain-needed-score-col input {
-        width: 60px;
-        text-align: center;
-    }
-
-    td select {
-        word-wrap: normal;
-        border: Solid 2px #e1e8ee;
-        border-radius: 5px;
-        margin: auto;
-        outline: none;
-    }
-
-    input.domain-desc-col {
-        min-width: 98%;
-    }
-
+  
     /* switch */
     .switch {
         position: relative;
         display: inline-block;
-        width: 185px;
-        height: 66px;
-        zoom: 30%;
+        width: 53px;
+        height: 32px;
         top: 0.4rem;
     }
 
@@ -820,10 +535,12 @@
         position: absolute;
         cursor: pointer;
         overflow: hidden;
-        top: 0;
+        top: 5px;
         left: 0;
         right: 0;
         bottom: 0;
+        width: 60px;
+        height: 20px;
         background-color: #f2f2f2;
         -webkit-transition: .4s;
         transition: .4s;
@@ -833,10 +550,10 @@
         position: absolute;
         z-index: 2;
         content: "";
-        height: 45px;
-        width: 45px;
-        left: 10px;
-        bottom: 11px;
+        height: 14px;
+        width: 14px;
+        left: 5px;
+        bottom: 3px;
         background-color: darkgrey;
         -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
@@ -844,17 +561,18 @@
         transition: all 0.4s ease-in-out;
     }
 
+
     .slider:after {
         position: absolute;
-        left: 0;
+        left: -20px;
         z-index: 1;
         content: "YES";
-        font-size: 37px;
+        font-size: 13px;
         text-align: left !important;
-        line-height: 65px;
+        line-height: 19px;
         padding-left: 0;
-        width: 185px;
-        height: 66px !important;
+        width: 95px;
+        height: 26px !important;
         color: #f9f9f9;
         background-color: #477ab3;
         background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
@@ -882,21 +600,24 @@
         transition: all 0.4s ease-in-out;
     }
 
-    input:checked + .slider:after {
+    input:checked+.slider:after {
         -webkit-transform: translateX(0px);
         -ms-transform: translateX(0px);
         transform: translateX(0px);
         padding-left: 25px;
     }
 
-    input:checked + .slider:before {
+    input:checked+.slider:before {
         background-color: #fff;
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
     }
 
-    input:checked + .slider:before {
-        -webkit-transform: translateX(115px);
-        -ms-transform: translateX(115px);
-        transform: translateX(115px);
+    input:checked+.slider:before {
+        -webkit-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        transform: translateX(38px);
     }
 
     /* Rounded sliders */
@@ -910,15 +631,14 @@
 
     .absolute-no {
         position: absolute;
-        left: 0;
-        color: darkgrey;
+        left: 27px;
+        color: DarkGrey;
         text-align: right !important;
-        font-size: 45px;
+        font-size: 16px;
         width: calc(100% - 25px);
-        line-height: 70px;
-        cursor: pointer;
+        line-height: 30px;
     }
-
+    
     input.domain-needed-score-col {
         max-width: 60px;
         text-align: center;
@@ -963,5 +683,18 @@
         margin-top: 124px !important;
         margin-left: 38%;
         transform: translateX(-50%);
+    }
+
+    .filter-bar{
+    display: flex;
+    flex-direction: row-reverse;
+    float: right;
+    margin-top: 22px;
+    margin-right: 12px;
+    }
+
+    .btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
     }
 </style>
