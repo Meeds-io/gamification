@@ -1,6 +1,6 @@
 <template>
-<section>
-    <div class="alert alert-success" v-if="isadded || addSuccess" v-on:="closeAlert()">
+<div>
+    <div class="alert alert-success"  v-if="isadded || addSuccess" v-on:="closeAlert()">
         <i class="uiIconSuccess"></i>
         {{this.$t('exoplatform.gamification.badge')}}
         {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
@@ -9,10 +9,11 @@
     <div class="alert alert-danger require-msg"   @dismiss-count-down="countDownChanged" dismissible fade show="dismissCountDown" v-if="addError" variant="danger">
         {{this.$t('exoplatform.gamification.errorbadge')}}
     </div>
-
+<section>
     <save-badge-form :badge="badgeInForm" :domains="domains" v-on:cancel="resetBadgeInForm" v-on:failAdd="onBadgeFail" v-on:submit="onBadgeCreated"></save-badge-form>
     <badge-list :badges="badges" :domains="domains" v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></badge-list>
 </section>
+</div>
 </template>
 
 <script>
@@ -21,8 +22,7 @@ import BadgeList from './BadgeList'
 import SaveBadgeForm from './SaveBadgeForm'
 import BootstrapVue from 'bootstrap-vue'
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 
 Vue.use(BootstrapVue);
 const initialData = () => {
@@ -97,7 +97,10 @@ export default {
             const index = this.badges.findIndex((p) => p.id === badgeId);
             axios.delete(`/rest/gamification/badges/delete/` + badgeId)
                 .then(response => {
+                    this.addSuccess = true
+                    this.updateMessage = 'deleted'
                     this.badges.splice(index, 1)
+                    this.dismissCountDown = 5
                 })
                 .catch(e => {
                     this.errors.push(e)
@@ -162,9 +165,18 @@ section {
     display: none;
 }
 .alert-success {
+    background: #6ccbae;
+    border-color: #2eb58c;
+    color: #333333;
+}
+
+.alert {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
     max-width: 40%;
     margin: 10px !important;
-    position: fixed;
-    top: 41% !important;
+    display: inline-block;
 }
+
 </style>

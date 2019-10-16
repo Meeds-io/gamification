@@ -76,7 +76,7 @@
                                 <button class="btn secondary pull-right" type="cancel" v-on:click.prevent="collapseButton(), onCancel()">{{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                 </button>
-                                <button class="btn-primary pull-right" type="submit" v-on:click="onSubmit()">
+                                <button class="btn-primary pull-right" type="submit" :disabled='isDisabled' v-on:click="onSubmit()">
                                     {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
 
                                 </button>
@@ -120,6 +120,11 @@ export default {
             dynamicRules: []
         }
     },
+    computed: {
+         isDisabled: function(){
+                return !(this.isNotEmpty(this.badge.neededScore)&&this.isNotEmpty(this.badge.title)&&this.isNotEmpty(this.uploadId)&&this.badge.domainDTO!=null)
+                }
+        },
     watch: {
         'badge.id'() {
             this.formErrors = {};
@@ -128,6 +133,9 @@ export default {
         },
     },
     methods: {
+        isNotEmpty(str){
+              return(str!=null&&str!="")
+            },
         validateForm() {
             const errors = {};
             if (!this.badge.title) {
@@ -162,21 +170,22 @@ export default {
                     this.addSuccess = true;
                     this.updateMessage = 'added';
                     this.$emit('submit', this.badge)
+                    this.uploadId="";
                 })
                 .catch(e => {
                     this.addError = true;
                     this.errors.push(e)
+                    this.uploadId="";
                 })
         },
 
         onCancel() {
             this.$emit('cancel')
+            this.uploadId="";
         },
         onSubmit() {
-            if (this.validateForm()) {
-                this.createBadge(this.badge);
-                this.collapseButton()
-            }
+             this.createBadge(this.badge);
+             this.collapseButton()
             if (this.isShown) {
                 this.closeAlert(".alert")
             }
@@ -185,7 +194,7 @@ export default {
         getFormData(files) {
             const data = new FormData();
             [...files].forEach((file) => {
-                data.append('data', file, file.name); // currently only one file at a time
+                data.append('data', file, file.name);
             });
             return data;
         },
@@ -574,5 +583,9 @@ label.pt-0 {
 form#domainSelectboxGroup,
 form#enabled {
     display: inline-block;
+}
+.btn-primary.disabled, .btn-primary:disabled {
+     background-color: #afc9e5; 
+     background-image: none;
 }
 </style>

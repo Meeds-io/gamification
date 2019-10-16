@@ -14,21 +14,12 @@
                            name="keyword" type="text" v-model="search" value="">
                 </div>
 
-                <div class="action-bar dropdown filterWithIcon" data-currentorderby="dueDate">
-
-                    <a href="" class="actionIcon dropdown-toggle" data-toggle="dropdown" data-placement="bottom">
-                       {{$t(`exoplatform.gamification.${filerlabel}`,filerlabel)}}
-                    </a>
-                     <ul class="dropdown-menu">
-                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=true,filerlabel='enabled'">{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</a>
-                         </li>
-                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=false,filerlabel='disabled'">{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</a>
-                         </li>
-
-                         <li><a href="javascript:void(0)" v-on:click.prevent="enabledFilter=null,filerlabel='all'">{{$t(`exoplatform.gamification.all`,"All")}} </a>
-                         </li>
-
-                 </ul>
+                <div class="filter-bar" >
+                 <select class="mb-4" v-model="enabledFilter">
+                                    <option :value=null>{{$t(`exoplatform.gamification.all`,"All")}}</option>
+                                    <option :value=true>{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</option>
+                                    <option :value=false>{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</option>
+                                </select>
              </div>
 
                          <div :class="isEditShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
@@ -54,7 +45,7 @@
                                      @dismissed="dismissCountdown=0"
                                      class="require-msg" dismissible v-if="formErrors.title"
                                      variant="danger">
-                                    {{ this.$t('exoplatform.gamification.Badgetitle',"Badge Title")}} {{dismissCountDown}}
+                                    {{ this.$t('exoplatform.gamification.Badgetitle',"Badge Title is required please enter a value")}} {{dismissCountDown}}
                                 </div>
                             </form>
 
@@ -66,6 +57,10 @@
                                           id="badgeDescription" placeholder="Enter description"
                                           v-model="editedbadge.description">
                     </textarea>
+                                                    <div class="alert alert-danger require-msg" v-if="formErrors.description" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                             @dismiss-count-down="countDownChanged">
+                                    {{ this.$t('exoplatform.gamification.badge.description.required','Description needed score is required please enter a value')}}
+                                </div>
                             </div>
 
                             <form id="neededScoreInputGroup" >
@@ -85,6 +80,11 @@
                                          accept="image/jpeg, image/png, image/gif"
                                          placeholder="+"
                                          @change="onFilePicked">
+
+                                        <div class="alert alert-danger require-msg" v-if="formErrors.uploadId" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    {{ this.$t('exoplatform.gamification.badge.icon.required','Badge icon is required please enter a value')}}
+                                </div>
                                          
                               </form> 
 
@@ -101,6 +101,10 @@
                                         }}
                                     </option>
                                 </select>
+                                                                <div class="alert alert-danger require-msg" v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
+                                         @dismiss-count-down="countDownChanged">
+                                    {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}}
+                                </div>
                             </form>
 
 
@@ -122,7 +126,7 @@
                                             v-on:click.prevent="collapseEditButton(), onCancel()">{{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel',"cancel") }}
                                     </button>
-                                    <button class="btn-primary pull-right" type="submit"
+                                    <button class="btn-primary pull-right" type="submit" :disabled='isDisabled'
                                             v-on:click.prevent="onSave">
                                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm',"confirm") }}
 
@@ -301,7 +305,11 @@
                         && (this.enabledFilter === null || item.enabled === this.enabledFilter)
 
                 })
-            }
+            },
+            isDisabled: function(){
+                return !(this.isNotEmpty(this.editedbadge.neededScore)&&this.isNotEmpty(this.editedbadge.title)&&this.editedbadge.domainDTO!=null)
+
+                }
         },
         watch: {
             'badge.id'() {
@@ -310,12 +318,15 @@
                 this.selectedFileName = this.badge.imageName
             }
         },
+       
         methods: {
+            isNotEmpty(str){
+              return(str!=null&&str!="")
+            },
             onSave() {
-
                 this.$emit('save', this.editedbadge);
                 this.editedbadge= {};
-                this.isEditShown = !this.isEditShown;
+                this.isEditShown = !this.isEditShown;               
             },
 
             onImageChanged(event) {
@@ -327,7 +338,6 @@
             },
             onRemove(id, title) {
                 this.$emit('remove', id, title);
-                this.isdeleted = true
             },
             change() {
                 console.log('filechange');
@@ -739,5 +749,16 @@
     form#domainSelectboxGroup, form#enabledswittch {
         width: 40%;
         display: inline-block;
+    }
+    .filter-bar{
+        display: flex;
+        flex-direction: row-reverse;
+        float: right;
+        margin-top: 11px;
+        margin-right: 12px;
+    }
+    .btn-primary.disabled, .btn-primary:disabled {
+        background-color: #afc9e5; 
+        background-image: none;
     }
 </style>
