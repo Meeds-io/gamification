@@ -115,9 +115,13 @@
             },
 
             onSubmit() {
-                    this.isShown = !this.isShown;
-                    this.createDomain(this.domain);
-                    this.collapseButton()           
+                this.isShown = !this.isShown;
+                this.createDomain(this.domain);
+                if (this.isShown) {
+
+                    this.closeAlert(".alert")
+                    this.collapseButton();
+                }
             },
 
             closeAlert(item) {
@@ -270,6 +274,12 @@
     }
 
     /* switch */
+    label.uiSwitchBtn {
+        height: 30px;
+    }
+    .uiSwitchBtn span.absolute-no {
+        text-align: left;
+    }
     .switch {
         position: relative;
         display: inline-block;
@@ -384,7 +394,7 @@
         position: absolute;
         left: 27px;
         color: DarkGrey;
-        text-align: right !important;
+        text-align: right;
         font-size: 16px;
         width: calc(100% - 25px);
         line-height: 30px;

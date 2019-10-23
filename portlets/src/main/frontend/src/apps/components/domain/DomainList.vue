@@ -161,7 +161,7 @@
                                 <label class="switch">
                                     <input type="checkbox" disabled  v-model="domain.enabled">
                                     <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.YES`,"Yes")}}</span>
+                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"No")}}</span>
                                 </label>
                             </div>
                         </td>
@@ -333,6 +333,35 @@
 
 <style scoped>
 
+    .table {
+        position: relative;
+        border-radius: 3px;
+        background: #fff;
+        margin-bottom: 20px;
+        width: 96%;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+        margin: 14px auto 0;
+        margin-bottom: 30px;
+    }
+
+    .uiGrid.table tr td {
+        padding: 5px;
+        vertical-align: inherit;
+    }
+
+
+    .table td,
+    .table th {
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        text-align: center;
+        border: none;
+    }
+    .table-hover tbody tr:hover {
+        cursor: pointer;
+    }
+
     .uiSearchInput .advancedSearch, .uiSearchInput .AdvancedSearch {
         display: block;
         position: absolute;
@@ -348,23 +377,13 @@
         display: flex;
         flex-direction: row-reverse;
         float: right;
-        margin-top: 18px;
+        margin: 17px 10px;
+    }
+    .uiSearchInput input[type="text"] {
+        height: 39px;
     }
 
-    .filterWithIcon{
-        display: flex;
-        flex-direction: row-reverse;
-        float: right;
-        margin: 10px;
-        font-size: 15px;
-        height: 35px;
-        border: 2px Solid #e1e8ee;
-        border-radius: 5px;
-        box-shadow: none;
-        width: 90px;
-        text-overflow: ellipsis;
-        margin-top: 18px;
-    }
+
     .action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
         box-shadow: none;
         border: none;
@@ -519,6 +538,12 @@
     }
   
     /* switch */
+    label.uiSwitchBtn {
+        height: 30px;
+    }
+    .uiSwitchBtn span.absolute-no {
+        text-align: left;
+    }
     .switch {
         position: relative;
         display: inline-block;
@@ -633,7 +658,6 @@
         position: absolute;
         left: 27px;
         color: DarkGrey;
-        text-align: right !important;
         font-size: 16px;
         width: calc(100% - 25px);
         line-height: 30px;
@@ -688,9 +712,18 @@
     .filter-bar{
     display: flex;
     flex-direction: row-reverse;
+    border: 1px Solid #e1e8ee;
+    border-radius: 5px;
+    outline: none;
     float: right;
-    margin-top: 22px;
+    margin-top: 17px;
     margin-right: 12px;
+    }
+    .filter-bar select {
+        width: auto;
+        outline: none;
+        padding: 8px 20px;
+        height: 35px;
     }
 
     .btn-primary.disabled, .btn-primary:disabled {
