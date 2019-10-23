@@ -89,7 +89,7 @@
                               </form> 
 
                             <form id="domainSelectboxGroup">
-                                <label class="pt-0">>{{$t('exoplatform.gamification.gamificationinformation.Domain')}}:</label>
+                                <label class="pt-0">{{$t('exoplatform.gamification.gamificationinformation.Domain')}}:</label>
 
                                 <select class="mb-4" v-model="editedbadge.domainDTO">
                                     <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain','Select domain')
@@ -559,7 +559,7 @@
 
     .absolute-no {
         position: absolute;
-        left: 27px;
+        left: 18px;
         color: DarkGrey;
         text-align: right !important;
         font-size: 16px;
@@ -749,16 +749,45 @@
     form#domainSelectboxGroup, form#enabledswittch {
         width: 40%;
         display: inline-block;
+        margin: 15px 0;
     }
-    .filter-bar{
+
+    .filter-bar select.mb-4 {
+        margin: 18px 12px;
+        padding: 0 10px;
+        border: Solid 2px #e1e8ee;
+        height: 40px;
+        border-radius: 5px;
+        width: auto;
         display: flex;
         flex-direction: row-reverse;
+        outline: none;
         float: right;
-        margin-top: 11px;
-        margin-right: 12px;
     }
     .btn-primary.disabled, .btn-primary:disabled {
         background-color: #afc9e5; 
         background-image: none;
+    }
+    form#domainSelectboxGroup select.mb-4 {
+        vertical-align: sub;
+    }
+    input#neededScoreInput {
+        padding: 0 10px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        outline: none;
+        height: 40px;
+    }
+    textarea.form-control {
+        height: auto;
+        padding: 0 10px;
+        border: Solid 2px #e1e8ee;
+        border-radius: 5px;
+        box-shadow: none;
+        outline: none;
+    }
+    form {
+        margin: 5px 0;
     }
 </style>
