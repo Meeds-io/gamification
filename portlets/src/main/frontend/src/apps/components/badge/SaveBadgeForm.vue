@@ -61,14 +61,15 @@
                                 </option>
                             </select>
                         </form>
+                        <form id="enable">
+                            <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
+                            <label class="uiSwitchBtn">
 
-                        <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
-                        <label class="uiSwitchBtn">
-
-                            <input type="checkbox" v-model="badge.enabled">
-                            <span class="slider round"></span>
-                            <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO')}}</span>
-                        </label>
+                                <input type="checkbox" v-model="badge.enabled">
+                                <span class="slider round"></span>
+                                <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO')}}</span>
+                            </label>
+                        </form>
 
                         <b-row style="display: inherit;">
                             <b-col>
@@ -76,7 +77,7 @@
                                 <button class="btn secondary pull-right" type="cancel" v-on:click.prevent="collapseButton(), onCancel()">{{
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                 </button>
-                                <button class="btn-primary pull-right" type="submit" :disabled='isDisabled' v-on:click="onSubmit()">
+                                <button class="btn-primary pull-right" type="submit" :disabled='isDisabled' v-on:click="onSubmit(), collapseButton()">
                                     {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
 
                                 </button>
@@ -185,7 +186,7 @@ export default {
         },
         onSubmit() {
              this.createBadge(this.badge);
-             this.collapseButton()
+
             if (this.isShown) {
                 this.closeAlert(".alert")
             }
@@ -301,7 +302,7 @@ input[type="number"] {
     font-size: 15px;
     height: 40px;
     padding: 0 10px;
-    border: 1px solid #e1e8ee;
+    border: 2px solid #e1e8ee;
     border-radius: 5px;
     box-shadow: none;
     max-height: 40px;
@@ -407,18 +408,6 @@ button.btn.btn-link.primary {
 
 button.btn-primary.pull-right {
     border-radius: 0.25rem;
-}
-
-.col-sm-12.card {
-    position: relative;
-    border-radius: 3px;
-    background: #ffffff;
-    margin-bottom: 20px;
-    width: 100%;
-    box-shadow: none;
-    margin: 0 auto;
-    padding: 0;
-    border: none;
 }
 
 .collapse {
@@ -553,6 +542,7 @@ input:checked+.slider:before {
     border: 2px solid #e1e8ee;
     border-radius: 5px;
     box-shadow: none;
+    height: 40px;
 }
 
 select:focus {
@@ -563,29 +553,24 @@ select:focus {
     color: #333;
 }
 
-input#iconInput {
-    width: 100%;
-    font-size: 15px;
-    height: 40px;
-    padding: 0 10px;
-    border: 1px solid #e1e8ee;
-    border-radius: 5px;
-    box-shadow: none;
-    max-height: 40px;
-    text-overflow: ellipsis;
-}
 
 label.pt-0 {
     display: inline-block;
     width: 100%;
 }
 
-form#domainSelectboxGroup,
-form#enabled {
+form#domainSelectboxGroup {
     display: inline-block;
 }
 .btn-primary.disabled, .btn-primary:disabled {
      background-color: #afc9e5; 
      background-image: none;
+}
+textarea#badgeDescription {
+    border:2px solid #e1e8ee
+}
+form#enable {
+    display: inline-block;
+    margin-left: 10%;
 }
 </style>
