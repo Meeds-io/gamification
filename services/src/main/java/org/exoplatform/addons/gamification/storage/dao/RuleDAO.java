@@ -89,22 +89,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     }
 
-    public int deleteRuleById(int ruleId) throws PersistenceException {
-        return getEntityManager().createNamedQuery("Rule.deleteRuleById")
-                .setParameter("ruleId", ruleId)
-                .executeUpdate();
-
-    }
-
-
-    public int deleteRuleByTitle(String ruleTitle) throws PersistenceException {
-        return getEntityManager().createNamedQuery("Rule.deleteRuleByTitle")
-                .setParameter("ruleTitle", ruleTitle)
-                .executeUpdate();
-
-    }
-
-
     public List<String>  getDomainList() throws PersistenceException {
         TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getDomainList", String.class);
 
@@ -127,7 +111,4 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     }
 
-    public void clear() {
-        getEntityManager().clear();
-    }
 }

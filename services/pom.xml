@@ -29,7 +29,7 @@
     <description>eXo Gamification services</description>
 
     <properties>
-        <exo.test.coverage.ratio>0.00</exo.test.coverage.ratio>
+        <exo.test.coverage.ratio>0.22</exo.test.coverage.ratio>
     </properties>
 
     <dependencies>
@@ -117,7 +117,6 @@
             <scope>provided</scope>
         </dependency>
         <!-- Test Dependencies -->
-        <!-- test dependencies-->
 
         <dependency>
             <groupId>junit</groupId>

@@ -68,24 +68,6 @@ public class BadgeService {
 
     }
 
-    /**
-     * Return all badges within the DB
-     * @return a list of BadgeDTO
-     */
-    public List<BadgeDTO> getAllBadgesbyDomain() {
-        try {
-            //--- load all Rules
-            List<BadgeEntity> badges = badgeStorage.getAllBadges();
-            if (badges != null) {
-                return badgeMapper.badgesToBadgeDTOs(badges);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find Badges", e.getMessage());
-        }
-        return null;
-
-    }
 
     /**
      * Add Badge to DB
@@ -100,7 +82,7 @@ public class BadgeService {
         try {
             badgeEntity = badgeStorage.findBadgeByTitle(badgeDTO.getTitle());
             if(badgeEntity==null){
-                if(!badgeDTO.getDomainDTO().isEnabled()){
+                if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                     badgeDTO.setEnabled(false);
                 }
                 badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
@@ -108,7 +90,7 @@ public class BadgeService {
                 Long id = badgeEntity.getId();
                 badgeEntity = badgeMapper.badgeDTOToBadge(badgeDTO);
                 badgeEntity.setId(id);
-                if(!badgeDTO.getDomainDTO().isEnabled()){
+                if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                     badgeDTO.setEnabled(false);
                 }
                 badgeEntity = badgeStorage.update(badgeEntity);
@@ -134,7 +116,7 @@ public class BadgeService {
         BadgeEntity badgeEntity = null;
 
         try {
-            if(!badgeDTO.getDomainDTO().isEnabled()){
+            if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                 badgeDTO.setEnabled(false);
             }
             badgeEntity = badgeStorage.update(badgeMapper.badgeDTOToBadge(badgeDTO));

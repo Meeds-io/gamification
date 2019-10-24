@@ -24,11 +24,7 @@ public class DomainService {
     protected final DomainMapper domainMapper;
     protected final ListenerService listenerService;
 
-/*    public DomainService(DomainDAO domainDAO, DomainMapper domainMapper, ListenerService listenerService) {
-        this.domainStorage = domainDAO;
-        this.domainMapper = domainMapper;
-        this.listenerService = listenerService;
-    }*/
+
 
   public DomainService() {
     this.domainStorage = CommonsUtils.getService(DomainDAO.class);

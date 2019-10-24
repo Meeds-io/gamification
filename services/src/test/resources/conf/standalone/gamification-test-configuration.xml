@@ -29,6 +29,10 @@
         <type>org.exoplatform.addons.gamification.service.configuration.DomainService</type>
     </component>
 
+    <component>
+        <key>org.exoplatform.social.core.manager.IdentityManager</key>
+        <type>org.exoplatform.addons.gamification.mock.IdentityManagerMock</type>
+    </component>
 
     <!-- Gamification Effective Service -->
     <component>
@@ -38,6 +42,16 @@
     <!-- Rules Service Layer-->
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.RuleService</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
+        <init-params>
+            <value-param>
+                <name>query-limit-offset</name>
+                <value>10</value>
+            </value-param>
+        </init-params>
     </component>
     <component>
         <type>org.exoplatform.services.rest.impl.ProvidersRegistry</type>
@@ -58,6 +72,10 @@
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.DomainDAO</type>
     </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
+    </component>
     <!-- Badge entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
@@ -66,6 +84,11 @@
     <!-- Domain entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.DomainMapper</type>
+    </component>
+
+    <!-- Rule entity Mapper -->
+    <component>
+        <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>
     </component>
 
 
@@ -112,7 +135,7 @@
     </component>
 
 
-    <component>
+<!--    <component>
         <key>org.exoplatform.services.log.LogConfigurationInitializer</key>
         <type>org.exoplatform.services.log.LogConfigurationInitializer</type>
         <init-params>
@@ -140,7 +163,7 @@
 
             </properties-param>
         </init-params>
-    </component>
+    </component>-->
     <component>
         <key>org.exoplatform.services.database.HibernateService</key>
         <jmx-name>exo-service:type=HibernateService</jmx-name>
