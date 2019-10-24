@@ -320,6 +320,9 @@ export default {
         onSave(rule) {
             this.$emit('save', rule);
             this.editedrule = {};
+            if (this.isShown) {
+                this.closeAlert(".alert")
+            }
         },
         onCancel(rule) {
             this.editedrule = {};
@@ -354,14 +357,7 @@ export default {
     display: flex;
     flex-direction: row-reverse;
     float: right;
-    margin-top: 18px;
-}
-
-.filterWithIcon {
-    display: flex;
-    flex-direction: row-reverse;
-    float: right;
-    margin-top: 18px;
+    margin-top: 17px;
 }
 
 i.uiIconSearch.uiIconLightGray {
@@ -422,7 +418,7 @@ i.uiIconSearch.uiIconLightGray {
 }
 
 input[type="text"] {
-    height: 35px;
+    height: 37px;
     margin: auto;
 }
 
@@ -690,7 +686,6 @@ button, [type="button"], [type="reset"], [type="submit"] {
     -webkit-appearance: button;
     align-content: stretch;
     padding: 8px 25px;
-   /* margin-left: 500px; */
 }
 
 input[type="checkbox"] {
@@ -908,20 +903,7 @@ select.mb-4.select-event {
     width: 100%;
     height: 40px;
 }
-.filterWithIcon{
-    display: flex;
-    flex-direction: row-reverse;
-    float: right;
-    margin: 10px;
-    font-size: 15px;
-    height: 35px;
-    border: 2px Solid #e1e8ee;
-    border-radius: 5px;
-    box-shadow: none;
-    width: 90px;
-    text-overflow: ellipsis;
-    margin-top: 18px;
-}
+
 .action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
     box-shadow: none;
     border: none;
@@ -933,9 +915,8 @@ select.mb-4.select-event {
 }
 form.switchEnabled, form#domainSelectboxGroup {
     display: inline-flex;
-    min-width: 38%;
-    margin-top: 30px;
-
+    min-width: 40%;
+    margin: 20px 5px;
 }
 button.btn-primary.pull-right {
     border-radius: 0.25rem;
@@ -946,17 +927,29 @@ button.btn-primary.pull-right {
     display: flex;
     flex-direction: row-reverse;
     float: right;
-    margin-top: 21px;
+    margin-top: 17px;
     margin-right: 12px;
     }
+.filter-bar select.mb-4 {
+    word-wrap: normal;
+    border: 2px Solid #e1e8ee;
+    border-radius: 5px;
+    margin: auto;
+    outline: none;
+    height: 36px;
+    width: auto;
+    padding: 0 10px;
+}
     .btn-primary.disabled, .btn-primary:disabled {
      background-color: #afc9e5; 
      background-image: none;
 }
-
-.popupContent label.switch {
-    margin-left: 10px;
-    margin-top: -8px;
+.PopupContent.popupContent select {
+    height: 40px;
+}
+form.switchEnabled label.switch {
+    margin-left: 21px;
+    margin-top: -7px;
 }
 
 </style>

@@ -85,7 +85,7 @@
                                         this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                                     </button>
                                     <button class="btn-primary pull-right" type="submit" :disabled='isDisabled' 
-                                              v-on:click.prevent="onSubmit()">
+                                              v-on:click.prevent="onSubmit(), collapseButton()">
                                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
 
                                     </button>
@@ -157,9 +157,6 @@
 
             },
             onSubmit() {
-                    this.collapseButton();
-                    this.isShown = !this.isShown;
-
                     this.createRule(this.rule);
                 if (this.isShown) {
                     this.closeAlert(".alert")
@@ -233,7 +230,7 @@
         font-size: 15px;
         height: 40px;
         padding: 0 10px;
-        border: 1px solid #e1e8ee;
+        border: 2px solid #e1e8ee;
         border-radius: 5px;
         box-shadow: none;
         max-height: 40px;
@@ -461,6 +458,9 @@
     .btn-primary.disabled, .btn-primary:disabled {
      background-color: #afc9e5; 
      background-image: none;
+    }
+    .PopupContent.popupContent select {
+        height: 40px;
     }
 
 </style>

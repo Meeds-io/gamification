@@ -161,12 +161,18 @@
     }
 </script>
 <style scoped>
-    .alert-success {
+    .alert {
         position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
         max-width: 40%;
-        margin: 10px !important;
-        position: fixed;
-        top: 41% !important;
+        top: 35%;
+        display: inline-block;
+    }
+    .alert-success {
+        background: #6ccbae;
+        border-color: #2eb58c;
+        color: #333333;
     }
 
     section {
