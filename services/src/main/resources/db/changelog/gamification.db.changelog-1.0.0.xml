@@ -281,6 +281,15 @@
                         />
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-18">
+        <sql dbms="mysql">
+            ALTER TABLE GAMIFICATION_DOMAIN DROP INDEX DESCRIPTION;
+        </sql>
+        <sql dbms="postgresql">
+            ALTER TABLE GAMIFICATION_DOMAIN DROP CONSTRAINT gamification_domain_description_key;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
 
 
