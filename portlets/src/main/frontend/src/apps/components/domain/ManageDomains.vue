@@ -5,7 +5,7 @@
                class="success alert alert-success"
                dismissible
                fade
-               v-if="addSuccess" variant="success"><i class="uiIconSuccess"></i>{{updateMessage}}
+               v-if="isadded || addSuccess" v-on:="closeAlert()" variant="success"><i class="uiIconSuccess"></i>{{updateMessage}}
         </alert>
         <alert class="alert alert-error" data-auto-dismiss="5000" v-if="addError"><i class="uiIconError"></i> {{errorMessage}}
         </alert>
@@ -50,6 +50,8 @@
             domains: [],
             dismissSecs: 5,
             dismissCountDown: 0,
+            isShown: false,
+            isadded: false,
         }
     };
     export default {
@@ -94,15 +96,16 @@
             },
             onSaveClicked(domain) {
                 this.updateDomain(domain)
+                this.isShown = !this.isShown;
 
 
             },
             onDomainCreated(domain) {
+                this.isadded = true;
                 this.addSuccess = true;
                 this.updateMessage = this.$t('exoplatform.gamification.message.domain.added',"Domain added successfully");
                 this.domains.push(domain);
                 this.resetDomainInForm();
-                this.dismissCountDown = 5
 
             },
             onDomainUpdated(domain) {
@@ -166,15 +169,18 @@
     }
 </script>
 <style scoped>
-    .alert-success {
-        color: #315b73;
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-        top: 28% !important;
+    .alert {
         position: fixed;
-        margin: 40px !important;
-        top: 100px !important;
-
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 40%;
+        top: 26%;
+        display: inline-block;
+    }
+    .alert-success {
+        background: #6ccbae;
+        border-color: #2eb58c;
+        color: #333333;
     }
 
     section {

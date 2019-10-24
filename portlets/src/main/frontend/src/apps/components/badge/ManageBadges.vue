@@ -3,7 +3,7 @@
     <div class="alert alert-success"  v-if="isadded || addSuccess" v-on:="closeAlert()">
         <i class="uiIconSuccess"></i>
         {{this.$t('exoplatform.gamification.badge')}}
-        {{updateMessage}}{{this.$t('exoplatform.gamification.successfully')}}
+        {{updateMessage}} {{this.$t('exoplatform.gamification.successfully')}}
     </div>
 
     <div class="alert alert-danger require-msg"   @dismiss-count-down="countDownChanged" dismissible fade show="dismissCountDown" v-if="addError" variant="danger">
