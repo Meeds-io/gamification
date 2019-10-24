@@ -602,12 +602,19 @@ div#collapseTwo {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.alert-success {
-    position: absolute;
-    top: 11% !important;
-    margin: auto 0.5% !important;
+.alert {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 40%;
+    top: 26%;
+    display: inline-block;
 }
-
+.alert-success {
+    background: #6ccbae;
+    border-color: #2eb58c;
+    color: #333333;
+}
 .filterWithIcon {
     display: flex;
     flex-direction: row-reverse;
