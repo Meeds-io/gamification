@@ -622,6 +622,7 @@ div#collapseTwo {
 
 .card-body label {
     display: block;
+    margin-right: 10px;
 }
 
 form {
@@ -888,6 +889,9 @@ i.uiIconClose.uiIconBlue {
     border-radius: 5px;
     box-shadow: none;
     margin-left: 20px;
+    height:40px;
+    width:352px;
+    margin-top: -7px;
 }
 
 select:focus {
@@ -902,6 +906,7 @@ select:focus {
 select.mb-4.select-event {
     margin: 0 !important;
     width: 100%;
+    height: 40px;
 }
 .filterWithIcon{
     display: flex;
@@ -927,8 +932,10 @@ select.mb-4.select-event {
     background-color: transparent;
 }
 form.switchEnabled, form#domainSelectboxGroup {
-    display: inline-block;
-    min-width: 40%;
+    display: inline-flex;
+    min-width: 38%;
+    margin-top: 30px;
+
 }
 button.btn-primary.pull-right {
     border-radius: 0.25rem;
@@ -946,4 +953,10 @@ button.btn-primary.pull-right {
      background-color: #afc9e5; 
      background-image: none;
 }
+
+.popupContent label.switch {
+    margin-left: 10px;
+    margin-top: -8px;
+}
+
 </style>
