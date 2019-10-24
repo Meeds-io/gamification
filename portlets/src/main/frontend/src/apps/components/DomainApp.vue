@@ -17,10 +17,10 @@
 <style>
 
     .UIToolbarContainer .NormalContainerBlock .ToolbarContainer .TRContainer {
-        background: #fff;
+        background: #333333;
     }
     .UIToolbarContainerDark .uiDropdownWithIcon > a, .UIToolbarContainer .uiDropdownWithIcon > a > i {
-        color: #4d5466 !important;
+        color: #ffffff !important;
     }
     .UIToolbarContainerDark .uiDropdownWithIcon.dropdown > a:hover,
     .UIToolbarContainerDark .uiHelpPLFToolbarPortlet > a:hover,

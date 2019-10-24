@@ -431,6 +431,11 @@
         border-radius: 5px;
         box-shadow: none;
         margin-left: 20px;
+        height: 40px;
+        width: 343px;
+        margin-top: 17px;
+        margin-bottom: inherit;
+
     }
     select:focus{
         border-color: #a6bad6;
@@ -447,6 +452,7 @@
     select.mb-4.select-event {
         margin: 0 !important;
         width: 100%;
+        height: 40px;
     }
 
     .btn-primary.disabled, .btn-primary:disabled {

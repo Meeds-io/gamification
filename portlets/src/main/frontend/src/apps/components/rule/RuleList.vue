@@ -618,6 +618,7 @@ div#collapseTwo {
 
 .card-body label {
     display: block;
+    margin-right: 10px;
 }
 
 form {
@@ -883,6 +884,9 @@ i.uiIconClose.uiIconBlue {
     border-radius: 5px;
     box-shadow: none;
     margin-left: 20px;
+    height:40px;
+    width:352px;
+    margin-top: -7px;
 }
 
 select:focus {
@@ -897,6 +901,7 @@ select:focus {
 select.mb-4.select-event {
     margin: 0 !important;
     width: 100%;
+    height: 40px;
 }
 
 .action-bar.dropdown.filterWithIcon> a.actionIcon.dropdown-toggle {
@@ -946,4 +951,5 @@ form.switchEnabled label.switch {
     margin-left: 21px;
     margin-top: -7px;
 }
+
 </style>
