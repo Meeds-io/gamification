@@ -730,4 +730,8 @@
      background-color: #afc9e5; 
      background-image: none;
     }
+
+        .collapse.show.out {
+    display: none;
+}
 </style>

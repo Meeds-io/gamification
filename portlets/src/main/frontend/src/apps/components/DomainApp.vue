@@ -16,25 +16,16 @@
 
 <style>
 
-    .UIToolbarContainer .NormalContainerBlock .ToolbarContainer .TRContainer {
-        background: #333333;
-    }
-    .UIToolbarContainerDark .uiDropdownWithIcon > a, .UIToolbarContainer .uiDropdownWithIcon > a > i {
-        color: #ffffff !important;
-    }
-    .UIToolbarContainerDark .uiDropdownWithIcon.dropdown > a:hover,
-    .UIToolbarContainerDark .uiHelpPLFToolbarPortlet > a:hover,
-    .UIToolbarContainerDark .uiDropdownWithIcon.dropdown.open > a,
-    .UIToolbarContainerDark .uiHelpPLFToolbarPortlet.open > a{
-        background: none;
-        border-bottom: solid 3px #578dc9;
-        box-sizing: border-box;
-    }
 
-    a, a:hover, a:focus {
-        color: inherit;
-        text-decoration: none;
-    }
+     .UIToolbarContainerDark a.dropdown-toggle {
+    color: #fff;
+      text-decoration: none;
+}
+ .UIToolbarContainerDark a.dropdown-toggle:hover, .UIToolbarContainerDark a.dropdown-toggle:focus{
+      text-decoration: none;
+       color: #fff;
+}
+     
 
     a {
         color: none;

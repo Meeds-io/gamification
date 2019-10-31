@@ -54,6 +54,26 @@ public class DomainService {
     }
 
     /**
+     * Return enabled domains within the DB
+     * @return a list of enabled DomainDTO
+     */
+    public List<DomainDTO> getEnabledDomains() {
+        try {
+            //--- load all Domains
+            List<DomainEntity> badges = domainStorage.getEnabledDomains();
+            if (badges != null) {
+                return domainMapper.domainssToDomainDTOs(badges);
+            }else{
+                return null;
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Domains", e);
+            throw (e);
+        }
+    }
+
+    /**
      * Find a DomainEntity by title
      * @param domainTitle : domain title
      * @return an instance DomainDTO

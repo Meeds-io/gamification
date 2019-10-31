@@ -140,22 +140,22 @@ public class GamificationRestEndpoint implements ResourceContainer {
     }
 
     /**
-     * Return all domains
+     * Return enabled domains
      *
-     * @return : list of all domains
+     * @return : list of enabled domains
      */
     @Path("domains")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
-    public Response getAllDomains() {
+    public Response getDomains() {
 
         try {
-            return Response.ok(domainService.getAllDomains()).build();
+            return Response.ok(domainService.getEnabledDomains()).build();
 
         } catch (Exception e) {
-            LOG.error("Error while fetching All Domains", e);
-            return Response.serverError().entity("Error while fetching all domains").build();
+            LOG.error("Error while fetching Enabled Domains", e);
+            return Response.serverError().entity("Error while fetching enabled domains").build();
         }
 
     }

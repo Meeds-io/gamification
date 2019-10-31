@@ -38,6 +38,18 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
         }
 
     }
+
+    public List<DomainEntity> getEnabledDomains() throws PersistenceException {
+
+        TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.getEnabledDomains", DomainEntity.class);
+
+        try {
+            return query.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
     public int deleteDomainByTitle(String domainTitle) throws PersistenceException {
         return getEntityManager().createNamedQuery("GamificationDomain.deleteDomainByTitle")
                 .setParameter("domainTitle", domainTitle)

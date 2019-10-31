@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col">
             <select v-model="domain" class="mb-4" required>
-                <option value="null" disabled selected>{{ this.$t('exoplatform.gamification.leaderboard.domain.null',"Global") }}</option>
+                <option value="null"  selected>{{ this.$t('exoplatform.gamification.leaderboard.domain.null',"Global") }}</option>
                 <option v-for="option in domains" v-bind:value="option.title">
                      {{$t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title) }}
                 </option>
