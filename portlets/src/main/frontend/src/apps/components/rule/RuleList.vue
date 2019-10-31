@@ -915,7 +915,6 @@ select.mb-4.select-event {
 }
 form.switchEnabled, form#domainSelectboxGroup {
     display: inline-flex;
-    min-width: 40%;
     margin: 20px 5px;
 }
 button.btn-primary.pull-right {
