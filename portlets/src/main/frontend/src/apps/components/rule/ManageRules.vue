@@ -143,7 +143,7 @@
                     this.addError = true;
                     this.errors.push(e)
                 });
-            axios.get(`/rest/gamification/api/v1/domains`)
+            axios.get(`/rest/gamification/domains`)
                 .then(response => {
                     this.domains = response.data;
                 })

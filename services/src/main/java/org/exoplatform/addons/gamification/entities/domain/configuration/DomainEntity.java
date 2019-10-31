@@ -15,6 +15,10 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
                 name = "GamificationDomain.getAllDomains",
                 query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false"
         ),
+        @NamedQuery(
+                name = "GamificationDomain.getEnabledDomains",
+                query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false AND domain.isEnabled = true "
+        ),
 
         @NamedQuery(
                 name = "GamificationDomain.findDomainByTitle",
