@@ -85,8 +85,6 @@ public interface GamificationConstant {
     String GAMIFICATION_FORUM_ADD_TOPIC                                                 = "addForumTopic";
     /** ADD TOPIC IN FORUM */
     String GAMIFICATION_FORUM_VOTE_TOPIC                                                = "voteForumTopic";
-    /** OPEN TOPIC IN FORUM (VISITED) **/
-    String GAMIFICATION_FORUM_OPEN_TOPIC                                                = "openForumTopic";
 
 
     /***************************************************************************************************************************************************/
