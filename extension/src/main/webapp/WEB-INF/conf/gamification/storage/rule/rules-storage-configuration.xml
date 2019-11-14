@@ -1033,40 +1033,6 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
-            <name>rule.OpenForumTopic</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>openForumTopic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>Someone visited your topic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>openForumTopic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>1</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
     <!-- ############################################################################################ -->
     <!-- ################## Gamification Rule Config : WIKI FLOW ########################## -->
     <!-- ############################################################################################ -->
