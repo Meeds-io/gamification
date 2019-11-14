@@ -107,7 +107,7 @@
 
     Vue.use(BootstrapVue);
     export default {
-        props: ['rule', 'domains', 'events'],
+        props: ['rule', 'domains', 'events', 'errorType'],
         data: function (){
             return {
                 SaveRuleForm:'',
@@ -133,7 +133,7 @@
                 this.selectedFileName = this.rule.imageName
             },
             'rule.domainDTO'() {
-                this.rule.area = this.rule.domainDTO.title
+                if (typeof(this.rule.domainDTO) != "undefined"){this.rule.area = this.rule.domainDTO.title}
             },
             'rule.ruleDTO'() {
                 this.rule.title = this.rule.ruleDTO.title
@@ -192,7 +192,14 @@
                         this.$emit('sucessAdd', this.rule)
                     })
                     .catch(e => {
-                        this.$emit('failAdd', this.rule)
+                         this.addError = true;
+                         this.uploadId="";
+                        if(e.response.status===304){
+                            this.errorType="ruleExists"
+                        }else{
+                            this.errorType="addRuleError"
+                        }
+                       this.$emit('failAdd', this.rule, this.errorType)
                     })
                 //this.resetRuleInForm()
             }

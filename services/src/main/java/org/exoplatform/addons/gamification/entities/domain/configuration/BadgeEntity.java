@@ -40,6 +40,10 @@ import java.util.Objects;
                 query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle"
         ),
         @NamedQuery(
+                name = "GamificationBadge.findBadgeByTitleAndDomain",
+                query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle and badge.domain = :domain"
+        ),
+        @NamedQuery(
                 name = "GamificationBadge.deleteBadgeByTitle",
                 query = "DELETE FROM GamificationBadge badge WHERE badge.title = :badgeTitle"
         ),

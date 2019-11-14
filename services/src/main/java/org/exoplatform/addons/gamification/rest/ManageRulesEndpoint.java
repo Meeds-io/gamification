@@ -11,6 +11,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import javax.annotation.security.RolesAllowed;
+import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -101,6 +102,14 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
                 return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
 
+            }catch (EntityExistsException e) {
+
+                LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
+
+                return Response.notModified()
+                        .cacheControl(cacheControl)
+                        .entity("Rule already exists")
+                        .build();
             } catch (Exception e) {
 
                 LOG.error("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
@@ -151,7 +160,15 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
                 return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
 
-            } catch (Exception e) {
+            } catch (EntityExistsException e) {
+
+                LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
+
+                return Response.notModified()
+                        .cacheControl(cacheControl)
+                        .entity("Rule already exists")
+                        .build();
+            }catch (Exception e) {
 
                 LOG.error("Error updating rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
 

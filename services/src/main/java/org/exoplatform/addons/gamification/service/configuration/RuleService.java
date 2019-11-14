@@ -12,6 +12,7 @@ import org.exoplatform.services.log.Log;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 public class RuleService {
@@ -232,7 +233,7 @@ public class RuleService {
         RuleEntity ruleEntity = null;
 
         try {
-            ruleEntity = ruleDAO.findRuleByTitle(ruleDTO.getTitle());
+            ruleEntity = ruleDAO.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
             if(ruleEntity==null){
                 ruleEntity = ruleDAO.create(ruleMapper.ruleDTOToRule(ruleDTO));
             }else if(ruleEntity.isDeleted()){
@@ -241,7 +242,7 @@ public class RuleService {
                 ruleEntity.setId(id);
                 ruleEntity = ruleDAO.update(ruleEntity);
             }else{
-                throw(new EntityExistsException());
+                throw(new EntityExistsException("Rule with same event and domain already exist"));
             }
         } catch (Exception e) {
             LOG.error("Error to add rule with title {}", ruleDTO.getTitle() , e);
@@ -262,14 +263,16 @@ public class RuleService {
         RuleEntity ruleEntity = null;
 
         try {
-
-            ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO));
-
+            ruleEntity = ruleDAO.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
+            if(  ruleEntity!=null && ruleEntity.getId()!=ruleDTO.getId()){
+                throw(new EntityExistsException("Rule with same event and domain already exist"));
+            }
+            ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
+            ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO)); 
         } catch (Exception e) {
             LOG.error("Error to update rule with title {}", ruleDTO.getTitle() , e);
             throw(e);
         }
-
         return ruleMapper.ruleToRuleDTO(ruleEntity);
     }
 }

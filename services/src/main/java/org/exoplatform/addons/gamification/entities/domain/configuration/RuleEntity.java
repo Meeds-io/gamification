@@ -31,6 +31,10 @@ import java.util.Objects;
                 query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle and rule.isEnabled = true"
         ),
         @NamedQuery(
+                name = "Rule.findRuleByEventAndDomain",
+                query = "SELECT rule FROM Rule rule where rule.event = :event and rule.area = :domain and rule.isEnabled = true"
+        ),
+        @NamedQuery(
                 name = "Rule.findEnabledRulesByEvent",
                 query = "SELECT rule FROM Rule rule where rule.event = :event and rule.isEnabled = true AND rule.isDeleted = false"
         ),

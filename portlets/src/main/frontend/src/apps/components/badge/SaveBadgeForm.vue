@@ -18,10 +18,6 @@
                             <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
                             <input class="form-control" id="titleInput" :placeholder="$t('badge.title.placeholder','Enter badge title')" required type="text" v-model="badge.title">
                             </input>
-
-                            <div :show="dismissCountDown" @dismiss-count-down="countDownChanged" @dismissed="dismissCountdown=0" class="require-msg" dismissible v-if="formErrors.title" variant="danger">
-                                {{ this.$t('exoplatform.gamification.Badgetitle')}} {{dismissCountDown}}
-                            </div>
                         </form>
 
                         <div id="descriptionInputGroup">
@@ -35,10 +31,6 @@
                         <form id="neededScoreInputGroup">
                             <label id="Needed" label-for="neededScoreInput" class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score')}}:</label>
                             <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required  :placeholder="$t('badge.score.placeholder','Enter badge needed score')">
-
-                            <div class="alert alert-danger require-msg"  v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0" @dismiss-count-down="countDownChanged">
-                                {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}}
-                            </div>
                         </form>
                         <form id="iconInputGroup">
                             <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon')}}: </label>
@@ -100,14 +92,13 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue);
 export default {
-    props: ['badge', 'domains'],
+    props: ['badge', 'domains', 'errorType'],
     data: function () {
         return {
             formErrors: {},
             selectedFile: undefined,
             selectedFileName: '',
             dismissSecs: 5,
-            dismissCountDown: 0,
             isShown: false,
             imageName: '',
             imageFile: '',
@@ -137,28 +128,7 @@ export default {
         isNotEmpty(str){
               return(str!=null&&str!="")
             },
-        validateForm() {
-            const errors = {};
-            if (!this.badge.title) {
-                console.log('Title is required')
-                errors.title = 'Title is required';
-                this.dismissCountDown = 5
-            }
 
-            if (!this.uploadId) {
-                console.log('Needed icon is required')
-                errors.icon = 'Needed icon is required';
-                this.dismissCountDown = 5
-            }
-
-            if (!this.badge.neededScore) {
-                console.log('Needed score is required')
-                errors.neededScore = 'Needed score is required';
-                this.dismissCountDown = 5
-            }
-            this.formErrors = errors;
-            return Object.keys(errors).length === 0
-        },
         collapseButton() {
             this.isShown = !this.isShown;
         },
@@ -175,8 +145,13 @@ export default {
                 })
                 .catch(e => {
                     this.addError = true;
-                    this.errors.push(e)
                     this.uploadId="";
+                    if(e.response.status===304){
+                            this.errorType="badgeExists"
+                        }else{
+                            this.errorType="createBadgeError"
+                        }
+                   this.$emit('failAdd', this.badgeDTO, this.errorType)
                 })
         },
 

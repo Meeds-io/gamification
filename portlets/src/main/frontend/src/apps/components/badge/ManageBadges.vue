@@ -1,16 +1,17 @@
 <template>
 <div>
-    <div class="alert alert-success"  v-if="isadded || addSuccess" v-on:="closeAlert()">
+    <div class="alert alert-success"  v-show="addSuccess" v-on:="closeAlert()">
         <i class="uiIconSuccess"></i>
         {{this.$t('exoplatform.gamification.badge')}}
         {{updateMessage}} {{this.$t('exoplatform.gamification.successfully')}}
     </div>
-
-    <div class="alert alert-danger require-msg"   @dismiss-count-down="countDownChanged" dismissible fade show="dismissCountDown" v-if="addError" variant="danger">
-        {{this.$t('exoplatform.gamification.errorbadge')}}
+    <div class="alert alert-error"  v-show="addError" v-on:="closeAlert()">
+        <i class="uiIconError"></i>
+        {{this.$t(`exoplatform.gamification.${errorType}`)}}
     </div>
+
 <section>
-    <save-badge-form :badge="badgeInForm" :domains="domains" v-on:cancel="resetBadgeInForm" v-on:failAdd="onBadgeFail" v-on:submit="onBadgeCreated"></save-badge-form>
+    <save-badge-form :badge="badgeInForm" :domains="domains" :errorType="errorType" v-on:cancel="resetBadgeInForm" v-on:failAdd="onBadgeFail" v-on:submit="onBadgeCreated"></save-badge-form>
     <badge-list :badges="badges" :domains="domains" v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></badge-list>
 </section>
 </div>
@@ -34,14 +35,13 @@ const initialData = () => {
             neededScore: null,
             icon: null,
             dismissSecs: 5,
-            dismissCountDown: 0,
+            countDown: 0,
             showDismissibleAlert: false,
             domain: '',
             enabled: true,
             createdDate: null,
             lastModifiedBy: '',
             lastModifiedDate: null,
-            isadded: false,
             isShown: false,
         },
         addSuccess: false,
@@ -49,6 +49,7 @@ const initialData = () => {
         updateMessage: '',
         badges: [],
         domains: [],
+        errorType: ""
     }
 };
 export default {
@@ -66,7 +67,6 @@ export default {
             this.isShown = !this.isShown;
         },
         onBadgeCreated(badge) {
-            this.isadded = true;
             this.addSuccess = true;
             this.updateMessage = 'added';
             this.badges.push(badge);
@@ -75,13 +75,18 @@ export default {
         collapseButton() {
             this.isShown = !this.isShown;
         },
-        onBadgeFail(rule) {
-
+        onBadgeFail(badge,errorType) {
             this.addError = true
-            this.errors.push(e)
+            this.errorType=errorType
             this.resetBadgeInForm()
-
+            this.dismissCountDown();
         },
+         dismissCountDown() {
+                setTimeout(() => {
+                this.addError = false
+                this.addSuccess = false
+            }, 3000);
+            }, 
         onBadgeAction(badge) {
             const index = this.badges.findIndex((p) => p.id === badge.id);
             if (index !== -1) {
@@ -100,10 +105,12 @@ export default {
                     this.addSuccess = true
                     this.updateMessage = 'deleted'
                     this.badges.splice(index, 1)
-                    this.dismissCountDown = 5
+                    this.dismissCountDown();
                 })
                 .catch(e => {
-                    this.errors.push(e)
+                    this.errorType="deleteRuleError"
+                    this.addError=true
+                    this.dismissCountDown();
                 });
             if (badgeId === this.badgeInForm.id) {
                 this.resetBadgeInForm()
@@ -115,35 +122,45 @@ export default {
                     this.addSuccess = true;
                     this.updateMessage = 'updated';
                     this.badges.push(badge);
-                    this.dismissCountDown = 5
-
-                        .catch(e => {
-                            this.addError = true
-
-                            this.errors.push(e)
-                        })
+                    this.dismissCountDown();
                 })
                 .catch(e => {
-                    console.log("Error")
+                        if(e.response.status===304){
+                            this.errorType="badgeExists"
+                        }else{
+                            this.errorType="updateBadgeError"
+                        }
+                        this.addError=true
+                        this.dismissCountDown();
+                        this.getBadges()
                 })
 
-        }
-    },
-    created() {
-        axios.get(`/rest/gamification/badges/all`)
+        },
+        getBadges() {
+            axios.get(`/portal/rest/gamification/badges/all`)
             .then(response => {
                 this.badges = response.data;
             })
             .catch(e => {
-                this.errors.push(e)
+                this.errorType="getBadgesError"
+                this.addError=true
+                this.dismissCountDown();
+                console.log(e)
             });
-        axios.get(`/rest/gamification/domains`)
+        },
+        getDomains(){
+            axios.get(`/portal/rest/gamification/domains`)
             .then(response => {
                 this.domains = response.data;
             })
             .catch(e => {
-                this.errors.push(e)
+                console.log(e)
             })
+        }
+    },
+    created() {
+        this.getBadges()
+        this.getDomains() 
     }
 }
 </script>

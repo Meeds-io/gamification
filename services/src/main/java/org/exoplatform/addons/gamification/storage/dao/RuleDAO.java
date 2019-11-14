@@ -53,6 +53,20 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     }
 
+    public RuleEntity findRuleByEventAndDomain(String event, String domain) throws PersistenceException {
+
+        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
+                .setParameter("event", event)
+                .setParameter("domain", domain);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
+
     public List<RuleEntity> getAllRules() throws PersistenceException {
 
         TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRules", RuleEntity.class);

@@ -1,23 +1,17 @@
 <template>
     <section>
-        <div class="alert alert-success" v-if="isadded || addSuccess" v-on:="closeAlert()">
+        <div class="alert alert-success" v-show="isadded || addSuccess" v-on:="closeAlert()">
             <i class="uiIconSuccess"></i>
             {{this.$t('exoplatform.gamification.rule')}} {{updateMessage}}
             {{this.$t('exoplatform.gamification.successfully')}}
         </div>
 
+        <div class="alert alert-error" v-show="addError" v-on:="closeAlert()">
+            <i class="uiIconError"></i>
+            {{this.$t(`exoplatform.gamification.${errorType}`)}}
+        </div>
 
-        <alert @dismiss-count-down="countDownChanged"
-               class="alert alert-danger"
-               :show="dismissCountDown"
-               dismissible
-               fade
-               variant="danger"
-               v-if="addError"><i class="uiIconError"></i> {{this.$t('exoplatform.gamification.errorrule')}}
-        </alert>
-
-
-        <save-rule-form :rule="ruleInForm" :domains="domains" :events="events"  v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm"></save-rule-form>
+        <save-rule-form :rule="ruleInForm" :domains="domains" :events="events" :errorType="errorType"  v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm" ></save-rule-form>
         <rule-list :domain="domain" :domains="domains" :events="events" :rule="ruleInForm" :rules="rules"
                    v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></rule-list>
 
@@ -54,6 +48,7 @@
             events: [],
             isadded: false,
             isShown: false,
+            errorType:"errorrule"
         }
     };
     export default {
@@ -63,19 +58,33 @@
         },
         data: initialData,
         methods: {
-            validateForm() {
-                const errors = {};
-                if (this.addSuccess=true) {
-                    errors.title = 'success';
-                    this.dismissCountDown = 5
-                }
-                if (this.addError=true) {
-                    errors.title = 'error';
-                    this.dismissCountDown = 5
-                }
-
-                this.formErrors = errors;
-                return Object.keys(errors).length === 0
+            getRules() {
+                axios.get(`/rest/gamification/rules/all`)
+                .then(response => {
+                    this.rules = response.data;
+                })
+                .catch(e => {
+                    this.addError = true;
+                    this.errorType="getRulesError"
+                });
+            },
+            getDomains() {
+                axios.get(`/rest/gamification/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    console.log(e)
+                });
+            },
+            getEvents() {
+                 axios.get(`/rest/gamification/api/v1/events`)
+                .then(response => {
+                    this.events = response.data;
+                })
+                .catch(e => {
+                    console.log(e)
+                })
             },
             countDownChanged(dismissCountDown) {
                 this.dismissCountDown = dismissCountDown
@@ -94,14 +103,13 @@
                 this.updateMessage = 'added';
                 this.rules.push(rule);
                 this.resetRuleInForm()
-
             },
 
-            onRuleFail(rule) {
-                this.addError = true;
-                this.errors.push(e);
-                this.resetRuleInForm();
-                this.dismissCountDown = 5
+            onRuleFail(rule,errorType) {                
+                this.addError = true
+                this.errorType=errorType
+                this.resetRuleInForm()
+                this.dismissCountDown = 15
             },
 
             onRemoveClicked(ruleId, ruleTitle) {
@@ -111,7 +119,8 @@
                         this.rules.splice(index, 1)
                     })
                     .catch(e => {
-                        this.errors.push(e)
+                        this.getRules()
+                        this.errorType="deleteRuleError"
                     });
                 if (ruleId === this.ruleInForm.id) {
                     this.resetRuleInForm()
@@ -123,40 +132,23 @@
                         this.addSuccess = true;
                         this.updateMessage = 'updated';
                         this.rules.push(rule);
-                        this.dismissCountDown = 5
-                            .catch(e => {
-                                this.addError = true;
-                                this.errors.push(e)
-                            })
+                        this.dismissCountDown = 15
                     })
                     .catch(e => {
-                        console.log("Error")
+                        if(e.response.status===304){
+                            this.errorType="ruleExists"
+                        }else{
+                            this.errorType="updateRuleError"
+                        }
+                        this.addError = true
+                        this.getRules()
                     })
             }
         },
         created() {
-            axios.get(`/rest/gamification/rules/all`)
-                .then(response => {
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.addError = true;
-                    this.errors.push(e)
-                });
-            axios.get(`/rest/gamification/domains`)
-                .then(response => {
-                    this.domains = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-            axios.get(`/rest/gamification/api/v1/events`)
-                .then(response => {
-                    this.events = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+            this.getRules() 
+            this.getDomains() 
+            this.getEvents()
         }
     }
 </script>
