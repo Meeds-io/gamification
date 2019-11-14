@@ -78,9 +78,11 @@ public class BadgeService {
     public BadgeDTO addBadge (BadgeDTO badgeDTO) {
 
         BadgeEntity badgeEntity = null;
-
         try {
-            badgeEntity = badgeStorage.findBadgeByTitle(badgeDTO.getTitle());
+            if(badgeDTO.getDomainDTO()!=null){
+                badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
+            }
+            badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(),badgeDTO.getDomain());
             if(badgeEntity==null){
                 if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                     badgeDTO.setEnabled(false);
@@ -100,6 +102,7 @@ public class BadgeService {
 
         } catch (Exception e) {
             LOG.error("Error to create badge with title {}", badgeDTO.getTitle() , e);
+            throw(e);
         }
 
         return badgeMapper.badgeToBadgeDTO(badgeEntity);
@@ -114,15 +117,22 @@ public class BadgeService {
     public BadgeDTO updateBadge (BadgeDTO badgeDTO) {
 
         BadgeEntity badgeEntity = null;
-
         try {
-            if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
-                badgeDTO.setEnabled(false);
+            if(badgeDTO.getDomainDTO()!=null){
+                badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
             }
-            badgeEntity = badgeStorage.update(badgeMapper.badgeDTOToBadge(badgeDTO));
+            badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(),badgeDTO.getDomain());
+            if(  badgeEntity!=null && badgeEntity.getId()!=badgeDTO.getId()){
+                throw(new EntityExistsException("Badge with same title and domain already exist"));
+            }
+                if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
+                    badgeDTO.setEnabled(false);
+                }
+                badgeEntity = badgeStorage.update(badgeMapper.badgeDTOToBadge(badgeDTO));
 
         } catch (Exception e) {
             LOG.error("Error to update with title {}", badgeDTO.getTitle() , e);
+            throw(e);
         }
 
         return badgeMapper.badgeToBadgeDTO(badgeEntity);

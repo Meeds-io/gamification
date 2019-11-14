@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
+import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -179,6 +180,15 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
 
+      } catch (EntityExistsException e) {
+
+        LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
+
+        return Response.notModified()
+                .cacheControl(cacheControl)
+                .entity("Badge already exists")
+                .build();
+
       } catch (Exception e) {
 
         LOG.error("Error adding new badge {} by {} ", badgeDTO.getTitle(), currentUserName, e);
@@ -246,13 +256,23 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         LOG.info("service=gamification operation=edit-badge parameters=\"user_social_id:{},badge_id:{},badge_title:{},badge_description:{}\"", actorId, badgeDTO.getId(), badgeDTO.getTitle(), badgeDTO.getDescription());
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
+      }
+        catch (EntityExistsException e) {
 
-      } catch (Exception e) {
+          LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
 
-        LOG.error("Error updating badge {} by {} ", badgeDTO.getTitle(), currentUserName, e);
+          return Response.notModified()
+                  .cacheControl(cacheControl)
+                  .entity("Badge already exists")
+                  .build();
+
+        }
+        catch (Exception e) {
+
+        LOG.error("Error when updating badge {} by {} ", badgeDTO.getTitle(), currentUserName, e);
 
         return Response.serverError().cacheControl(cacheControl).entity("Error adding new badge").build();
-      }
+        }
 
     } else {
 
