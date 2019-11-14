@@ -108,7 +108,7 @@ export default {
                     this.dismissCountDown();
                 })
                 .catch(e => {
-                    this.errorType="deleteRuleError"
+                    this.errorType="deleteBadgeError"
                     this.addError=true
                     this.dismissCountDown();
                 });
