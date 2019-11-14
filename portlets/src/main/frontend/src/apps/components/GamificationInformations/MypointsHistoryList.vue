@@ -5,7 +5,7 @@
             <th class="rule-name-col"></th>
             <th class="rule-name-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Event') }}</th>
             <th class="rule-desc-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Date') }}</th>
-            <th class="rule-price-col"> {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }} <a class="ico-info actionIco" data-v-2e935f06="" href="../gamification-earn-points" target="_blank" rel="tooltip"
+            <th class="rule-price-col"> {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }} <a class="ico-info actionIco" data-v-2e935f06="" href="../intranet/gamification-earn-points" target="_blank" rel="tooltip"
                                                   :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') " >
                 <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
             <th class="rule-enable-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Domain') }}</th>
