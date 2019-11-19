@@ -59,7 +59,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
             // Processing registered rules
 
             for (RuleConfig rule : ruleMap.values()) {
-                RuleDTO ruleDTO = ruleService.findRuleByTitle(rule.getTitle());
+                RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(rule.getTitle(),rule.getZone());
 
                 if (ruleDTO == null) {
                     store(rule);

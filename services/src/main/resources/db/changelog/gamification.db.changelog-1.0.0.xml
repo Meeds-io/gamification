@@ -290,6 +290,15 @@
         </sql>
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-19">
+        <sql dbms="mysql">
+            ALTER TABLE GAMIFICATION_BADGES DROP INDEX TITLE;
+        </sql>
+        <sql dbms="postgresql">
+            ALTER TABLE GAMIFICATION_BADGES DROP CONSTRAINT gamification_badges_title_key;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
 
 

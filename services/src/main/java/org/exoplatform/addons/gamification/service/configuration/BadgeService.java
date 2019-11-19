@@ -48,6 +48,29 @@ public class BadgeService {
         return null;
 
     }
+    /**
+     * Find a BadgeEntity by title
+     * @param badgeTitle : badge title
+     * @param domain : badge domain
+     * @return an instance BadgeDTO
+     */
+    @ExoTransactional
+    public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, String domain) {
+
+        try {
+            //--- Get Entity from DB
+            BadgeEntity entity = badgeStorage.findBadgeByTitleAndDomain(badgeTitle,domain);
+            //--- Convert Entity to DTO
+            if (entity != null) {
+                return badgeMapper.badgeToBadgeDTO(entity);
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
+        }
+        return null;
+
+    }
 
     /**
      * Return all badges within the DB

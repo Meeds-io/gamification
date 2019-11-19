@@ -124,6 +124,32 @@ public class RuleService {
     }
 
 
+    /**
+     * Find a RuleEntity by title
+     * @param ruleTitle : rule's title param
+     * @param domain : rule's domain param
+     * @return an instance of RuleDTO
+     */
+    @ExoTransactional
+    public RuleDTO findRuleByEventAndDomain (String ruleTitle, String domain) {
+
+        try {
+            //--- Get Entity from DB
+            RuleEntity entity = ruleDAO.findRuleByEventAndDomain(ruleTitle,domain);
+            //--- Convert Entity to DTO
+            if (entity != null ) {
+                return ruleMapper.ruleToRuleDTO(entity);
+            }else{
+                return null;
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find Rule entity with title : {}",ruleTitle,e);
+            throw(e);
+        }
+    }
+
+
 
     /**
      * Get all Rules from DB

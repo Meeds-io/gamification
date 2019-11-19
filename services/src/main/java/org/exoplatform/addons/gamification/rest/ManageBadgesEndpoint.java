@@ -173,11 +173,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
           badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
         }
 
-        if(badgeDTO.getDomainDTO()!=null) {
-          badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
-          badgeDTO.setTitle(badgeDTO.getTitle() + "_" + badgeDTO.getDomain());
-        }
-
         // --- Add badge
         badgeDTO = badgeService.addBadge(badgeDTO);
 
@@ -250,11 +245,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         badgeDTO.setCreatedBy(currentUserName);
         badgeDTO.setLastModifiedBy(currentUserName);
         badgeDTO.setLastModifiedDate(formatter.format(new Date()));
-
-        if(badgeDTO.getDomainDTO()!=null) {
-          badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
-          badgeDTO.setTitle(badgeDTO.getTitle() + "_" + badgeDTO.getDomain());
-        }
 
         // --- Update rule
         badgeDTO = badgeService.updateBadge(badgeDTO);
