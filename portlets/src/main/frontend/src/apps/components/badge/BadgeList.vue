@@ -86,10 +86,12 @@
                              <form id="enabledswittch">
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
                                 <label class="uiSwitchBtn">
-                                    <input type="checkbox" v-model="editedbadge.enabled" >
+                                    <input :disabled="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" type="checkbox" v-model="editedbadge.enabled" >
                                     <span class="slider round"></span>
                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
                                 </label>
+                            <div v-if="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" class="error"> *{{$t(`exoplatform.gamification.disabledDomainForDomains`,"This domain cannot be enabled as long as the related domain is disabled")}}.</div>
+
                             </form>
  
 

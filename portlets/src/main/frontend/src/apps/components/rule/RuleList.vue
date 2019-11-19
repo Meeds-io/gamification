@@ -80,15 +80,13 @@
                             <form class="switchEnabled">
                                 <label class="col-form-label pt-0" max-rows="6">{{$t(`exoplatform.gamification.enabled`)
                                     }}:</label>
-
                                 <label class="switch">
-
                                     <input :disabled="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" type="checkbox" v-model="editedrule.enabled">
                                     <span class="slider round"></span>
                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
-
-
                                 </label>
+                                <div v-if="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" class="error"> *{{$t(`exoplatform.gamification.disabledDomainForRules`,"This rule cannot be enabled as long as the related domain is disabled")}}.</div>
+
                             </form>
                             <form id="domainSelectboxGroup">
 
