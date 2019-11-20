@@ -193,7 +193,7 @@
                             <div>{{ $t(`badge.title.${badge.title}`,badge.title) }}</div>
                         </td>
                         <td class="badge-desc-col">
-                            <div>{{$t(`badge.description.${badge.title}`,badge.description)}}</div>
+                            <div>{{$t(`badge.description.${badge.title}_${badge.domain}`,badge.description)}}</div>
                         </td>
                         <td class="badge-needed-score-col">
                             <div>
