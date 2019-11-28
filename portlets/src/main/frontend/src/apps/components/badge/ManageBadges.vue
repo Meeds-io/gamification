@@ -121,8 +121,8 @@ export default {
                 .then(response => {
                     this.addSuccess = true;
                     this.updateMessage = 'updated';
-                    this.badges.push(badge);
                     this.dismissCountDown();
+                    this.getBadges()
                 })
                 .catch(e => {
                         if(e.response.status===304){

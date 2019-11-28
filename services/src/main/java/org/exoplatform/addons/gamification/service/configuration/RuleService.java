@@ -8,11 +8,8 @@ import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
 import java.util.List;
 
 public class RuleService {
@@ -293,7 +290,7 @@ public class RuleService {
             if(  ruleEntity!=null && ruleEntity.getId()!=ruleDTO.getId()){
                 throw(new EntityExistsException("Rule with same event and domain already exist"));
             }
-            if(!ruleDTO.getTitle().startsWith("def_")){
+            if(!ruleDTO.getTitle().startsWith(GAMIFICATION_DEFAULT_DATA_PREFIX)){
                 ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
             }
             ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO)); 

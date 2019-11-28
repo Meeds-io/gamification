@@ -213,34 +213,28 @@ public class ManageBadgesEndpoint implements ResourceContainer {
       String currentUserName = conversationState.getIdentity().getUserId();
       try {
 
-        // TODO : Load locale
-        Locale lc = request.getLocale();
-
         if (badgeDTO.getUploadId() != null) {
+          /** Upload badge's icon into DB */
+          FileItem fileItem = null;
           UploadResource uploadResource = uploadService.getUploadResource(badgeDTO.getUploadId());
 
           if (uploadResource != null) {
-            /** Upload badge's icon into DB */
-            FileItem fileItem = null;
 
             fileItem = new FileItem(null,
-                                    badgeDTO.getTitle().toLowerCase(),
-                                    uploadResource.getMimeType(),
-                                    "gamification",
-                                    (long) uploadResource.getUploadedSize(),
-                                    new Date(),
-                                    currentUserName,
-                                    false,
-                                    new FileInputStream(uploadResource.getStoreLocation()));
+                    badgeDTO.getTitle().toLowerCase(),
+                    uploadResource.getMimeType(),
+                    DEFAULT_BADGE_ICON_NAMESPACE,
+                    (long) uploadResource.getUploadedSize(),
+                    new Date(),
+                    currentUserName,
+                    false,
+                    new FileInputStream(uploadResource.getStoreLocation()));
             fileItem = fileService.writeFile(fileItem);
             /** END upload */
-
             badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
 
           }
-
         }
-
         // Compute rule's data
         badgeDTO.setCreatedBy(currentUserName);
         badgeDTO.setLastModifiedBy(currentUserName);

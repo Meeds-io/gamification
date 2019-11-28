@@ -13,6 +13,7 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
             // Processing registered rules
 
             for (RuleConfig rule : ruleMap.values()) {
-                RuleDTO ruleDTO = ruleService.findRuleByTitle("def_"+rule.getTitle());
+                RuleDTO ruleDTO = ruleService.findRuleByTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+rule.getTitle());
                 if (ruleDTO == null) {
                     store(rule);
                 }
@@ -90,11 +91,11 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
             RuleDTO ruleDTO = ruleService.findRuleByTitle(ruleConfig.getTitle());
             if (ruleDTO != null) {
-                ruleDTO.setTitle("def_"+ruleConfig.getTitle());
+                ruleDTO.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+ruleConfig.getTitle());
                 CommonsUtils.getService(RuleService.class).updateRule(ruleDTO);
             }else{
                 RuleDTO ruleDto = new RuleDTO();
-                ruleDto.setTitle("def_"+ruleConfig.getTitle());
+                ruleDto.setTitle("GAMIFICATION_DEFAULT_DATA_PREFIX"+ruleConfig.getTitle());
                 ruleDto.setScore(ruleConfig.getScore());
                 ruleDto.setEnabled(ruleConfig.isEnable());
                 ruleDto.setEvent(ruleConfig.getEvent());

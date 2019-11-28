@@ -36,7 +36,7 @@
                         </div>
 
                         <div class="box" v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore " :id="'rep'+badge.id">
-                            <img thumbnail fluid :id="'reputation'+badge.id" :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="greytwo" width="200px" height="200px" />
+                            <img thumbnail fluid :id="'reputation'+badge.id" :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`" alt="Thumbnail" class="greytwo" width="200px" height="200px" />
 
 
                             <progress-bar
@@ -125,7 +125,7 @@
                         </b-popover>
                     </div>
                     <div class="box" v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore " :id="'rep'+badge.id">
-                        <img thumbnail fluid :id="'reputation'+badge.id" :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="greytwo" width="200px" height="200px" />
+                        <img thumbnail fluid :id="'reputation'+badge.id" :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`" alt="Thumbnail" class="greytwo" width="200px" height="200px" />
                         <progress-bar
                                 :id="'rep'+badge.id"
                                 class="cylinder-progress"

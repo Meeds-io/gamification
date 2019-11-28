@@ -185,7 +185,7 @@
                     <tbody>
                     <tr v-for="badge in filteredBadges">
                         <td id="iconInputGroup" style="max-width: 100px;">
-                            <div   style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
+                            <div   style="z-index: 0;"> <img thumbnail fluid :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
 
                         </td>
@@ -368,8 +368,9 @@
                             'Content-Type': 'multipart/form-data'
                         }
                     }).then(response => {
-                      this.editedbadge.uploadId=uploadId
-                                })
+                this.editedbadge.uploadId=uploadId                    
+            })
+
   			} else {
   				this.imageName = ''
   				this.imageFile = ''
