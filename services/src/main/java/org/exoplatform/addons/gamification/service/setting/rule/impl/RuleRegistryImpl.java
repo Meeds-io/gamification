@@ -59,8 +59,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
             // Processing registered rules
 
             for (RuleConfig rule : ruleMap.values()) {
-                RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(rule.getTitle(),rule.getZone());
-
+                RuleDTO ruleDTO = ruleService.findRuleByTitle("def_"+rule.getTitle());
                 if (ruleDTO == null) {
                     store(rule);
                 }
@@ -88,26 +87,32 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
         domainService = CommonsUtils.getService(DomainService.class);
 
         try {
-            RuleDTO ruleDto = new RuleDTO();
 
-            ruleDto.setTitle(ruleConfig.getTitle());
-            ruleDto.setScore(ruleConfig.getScore());
-            ruleDto.setEnabled(ruleConfig.isEnable());
-            ruleDto.setEvent(ruleConfig.getEvent());
-            ruleDto.setLastModifiedDate(new Date());
-            ruleDto.setLastModifiedBy("Gamification");
-            ruleDto.setCreatedBy("Gamification");
-            ruleDto.setArea(ruleConfig.getZone());
-            ruleDto.setEnabled(true);
-            ruleDto.setDeleted(false);
-            ruleDto.setDomainDTO(domainService.findDomainByTitle(ruleConfig.getZone()));
-            if(ruleDto.getDomainDTO().isEnabled()==false){
-                ruleDto.setEnabled(false);
+            RuleDTO ruleDTO = ruleService.findRuleByTitle(ruleConfig.getTitle());
+            if (ruleDTO != null) {
+                ruleDTO.setTitle("def_"+ruleConfig.getTitle());
+                CommonsUtils.getService(RuleService.class).updateRule(ruleDTO);
+            }else{
+                RuleDTO ruleDto = new RuleDTO();
+                ruleDto.setTitle("def_"+ruleConfig.getTitle());
+                ruleDto.setScore(ruleConfig.getScore());
+                ruleDto.setEnabled(ruleConfig.isEnable());
+                ruleDto.setEvent(ruleConfig.getEvent());
+                ruleDto.setLastModifiedDate(new Date());
+                ruleDto.setLastModifiedBy("Gamification");
+                ruleDto.setCreatedBy("Gamification");
+                ruleDto.setArea(ruleConfig.getZone());
+                ruleDto.setEnabled(true);
+                ruleDto.setDeleted(false);
+                ruleDto.setDomainDTO(domainService.findDomainByTitle(ruleConfig.getZone()));
+                if(ruleDto.getDomainDTO().isEnabled()==false){
+                    ruleDto.setEnabled(false);
+                }
+                ruleDto.setDescription(ruleConfig.getDescription());
+                ruleDto.setCreatedDate(new Date());
+                CommonsUtils.getService(RuleService.class).addRule(ruleDto);
             }
-            ruleDto.setDescription(ruleConfig.getDescription());
-            ruleDto.setCreatedDate(new Date());
 
-            CommonsUtils.getService(RuleService.class).addRule(ruleDto);
         } catch (Exception e) {
             LOG.error("Error when saving Rule ", e);
         }

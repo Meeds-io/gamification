@@ -90,7 +90,7 @@
                                     <span class="slider round"></span>
                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
                                 </label>
-                            <div v-if="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" class="error"> *{{$t(`exoplatform.gamification.disabledDomainForDomains`,"This domain cannot be enabled as long as the related domain is disabled")}}.</div>
+                            <div v-if="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" class="error"> *{{$t(`exoplatform.gamification.disabledDomainForBadges`,"This domain cannot be enabled as long as the related domain is disabled")}}.</div>
 
                             </form>
  

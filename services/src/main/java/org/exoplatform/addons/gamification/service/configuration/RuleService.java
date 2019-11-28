@@ -293,7 +293,9 @@ public class RuleService {
             if(  ruleEntity!=null && ruleEntity.getId()!=ruleDTO.getId()){
                 throw(new EntityExistsException("Rule with same event and domain already exist"));
             }
-            ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
+            if(!ruleDTO.getTitle().startsWith("def_")){
+                ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
+            }
             ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO)); 
         } catch (Exception e) {
             LOG.error("Error to update rule with title {}", ruleDTO.getTitle() , e);
