@@ -95,7 +95,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                 CommonsUtils.getService(RuleService.class).updateRule(ruleDTO);
             }else{
                 RuleDTO ruleDto = new RuleDTO();
-                ruleDto.setTitle("GAMIFICATION_DEFAULT_DATA_PREFIX"+ruleConfig.getTitle());
+                ruleDto.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+ruleConfig.getTitle());
                 ruleDto.setScore(ruleConfig.getScore());
                 ruleDto.setEnabled(ruleConfig.isEnable());
                 ruleDto.setEvent(ruleConfig.getEvent());
