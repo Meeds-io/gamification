@@ -1,191 +1,227 @@
 <template>
-
-    <b-container fluid class="p-4" id="reputation-badge-container">
-
+    <div class="p-4 " id="reputation-badge-container">
         <div>
             <h3> {{ this.$t(`badges.social`,badges.social) }} </h3>
-            <b-col md="12" class="text-center no-padding" >
-                <div class="protected content bg-indigo" :key="prog" v-for="prog in progs" v-if="prog.label=== 'Social'" >
-                    <div class="container text-center no-reveal" :key="badge" v-for="badge in badges" v-if="badge.zone === 'Social'" >
-                        <div class="box" v-if=" prog.value > badge.startScore">
-                            <img :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" fluid height="200px" thumbnail width="200px"/>
-                            <b-popover :content="`${badge.description}`" :placement="'top'"
-                                       :target="'reputation'+badge.id"
-                                       triggers="hover focus">
-                                <div class="level-badges">{{badge.level}}<br><span>Level</span>
+            <div md="12" class="text-center no-padding col" :key="prog" v-for="prog in progs"
+                   v-if="prog.label=== 'Social'">
+                <div class="protected content bg-indigo">
+                    <div class="text-center no-reveal badge-wrapper" :key="badge" v-for="badge in badges"
+                         v-if="badge.zone === 'Social'">
+                        <div v-if=" prog.value > badge.startScore">
+                            <popper triggers="hover focus" :target="'reputation'+badge.id"
+                                    :options="{placement: 'top'}">
+                                <div class="popper" style="max-width: 250px">
+                                    <div class="level-badges">{{badge.level}}<br><span>Level</span>
+                                    </div>
+                                    <div class="title-badges">{{badge.title}}</div>
+                                    <div class="cat-badges">{{badge.domain}}</div>
+                                    <div class="desc-badges">{{badge.description}}</div>
+                                    <div class="prog-point">
+                                        <div class="first-number">{{badge.startScore}}
+                                            <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K
+                                            </div>
+                                            <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                        </div>
+                                        <hr class="interval">
+                                        <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}"
+                                             v-if="badge.endScore == 0">
+                                            ∞
+                                        </div>
+                                        <div class="last-number" v-else>
+                                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="title-badges">{{badge.title}}</div>
-                                <div class="cat-badges">{{badge.domain}}</div>
-                                <div class="desc-badges">{{badge.description}}</div>
-                                <div class="prog-point">
-                                    <div class="first-number">{{badge.startScore}}
-                                        <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
-                                        <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
-                                    </div>
-                                    <hr class="interval">
-                                    <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}"
-                                         v-if="badge.endScore == 0">
-                                        ∞
-                                    </div>
-                                    <div class="last-number" v-else>
-                                        <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
-                                        <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                <div slot="reference">
+                                    <div class="box">
+                                        <img :id="'reputation'+badge.id"
+                                             :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`"
+                                             alt="Thumbnail" class="m-1"
+                                             fluid
+                                             height="200px" thumbnail width="200px"/>
                                     </div>
                                 </div>
-                            </b-popover>
+                            </popper>
                         </div>
-
-                        <div class="box" v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore " :id="'rep'+badge.id">
-                            <img thumbnail fluid :id="'reputation'+badge.id" :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`" alt="Thumbnail" class="greytwo" width="200px" height="200px" />
-
-
-                            <progress-bar
-                                    :id="'rep'+badge.id"
-                                    class="cylinder-progress"
-                                    :stroke="defaultOptions.progress.color"
-                                    :stroke-width="progressWidth"
-                                    :animation="defaultOptions.progress.animation"
-                                    :options="defaultOptions"
-                                    :value=" (prog.value * 100)/((badge.endScore))"
-                            />
-
-                            <div class="title-badge">{{badge.title}}</div>
-                            <b-popover :content="`${badge.description}`" :placement="'top'" :target="'rep'+badge.id"
-                                       triggers="hover focus">
-                                <div class="level-badges">{{badge.level}}<br><span>Level</span>
-                                </div>
-                                <div class="title-badges">{{badge.title}}</div>
-                                <div class="cat-badges">{{badge.domain}}</div>
-                                <div class="desc-badges">{{badge.description}}</div>
-
-                                <div class="prog-pointS">
-                                    <div class="first-number">
-                                        <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
-                                        <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                        <div v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore "
+                             :id="'rep'+badge.id">
+                            <popper triggers="hover focus"
+                                    :options="{placement: 'top',modifiers: { offset: { offset: '0,10px' } }}">
+                                <div class="popper" style="max-width: 250px">
+                                    <div class="level-badges">{{badge.level}}<br><span>Level</span>
                                     </div>
+                                    <div class="title-badges">{{badge.title}}</div>
+                                    <div class="cat-badges">{{badge.domain}}</div>
+                                    <div class="desc-badges">{{badge.description}}</div>
+                                    <div class="prog-pointS">
+                                        <div class="first-number">
+                                            <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K
+                                            </div>
+                                            <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                        </div>
+                                        <progress-bar
+                                                :id="'rep'+badge.id"
+                                                class="cylinder-progresss"
+                                                :stroke="defaultOptions.progress.color"
+                                                :stroke-width="progressWidth"
+                                                :animation="defaultOptions.progress.animation"
+                                                :options="defaultOptions"
+                                                :value=" (prog.value * 100)/((badge.endScore))"
 
-                                    <progress-bar
-                                            :id="'rep'+badge.id"
-                                            class="cylinder-progresss"
-                                            :stroke="defaultOptions.progress.color"
-                                            :stroke-width="progressWidth"
-                                            :animation="defaultOptions.progress.animation"
-                                            :options="defaultOptions"
-                                            :value=" (prog.value * 100)/((badge.endScore))"
-
-                                    />
-                                    <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
-                                        ∞
-                                    </div>
-
-                                    <div class="last-numberS" v-else> <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
-                                        <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                        />
+                                        <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}"
+                                             v-if="badge.endScore == 0">
+                                            ∞
+                                        </div>
+                                        <div class="last-numberS" v-else>
+                                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </b-popover>
+                                <div slot="reference">
+                                    <div class="box">
+                                        <img thumbnail fluid :id="'reputation'+badge.id"
+                                             :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`"
+                                             alt="Thumbnail" class="greytwo" width="200px" height="200px"/>
+                                        <progress-bar
+                                                :id="'rep'+badge.id"
+                                                class="cylinder-progress"
+                                                :stroke="defaultOptions.progress.color"
+                                                :stroke-width="progressWidth"
+                                                :animation="defaultOptions.progress.animation"
+                                                :options="defaultOptions"
+                                                :value=" (prog.value * 100)/((badge.endScore))"
+                                        />
+                                    </div>
+                                </div>
+                            </popper>
                         </div>
-                    </div>
-
-                </div>
-
-            </b-col>
-        </div><br><hr><div>
-
-        <h3> {{ this.$t(`badges.knowledge`,badges.knowledge) }} </h3>
-
-        <b-col md="12" class="text-center no-padding" :key="prog" v-for="prog in progs" v-if="prog.label=== 'Knowledge'">
-            <div class="protected content bg-indigo" >
-                <div class="container text-center no-reveal" :key="badge" v-for="badge in badges" v-if="badge.zone === 'Knowledge' " >
-                    <div class="box" v-if=" prog.value > badge.startScore ">
-                        <img :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" fluid height="200px"
-
-                             thumbnail width="200px"/>
-                        <div class="title-badge">{{badge.title}}</div>
-                        <b-popover :content="`${badge.description}`" :placement="'top'" :target="'reputation'+badge.id"
-                                   triggers="hover focus">
-                            <div class="level-badges">{{badge.level}}<br><span>Level</span>
-                            </div>
-                            <div class="title-badges">{{badge.title}}</div>
-                            <div class="cat-badges">{{badge.domain}}</div>
-                            <div class="desc-badges">{{badge.description}}</div>
-                            <div class="prog-point">
-                                <div class="first-number">
-                                    <div v-if="badge.startScore >=1000"> {{badge.startScore/1000}} K</div>
-                                    <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
-                                </div>
-                                <hr class="interval">
-                                <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
-                                    ∞
-                                </div>
-                                <div class="last-number" v-else> <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
-                                    <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
-
-                                </div>
-                            </div>
-                        </b-popover>
-                    </div>
-                    <div class="box" v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore " :id="'rep'+badge.id">
-                        <img thumbnail fluid :id="'reputation'+badge.id" :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`" alt="Thumbnail" class="greytwo" width="200px" height="200px" />
-                        <progress-bar
-                                :id="'rep'+badge.id"
-                                class="cylinder-progress"
-                                :stroke="defaultOptions.progress.color"
-                                :stroke-width="progressWidth"
-                                :animation="defaultOptions.progress.animation"
-                                :options="defaultOptions"
-                                :value=" (prog.value * 100)/((badge.endScore))"
-                        />
-                        <div class="title-badge">{{badge.title}}</div>
-                        <b-popover :content="`${badge.description}`" :placement="'top'" :target="'rep'+badge.id"
-                                   triggers="hover focus">
-                            <div class="level-badges">{{badge.level}}<br><span>Level</span>
-                            </div>
-                            <div class="title-badges">{{badge.title}}</div>
-                            <div class="cat-badges">{{badge.domain}}</div>
-                            <div class="desc-badges">{{badge.description}}</div>
-
-                            <div class="prog-pointS">
-                                <div class="first-number">
-                                    <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K</div>
-                                    <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
-                                </div>
-
-                                <progress-bar
-                                        :id="'rep'+badge.id"
-                                        class="cylinder-progresss"
-                                        :stroke="defaultOptions.progress.color"
-                                        :stroke-width="progressWidth"
-                                        :animation="defaultOptions.progress.animation"
-                                        :options="defaultOptions"
-                                        :value=" (prog.value * 100)/((badge.endScore))"
-
-                                />
-                                <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}" v-if="badge.endScore == 0">
-                                    ∞
-                                </div>
-
-                                <div class="last-numberS" v-else> <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
-                                    <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
-                                </div>
-                            </div>
-                        </b-popover>
                     </div>
                 </div>
             </div>
-        </b-col>
+        </div>
+        <br>
+        <hr>
+        <div>
+            <h3> {{ this.$t(`badges.knowledge`,badges.knowledge) }} </h3>
+            <b-col md="12" class="text-center no-padding" :key="prog" v-for="prog in progs"
+                   v-if="prog.label=== 'Knowledge'">
+                <div class="protected content bg-indigo">
+                    <div class="text-center no-reveal badge-wrapper" :key="badge" v-for="badge in badges"
+                         v-if="badge.zone === 'Knowledge' ">
+                        <div v-if=" prog.value > badge.startScore">
+                            <popper triggers="hover focus" :target="'reputation'+badge.id"
+                                    :options="{placement: 'top'}">
+                                <div class="popper" style="max-width: 250px">
+                                    <div class="level-badges">{{badge.level}}<br><span>Level</span>
+                                    </div>
+                                    <div class="title-badges">{{badge.title}}</div>
+                                    <div class="cat-badges">{{badge.domain}}</div>
+                                    <div class="desc-badges">{{badge.description}}</div>
+                                    <div class="prog-point">
+                                        <div class="first-number">{{badge.startScore}}
+                                            <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K
+                                            </div>
+                                            <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                        </div>
+                                        <hr class="interval">
+                                        <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}"
+                                             v-if="badge.endScore == 0">
+                                            ∞
+                                        </div>
+                                        <div class="last-number" v-else>
+                                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div slot="reference">
+                                    <div class="box">
+                                        <img :id="'reputation'+badge.id"
+                                             :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`"
+                                             alt="Thumbnail" class="m-1"
+                                             fluid
+                                             height="200px" thumbnail width="200px"/>
+                                    </div>
+                                </div>
+                            </popper>
+                        </div>
+                        <div v-else-if=" prog.value > badge.startScore || prog.value < badge.endScore ||prog.value < badge.startScore "
+                             :id="'rep'+badge.id">
+                            <popper triggers="hover focus"
+                                    :options="{placement: 'top',modifiers: { offset: { offset: '0,10px' } }}">
+                                <div class="popper" style="max-width: 250px">
+                                    <div class="level-badges">{{badge.level}}<br><span>Level</span>
+                                    </div>
+                                    <div class="title-badges">{{badge.title}}</div>
+                                    <div class="cat-badges">{{badge.domain}}</div>
+                                    <div class="desc-badges">{{badge.description}}</div>
+
+                                    <div class="prog-pointS">
+                                        <div class="first-number">
+                                            <div v-if="badge.startScore >=1000">{{badge.startScore/1000}} K
+                                            </div>
+                                            <div v-if="badge.startScore <1000"> {{badge.startScore}}</div>
+                                        </div>
+
+                                        <progress-bar
+                                                :id="'rep'+badge.id"
+                                                class="cylinder-progresss"
+                                                :stroke="defaultOptions.progress.color"
+                                                :stroke-width="progressWidth"
+                                                :animation="defaultOptions.progress.animation"
+                                                :options="defaultOptions"
+                                                :value=" (prog.value * 100)/((badge.endScore))"
+
+                                        />
+                                        <div class="last-number" v-bind:class="{'bg-red': bgBadges(badge)}"
+                                             v-if="badge.endScore == 0">
+                                            ∞
+                                        </div>
+
+                                        <div class="last-numberS" v-else>
+                                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
+                                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div slot="reference">
+                                    <div class="box">
+                                        <img thumbnail fluid :id="'reputation'+badge.id"
+                                             :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`"
+                                             alt="Thumbnail" class="greytwo" width="200px" height="200px"/>
+                                        <progress-bar
+                                                :id="'rep'+badge.id"
+                                                class="cylinder-progress"
+                                                :stroke="defaultOptions.progress.color"
+                                                :stroke-width="progressWidth"
+                                                :animation="defaultOptions.progress.animation"
+                                                :options="defaultOptions"
+                                                :value=" (prog.value * 100)/((badge.endScore))"
+                                        />
+                                    </div>
+                                </div>
+                            </popper>
+                        </div>
+                    </div>
+                </div>
+            </b-col>
+        </div>
     </div>
-    </b-container>
 </template>
 <script>
     import Vue from 'vue'
     import BootstrapVue from 'bootstrap-vue'
-    import {Image, Popover} from 'bootstrap-vue/es/components';
+    import {Image} from 'bootstrap-vue/es/components';
     import ProgressBar from 'vuejs-progress-bar'
+    import Popper from 'vue-popperjs';
+    import 'vue-popperjs/dist/vue-popper.css';
     import axios from 'axios';
-
     Vue.use(ProgressBar);
     Vue.use(BootstrapVue);
-    Vue.use(Popover);
     Vue.use(Image);
     const initialData = () => {
         return {
@@ -196,6 +232,9 @@
         }
     };
     export default {
+        components: {
+            'popper': Popper
+        },
         data: initialData,
         computed: {
             cylinder () {
@@ -210,7 +249,6 @@
             height () {
                 return this.defaultOptions.layout.height
             },
-
             striped: true,
             animate: true
         },
@@ -313,6 +351,32 @@
                     type: 'line'
                 }}
         }
-
     }
 </script>
+
+<style>
+    @media screen and (min-width: 1210px) {
+        .badge-wrapper {
+            width: 16%;
+        }
+    }
+    @media screen and (max-width: 1209px) and (min-width: 767px){
+        .badge-wrapper {
+            width: 15.5%;
+        }
+    }
+
+    @media screen and (max-width: 766px) and (min-width: 400px){
+        .badge-wrapper {
+            width: 33%;
+        }
+    }
+
+    @media screen and (max-width: 399px){
+        .badge-wrapper {
+            width: 100%;
+        }
+    }
+
+
+</style>
