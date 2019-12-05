@@ -703,7 +703,6 @@
     }
 
     .alert-success {
-        position: fixed;
         margin-top: 124px !important;
         margin-left: 38%;
         transform: translateX(-50%);

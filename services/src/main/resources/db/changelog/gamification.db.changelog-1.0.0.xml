@@ -14,12 +14,13 @@
 
     <!-- Definition of GAMIFICATION_BADGE table -->
     <changeSet author="exo-gamification" id="1.0.0-1">
+        <validCheckSum>ANY</validCheckSum>
         <createTable tableName="GAMIFICATION_BADGES">
             <column name="BADGE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_BADGES"/>
             </column>
             <column name="TITLE" type="NVARCHAR(50)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="DESCRIPTION" type="NVARCHAR(255)">
                 <constraints nullable="false"/>
@@ -196,14 +197,15 @@
     </changeSet>
 
 
-    <changeSet author="exo-gamification" id="1.0.0-12" runOnChange="true">
+    <changeSet author="exo-gamification" id="1.0.0-12">
+        <validCheckSum>ANY</validCheckSum>
         <createTable tableName="GAMIFICATION_DOMAIN">
             <column autoIncrement="${autoIncrement}" name="ID" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="TITLE" type="VARCHAR(255)"/>
             <column name="DESCRIPTION" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="PRIORITY" type="INT"/>
             <column name="CREATED_BY" type="varchar(200)">
@@ -278,27 +280,7 @@
         <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
                         columnName="USER_SOCIAL_ID"
                         newDataType="NVARCHAR(200)"
-                        />
-    </changeSet>
-
-    <changeSet author="exo-gamification" id="1.0.0-18">
-        <sql dbms="mysql">
-            ALTER TABLE GAMIFICATION_DOMAIN DROP INDEX DESCRIPTION;
-        </sql>
-        <sql dbms="postgresql">
-            ALTER TABLE GAMIFICATION_DOMAIN DROP CONSTRAINT gamification_domain_description_key;
-        </sql>
-    </changeSet>
-
-    <changeSet author="exo-gamification" id="1.0.0-19">
-        <sql dbms="mysql">
-            ALTER TABLE GAMIFICATION_BADGES DROP INDEX TITLE;
-        </sql>
-        <sql dbms="postgresql">
-            ALTER TABLE GAMIFICATION_BADGES DROP CONSTRAINT gamification_badges_title_key;
-        </sql>
+        />
     </changeSet>
 
 </databaseChangeLog>
-
-
