@@ -25,7 +25,7 @@
        color: #fff;
 }
      
-     a{
+     a:hover{
          text-decoration: none;
          background-color: transparent;
          -webkit-text-decoration-skip: objects;
@@ -41,9 +41,6 @@
     .dropdown-menu {
         font-size: inherit;
     }
-    .uiCompanyNavigationPortlet .title, .uiSpaceNavigationPortlet .title {
-        font-size: 15px;
-    }
     .uiBreadcumbsNavigationPortlet .uiBreadcumbsNavigations .navItemSelected {
         font-size: 14px;
     }
@@ -56,4 +53,21 @@
     .uiSpaceNavigationPortlet .searchInput:before {
         top: 27px;
     }
+    /* Fix/ PLF-8495 */
+    .tooltip.fade.bottom.in {
+        opacity: 1 !important;
+    }
+    .uiCompanyNavigationPortlet .uiCompanyNavigations > li > a, h5 {
+        box-sizing: content-box;
+        font-family: Helvetica, arial, sans-serif;
+    }
+    a:hover{
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+    .uiCompanyNavigationPortlet .title, .uiSpaceNavigationPortlet .title {
+        font-size: 14px;
+    }
+
 </style>
