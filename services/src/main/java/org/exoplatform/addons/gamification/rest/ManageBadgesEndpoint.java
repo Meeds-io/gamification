@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
+import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -172,12 +173,19 @@ public class ManageBadgesEndpoint implements ResourceContainer {
           badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
         }
 
-
-
         // --- Add badge
         badgeDTO = badgeService.addBadge(badgeDTO);
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
+
+      } catch (EntityExistsException e) {
+
+        LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
+
+        return Response.notModified()
+                .cacheControl(cacheControl)
+                .entity("Badge already exists")
+                .build();
 
       } catch (Exception e) {
 
@@ -205,34 +213,28 @@ public class ManageBadgesEndpoint implements ResourceContainer {
       String currentUserName = conversationState.getIdentity().getUserId();
       try {
 
-        // TODO : Load locale
-        Locale lc = request.getLocale();
-
         if (badgeDTO.getUploadId() != null) {
+          /** Upload badge's icon into DB */
+          FileItem fileItem = null;
           UploadResource uploadResource = uploadService.getUploadResource(badgeDTO.getUploadId());
 
           if (uploadResource != null) {
-            /** Upload badge's icon into DB */
-            FileItem fileItem = null;
 
             fileItem = new FileItem(null,
-                                    badgeDTO.getTitle().toLowerCase(),
-                                    uploadResource.getMimeType(),
-                                    "gamification",
-                                    (long) uploadResource.getUploadedSize(),
-                                    new Date(),
-                                    currentUserName,
-                                    false,
-                                    new FileInputStream(uploadResource.getStoreLocation()));
+                    badgeDTO.getTitle().toLowerCase(),
+                    uploadResource.getMimeType(),
+                    DEFAULT_BADGE_ICON_NAMESPACE,
+                    (long) uploadResource.getUploadedSize(),
+                    new Date(),
+                    currentUserName,
+                    false,
+                    new FileInputStream(uploadResource.getStoreLocation()));
             fileItem = fileService.writeFile(fileItem);
             /** END upload */
-
             badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
 
           }
-
         }
-
         // Compute rule's data
         badgeDTO.setCreatedBy(currentUserName);
         badgeDTO.setLastModifiedBy(currentUserName);
@@ -246,13 +248,23 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         LOG.info("service=gamification operation=edit-badge parameters=\"user_social_id:{},badge_id:{},badge_title:{},badge_description:{}\"", actorId, badgeDTO.getId(), badgeDTO.getTitle(), badgeDTO.getDescription());
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
+      }
+        catch (EntityExistsException e) {
 
-      } catch (Exception e) {
+          LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
 
-        LOG.error("Error updating badge {} by {} ", badgeDTO.getTitle(), currentUserName, e);
+          return Response.notModified()
+                  .cacheControl(cacheControl)
+                  .entity("Badge already exists")
+                  .build();
+
+        }
+        catch (Exception e) {
+
+        LOG.error("Error when updating badge {} by {} ", badgeDTO.getTitle(), currentUserName, e);
 
         return Response.serverError().cacheControl(cacheControl).entity("Error adding new badge").build();
-      }
+        }
 
     } else {
 

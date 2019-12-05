@@ -1,7 +1,7 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
-const exoServerPath = "D:\\exo\\exo-working\\servers\\platform-6.0.0-M01";
+const exoServerPath = "D:\\exo\\exo-working\\servers\\platform-6.0.0-M08";
 
 
 module.exports = merge(common, {

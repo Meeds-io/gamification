@@ -238,7 +238,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     @Path("badge/{badge}/avatar")
     public Response getSpaceAvatarById(@Context UriInfo uriInfo,
                                        @Context Request request,
-                                       @PathParam("badge") String badgeTitle) throws IOException {
+                                       @PathParam("badge") Long id) throws IOException {
 
         ConversationState conversationState = ConversationState.getCurrent();
 
@@ -247,7 +247,7 @@ public class UserReputationEndpoint implements ResourceContainer {
             InputStream stream = null;
 
             try {
-                BadgeDTO badgeDTO = badgeService.findBadgeByTitle(badgeTitle);
+                BadgeDTO badgeDTO = badgeService.findBadgeById(id);
 
                 Long lastUpdated = null;
                 if (badgeDTO != null) {

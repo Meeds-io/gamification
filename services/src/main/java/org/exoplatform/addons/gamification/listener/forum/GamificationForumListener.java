@@ -122,25 +122,6 @@ public class GamificationForumListener extends ForumEventListener {
     @Override
     public void openTopic(String userId, String topicId) {
 
-
-        Topic topic = new Topic();
-
-                try {
-                    // Get Topic owner
-                    String topicOwner = ((Topic) forumService.getObjectNameById(topicId, Utils.TOPIC)).getOwner();
-
-                    if (topicOwner != null && topicOwner.length() != 0 && (!topicOwner.equals(userId)) ) {
-
-                        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, topicOwner, false).getId();
-                        gamificationService.createHistory(GAMIFICATION_FORUM_OPEN_TOPIC,actorId,actorId,ForumUtils.createdSubForumLink(topic.toString(), topicId, true));
-
-                    }
-
-                } catch (Exception e) {
-                    LOG.error("Error to get Topic", e);
-                }
-
-
     }
 
     private void processUpdateTopicType(PropertyChangeEvent event, Topic topic) {

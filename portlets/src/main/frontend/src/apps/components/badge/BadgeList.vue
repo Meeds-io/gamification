@@ -39,16 +39,7 @@
                                        type="text"
                                        v-model="editedbadge.title">
                                 </input>
-
-
-                                <div :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                     @dismissed="dismissCountdown=0"
-                                     class="require-msg" dismissible v-if="formErrors.title"
-                                     variant="danger">
-                                    {{ this.$t('exoplatform.gamification.Badgetitle',"Badge Title is required please enter a value")}} {{dismissCountDown}}
-                                </div>
                             </form>
-
                             <div id="descriptionInputGroup">
                                 <label class="pt-0" id="descriptionInput">{{
                                     this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description")
@@ -57,20 +48,12 @@
                                           id="badgeDescription" placeholder="Enter description"
                                           v-model="editedbadge.description">
                     </textarea>
-                                                    <div class="alert alert-danger require-msg" v-if="formErrors.description" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
-                             @dismiss-count-down="countDownChanged">
-                                    {{ this.$t('exoplatform.gamification.badge.description.required','Description needed score is required please enter a value')}}
-                                </div>
+
                             </div>
 
                             <form id="neededScoreInputGroup" >
                                 <label id="Needed" label-for="neededScoreInput" class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score')}}:</label>
                                 <input id="neededScoreInput" type="number" v-model="editedbadge.neededScore" class="form-control" required placeholder="Enter badge's needed score">
-
-                                <div class="alert alert-danger require-msg" v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}}
-                                </div>
                             </form>
                             <form id="iconInputGroup">
                                   <label for="iconInput"  class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon')}}: </label>
@@ -80,12 +63,7 @@
                                          accept="image/jpeg, image/png, image/gif"
                                          placeholder="+"
                                          @change="onFilePicked">
-
-                                        <div class="alert alert-danger require-msg" v-if="formErrors.uploadId" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    {{ this.$t('exoplatform.gamification.badge.icon.required','Badge icon is required please enter a value')}}
-                                </div>
-                                         
+                                        
                               </form> 
 
                             <form id="domainSelectboxGroup">
@@ -101,10 +79,6 @@
                                         }}
                                     </option>
                                 </select>
-                                                                <div class="alert alert-danger require-msg" v-if="formErrors.neededScore" :show="dismissCountDown" dismissible variant="danger" @dismissed="dismissCountdown=0"
-                                         @dismiss-count-down="countDownChanged">
-                                    {{ this.$t('exoplatform.gamification.badge.score.required','Badge needed score is required please enter a value')}}
-                                </div>
                             </form>
 
 
@@ -112,10 +86,12 @@
                              <form id="enabledswittch">
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
                                 <label class="uiSwitchBtn">
-                                    <input type="checkbox" v-model="editedbadge.enabled" >
+                                    <input :disabled="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" type="checkbox" v-model="editedbadge.enabled" >
                                     <span class="slider round"></span>
                                     <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
                                 </label>
+                            <div v-if="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" class="error"> *{{$t(`exoplatform.gamification.disabledDomainForBadges`,"This domain cannot be enabled as long as the related domain is disabled")}}.</div>
+
                             </form>
  
 
@@ -209,7 +185,7 @@
                     <tbody>
                     <tr v-for="badge in filteredBadges">
                         <td id="iconInputGroup" style="max-width: 100px;">
-                            <div   style="z-index: 0;"> <img thumbnail fluid :src="`/rest/gamification/reputation/badge/${badge.title}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
+                            <div   style="z-index: 0;"> <img thumbnail fluid :src="`/portal/rest/gamification/reputation/badge/${badge.id}/avatar`" alt="Thumbnail" class="m-1"  width="40" height="40"/>
                             </div>
 
                         </td>
@@ -217,7 +193,7 @@
                             <div>{{ $t(`badge.title.${badge.title}`,badge.title) }}</div>
                         </td>
                         <td class="badge-desc-col">
-                            <div>{{$t(`badge.description.${badge.title}`,badge.description)}}</div>
+                            <div>{{$t(`badge.description.${badge.title}_${badge.domain}`,badge.description)}}</div>
                         </td>
                         <td class="badge-needed-score-col">
                             <div>
@@ -392,8 +368,9 @@
                             'Content-Type': 'multipart/form-data'
                         }
                     }).then(response => {
-                      this.editedbadge.uploadId=uploadId
-                                })
+                this.editedbadge.uploadId=uploadId                    
+            })
+
   			} else {
   				this.imageName = ''
   				this.imageFile = ''

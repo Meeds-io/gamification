@@ -85,8 +85,6 @@ public interface GamificationConstant {
     String GAMIFICATION_FORUM_ADD_TOPIC                                                 = "addForumTopic";
     /** ADD TOPIC IN FORUM */
     String GAMIFICATION_FORUM_VOTE_TOPIC                                                = "voteForumTopic";
-    /** OPEN TOPIC IN FORUM (VISITED) **/
-    String GAMIFICATION_FORUM_OPEN_TOPIC                                                = "openForumTopic";
 
 
     /***************************************************************************************************************************************************/
@@ -117,8 +115,18 @@ public interface GamificationConstant {
     /** UPLOAD AND SHARE DOCUMENT ON USER'S NETWORK CONTEXT */
     String GAMIFICATION_KNOWLEDGE_SHARE_UPLOAD__DOCUMENT_NETWORK_STREAM                           = "uploaddocumentOnNetworkStream";
 
+    /***************************************************************************************************************************************************/
+    /*************************************************** CONSTANTS TO MANAGE Attendance GAMIFICATION User Login **********************************************/
+    /***************************************************************************************************************************************************/
+    /** USER LOGIN CONTEXT */
+    String GAMIFICATION_ATTENDANCE_USER_LOGIN                                           = "userLogin";
 
 
+    /***************************************************************************************************************************************************/
+    /*************************************************** Prefix fot default data **********************************************/
+    /***************************************************************************************************************************************************/
+
+    String GAMIFICATION_DEFAULT_DATA_PREFIX                          = "def_";
 
 
 
