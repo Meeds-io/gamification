@@ -65,4 +65,18 @@
     .uiSpaceNavigationPortlet .searchInput:before {
         top: 27px;
     }
+
+    /* Fix/ PLF-8495 */
+    .tooltip.fade.bottom.in {
+        opacity: 1 !important;
+    }
+    .uiCompanyNavigationPortlet .uiCompanyNavigations > li > a {
+        box-sizing: content-box;
+        font-family: Helvetica, arial, sans-serif;
+    }
+    a:hover{
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
 </style>
