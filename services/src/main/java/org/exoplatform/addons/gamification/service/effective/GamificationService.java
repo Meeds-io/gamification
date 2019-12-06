@@ -429,7 +429,7 @@ public class GamificationService {
       aHistory.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
       aHistory.setDate(new Date());
       aHistory.setUserSocialId(actor);
-      aHistory.setActionTitle(ruleDto.getTitle());
+      aHistory.setActionTitle(ruleDto.getEvent());
       aHistory.setDomain(ruleDto.getArea());
       if(ruleDto.getDomainDTO()!=null){
           aHistory.setDomainEntity(domainMapper.domainDTOToDomain(ruleDto.getDomainDTO()));

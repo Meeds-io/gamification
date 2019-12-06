@@ -20,11 +20,12 @@
 
            <td>  <div class="desc-user">
                            <a :href="user.profileUrl"> <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar></a>
-                       </div></td>
-            <td :key="rule.id" v-for="rule in rules" v-if=" rule.title === user.actionTitle">
+                       </div>
+                       </td>
+            <td>
                 <a v-bind:href="user.objectId" >
 
-                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`,rule.title) }}
+                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${user.actionTitle}`,user.actionTitle) }}
 
                 </a> </td>
 
