@@ -58,8 +58,11 @@
         <!-- **************************************** -->
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
-        <org.exoplatform.depmgt.version>13</org.exoplatform.depmgt.version>
-        <org.exoplatform.platform.version>6.0.x-SNAPSHOT</org.exoplatform.platform.version>
+        <org.exoplatform.social.version>6.0.x-SNAPSHOT</org.exoplatform.social.version>
+        <org.exoplatform.ecms.version>6.0.x-SNAPSHOT</org.exoplatform.ecms.version>
+        <org.exoplatform.calendar.version>6.0.x-SNAPSHOT</org.exoplatform.calendar.version>
+        <org.exoplatform.forum.version>6.0.x-SNAPSHOT</org.exoplatform.forum.version>
+        <org.exoplatform.wiki.version>6.0.x-SNAPSHOT</org.exoplatform.wiki.version>
         <!-- for tests -->
         <junit.version>4.12</junit.version>
         <!-- Liquibase stack -->
@@ -83,9 +86,37 @@
         <dependencies>
             <!-- Import versions from platform project -->
             <dependency>
-                <groupId>org.exoplatform.platform</groupId>
-                <artifactId>platform</artifactId>
-                <version>${org.exoplatform.platform.version}</version>
+                <groupId>org.exoplatform.social</groupId>
+                <artifactId>social</artifactId>
+                <version>${org.exoplatform.social.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.exoplatform.ecms</groupId>
+                <artifactId>ecms</artifactId>
+                <version>${org.exoplatform.ecms.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.exoplatform.calendar</groupId>
+                <artifactId>calendar</artifactId>
+                <version>${org.exoplatform.calendar.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.exoplatform.wiki</groupId>
+                <artifactId>wiki</artifactId>
+                <version>${org.exoplatform.wiki.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.exoplatform.forum</groupId>
+                <artifactId>forum</artifactId>
+                <version>${org.exoplatform.forum.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
