@@ -355,7 +355,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 badgeDTO = allBadges.get(index - 1);
                 reputation = new JSONObject();
                 //computte badge's icon
-                String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                String iconUrl = "/portal/rest/gamification/reputation/badge/" + badgeDTO.getId() + "/avatar";
                 reputation.put("url", iconUrl);
                 reputation.put("description", badgeDTO.getDescription());
                 reputation.put("id", badgeDTO.getId());
@@ -641,7 +641,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 try {
 
                     //computte badge's icon
-                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    String iconUrl = "/portal/rest/gamification/reputation/badge/" + badgeDTO.getId() + "/avatar";
                     reputation.put("url", iconUrl);
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
@@ -663,7 +663,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 try {
 
                     //computte badge's icon
-                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    String iconUrl = "/portal/rest/gamification/reputation/badge/" + badgeDTO.getId() + "/avatar";
                     reputation.put("url", iconUrl);
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
@@ -686,7 +686,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     try {
 
                         //computte badge's icon
-                        String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                        String iconUrl = "/portal/rest/gamification/reputation/badge/" + badgeDTO.getId() + "/avatar";
                         reputation.put("url", iconUrl);
                         reputation.put("description", badgeDTO.getDescription());
                         reputation.put("id", badgeDTO.getId());
@@ -861,7 +861,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 badgeDTO = allBadges.get(index - 1);
                 reputation = new JSONObject();
                 //computte badge's icon
-                String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                String iconUrl = "/portal/rest/gamification/reputation/badge/" + badgeDTO.getId() + "/avatar";
                 reputation.put("url", iconUrl);
                 reputation.put("description", badgeDTO.getDescription());
                 reputation.put("id", badgeDTO.getId());
@@ -903,7 +903,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 try {
 
                     //computte badge's icon
-                    String iconUrl = "/rest/gamification/reputation/badge/" + badgeDTO.getTitle() + "/avatar";
+                    String iconUrl = "/portal/rest/gamification/reputation/badge/" + badgeDTO.getId() + "/avatar";
                     reputation.put("url", iconUrl);
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
