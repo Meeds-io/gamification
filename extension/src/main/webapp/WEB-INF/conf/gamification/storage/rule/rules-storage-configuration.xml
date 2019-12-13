@@ -339,7 +339,7 @@
     <!-- ############################################################################################ -->
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddActivityOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -370,10 +370,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddActivityOnNetworkStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -404,10 +401,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddActivityOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -439,10 +433,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddActivityTargetUserStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -473,10 +464,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddActivityOnMyStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -507,13 +495,10 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <!-- ############################################################################################ -->
-    <!-- ################# Gamification Rule Config : LIKE ACTIVITY FLOW ############################ -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <!-- ############################################################################################ -->
+        <!-- ################# Gamification Rule Config : LIKE ACTIVITY FLOW ############################ -->
+        <!-- ############################################################################################ -->
+        <component-plugin profiles="social">
             <name>rule.LikeActivityOnNetworkStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -544,10 +529,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.LikeActivityOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -578,10 +560,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.LikeActivityOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -612,10 +591,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.likeActivityTargetUserStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -646,13 +622,10 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <!-- ############################################################################################ -->
-    <!-- ################## Gamification Rule Config : USER PROFILE FLOW ############################ -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <!-- ############################################################################################ -->
+        <!-- ################## Gamification Rule Config : USER PROFILE FLOW ############################ -->
+        <!-- ############################################################################################ -->
+        <component-plugin profiles="social">
             <name>rule.AddUserProfileAvatar</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -683,10 +656,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddUserProfileBanner</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -717,10 +687,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddUserProfileAboutMe</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -751,13 +718,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <!-- ############################################################################################ -->
-    <!-- ################## Gamification Rule Config : SPACE FLOW ############################ -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.AddSpace</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -788,10 +749,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.JoinSpace</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -822,10 +780,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.GrantUserAsLead</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -856,13 +811,10 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <!-- ############################################################################################ -->
-    <!-- ################## Gamification Rule Config : RELATIONSHIP FLOW ############################ -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <!-- ############################################################################################ -->
+        <!-- ################## Gamification Rule Config : RELATIONSHIP FLOW ############################ -->
+        <!-- ############################################################################################ -->
+        <component-plugin profiles="social">
             <name>rule.SendRelationshipRequest</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -893,10 +845,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="social">
             <name>rule.ReceiveRelationshipRequest</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -927,13 +876,10 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <!-- ############################################################################################ -->
-    <!-- ################## Gamification Rule Config : FORUM FLOW ########################## -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <!-- ############################################################################################ -->
+        <!-- ################## Gamification Rule Config : FORUM FLOW ########################## -->
+        <!-- ############################################################################################ -->
+        <component-plugin profiles="forum">
             <name>rule.AddForumPost</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -964,10 +910,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="forum">
             <name>rule.AddForumTopic</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -998,10 +941,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="forum">
             <name>rule.VoteForumTopic</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1032,13 +972,10 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <!-- ############################################################################################ -->
-    <!-- ################## Gamification Rule Config : WIKI FLOW ########################## -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <!-- ############################################################################################ -->
+        <!-- ################## Gamification Rule Config : WIKI FLOW ########################## -->
+        <!-- ############################################################################################ -->
+        <component-plugin profiles="wiki">
             <name>rule.AddWikiPage</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1069,10 +1006,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="wiki">
             <name>rule.UpdateWikiPage</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1103,14 +1037,10 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-
-    <!-- ############################################################################################ -->
-    <!-- ######################## Gamification Rule Config : TASK FLOW ############################## -->
-    <!-- ############################################################################################ -->
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <!-- ############################################################################################ -->
+        <!-- ######################## Gamification Rule Config : TASK FLOW ############################## -->
+        <!-- ############################################################################################ -->
+        <component-plugin profiles="task">
             <name>rule.CreateNewTask</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1141,10 +1071,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="task">
             <name>rule.CompleteTaskAssigned</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1175,10 +1102,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="task">
             <name>rule.CompleteTaskCoworker</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1209,10 +1133,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="task">
             <name>rule.CommentTask</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -1243,10 +1164,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-    </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin>
+        <component-plugin profiles="task">
             <name>rule.UpdateTask</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>

@@ -30,6 +30,12 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
     return ManageBadgesEndpoint.class;
   }
 
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    startSessionAs("root");
+  }
+
   /**
    * Testing get All badges
    **/
@@ -37,7 +43,6 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testGetAllBadges() {
 
     try {
-      startSessionAs("root");
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/all";
@@ -64,7 +69,6 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testAddBadge() {
 
     try {
-      startSessionAs("root");
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/add";
@@ -108,8 +112,6 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testDeleteBadge() {
     try {
       BadgeEntity badgeEntity = newBadge();
-      startSessionAs("root");
-      Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/delete/" + badgeEntity.getId();
       EnvironmentContext envctx = new EnvironmentContext();
@@ -150,7 +152,6 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testUpdateBadge() {
 
     try {
-      startSessionAs("root");
       BadgeEntity badgeEntity = newBadge();
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);

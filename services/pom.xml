@@ -41,21 +41,21 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Portal & ECMS & Social -->
+        <!-- Portal & Social -->
         <dependency>
             <groupId>org.exoplatform.commons</groupId>
             <artifactId>commons-webui-ext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.exoplatform.ecms</groupId>
-            <artifactId>ecms-core-webui-explorer</artifactId>
             <scope>provided</scope>
         </dependency>
         <!-- Social -->
@@ -192,13 +192,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-
-        <dependency>
-            <groupId>org.exoplatform.gatein.portal</groupId>
-            <artifactId>exo.portal.component.test.jcr</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
@@ -261,6 +254,7 @@
                         </includes>
                         <systemPropertyVariables>
                             <exo.profiles>hsqldb</exo.profiles>
+                            <java.naming.factory.initial>org.exoplatform.services.naming.SimpleContextFactory</java.naming.factory.initial>
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
