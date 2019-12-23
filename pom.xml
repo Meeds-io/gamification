@@ -59,12 +59,6 @@
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
         <org.exoplatform.social.version>6.0.x-SNAPSHOT</org.exoplatform.social.version>
-        <org.exoplatform.ecms.version>6.0.x-SNAPSHOT</org.exoplatform.ecms.version>
-        <org.exoplatform.calendar.version>6.0.x-SNAPSHOT</org.exoplatform.calendar.version>
-        <org.exoplatform.forum.version>6.0.x-SNAPSHOT</org.exoplatform.forum.version>
-        <org.exoplatform.wiki.version>6.0.x-SNAPSHOT</org.exoplatform.wiki.version>
-        <!-- for tests -->
-        <junit.version>4.12</junit.version>
         <!-- Liquibase stack -->
         <org.liquibase.version>3.5.5</org.liquibase.version>
         <org.liquibase-hibernate4.version>3.6</org.liquibase-hibernate4.version>
@@ -72,10 +66,6 @@
         <validation-api.version>1.1.0.Final</validation-api.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <profile.liquibase/>
-        <!-- Juzu Version -->
-        <org.juzu.version>1.2.0</org.juzu.version>
-        <!-- Task Version -->
-        <addon.exo.tasks.version>3.0.x-SNAPSHOT</addon.exo.tasks.version>
         <!-- Lombok driver-->
         <lombok.version>1.16.22</lombok.version>
         <!-- Maven Plugin for JS and CSS bundling and Unit Test execution -->
@@ -89,50 +79,6 @@
                 <groupId>org.exoplatform.social</groupId>
                 <artifactId>social</artifactId>
                 <version>${org.exoplatform.social.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.exoplatform.ecms</groupId>
-                <artifactId>ecms</artifactId>
-                <version>${org.exoplatform.ecms.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.exoplatform.calendar</groupId>
-                <artifactId>calendar</artifactId>
-                <version>${org.exoplatform.calendar.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.exoplatform.wiki</groupId>
-                <artifactId>wiki</artifactId>
-                <version>${org.exoplatform.wiki.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.exoplatform.forum</groupId>
-                <artifactId>forum</artifactId>
-                <version>${org.exoplatform.forum.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Import Juzu framework -->
-            <dependency>
-                <groupId>org.juzu</groupId>
-                <artifactId>juzu-parent</artifactId>
-                <version>${org.juzu.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Import Task addon -->
-            <dependency>
-                <groupId>org.exoplatform.addons.task</groupId>
-                <artifactId>task-management-parent</artifactId>
-                <version>${addon.exo.tasks.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -155,21 +101,6 @@
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
-            <!-- for tests -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <!-- lombock -->
-            <!--
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-            </dependency>
-            -->
         </dependencies>
     </dependencyManagement>
 

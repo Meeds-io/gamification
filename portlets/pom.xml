@@ -60,12 +60,6 @@
         </dependency>
         <dependency>
             <groupId>org.juzu</groupId>
-            <artifactId>juzu-core</artifactId>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.juzu</groupId>
             <artifactId>juzu-plugins-less</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -127,6 +121,7 @@
                 <executions>
                     <execution>
                         <id>install node and npm</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
@@ -137,6 +132,7 @@
                     </execution>
                     <execution>
                         <id>npm install</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
@@ -157,6 +153,7 @@
                     -->
                     <execution>
                         <id>npm run build</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>

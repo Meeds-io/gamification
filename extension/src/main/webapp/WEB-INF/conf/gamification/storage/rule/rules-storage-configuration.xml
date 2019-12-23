@@ -339,7 +339,7 @@
     <!-- ############################################################################################ -->
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddActivityOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -370,7 +370,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddActivityOnNetworkStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -401,7 +401,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddActivityOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -433,7 +433,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddActivityTargetUserStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -464,7 +464,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddActivityOnMyStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -498,7 +498,7 @@
         <!-- ############################################################################################ -->
         <!-- ################# Gamification Rule Config : LIKE ACTIVITY FLOW ############################ -->
         <!-- ############################################################################################ -->
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.LikeActivityOnNetworkStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -529,7 +529,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.LikeActivityOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -560,7 +560,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.LikeActivityOnSpaceStreamTarget</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -591,7 +591,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.likeActivityTargetUserStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -625,7 +625,7 @@
         <!-- ############################################################################################ -->
         <!-- ################## Gamification Rule Config : USER PROFILE FLOW ############################ -->
         <!-- ############################################################################################ -->
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddUserProfileAvatar</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -656,7 +656,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddUserProfileBanner</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -687,7 +687,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddUserProfileAboutMe</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -718,7 +718,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.AddSpace</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -749,7 +749,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.JoinSpace</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -780,7 +780,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.GrantUserAsLead</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -814,7 +814,7 @@
         <!-- ############################################################################################ -->
         <!-- ################## Gamification Rule Config : RELATIONSHIP FLOW ############################ -->
         <!-- ############################################################################################ -->
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.SendRelationshipRequest</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -845,7 +845,7 @@
                 </value-param>
             </init-params>
         </component-plugin>
-        <component-plugin profiles="social">
+        <component-plugin>
             <name>rule.ReceiveRelationshipRequest</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
@@ -869,325 +869,6 @@
                 <value-param>
                     <name>rule-zone</name>
                     <value>Social</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <!-- ############################################################################################ -->
-        <!-- ################## Gamification Rule Config : FORUM FLOW ########################## -->
-        <!-- ############################################################################################ -->
-        <component-plugin profiles="forum">
-            <name>rule.AddForumPost</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>addForumPost</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You replied in the forum</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>addForumPost</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>5</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="forum">
-            <name>rule.AddForumTopic</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>addForumTopic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You started a new topic in the forum</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>addForumTopic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>15</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="forum">
-            <name>rule.VoteForumTopic</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>voteForumTopic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You rated a forum topic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>voteForumTopic</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>2</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <!-- ############################################################################################ -->
-        <!-- ################## Gamification Rule Config : WIKI FLOW ########################## -->
-        <!-- ############################################################################################ -->
-        <component-plugin profiles="wiki">
-            <name>rule.AddWikiPage</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>addWikiPage</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You created a wiki page</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>addWikiPage</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>5</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="wiki">
-            <name>rule.UpdateWikiPage</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>updateWikiPage</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You Updated a wiki Page</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>updateWikiPage</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>2</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <!-- ############################################################################################ -->
-        <!-- ######################## Gamification Rule Config : TASK FLOW ############################## -->
-        <!-- ############################################################################################ -->
-        <component-plugin profiles="task">
-            <name>rule.CreateNewTask</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>createNewTask</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You created a task</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>createNewTask</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>3</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Teamwork</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="task">
-            <name>rule.CompleteTaskAssigned</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>completeTaskAssigned</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You Completed an assigned task</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>completeTaskAssigned</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>5</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Teamwork</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="task">
-            <name>rule.CompleteTaskCoworker</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>completeTaskCoworker</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You completed a task as coworker</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>completeTaskCoworker</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>1</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Teamwork</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="task">
-            <name>rule.CommentTask</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>commentTask</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You commented a task</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>commentTask</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>2</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Teamwork</value>
-                </value-param>
-                <value-param>
-                    <name>rule-enable</name>
-                    <value>true</value>
-                </value-param>
-            </init-params>
-        </component-plugin>
-        <component-plugin profiles="task">
-            <name>rule.UpdateTask</name>
-            <set-method>addPlugin</set-method>
-            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
-            <init-params>
-                <value-param>
-                    <name>rule-title</name>
-                    <value>updateTask</value>
-                </value-param>
-                <value-param>
-                    <name>rule-description</name>
-                    <value>You updated a task</value>
-                </value-param>
-                <value-param>
-                    <name>rule-event</name>
-                    <value>updateTask</value>
-                </value-param>
-                <value-param>
-                    <name>rule-score</name>
-                    <value>1</value>
-                </value-param>
-                <value-param>
-                    <name>rule-zone</name>
-                    <value>Teamwork</value>
                 </value-param>
                 <value-param>
                     <name>rule-enable</name>

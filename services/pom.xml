@@ -64,17 +64,6 @@
             <artifactId>social-component-core</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Forum -->
-        <dependency>
-            <groupId>org.exoplatform.forum</groupId>
-            <artifactId>forum-forum-service</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Wiki -->
-        <dependency>
-            <groupId>org.exoplatform.wiki</groupId>
-            <artifactId>wiki-service</artifactId>
-        </dependency>
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -113,12 +102,6 @@
         <dependency>
             <groupId>org.exoplatform.social</groupId>
             <artifactId>social-component-service</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Task -->
-        <dependency>
-            <groupId>org.exoplatform.addons.task</groupId>
-            <artifactId>task-management-services</artifactId>
             <scope>provided</scope>
         </dependency>
         <!-- Test Dependencies -->
@@ -195,11 +178,6 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.exoplatform.social</groupId>
-            <artifactId>social-component-core-jpa</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- End Test-->
