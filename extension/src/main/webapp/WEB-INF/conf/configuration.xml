@@ -30,7 +30,6 @@
     <import>war:/conf/gamification/storage/storage-configuration.xml</import>
     <import>war:/conf/gamification/portlets/container-configuration.xml</import>
     <import>war:/conf/gamification/global/completion-configuration.xml</import>
-    <import>war:/conf/gamification/listener/ideation-listeners-configuration.xml</import>
     <import>war:/conf/gamification/listener/social-listeners-configuration.xml</import>
     <import>war:/conf/gamification/listener/generic-listener-configuration.xml</import>
     <import>war:/conf/gamification/listener/domain-listener-configuration.xml</import>
