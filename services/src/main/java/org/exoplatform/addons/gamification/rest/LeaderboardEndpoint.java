@@ -114,6 +114,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
                     // Set profile URL
                     leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+                    
+                    // Set total rank
+                    leaderboardInfo.setRank(gamificationService.bluidCurrentUserRank(identity.getId(), Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), "all"));
 
                     // Leader
                     leaderboardList.add(leaderboardInfo);
@@ -341,6 +344,15 @@ public class LeaderboardEndpoint implements ResourceContainer {
         String fullname;
         long score;
         String profileUrl;
+        int rank;
+
+        public int getRank() {
+            return rank;
+        }
+
+        public void setRank(int rank) {
+            this.rank = rank;
+        }
 
         public String getAvatarUrl() {
             return avatarUrl;

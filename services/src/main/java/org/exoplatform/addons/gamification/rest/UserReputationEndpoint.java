@@ -29,6 +29,10 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,6 +72,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         ConversationState conversationState = ConversationState.getCurrent();
         long userReputationScore = 0;
+        int userRank = 0;
 
         // Get profile owner from url
         String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
@@ -95,8 +100,11 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 userReputationScore = gamificationService.findUserReputationBySocialId(actorId);
 
-
+                userRank = gamificationService.bluidCurrentUserRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), "all");
+                
                 reputation.put("score", userReputationScore);
+
+                reputation.put("rank", userRank);
 
 
                 return Response.ok().cacheControl(cacheControl).entity(reputation.toString()).build();
