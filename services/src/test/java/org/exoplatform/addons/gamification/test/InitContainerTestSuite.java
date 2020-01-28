@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.service.GamificationServiceTest;
 import org.exoplatform.addons.gamification.service.configuration.BadgeServiceTest;
 import org.exoplatform.addons.gamification.service.configuration.DomainServiceTest;
 import org.exoplatform.addons.gamification.service.configuration.RuleServiceTest;
+import org.exoplatform.addons.gamification.service.upgrade.RuleNameUpgradePluginTest;
 import org.exoplatform.addons.gamification.storage.dao.BadgeDAOTest;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAOTest;
 import org.exoplatform.addons.gamification.test.rest.TestManageBadgesEndpoint;
@@ -26,6 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
         RuleDAOTest.class,
         TestManageDomainsEndpoint.class,
         TestManageBadgesEndpoint.class,
+        RuleNameUpgradePluginTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

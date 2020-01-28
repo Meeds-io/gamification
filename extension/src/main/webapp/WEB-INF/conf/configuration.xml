@@ -43,6 +43,7 @@
     <import>war:/conf/gamification/listener/domain-listener-configuration.xml</import>
     <import>war:/conf/gamification/listener/user-listeners-configuration.xml</import>
     <import>war:/conf/gamification/bundle/bundle-configuration.xml</import>
+    <import>war:/conf/gamification/upgrade/upgrade-configuration.xml</import>
     <!--<import>war:/conf/gamification/wcm/deployment/gamification-deployment-comnfiguration.xml</import>-->
 
 </configuration>
