@@ -53,6 +53,9 @@
             <depends>
                 <module>eXoVueI18n</module>
             </depends>
+            <depends>
+                <module>bts_popover</module>
+            </depends>
         </module>
     </portlet>
     <portlet>
@@ -124,6 +127,9 @@
             <depends>
                 <module>eXoVueI18n</module>
             </depends>
+            <depends>
+                <module>bts_popover</module>
+            </depends>
         </module>
     </portlet>
     <portlet>
@@ -137,6 +143,9 @@
             </depends>
             <depends>
                 <module>eXoVueI18n</module>
+            </depends>
+            <depends>
+                <module>bts_popover</module>
             </depends>
         </module>
     </portlet>
@@ -257,6 +266,9 @@
         <depends>
             <module>eXoVueI18n</module>
         </depends>
+        <depends>
+            <module>bts_popover</module>
+        </depends>
     </module>
     <module>
         <name>spaceLeaderboard</name>
@@ -277,6 +289,9 @@
         </depends>
         <depends>
             <module>eXoVueI18n</module>
+        </depends>
+        <depends>
+            <module>bts_popover</module>
         </depends>
     </module>
     <module>

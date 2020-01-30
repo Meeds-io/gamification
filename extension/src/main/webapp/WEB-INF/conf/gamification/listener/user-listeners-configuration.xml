@@ -24,7 +24,7 @@
         xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
     <external-component-plugins>
         <target-component>org.exoplatform.services.listener.ListenerService</target-component>
-        <component-plugin profiles="all">
+        <component-plugin>
             <name>exo.core.security.ConversationRegistry.register</name>
             <set-method>addListener</set-method>
             <type>org.exoplatform.addons.gamification.listener.user.GamificationUserLoginListener</type>

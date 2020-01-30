@@ -43,7 +43,6 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   public void testgetAllDomains() {
 
     try {
-      startSessionAs("root");
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
       String restPath = "/gamification/domains/all";
@@ -70,7 +69,6 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   public void testAddDomain() {
 
     try {
-      startSessionAs("root");
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
       String restPath = "/gamification/domains/add";
@@ -120,7 +118,6 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   public void testUpdateDomain() {
 
     try {
-      startSessionAs("root");
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
       String restPath = "/gamification/domains/update";
@@ -164,7 +161,6 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   @Test
   public void testDeleteDomain() {
     try {
-      startSessionAs("root");
       Map<String, Object> ssResults = new HashMap<String, Object>();
       getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
       String restPath = "/gamification/domains/delete";

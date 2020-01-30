@@ -32,23 +32,6 @@
     <packaging>war</packaging>
     <name>eXo Gamification :: Extension Webapp</name>
     <description>eXo Gamification portal extension</description>
-
-    <dependencies>
-        <!-- Social project-->
-        <dependency>
-            <groupId>org.exoplatform.social</groupId>
-            <artifactId>social-component-core</artifactId>
-            <version>${org.exoplatform.platform.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.exoplatform.integration</groupId>
-            <artifactId>integ-ecms-social</artifactId>
-            <version>${org.exoplatform.platform.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
     <build>
         <resources>
             <resource>

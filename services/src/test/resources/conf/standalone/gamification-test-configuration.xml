@@ -5,6 +5,18 @@
         xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
     <component>
+      <key>org.exoplatform.services.naming.InitialContextInitializer</key>
+      <type>org.exoplatform.commons.InitialContextInitializer2</type>
+      <init-params>
+        <properties-param>
+          <name>default-properties</name>
+          <description>Default initial context properties</description>
+          <property name="java.naming.factory.initial" value="org.exoplatform.services.naming.SimpleContextFactory" />
+        </properties-param>
+      </init-params>
+    </component>
+
+    <component>
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService
         </type>
     </component>
@@ -90,7 +102,6 @@
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>
     </component>
-
 
     <component>
         <key>org.exoplatform.commons.api.persistence.DataInitializer</key>
@@ -470,25 +481,6 @@
         </component-plugin>
     </external-component-plugins>
 
-
-    <external-component-plugins>
-        <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
-        <component-plugin>
-            <name>TaskManagementChangeLogsPlugin</name>
-            <set-method>addChangeLogsPlugin</set-method>
-            <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
-            <init-params>
-                <values-param>
-                    <name>changelogs</name>
-                    <description>Change logs of Gamification</description>
-                    <value>db/changelog/gamification.db.changelog-1.0.0.xml</value>
-                </values-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
-
-
-
     <!-- Bind datasource -->
     <external-component-plugins>
         <target-component>org.exoplatform.services.naming.InitialContextInitializer</target-component>
@@ -537,5 +529,6 @@
     </external-component-plugins>
 
 
+  <remove-configuration>org.exoplatform.commons.chromattic.ChromatticManager</remove-configuration>
 
 </configuration>

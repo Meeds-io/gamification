@@ -34,9 +34,9 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.RootContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
-import org.exoplatform.services.jcr.ext.app.SessionProviderService;
-import org.exoplatform.services.jcr.ext.common.SessionProvider;
+import org.exoplatform.services.naming.InitialContextInitializer;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ProviderBinder;
 import org.exoplatform.services.rest.impl.RequestHandlerImpl;
@@ -52,11 +52,10 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
 
 @ConfiguredBy({
-
+    @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/portal/test-db-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml") })
 
 public abstract class AbstractServiceTest extends BaseExoTestCase {
@@ -79,7 +78,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final String           TEST_GLOBAL_SCORE   = "245590";
 
   protected static final String           TEST__SCORE         = "50";
-  protected static SessionProviderService sessionProviderService;
   protected IdentityManager               identityManager;
   protected RelationshipManager           relationshipManager;
   protected ActivityManager               activityManager;
@@ -88,7 +86,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected ManageBadgesEndpoint          manageBadgesEndpoint;
   protected ManageDomainsEndpoint         manageDomainsEndpoint;
   protected RequestHandlerImpl            requestHandler;
-  protected SessionProvider               sessionProvider;
   protected Identity                      rootIdentity;
   protected ResourceLauncher              launcher;
   protected ProviderBinder                providers;
@@ -109,7 +106,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   protected void setUp() throws Exception {
     begin();
-    sessionProviderService = getContainer().getComponentInstanceOfType(SessionProviderService.class);
     gamificationService = getContainer().getComponentInstanceOfType(GamificationService.class);
     identityManager = CommonsUtils.getService(IdentityManager.class);
     activityManager = CommonsUtils.getService(ActivityManager.class);
@@ -152,26 +148,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     binder.addResource(resourceClass, null);
   }
 
-  protected void startSystemSession() {
-    sessionProvider = sessionProviderService.getSystemSessionProvider(null);
-  }
-
   protected void startSessionAs(String user) {
-    startSessionAs(user, new HashSet<MembershipEntry>());
-  }
-
-  protected void startSessionAs(String user, Collection<MembershipEntry> memberships) {
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(user, memberships);
+    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(user);
     ConversationState state = new ConversationState(identity);
     ConversationState.setCurrent(state);
-    sessionProviderService.setSessionProvider(null, new SessionProvider(state));
-    sessionProvider = sessionProviderService.getSessionProvider(null);
-  }
-
-  protected void endSession() {
-    sessionProviderService.removeSessionProvider(null);
-    ConversationState.setCurrent(null);
-    startSystemSession();
   }
 
   protected RuleEntity newRule() {

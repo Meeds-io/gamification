@@ -5,9 +5,6 @@ const common = require('./webpack.common.js');
 const webpack = require('webpack');
 
 module.exports = merge(common, {
-
-    devtool: 'source-map',
-
     context: path.resolve(__dirname, 'src/apps'),
     entry: {
 
