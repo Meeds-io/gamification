@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
@@ -74,7 +75,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         // Get profile owner from url
         String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
-        if(profileOwner.equals("profile")){
+        if(profileOwner.equals("profile") || StringUtils.isBlank(profileOwner)){
             profileOwner= conversationState.getIdentity().getUserId();
         }
 

@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter;
@@ -16,10 +17,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -64,8 +62,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     @GET
     @Path("rank/all")
-    public Response getAllLeadersByRank(@Context UriInfo uriInfo) {
-
+    public Response getAllLeadersByRank(@Context UriInfo uriInfo,
+                                        @ApiParam(value = "Get only the top 10 users or all users",required = false) @DefaultValue("true") @QueryParam("loadCapacity") boolean loadCapacity) {
         ConversationState conversationState = ConversationState.getCurrent();
 
         if (conversationState != null) {
@@ -82,7 +80,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
             try {
                 // Filter users to add to leaderboard according to filter criteria
-                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter, true);
+                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter, loadCapacity);
 
                 if (standardLeaderboards == null) {
                     return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
