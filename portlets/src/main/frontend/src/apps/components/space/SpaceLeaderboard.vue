@@ -578,13 +578,7 @@
         box-shadow: none;
     }
 
-    .btn-secondary:not(:disabled):not(.disabled).active,
-    .btn-secondary:not(:disabled):not(.disabled):active,
-    .show>.btn-secondary.dropdown-toggle {
-        background-color: #578dc9;
-        border: solid 1px #578dc9;
-        color: #fff;
-    }
+
 
     .custom-select {
         font-size: 14px;

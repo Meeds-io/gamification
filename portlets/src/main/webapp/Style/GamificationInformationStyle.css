@@ -471,11 +471,6 @@ svg#line-progress {
     box-shadow: none;
 }
 
-#achivements .show>.btn-secondary.dropdown-toggle {
-    background-color: #578dc9;
-    border: solid 1px #578dc9;
-    color: #fff;
-}
 #achivements .custom-select {
     font-size: 14px;
 }
