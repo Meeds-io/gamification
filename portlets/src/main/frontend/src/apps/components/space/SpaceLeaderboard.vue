@@ -80,7 +80,7 @@
 
                     </div>
                     <div class="load-more" v-if="users.length>1">
-                        <b-link href="#" @click.prevent="showMore()">Load More</b-link>
+                        <a href="#" @click.prevent="showMore()">Load More</a>
                     </div>
 
                 </div>
@@ -618,11 +618,9 @@
     .load-more {
         float: right;
         padding: 15px;
-        color: #578dc9;
         font-weight: bold;
     }
     .load-more:hover {
-        color: #578dc9ba;
         cursor: pointer;
     }
 </style>

@@ -43,9 +43,6 @@
     .alert .close{
       line-height: 16px;   
     }
-    .btn-primary:hover {
-      background-color: #476a9c;
-    }
     .dropdown-toggle:after{
         display:none;
         font-size: 14px !important;

@@ -97,8 +97,8 @@
                                 <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
                                 <label class="uiSwitchBtn">
                                     <input type="checkbox" v-model="editedDomain.enabled" >
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
+                                    <span class="slider round switchBtnSpanOn"></span>
+                                    <span class="absolute-no switchBtnSpanOff">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
                                 </label>
                                 <div class="error">{{enabledMessage}}</div>
                             </form>
@@ -160,8 +160,8 @@
                             <div >
                                 <label class="switch">
                                     <input type="checkbox" disabled  v-model="domain.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"No")}}</span>
+                                    <span class="slider round switchBtnSpanOn"></span>
+                                    <span class="absolute-no switchBtnSpanOff">{{$t(`exoplatform.gamification.NO`,"No")}}</span>
                                 </label>
                             </div>
                         </td>
@@ -426,16 +426,9 @@
         margin: 15px 12px 5px;
     }
 
-    .btn-primary:focus, .btn-primary.focus {
-        box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
-    }
     button.btn-primary.pull-right {
         border-radius: 0.25rem;
         height: 44px;
-    }
-    button.btn-primary.pull-right:hover {
-        background: #476a9c;
-        color: #f9f9f9 !important;
     }
     label {
         display: inline-block;
@@ -599,17 +592,8 @@
         width: 95px;
         height: 26px !important;
         color: #f9f9f9;
-        background-color: #477ab3;
-        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
-        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
         background-repeat: repeat-x;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
-        -webkit-box-shadow: inset 0px 3px 5px #224469;
-        -moz-box-shadow: inset 0px 3px 5px #224469;
-        box-shadow: inset 0px 3px 5px #224469;
         -webkit-border-top-left-radius: 9px;
         -moz-border-radius-topleft: 9px;
         border-top-left-radius: 9px;
@@ -618,7 +602,6 @@
         border-bottom-left-radius: 9px;
         height: 57px;
         border-radius: 100px;
-        background-color: #578dc9;
         -webkit-transform: translateX(-190px);
         -ms-transform: translateX(-190px);
         transform: translateX(-190px);
@@ -726,7 +709,6 @@
     }
 
     .btn-primary.disabled, .btn-primary:disabled {
-     background-color: #afc9e5; 
      background-image: none;
     }
 

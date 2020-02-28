@@ -32,9 +32,6 @@
          background-color: transparent;
          -webkit-text-decoration-skip: objects;
      }
-    .btn-primary:hover {
-        background-color: #476a9c;
-    }
 
     .dropdown-toggle:after {
         display: none;

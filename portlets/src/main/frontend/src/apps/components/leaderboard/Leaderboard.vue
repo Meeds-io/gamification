@@ -71,7 +71,7 @@
 
                 </div>
                 <div class="load-more" v-if="users.length>1">
-                    <b-link href="#" @click.prevent="showMore()"> {{ this.$t('exoplatform.gamification.leaderboard.showMore',"Show more") }}</b-link>
+                    <a href="#" @click.prevent="showMore()"> {{ this.$t('exoplatform.gamification.leaderboard.showMore',"Show more") }}</a>
                 </div>
 
             </div>
@@ -609,12 +609,10 @@ select {
 .load-more {
     float: right;
     padding: 15px;
-    color: #578dc9;
     font-weight: bold;
 }
 
 .load-more:hover {
-    color: #578dc9ba;
     cursor: pointer;
 }
 </style>

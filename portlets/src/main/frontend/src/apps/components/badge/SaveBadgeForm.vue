@@ -58,8 +58,8 @@
                             <label class="uiSwitchBtn">
 
                                 <input type="checkbox" v-model="badge.enabled">
-                                <span class="slider round"></span>
-                                <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO')}}</span>
+                                <span class="slider round switchBtnSpanOn"></span>
+                                <span class="absolute-no switchBtnSpanOff">{{ this.$t('exoplatform.gamification.NO')}}</span>
                             </label>
                         </form>
 
@@ -237,11 +237,6 @@ div#headingOne button.btn.btn-primary {
     margin: 15px 12px 5px;
     border-radius: 3px;
 
-}
-
-.btn-primary:focus,
-.btn-primary.focus {
-    box-shadow: inset 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
 }
 
 .collapse.show.out {
@@ -457,10 +452,7 @@ div#collapseOne {
     width: 95px;
     height: 26px !important;
     color: #f9f9f9;
-    background-color: #477ab3;
-
     border-radius: 100px;
-    background-color: #578dc9;
     -webkit-transform: translateX(-190px);
     -ms-transform: translateX(-190px);
     transform: translateX(-190px);
@@ -538,8 +530,7 @@ form#domainSelectboxGroup {
     display: inline-block;
 }
 .btn-primary.disabled, .btn-primary:disabled {
-     background-color: #afc9e5; 
-     background-image: none;
+    background-image: none;
 }
 textarea#badgeDescription {
     border:2px solid #e1e8ee
