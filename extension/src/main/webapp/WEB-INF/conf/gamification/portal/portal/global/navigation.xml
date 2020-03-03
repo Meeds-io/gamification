@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node-navigation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.gatein.org/xml/ns/gatein_objects_1_6 http://www.gatein.org/xml/ns/gatein_objects_1_6"
+                 xmlns="http://www.gatein.org/xml/ns/gatein_objects_1_6">
+  <priority>1</priority>
+  <page-nodes>
+    <node>
+      <name>gamification-earn-points</name>
+      <label>How to earn point</label>
+      <visibility>SYSTEM</visibility>
+      <page-reference>portal::global::gameficationhelp</page-reference>
+    </node>
+
+    <node>
+      <name>achievements</name>
+      <label>Gamification Achievements</label>
+      <visibility>SYSTEM</visibility>
+      <page-reference>portal::global::achievements</page-reference>
+    </node>
+  </page-nodes>
+</node-navigation>
