@@ -1,3 +1,3 @@
-<div class='manage-domains-portlet'>
-    <div id="app" class="container"></div>
+<div id="manage-domains-portlet" class='manage-domains-portlet'>
+    <div class="container"></div>
 </div>

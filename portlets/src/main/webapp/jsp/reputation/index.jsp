@@ -1,3 +1,3 @@
-<div class='user-reputation-portlet'>
-  <div id="app" class="container"></div>
+<div id="reputation-portlet" class='user-reputation-portlet'>
+  <div class="container"></div>
 </div>

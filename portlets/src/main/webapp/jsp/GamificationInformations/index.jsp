@@ -1,3 +1,3 @@
-<div class='user-GamificationInformations-portlet'>
-  <div id="app" class="container"></div>
+<div id="GamificationInformations" class='user-GamificationInformations-portlet'>
+  <div class="container"></div>
 </div>

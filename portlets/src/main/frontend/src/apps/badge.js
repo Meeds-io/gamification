@@ -8,7 +8,7 @@ $(document).ready(() => {
         const vueApp = new Vue({
             render: (h) => h(BadgeApp),
             i18n
-        }).$mount('#app');
+        }).$mount('#manage-badges-portlet > .container');
         Vue.prototype.$vueT = Vue.prototype.$t;
         Vue.prototype.$t = (key, defaultValue) => {
             const translation = vueApp.$vueT(key);

@@ -1,3 +1,3 @@
-<div class='manage-rules-portlet'>
-  <div id="app" class="container"></div>
+<div id="manage-rules-portlet" class='manage-rules-portlet'>
+  <div class="container"></div>
 </div>

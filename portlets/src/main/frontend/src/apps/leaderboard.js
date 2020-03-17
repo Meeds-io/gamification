@@ -9,7 +9,7 @@ $(document).ready(() => {
         const vueApp = new Vue({
             render: (h) => h(LeaderboardApp),
             i18n
-        }).$mount('#app')
+        }).$mount('#leaderboard-portlet > .container')
         Vue.prototype.$vueT = Vue.prototype.$t;
         Vue.prototype.$t = (key, defaultValue) => {
         const translation = vueApp.$vueT(key);

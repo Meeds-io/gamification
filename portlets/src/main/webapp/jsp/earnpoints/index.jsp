@@ -1,3 +1,3 @@
-<div class='Gamificationhelp'>
-  <div id="app" class="container"></div>
+<div id="GamificationEarnPoints" class='Gamificationhelp'>
+  <div class="container"></div>
 </div>

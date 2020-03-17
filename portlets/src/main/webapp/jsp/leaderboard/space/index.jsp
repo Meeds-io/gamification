@@ -1,3 +1,3 @@
-<div class='space-leaderboard-portlet'>
-  <div id="app" class="container"></div>
+<div id="leaderboard-portlet" class='space-leaderboard-portlet'>
+  <div class="container"></div>
 </div>
