@@ -16,12 +16,14 @@ module.exports = merge(common, {
         GamificationInformations: "./GamificationInformations.js",
         earnpoints: "./earnpoints.js",
         spaceleaderboard: "./spaceleaderboard.js",
+        profileStats: "./profileStats/main.js",
 
     },
     output: {
 
         path: path.resolve(__dirname, '../webapp/javascript/'),
-        filename: '[name]/[name].bundle.js'
+        filename: '[name]/[name].bundle.js',
+        libraryTarget: 'amd'
 
     },
     plugins: [

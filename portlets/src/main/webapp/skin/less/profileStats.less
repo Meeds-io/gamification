@@ -1,0 +1,100 @@
+@import "variables.less";
+@import "mixins.less";
+
+.VuetifyApp {
+    #profile-stats-portlet {
+        background: transparent;
+        .profile-card-header {
+          color: @textColor;
+        }
+        .profileCard {
+          position: relative;
+          width: 100%;
+          max-height: 300px;
+          height: 300px;
+          min-width: 270px;
+          transform-style: preserve-3d;
+          transition: transform 1s;
+          margin-bottom: 10px;
+          margin-bottom: 10px;
+        }
+        .profileCard.is-flipped {
+          transform: rotateY(-180deg);
+        }
+        .profileStats{
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+        }
+        .ConnexionsRequests {
+          background: white;
+          transform: rotateY(180deg);
+        }
+
+        .header-badge-color {
+        	background-color: @tertiaryColor !important;
+          	border-color: @tertiaryColor !important;
+          	color: white !important;
+        }
+
+        .connexion-accept-btn .v-icon {
+        	background-color: transparent !important;
+          	border-color: @primaryColor !important;
+          	color: @primaryColor !important;
+        }
+
+        .connexion-refuse-btn .v-icon {
+           background-color: transparent !important;
+           border-color: @greyColorLighten1 !important;
+           color: @greyColorLighten1 !important;
+        }
+
+        .request-user-name {
+            color: @primaryColor
+        }
+
+        .caption-1 {
+          font-size: 0.7rem!important;
+        }
+        .v-badge.badge-color .v-badge__badge .v-btn {
+          background-color: @tertiaryColor!important;
+          border-color: @tertiaryColor!important;
+          color: white !important;
+        }
+        .top1 {
+          -webkit-animation-duration: 1.5s;
+          animation-duration: 1.5s;
+          -webkit-animation-name: toTop1;
+          animation-name: toTop1;
+        }
+        .top2 {
+          -webkit-animation-duration: 1.5s;
+          animation-duration: 1.5s;
+          -webkit-animation-name: toTop2;
+          animation-name: toTop2;
+        }
+        .top3 {
+          -webkit-animation-duration: 1.5s;
+          animation-duration: 1.5s;
+          -webkit-animation-name: toTop3;
+          animation-name: toTop3;
+        }
+        .podium-layout {
+          min-height: 100px;
+        }
+  }
+      .profileStats {
+        span.v-badge__badge{
+          padding: 0!important;
+        }
+      }
+  }
+
+  .uiIconAppGamification:before {
+      content: "\ebdb"!important;
+  }
+
+  .uiIconAppachievements:before {
+      content: "\ebdb"!important;
+  }

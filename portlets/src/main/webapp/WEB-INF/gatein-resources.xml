@@ -28,8 +28,8 @@
     <portal-skin>
         <skin-name>Enterprise</skin-name>
         <skin-module>gamification</skin-module>
-        <css-path>/skin/platform.css</css-path>
-        <css-priority>10</css-priority>
+        <css-path>/skin/css/profileStats.css</css-path>
+        <css-priority>120</css-priority>
     </portal-skin>
 
     <portlet>
@@ -155,6 +155,33 @@
             </depends>
         </module>
     </portlet>
+
+    <portlet>
+        <name>ProfileStats</name>
+        <module>
+            <depends>
+                <module>profileStatsBundle</module>
+            </depends>
+        </module>
+    </portlet>
+
+    <module>
+        <name>profileStatsBundle</name>
+        <script>
+            <minify>false</minify>
+            <path>/javascript/profileStats/profileStats.bundle.js</path>
+        </script>
+        <depends>
+            <module>vue</module>
+        </depends>
+        <depends>
+            <module>vuetify</module>
+        </depends>
+        <depends>
+            <module>eXoVueI18n</module>
+        </depends>
+    </module>
+
 
     <module>
         <name>manageRules</name>
