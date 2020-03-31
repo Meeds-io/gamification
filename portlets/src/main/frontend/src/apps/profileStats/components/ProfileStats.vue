@@ -11,7 +11,7 @@
           wrap
           mx-0
           class="white profileCard">
-          <user-dashboard
+          <user-dashbord
             v-if="!isFlipped"
             class="profileFlippedCard profileStats"
             @specificCard="setFlippedCard"/>
@@ -29,20 +29,7 @@
   </v-app>
 </template>
 <script>
-    import UserDashboard from './UserDashbord.vue';
-    import ConnectionsRequests from './ConnectionsRequests.vue';
-    import TotalPoints from './TotalPoints.vue';
-    import SpacesRequests from './SpacesRequests.vue';
-    import GamificationRank from "./GamificationRank.vue";
     export default {
-        components: {
-            UserDashboard,
-            ConnectionsRequests,
-            TotalPoints,
-            SpacesRequests,
-            GamificationRank
-        },
-
         data: function() {
           return {
             currentComponent: null,

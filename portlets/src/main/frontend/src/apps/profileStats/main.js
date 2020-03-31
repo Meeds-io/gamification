@@ -1,4 +1,4 @@
-import profileStatsApp from './components/ProfileStats.vue';
+import './initComponents.js';
 
 Vue.use(Vuetify);
 
@@ -19,7 +19,7 @@ exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
         // init Vue app when locale ressources are ready
         new Vue({
-            render: h => h(profileStatsApp),
+            template: '<profile-stats></profile-stats>',
             i18n,
             vuetify,
         }).$mount('#profile-stats');

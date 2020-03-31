@@ -1,13 +1,27 @@
+const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 /**
 const DashboardPlugin = require("webpack-dashboard/plugin");
 */
-
-
 module.exports = {
+    context: path.resolve(__dirname, 'src/apps'),
+    entry: {
+        rule: "./rule.js",
+        badge: "./badge.js",
+        domain: "./domain.js",
+        reputation: "./reputation.js",
+        leaderboard: "./leaderboard.js",
+        GamificationInformations: "./GamificationInformations.js",
+        earnpoints: "./earnpoints.js",
+        spaceleaderboard: "./spaceleaderboard.js",
+        profileStats: "./profileStats/main.js"
 
-
+    },
+    output: {
+        filename: '[name]/[name].bundle.js',
+        libraryTarget: 'amd'
+    },
     module: {
         rules: [
             {
