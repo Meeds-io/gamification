@@ -20,7 +20,8 @@
     "eXo": true,
     "$": true,
     "global": true,
-    "exoi18n": true
+    "exoi18n": true,
+    "echarts": true
   },
   "parserOptions": {
     "sourceType": "module",

@@ -357,6 +357,9 @@
         <depends>
             <module>eXoVueI18n</module>
         </depends>
+        <depends>
+            <module>eChart</module>
+        </depends>
     </module>
 
 </gatein-resources>

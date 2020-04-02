@@ -46,7 +46,7 @@
                     dark
                     height="22"
                     width="22"
-                    @click="getSpecificCard('SpacesRequests')">{{ spacesRequestsSize }}</v-btn>
+                    @click="getSpecificCard('spaces-requests')">{{ spacesRequestsSize }}</v-btn>
                   <a class="headline blue-grey--text font-weight-bold pa-1" @click="navigateTo('spaces')">{{ spacesSize }}</a>
                 </v-badge>
               </a>
@@ -72,7 +72,7 @@
                     dark
                     height="20"
                     width="20"
-                    @click="getSpecificCard('ConnectionsRequests')">{{ connectionsRequestsSize }}</v-btn>
+                    @click="getSpecificCard('connections-requests')">{{ connectionsRequestsSize }}</v-btn>
                   <a class="headline blue-grey--text font-weight-bold pa-1" @click="navigateTo('connexions/network')">{{ connectionsSize }}</a>
                 </v-badge>
               </a>
@@ -93,7 +93,7 @@
             align-center>
             <v-card
               flat>
-              <a @click="getSpecificCard('TotalPoints')">
+              <a @click="getSpecificCard('total-points')">
                 <v-card-text class="headline blue-grey--text font-weight-bold pa-1">{{ totalPoints }}</v-card-text>
                 <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.totalPoints') }}</v-card-text>
               </a>
@@ -108,7 +108,7 @@
               flat
               color="transparent"
               align-center>
-              <a @click="getSpecificCard('GamificationRank')">
+              <a @click="getSpecificCard('gamification-rank')">
                 <v-card-text class="headline blue-grey--text font-weight-bold pa-1">{{ gamificationRank }}</v-card-text>
                 <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.totalRank') }}</v-card-text>
               </a>
@@ -120,7 +120,6 @@
   </v-flex>
 </template>
 <script>
-
   import {getUserInformations, getSpaces, getSpacesRequests, getConnections, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI'
   export default {
     data() {

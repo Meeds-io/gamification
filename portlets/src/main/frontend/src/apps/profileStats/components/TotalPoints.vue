@@ -31,28 +31,18 @@
         </v-flex>
       </v-layout>
     </v-flex>
-    <div style="margin: auto">
-      <v-chart :options="option" style="width: 315px; height: 220px"/>
-    </div>
+    <div id="echart-total-point"></div>
   </v-layout>
 </template>
 
 <script>
-  import ECharts from 'vue-echarts';
-  import 'echarts/lib/chart/pie';
-  import 'echarts/lib/component/tooltip';
-  import 'echarts/lib/component/graphic';
-  import 'echarts/lib/component/legend';
   import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI'
-
   export default {
-    components: {
-      'v-chart': ECharts
-    },
+
     data() {
       return {
         option : {
-          tooltip : {
+           tooltip : {
             trigger: 'item',
             formatter: '{b} : {c} ({d}%)'
           },
@@ -92,6 +82,7 @@
     created() {
       this.getGamificationPointsStats();
       this.getGamificationPoints();
+      this.initChart();
     },
     methods: {
       getGamificationPoints() {
@@ -115,6 +106,10 @@
       },
       toProfileStats() {
         this.$emit('isProfileStats');
+      },
+      initChart() {
+        const chart = echarts.init($('#echart-total-point'));
+        chart.setOption(this.option, true);
       }
     }
   }
