@@ -14,7 +14,7 @@
           <user-dashbord
             v-if="!isFlipped"
             class="profileFlippedCard profileStats"
-            @specificCard="setFlippedCard"/>
+            @specific-card="setFlippedCard"/>
           <v-flex
             v-if="isFlipped"
             :is="currentComponent"

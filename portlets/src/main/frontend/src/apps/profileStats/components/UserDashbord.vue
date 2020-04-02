@@ -197,7 +197,7 @@
         )
       },
       getSpecificCard(component) {
-        this.$emit('specificCard',component);
+        this.$emit('specific-card',component);
       },
       toProfileStats() {
         this.$emit('isProfileStats');

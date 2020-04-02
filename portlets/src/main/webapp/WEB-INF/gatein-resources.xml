@@ -178,10 +178,17 @@
             <module>vuetify</module>
         </depends>
         <depends>
+            <module>jquery</module>
+            <as>$</as>
+        </depends>
+        <depends>
             <module>eXoVueI18n</module>
         </depends>
         <depends>
             <module>extensionRegistry</module>
+        </depends>
+        <depends>
+            <module>echarts</module>
         </depends>
     </module>
 
@@ -356,9 +363,6 @@
         </depends>
         <depends>
             <module>eXoVueI18n</module>
-        </depends>
-        <depends>
-            <module>echarts</module>
         </depends>
     </module>
 
