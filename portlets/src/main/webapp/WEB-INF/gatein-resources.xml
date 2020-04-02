@@ -358,7 +358,7 @@
             <module>eXoVueI18n</module>
         </depends>
         <depends>
-            <module>eChart</module>
+            <module>echarts</module>
         </depends>
     </module>
 
