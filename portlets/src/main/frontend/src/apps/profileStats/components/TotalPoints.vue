@@ -31,7 +31,9 @@
         </v-flex>
       </v-layout>
     </v-flex>
-    <div id="echart-total-point"></div>
+    <div style="margin:auto;">
+      <div id="echartTotalPoint" style="width:320px; height:220px; "></div>
+    </div>
   </v-layout>
 </template>
 
@@ -62,7 +64,7 @@
               width: 30,
               height: 30
             }
-            },
+          },
           series : [
             {
               type: 'pie',
@@ -72,7 +74,6 @@
                 normal: {
                   show: false
                 },
-                  
               },
             }, 
           ]
@@ -82,7 +83,6 @@
     created() {
       this.getGamificationPointsStats();
       this.getGamificationPoints();
-      this.initChart();
     },
     methods: {
       getGamificationPoints() {
@@ -100,16 +100,21 @@
               const optionSeriesName = this.option.series[0].data[i].name;
               this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase() + optionSeriesName.slice(1);
             }
-            this.option.legend.data = this.option.series[0].data.name
+            this.option.legend.data = this.option.series[0].data.name;
+
+            this.initChart(this.option);
           }
         )
       },
       toProfileStats() {
         this.$emit('isProfileStats');
       },
-      initChart() {
-        const chart = echarts.init(document.getElementById('echart-total-point'));
-        chart.setOption(option);
+      initChart(option) {
+        $(document).ready(function(){
+          var chartContainerId = document.getElementById('echartTotalPoint');
+          const chart = echarts.init(chartContainerId);
+          chart.setOption(option, true);
+         });
       }
     }
   }

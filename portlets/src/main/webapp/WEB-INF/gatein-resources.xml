@@ -188,7 +188,7 @@
             <module>extensionRegistry</module>
         </depends>
         <depends>
-            <module>echarts</module>
+            <module>eCharts</module>
         </depends>
     </module>
     <module>
