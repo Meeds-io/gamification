@@ -15,7 +15,7 @@
         <v-card
           flat>
           <v-list-item>
-            <a @click="navigateTo('profile')">
+            <a :href="profileUrl">
               <v-list-item-avatar>
                 <v-img
                   :src="avatar" />
@@ -47,7 +47,7 @@
                     height="22"
                     width="22"
                     @click="getSpecificCard('spaces-requests')">{{ spacesRequestsSize }}</v-btn>
-                  <a class="headline blue-grey--text font-weight-bold pa-1" @click="navigateTo('spaces')">{{ spacesSize }}</a>
+                  <a class="headline blue-grey--text font-weight-bold pa-1" :href="spacesUrl">{{ spacesSize }}</a>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.spaces') }}</v-card-text>
@@ -73,7 +73,7 @@
                     height="20"
                     width="20"
                     @click="getSpecificCard('connections-requests')">{{ connectionsRequestsSize }}</v-btn>
-                  <a class="headline blue-grey--text font-weight-bold pa-1" @click="navigateTo('connexions/network')">{{ connectionsSize }}</a>
+                  <a class="headline blue-grey--text font-weight-bold pa-1" :href="connexionsUrl">{{ connectionsSize }}</a>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.connections') }}</v-card-text>
@@ -131,7 +131,10 @@
         connectionsSize: '',
         connectionsRequestsSize: '',
         gamificationRank:'',
-        totalPoints: ''
+        totalPoints: '',
+        profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
+        spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
+        connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network')`
       }
     },
     
@@ -201,9 +204,6 @@
       },
       toProfileStats() {
         this.$emit('isProfileStats');
-      },
-      navigateTo(pagelink) {
-        location.href=`${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/${ pagelink }` ;
       },
     }
   }

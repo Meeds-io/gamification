@@ -96,7 +96,7 @@
         depressed
         small
         class="caption text-uppercase grey--text"
-        @click="navigateTo('invitationSpace')">{{ this.$t('homepage.seeAll') }}</v-btn>
+        :href="invitationSpaceUrl">{{ this.$t('homepage.seeAll') }}</v-btn>
     </v-flex>
   </v-layout>
 </template>
@@ -106,7 +106,8 @@
     data() {
       return {
         spacesRequests: [],
-        spacesRequestsSize: ''
+        spacesRequestsSize: '',
+        invitationSpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/invitationSpace`
       }
     },
     created(){
@@ -165,9 +166,6 @@
             }
           }
         )
-      },
-      navigateTo(pagelink) {
-        location.href=`${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/${ pagelink }` ;
       },
     }
   }

@@ -64,7 +64,7 @@
               width: 30,
               height: 30
             }
-          },
+            },
           series : [
             {
               type: 'pie',
@@ -74,6 +74,7 @@
                 normal: {
                   show: false
                 },
+
               },
             }, 
           ]
@@ -101,7 +102,6 @@
               this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase() + optionSeriesName.slice(1);
             }
             this.option.legend.data = this.option.series[0].data.name;
-
             this.initChart(this.option);
           }
         )

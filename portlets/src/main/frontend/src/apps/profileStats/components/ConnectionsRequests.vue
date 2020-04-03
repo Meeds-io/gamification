@@ -94,7 +94,7 @@
         depressed
         small
         class="caption text-uppercase grey--text"
-        @click="navigateTo('connexions/receivedInvitations')">{{ this.$t('homepage.seeAll') }}</v-btn>
+        :href="receivedInvitationsUrl">{{ this.$t('homepage.seeAll') }}</v-btn>
     </v-flex>
   </v-layout>
 
@@ -106,7 +106,8 @@
       return {
         connectionsRequests: [],
         connectionsRequestsSize: '',
-        items: []
+        items: [],
+        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`
       }
     },
     created(){
@@ -167,10 +168,7 @@
             }
           }
         )
-      },
-      navigateTo(pagelink) {
-        location.href=`${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/${ pagelink }` ;
-      },
+      }
     }
   }
 </script>
