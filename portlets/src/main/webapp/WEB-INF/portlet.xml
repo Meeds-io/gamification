@@ -139,4 +139,24 @@
         </portlet-info>
     </portlet>
 
+    <portlet>
+        <portlet-name>ProfileStats</portlet-name>
+        <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+        <init-param>
+            <name>portlet-view-dispatched-file-path</name>
+            <value>/html/profileStats.html</value>
+        </init-param>
+        <init-param>
+            <description>List of profiles that can be used to enable this portlet</description>
+            <name>exo.profiles</name>
+            <value>gamification,social</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+        <portlet-info>
+            <title>Profile Stats</title>
+        </portlet-info>
+    </portlet>
+
 </portlet-app>

@@ -59,6 +59,7 @@
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
         <org.exoplatform.social.version>6.0.x-SNAPSHOT</org.exoplatform.social.version>
+        <org.exoplatform.platform-ui.version>6.0.x-SNAPSHOT</org.exoplatform.platform-ui.version>
         <!-- Liquibase stack -->
         <org.liquibase.version>3.5.5</org.liquibase.version>
         <org.liquibase-hibernate4.version>3.6</org.liquibase-hibernate4.version>
@@ -82,6 +83,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.exoplatform.platform-ui</groupId>
+                <artifactId>platform-ui</artifactId>
+                <version>${org.exoplatform.platform-ui.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Gamification Calls extension -->
             <dependency>
                 <groupId>org.exoplatform.addons.gamification</groupId>
