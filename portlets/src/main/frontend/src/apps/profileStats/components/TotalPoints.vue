@@ -108,8 +108,8 @@
         this.$emit('isProfileStats');
       },
       initChart() {
-        const chart = echarts.init($('#echart-total-point'));
-        chart.setOption(this.option, true);
+        const chart = echarts.init(document.getElementById('echart-total-point'));
+        chart.setOption(option);
       }
     }
   }

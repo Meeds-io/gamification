@@ -191,8 +191,6 @@
             <module>echarts</module>
         </depends>
     </module>
-
-
     <module>
         <name>manageRules</name>
         <script>

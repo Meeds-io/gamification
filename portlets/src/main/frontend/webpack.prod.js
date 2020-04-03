@@ -9,7 +9,7 @@ const app = 'gamification-portlets';
 
 module.exports = merge(common, {
     output: {
-        path: path.resolve(__dirname, `./target/${app}/javascript/`)
+        path: path.resolve(__dirname, '../webapp/javascript/')
     },
     plugins: [
         new webpack.DefinePlugin({
