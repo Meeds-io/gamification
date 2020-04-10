@@ -17,7 +17,6 @@ import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ActivityStream;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -43,6 +42,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     this.identityManager = CommonsUtils.getService(IdentityManager.class);
     this.spaceService = CommonsUtils.getService(SpaceService.class);
     this.activityManager = CommonsUtils.getService(ActivityManager.class);
+    this.listenerService = CommonsUtils.getService(ListenerService.class);
   }
 
   @Override
@@ -139,14 +139,14 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
 
     String activityUrl = getActivityUrl(activity);
-    Space space = getSpaceOfActivity(activity);
-    boolean isSpaceActivity = space != null;
+    Space space = getSpaceOfActivity(parent);
 
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            activity.getPosterId(),
                                            GAMIFICATION_SOCIAL_COMMENT_ADD,
                                            activityUrl);
 
+    boolean isSpaceActivity = space != null;
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            parent.getPosterId(),
                                            isSpaceActivity ? GAMIFICATION_SOCIAL_COMMENT_SPACE_STREAM
@@ -260,7 +260,10 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   private Space getSpaceOfActivity(ExoSocialActivity activity) {
-    return isSpaceActivity(activity) ? null : spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId());
+    if (activity.getParentId() != null) {
+      activity = activityManager.getParentActivity(activity);
+    }
+    return isSpaceActivity(activity) ? spaceService.getSpaceByPrettyName(activity.getActivityStream().getPrettyId()) : null;
   }
 
   private boolean isSpaceActivity(ExoSocialActivity activity) {
@@ -289,10 +292,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     return activityUrl;
   }
 
-  private void createActivityGamificationHistoryEntry(String sender, String receiver, String ruleTitle, String activityUrl) {
-    String senderId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, sender).getId();
-    String receiverId = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, receiver).getId();
-
+  private void createActivityGamificationHistoryEntry(String senderId, String receiverId, String ruleTitle, String activityUrl) {
     try {
       Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
@@ -301,23 +301,24 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put("receiverId", receiverId);
       listenerService.broadcast(EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event");
+      LOG.error("Cannot broadcast gamification event", e);
     }
   }
 
-  private void createSpaceGamificationHistoryEntry(String sender, String spacePrettyName, String ruleTitle, String activityUrl) {
-    String senderId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, sender).getId();
-    String receiverId = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, spacePrettyName).getId();
-
+  private void createSpaceGamificationHistoryEntry(String spacePrettyName,
+                                                   String receiverId,
+                                                   String ruleTitle,
+                                                   String activityUrl) {
     try {
       Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put("object", activityUrl);
-      gam.put("senderId", senderId);
+      gam.put("senderId", spacePrettyName);
+      gam.put("senderType", SpaceIdentityProvider.NAME);
       gam.put("receiverId", receiverId);
       listenerService.broadcast(EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event");
+      LOG.error("Cannot broadcast gamification event", e);
     }
   }
 

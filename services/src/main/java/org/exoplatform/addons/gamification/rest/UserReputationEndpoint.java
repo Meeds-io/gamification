@@ -97,7 +97,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 JSONObject reputation = new JSONObject();
 
-                userReputationScore = gamificationService.findUserReputationByEarnerId(actorId);
+                userReputationScore = gamificationService.findReputationByEarnerId(actorId);
 
                 userRank = gamificationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), "all");
                 

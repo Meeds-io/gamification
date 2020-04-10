@@ -66,6 +66,12 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final String           BADGE_NAME          = "TeamLeader";
 
+  /* Space */
+  protected static final String           TEST_SPACE_ID  = "150";
+
+  /* Space */
+  protected static final String           TEST_SPACE2_ID  = "152";
+
   /* Receiver */
   protected static final String           TEST_USER_RECEIVER  = "55";
 
