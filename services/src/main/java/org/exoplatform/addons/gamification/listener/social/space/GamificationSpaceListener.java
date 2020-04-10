@@ -1,134 +1,155 @@
 package org.exoplatform.addons.gamification.listener.social.space;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.EVENT_NAME;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.listener.Asynchronous;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceListenerPlugin;
+import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-@Asynchronous
 public class GamificationSpaceListener extends SpaceListenerPlugin {
 
-    private static final Log LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
-    protected RuleService ruleService;
-    protected IdentityManager identityManager;
-    protected SpaceService spaceService;
-    protected GamificationService gamificationService;
+  private static final Log  LOG = ExoLogger.getLogger(GamificationSpaceListener.class);
 
-    public GamificationSpaceListener() {
-        this.ruleService = CommonsUtils.getService(RuleService.class);
-        this.identityManager = CommonsUtils.getService(IdentityManager.class);
-        this.spaceService = CommonsUtils.getService(SpaceService.class);
-        this.gamificationService = CommonsUtils.getService(GamificationService.class);
+  protected RuleService     ruleService;
+
+  protected IdentityManager identityManager;
+
+  protected SpaceService    spaceService;
+
+  protected ListenerService listenerService;
+
+  public GamificationSpaceListener() {
+    this.ruleService = CommonsUtils.getService(RuleService.class);
+    this.identityManager = CommonsUtils.getService(IdentityManager.class);
+    this.spaceService = CommonsUtils.getService(SpaceService.class);
+    this.listenerService = CommonsUtils.getService(ListenerService.class);
+  }
+
+  @Override
+  public void spaceCreated(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_ADD);
+  }
+
+  @Override
+  public void spaceRemoved(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void applicationAdded(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void applicationRemoved(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void applicationActivated(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void applicationDeactivated(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void joined(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN);
+  }
+
+  @Override
+  public void left(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void grantedLead(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD);
+  }
+
+  @Override
+  public void revokedLead(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void spaceRenamed(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void spaceAvatarEdited(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void spaceAccessEdited(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void addInvitedUser(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void addPendingUser(SpaceLifeCycleEvent event) {
+  }
+
+  @Override
+  public void spaceRegistrationEdited(SpaceLifeCycleEvent event) {
+
+  }
+
+  @Override
+  public void spaceBannerEdited(SpaceLifeCycleEvent event) {
+  }
+
+  private void createGamificationHistoryEntry(String username, Space space, String ruleTitle) {
+    // Compute user id
+    String senderId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username).getId();
+    String receiverId = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName()).getId();
+    String spaceURL = "/portal/g/:spaces:" + space.getGroupId().replace("/spaces/", "");
+
+    try {
+      Map<String, String> gam = new HashMap<>();
+      gam.put("ruleTitle", ruleTitle);
+      gam.put("object", spaceURL);
+      gam.put("senderId", senderId);
+      gam.put("receiverId", receiverId);
+      listenerService.broadcast(EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error("Cannot broadcast gamification event");
     }
 
-    @Override
-    public void spaceCreated(SpaceLifeCycleEvent event) {
-
-        // Get the space's creator username
-        String actorUsername = event.getSource();
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
-
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_SPACE_ADD, actorId, actorId,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
-
+    try {
+      Map<String, String> gam = new HashMap<>();
+      gam.put("ruleTitle", ruleTitle);
+      gam.put("object", spaceURL);
+      gam.put("senderId", receiverId);
+      gam.put("receiverId", senderId);
+      listenerService.broadcast(EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error("Cannot broadcast gamification event");
     }
+  }
 
-    @Override
-    public void spaceRemoved(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void applicationAdded(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void applicationRemoved(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void applicationActivated(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void applicationDeactivated(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void joined(SpaceLifeCycleEvent event) {
-
-        // Get the space's creator username
-        String actorUsername = event.getSource();
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
-
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_SPACE_JOIN, actorId, actorId,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
-
-    }
-
-    @Override
-    public void left(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void grantedLead(SpaceLifeCycleEvent event) {
-
-        // Get the created space
-        //Space space = event.getSpace();
-        // Get the space's creator username
-        String actorUsername = event.getSource();
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, actorUsername, false).getId();
-
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD, actorId,actorId,"/portal/g/:spaces:"+event.getSpace().getPrettyName().toString()+event.getSpace().getGroupId().replace("/spaces","").toString());
-    }
-
-    @Override
-    public void revokedLead(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceRenamed(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceAvatarEdited(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void spaceAccessEdited(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void addInvitedUser(SpaceLifeCycleEvent event) {
-    }
-
-    @Override
-    public void addPendingUser(SpaceLifeCycleEvent event) {
-}
-
-    @Override
-    public void spaceRegistrationEdited(SpaceLifeCycleEvent event) {
-
-    }
-    @Override
-    public void spaceBannerEdited(SpaceLifeCycleEvent event) {
-    }
 }
