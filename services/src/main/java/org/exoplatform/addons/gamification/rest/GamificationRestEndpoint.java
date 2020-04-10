@@ -64,7 +64,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
         }
         try {
             Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-            Long earnedXP = gamificationService.findUserReputationByEarnerId(identity.getId());
+            Long earnedXP = gamificationService.findReputationByEarnerId(identity.getId());
             return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
 
         } catch (Exception e) {

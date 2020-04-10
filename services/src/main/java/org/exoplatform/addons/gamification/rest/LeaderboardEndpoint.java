@@ -19,8 +19,11 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.swagger.annotations.ApiParam;
 
@@ -43,10 +46,13 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
   protected RelationshipManager relationshipManager;
 
+  protected SpaceService        spaceService;
+
   public LeaderboardEndpoint() {
     identityManager = CommonsUtils.getService(IdentityManager.class);
     gamificationService = CommonsUtils.getService(GamificationService.class);
     relationshipManager = CommonsUtils.getService(RelationshipManager.class);
+    spaceService = CommonsUtils.getService(SpaceService.class);
   }
 
   @GET
@@ -75,6 +81,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
         Identity identity = identityManager.getIdentity(element.getEarnerId(), true);
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
         leaderboardInfo.setSocialId(identity.getId());
+        String technicalId = computeTechnicalId(identity);
+        leaderboardInfo.setTechnicalId(technicalId);
         leaderboardInfo.setScore(element.getReputationScore());
         leaderboardInfo.setRemoteId(identity.getRemoteId());
         leaderboardInfo.setFullname(identity.getProfile().getFullName());
@@ -145,6 +153,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
       for (StandardLeaderboard leader : standardLeaderboards) {
         Identity identity = identityManager.getIdentity(leader.getEarnerId(), true);
         leaderboardInfo = new LeaderboardInfo();
+        String technicalId = computeTechnicalId(identity);
+        leaderboardInfo.setTechnicalId(technicalId);
         leaderboardInfo.setSocialId(identity.getId());
         leaderboardInfo.setScore(leader.getReputationScore());
         leaderboardInfo.setRemoteId(identity.getRemoteId());
@@ -225,6 +235,14 @@ public class LeaderboardEndpoint implements ResourceContainer {
     return leaderboard.stream().map(LeaderboardInfo::getSocialId).anyMatch(username::equals);
   }
 
+  private String computeTechnicalId(Identity identity) {
+    if(!SpaceIdentityProvider.NAME.equals(identity.getProviderId())) {
+      return null;
+    }
+    Space space = spaceService.getSpaceByPrettyName(identity.getRemoteId());
+    return space == null ? null : space.getId();
+  }
+
   private LeaderboardInfo buildCurrentUserRank(Date date,
                                                String domain,
                                                List<LeaderboardInfo> leaderboardList) {
@@ -255,6 +273,8 @@ public class LeaderboardEndpoint implements ResourceContainer {
   }
 
   public static class LeaderboardInfo {
+
+    String technicalId;
 
     String socialId;
 
@@ -324,6 +344,14 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     public void setSocialId(String socialId) {
       this.socialId = socialId;
+    }
+
+    public String getTechnicalId() {
+      return technicalId;
+    }
+
+    public void setTechnicalId(String technicalId) {
+      this.technicalId = technicalId;
     }
   }
 

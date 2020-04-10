@@ -88,7 +88,7 @@ public class GamificationService {
    * @param earnerId : the current user earner id
    * @return long score of user
    */
-  public long findUserReputationByEarnerId(String earnerId) {
+  public long findReputationByEarnerId(String earnerId) {
     GamificationActionsHistory aHistory = this.findLatestActionHistoryByEarnerId(earnerId);
     return (aHistory != null ? aHistory.getGlobalScore() : 0);
   }
