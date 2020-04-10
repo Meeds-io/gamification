@@ -26,6 +26,7 @@
 
     <!-- Gamification core configurations -->
     <import>war:/conf/gamification/portal/portal-configuration.xml</import>
+    <import>war:/conf/gamification/portal/user-page-configuration.xml</import>
     <import>war:/conf/gamification/storage/storage-configuration.xml</import>
     <import>war:/conf/gamification/portlets/container-configuration.xml</import>
     <import>war:/conf/gamification/global/completion-configuration.xml</import>
