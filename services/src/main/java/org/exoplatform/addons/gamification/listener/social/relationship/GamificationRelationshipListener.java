@@ -1,13 +1,12 @@
 package org.exoplatform.addons.gamification.listener.social.relationship;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -16,7 +15,6 @@ import org.exoplatform.social.core.relationship.RelationshipEvent;
 import org.exoplatform.social.core.relationship.RelationshipListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-@Asynchronous
 public class GamificationRelationshipListener extends RelationshipListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationRelationshipListener.class);
