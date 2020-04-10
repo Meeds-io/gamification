@@ -14,6 +14,8 @@ import org.exoplatform.social.core.manager.IdentityManager;
 @Asynchronous
 public class GamificationGenericListener extends Listener<Map<String, String>, String> {
 
+  public static final String    EVENT_NAME = "exo.gamification.generic.action";
+
   protected PortalContainer     container;
 
   protected RuleService         ruleService;
@@ -37,12 +39,12 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
     try {
-      String ruleTitle = (String) event.getSource().get("ruleTitle");
-      String senderId = (String) event.getSource().get("senderId");
-      String receiverId = (String) event.getSource().get("receiverId");
-      String obj = (String) event.getSource().get("object");
-      String sender = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId, false).getId();
-      String receiver = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId, false).getId();
+      String ruleTitle = event.getSource().get("ruleTitle");
+      String senderId = event.getSource().get("senderId");
+      String receiverId = event.getSource().get("receiverId");
+      String obj = event.getSource().get("object");
+      String sender = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId).getId();
+      String receiver = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId).getId();
       gamificationService.createHistory(ruleTitle, sender, receiver, obj);
     } finally {
       RequestLifeCycle.end();
