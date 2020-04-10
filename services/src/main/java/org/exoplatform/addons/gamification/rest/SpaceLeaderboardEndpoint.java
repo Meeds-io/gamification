@@ -34,252 +34,279 @@ import java.util.List;
 @RolesAllowed("users")
 public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
-    private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
+  private static final Log      LOG                   = ExoLogger.getLogger(ManageBadgesEndpoint.class);
 
-    private final static String YOUR_CURRENT_RANK_MSG = "Your current rank";
+  private final static String   YOUR_CURRENT_RANK_MSG = "Your current rank";
 
-    private final CacheControl cacheControl;
+  private final CacheControl    cacheControl;
 
-    protected GamificationService gamificationService = null;
+  protected GamificationService gamificationService   = null;
 
-    protected IdentityManager identityManager = null;
+  protected IdentityManager     identityManager       = null;
 
-    protected SpaceService spaceService = null;
+  protected SpaceService        spaceService          = null;
 
-    public SpaceLeaderboardEndpoint(GamificationService gamificationService,
-                                    IdentityManager identityManager,
-                                    SpaceService spaceService) {
+  public SpaceLeaderboardEndpoint(GamificationService gamificationService,
+                                  IdentityManager identityManager,
+                                  SpaceService spaceService) {
 
-        this.cacheControl = new CacheControl();
-        cacheControl.setNoCache(true);
-        cacheControl.setNoStore(true);
-        this.gamificationService = gamificationService;
-        this.identityManager = identityManager;
-        this.spaceService = spaceService;
-    }
+    this.cacheControl = new CacheControl();
+    cacheControl.setNoCache(true);
+    cacheControl.setNoStore(true);
+    this.gamificationService = gamificationService;
+    this.identityManager = identityManager;
+    this.spaceService = spaceService;
+  }
 
-    @GET
-    @Path("overall")
-    public Response getAllLeadersByRank(@Context UriInfo uriInfo, @QueryParam("url") String url) {
-        ConversationState conversationState = ConversationState.getCurrent();
+  @GET
+  @Path("overall")
+  public Response getAllLeadersByRank(@Context UriInfo uriInfo, @QueryParam("url") String url) {
+    ConversationState conversationState = ConversationState.getCurrent();
 
-        if (conversationState != null) {
+    if (conversationState != null) {
 
-            //Init search criteria
-            LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
+      // Init search criteria
+      LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
-            // Hold leaderboard flow
-            List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList = new ArrayList<>();
+      // Hold leaderboard flow
+      List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList = new ArrayList<>();
 
-            LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+      LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
 
-            Identity identity = null;
+      Identity identity = null;
 
-            try {
-                // Find current space
-                Space space = GamificationUtils.extractSpaceNameFromUrl(url);
-                // Filter users to add to leaderboard according to filter criteria
-                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter, false);
+      try {
+        // Find current space
+        Space space = GamificationUtils.extractSpaceNameFromUrl(url);
+        // Filter users to add to leaderboard according to filter criteria
+        List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
 
-                if (standardLeaderboards == null) {
-                    return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-                }
-
-                // Build StandardLeaderboard flow only when the returned list is not null
-                for (StandardLeaderboard element : standardLeaderboards) {
-
-                    // Load Social identity
-                    identity = identityManager.getIdentity(element.getUserSocialId(), true);
-
-                    if (spaceService.isMember(space, identity.getRemoteId())) {
-                        leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
-
-                        // Set SocialId
-
-                        leaderboardInfo.setSocialId(identity.getId());
-
-                        // Set score
-                        leaderboardInfo.setScore(element.getReputationScore());
-
-                        // Set username
-                        leaderboardInfo.setRemoteId(identity.getRemoteId());
-
-                        // Set FullName
-                        leaderboardInfo.setFullname(identity.getProfile().getFullName());
-
-                        // Set avatar
-                        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-
-                        // Set profile URL
-                        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-
-                        // Leader
-                        leaderboardList.add(leaderboardInfo);
-                    }
-                    if (leaderboardList.size() == 10) return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-                }
-               return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error building leaderboard ", e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error building leaderboard")
-                        .build();
-            }
-
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
+        if (standardLeaderboards == null) {
+          return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
         }
-    }
-    @GET
-    @Path("filter")
-    public Response filter(@Context UriInfo uriInfo, @QueryParam("domain") String domain, @QueryParam("period") String period, @QueryParam("url") String url, @QueryParam("capacity") String capacity ) {
 
-        ConversationState conversationState = ConversationState.getCurrent();
+        // Build StandardLeaderboard flow only when the returned list is not
+        // null
+        for (StandardLeaderboard element : standardLeaderboards) {
 
-        if (conversationState != null) {
+          // Load Social identity
+          identity = identityManager.getIdentity(element.getEarnerId(), true);
 
-            //Init search criteria
-            LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
+          if (spaceService.isMember(space, identity.getRemoteId())) {
+            leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
 
-            if (StringUtils.isNotBlank(domain) && !domain.equalsIgnoreCase("null"))
-                leaderboardFilter.setDomain(domain);
+            // Set SocialId
 
-            if (StringUtils.isNotBlank(period)) leaderboardFilter.setPeriod(period);
+            leaderboardInfo.setSocialId(identity.getId());
 
-            // hold leaderboard flow
-            LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+            // Set score
+            leaderboardInfo.setScore(element.getReputationScore());
 
-            // Build leaderboard list
-            List<LeaderboardEndpoint.LeaderboardInfo> leaderboardInfoList = null;
+            // Set username
+            leaderboardInfo.setRemoteId(identity.getRemoteId());
 
-            try {
-                // Find current space
-                Space space = GamificationUtils.extractSpaceNameFromUrl(url);
+            // Set FullName
+            leaderboardInfo.setFullname(identity.getProfile().getFullName());
 
-                List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter,false);
+            // Set avatar
+            leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
 
-                if (standardLeaderboards == null) {
-                    return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-                }
+            // Set profile URL
+            leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
 
+            // Leader
+            leaderboardList.add(leaderboardInfo);
+          }
+          if (leaderboardList.size() == 10)
+            return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
-                leaderboardInfoList = new ArrayList<LeaderboardEndpoint.LeaderboardInfo>();
-
-                Identity identity = null;
-
-                // Get current User identity
-
-                Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, conversationState.getIdentity().getUserId(), false);
-
-                for (StandardLeaderboard leader : standardLeaderboards) {
-
-
-                    // Load Social identity
-                    identity = identityManager.getIdentity(leader.getUserSocialId(), true);
-
-                    if (spaceService.isMember(space, identity.getRemoteId()) && leaderboardInfoList.size() < Integer.parseInt(capacity)) {
-                        leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
-
-                        // Set SocialId
-
-                        leaderboardInfo.setSocialId(identity.getId());
-
-                        // Set score
-                        leaderboardInfo.setScore(leader.getReputationScore());
-
-                        // Set username
-                        leaderboardInfo.setRemoteId(identity.getRemoteId());
-
-                        // Set FullName
-                        leaderboardInfo.setFullname(identity.getProfile().getFullName());
-
-                        // Set avatar
-                        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-
-                        // Set profile URL
-                        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-
-                        leaderboardInfoList.add(leaderboardInfo);
-                    }
-                    //if (leaderboardInfoList.size() == 10) return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-                }
-                // Check if the current user is already in top10
-                Date date = null;
-                switch (leaderboardFilter.getPeriod()) {
-                    case "WEEK":
-                        date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        break;
-                    case "MONTH":
-                        date = Date.from(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        break;
-                }
-                LeaderboardEndpoint.LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(), date,leaderboardFilter.getDomain(), leaderboardInfoList);
-                // Complete the final leaderboard
-                if (leader != null) leaderboardInfoList.add(leader);
-
-                return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error filtering leaderbaord by Doamin : {} and by Period {} ", leaderboardFilter.getDomain(), leaderboardFilter.getPeriod(), e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error filtering leaderboard")
-                        .build();
-            }
-
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
         }
+        return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+
+      } catch (Exception e) {
+
+        LOG.error("Error building leaderboard ", e);
+
+        return Response.serverError()
+                       .cacheControl(cacheControl)
+                       .entity("Error building leaderboard")
+                       .build();
+      }
+
+    } else {
+      return Response.status(Response.Status.UNAUTHORIZED)
+                     .cacheControl(cacheControl)
+                     .entity("Unauthorized user")
+                     .build();
     }
-    private LeaderboardEndpoint.LeaderboardInfo buildCurrentUserRank (String identityId, Date date, String domain, List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList ) {
-        if (leaderboardList.size() == 0) return null;
-        LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
-        String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,identityId, false).getId();
-        if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
+  }
 
-            // Get GaamificationScore for current user
-            int rank = gamificationService.bluidCurrentUserRank(currentUser, date, domain);
+  @GET
+  @Path("filter")
+  public Response filter(@Context UriInfo uriInfo,
+                         @QueryParam("domain") String domain,
+                         @QueryParam("period") String period,
+                         @QueryParam("url") String url,
+                         @QueryParam("capacity") String capacity) {
 
-            if (rank > 0) {
+    ConversationState conversationState = ConversationState.getCurrent();
 
-                leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+    if (conversationState != null) {
 
-                // Set score
-                leaderboardInfo.setScore(rank);
+      // Init search criteria
+      LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
-                // Set username
-                leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
+      if (StringUtils.isNotBlank(domain) && !domain.equalsIgnoreCase("null"))
+        leaderboardFilter.setDomain(domain);
 
-                // Set FullName
-                leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
+      if (StringUtils.isNotBlank(period))
+        leaderboardFilter.setPeriod(period);
 
-                // Set avatar
-                leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
+      // hold leaderboard flow
+      LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
 
-                // Set profile URL
-                leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
-            }
+      // Build leaderboard list
+      List<LeaderboardEndpoint.LeaderboardInfo> leaderboardInfoList = null;
+
+      try {
+        // Find current space
+        Space space = GamificationUtils.extractSpaceNameFromUrl(url);
+
+        List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+
+        if (standardLeaderboards == null) {
+          return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
         }
-        return leaderboardInfo;
 
+        leaderboardInfoList = new ArrayList<LeaderboardEndpoint.LeaderboardInfo>();
+
+        Identity identity = null;
+
+        // Get current User identity
+
+        Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                       conversationState.getIdentity().getUserId(),
+                                                                       false);
+
+        for (StandardLeaderboard leader : standardLeaderboards) {
+
+          // Load Social identity
+          identity = identityManager.getIdentity(leader.getEarnerId(), true);
+
+          if (spaceService.isMember(space, identity.getRemoteId()) && leaderboardInfoList.size() < Integer.parseInt(capacity)) {
+            leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+
+            // Set SocialId
+
+            leaderboardInfo.setSocialId(identity.getId());
+
+            // Set score
+            leaderboardInfo.setScore(leader.getReputationScore());
+
+            // Set username
+            leaderboardInfo.setRemoteId(identity.getRemoteId());
+
+            // Set FullName
+            leaderboardInfo.setFullname(identity.getProfile().getFullName());
+
+            // Set avatar
+            leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+
+            // Set profile URL
+            leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+
+            leaderboardInfoList.add(leaderboardInfo);
+          }
+          // if (leaderboardInfoList.size() == 10) return
+          // Response.ok(leaderboardInfoList,
+          // MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+        }
+        // Check if the current user is already in top10
+        Date date = null;
+        switch (leaderboardFilter.getPeriod()) {
+        case "WEEK":
+          date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+          break;
+        case "MONTH":
+          date = Date.from(LocalDate.now()
+                                    .with(TemporalAdjusters.firstDayOfMonth())
+                                    .atStartOfDay(ZoneId.systemDefault())
+                                    .toInstant());
+          break;
+        }
+        LeaderboardEndpoint.LeaderboardInfo leader = buildCurrentUserRank(conversationState.getIdentity().getUserId(),
+                                                                          date,
+                                                                          leaderboardFilter.getDomain(),
+                                                                          leaderboardInfoList);
+        // Complete the final leaderboard
+        if (leader != null)
+          leaderboardInfoList.add(leader);
+
+        return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
+
+      } catch (Exception e) {
+
+        LOG.error("Error filtering leaderbaord by Doamin : {} and by Period {} ",
+                  leaderboardFilter.getDomain(),
+                  leaderboardFilter.getPeriod(),
+                  e);
+
+        return Response.serverError()
+                       .cacheControl(cacheControl)
+                       .entity("Error filtering leaderboard")
+                       .build();
+      }
+
+    } else {
+      return Response.status(Response.Status.UNAUTHORIZED)
+                     .cacheControl(cacheControl)
+                     .entity("Unauthorized user")
+                     .build();
     }
-    private boolean isCurrentUserInTopTen(String username, List<LeaderboardEndpoint.LeaderboardInfo> leaderboard) {
+  }
 
-        if (leaderboard.isEmpty()) return false;
+  private LeaderboardEndpoint.LeaderboardInfo buildCurrentUserRank(String identityId,
+                                                                   Date date,
+                                                                   String domain,
+                                                                   List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList) {
+    if (leaderboardList.size() == 0)
+      return null;
+    LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
+    String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, identityId, false).getId();
+    if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
-        return leaderboard.stream().map(LeaderboardEndpoint.LeaderboardInfo::getSocialId).anyMatch(username::equals);
+      // Get GaamificationScore for current user
+      int rank = gamificationService.getLeaderboardRank(currentUser, date, domain);
+
+      if (rank > 0) {
+
+        leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
+
+        // Set score
+        leaderboardInfo.setScore(rank);
+
+        // Set username
+        leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
+
+        // Set FullName
+        leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
+
+        // Set avatar
+        leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
+
+        // Set profile URL
+        leaderboardInfo.setProfileUrl(YOUR_CURRENT_RANK_MSG);
+      }
     }
+    return leaderboardInfo;
+
+  }
+
+  private boolean isCurrentUserInTopTen(String username, List<LeaderboardEndpoint.LeaderboardInfo> leaderboard) {
+
+    if (leaderboard.isEmpty())
+      return false;
+
+    return leaderboard.stream().map(LeaderboardEndpoint.LeaderboardInfo::getSocialId).anyMatch(username::equals);
+  }
 }

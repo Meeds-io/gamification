@@ -4,18 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -23,126 +18,139 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.social.core.manager.RelationshipManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 @Path("/gamification/gameficationinformationsboard")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed("users")
 public class GamificationInformationsEndpoint implements ResourceContainer {
 
-  private static final Log      LOG                 = ExoLogger.getLogger(ManageBadgesEndpoint.class);
-
-  private final CacheControl    cacheControl;
+  private static final Log      LOG                 = ExoLogger.getLogger(GamificationInformationsEndpoint.class);
 
   protected IdentityManager     identityManager     = null;
 
   protected GamificationService gamificationService = null;
 
-  protected RelationshipManager relationshipManager;
+  protected SpaceService spaceService;
 
-  public GamificationInformationsEndpoint() {
-
-    this.cacheControl = new CacheControl();
-
-    cacheControl.setNoCache(true);
-
-    cacheControl.setNoStore(true);
-
-    identityManager = CommonsUtils.getService(IdentityManager.class);
-
-    gamificationService = CommonsUtils.getService(GamificationService.class);
-
-    relationshipManager = CommonsUtils.getService(RelationshipManager.class);
-
+  public GamificationInformationsEndpoint(IdentityManager identityManager,
+                                          SpaceService spaceService,
+                                          GamificationService gamificationService) {
+    this.identityManager = identityManager;
+    this.gamificationService = gamificationService;
+    this.spaceService = spaceService;
   }
 
   @GET
   @Path("history/all")
+  @RolesAllowed("users")
   public Response getAllLeadersByRank(@Context UriInfo uriInfo,
                                       @QueryParam("capacity") String capacity,
-                                      @QueryParam("url") String url) {
+                                      @QueryParam("providerId") String providerId,
+                                      @QueryParam("remoteId") String remoteId) {
 
-    ConversationState conversationState = ConversationState.getCurrent();
-    // Get profile owner from url
-    String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url, "/");
-    if (conversationState != null) {
-      boolean isOwner = false;
-      List<GamificationHistoryInfo> historyList = new ArrayList<>();
-      Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-                                                              conversationState.getIdentity().getUserId(),
-                                                              false);
-      Identity actorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false);
-      String actorId = actorIdentity != null ? actorIdentity.getId() : identity.getId();
-      if (actorId.equals(identity.getId()) || conversationState.getIdentity().isMemberOf("/platform/administrators")) {
-        isOwner = true;
-      }
-      try {
-
-        int loadCapacity = 10;
-        if (StringUtils.isNotBlank(capacity)) {
-          loadCapacity = Integer.parseInt(capacity);
-        }
-
-        // find actions History by userid adding a pagination load more capacity filter
-        // List<GamificationActionsHistory> ss =
-        // gamificationService.findActionsHistoryByUserId(identity.getId(),true,loadCapacity);
-        List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByReceiverId(actorId, true, loadCapacity);
-        if (ss == null) {
-          return Response.ok(new ArrayList<>(), MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-        }
-        // Build GamificationActionsHistory flow only when the returned list is not null
-        for (GamificationActionsHistory element : ss) {
-          // Load Social identity
-          // identity = identityManager.getIdentity(element.getUserSocialId(), true);
-          identity = identityManager.getIdentity(element.getUserSocialId(), true);
-          Profile profile = identity.getProfile();
-
-          GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
-          // Set SocialId
-          gamificationHistoryInfo.setSocialId(identity.getId());
-
-          gamificationHistoryInfo.setReceiver(element.getReceiver());
-          // Set username
-          gamificationHistoryInfo.setRemoteId(identity.getRemoteId());
-          // Set FullName
-          gamificationHistoryInfo.setFullname(profile.getFullName());
-          // Set avatar
-          gamificationHistoryInfo.setAvatarUrl(profile.getAvatarUrl());
-          // Set profile URL
-          gamificationHistoryInfo.setProfileUrl(profile.getUrl());
-          // Set Final Score
-          gamificationHistoryInfo.setActionScore(element.getActionScore());
-          // Set Action Title
-          gamificationHistoryInfo.setActionTitle(element.getActionTitle());
-          gamificationHistoryInfo.setContext(element.getContext());
-          // Set Date-Hours-Minutes GMT Format of the creation
-          gamificationHistoryInfo.setCreatedDate(element.getCreatedDate().toGMTString());
-          // Set Domain
-          gamificationHistoryInfo.setDomain(element.getDomain());
-          // Set Global Score
-          gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
-          // Set event id
-          if (isOwner) {
-            gamificationHistoryInfo.setObjectId(element.getObjectId());
-          }
-
-          // log
-          historyList.add(gamificationHistoryInfo);
-        }
-
-        return Response.ok(historyList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
-      } catch (Exception e) {
-        LOG.error("Error building My points history ", e);
-        return Response.serverError().cacheControl(cacheControl).entity("Error building My points history").build();
-      }
-    } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+    if (StringUtils.isBlank(providerId)) {
+      return Response.status(400).entity("identity 'providerId' parameter is mandatory").build();
     }
+
+    if (StringUtils.isBlank(remoteId)) {
+      return Response.status(400).entity("identity 'remoteId' parameter is mandatory").build();
+    }
+
+    boolean isManager = isCurrentUserSuperManager();
+    boolean canShowDetails = isManager || isCurrentUser(providerId, remoteId);
+
+    if (SpaceIdentityProvider.NAME.equals(providerId)) {
+      Space space = spaceService.getSpaceByPrettyName(remoteId);
+      if (space == null) {
+        return Response.status(404).entity("Space with pretty name '" + remoteId + "'").build();
+      }
+
+      String currentUsername = getCurrentUsername();
+      boolean isSpaceMember = spaceService.isMember(space, currentUsername) || spaceService.isSuperManager(currentUsername);
+      if (!isSpaceMember) {
+        return Response.status(403).build();
+      }
+    }
+
+    List<GamificationHistoryInfo> historyList = new ArrayList<>();
+    Identity identity = identityManager.getOrCreateIdentity(providerId, remoteId);
+    try {
+      int loadCapacity = 10;
+      if (StringUtils.isNotBlank(capacity)) {
+        loadCapacity = Integer.parseInt(capacity);
+      }
+
+      // find actions History by userid adding a pagination load more capacity filter
+      List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(identity.getId(), loadCapacity);
+      if (ss == null || ss.isEmpty()) {
+        return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
+      }
+
+      // Build GamificationActionsHistory flow only when the returned list is not null
+      for (GamificationActionsHistory element : ss) {
+        // Load Social identity
+        identity = identityManager.getIdentity(element.getEarnerId(), true);
+        Profile profile = identity.getProfile();
+        GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
+        // Set SocialIds
+        gamificationHistoryInfo.setSocialId(identity.getId());
+        gamificationHistoryInfo.setSpace(StringUtils.equals(identity.getProviderId(), SpaceIdentityProvider.NAME));
+        gamificationHistoryInfo.setReceiver(element.getReceiver());
+        // Set username
+        gamificationHistoryInfo.setRemoteId(identity.getRemoteId());
+        // Set FullName
+        gamificationHistoryInfo.setFullname(profile.getFullName());
+        // Set avatar
+        gamificationHistoryInfo.setAvatarUrl(profile.getAvatarUrl());
+        // Set profile URL
+        gamificationHistoryInfo.setProfileUrl(profile.getUrl());
+        // Set Final Score
+        gamificationHistoryInfo.setActionScore(element.getActionScore());
+        // Set Action Title
+        gamificationHistoryInfo.setActionTitle(element.getActionTitle());
+        gamificationHistoryInfo.setContext(element.getContext());
+        // Set Date-Hours-Minutes GMT Format of the creation
+        gamificationHistoryInfo.setCreatedDate(element.getCreatedDate().toGMTString());
+        // Set Domain
+        gamificationHistoryInfo.setDomain(element.getDomain());
+        // Set Global Score
+        gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
+        // Set event id
+        if (canShowDetails) {
+          gamificationHistoryInfo.setObjectId(element.getObjectId());
+        }
+
+        // log
+        historyList.add(gamificationHistoryInfo);
+      }
+
+      return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
+    } catch (Exception e) {
+      LOG.error("Error building My points history ", e);
+      return Response.serverError().entity("Error building My points history").build();
+    }
+  }
+
+  private boolean isCurrentUser(String providerId, String remoteId) {
+    return OrganizationIdentityProvider.NAME.equals(providerId) && StringUtils.equals(getCurrentUsername(), remoteId);
+  }
+
+  private String getCurrentUsername() {
+    return ConversationState.getCurrent().getIdentity().getUserId();
+  }
+
+  private boolean isCurrentUserSuperManager() {
+    return ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
   }
 
   public static class GamificationHistoryInfo {
     String         socialId;
+
+    boolean        isSpace;
 
     String         avatarUrl;
 
@@ -216,6 +224,14 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     public void setSocialId(String socialId) {
       this.socialId = socialId;
+    }
+
+    public boolean isSpace() {
+      return isSpace;
+    }
+
+    public void setSpace(boolean isSpace) {
+      this.isSpace = isSpace;
     }
 
     public long getGlobalScore() {

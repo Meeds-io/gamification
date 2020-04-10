@@ -2,6 +2,8 @@ package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
@@ -62,7 +64,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
         }
         try {
             Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-            Long earnedXP = gamificationService.findUserReputationBySocialId(identity.getId());
+            Long earnedXP = gamificationService.findUserReputationByEarnerId(identity.getId());
             return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
 
         } catch (Exception e) {
@@ -114,7 +116,10 @@ public class GamificationRestEndpoint implements ResourceContainer {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
-    public Response getLeaderboardByDate(@Context UriInfo uriInfo, @QueryParam("startDate") String startDateEntry, @QueryParam("endDate") String endDateEntry) {
+  public Response getLeaderboardByDate(@Context UriInfo uriInfo,
+                                       @QueryParam("identityType") String identityType,
+                                       @QueryParam("startDate") String startDateEntry,
+                                       @QueryParam("endDate") String endDateEntry) {
 
         try {
             Date startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
@@ -123,7 +128,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
             if (startDate.after(endDate)) {
                 return Response.ok(new GamificationPoints().code("2").message("Dates parameters are not set correctly")).build();
             }
-            List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(startDate, endDate);
+            List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(identityType), startDate, endDate);
             return Response.ok(new GamificationPoints().code("0").leaderboard(leaderboard).message("Gamification API is called successfully")).build();
 
         } catch (ParseException pe) {

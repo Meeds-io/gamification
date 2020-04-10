@@ -283,7 +283,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     assertEquals(h1.getGlobalScore(), h2.getGlobalScore());
     assertEquals(h1.getObjectId(), h2.getObjectId());
     assertEquals(h1.getReceiver(), h2.getReceiver());
-    assertEquals(h1.getUserSocialId(), h2.getUserSocialId());
+    assertEquals(h1.getEarnerId(), h2.getEarnerId());
     assertEquals(h1.getCreatedBy(), h2.getCreatedBy());
   }
 

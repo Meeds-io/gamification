@@ -274,11 +274,13 @@
             }
 
         },
-
-
         created() {
-            var url = window.location.pathname
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
+            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, {
+                  params: {
+                    providerId: 'user',
+                    remoteId: eXo.env.portal.profileOwner,
+                  }
+                })
                 .then(response => {
                     this.users = response.data;
                 });
