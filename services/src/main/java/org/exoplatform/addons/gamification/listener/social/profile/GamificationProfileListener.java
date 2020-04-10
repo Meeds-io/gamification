@@ -3,11 +3,9 @@ package org.exoplatform.addons.gamification.listener.social.profile;
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -15,7 +13,6 @@ import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-@Asynchronous
 public class GamificationProfileListener extends ProfileListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
