@@ -2,24 +2,27 @@ package org.exoplatform.addons.gamification.service.effective;
 
 import java.io.Serializable;
 
-abstract public class AbstractLeaderboard implements Serializable {
+public abstract class AbstractLeaderboard implements Serializable {
 
-    protected String userSocialId;
-    protected long reputationScore;
+  private static final long serialVersionUID = 6094595264371166779L;
 
-    public String getUserSocialId() {
-        return userSocialId;
-    }
+  protected String          earnerId;
 
-    public void setUserSocialId(String userSocialId) {
-        this.userSocialId = userSocialId;
-    }
+  protected long            reputationScore;
 
-    public long getReputationScore() {
-        return reputationScore;
-    }
+  public String getEarnerId() {
+    return earnerId;
+  }
 
-    public void setReputationScore(long reputationScore) {
-        this.reputationScore = reputationScore;
-    }
+  public void setEarnerId(String earnerId) {
+    this.earnerId = earnerId;
+  }
+
+  public long getReputationScore() {
+    return reputationScore;
+  }
+
+  public void setReputationScore(long reputationScore) {
+    this.reputationScore = reputationScore;
+  }
 }

@@ -283,4 +283,13 @@
         />
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-18">
+      <renameColumn oldColumnName="USER_SOCIAL_ID" newColumnName="EARNER_ID" columnDataType="BIGINT" tableName="GAMIFICATION_ACTIONS_HISTORY" />
+      <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+        <column name="EARNER_TYPE" type="INT" defaultValueNumeric="0">
+          <constraints nullable="false" />
+        </column>
+      </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

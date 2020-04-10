@@ -97,9 +97,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 JSONObject reputation = new JSONObject();
 
-                userReputationScore = gamificationService.findUserReputationBySocialId(actorId);
+                userReputationScore = gamificationService.findUserReputationByEarnerId(actorId);
 
-                userRank = gamificationService.bluidCurrentUserRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), "all");
+                userRank = gamificationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), "all");
                 
                 reputation.put("score", userReputationScore);
 
@@ -158,7 +158,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 }
                 String actorId = id.getId();
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
 
                 allBadges = buildProfileBadges(badgesByDomain);
 
@@ -218,7 +218,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
 
                 allBadges = buildProfileBadges(badgesByDomain);
 
@@ -498,7 +498,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
 
                 allBadges = buildProfilBadges(badgesByDomain);
 
@@ -604,7 +604,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
 
                 allBadges = buildProfilNextBadges(badgesByDomain);
 
@@ -742,7 +742,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByUserId(actorId);
+                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
 
                 allBadges = buildallBadges(badgesByDomain,url);
 

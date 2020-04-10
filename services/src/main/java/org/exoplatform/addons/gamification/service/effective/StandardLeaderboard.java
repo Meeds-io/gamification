@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class StandardLeaderboard extends AbstractLeaderboard implements Serializable {
 
-    public StandardLeaderboard(String userSocialId, long reputationScore) {
-        this.userSocialId = userSocialId;
+    public StandardLeaderboard(String earnerId, long reputationScore) {
+        this.earnerId = earnerId;
         this.reputationScore = reputationScore;
     }
 }

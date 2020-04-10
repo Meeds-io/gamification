@@ -1,39 +1,52 @@
 package org.exoplatform.addons.gamification.service.effective;
 
+import org.exoplatform.addons.gamification.IdentityType;
+
 public class LeaderboardFilter {
 
-    private int loadCapacity = 10;
+  private int          loadCapacity = 10;
 
-    private String domain = "all";
+  private String       domain       = "all";
 
-    private Period period = Period.WEEK;
+  private IdentityType identityType = IdentityType.USER;
 
-    enum Period { ALL, MONTH, WEEK }
+  private Period       period       = Period.WEEK;
 
-    public LeaderboardFilter() {
-    }
+  enum Period {
+    ALL,
+    MONTH,
+    WEEK
+  }
 
-    public int getLoadCapacity() {
-        return loadCapacity;
-    }
+  public int getLoadCapacity() {
+    return loadCapacity;
+  }
 
-    public void setLoadCapacity(String loadCapacity) {
-        this.loadCapacity = Integer.parseInt(loadCapacity);
-    }
+  public void setLoadCapacity(String loadCapacity) {
+    this.loadCapacity = Integer.parseInt(loadCapacity);
+  }
 
-    public String getDomain() {
-        return domain;
-    }
+  public String getDomain() {
+    return domain;
+  }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
+  public void setDomain(String domain) {
+    this.domain = domain;
+  }
 
-    public String getPeriod() {
-        return period.name();
-    }
+  public String getPeriod() {
+    return period.name();
+  }
 
-    public void setPeriod(String period) {
-        this.period = Period.valueOf(period);
-    }
+  public void setPeriod(String period) {
+    this.period = Period.valueOf(period);
+  }
+
+  public IdentityType getIdentityType() {
+    return identityType;
+  }
+
+  public void setIdentityType(IdentityType identityType) {
+    this.identityType = identityType;
+  }
 }

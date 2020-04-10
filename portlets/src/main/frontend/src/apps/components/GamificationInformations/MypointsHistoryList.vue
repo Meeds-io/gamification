@@ -129,7 +129,13 @@
                 var url = window.location.pathname;
                 let self = this;
                 self.loadCapacity += 10;
-                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'capacity': self.loadCapacity,'url': url} })
+                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
+                      'domain': self.domain,
+                      'period': self.selectedPeriod,
+                      'capacity': self.loadCapacity,
+                      providerId: 'user',
+                      remoteId: eXo.env.portal.profileOwner,
+                    }})
                     .then(response => {
                         this.users = response.data;
                     })
@@ -164,8 +170,10 @@
             },
         },
         created() {
-            var url = window.location.pathname;
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: { 'url': url } })
+            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
+                  providerId: 'user',
+                  remoteId: eXo.env.portal.profileOwner,
+                }})
                 .then(response => {
                     this.users = response.data;
                 });

@@ -58,12 +58,6 @@
 
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
-        <init-params>
-            <value-param>
-                <name>query-limit-offset</name>
-                <value>10</value>
-            </value-param>
-        </init-params>
     </component>
     <component>
         <type>org.exoplatform.services.rest.impl.ProvidersRegistry</type>

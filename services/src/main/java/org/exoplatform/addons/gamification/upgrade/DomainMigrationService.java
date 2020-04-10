@@ -13,6 +13,8 @@ import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
@@ -31,6 +33,7 @@ public class DomainMigrationService implements Startable {
 
 
 
+    protected PortalContainer portalContainer;
     protected RuleService ruleService;
     protected DomainService domainService;
     protected BadgeService badgeService;
@@ -39,15 +42,14 @@ public class DomainMigrationService implements Startable {
     protected SettingService settingService;
 
 
-    public DomainMigrationService(RuleService ruleService, DomainService domainService, BadgeService badgeService, GamificationHistoryDAO gamificationHistoryDAO, DomainMapper domainMapper, SettingService settingService) {
-
+    public DomainMigrationService(PortalContainer portalContainer, RuleService ruleService, DomainService domainService, BadgeService badgeService, GamificationHistoryDAO gamificationHistoryDAO, DomainMapper domainMapper, SettingService settingService) {
         this.ruleService = ruleService;
         this.domainService = domainService;
         this.badgeService = badgeService;
         this.gamificationHistoryDAO = gamificationHistoryDAO;
         this.domainMapper = domainMapper;
         this.settingService = settingService;
-
+        this.portalContainer = portalContainer;
     }
 
     @Override
@@ -59,6 +61,7 @@ public class DomainMigrationService implements Startable {
             boolean rulesmigrationDone=false;
             boolean badgesMigrationDone=false;
             boolean pointsMigrationDone=false;
+            RequestLifeCycle.begin(this.portalContainer);
             try {
                 LOG.info("=== Start migration of Rules");
                 List<String> domains = ruleService.getDomainListFromRules();
@@ -101,8 +104,11 @@ public class DomainMigrationService implements Startable {
 
             } catch (Exception e) {
                 LOG.error("Error when migration Rules ", e);
+            } finally {
+              RequestLifeCycle.end();
             }
 
+            RequestLifeCycle.begin(this.portalContainer);
             try {
                 LOG.info("=== Start migration of Badges");
                 startTime = System.currentTimeMillis();
@@ -147,9 +153,11 @@ public class DomainMigrationService implements Startable {
 
             } catch (Exception e) {
                 LOG.error("Error when migration badges ", e);
+            } finally {
+              RequestLifeCycle.end();
             }
 
-
+            RequestLifeCycle.begin(this.portalContainer);
             try {
                 LOG.info("=== Start migration of History");
                 startTime = System.currentTimeMillis();
@@ -193,6 +201,8 @@ public class DomainMigrationService implements Startable {
 
             } catch (Exception e) {
                 LOG.error("Error when migration Points ", e);
+            } finally {
+              RequestLifeCycle.end();
             }
             if(badgesMigrationDone && rulesmigrationDone && pointsMigrationDone){
                 setDataversion(DOMAIN_MIGRATION_DATA_VERSION);
