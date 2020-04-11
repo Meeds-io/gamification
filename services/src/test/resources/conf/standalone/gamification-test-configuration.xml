@@ -46,6 +46,11 @@
         <type>org.exoplatform.addons.gamification.mock.IdentityManagerMock</type>
     </component>
 
+    <component>
+        <key>org.exoplatform.social.core.space.spi.SpaceService</key>
+        <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
+    </component>
+
     <!-- Gamification Effective Service -->
     <component>
         <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>

@@ -6,13 +6,15 @@ public class LeaderboardFilter {
 
   private int          loadCapacity = 10;
 
+  private String       currentUser  = null;
+
   private String       domain       = "all";
 
   private IdentityType identityType = IdentityType.USER;
 
   private Period       period       = Period.WEEK;
 
-  enum Period {
+  public enum Period {
     ALL,
     MONTH,
     WEEK
@@ -24,6 +26,10 @@ public class LeaderboardFilter {
 
   public void setLoadCapacity(String loadCapacity) {
     this.loadCapacity = Integer.parseInt(loadCapacity);
+  }
+
+  public void setLoadCapacity(int limit) {
+    this.loadCapacity = limit;
   }
 
   public String getDomain() {
@@ -39,7 +45,7 @@ public class LeaderboardFilter {
   }
 
   public void setPeriod(String period) {
-    this.period = Period.valueOf(period);
+    this.period = Period.valueOf(period.toUpperCase());
   }
 
   public IdentityType getIdentityType() {
@@ -48,5 +54,13 @@ public class LeaderboardFilter {
 
   public void setIdentityType(IdentityType identityType) {
     this.identityType = identityType;
+  }
+
+  public void setCurrentUser(String currentUser) {
+    this.currentUser = currentUser;
+  }
+
+  public String getCurrentUser() {
+    return currentUser;
   }
 }
