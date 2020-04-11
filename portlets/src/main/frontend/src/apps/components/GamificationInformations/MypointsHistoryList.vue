@@ -9,10 +9,11 @@
         <th class="rule-name-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Event') }}</th>
         <th class="rule-desc-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Date') }}</th>
         <th class="rule-price-col">
-          {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }} <a
+          {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }}
+          <a
+            :href="earnedPointsUrl"
             class="ico-info actionIco"
             data-v-2e935f06=""
-            href="../intranet/gamification-earn-points"
             target="_blank"
             rel="tooltip"
             :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') ">
@@ -22,17 +23,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(user, index) in users" :key="user.receiver">
+      <tr v-for="user in users">
         <td>
           <div class="desc-user">
-            <a :href="user.profileUrl"> <avatar
-              :username="user.fullname"
-              :size="35"
-              :src="user.avatarUrl" /></a>
+            <a :href="user.profileUrl">
+              <avatar
+                :username="user.fullname"
+                :size="35"
+                :src="user.avatarUrl" />
+            </a>
           </div>
         </td>
         <td>
-          <a :href="user.objectId">
+          <a :href="replaceCurrentPortalUrl(user.objectId)">
             {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${user.actionTitle}`,user.actionTitle) }}
           </a>
         </td>
@@ -97,15 +100,20 @@
                     }).on('mouseenter', function () {
                         true;
                     })
-                        .on('mouseleave', function () {
-                            false;
-                        });
+                    .on('mouseleave', function () {
+                        false;
+                    });
                 },
             }
         },
         data: initialData,
         localFiltering() {
             return this.hasProvider ? !!this.noProviderFiltering : true
+        },
+        computed: {
+          earnedPointsUrl() {
+            return `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
+          },
         },
         watch: {
             domain() {
@@ -118,7 +126,7 @@
                   remoteId: eXo.env.portal.profileOwner,
                 }})
                 .then(response => {
-                    this.users = response.data;
+                    this.users = response.data || [];
                 });
             axios.get(`/rest/gamification/rules/all`)
                 .then(response => {
@@ -129,21 +137,20 @@
                 })
         },
         methods: {
+            replaceCurrentPortalUrl(url) {
+              return url && url.replace(/\/portal\/[0-9a-zA-Z]+\//g, `/portal/${eXo.env.portal.portalName}/`);
+            },
             filter() {
                 const self = this;
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
-                        this.users = response.data;
-
+                        this.users = response.data || [];
                     })
                     .catch(e => {
                         console.warn(e)
-
                     })
-
             },
             showMore() {
-                const url = window.location.pathname;
                 const self = this;
                 self.loadCapacity += 10;
                 axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
