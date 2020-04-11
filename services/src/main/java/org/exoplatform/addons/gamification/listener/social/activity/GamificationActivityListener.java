@@ -278,16 +278,11 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private String getActivityUrl(ExoSocialActivity activity) {
     String activityId = activity.getParentId() == null ? activity.getId() : activity.getParentId();
-    String commentIdTmp = activity.getParentCommentId() == null ? activity.getId()
-                                                                : activity.getParentCommentId();
-    String commentId = activity.getParentId() == null ? null : commentIdTmp;
-    String subCommentId = activity.getParentCommentId() == null ? null : activity.getId();
+    String commentId = activity.getParentId() == null ? null : activity.getId();
+
     String activityUrl = "/portal/intranet/activity?id=" + activityId;
     if (commentId != null) {
       activityUrl += "&commentId=" + commentId;
-    }
-    if (subCommentId != null) {
-      activityUrl += "#comment-=" + subCommentId;
     }
     return activityUrl;
   }
