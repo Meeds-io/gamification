@@ -9,6 +9,7 @@ import javax.ws.rs.core.*;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.services.log.ExoLogger;
@@ -60,6 +61,8 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       return Response.status(400).entity("identity 'remoteId' parameter is mandatory").build();
     }
 
+    providerId = IdentityType.getType(providerId).getProviderId();
+
     boolean isManager = isCurrentUserSuperManager();
     boolean canShowDetails = isManager || isCurrentUser(providerId, remoteId);
 
@@ -93,7 +96,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       // Build GamificationActionsHistory flow only when the returned list is not null
       for (GamificationActionsHistory element : ss) {
         // Load Social identity
-        identity = identityManager.getIdentity(element.getEarnerId(), true);
+        identity = identityManager.getIdentity(element.getReceiver(), true);
         Profile profile = identity.getProfile();
         GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
         // Set SocialIds

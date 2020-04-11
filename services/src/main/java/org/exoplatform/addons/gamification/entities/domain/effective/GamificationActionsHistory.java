@@ -23,7 +23,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         " FROM GamificationActionsHistory g" +
         "     GROUP BY  g.earnerId" +
         "     ORDER BY total DESC"),
-    @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByReceiverIdSortedByDate", query = "SELECT g " +
+    @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByEarnerIdSortedByDate", query = "SELECT g " +
         " FROM GamificationActionsHistory g" +
         " WHERE g.earnerId = :earnerId" +
         "     ORDER BY g.date DESC"),
@@ -37,7 +37,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         "     AND g.earnerType = :earnerType" +
         "     GROUP BY  g.earnerId" +
         "     ORDER BY total DESC"),
-    @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByUserId", query = "SELECT a" +
+    @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByEarnerId", query = "SELECT a" +
         " FROM GamificationActionsHistory a" +
         " WHERE a.earnerId = :earnerId" +
         "     ORDER BY a.globalScore DESC"),

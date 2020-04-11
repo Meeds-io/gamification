@@ -146,7 +146,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
    */
   public List<GamificationActionsHistory> findActionsHistoryByEarnerId(String earnerId, int limit) {
     TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByUserId",
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByEarnerId",
                                                                                      GamificationActionsHistory.class);
     query.setParameter("earnerId", earnerId);
     query.setMaxResults(limit);
