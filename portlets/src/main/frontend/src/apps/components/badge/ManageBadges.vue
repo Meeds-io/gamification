@@ -120,7 +120,7 @@ export default {
         },
         onRemoveClicked(badgeId, badgeTitle) {
             const index = this.badges.findIndex((p) => p.id === badgeId);
-            axios.delete(`/rest/gamification/badges/delete/${  badgeId}`)
+            axios.delete(`/portal/rest/gamification/badges/delete/${  badgeId}`)
                 .then(response => {
                     this.addSuccess = true
                     this.updateMessage = 'deleted'
@@ -137,7 +137,7 @@ export default {
             }
         },
         updateBadge(badgeDTO) {
-            axios.put(`/rest/gamification/badges/update`, badgeDTO)
+            axios.put(`/portal/rest/gamification/badges/update`, badgeDTO)
                 .then(response => {
                     this.addSuccess = true;
                     this.updateMessage = 'updated';

@@ -223,7 +223,7 @@
 
         created() {
             const url = window.location.pathname
-            axios.get(`/rest/gamification/space/leaderboard/overall`, { params: { 'url': url } })
+            axios.get(`/portal/rest/gamification/space/leaderboard/overall`, { params: { 'url': url } })
                 .then(response => {
                     this.users = response.data;
                 })
@@ -236,7 +236,7 @@
             filter() {
                 const url = window.location.pathname
                 const self = this
-                axios.get(`/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
+                axios.get(`/portal/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
                     .then(response => {
                         this.users = response.data;
 
@@ -251,7 +251,7 @@
                 const url = window.location.pathname
                 const self = this
                 self.loadCapacity += 10;
-                axios.get(`/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
+                axios.get(`/portal/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
                     .then(response => {
                         this.users = response.data;
                     })
@@ -262,7 +262,7 @@
             onShown(username) {
 
                 window.dispatchEvent(new Event('resize'));
-                axios.get(`/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
+                axios.get(`/portal/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
                     .then(response => {
                         this.chartData = response.data;
 

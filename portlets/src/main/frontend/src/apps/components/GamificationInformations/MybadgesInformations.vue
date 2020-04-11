@@ -320,11 +320,11 @@
         created() {
             const url = window.location.pathname;
             console.log(url);
-            axios.get(`/rest/gamification/reputation/AllofBadges`, { params: { 'url': url } })
+            axios.get(`/portal/rest/gamification/reputation/AllofBadges`, { params: { 'url': url } })
                 .then(response => {
                     this.badges = response.data;
                 });
-            axios.get(`/rest/gamification/reputation/stats`, { params: { 'url': url }})
+            axios.get(`/portal/rest/gamification/reputation/stats`, { params: { 'url': url }})
                 .then(response => {
                     this.progs = response.data;
                 })
@@ -361,7 +361,7 @@
         },
         methods: {
             showBadgeDetail(badgeDTO) {
-                axios.get(`/rest/gamification/update`, badgeDTO)
+                axios.get(`/portal/rest/gamification/update`, badgeDTO)
                     .then(response => {
                     })
                     .catch(e => {

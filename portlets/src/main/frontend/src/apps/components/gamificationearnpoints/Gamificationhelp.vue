@@ -293,7 +293,7 @@
             }
         },
         created() {
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, {
+            axios.get(`/portal/rest/gamification/gameficationinformationsboard/history/all`, {
                   params: {
                     providerId: 'user',
                     remoteId: eXo.env.portal.profileOwner,
@@ -302,7 +302,7 @@
                 .then(response => {
                     this.users = response.data;
                 });
-            axios.get(`/rest/gamification/rules/all`)
+            axios.get(`/portal/rest/gamification/rules/all`)
                 .then(response => {
                     this.rules = response.data;
                 })

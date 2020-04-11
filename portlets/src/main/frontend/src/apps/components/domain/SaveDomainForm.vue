@@ -170,7 +170,7 @@
             },
 
             createDomain(domainDTO) {
-                axios.post(`/rest/gamification/domains`, domainDTO)
+                axios.post(`/portal/rest/gamification/domains`, domainDTO)
                     .then(response => {
                         this.$emit('sucessAdd', this.domain)
                     })
