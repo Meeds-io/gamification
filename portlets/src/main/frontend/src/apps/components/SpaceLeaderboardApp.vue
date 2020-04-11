@@ -1,5 +1,5 @@
 <template>
-    <spaceLeaderboard></spaceLeaderboard>
+  <space-leaderboard />
 </template>
 <script>
 

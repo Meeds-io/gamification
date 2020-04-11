@@ -1,225 +1,268 @@
 <template>
-
-
-    <div id="uiHowEarnPoint">
-
-        <h1 class="how-title">How can I earn points ?</h1>
-
-        <!-- Tabulation of domains -->
-        <div class="tab">
-
-            <button class="tablinks active">   <a href="gamification-earn-points">All Elements </a> </button>
-
-            <button class="tablinks" v-on:click="openCategory($event, 'soc')">Social</button>
-            <button class="tablinks" v-on:click="openCategory($event, 'Team')">Team Work</button>
-            <button class="tablinks" v-on:click="openCategory($event, 'Know')">Knowledge</button>
-            <button class="tablinks" v-on:click="openCategory($event, 'feed')">Feedback</button>
-            <button class="tablinks" v-on:click="openCategory($event, 'reward')">Reward</button>
-
-
-
-        </div>
-
-
-        <div  >
-            <div class="card card-body">
-                <div class="clearfix ">
-                    <!-- Social Domain Rules -->
-
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0"><button aria-controls="collapseOne" aria-expanded="true" class="btn btn-link collapsed" data-target="#collapseOne" data-toggle="collapse" type="button">Social&nbsp;</button></h5>
-                        </div>
-
-                        <div aria-labelledby="headingOne" class="in collapse show"  id="collapseOne" style="height: auto;">
-
-                            <div class="tabcontent" id="soc" name="soc" type="hidden">
-                                <div class="alignright">
-
-                                    <div class="uiBox">
-
-                                        <h6 class="title clearfix">Social Activities</h6>
-
-                                        <div class="noContent">
-                                            <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Social' ">
-
-                                                <div class="first-col">{{ rule.description}}</div>
-
-                                                <div class="second-col">{{ rule.score}} Pts</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header" id="headingTwo">
-                            <!-- Teamwork Domain Rules -->
-
-                            <h5 class="mb-0">
-                                <button aria-controls="collapseTwo" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseTwo" data-toggle="collapse" type="button">Team work</button></h5>
-                        </div>
-
-                        <div aria-labelledby="headingTwo" class="in collapse show" id="collapseTwo">
-
-                            <div class="tabcontent" id="Team" name="Team">
-                                <div class="alignright">
-                                    <div class="uiBox">
-
-                                        <h6 class="title clearfix">Teamwork Activities</h6>
-
-                                        <div class="noContent">
-
-
-                                            <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Teamwork'">
-                                                <div class="first-col">{{ rule.description}}</div>
-
-                                                <div class="second-col">{{ rule.score}} Pts</div>
-                                            </div>
-                                        </div>
-                                        <!-- page iterator -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header" id="headingThree">
-                            <!-- Knowledge Domain Rules -->
-
-                            <h5 class="mb-0">
-                                <button aria-controls="collapseThree" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseThree" data-toggle="collapse" type="button">Knowledge</button></h5>
-                        </div>
-
-                        <div aria-labelledby="headingThree" class="in collapse show"  id="collapseThree">
-
-                            <div class="tabcontent" id="Know" name="Know">
-
-                                <div class="clearfix">
-
-                                    <div class="alignright">
-
-                                        <div class="uiBox">
-
-                                            <h6 class="title clearfix">Knowledge Activities</h6>
-
-                                            <div class="noContent">
-
-
-
-
-                                                <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Knowledge'">
-
-                                                    <div class="first-col">{{ rule.description}}</div>
-
-                                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="card">
-                        <div class="card-header" id="headingFOur">
-                            <h5 class="mb-0"><button aria-controls="collapseFOur" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseFOur" data-toggle="collapse" type="button">Feedback</button></h5>
-                        </div>
-
-                        <div aria-labelledby="headingFOur" class="in collapse show" id="collapseFOur">
-
-                            <div class="tabcontent" id="feed" name="feed">
-
-                                <div class="clearfix">
-                                    <!-- Feedback Domain Rules -->
-
-                                    <div class="alignright">
-
-                                        <div class="uiBox">
-
-                                            <h6 class="title clearfix">Feedback Activities</h6>
-
-                                            <div class="noContent">
-
-
-
-
-                                                <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'Feedback'">
-
-                                                    <div class="first-col">{{ rule.description}}</div>
-
-                                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="card">
-                        <div class="card-header" id="headingFive">
-                            <h5 class="mb-0"><button aria-controls="collapseFOur" aria-expanded="false" class="btn btn-link collapsed" data-target="#collapseFive" data-toggle="collapse" type="button">Reward</button></h5>
-                        </div>
-
-                        <div aria-labelledby="headingFive" class="in collapse show" data-parent="" id="collapseFive">
-
-                            <div class="tabcontent" id="reward" name="reward">
-
-                                <div class="clearfix">
-                                    <!-- Reward Domain Rules -->
-
-                                    <div class="alignright">
-
-                                        <div class="uiBox">
-
-                                            <h6 class="title clearfix">Reward Activities</h6>
-
-                                            <div class="noContent">
-
-
-
-
-                                                <div class="row":key="rule.id" v-for="rule in orderedRules" v-if="rule.area === 'reward'">
-
-                                                    <div class="first-col">{{ rule.description}}</div>
-
-                                                    <div class="second-col">{{ rule.score}} Pts</div>
-                                                </div>
-
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end all elements --></div>
-            </div>
-        </div>
-
-
-
+  <div id="uiHowEarnPoint">
+    <h1 class="how-title">How can I earn points ?</h1>
+
+    <!-- Tabulation of domains -->
+    <div class="tab">
+      <button class="tablinks active">   <a href="gamification-earn-points">All Elements </a> </button>
+
+      <button class="tablinks" @click="openCategory($event, 'soc')">Social</button>
+      <button class="tablinks" @click="openCategory($event, 'Team')">Team Work</button>
+      <button class="tablinks" @click="openCategory($event, 'Know')">Knowledge</button>
+      <button class="tablinks" @click="openCategory($event, 'feed')">Feedback</button>
+      <button class="tablinks" @click="openCategory($event, 'reward')">Reward</button>
     </div>
 
+
+    <div>
+      <div class="card card-body">
+        <div class="clearfix ">
+          <!-- Social Domain Rules -->
+
+          <div class="card">
+            <div id="headingOne" class="card-header">
+              <h5 class="mb-0">
+                <button
+                  aria-controls="collapseOne"
+                  aria-expanded="true"
+                  class="btn btn-link collapsed"
+                  data-target="#collapseOne"
+                  data-toggle="collapse"
+                  type="button">
+                  Social&nbsp;
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapseOne"
+              aria-labelledby="headingOne"
+              class="in collapse show"
+              style="height: auto;">
+              <div
+                id="soc"
+                class="tabcontent"
+                name="soc"
+                type="hidden">
+                <div class="alignright">
+                  <div class="uiBox">
+                    <h6 class="title clearfix">Social Activities</h6>
+
+                    <div class="noContent">
+                      <div
+                        v-for="rule in orderedRules"
+                        v-if="rule.area === 'Social' "
+                        :key="rule.id"
+                        class="row">
+                        <div class="first-col">{{ rule.description }}</div>
+
+                        <div class="second-col">{{ rule.score }} Pts</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div id="headingTwo" class="card-header">
+              <!-- Teamwork Domain Rules -->
+
+              <h5 class="mb-0">
+                <button
+                  aria-controls="collapseTwo"
+                  aria-expanded="false"
+                  class="btn btn-link collapsed"
+                  data-target="#collapseTwo"
+                  data-toggle="collapse"
+                  type="button">
+                  Team work
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapseTwo"
+              aria-labelledby="headingTwo"
+              class="in collapse show">
+              <div
+                id="Team"
+                class="tabcontent"
+                name="Team">
+                <div class="alignright">
+                  <div class="uiBox">
+                    <h6 class="title clearfix">Teamwork Activities</h6>
+
+                    <div class="noContent">
+                      <div
+                        v-for="rule in orderedRules"
+                        v-if="rule.area === 'Teamwork'"
+                        :key="rule.id"
+                        class="row">
+                        <div class="first-col">{{ rule.description }}</div>
+
+                        <div class="second-col">{{ rule.score }} Pts</div>
+                      </div>
+                    </div>
+                    <!-- page iterator -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div id="headingThree" class="card-header">
+              <!-- Knowledge Domain Rules -->
+
+              <h5 class="mb-0">
+                <button
+                  aria-controls="collapseThree"
+                  aria-expanded="false"
+                  class="btn btn-link collapsed"
+                  data-target="#collapseThree"
+                  data-toggle="collapse"
+                  type="button">
+                  Knowledge
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapseThree"
+              aria-labelledby="headingThree"
+              class="in collapse show">
+              <div
+                id="Know"
+                class="tabcontent"
+                name="Know">
+                <div class="clearfix">
+                  <div class="alignright">
+                    <div class="uiBox">
+                      <h6 class="title clearfix">Knowledge Activities</h6>
+
+                      <div class="noContent">
+                        <div
+                          v-for="rule in orderedRules"
+                          v-if="rule.area === 'Knowledge'"
+                          :key="rule.id"
+                          class="row">
+                          <div class="first-col">{{ rule.description }}</div>
+
+                          <div class="second-col">{{ rule.score }} Pts</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div id="headingFOur" class="card-header">
+              <h5 class="mb-0">
+                <button
+                  aria-controls="collapseFOur"
+                  aria-expanded="false"
+                  class="btn btn-link collapsed"
+                  data-target="#collapseFOur"
+                  data-toggle="collapse"
+                  type="button">
+                  Feedback
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapseFOur"
+              aria-labelledby="headingFOur"
+              class="in collapse show">
+              <div
+                id="feed"
+                class="tabcontent"
+                name="feed">
+                <div class="clearfix">
+                  <!-- Feedback Domain Rules -->
+
+                  <div class="alignright">
+                    <div class="uiBox">
+                      <h6 class="title clearfix">Feedback Activities</h6>
+
+                      <div class="noContent">
+                        <div
+                          v-for="rule in orderedRules"
+                          v-if="rule.area === 'Feedback'"
+                          :key="rule.id"
+                          class="row">
+                          <div class="first-col">{{ rule.description }}</div>
+
+                          <div class="second-col">{{ rule.score }} Pts</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div id="headingFive" class="card-header">
+              <h5 class="mb-0">
+                <button
+                  aria-controls="collapseFOur"
+                  aria-expanded="false"
+                  class="btn btn-link collapsed"
+                  data-target="#collapseFive"
+                  data-toggle="collapse"
+                  type="button">
+                  Reward
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapseFive"
+              aria-labelledby="headingFive"
+              class="in collapse show"
+              data-parent="">
+              <div
+                id="reward"
+                class="tabcontent"
+                name="reward">
+                <div class="clearfix">
+                  <!-- Reward Domain Rules -->
+
+                  <div class="alignright">
+                    <div class="uiBox">
+                      <h6 class="title clearfix">Reward Activities</h6>
+
+                      <div class="noContent">
+                        <div
+                          v-for="rule in orderedRules"
+                          v-if="rule.area === 'reward'"
+                          :key="rule.id"
+                          class="row">
+                          <div class="first-col">{{ rule.description }}</div>
+
+                          <div class="second-col">{{ rule.score }} Pts</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end all elements -->
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -249,12 +292,30 @@
 
             }
         },
+        created() {
+            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, {
+                  params: {
+                    providerId: 'user',
+                    remoteId: eXo.env.portal.profileOwner,
+                  }
+                })
+                .then(response => {
+                    this.users = response.data;
+                });
+            axios.get(`/rest/gamification/rules/all`)
+                .then(response => {
+                    this.rules = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        },
 
         methods: {
 
             openCategory:function ($evt,categoryName){
 
-                var i,tabcontent,tablinks;
+                let i,tabcontent,tablinks;
                 tabcontent = document.getElementsByClassName('tabcontent');
                 for (i = 0; i < tabcontent.length; i++) {
 
@@ -273,24 +334,6 @@
 
             }
 
-        },
-        created() {
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, {
-                  params: {
-                    providerId: 'user',
-                    remoteId: eXo.env.portal.profileOwner,
-                  }
-                })
-                .then(response => {
-                    this.users = response.data;
-                });
-            axios.get(`/rest/gamification/rules/all`)
-                .then(response => {
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
         }
     }
 

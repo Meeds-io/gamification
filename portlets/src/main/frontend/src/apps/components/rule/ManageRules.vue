@@ -1,21 +1,39 @@
 <template>
-    <section>
-        <div class="alert alert-success" v-show="isadded || addSuccess" v-on:="closeAlert()">
-            <i class="uiIconSuccess"></i>
-            {{this.$t('exoplatform.gamification.rule')}} {{updateMessage}}
-            {{this.$t('exoplatform.gamification.successfully')}}
-        </div>
+  <section>
+    <div
+      v-show="isadded || addSuccess"
+      class="alert alert-success"
+      v-on:="closeAlert()">
+      <i class="uiIconSuccess"></i>
+      {{ this.$t('exoplatform.gamification.rule') }} {{ updateMessage }}
+      {{ this.$t('exoplatform.gamification.successfully') }}
+    </div>
 
-        <div class="alert alert-error" v-show="addError" v-on:="closeAlert()">
-            <i class="uiIconError"></i>
-            {{this.$t(`exoplatform.gamification.${errorType}`)}}
-        </div>
+    <div
+      v-show="addError"
+      class="alert alert-error"
+      v-on:="closeAlert()">
+      <i class="uiIconError"></i>
+      {{ this.$t(`exoplatform.gamification.${errorType}`) }}
+    </div>
 
-        <save-rule-form :rule="ruleInForm" :domains="domains" :events="events" :errorType="errorType"  v-on:sucessAdd="onRuleCreated" v-on:failAdd="onRuleFail" v-on:cancel="resetRuleInForm" ></save-rule-form>
-        <rule-list :domain="domain" :domains="domains" :events="events" :rule="ruleInForm" :rules="rules"
-                   v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></rule-list>
-
-    </section>
+    <save-rule-form
+      :rule="ruleInForm"
+      :domains="domains"
+      :events="events"
+      :error-type="errorType"
+      @sucessAdd="onRuleCreated"
+      @failAdd="onRuleFail"
+      @cancel="resetRuleInForm" />
+    <rule-list
+      :domain="domain"
+      :domains="domains"
+      :events="events"
+      :rule="ruleInForm"
+      :rules="rules"
+      @remove="onRemoveClicked"
+      @save="onSaveClicked" />
+  </section>
 </template>
 <script>
     import Vue from 'vue'
@@ -57,6 +75,11 @@
             SaveRuleForm
         },
         data: initialData,
+        created() {
+            this.getRules() 
+            this.getDomains() 
+            this.getEvents()
+        },
         methods: {
             getRules() {
                 axios.get(`/rest/gamification/rules/all`)
@@ -114,7 +137,7 @@
 
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId);
-                axios.delete(`/rest/gamification/rules/delete/`+ruleId)
+                axios.delete(`/rest/gamification/rules/delete/${ruleId}`)
                     .then(response => {
                         this.rules.splice(index, 1)
                     })
@@ -144,11 +167,6 @@
                         this.getRules()
                     })
             }
-        },
-        created() {
-            this.getRules() 
-            this.getDomains() 
-            this.getEvents()
         }
     }
 </script>

@@ -1,7 +1,5 @@
 <template>
-
-
-    <manage-rules></manage-rules>
+  <manage-rules />
 </template>
 <script>
 

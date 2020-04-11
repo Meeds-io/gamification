@@ -1,5 +1,5 @@
 <template>
-    <Gamificationhelp></Gamificationhelp>
+  <gamificationhelp />
 </template>
 
 <script>

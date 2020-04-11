@@ -1,21 +1,16 @@
 <template>
-    <section>
+  <section>
+    <div class="Allof">
+      <div class="tooltip">
+        <span class="tooltiptext">Tooltip text</span>
+      </div>
 
-
-        <div class="Allof">
-
-
-            <div class="tooltip">
-                <span class="tooltiptext">Tooltip text</span>
-            </div>
-
-            <h4 class="mt-0 center">{{ this.$t('exoplatform.gamification.gamificationinformation.Total') }}</h4>
-            <div class="points">
-                <span>{{reputation.score}} {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }}</span> </div>
-
-        </div>
-
-    </section>
+      <h4 class="mt-0 center">{{ this.$t('exoplatform.gamification.gamificationinformation.Total') }}</h4>
+      <div class="points">
+        <span>{{ reputation.score }} {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }}</span>
+      </div>
+    </div>
+  </section>
 </template>
 <script>
 
@@ -41,7 +36,7 @@
 
 
         created() {
-            var url = window.location.pathname
+            const url = window.location.pathname
             axios.get(`/rest/gamification/reputation/status`, { params: { 'url': url } })
                 .then(response => {
 

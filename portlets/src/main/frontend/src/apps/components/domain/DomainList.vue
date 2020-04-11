@@ -1,196 +1,249 @@
 <template>
-    <b-container fluid>
-        <b-row>
-            <b-col sm="12">
-                <div>
-                    <div class="uiSearchForm uiSearchInput searchWithIcon">
-                        <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search','Search')"
-                               name="keyword" type="text" v-model="search" value="">
-                        <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
-                            <i class="uiIconSearch uiIconLightGray"></i>
-                        </a>
-                    </div>
-                    <div class="filter-bar" >
-                         <select  v-model="enabledFilter">
-                                        <option :value=null>{{$t(`exoplatform.gamification.all`,"All")}}</option>
-                                        <option :value=true>{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</option>
-                                        <option :value=false>{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</option>
-                          </select>
-                    </div>
+  <b-container fluid>
+    <b-row>
+      <b-col sm="12">
+        <div>
+          <div class="uiSearchForm uiSearchInput searchWithIcon">
+            <input
+              v-model="search"
+              :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search','Search')"
+              name="keyword"
+              type="text"
+              value="">
+            <a
+              class="advancedSearch"
+              data-placement="bottom"
+              rel="tooltip"
+              title="">
+              <i class="uiIconSearch uiIconLightGray"></i>
+            </a>
+          </div>
+          <div class="filter-bar">
+            <select v-model="enabledFilter">
+              <option :value="null">{{ $t(`exoplatform.gamification.all`,"All") }}</option>
+              <option :value="true">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}</option>
+              <option :value="false">{{ $t(`exoplatform.gamification.disabled`,"Disabled") }}</option>
+            </select>
+          </div>
 
-                    <div class="alert alert-success" v-if="isdeleted" v-on:="onRemovealertclose()">
-                        <button aria-label="Close" class="close" data-dismiss="alert" style="line-height: 27px; margin-right: 5px;" type="button">
-                        </button>
-                        <i class="uiIconSuccess"></i>
-                        {{this.$t('exoplatform.gamification.domain.successdelete')}}
-                    </div>
-                    <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
-                         data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
+          <div
+            v-if="isdeleted"
+            class="alert alert-success"
+            v-on:="onRemovealertclose()">
+            <button
+              aria-label="Close"
+              class="close"
+              data-dismiss="alert"
+              style="line-height: 27px; margin-right: 5px;"
+              type="button">
+            </button>
+            <i class="uiIconSuccess"></i>
+            {{ this.$t('exoplatform.gamification.domain.successdelete') }}
+          </div>
+          <div
+            id="collapseTwo"
+            :class="isShown ? '' : 'out'"
+            aria-labelledby="headingOne"
+            class="collapse show"
+            data-parent="#accordionExample"
+            style="height: 0px; transition: inherit;">
+            <div v-if="confirm" class="card-body">
+              <div
+                id="validationForm"
+                class="UIPopupWindow uiPopup UIDragObject NormalStyle"
+                style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                <div class="popupHeader ClearFix">
+                  <a class="uiIconClose pull-right" @click.prevent="collapseButtonn(domain,true)"></a>
 
-                                         <div v-if="confirm" class="card-body">
-                    <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="validationForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
-                        <div class="popupHeader ClearFix">
-                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseButtonn(domain,true)"></a>
-
-                            <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
-                        </div>
-                        <div class="PopupContent popupContent">
-                            <div class="media">
-                                <div class="pull-left">
-                                    <i class="uiIconColorQuestion"></i>
-                                </div>
-                                <div class="media-body">
-                                    <p class="msg"> {{ this.$t('exoplatform.gamification.areyousure.delete.domain','Are you sure you want to delete this domain ?')
-                                            }}</p>
-                                </div>
-                            </div>
-                            <div class="uiAction uiActionBorder pull-right" style="float: right">
-                                <b-col>
-                                    <button class="btn cancel pull-right" type="submit" v-on:click.prevent="collapseButtonn(domain,true), onCancel()">{{
-                                            this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
-                                            }}
-                                    </button>
-
-                                    <button class="btn-primary pull-right" type="submit" v-on:click.prevent="onRemove(editedDomain.id),collapseButtonn(domain,true)">
-                                        {{
-                                            this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
-                                            }}
-                                    </button>
-                                </b-col>
-                            </div>
-
-                        </div>
-                    </div>
+                  <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
                 </div>
+                <div class="PopupContent popupContent">
+                  <div class="media">
+                    <div class="pull-left">
+                      <i class="uiIconColorQuestion"></i>
+                    </div>
+                    <div class="media-body">
+                      <p class="msg">
+                        {{ this.$t('exoplatform.gamification.areyousure.delete.domain','Are you sure you want to delete this domain ?')
+                        }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="uiAction uiActionBorder pull-right" style="float: right">
+                    <b-col>
+                      <button
+                        class="btn cancel pull-right"
+                        type="submit"
+                        @click.prevent="collapseButtonn(domain,true), onCancel()">
+                        {{
+                          this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                        }}
+                      </button>
 
-                        <div v-if="!confirm" class="card-body">
-                            <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm"
-                                 style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
-                                <div class="popupHeader ClearFix">
+                      <button
+                        class="btn-primary pull-right"
+                        type="submit"
+                        @click.prevent="onRemove(editedDomain.id),collapseButtonn(domain,true)">
+                        {{
+                          this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                        }}
+                      </button>
+                    </b-col>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                                    <a class="uiIconClose pull-right" v-on:click.prevent="collapseButtonn(domain,false)"></a>
+            <div v-if="!confirm" class="card-body">
+              <div
+                id="myForm"
+                class="UIPopupWindow uiPopup UIDragObject NormalStyle"
+                style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+                <div class="popupHeader ClearFix">
+                  <a class="uiIconClose pull-right" @click.prevent="collapseButtonn(domain,false)"></a>
 
-                                    <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.domain.popupedit',"Edit") }}</span>
-                                </div>
-                                <div class="PopupContent popupContent">
+                  <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.domain.popupedit',"Edit") }}</span>
+                </div>
+                <div class="PopupContent popupContent">
+                  <form id="titleInputGroup">
+                    <label class="col-form-label pt-0">{{
+                      this.$t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
+                      :</label>
+                    <input
+                      id="titleInput"
+                      v-model="editedDomain.title"
+                      placeholder="Enter domain's title"
+                      required
+                      type="text">
+                    </input>
+                  </form>
 
-                                    <form id="titleInputGroup">
-                                        <label class="col-form-label pt-0">{{
-                                            this.$t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
-                                            :</label>
-                                        <input id="titleInput" placeholder="Enter domain's title" required type="text"
-                                               v-model="editedDomain.title">
-                                        </input>
-                                    </form>
 
-
-                                    <form id="descriptionInputGroup">
-                                        <label class="col-form-label pt-0">{{
-                                            this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description")
-                                            }} :</label>
-                                        <textarea :max-rows="6" :rows="3" id="domainDescription"
-                                                  placeholder="Enter description" v-model="editedDomain.description">
+                  <form id="descriptionInputGroup">
+                    <label class="col-form-label pt-0">{{
+                      this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description")
+                    }} :</label>
+                    <textarea
+                      id="domainDescription"
+                      v-model="editedDomain.description"
+                      :max-rows="6"
+                      :rows="3"
+                      placeholder="Enter description">
                                         </textarea>
-
-                                    </form>
-                            <form>
-                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
-                                <label class="uiSwitchBtn">
-                                    <input type="checkbox" v-model="editedDomain.enabled" >
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"NO")}}</span>
-                                </label>
-                                <div class="error">{{enabledMessage}}</div>
-                            </form>
+                  </form>
+                  <form>
+                    <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
+                    <label class="uiSwitchBtn">
+                      <input v-model="editedDomain.enabled" type="checkbox">
+                      <span class="slider round"></span>
+                      <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
+                    </label>
+                    <div class="error">{{ enabledMessage }}</div>
+                  </form>
                                     
-                            <div class="row">
-                                <b-col>
-                                    <button class="btn secondary pull-right" type="submit"
-                                            v-on:click.prevent="collapseButtonn(editedDomain,false), onCancel()">{{
-                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
-                                    </button>
-                                    <button class="btn-primary pull-right" type="submit" :disabled='isDisabled'
-                                              v-on:click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)" style="margin-left: 500px;">
-                                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
-
-                                    </button>
-                                </b-col>
-                            </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <table class="uiGrid table table-hover domain-table" hover striped>
-
-
-                        <thead>
-                        <tr>
-                            <th class="domain-name-col">{{
-                                this.$t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
-                            </th>
-                            <th class="domain-desc-col">{{
-                                this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description") }}
-                            </th>
-                            <th class="domain-desc-col">{{
-                                this.$t('exoplatform.gamification.enabled',"Enabled") }}
-                            </th>
-                            <th class="domain-action-col">{{
-                                this.$t('exoplatform.gamification.gamificationinformation.domain.Actions',"Actions") }}
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-
-                        <tr v-for="domain in filteredDomains">
-
-                            <td>
-                                <div>
-                                    {{$t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`,domain.title) }}
-                                </div>
-                            </td>
-
-                            <td class="domain-desc-col">
-                                <div>{{$t(`exoplatform.gamification.gamificationinformation.domain.${domain.description}`,domain.description)}}</div>
-                            </td>
-                            <td>
-                            <div >
-                                <label class="switch">
-                                    <input type="checkbox" disabled  v-model="domain.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`,"No")}}</span>
-                                </label>
-                            </div>
-                        </td>
-                            <td class="center actionContainer">
-
-
-                                <a aria-controls="collapseTwo" aria-expanded="true" data-target="#collapseTwo"
-                                   data-toggle="collapse" href="" v-on:click.prevent="collapseButtonn(domain,false)"> <i
-                                        class="uiIconEdit uiIconLightGray"></i></a>
-
-                                <a aria-controls="collapseTwo" aria-expanded="true" data-target="#collapseTwo"
-                                   data-toggle="collapse" href="" v-on:click.prevent="collapseButtonn(domain,true)"> <i
-                                        class="uiIconDelete uiIconLightGray"></i></a>        
-
-                            </td>
-
-                        </tr>
-                        <tr v-if="!domains.length || !filteredDomains.length " v-model="search">
-                            <td class="empty center" colspan="6">
-                                {{$t(`exoplatform.gamification.gamificationinformation.domain.warning.add.domains`,"Add domain") }}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
+                  <div class="row">
+                    <b-col>
+                      <button
+                        class="btn secondary pull-right"
+                        type="submit"
+                        @click.prevent="collapseButtonn(editedDomain,false), onCancel()">
+                        {{
+                          this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                      </button>
+                      <button
+                        class="btn-primary pull-right"
+                        type="submit"
+                        :disabled="isDisabled"
+                        style="margin-left: 500px;"
+                        @click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)">
+                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+                      </button>
+                    </b-col>
+                  </div>
                 </div>
-            </b-col>
-        </b-row>
-    </b-container>
+              </div>
+            </div>
+          </div>
+
+
+          <table
+            class="uiGrid table table-hover domain-table"
+            hover
+            striped>
+            <thead>
+              <tr>
+                <th class="domain-name-col">
+                  {{
+                    this.$t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
+                </th>
+                <th class="domain-desc-col">
+                  {{
+                    this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description") }}
+                </th>
+                <th class="domain-desc-col">
+                  {{
+                    this.$t('exoplatform.gamification.enabled',"Enabled") }}
+                </th>
+                <th class="domain-action-col">
+                  {{
+                    this.$t('exoplatform.gamification.gamificationinformation.domain.Actions',"Actions") }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="domain in filteredDomains">
+                <td>
+                  <div>
+                    {{ $t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`,domain.title) }}
+                  </div>
+                </td>
+
+                <td class="domain-desc-col">
+                  <div>{{ $t(`exoplatform.gamification.gamificationinformation.domain.${domain.description}`,domain.description) }}</div>
+                </td>
+                <td>
+                  <div>
+                    <label class="switch">
+                      <input
+                        v-model="domain.enabled"
+                        type="checkbox"
+                        disabled>
+                      <span class="slider round"></span>
+                      <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"No") }}</span>
+                    </label>
+                  </div>
+                </td>
+                <td class="center actionContainer">
+                  <a
+                    aria-controls="collapseTwo"
+                    aria-expanded="true"
+                    data-target="#collapseTwo"
+                    data-toggle="collapse"
+                    href=""
+                    @click.prevent="collapseButtonn(domain,false)"> <i
+                      class="uiIconEdit uiIconLightGray"></i></a>
+
+                  <a
+                    aria-controls="collapseTwo"
+                    aria-expanded="true"
+                    data-target="#collapseTwo"
+                    data-toggle="collapse"
+                    href=""
+                    @click.prevent="collapseButtonn(domain,true)"> <i
+                      class="uiIconDelete uiIconLightGray"></i></a>
+                </td>
+              </tr>
+              <tr v-if="!domains.length || !filteredDomains.length " v-model="search">
+                <td class="empty center" colspan="6">
+                  {{ $t(`exoplatform.gamification.gamificationinformation.domain.warning.add.domains`,"Add domain") }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 <script>
     import Vue from 'vue'
@@ -202,7 +255,7 @@
     Vue.use(BootstrapVue);
     Vue.prototype.moment = moment;
 
-    let domain = {};
+    const domain = {};
     export default {
 
         props: ['domains', 'domain'],

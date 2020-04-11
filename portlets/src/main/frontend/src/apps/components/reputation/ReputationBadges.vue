@@ -1,35 +1,54 @@
 <template>
+  <b-container
+    id="reputation-badge-container"
+    fluid
+    class="p-4">
+    <div>
+      <b-col
+        v-for="badge in badges"
+        :key="badge"
+        md="4"
+        class="text-center no-padding">
+        <img
+          :id="'reputation'+badge.id"
+          thumbnail
+          fluid
+          :src="badge.url"
+          alt="Thumbnail"
+          class="m-1"
+          width="70"
+          height="70">
 
-    <b-container fluid class="p-4" id="reputation-badge-container">
-        <div>
-            <b-col md="4" class="text-center no-padding" v-for="badge in badges" :key="badge">
-                <img thumbnail fluid :id="'reputation'+badge.id" :src="badge.url" alt="Thumbnail" class="m-1" width="70" height="70" />
-
-                <b-popover :target="'reputation'+badge.id" :placement="'top'" triggers="hover focus" :content="`${badge.description}`">
-                    <div class="level-badges">
-                        {{badge.level}}<br><span>Level</span>
-                    </div>
-                    <div class="title-badges">{{badge.title}}</div>
-                    <div class="cat-badges">{{badge.zone}} </div>
-                    <div class="date-badges">{{badge.createdDate}}</div>
-                    <div class="desc-badges">{{badge.description}}</div>
-                    <div class="prog-point">
-                        <div class="first-number">{{badge.startScore}}</div>
-                        <hr class="interval">
-                        <div class="last-number" v-if="badge.endScore == 0" v-bind:class="{'bg-red': bgBadges(badge)}"> ∞
-                        </div>
-                        <div class="last-number" v-else>
-
-                            <div v-if="badge.endScore >=1000">{{badge.endScore/1000}} K</div>
-                            <div v-if="badge.endScore <1000"> {{badge.endScore}}</div>
-
-                        </div>
-                    </div>
-                </b-popover>
-            </b-col>
-        </div>
-
-    </b-container>
+        <b-popover
+          :target="'reputation'+badge.id"
+          :placement="'top'"
+          triggers="hover focus"
+          :content="`${badge.description}`">
+          <div class="level-badges">
+            {{ badge.level }}<br><span>Level</span>
+          </div>
+          <div class="title-badges">{{ badge.title }}</div>
+          <div class="cat-badges">{{ badge.zone }} </div>
+          <div class="date-badges">{{ badge.createdDate }}</div>
+          <div class="desc-badges">{{ badge.description }}</div>
+          <div class="prog-point">
+            <div class="first-number">{{ badge.startScore }}</div>
+            <hr class="interval">
+            <div
+              v-if="badge.endScore == 0"
+              class="last-number"
+              :class="{'bg-red': bgBadges(badge)}">
+              ∞
+            </div>
+            <div v-else class="last-number">
+              <div v-if="badge.endScore >=1000">{{ badge.endScore/1000 }} K</div>
+              <div v-if="badge.endScore <1000"> {{ badge.endScore }}</div>
+            </div>
+          </div>
+        </b-popover>
+      </b-col>
+    </div>
+  </b-container>
 </template>
 <script>
 
@@ -52,6 +71,19 @@
 
     export default {
         data: initialData,
+
+        created() {
+            const url = window.location.pathname
+            console.log(url)
+            axios.get(`/rest/gamification/reputation/badges`, { params: { 'url': url  } })
+                .then(response => {
+
+                    this.badges = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        },
         methods: {
             showBadgeDetail(badgeDTO) {
                 axios.get(`/rest/gamification/reputation/update`, badgeDTO)
@@ -67,19 +99,6 @@
                 return badge.endScore == 0;
 
             }
-        },
-
-        created() {
-            var url = window.location.pathname
-            console.log(url)
-            axios.get(`/rest/gamification/reputation/badges`, { params: { 'url': url  } })
-                .then(response => {
-
-                    this.badges = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
         }
     }
 </script>

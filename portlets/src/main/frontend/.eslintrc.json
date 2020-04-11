@@ -17,8 +17,10 @@
   ],
   "globals": {
     "Vue": true,
+    "Vuetify": true,
     "eXo": true,
     "$": true,
+    "jQuery": true,
     "global": true,
     "exoi18n": true,
     "echarts": true

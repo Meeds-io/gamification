@@ -1,249 +1,328 @@
 <template>
-<b-container fluid>
+  <b-container fluid>
     <b-row>
-        <b-col sm="12">
-            <div class="alert alert-success" v-if="isdeleted" v-on:="closeAlert()">
-                <button aria-label="Close" class="close" data-dismiss="alert" style="line-height: 27px; margin-right: 5px;" type="button">
-
-                </button>
-                <i class="uiIconSuccess"></i>
-                {{this.$t('exoplatform.gamification.successdelete')}}
-            </div>
-
-
-            <div class="uiSearchForm uiSearchInput searchWithIcon">
-
-                <input :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')" name="keyword" type="text" v-model="search" value="">
-                <a class="advancedSearch" data-placement="bottom" rel="tooltip" title="">
-                    <i class="uiIconSearch uiIconLightGray"></i>
-                </a>
-            </div>
-
-            <div class="filter-bar" >
-                 <select class="mb-4" v-model="enabledFilter">
-                    <option :value=null>{{$t(`exoplatform.gamification.all`,"All")}}</option>
-                    <option :value=true>{{$t(`exoplatform.gamification.enabled`,"Enabled")}}</option>
-                    <option :value=false>{{$t(`exoplatform.gamification.disabled`,"Disabled")}}</option>
-                 </select>
-             </div>
-
-            <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
-                 data-parent="#accordionExample" id="collapseTwo" style="height: 0px; transition: inherit;">
-                <div class="card-body">
-                    <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm"
-                         style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
-                        <div class="popupHeader ClearFix">
-
-                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseButtonn(rule)"></a>
-
-                            <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.rule.popupedit') }}</span>
-                        </div>
-                        <div class="PopupContent popupContent">
-                            <form id="titleInputGroup">
-                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.gamificationinformation.Event`)
-                                    }}:</label>
+      <b-col sm="12">
+        <div
+          v-if="isdeleted"
+          class="alert alert-success"
+          v-on:="closeAlert()">
+          <button
+            aria-label="Close"
+            class="close"
+            data-dismiss="alert"
+            style="line-height: 27px; margin-right: 5px;"
+            type="button">
+          </button>
+          <i class="uiIconSuccess"></i>
+          {{ this.$t('exoplatform.gamification.successdelete') }}
+        </div>
 
 
-                                <select class="mb-4 select-event" required v-model="editedrule.event">
-                                    <option disabled selected value="null">
-                                        {{$t(`exoplatform.gamification.selectevent`)}}
-                                    </option>
-                                    <option v-bind:value="option" v-for="option in events">
-                                        {{
-                                        $t(`exoplatform.gamification.gamificationinformation.rule.title.${option}`,option)
-                                        }}
-                                    </option>
-                                </select>
+        <div class="uiSearchForm uiSearchInput searchWithIcon">
+          <input
+            v-model="search"
+            :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search')"
+            name="keyword"
+            type="text"
+            value="">
+          <a
+            class="advancedSearch"
+            data-placement="bottom"
+            rel="tooltip"
+            title="">
+            <i class="uiIconSearch uiIconLightGray"></i>
+          </a>
+        </div>
 
-                            </form>
+        <div class="filter-bar">
+          <select v-model="enabledFilter" class="mb-4">
+            <option :value="null">{{ $t(`exoplatform.gamification.all`,"All") }}</option>
+            <option :value="true">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}</option>
+            <option :value="false">{{ $t(`exoplatform.gamification.disabled`,"Disabled") }}</option>
+          </select>
+        </div>
 
-                            <form id="descriptionInputGroup">
-                                <label class="col-form-label pt-0">{{$t(`exoplatform.gamification.gamificationinformation.domain.Description`)
-                                    }}:</label>
-                                <textarea :max-rows="6" :rows="3" id="ruleDescription" placeholder="Enter description"
-                                          v-model="editedrule.description">
+        <div
+          id="collapseTwo"
+          :class="isShown ? '' : 'out'"
+          aria-labelledby="headingOne"
+          class="collapse show"
+          data-parent="#accordionExample"
+          style="height: 0px; transition: inherit;">
+          <div class="card-body">
+            <div
+              id="myForm"
+              class="UIPopupWindow uiPopup UIDragObject NormalStyle"
+              style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+              <div class="popupHeader ClearFix">
+                <a class="uiIconClose pull-right" @click.prevent="collapseButtonn(rule)"></a>
+
+                <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.rule.popupedit') }}</span>
+              </div>
+              <div class="PopupContent popupContent">
+                <form id="titleInputGroup">
+                  <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.gamificationinformation.Event`)
+                  }}:</label>
+
+
+                  <select
+                    v-model="editedrule.event"
+                    class="mb-4 select-event"
+                    required>
+                    <option
+                      disabled
+                      selected
+                      value="null">
+                      {{ $t(`exoplatform.gamification.selectevent`) }}
+                    </option>
+                    <option v-for="option in events" :value="option">
+                      {{
+                        $t(`exoplatform.gamification.gamificationinformation.rule.title.${option}`,option)
+                      }}
+                    </option>
+                  </select>
+                </form>
+
+                <form id="descriptionInputGroup">
+                  <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.gamificationinformation.domain.Description`)
+                  }}:</label>
+                  <textarea
+                    id="ruleDescription"
+                    v-model="editedrule.description"
+                    :max-rows="6"
+                    :rows="3"
+                    placeholder="Enter description">
                             </textarea>
-                            </form>
-                            <b-form id="scoreInputGroup">
+                </form>
+                <b-form id="scoreInputGroup">
+                  <label
+                    id="scoreInputGroup"
+                    class="col-form-label pt-0"
+                    for="scoreInput">{{ $t(`exoplatform.gamification.score`)
+                    }}:</label>
+                  <input
+                    id="scoreDescription"
+                    v-model="editedrule.score"
+                    placeholder="Enter rule's score"
+                    required
+                    type="number">
 
-                                <label class="col-form-label pt-0" for="scoreInput" id="scoreInputGroup">{{$t(`exoplatform.gamification.score`)
-                                    }}:</label>
-                                <input id="scoreDescription" placeholder="Enter rule's score" required type="number"
-                                       v-model="editedrule.score">
+                  <div
+                    v-if="formErrors.score"
+                    class="alert alert-danger require-msg"
+                    :show="dismissCountDown"
+                    dismissible
+                    variant="danger"
+                    @dismiss-count-down="countDownChanged"
+                    @dismissed="dismissCountdown=0">
+                    Rule score is required please enter a score
+                  </div>
+                </b-form>
+                <form class="switchEnabled">
+                  <label class="col-form-label pt-0" max-rows="6">{{ $t(`exoplatform.gamification.enabled`)
+                  }}:</label>
+                  <label class="switch">
+                    <input
+                      v-model="editedrule.enabled"
+                      :disabled="editedrule.domainDTO==null||!editedrule.domainDTO.enabled"
+                      type="checkbox">
+                    <span class="slider round"></span>
+                    <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`) }}</span>
+                  </label>
+                  <div v-if="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" class="error"> *{{ $t(`exoplatform.gamification.disabledDomainForRules`,"This rule cannot be enabled as long as the related domain is disabled") }}.</div>
+                </form>
+                <form id="domainSelectboxGroup">
+                  <label class="col-form-label pt-0" style="margin-left: 20%">{{ $t(`exoplatform.gamification.gamificationinformation.Domain`)
+                  }}:</label>
+                  <select v-model="editedrule.domainDTO" required>
+                    <option disabled value="null">
+                      {{ $t(`exoplatform.gamification.selectdM`) }}
+                    </option>
+                    <option v-for="option in domains" :value="option">
+                      {{
+                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
+                      }}
+                    </option>
+                  </select>
+                </form>
 
-                                <div class="alert alert-danger require-msg"   :show="dismissCountDown" @dismiss-count-down="countDownChanged"
-                                         @dismissed="dismissCountdown=0" dismissible
-                                         v-if="formErrors.score" variant="danger">
-                                    Rule score is required please enter a score
-                                </div>
-                            </b-form>
-                            <form class="switchEnabled">
-                                <label class="col-form-label pt-0" max-rows="6">{{$t(`exoplatform.gamification.enabled`)
-                                    }}:</label>
-                                <label class="switch">
-                                    <input :disabled="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" type="checkbox" v-model="editedrule.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no">{{$t(`exoplatform.gamification.NO`)}}</span>
-                                </label>
-                                <div v-if="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" class="error"> *{{$t(`exoplatform.gamification.disabledDomainForRules`,"This rule cannot be enabled as long as the related domain is disabled")}}.</div>
-
-                            </form>
-                            <form id="domainSelectboxGroup">
-
-                                <label class="col-form-label pt-0" style="margin-left: 20%">{{$t(`exoplatform.gamification.gamificationinformation.Domain`)
-                                    }}:</label>
-                                <select required v-model="editedrule.domainDTO">
-                                    <option disabled value="null">{{$t(`exoplatform.gamification.selectdM`)}}
-                                    </option>
-                                    <option v-for="option in domains" v-bind:value="option" >
-                                        {{
-                                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
-                                        }}
-                                    </option>
-                                </select>
-                            </form>
-
-                            <div class="row">
-                                <b-col>
-                                    <button class="btn secondary pull-right" type="submit"
-                                            v-on:click.prevent="collapseButtonn(editedrule), onCancel()">{{
-                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
-                                        }}
-                                    </button>
-                                    <button class="btn-primary pull-right" type="submit" :disabled='isBottonDisabled'
-                                            v-on:click.prevent="onSave(editedrule),collapseButtonn(editedrule)" style="margin-left: 500px;">
-                                        {{
-                                        this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
-                                        }}
-                                    </button>
-                                </b-col>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row">
+                  <b-col>
+                    <button
+                      class="btn secondary pull-right"
+                      type="submit"
+                      @click.prevent="collapseButtonn(editedrule), onCancel()">
+                      {{
+                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                      }}
+                    </button>
+                    <button
+                      class="btn-primary pull-right"
+                      type="submit"
+                      :disabled="isBottonDisabled"
+                      style="margin-left: 500px;"
+                      @click.prevent="onSave(editedrule),collapseButtonn(editedrule)">
+                      {{
+                        this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                      }}
+                    </button>
+                  </b-col>
                 </div>
+              </div>
             </div>
+          </div>
+        </div>
 
 
-            <div :class="isShowndeleted ? '' : 'out'" aria-labelledby="headingOne" class="collapse show"
-                 data-parent="#accordionExample" id="collapseOne" style=" transition: inherit;">
+        <div
+          id="collapseOne"
+          :class="isShowndeleted ? '' : 'out'"
+          aria-labelledby="headingOne"
+          class="collapse show"
+          data-parent="#accordionExample"
+          style=" transition: inherit;">
+          <div class="card-body">
+            <div
+              id="myForm2"
+              class="UIPopupWindow uiPopup UIDragObject NormalStyle"
+              style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+              <div class="popupHeader ClearFix">
+                <a class="uiIconClose pull-right" @click.prevent="collapseConfirm(rule)"></a>
 
-                <div class="card-body">
-                    <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm2"
-                         style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
-                        <div class="popupHeader ClearFix">
-                            <a class="uiIconClose pull-right" v-on:click.prevent="collapseConfirm(rule)"></a>
-
-                            <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
-                        </div>
-                        <div class="PopupContent popupContent">
-                            <div class="media">
-                                <div class="pull-left">
-                                    <i class="uiIconColorQuestion"></i>
-                                </div>
-                                <div class="media-body">
-                                    <p class="msg"> {{ this.$t('exoplatform.gamification.areyousure.deleterule')
-                                        }}</p>
-                                </div>
-                            </div>
-                            <div class="uiAction uiActionBorder">
-                                <b-col>
-                                    <button class="btn cancel pull-right" type="submit" v-on:click.prevent="collapseConfirm(rule), onCancel()">{{
-                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
-                                        }}
-                                    </button>
-
-                                    <button class="btn-primary pull-right" type="submit"
-                                            v-on:click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)" style="margin-left: 0 !important; margin-right: 9px;">
-                                        {{
-                                        this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
-                                        }}
-                                    </button>
-                                </b-col>
-                            </div>
-
-                        </div>
-                    </div>
+                <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
+              </div>
+              <div class="PopupContent popupContent">
+                <div class="media">
+                  <div class="pull-left">
+                    <i class="uiIconColorQuestion"></i>
+                  </div>
+                  <div class="media-body">
+                    <p class="msg">
+                      {{ this.$t('exoplatform.gamification.areyousure.deleterule')
+                      }}
+                    </p>
+                  </div>
                 </div>
+                <div class="uiAction uiActionBorder">
+                  <b-col>
+                    <button
+                      class="btn cancel pull-right"
+                      type="submit"
+                      @click.prevent="collapseConfirm(rule), onCancel()">
+                      {{
+                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                      }}
+                    </button>
+
+                    <button
+                      class="btn-primary pull-right"
+                      type="submit"
+                      style="margin-left: 0 !important; margin-right: 9px;"
+                      @click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
+                      {{
+                        this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                      }}
+                    </button>
+                  </b-col>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
 
 
-            <table striped hover class="uiGrid table table-hover rule-table">
-                <thead>
-                    <tr>
-                        <th class="rule-name-col">{{$t(`exoplatform.gamification.gamificationinformation.Event`) }}</th>
+        <table
+          striped
+          hover
+          class="uiGrid table table-hover rule-table">
+          <thead>
+            <tr>
+              <th class="rule-name-col">{{ $t(`exoplatform.gamification.gamificationinformation.Event`) }}</th>
 
-                        <th class="rule-desc-col">
-                            {{$t(`exoplatform.gamification.gamificationinformation.domain.Description`) }}
-                        </th>
-                        <th class="rule-price-col">{{$t(`exoplatform.gamification.score`) }}</th>
-                        <th class="rule-area-col">{{$t(`exoplatform.gamification.gamificationinformation.Domain`) }}
-                        </th>
-                        <th class="rule-enable-col">{{$t(`exoplatform.gamification.enabled`) }}</th>
-                        <th class="rule-action-col">{{$t(`exoplatform.gamification.action`)}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="rule in filteredRules">
-
-                        <td>
-                            <div> {{
-                                $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`,rule.event)
-                                }}
-                            </div>
-                        </td>
-                        <td class="rule-desc-col">
-                            <div>{{
-                                $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`,rule.description)
-                                }}
-                            </div>
-                        </td>
-                        <td>
-                            <div>{{rule.score}}</div>
-                        </td>
-                        <td style="max-width: 115px;">
-                            <div v-if="rule.domainDTO != null">{{
-                                $t(`exoplatform.gamification.gamificationinformation.domain.${rule.domainDTO.title}`,rule.domainDTO.title)
-                                }}
-                            </div>
-
-                        <td>
-                            <div>
-                                <label class="switch">
-                                    <input disabled type="checkbox" v-model="rule.enabled">
-                                    <span class="slider round"></span>
-                                    <span class="absolute-no" data-value="rule.enabled">{{$t(`exoplatform.gamification.NO`)}}</span>
-                                </label>
-                            </div>
-
-                        </td>
-
-
-                        <td class="center actionContainer">
-
-                            <a aria-controls="collapseTwo" aria-expanded="true" data-target="#collapseTwo"
-                               data-toggle="collapse" href="" v-on:click.prevent="collapseButtonn(rule)"> <i
-                                    class="uiIconEdit uiIconLightGray"></i></a>
-                            <a class="actionIcon" data-placement="bottom" href="#" rel="tooltip" v-on:click.prevent="collapseConfirm(rule)" data-original-title="Supprimer" v-b-tooltip.hover title="Supprimer">
-                                <i class="uiIconDelete uiIconLightGray"></i>
-                            </a>
-  
-                        </td>
-                    </tr>
+              <th class="rule-desc-col">
+                {{ $t(`exoplatform.gamification.gamificationinformation.domain.Description`) }}
+              </th>
+              <th class="rule-price-col">{{ $t(`exoplatform.gamification.score`) }}</th>
+              <th class="rule-area-col">
+                {{ $t(`exoplatform.gamification.gamificationinformation.Domain`) }}
+              </th>
+              <th class="rule-enable-col">{{ $t(`exoplatform.gamification.enabled`) }}</th>
+              <th class="rule-action-col">{{ $t(`exoplatform.gamification.action`) }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="rule in filteredRules">
+              <td>
+                <div>
+                  {{
+                    $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`,rule.event)
+                  }}
+                </div>
+              </td>
+              <td class="rule-desc-col">
+                <div>
+                  {{
+                    $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`,rule.description)
+                  }}
+                </div>
+              </td>
+              <td>
+                <div>{{ rule.score }}</div>
+              </td>
+              <td style="max-width: 115px;">
+                <div v-if="rule.domainDTO != null">
+                  {{
+                    $t(`exoplatform.gamification.gamificationinformation.domain.${rule.domainDTO.title}`,rule.domainDTO.title)
+                  }}
+                </div>
+              </td><td>
+                <div>
+                  <label class="switch">
+                    <input
+                      v-model="rule.enabled"
+                      disabled
+                      type="checkbox">
+                    <span class="slider round"></span>
+                    <span class="absolute-no" data-value="rule.enabled">{{ $t(`exoplatform.gamification.NO`) }}</span>
+                  </label>
+                </div>
+              </td>
 
 
-                    <tr v-if="!rules.length || !filteredRules.length  " v-model="search">
+              <td class="center actionContainer">
+                <a
+                  aria-controls="collapseTwo"
+                  aria-expanded="true"
+                  data-target="#collapseTwo"
+                  data-toggle="collapse"
+                  href=""
+                  @click.prevent="collapseButtonn(rule)"> <i
+                    class="uiIconEdit uiIconLightGray"></i></a>
+                <a
+                  v-b-tooltip.hover
+                  class="actionIcon"
+                  data-placement="bottom"
+                  href="#"
+                  rel="tooltip"
+                  data-original-title="Supprimer"
+                  title="Supprimer"
+                  @click.prevent="collapseConfirm(rule)">
+                  <i class="uiIconDelete uiIconLightGray"></i>
+                </a>
+              </td>
+            </tr>
 
-                        <td class="empty center" colspan="6"> {{$t(`exoplatform.gamification.ErrorRulesMsg`)}}
 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </b-col>
-
+            <tr v-if="!rules.length || !filteredRules.length " v-model="search">
+              <td class="empty center" colspan="6">
+                {{ $t(`exoplatform.gamification.ErrorRulesMsg`) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </b-col>
     </b-row>
-
-</b-container>
+  </b-container>
 </template>
 
 <script>
