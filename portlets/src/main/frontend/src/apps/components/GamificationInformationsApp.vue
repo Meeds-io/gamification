@@ -1,40 +1,22 @@
 <template>
+  <div id="achivements" class="uiBox">
+    <tabs
+      :tabs="tabs"
+      :current-tab="currentTab"
+      @onClick="handleClick" />
+    <div class="content">
+      <div v-if="currentTab === 'MyPoints'">
+        <total-points-filter />
 
-    <div id="achivements" class="uiBox">
-
-
-        <tabs
-                :tabs="tabs"
-                :currentTab="currentTab"
-                @onClick="handleClick"
-        />
-        <div class="content">
-
-            <div v-if="currentTab === 'MyPoints'">
-
+        <mypoints-history-list />
+      </div>
 
 
-                <total-points-filter></total-points-filter>
-
-                <mypoints-history-list></mypoints-history-list>
-
-
-            </div>
-
-
-            <div v-else-if="currentTab === 'MyBadges'">
-                <MybadgesInformations></MybadgesInformations>
-            </div>
-
-
-
-
-        </div>
-
-
-
-
+      <div v-else-if="currentTab === 'MyBadges'">
+        <mybadges-informations />
+      </div>
     </div>
+  </div>
 </template>
 
 <!--    GamificationInformations portlets  -->

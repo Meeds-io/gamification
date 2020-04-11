@@ -1,8 +1,8 @@
 <template>
-    <div id="user-reputation-container" class="uiBox">
-        <reputation-points></reputation-points>
-        <reputation-badges></reputation-badges>
-    </div>
+  <div id="user-reputation-container" class="uiBox">
+    <reputation-points />
+    <reputation-badges />
+  </div>
 </template>
 <script>
 

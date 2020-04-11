@@ -1,7 +1,5 @@
 <template>
-
-
-    <leaderboard></leaderboard>
+  <leaderboard />
 </template>
 <script>
 

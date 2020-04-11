@@ -1,27 +1,39 @@
 <template>
-    <section>
-        <alert :show="dismissCountDown"
-               @dismiss-count-down="countDownChanged"
-               class="success alert alert-success"
-               dismissible
-               fade
-               v-if="isadded || addSuccess" v-on:="closeAlert()" variant="success"><i class="uiIconSuccess"></i>{{updateMessage}}
-        </alert>
-        <alert class="alert alert-error" data-auto-dismiss="5000" v-if="addError"><i class="uiIconError"></i> {{errorMessage}}
-        </alert>
+  <section>
+    <alert
+      v-if="isadded || addSuccess"
+      :show="dismissCountDown"
+      class="success alert alert-success"
+      dismissible
+      fade
+      v-on:="closeAlert()"
+      variant="success"
+      @dismiss-count-down="countDownChanged">
+      <i class="uiIconSuccess"></i>{{ updateMessage }}
+    </alert>
+    <alert
+      v-if="addError"
+      class="alert alert-error"
+      data-auto-dismiss="5000">
+      <i class="uiIconError"></i> {{ errorMessage }}
+    </alert>
 
 
-        <save-domain-form :domain="domainInForm" :domains="domains" v-on:cancel="resetDomainInForm"
-                          v-on:failAdd="onDomainFail" v-on:sucessAdd="onDomainCreated"></save-domain-form>
+    <save-domain-form
+      :domain="domainInForm"
+      :domains="domains"
+      @cancel="resetDomainInForm"
+      @failAdd="onDomainFail"
+      @sucessAdd="onDomainCreated" />
 
-        <domain-list :domain="domainInForm" :domains="domains" v-on:failAdd="onDomainFail" v-on:remove="onRemoveClicked"
-                     v-on:sucessAdd="onDomainUpdated" v-on:edit="onSaveClicked">
-
-
-        </domain-list>
-
-
-    </section>
+    <domain-list
+      :domain="domainInForm"
+      :domains="domains"
+      @failAdd="onDomainFail"
+      @remove="onRemoveClicked"
+      @sucessAdd="onDomainUpdated"
+      @edit="onSaveClicked" />
+  </section>
 </template>
 <script>
     import DomainList from './DomainList'
@@ -61,6 +73,19 @@
             DomainList
         },
         data: initialData,
+        created() {
+            axios.get(`/rest/gamification/domains`)
+                .then(response => {
+                    this.domains = response.data;
+                })
+                .catch(e => {
+                    this.addError = true;
+                    this.errors.push(e)
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        },
         methods: {
             validateForm() {
                 const errors = {};
@@ -125,7 +150,7 @@
             onRemoveClicked(domainId) {
                 const index = this.domains.findIndex((p) => p.id === domainId);
 
-                axios.delete(`/rest/gamification/domains/` + domainId)
+                axios.delete(`/rest/gamification/domains/${  domainId}`)
                     .then(response => {
                         this.domains.splice(index, 1)
                     })
@@ -138,7 +163,7 @@
             },
 
             updateDomain(domainDTO) {
-                axios.put(`/rest/gamification/domains/` + domainDTO.id, domainDTO)
+                axios.put(`/rest/gamification/domains/${  domainDTO.id}`, domainDTO)
                     .then(response => {
                         this.addSuccess = true;
                         this.updateMessage = 'updated';
@@ -152,19 +177,6 @@
                         console.log("Error")
                     })
             }
-        },
-        created() {
-            axios.get(`/rest/gamification/domains`)
-                .then(response => {
-                    this.domains = response.data;
-                })
-                .catch(e => {
-                    this.addError = true;
-                    this.errors.push(e)
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
         }
     }
 </script>

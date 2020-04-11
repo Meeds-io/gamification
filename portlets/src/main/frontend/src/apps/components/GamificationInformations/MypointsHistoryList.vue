@@ -1,53 +1,54 @@
 <template class="">
- <table class="uiGrid table table-hover table-striped rule-table" hover striped>
+  <table
+    class="uiGrid table table-hover table-striped rule-table"
+    hover
+    striped>
     <thead>
-        <tr>
-            <th class="rule-name-col"></th>
-            <th class="rule-name-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Event') }}</th>
-            <th class="rule-desc-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Date') }}</th>
-            <th class="rule-price-col"> {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }} <a class="ico-info actionIco" data-v-2e935f06="" href="../intranet/gamification-earn-points" target="_blank" rel="tooltip"
-                                                  :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') " >
-                <i data-v-2e935f06="" class="uiIconInformation"></i></a></th>
-            <th class="rule-enable-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Domain') }}</th>
-        </tr>
-        </thead>
-        <tbody>
-
-
-        <tr :key="user.receiver" v-for="(user, index) in users">
-
-
-
-           <td>  <div class="desc-user">
-                           <a :href="user.profileUrl"> <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar></a>
-                       </div>
-                       </td>
-            <td>
-                <a v-bind:href="user.objectId" >
-
-                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${user.actionTitle}`,user.actionTitle) }}
-
-                </a> </td>
-
-
-
-            <td>{{user.createdDate}}</td>
-            <td>{{user.actionScore}}</td>
-            <td>{{ $t(`exoplatform.gamification.gamificationinformation.domain.${user.domain}`,user.domain) }}</td>
-
-        </tr>
-
-
-
-
-        </tbody>
-     <div id="ActivitiesLoader" v-if="users.length>1" class="btn btn-block" @click="showMore()">
-         {{ this.$t('exoplatform.gamification.leaderboard.showMore') }}
-     </div>
-        
-    </table>
-
-
+      <tr>
+        <th class="rule-name-col"></th>
+        <th class="rule-name-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Event') }}</th>
+        <th class="rule-desc-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Date') }}</th>
+        <th class="rule-price-col">
+          {{ this.$t('exoplatform.gamification.gamificationinformation.Points') }} <a
+            class="ico-info actionIco"
+            data-v-2e935f06=""
+            href="../intranet/gamification-earn-points"
+            target="_blank"
+            rel="tooltip"
+            :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') ">
+            <i data-v-2e935f06="" class="uiIconInformation"></i></a>
+        </th>
+        <th class="rule-enable-col">{{ this.$t('exoplatform.gamification.gamificationinformation.Domain') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(user, index) in users" :key="user.receiver">
+        <td>
+          <div class="desc-user">
+            <a :href="user.profileUrl"> <avatar
+              :username="user.fullname"
+              :size="35"
+              :src="user.avatarUrl" /></a>
+          </div>
+        </td>
+        <td>
+          <a :href="user.objectId">
+            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${user.actionTitle}`,user.actionTitle) }}
+          </a>
+        </td>
+        <td>{{ user.createdDate }}</td>
+        <td>{{ user.actionScore }}</td>
+        <td>{{ $t(`exoplatform.gamification.gamificationinformation.domain.${user.domain}`,user.domain) }}</td>
+      </tr>
+    </tbody>
+    <div
+      v-if="users.length>1"
+      id="ActivitiesLoader"
+      class="btn btn-block"
+      @click="showMore()">
+      {{ this.$t('exoplatform.gamification.leaderboard.showMore') }}
+    </div>
+  </table>
 </template>
 
 <script>
@@ -83,7 +84,6 @@
         }
     };
     export default {
-        data: initialData,
         components: {
             TotalPointsFilter,
             Avatar,
@@ -103,6 +103,7 @@
                 },
             }
         },
+        data: initialData,
         localFiltering() {
             return this.hasProvider ? !!this.noProviderFiltering : true
         },
@@ -111,9 +112,25 @@
                 this.loadCapacity=10
             }
         },
+        created() {
+            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
+                  providerId: 'user',
+                  remoteId: eXo.env.portal.profileOwner,
+                }})
+                .then(response => {
+                    this.users = response.data;
+                });
+            axios.get(`/rest/gamification/rules/all`)
+                .then(response => {
+                    this.rules = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        },
         methods: {
             filter() {
-                let self = this;
+                const self = this;
                 axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
                         this.users = response.data;
@@ -126,8 +143,8 @@
 
             },
             showMore() {
-                var url = window.location.pathname;
-                let self = this;
+                const url = window.location.pathname;
+                const self = this;
                 self.loadCapacity += 10;
                 axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
                       'domain': self.domain,
@@ -168,22 +185,6 @@
             toggleClass() {
                 this.isActive = !this.isActive;
             },
-        },
-        created() {
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
-                  providerId: 'user',
-                  remoteId: eXo.env.portal.profileOwner,
-                }})
-                .then(response => {
-                    this.users = response.data;
-                });
-            axios.get(`/rest/gamification/rules/all`)
-                .then(response => {
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
         }
     }
 </script>

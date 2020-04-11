@@ -1,13 +1,10 @@
 <template>
-    <section>
-        <h5  class="mt-0">Achievements</h5>
-        <div>
-
-    <div    class="points" ><span><a href ="MyConnection Achivements" @click.prevent="gotoLink()" > {{reputation.score}} Points </a></span> </div>
-
-        </div>
-
-    </section>
+  <section>
+    <h5 class="mt-0">Achievements</h5>
+    <div>
+      <div class="points"><span><a href="MyConnection Achivements" @click.prevent="gotoLink()"> {{ reputation.score }} Points </a></span> </div>
+    </div>
+  </section>
 </template>
 <script>
 
@@ -29,17 +26,8 @@
 
     export default {
         data: initialData,
-        //isPointsEnabled: false,
-
-        methods: {
-
-            gotoLink() {
-                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
-
-            },
-        },
         created() {
-            var url = window.location.pathname
+            const url = window.location.pathname
             axios.get(`/rest/gamification/reputation/status`, { params: { 'url': url } })
                 .then(response => {
 
@@ -51,6 +39,15 @@
 
 
 
+        },
+        //isPointsEnabled: false,
+
+        methods: {
+
+            gotoLink() {
+                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
+
+            },
         }
 
 

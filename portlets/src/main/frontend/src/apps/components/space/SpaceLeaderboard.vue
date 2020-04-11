@@ -1,93 +1,135 @@
 <template class="">
-    <div class="uiBox container-fluid">
-        <div class="row">
-            <div class="col">
-                <h5 class="mt-0 title">Top users</h5>
-                <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip"
-                    data-original-title="How can I earn points ?">
-                    <i class="uiIconInformation"></i>
-                </a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <select v-model="domain" class="custom-select ">
-
-                    <option :value="null">Overall</option>
-                    <option value="social">Social</option>
-                    <option value="knowledge">Knowledge</option>
-                    <option value="teamwork">Teamwork</option>
-                </select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
-                    <div id="app" role="group" class="btn-group">
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK';loadCapacity=10"
-                            :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter()">Week</button>
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'MONTH';loadCapacity=10 "
-                            :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter()">Month</button>
-                        <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn3';selectedPeriod = 'ALL';loadCapacity=10 "
-                            :class="{active: activeBtn === 'btn3' }" v-on:click.prevent="filter()">All times</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-
-            <div class="list-lead col">
-                <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
-                    <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)"
-                        :key="user.socialId" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
-
-                        <div class="rank-user">{{index+1}}
-                        </div>
-                        <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
-                        <div class="desc-user">
-                            <a :href="user.profileUrl">{{user.fullname}}</a>
-                        </div>
-                        <div class="number-user">{{user.score}}
-                            <span>Pts</span>
-                        </div>
-
-                        <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
-                            <div class="popover fade show bs-popover-left" @mouseover="onShown(user.remoteId)"
-                                v-on:load="onShown(user.remoteId)" role="tooltip" tabindex="-1" :id="'leaderboard'+index"
-                                x-placement="left">
-                                <div class="arrow" style="top: 108px;"></div>
-                                <template>
-                                    <div class='chart' id="chart">
-
-                                        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-                                            rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-                                            crossorigin="anonymous">
-
-                                        <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div v-else class="current-rank">
-                        <div v-if="users.length" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
-                            <div class="desc-user">
-                                {{user.fullname}} :
-                            </div>
-                            <div class="number-user">{{user.score}}</div>
-                        </div>
-
-                    </div>
-                    <div class="load-more" v-if="users.length>1">
-                        <b-link href="#" @click.prevent="showMore()">Load More</b-link>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
+  <div class="uiBox container-fluid">
+    <div class="row">
+      <div class="col">
+        <h5 class="mt-0 title">Top users</h5>
+        <a
+          href="gamification-earn-points"
+          class="ico-info actionIco"
+          target="_blank"
+          rel="tooltip"
+          data-original-title="How can I earn points ?">
+          <i class="uiIconInformation"></i>
+        </a>
+      </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <select v-model="domain" class="custom-select ">
+          <option :value="null">Overall</option>
+          <option value="social">Social</option>
+          <option value="knowledge">Knowledge</option>
+          <option value="teamwork">Teamwork</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div
+          role="toolbar"
+          class="btn-toolbar"
+          aria-label="Toolbar with button groups and dropdown menu">
+          <div
+            id="app"
+            role="group"
+            class="btn-group">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              :class="{active: activeBtn === 'btn1' }"
+              @click="activeBtn = 'btn1';selectedPeriod = 'WEEK';loadCapacity=10"
+              @click.prevent="filter()">
+              Week
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              :class="{active: activeBtn === 'btn2' }"
+              @click="activeBtn = 'btn2';selectedPeriod = 'MONTH';loadCapacity=10 "
+              @click.prevent="filter()">
+              Month
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              :class="{active: activeBtn === 'btn3' }"
+              @click="activeBtn = 'btn3';selectedPeriod = 'ALL';loadCapacity=10 "
+              @click.prevent="filter()">
+              All times
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="list-lead col">
+        <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
+          <div
+            v-for="(user, index) in users"
+            v-if="user.fullname != 'Your current rank'"
+            :key="user.socialId"
+            class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop"
+            @mouseover="onShown(user.remoteId)">
+            <div class="rank-user">
+              {{ index+1 }}
+            </div>
+            <avatar
+              :username="user.fullname"
+              :size="35"
+              :src="user.avatarUrl" />
+            <div class="desc-user">
+              <a :href="user.profileUrl">{{ user.fullname }}</a>
+            </div>
+            <div class="number-user">
+              {{ user.score }}
+              <span>Pts</span>
+            </div>
+
+            <div
+              class="push popover__content"
+              :target="'leaderboard'+index"
+              @load="onShown(user.remoteId)">
+              <div
+                :id="'leaderboard'+index"
+                class="popover fade show bs-popover-left"
+                role="tooltip"
+                tabindex="-1"
+                x-placement="left"
+                @mouseover="onShown(user.remoteId)"
+                @load="onShown(user.remoteId)">
+                <div class="arrow" style="top: 108px;"></div>
+                <template>
+                  <div id="chart" class="chart">
+                    <link
+                      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+                      rel="stylesheet"
+                      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+                      crossorigin="anonymous">
+
+                    <chart-pie
+                      :data="chartData"
+                      :config="chartConfig"
+                      @load="onLoad" />
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+          <div v-else class="current-rank">
+            <div v-if="users.length" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+              <div class="desc-user">
+                {{ user.fullname }} :
+              </div>
+              <div class="number-user">{{ user.score }}</div>
+            </div>
+          </div>
+          <div v-if="users.length>1" class="load-more">
+            <b-link href="#" @click.prevent="showMore()">Load More</b-link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 
@@ -127,7 +169,6 @@
     }
 
     export default {
-        data: initialData,
 
         components: {
             Avatar,
@@ -143,16 +184,17 @@
                         content: $('#popover')
                     }).on('mouseenter', function () {
 
-                        popoverShow: true;
+                        true;
 
                     })
                         .on('mouseleave', function () {
 
-                            popoverShow: false;
+                            false;
                         });
                 },
             }
         },
+        data: initialData,
         watch: {
             domain() {
                 this.loadCapacity = 10
@@ -163,13 +205,13 @@
         mounted: function () {
             jQuery(".pop").popover({ trigger: "hover", html: true, animation: false })
                 .on("mouseenter", function () {
-                    var _this = this;
+                    const _this = this;
                     jQuery(this).popover("show");
                     jQuery(".popover").on("mouseleave", function () {
                         jQuery(_this).popover('hide');
                     });
                 }).on("mouseleave", function () {
-                    var _this = this;
+                    const _this = this;
                     setTimeout(function () {
                         if (!jQuery(".popover:hover").length) {
                             jQuery(_this).popover("hide");
@@ -179,10 +221,21 @@
 
         },
 
+        created() {
+            const url = window.location.pathname
+            axios.get(`/rest/gamification/space/leaderboard/overall`, { params: { 'url': url } })
+                .then(response => {
+                    this.users = response.data;
+                })
+                .catch(e => {
+                    this.errors.push(e)
+                })
+        },
+
         methods: {
             filter() {
-                var url = window.location.pathname
-                let self = this
+                const url = window.location.pathname
+                const self = this
                 axios.get(`/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
                     .then(response => {
                         this.users = response.data;
@@ -195,8 +248,8 @@
 
             },
             showMore() {
-                var url = window.location.pathname
-                let self = this
+                const url = window.location.pathname
+                const self = this
                 self.loadCapacity += 10;
                 axios.get(`/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
                     .then(response => {
@@ -223,9 +276,9 @@
             popOpen() {
                 jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
                     .on("mouseenter", function () {
-                        popoverShow: true;
+                        true;
                     }).on("mouseleave", function () {
-                        popoverShow: false;
+                        false;
                     });
             },
 
@@ -261,17 +314,6 @@
                 return user.fullname == 'Your current rank';
 
             }
-        },
-
-        created() {
-            var url = window.location.pathname
-            axios.get(`/rest/gamification/space/leaderboard/overall`, { params: { 'url': url } })
-                .then(response => {
-                    this.users = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
         }
 
     }

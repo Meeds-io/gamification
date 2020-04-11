@@ -1,5 +1,5 @@
 <template>
-    <manage-domains></manage-domains>
+  <manage-domains />
 </template>
 
 <script>

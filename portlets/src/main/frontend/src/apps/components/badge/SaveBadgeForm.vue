@@ -1,88 +1,135 @@
 <template>
-<div>
+  <div>
     <div class="col-sm-12 fluid">
-        <div class="pull-right" id="headingOne">
-            <button aria-controls="collapseOne" aria-expanded="true" class="btn btn-primary" data-target="#collapseOne" data-toggle="collapse" type="button" v-on:click.prevent="collapseButton()"> {{ this.$t('exoplatform.gamification.addbadge')}}
-            </button>
-        </div>
-        <div :class="isShown ? '' : 'out'" aria-labelledby="headingOne" class="collapse show" data-parent="#accordionExample" id="collapseOne" style="height: 0px; transition: inherit;">
-            <div class="card-body">
-                <div class="UIPopupWindow uiPopup UIDragObject NormalStyle" id="myForm" style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
-                    <div class="popupHeader ClearFix">
-                        <a class="uiIconClose pull-right" v-on:click.prevent="collapseButton(), onCancel()"></a>
-                        <span class="PopupTitle popupTitle"> {{ this.$t('exoplatform.gamification.addbadge')}}</span>
-                    </div>
-                    <div class="PopupContent popupContent">
-                        <form id="titleInputGroup">
-
-                            <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
-                            <input class="form-control" id="titleInput" :placeholder="$t('badge.title.placeholder','Enter badge title')" required type="text" v-model="badge.title">
-                            </input>
-                        </form>
-
-                        <div id="descriptionInputGroup">
-                            <label class="pt-0" id="descriptionInput">{{
-                                    this.$t('exoplatform.gamification.gamificationinformation.domain.Description')
-                                    }}:</label>
-                            <textarea :max-rows="6" :rows="3" class="form-control" id="badgeDescription" :placeholder="$t('badge.description.placeholder','Enter description')" v-model="badge.description">
-                    </textarea>
-                        </div>
-
-                        <form id="neededScoreInputGroup">
-                            <label id="Needed" label-for="neededScoreInput" class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score')}}:</label>
-                            <input id="neededScoreInput" type="number" v-model="badge.neededScore" class="form-control" required  :placeholder="$t('badge.score.placeholder','Enter badge needed score')">
-                        </form>
-                        <form id="iconInputGroup">
-                            <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon')}}: </label>
-
-                            <input type="file" id="iconInput" name="badge.icon" accept="image/jpeg, image/png, image/gif" placeholder="+" @change="onFilePicked">
-
-                        </form>
-
-                        <form id="domainSelectboxGroup">
-                            <label class="pt-0">{{$t('exoplatform.gamification.gamificationinformation.Domain')}}:</label>
-
-                            <select class="mb-4" v-model="badge.domainDTO">
-                                <option :value="null" disabled>{{ this.$t('exoplatform.gamification.selectdomain')
-                                        }}
-                                </option>
-                                <option v-bind:value="option" v-for="option in domains">
-                                    {{
-                                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
-                                        }}
-                                </option>
-                            </select>
-                        </form>
-                        <form id="enable">
-                            <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
-                            <label class="uiSwitchBtn">
-
-                                <input type="checkbox" v-model="badge.enabled">
-                                <span class="slider round"></span>
-                                <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO')}}</span>
-                            </label>
-                        </form>
-
-                        <b-row style="display: inherit;">
-                            <b-col>
-
-                                <button class="btn secondary pull-right" type="cancel" v-on:click.prevent="collapseButton(), onCancel()">{{
-                                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
-                                </button>
-                                <button class="btn-primary pull-right" type="submit" :disabled='isDisabled' v-on:click="onSubmit(), collapseButton()">
-                                    {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
-
-                                </button>
-                            </b-col>
-
-                        </b-row>
-                    </div>
-                </div>
+      <div id="headingOne" class="pull-right">
+        <button
+          aria-controls="collapseOne"
+          aria-expanded="true"
+          class="btn btn-primary"
+          data-target="#collapseOne"
+          data-toggle="collapse"
+          type="button"
+          @click.prevent="collapseButton()">
+          {{ this.$t('exoplatform.gamification.addbadge') }}
+        </button>
+      </div>
+      <div
+        id="collapseOne"
+        :class="isShown ? '' : 'out'"
+        aria-labelledby="headingOne"
+        class="collapse show"
+        data-parent="#accordionExample"
+        style="height: 0px; transition: inherit;">
+        <div class="card-body">
+          <div
+            id="myForm"
+            class="UIPopupWindow uiPopup UIDragObject NormalStyle"
+            style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
+            <div class="popupHeader ClearFix">
+              <a class="uiIconClose pull-right" @click.prevent="collapseButton(), onCancel()"></a>
+              <span class="PopupTitle popupTitle"> {{ this.$t('exoplatform.gamification.addbadge') }}</span>
             </div>
+            <div class="PopupContent popupContent">
+              <form id="titleInputGroup">
+                <label class="pt-0">{{ this.$t('exoplatform.gamification.title') }}:</label>
+                <input
+                  id="titleInput"
+                  v-model="badge.title"
+                  class="form-control"
+                  :placeholder="$t('badge.title.placeholder','Enter badge title')"
+                  required
+                  type="text">
+                </input>
+              </form>
 
+              <div id="descriptionInputGroup">
+                <label id="descriptionInput" class="pt-0">{{
+                  this.$t('exoplatform.gamification.gamificationinformation.domain.Description')
+                }}:</label>
+                <textarea
+                  id="badgeDescription"
+                  v-model="badge.description"
+                  :max-rows="6"
+                  :rows="3"
+                  class="form-control"
+                  :placeholder="$t('badge.description.placeholder','Enter description')">
+                    </textarea>
+              </div>
+
+              <form id="neededScoreInputGroup">
+                <label
+                  id="Needed"
+                  label-for="neededScoreInput"
+                  class="pt-0">{{ this.$t('exoplatform.gamification.badge.score','Score') }}:</label>
+                <input
+                  id="neededScoreInput"
+                  v-model="badge.neededScore"
+                  type="number"
+                  class="form-control"
+                  required
+                  :placeholder="$t('badge.score.placeholder','Enter badge needed score')">
+              </form>
+              <form id="iconInputGroup">
+                <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon') }}: </label>
+
+                <input
+                  id="iconInput"
+                  type="file"
+                  name="badge.icon"
+                  accept="image/jpeg, image/png, image/gif"
+                  placeholder="+"
+                  @change="onFilePicked">
+              </form>
+
+              <form id="domainSelectboxGroup">
+                <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
+
+                <select v-model="badge.domainDTO" class="mb-4">
+                  <option :value="null" disabled>
+                    {{ this.$t('exoplatform.gamification.selectdomain')
+                    }}
+                  </option>
+                  <option v-for="option in domains" :value="option">
+                    {{
+                      $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
+                    }}
+                  </option>
+                </select>
+              </form>
+              <form id="enable">
+                <label class="pt-0">{{ this.$t('exoplatform.gamification.enabled') }} :</label>
+                <label class="uiSwitchBtn">
+
+                  <input v-model="badge.enabled" type="checkbox">
+                  <span class="slider round"></span>
+                  <span class="absolute-no">{{ this.$t('exoplatform.gamification.NO') }}</span>
+                </label>
+              </form>
+
+              <b-row style="display: inherit;">
+                <b-col>
+                  <button
+                    class="btn secondary pull-right"
+                    type="cancel"
+                    @click.prevent="collapseButton(), onCancel()">
+                    {{
+                      this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                  </button>
+                  <button
+                    class="btn-primary pull-right"
+                    type="submit"
+                    :disabled="isDisabled"
+                    @click="onSubmit(), collapseButton()">
+                    {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+                  </button>
+                </b-col>
+              </b-row>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -134,7 +181,7 @@ export default {
         },
         createBadge(badgeDTO) {
 
-            if (this.uploadId != '') badgeDTO.uploadId = this.uploadId
+            if (this.uploadId != '') {badgeDTO.uploadId = this.uploadId}
             axios.post(`/rest/gamification/badges/add`, badgeDTO)
 
                 .then(response => {

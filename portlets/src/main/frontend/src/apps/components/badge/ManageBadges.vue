@@ -1,20 +1,36 @@
 <template>
-<div>
-    <div class="alert alert-success"  v-show="addSuccess" v-on:="closeAlert()">
-        <i class="uiIconSuccess"></i>
-        {{this.$t('exoplatform.gamification.badge')}}
-        {{updateMessage}} {{this.$t('exoplatform.gamification.successfully')}}
+  <div>
+    <div
+      v-show="addSuccess"
+      class="alert alert-success"
+      v-on:="closeAlert()">
+      <i class="uiIconSuccess"></i>
+      {{ this.$t('exoplatform.gamification.badge') }}
+      {{ updateMessage }} {{ this.$t('exoplatform.gamification.successfully') }}
     </div>
-    <div class="alert alert-error"  v-show="addError" v-on:="closeAlert()">
-        <i class="uiIconError"></i>
-        {{this.$t(`exoplatform.gamification.${errorType}`)}}
+    <div
+      v-show="addError"
+      class="alert alert-error"
+      v-on:="closeAlert()">
+      <i class="uiIconError"></i>
+      {{ this.$t(`exoplatform.gamification.${errorType}`) }}
     </div>
 
-<section>
-    <save-badge-form :badge="badgeInForm" :domains="domains" :errorType="errorType" v-on:cancel="resetBadgeInForm" v-on:failAdd="onBadgeFail" v-on:submit="onBadgeCreated"></save-badge-form>
-    <badge-list :badges="badges" :domains="domains" v-on:remove="onRemoveClicked" v-on:save="onSaveClicked"></badge-list>
-</section>
-</div>
+    <section>
+      <save-badge-form
+        :badge="badgeInForm"
+        :domains="domains"
+        :error-type="errorType"
+        @cancel="resetBadgeInForm"
+        @failAdd="onBadgeFail"
+        @submit="onBadgeCreated" />
+      <badge-list
+        :badges="badges"
+        :domains="domains"
+        @remove="onRemoveClicked"
+        @save="onSaveClicked" />
+    </section>
+  </div>
 </template>
 
 <script>
@@ -58,6 +74,10 @@ export default {
         SaveBadgeForm
     },
     data: initialData,
+    created() {
+        this.getBadges()
+        this.getDomains() 
+    },
     methods: {
         resetBadgeInForm() {
             this.badgeInForm = initialData().badgeInForm
@@ -100,7 +120,7 @@ export default {
         },
         onRemoveClicked(badgeId, badgeTitle) {
             const index = this.badges.findIndex((p) => p.id === badgeId);
-            axios.delete(`/rest/gamification/badges/delete/` + badgeId)
+            axios.delete(`/rest/gamification/badges/delete/${  badgeId}`)
                 .then(response => {
                     this.addSuccess = true
                     this.updateMessage = 'deleted'
@@ -157,10 +177,6 @@ export default {
                 console.log(e)
             })
         }
-    },
-    created() {
-        this.getBadges()
-        this.getDomains() 
     }
 }
 </script>

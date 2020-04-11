@@ -32,15 +32,19 @@ module.exports = {
                 ],
             },
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader'
-                }
+              test: /\.js$/,
+              exclude: /node_modules/,
+              use: [
+                'babel-loader',
+                // 'eslint-loader',
+              ]
             },
             {
-                test: /\.vue$/,
-                loader: 'vue-loader'
+              test: /\.vue$/,
+              use: [
+                'vue-loader',
+                // 'eslint-loader',
+              ]
             }
         ]
     },

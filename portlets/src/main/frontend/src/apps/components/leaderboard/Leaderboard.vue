@@ -1,84 +1,133 @@
 <template>
-<div class="uiBox container-fluid">
+  <div class="uiBox container-fluid">
     <div class="row">
-        <div class="col">
-            <h5 class="mt-0 title">{{ this.$t('exoplatform.gamification.leaderboard.title',"Title") }}</h5>
-            <a href="gamification-earn-points" class="ico-info actionIco" target="_blank" rel="tooltip" :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') ">
+      <div class="col">
+        <h5 class="mt-0 title">{{ this.$t('exoplatform.gamification.leaderboard.title',"Title") }}</h5>
+        <a
+          href="gamification-earn-points"
+          class="ico-info actionIco"
+          target="_blank"
+          rel="tooltip"
+          :title="this.$t('exoplatform.gamification.leaderboard.Howearnpoints') ">
 
-                <i class="uiIconInformation"></i>
-            </a>
-
-        </div>
+          <i class="uiIconInformation"></i>
+        </a>
+      </div>
     </div>
     <div class="row">
-        <div class="col">
-            <select v-model="domain" class="mb-4" required>
-                <option value="null"  selected>{{ this.$t('exoplatform.gamification.leaderboard.domain.null',"Global") }}</option>
-                <option v-for="option in domains" v-bind:value="option.title">
-                     {{$t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title) }}
-                </option>
-            </select>
-        </div>
+      <div class="col">
+        <select
+          v-model="domain"
+          class="mb-4"
+          required>
+          <option value="null" selected>{{ this.$t('exoplatform.gamification.leaderboard.domain.null',"Global") }}</option>
+          <option v-for="option in domains" :value="option.title">
+            {{ $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title) }}
+          </option>
+        </select>
+      </div>
     </div>
     <div class="row">
-        <div class="col">
-            <div role="toolbar" class="btn-toolbar" aria-label="Toolbar with button groups and dropdown menu">
-                <div id="app" role="group" class="btn-group">
-                    <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn1';selectedPeriod = 'WEEK';loadCapacity=10" :class="{active: activeBtn === 'btn1' }" v-on:click.prevent="filter('WEEK')"> {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.WEEK',"Week") }}</button>
-                    <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn2';selectedPeriod = 'MONTH';loadCapacity=10 " :class="{active: activeBtn === 'btn2' }" v-on:click.prevent="filter('MONTH')"> {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.MONTH',"Month") }}</button>
-                    <button type="button" class="btn btn-secondary" @click="activeBtn = 'btn3';selectedPeriod = 'ALL';loadCapacity=10 " :class="{active: activeBtn === 'btn3' }" v-on:click.prevent="filter('ALL')">{{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.ALL',"All") }}</button>
-                </div>
+      <div class="col">
+        <div
+          role="toolbar"
+          class="btn-toolbar"
+          aria-label="Toolbar with button groups and dropdown menu">
+          <div
+            id="app"
+            role="group"
+            class="btn-group">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              :class="{active: activeBtn === 'btn1' }"
+              @click="activeBtn = 'btn1';selectedPeriod = 'WEEK';loadCapacity=10"
+              @click.prevent="filter('WEEK')">
+              {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.WEEK',"Week") }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              :class="{active: activeBtn === 'btn2' }"
+              @click="activeBtn = 'btn2';selectedPeriod = 'MONTH';loadCapacity=10 "
+              @click.prevent="filter('MONTH')">
+              {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.MONTH',"Month") }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              :class="{active: activeBtn === 'btn3' }"
+              @click="activeBtn = 'btn3';selectedPeriod = 'ALL';loadCapacity=10 "
+              @click.prevent="filter('ALL')">
+              {{ this.$t('exoplatform.gamification.leaderboard.selectedPeriod.ALL',"All") }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="list-lead col">
+        <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
+          <div
+            v-for="(user, index) in users"
+            v-if="user.fullname != 'Your current rank'"
+            :key="user.socialId"
+            class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop"
+            @mouseover="onShown(user.remoteId)">
+            <div class="rank-user">
+              {{ index+1 }}
             </div>
-        </div>
-    </div>
-    <div class="row">
-
-        <div class="list-lead col">
-            <div class="list-group parentPosition" @mouseleave.native="popover = hidden">
-                <div v-if="user.fullname != 'Your current rank'" v-for="(user, index) in users" @mouseover="onShown(user.remoteId)" :key="user.socialId" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
-
-                    <div class="rank-user">{{index+1}}
-                    </div>
-                    <avatar :username="user.fullname" :size="35" :src="user.avatarUrl"></avatar>
-                    <div class="desc-user">
-                        <a :href="user.profileUrl">{{user.fullname}}</a>
-                    </div>
-                    <div class="number-user">{{user.score}}
-                        <span>Pts</span>
-                    </div>
-
-                    <div class="push popover__content" :target="'leaderboard'+index" v-on:load="onShown(user.remoteId)">
-                        <div class="popover fade show bs-popover-left" @mouseover="onShown(user.remoteId)" v-on:load="onShown(user.remoteId)" role="tooltip" tabindex="-1" :id="'leaderboard'+index" x-placement="left">
-                            <div class="arrow" style="top: 108px;"></div>
-                            <template>
-                                <div class='chart' id="chart">
-
-
-                                    <chart-pie :data='chartData' :config='chartConfig' v-on:load="onLoad"></chart-pie>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-
-                </div>
-                <div v-else class="current-rank">
-                    <div v-if="users.length" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
-                        <div class="desc-user">
-                            {{ getRankLabel() }}
-                        </div>
-                        <div class="number-user">{{user.score}}</div>
-                    </div>
-
-                </div>
-                <div class="load-more" v-if="users.length>1">
-                    <b-link href="#" @click.prevent="showMore()"> {{ this.$t('exoplatform.gamification.leaderboard.showMore',"Show more") }}</b-link>
-                </div>
-
+            <avatar
+              :username="user.fullname"
+              :size="35"
+              :src="user.avatarUrl" />
+            <div class="desc-user">
+              <a :href="user.profileUrl">{{ user.fullname }}</a>
             </div>
-        </div>
+            <div class="number-user">
+              {{ user.score }}
+              <span>Pts</span>
+            </div>
 
+            <div
+              class="push popover__content"
+              :target="'leaderboard'+index"
+              @load="onShown(user.remoteId)">
+              <div
+                :id="'leaderboard'+index"
+                class="popover fade show bs-popover-left"
+                role="tooltip"
+                tabindex="-1"
+                x-placement="left"
+                @mouseover="onShown(user.remoteId)"
+                @load="onShown(user.remoteId)">
+                <div class="arrow" style="top: 108px;"></div>
+                <template>
+                  <div id="chart" class="chart">
+                    <chart-pie
+                      :data="chartData"
+                      :config="chartConfig"
+                      @load="onLoad" />
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+          <div v-else class="current-rank">
+            <div v-if="users.length" class="popover__wrapper list-group-item d-flex justify-content-between list-li align-items-center pop">
+              <div class="desc-user">
+                {{ getRankLabel() }}
+              </div>
+              <div class="number-user">{{ user.score }}</div>
+            </div>
+          </div>
+          <div v-if="users.length>1" class="load-more">
+            <b-link href="#" @click.prevent="showMore()"> {{ this.$t('exoplatform.gamification.leaderboard.showMore',"Show more") }}</b-link>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -120,7 +169,6 @@ const initialData = () => {
     }
 }
 export default {
-    data: initialData,
     components: {
         Avatar,
         ChartPie,
@@ -132,14 +180,15 @@ export default {
                         html: true,
                         content: $('#popover')
                     }).on('mouseenter', function () {
-                        popoverShow: true;
+                        true;
                     })
                     .on('mouseleave', function () {
-                        popoverShow: false;
+                        false;
                     });
             },
         }
     },
+    data: initialData,
     watch: {
         domain() {
             this.loadCapacity = 10
@@ -153,13 +202,13 @@ export default {
                 animation: false
             })
             .on("mouseenter", function () {
-                var _this = this;
+                const _this = this;
                 jQuery(this).popover("show");
                 jQuery(".popover").on("mouseleave", function () {
                     jQuery(_this).popover('hide');
                 });
             }).on("mouseleave", function () {
-                var _this = this;
+                const _this = this;
                 setTimeout(function () {
                     if (!jQuery(".popover:hover").length) {
                         jQuery(_this).popover("hide");
@@ -167,9 +216,26 @@ export default {
                 }, 300);
             });
     },
+    created() {
+        axios.get(`/rest/gamification/leaderboard/rank/all`)
+            .then(response => {
+                this.users = response.data;
+            })
+            .catch(e => {
+                this.errors.push(e)
+            })
+
+        axios.get(`/rest/gamification/api/v1/domains`)
+            .then(response => {
+                this.domains = response.data;
+            })
+            .catch(e => {
+                this.errors.push(e)
+            })
+    },
     methods: {
         filter() {
-            let self = this
+            const self = this
             axios.get(`/rest/gamification/leaderboard/filter`, {
                     params: {
                         'domain': self.domain,
@@ -184,7 +250,7 @@ export default {
                 })
         },
         showMore() {
-            let self = this
+            const self = this
             self.loadCapacity += 10;
             axios.get(`/rest/gamification/leaderboard/filter`, {
                     params: {
@@ -224,9 +290,9 @@ export default {
                     animation: false
                 })
                 .on("mouseenter", function () {
-                    popoverShow: true;
+                    true;
                 }).on("mouseleave", function () {
-                    popoverShow: false;
+                    false;
                 });
         },
         disableByRef() {
@@ -254,23 +320,6 @@ export default {
         getRankLabel: function () {
             return this.$t('exoplatform.gamification.leaderboard.rank');
         }
-    },
-    created() {
-        axios.get(`/rest/gamification/leaderboard/rank/all`)
-            .then(response => {
-                this.users = response.data;
-            })
-            .catch(e => {
-                this.errors.push(e)
-            })
-
-        axios.get(`/rest/gamification/api/v1/domains`)
-            .then(response => {
-                this.domains = response.data;
-            })
-            .catch(e => {
-                this.errors.push(e)
-            })
     }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <manage-badges></manage-badges>
+  <manage-badges />
 </template>
 <script>
 
