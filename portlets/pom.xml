@@ -167,6 +167,7 @@
                             <compress>false</compress>
                             <includes>
                                 <include>profileStats.less</include>
+                                <include>popularSpaces.less</include>
                             </includes>
                         </configuration>
                         <goals>
