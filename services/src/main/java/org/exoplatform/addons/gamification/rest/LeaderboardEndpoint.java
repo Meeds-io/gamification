@@ -60,13 +60,13 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @Path("rank/all")
   @RolesAllowed("users")
   public Response getAllLeadersByRank(@Context UriInfo uriInfo,
-                                      @ApiParam(value = "Get leaderboard of user or space", required = false) @DefaultValue("user") @QueryParam("identityType") String identityType,
+                                      @ApiParam(value = "Get leaderboard of user or space", required = false) @DefaultValue("user") @QueryParam("earnerType") String earnerType,
                                       @ApiParam(value = "Limit of identities to retrieve", required = false) @DefaultValue("10") @QueryParam("limit") int limit,
                                       @ApiParam(value = "Period name, possible values: WEEK, MONTH or ALL", required = false) @DefaultValue("ALL") @QueryParam("period") String period,
                                       @ApiParam(value = "Get only the top 10 or all", required = false) @DefaultValue("true") @QueryParam("loadCapacity") boolean loadCapacity) {
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
-    IdentityType earnerType = IdentityType.getType(identityType);
-    leaderboardFilter.setIdentityType(earnerType);
+    IdentityType identityType = IdentityType.getType(earnerType);
+    leaderboardFilter.setIdentityType(identityType);
     if (limit <= 0) {
       if (loadCapacity) {
         limit = DEFAULT_LOAD_CAPACITY;
@@ -108,7 +108,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         leaderboardList.add(leaderboardInfo);
       }
 
-      if (earnerType.isUser()) {
+      if (identityType.isUser()) {
         // Check if the current user is already in top10
         LeaderboardInfo leader = buildCurrentUserRank(Date.from(LocalDate.now()
                                                                          .with(DayOfWeek.MONDAY)

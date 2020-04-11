@@ -15,8 +15,8 @@ module.exports = {
         GamificationInformations: "./GamificationInformations.js",
         earnpoints: "./earnpoints.js",
         spaceleaderboard: "./spaceleaderboard.js",
-        profileStats: "./profileStats/main.js"
-
+        profileStats: "./profileStats/main.js",
+        popularSpaces: "./popularSpaces/main.js"
     },
     output: {
         filename: '[name]/[name].bundle.js',

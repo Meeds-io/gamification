@@ -212,7 +212,7 @@ public class GamificationService {
       final String currentUser = filter.getCurrentUser();
 
       if (StringUtils.isNotBlank(currentUser)) {
-        result = filterAuthorizedSpaces(result, currentUser, limit);
+        result = filterAuthorizedSpaces(result, currentUser, filter.getLoadCapacity());
       }
     }
 

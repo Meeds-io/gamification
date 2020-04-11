@@ -1,0 +1,38 @@
+@import "variables.less";
+@import "mixins.less";
+
+#popularSpacesApplication {
+  
+  .popularSpacesCheck:not(.outlined) {
+    background-color: @successColor;
+    color: #fff;
+  }
+
+  .popularSpacesCheck.outlined {
+    background-color: transparent;
+    color: @successColor;
+
+    &:before {
+      background-color: transparent;
+    }
+  }
+
+  .popularSpacesClose:not(.outlined) {
+    background-color: @errorColor;
+    color: #fff;
+  }
+
+  .popularSpacesClose.outlined {
+    background-color: transparent;
+    color: @errorColor;
+
+    &:before {
+      background-color: transparent;
+    }
+  }
+
+  .popularSpacesAction i {
+    max-height: 20px;
+    max-width: 20px;
+  }
+}

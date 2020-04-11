@@ -117,7 +117,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
   public Response getLeaderboardByDate(@Context UriInfo uriInfo,
-                                       @QueryParam("identityType") String identityType,
+                                       @QueryParam("earnerType") String earnerType,
                                        @QueryParam("startDate") String startDateEntry,
                                        @QueryParam("endDate") String endDateEntry) {
 
@@ -128,7 +128,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
             if (startDate.after(endDate)) {
                 return Response.ok(new GamificationPoints().code("2").message("Dates parameters are not set correctly")).build();
             }
-            List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(identityType), startDate, endDate);
+            List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(earnerType), startDate, endDate);
             return Response.ok(new GamificationPoints().code("0").leaderboard(leaderboard).message("Gamification API is called successfully")).build();
 
         } catch (ParseException pe) {
