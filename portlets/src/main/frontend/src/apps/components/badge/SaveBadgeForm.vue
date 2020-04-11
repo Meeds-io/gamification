@@ -182,7 +182,7 @@ export default {
         createBadge(badgeDTO) {
 
             if (this.uploadId != '') {badgeDTO.uploadId = this.uploadId}
-            axios.post(`/rest/gamification/badges/add`, badgeDTO)
+            axios.post(`/portal/rest/gamification/badges/add`, badgeDTO)
 
                 .then(response => {
                     this.addSuccess = true;

@@ -37,7 +37,7 @@
 
         created() {
             const url = window.location.pathname
-            axios.get(`/rest/gamification/reputation/status`, { params: { 'url': url } })
+            axios.get(`/portal/rest/gamification/reputation/status`, { params: { 'url': url } })
                 .then(response => {
 
                     this.reputation = response.data;

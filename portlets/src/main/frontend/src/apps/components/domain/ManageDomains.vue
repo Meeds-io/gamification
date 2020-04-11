@@ -74,7 +74,7 @@
         },
         data: initialData,
         created() {
-            axios.get(`/rest/gamification/domains`)
+            axios.get(`/portal/rest/gamification/domains`)
                 .then(response => {
                     this.domains = response.data;
                 })
@@ -150,7 +150,7 @@
             onRemoveClicked(domainId) {
                 const index = this.domains.findIndex((p) => p.id === domainId);
 
-                axios.delete(`/rest/gamification/domains/${  domainId}`)
+                axios.delete(`/portal/rest/gamification/domains/${  domainId}`)
                     .then(response => {
                         this.domains.splice(index, 1)
                     })
@@ -163,7 +163,7 @@
             },
 
             updateDomain(domainDTO) {
-                axios.put(`/rest/gamification/domains/${  domainDTO.id}`, domainDTO)
+                axios.put(`/portal/rest/gamification/domains/${  domainDTO.id}`, domainDTO)
                     .then(response => {
                         this.addSuccess = true;
                         this.updateMessage = 'updated';

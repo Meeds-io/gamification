@@ -75,7 +75,7 @@
         created() {
             const url = window.location.pathname
             console.log(url)
-            axios.get(`/rest/gamification/reputation/badges`, { params: { 'url': url  } })
+            axios.get(`/portal/rest/gamification/reputation/badges`, { params: { 'url': url  } })
                 .then(response => {
 
                     this.badges = response.data;
@@ -86,7 +86,7 @@
         },
         methods: {
             showBadgeDetail(badgeDTO) {
-                axios.get(`/rest/gamification/reputation/update`, badgeDTO)
+                axios.get(`/portal/rest/gamification/reputation/update`, badgeDTO)
                     .then(response => {
 
                     })

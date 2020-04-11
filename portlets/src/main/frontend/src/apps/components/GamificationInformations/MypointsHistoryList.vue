@@ -1,4 +1,4 @@
-<template class="">
+<template>
   <table
     class="uiGrid table table-hover table-striped rule-table"
     hover
@@ -121,14 +121,14 @@
             }
         },
         created() {
-            axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
+            axios.get(`/portal/rest/gamification/gameficationinformationsboard/history/all`, { params: {
                   providerId: 'user',
                   remoteId: eXo.env.portal.profileOwner,
                 }})
                 .then(response => {
                     this.users = response.data || [];
                 });
-            axios.get(`/rest/gamification/rules/all`)
+            axios.get(`/portal/rest/gamification/rules/all`)
                 .then(response => {
                     this.rules = response.data;
                 })
@@ -142,7 +142,7 @@
             },
             filter() {
                 const self = this;
-                axios.get(`/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
+                axios.get(`/portal/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
                     .then(response => {
                         this.users = response.data || [];
                     })
@@ -153,7 +153,7 @@
             showMore() {
                 const self = this;
                 self.loadCapacity += 10;
-                axios.get(`/rest/gamification/gameficationinformationsboard/history/all`, { params: {
+                axios.get(`/portal/rest/gamification/gameficationinformationsboard/history/all`, { params: {
                       'domain': self.domain,
                       'period': self.selectedPeriod,
                       'capacity': self.loadCapacity,

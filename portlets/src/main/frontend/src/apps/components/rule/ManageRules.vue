@@ -82,7 +82,7 @@
         },
         methods: {
             getRules() {
-                axios.get(`/rest/gamification/rules/all`)
+                axios.get(`/portal/rest/gamification/rules/all`)
                 .then(response => {
                     this.rules = response.data;
                 })
@@ -92,7 +92,7 @@
                 });
             },
             getDomains() {
-                axios.get(`/rest/gamification/domains`)
+                axios.get(`/portal/rest/gamification/domains`)
                 .then(response => {
                     this.domains = response.data;
                 })
@@ -101,7 +101,7 @@
                 });
             },
             getEvents() {
-                 axios.get(`/rest/gamification/api/v1/events`)
+                 axios.get(`/portal/rest/gamification/api/v1/events`)
                 .then(response => {
                     this.events = response.data;
                 })
@@ -137,7 +137,7 @@
 
             onRemoveClicked(ruleId, ruleTitle) {
                 const index = this.rules.findIndex((p) => p.id === ruleId);
-                axios.delete(`/rest/gamification/rules/delete/${ruleId}`)
+                axios.delete(`/portal/rest/gamification/rules/delete/${ruleId}`)
                     .then(response => {
                         this.rules.splice(index, 1)
                     })
@@ -150,7 +150,7 @@
                 }
             },
             updateRule(ruleDTO) {
-                axios.put(`/rest/gamification/rules/update`, ruleDTO)
+                axios.put(`/portal/rest/gamification/rules/update`, ruleDTO)
                     .then(response => {
                         this.addSuccess = true;
                         this.updateMessage = 'updated';

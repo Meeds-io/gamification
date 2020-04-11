@@ -217,7 +217,7 @@ export default {
             });
     },
     created() {
-        axios.get(`/rest/gamification/leaderboard/rank/all`)
+        axios.get(`/portal/rest/gamification/leaderboard/rank/all`)
             .then(response => {
                 this.users = response.data;
             })
@@ -225,7 +225,7 @@ export default {
                 this.errors.push(e)
             })
 
-        axios.get(`/rest/gamification/api/v1/domains`)
+        axios.get(`/portal/rest/gamification/api/v1/domains`)
             .then(response => {
                 this.domains = response.data;
             })
@@ -236,7 +236,7 @@ export default {
     methods: {
         filter() {
             const self = this
-            axios.get(`/rest/gamification/leaderboard/filter`, {
+            axios.get(`/portal/rest/gamification/leaderboard/filter`, {
                     params: {
                         'domain': self.domain,
                         'period': self.selectedPeriod
@@ -252,7 +252,7 @@ export default {
         showMore() {
             const self = this
             self.loadCapacity += 10;
-            axios.get(`/rest/gamification/leaderboard/filter`, {
+            axios.get(`/portal/rest/gamification/leaderboard/filter`, {
                     params: {
                         'domain': self.domain,
                         'period': self.selectedPeriod,
@@ -268,7 +268,7 @@ export default {
         },
         onShown(username) {
             window.dispatchEvent(new Event('resize'));
-            axios.get(`/rest/gamification/leaderboard/stats`, {
+            axios.get(`/portal/rest/gamification/leaderboard/stats`, {
                     params: {
                         'username': username
                     }

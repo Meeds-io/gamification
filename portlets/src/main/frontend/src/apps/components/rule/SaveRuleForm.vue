@@ -234,7 +234,7 @@
                 });
             },
             createRule(ruleDTO) {
-                axios.post(`/rest/gamification/rules/add`, ruleDTO)
+                axios.post(`/portal/rest/gamification/rules/add`, ruleDTO)
                     .then(response => {
                         this.$emit('sucessAdd', this.rule)
                     })
