@@ -80,7 +80,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
     }
 
     List<GamificationHistoryInfo> historyList = new ArrayList<>();
-    Identity identity = identityManager.getOrCreateIdentity(providerId, remoteId);
+    Identity earnerIdentity = identityManager.getOrCreateIdentity(providerId, remoteId);
     try {
       int loadCapacity = 10;
       if (StringUtils.isNotBlank(capacity)) {
@@ -88,7 +88,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       }
 
       // find actions History by userid adding a pagination load more capacity filter
-      List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(identity.getId(), loadCapacity);
+      List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
       if (ss == null || ss.isEmpty()) {
         return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
       }
@@ -96,15 +96,15 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       // Build GamificationActionsHistory flow only when the returned list is not null
       for (GamificationActionsHistory element : ss) {
         // Load Social identity
-        identity = identityManager.getIdentity(element.getReceiver(), true);
-        Profile profile = identity.getProfile();
+        Identity receiverIdentity = identityManager.getIdentity(element.getReceiver(), true);
+        Profile profile = receiverIdentity.getProfile();
         GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
         // Set SocialIds
-        gamificationHistoryInfo.setSocialId(identity.getId());
-        gamificationHistoryInfo.setSpace(StringUtils.equals(identity.getProviderId(), SpaceIdentityProvider.NAME));
+        gamificationHistoryInfo.setSocialId(receiverIdentity.getId());
+        gamificationHistoryInfo.setSpace(StringUtils.equals(receiverIdentity.getProviderId(), SpaceIdentityProvider.NAME));
         gamificationHistoryInfo.setReceiver(element.getReceiver());
         // Set username
-        gamificationHistoryInfo.setRemoteId(identity.getRemoteId());
+        gamificationHistoryInfo.setRemoteId(receiverIdentity.getRemoteId());
         // Set FullName
         gamificationHistoryInfo.setFullname(profile.getFullName());
         // Set avatar

@@ -6,6 +6,10 @@ import java.time.*;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,7 +23,10 @@ import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationService {
 
@@ -29,16 +36,20 @@ public class GamificationService {
 
   private IdentityManager                identityManager;
 
+  private SpaceService                   spaceService;
+
   private DomainMapper                   domainMapper;
 
   private RuleService                    ruleService;
 
   public GamificationService(IdentityManager identityManager,
+                             SpaceService spaceService,
                              GamificationHistoryDAO gamificationHistoryDAO,
                              DomainMapper domainMapper,
                              RuleService ruleService) {
     this.gamificationHistoryDAO = gamificationHistoryDAO;
     this.identityManager = identityManager;
+    this.spaceService = spaceService;
     this.domainMapper = domainMapper;
     this.ruleService = ruleService;
   }
@@ -151,51 +162,61 @@ public class GamificationService {
    * @return list of objects of type StandardLeaderboard
    */
   public List<StandardLeaderboard> filter(LeaderboardFilter filter) {
-    LOG.debug("Filtering leaderboard based on Period/Domain name : [{}/{}]", filter.getPeriod(), filter.getDomain());
-    // Get overall leaderboard
+    int limit = filter.getLoadCapacity();
+    IdentityType identityType = filter.getIdentityType();
+    if (identityType.isSpace()) {
+      // Try to get more elements when searching, to be able to retrieve at
+      // least 'limit' elements after filtering on authorized spaces
+      limit = limit * 3;
+    }
+
+    List<StandardLeaderboard> result = null;
     if (StringUtils.isBlank(filter.getDomain()) || filter.getDomain().equalsIgnoreCase("all")) {
       // Compute date
       LocalDate now = LocalDate.now();
       // Check the period
       if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
-        return gamificationHistoryDAO.findAllActionsHistoryByDate(from(now.with(DayOfWeek.MONDAY)
-                                                                          .atStartOfDay(ZoneId.systemDefault())
-                                                                          .toInstant()),
-                                                                  filter.getIdentityType(),
-                                                                  filter.getLoadCapacity());
+        Date fromDate = from(now.with(DayOfWeek.MONDAY)
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant());
+        result = gamificationHistoryDAO.findAllActionsHistoryByDate(fromDate, identityType, limit);
       } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
-        return gamificationHistoryDAO.findAllActionsHistoryByDate(from(now.with(TemporalAdjusters.firstDayOfMonth())
-                                                                          .atStartOfDay(ZoneId.systemDefault())
-                                                                          .toInstant()),
-                                                                  filter.getIdentityType(),
-                                                                  filter.getLoadCapacity());
+        Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant());
+        result = gamificationHistoryDAO.findAllActionsHistoryByDate(fromDate, identityType, limit);
       } else {
-        return gamificationHistoryDAO.findAllActionsHistory(filter.getIdentityType(), filter.getLoadCapacity());
+        result = gamificationHistoryDAO.findAllActionsHistory(identityType, limit);
       }
     } else {
       // Compute date
       LocalDate now = LocalDate.now();
       // Check the period
       if (filter.getPeriod().equals(LeaderboardFilter.Period.WEEK.name())) {
-        return gamificationHistoryDAO.findActionsHistoryByDateByDomain(from(now.with(DayOfWeek.MONDAY)
-                                                                               .atStartOfDay(ZoneId.systemDefault())
-                                                                               .toInstant()),
-                                                                       filter.getIdentityType(),
-                                                                       filter.getDomain(),
-                                                                       filter.getLoadCapacity());
+        Date fromDate = from(now.with(DayOfWeek.MONDAY)
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant());
+        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomain(), limit);
       } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
-        return gamificationHistoryDAO.findActionsHistoryByDateByDomain(from(now.with(TemporalAdjusters.firstDayOfMonth())
-                                                                               .atStartOfDay(ZoneId.systemDefault())
-                                                                               .toInstant()),
-                                                                       filter.getIdentityType(),
-                                                                       filter.getDomain(),
-                                                                       filter.getLoadCapacity());
+        Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant());
+        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomain(), limit);
       } else {
-        return gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(),
-                                                                    filter.getIdentityType(),
-                                                                    filter.getLoadCapacity());
+        result = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), identityType, limit);
       }
     }
+
+    // Filter on spaces switch user identity
+    if (identityType.isSpace() && result != null && !result.isEmpty()) {
+      final String currentUser = filter.getCurrentUser();
+
+      if (StringUtils.isNotBlank(currentUser)) {
+        result = filterAuthorizedSpaces(result, currentUser, limit);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -285,5 +306,25 @@ public class GamificationService {
 
   public long computeTotalScore(String actorIdentityId) {
     return gamificationHistoryDAO.getTotalScore(actorIdentityId);
+  }
+
+  private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,
+                                                           final String currentUser,
+                                                           int limit) {
+    result = result.stream().filter(spacePoint -> {
+      String spaceIdentityId = spacePoint.getEarnerId();
+      Identity identity = identityManager.getIdentity(spaceIdentityId, false);
+      if (identity == null) {
+        LOG.warn("Space Identity with id {} was not found", spaceIdentityId);
+        return false;
+      }
+      String spacePrettyName = identity.getRemoteId();
+      Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
+      return space != null
+          && (!Space.HIDDEN.equals(space.getVisibility())
+              || spaceService.isSuperManager(currentUser)
+              || spaceService.isMember(space, currentUser));
+    }).limit(limit).collect(Collectors.toList());
+    return result;
   }
 }

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.effective.*;
+import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -36,9 +37,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
   private static final String   YOUR_CURRENT_RANK_MSG = "Your current rank";
 
-  private static final String   DEFAULT_LOAD_CAPACITY = "10";
+  private static final int      DEFAULT_LOAD_CAPACITY = 10;
 
-  private static final String   MAX_LOAD_CAPACITY     = "1000";
+  private static final int      MAX_LOAD_CAPACITY     = 100;
 
   protected IdentityManager     identityManager       = null;
 
@@ -59,16 +60,26 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @Path("rank/all")
   @RolesAllowed("users")
   public Response getAllLeadersByRank(@Context UriInfo uriInfo,
-                                      @ApiParam(value = "Get leaderboard of use or space", required = false) @DefaultValue("user") @QueryParam("identityType") String identityType,
+                                      @ApiParam(value = "Get leaderboard of user or space", required = false) @DefaultValue("user") @QueryParam("identityType") String identityType,
+                                      @ApiParam(value = "Limit of identities to retrieve", required = false) @DefaultValue("10") @QueryParam("limit") int limit,
+                                      @ApiParam(value = "Period name, possible values: WEEK, MONTH or ALL", required = false) @DefaultValue("ALL") @QueryParam("period") String period,
                                       @ApiParam(value = "Get only the top 10 or all", required = false) @DefaultValue("true") @QueryParam("loadCapacity") boolean loadCapacity) {
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     IdentityType earnerType = IdentityType.getType(identityType);
     leaderboardFilter.setIdentityType(earnerType);
-    if (loadCapacity) {
-      leaderboardFilter.setLoadCapacity(DEFAULT_LOAD_CAPACITY);
-    } else {
-      leaderboardFilter.setLoadCapacity(MAX_LOAD_CAPACITY);
+    if (limit <= 0) {
+      if (loadCapacity) {
+        limit = DEFAULT_LOAD_CAPACITY;
+      } else {
+        limit = MAX_LOAD_CAPACITY;
+      }
     }
+    leaderboardFilter.setLoadCapacity(limit);
+    if(StringUtils.isBlank(period)) {
+      period = Period.ALL.name();
+    }
+    leaderboardFilter.setPeriod(period);
+    leaderboardFilter.setCurrentUser(ConversationState.getCurrent().getIdentity().getUserId());
 
     List<LeaderboardInfo> leaderboardList = new ArrayList<>();
 
