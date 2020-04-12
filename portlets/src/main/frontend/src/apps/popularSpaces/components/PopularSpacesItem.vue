@@ -12,6 +12,7 @@
           :width="avatarSize"
           :max-height="avatarSize"
           :max-width="avatarSize"
+          :class="skeleton && 'skeleton-background'"
           class="mx-auto spaceAvatar">
         </v-img>
       </v-avatar>
@@ -21,21 +22,27 @@
       :href="url"
       class="pa-0">
       <v-list-item-title>
-        <a :href="url" class="text-color text-truncate">
+        <v-skeleton-loader v-if="skeleton" type="text" boilerplate class="mt-3 mr-3 skeleton-background" height="11px" />
+        <a v-else :href="url" class="text-color text-truncate">
           {{ space.displayName }}
         </a>
       </v-list-item-title>
       <v-list-item-subtitle>
-        {{ $t('popularSpaces.label.points', {0: space.score}) }}
+        <v-skeleton-loader v-if="skeleton" type="text" boilerplate class="mb-2 mt-1 skeleton-background" height="8px" width="70px" />
+        <template v-else>
+          {{ $t('popularSpaces.label.points', {0: space.score}) }}
+        </template>
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action class="ma-0 flex-row align-self-center">
-      <template v-if="space.isInvited" class="invitationButtons">
+      <template v-if="space.isInvited || skeleton" class="invitationButtons">
         <v-btn
           :title="$t('popularSpaces.button.acceptToJoin')"
           :width="actionIconSize"
           :height="actionIconSize"
           :loading="sendingAction"
+          :disabled="skeleton"
+          :class="skeleton && 'skeleton-background skeleton-text'"
           class="mr-1 popularSpacesAction popularSpacesCheck"
           fab
           dark
@@ -49,6 +56,8 @@
           :width="actionIconSize"
           :height="actionIconSize"
           :loading="sendingAction"
+          :disabled="skeleton"
+          :class="skeleton && 'skeleton-background skeleton-text'"
           class="mr-1 popularSpacesAction popularSpacesClose"
           fab
           dark
@@ -72,9 +81,10 @@
         @click="cancelRequest">
         <v-icon small  size="18">mdi-close</v-icon>
       </v-btn>
-      <template v-else-if="!space.isMember">
+      <template v-else-if="!space.isMember || skeleton">
         <v-btn
           v-if="space.subscription === 'open'"
+          :disabled="skeleton"
           :title="$t('popularSpaces.button.join')"
           :width="actionIconSize"
           :height="actionIconSize"
@@ -89,6 +99,7 @@
         </v-btn>
         <v-btn
           v-else-if="space.subscription === 'validation'"
+          :disabled="skeleton"
           :title="$t('popularSpaces.button.requestJoin')"
           :width="actionIconSize"
           :height="actionIconSize"
@@ -119,6 +130,10 @@ export default {
       type: Number,
       default: () => 37,
     },
+    skeleton: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -131,10 +146,12 @@ export default {
   },
   computed: {
     avatarUrl() {
-      return this.space && this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.prettyName}/avatar`;
+      return this.skeleton ?
+          '':
+          this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.prettyName}/avatar`;
     },
     url() {
-      if (!this.space || !this.space.groupId) {
+      if (this.skeleton || !this.space || !this.space.groupId) {
         return '#';
       }
       const uri = this.space.groupId.replace(/\//g, ':');
@@ -155,7 +172,7 @@ export default {
     },
   },
   mounted() {
-    if (this.space && this.space.groupId) {
+    if (!this.skeleton && this.space && this.space.groupId) {
       // TODO disable tiptip because of high CPU usage using its code
       this.initTiptip();
     }
