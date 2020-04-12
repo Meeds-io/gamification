@@ -1,6 +1,7 @@
 export function getUsersByGamificationRank() {
   return fetch( `/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -14,6 +15,7 @@ export function getReputationStatus() {
   const url = window.location.pathname
   return fetch( `/rest/gamification/reputation/status?url=${url}`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -27,6 +29,7 @@ export function getReputationStatus() {
 export function getUserInformations() {
   return fetch(`/portal/rest/v1/social/users/${eXo.env.portal.userName}`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -40,6 +43,7 @@ export function getUserInformations() {
 export function getSpaces() {
   return fetch( '/portal/rest/v1/social/spaces?returnSize=true', {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -53,6 +57,7 @@ export function getSpaces() {
 export function getSpacesRequests() {
   return fetch( '/portal/rest/v1/social/spacesMemberships?status=invited&returnSize=true&limit=3', {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -67,6 +72,7 @@ export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
   const data = {status: `${reply}`}; 
   return fetch(`/portal/rest/v1/social/spacesMemberships/${spaceMembershipId}`, {
     method: 'PUT',
+    credentials: 'include',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json'
@@ -84,6 +90,7 @@ export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
 export function getConnections() {
   return fetch('/portal/rest/v1/social/relationships?status=confirmed&returnSize=true', {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -97,6 +104,7 @@ export function getConnections() {
 export function getConnectionsRequests() {
   return fetch('/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=3', {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -110,6 +118,7 @@ export function getConnectionsRequests() {
 export function getConnectionRequestSender(senderUrl) {
   return fetch(`${senderUrl}`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -124,10 +133,11 @@ export function replyInvitationToConnect(relationId, reply) {
   const data = {status: `${reply}`}; 
   return fetch(`/portal/rest/v1/social/relationships/${relationId}`, {
     method: 'PUT',
-	body: JSON.stringify(data),
-	headers: {
-      'Content-Type': 'application/json'
-	}
+    credentials: 'include',
+  	body: JSON.stringify(data),
+  	headers: {
+        'Content-Type': 'application/json'
+  	}
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -141,6 +151,7 @@ export function replyInvitationToConnect(relationId, reply) {
 export function getGamificationPoints() {
   return fetch(`/portal/rest/gamification/api/v1/points?userId=${eXo.env.portal.userName}`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -154,6 +165,7 @@ export function getGamificationPoints() {
 export function getGamificationPointsStats() {
   return fetch(`/portal/rest/gamification/leaderboard/stats?username=${eXo.env.portal.userName}`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
@@ -167,6 +179,7 @@ export function getGamificationPointsStats() {
 export function getCommonConnections(relationId) {
   return fetch(`/portal/rest/v1/social/identities/${relationId}/commonConnections?returnSize=true`, {
     method: 'GET',
+    credentials: 'include',
   }).then((resp) => {
     if(resp && resp.ok) {
       return resp.json();
