@@ -129,6 +129,7 @@
                 spaceRequest.id = data.spacesMemberships[i].id;
                 fetch(`${data.spacesMemberships[i].space}`, {
                   method: 'GET',
+                  credentials: 'include',
                 }).then((resp) => {
                   if(resp && resp.ok) {
                     return resp.json();

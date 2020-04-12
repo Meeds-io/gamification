@@ -129,6 +129,7 @@
                 connection.id = data.relationships[i].id;
                 fetch(`${data.relationships[i].sender}`, {
                   method: 'GET',
+                  credentials: 'include',
                 }).then((resp) => {
                   if(resp && resp.ok) {
                     return resp.json();
