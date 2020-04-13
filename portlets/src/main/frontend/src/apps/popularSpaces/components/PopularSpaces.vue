@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-if="spaces && spaces.length || firstLoading">
     <v-card flat>
       <v-card-title class="text-sub-title subtitle-1 text-uppercase pb-2">
         {{ $t('popularSpaces.title') }}
