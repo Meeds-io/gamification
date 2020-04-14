@@ -18,11 +18,14 @@
             <a :href="profileUrl">
               <v-list-item-avatar>
                 <v-img
-                  :src="avatar" />
+                  :src="!firstLoadingName && avatar || ''"
+                  :class="firstLoadingName && 'skeleton-background'"/>
               </v-list-item-avatar>
             </a>
             <v-list-item-content>
-              <v-list-item-title class="text-uppercase subtitle-1 profile-card-header">{{ this.$t('homepage.profileStatus.header') }} {{ firstName }}</v-list-item-title>
+              <v-list-item-title class="text-uppercase subtitle-1 profile-card-header">
+                <span :class="firstLoadingName && 'skeleton-background skeleton-text skeleton-header skeleton-border-radius'">{{ $t('homepage.profileStatus.header') }} {{ firstName }}</span>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-card>
@@ -37,7 +40,8 @@
             justify-center
             align-center>
             <v-card
-              flat>
+              flat
+              :class="firstLoadingSpaces && 'skeleton-background skeleton-border-radius'">
               <a class="white--text">
                 <v-badge :value="spacesRequestsSize > 0" class="badge-color">
                   <v-btn
@@ -46,11 +50,17 @@
                     dark
                     height="22"
                     width="22"
-                    @click="getSpecificCard('spaces-requests')">{{ spacesRequestsSize }}</v-btn>
-                  <a class="headline blue-grey--text font-weight-bold pa-1" :href="spacesUrl">{{ spacesSize }}</a>
+                    @click="getSpecificCard('spaces-requests')">{{ spacesRequestsSize }}
+                  </v-btn>
+                  <a class="headline text-color font-weight-bold pa-1"
+                     :href="spacesUrl">
+                    <span :class="firstLoadingSpaces && 'skeleton-text'">{{ spacesSize }}</span>
+                  </a>
                 </v-badge>
               </a>
-              <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.spaces') }}</v-card-text>
+              <v-card-text class="pa-1 subtitle-1 text-color">
+                <span :class="firstLoadingSpaces && 'skeleton-text'">{{ $t('homepage.profileStatus.spaces') }}</span>
+              </v-card-text>
             </v-card>
           </v-flex>
           <v-flex
@@ -60,7 +70,8 @@
             align-center>
             <v-card
               tile
-              flat>
+              flat
+              :class="firstLoadingConnexion && 'skeleton-background skeleton-border-radius'">
               <a class="white--text">
                 <v-badge
                   :value="connectionsRequestsSize > 0"
@@ -73,10 +84,14 @@
                     height="20"
                     width="20"
                     @click="getSpecificCard('connections-requests')">{{ connectionsRequestsSize }}</v-btn>
-                  <a class="headline blue-grey--text font-weight-bold pa-1" :href="connexionsUrl">{{ connectionsSize }}</a>
+                  <a class="headline text-color font-weight-bold pa-1" :href="connexionsUrl">
+                    <span :class="firstLoadingConnexion && 'skeleton-text'">{{ connectionsSize }}</span>
+                  </a>
                 </v-badge>
               </a>
-              <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.connections') }}</v-card-text>
+              <v-card-text class="pa-1 subtitle-1 text-color">
+                <span :class="firstLoadingConnexion && 'skeleton-text'">{{ $t('homepage.profileStatus.connections') }}</span>
+              </v-card-text>
             </v-card>
           </v-flex>
         </v-layout>
@@ -92,10 +107,15 @@
             justify-center
             align-center>
             <v-card
-              flat>
+              flat
+              :class="firstLoadingTotalPoints && 'skeleton-background skeleton-border-radius'">
               <a @click="getSpecificCard('total-points')">
-                <v-card-text class="headline blue-grey--text font-weight-bold pa-1">{{ totalPoints }}</v-card-text>
-                <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.totalPoints') }}</v-card-text>
+                <v-card-text class="headline text-color font-weight-bold pa-1">
+                  <span :class="firstLoadingTotalPoints && 'skeleton-text'">{{ totalPoints }}</span>
+                </v-card-text>
+                <v-card-text class="pa-1 subtitle-1 text-color">
+                  <span :class="firstLoadingTotalPoints && 'skeleton-text'">{{ $t('homepage.profileStatus.totalPoints') }}</span>
+                </v-card-text>
               </a>
             </v-card>
           </v-flex>
@@ -106,11 +126,15 @@
             align-center>
             <v-card
               flat
-              color="transparent"
+              :class="firstLoadingRank && 'skeleton-background skeleton-border-radius'"
               align-center>
               <a @click="getSpecificCard('gamification-rank')">
-                <v-card-text class="headline blue-grey--text font-weight-bold pa-1">{{ gamificationRank }}</v-card-text>
-                <v-card-text class="pa-1 subtitle-1 blue-grey--text">{{ this.$t('homepage.profileStatus.totalRank') }}</v-card-text>
+                <v-card-text class="headline text-color font-weight-bold pa-1">
+                  <span :class="firstLoadingRank && 'skeleton-text'">{{ gamificationRank }}</span>
+                </v-card-text>
+                <v-card-text class="pa-1 subtitle-1 text-color">
+                  <span :class="firstLoadingRank && 'skeleton-text'">{{ $t('homepage.profileStatus.totalRank') }}</span>
+                </v-card-text>
               </a>
             </v-card>
           </v-flex>
@@ -134,7 +158,12 @@
         totalPoints: '',
         profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
         spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
-        connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network')`
+        connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network')`,
+        firstLoadingName: true,
+        firstLoadingSpaces: true,
+        firstLoadingConnexion: true,
+        firstLoadingTotalPoints: true,
+        firstLoadingRank: true
       }
     },
     
@@ -147,6 +176,7 @@
       this.getConnectionsRequestsSize();
       this.getGamificationRank();
       this.getGamificationPoints();
+
     },
     
     methods: {
@@ -154,6 +184,9 @@
         getUserInformations().then(
           (data) => {
             this.firstName = data.firstname;
+            if(this.firstLoadingName) {
+              this.firstLoadingName = false;
+            }
           }
         )
       },
@@ -161,6 +194,9 @@
         getSpaces().then(
           (data) => {
             this.spacesSize = data.size;
+             if(this.firstLoadingSpaces) {
+              this.firstLoadingSpaces = false;
+            }
           }
         )
       },
@@ -175,6 +211,9 @@
         getConnections().then(
           (data) => {
             this.connectionsSize = data.size;
+             if(this.firstLoadingConnexion) {
+              this.firstLoadingConnexion = false;
+            }
           }
         )
       },
@@ -189,6 +228,9 @@
           getReputationStatus().then(
               (data) => {
                   this.gamificationRank = data.rank;
+                  if(this.firstLoadingRank) {
+                    this.firstLoadingRank = false;
+                  }
               }
           )
       },
@@ -196,6 +238,9 @@
         getGamificationPoints().then(
           (data) => {
             this.totalPoints = data.points;
+             if(this.firstLoadingTotalPoints) {
+               this.firstLoadingTotalPoints = false;
+             }
           }
         )
       },
