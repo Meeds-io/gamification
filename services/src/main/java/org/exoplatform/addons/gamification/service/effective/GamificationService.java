@@ -315,7 +315,7 @@ public class GamificationService {
       String spaceIdentityId = spacePoint.getEarnerId();
       Identity identity = identityManager.getIdentity(spaceIdentityId, false);
       if (identity == null) {
-        LOG.warn("Space Identity with id {} was not found", spaceIdentityId);
+        LOG.debug("Space Identity with id {} was deleted, ignore it", spaceIdentityId);
         return false;
       }
       String spacePrettyName = identity.getRemoteId();
