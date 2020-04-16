@@ -38,7 +38,9 @@
           <v-icon
             color="grey darken-2"
             size="20"
-            @click="toProfileStats()">mdi-arrow-left</v-icon>
+            @click="toProfileStats()">
+            mdi-arrow-left
+          </v-icon>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -51,12 +53,12 @@
             :key="item.id"
             class="py-0 px-2">
             <v-list-item-avatar class="my-1 mr-2" size="30">
-              <v-img :src="item.avatar"/>
+              <v-img :src="item.avatar" />
             </v-list-item-avatar>
 
             <v-list-item-content class="py-0">
-              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-text="item.displayName"/>
-              <v-list-item-subtitle class="caption grey-color" v-text="item.description"/>
+              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-text="item.displayName" />
+              <v-list-item-subtitle class="caption grey-color" v-text="item.description" />
             </v-list-item-content>
             <v-list-item-action>
               <v-btn-toggle
@@ -96,7 +98,9 @@
         depressed
         small
         class="caption text-uppercase grey--text"
-        :href="invitationSpaceUrl">{{ this.$t('homepage.seeAll') }}</v-btn>
+        :href="invitationSpaceUrl">
+        {{ this.$t('homepage.seeAll') }}
+      </v-btn>
     </v-flex>
   </v-layout>
 </template>

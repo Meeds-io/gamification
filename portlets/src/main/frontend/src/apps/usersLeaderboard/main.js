@@ -1,17 +1,5 @@
 import './initComponents.js';
 
-//get overrided components if exists
-if (extensionRegistry) {
-const components = extensionRegistry.loadComponents('SpacesList');
-if (components && components.length > 0) {
- components.forEach(cmp => {
-   Vue.component(cmp.componentName, cmp.componentOptions);
- });
-}
-}
-
-document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-
 Vue.use(Vuetify);
 
 const vuetify = new Vuetify({
@@ -24,17 +12,17 @@ const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en'
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
-const appId = 'popularSpacesApplication';
+const appId = 'usersLeaderboard';
 
-export function init(period, limit) {
+export function init() {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
         // init Vue app when locale ressources are ready
         new Vue({
-          template: `<popular-spaces id="${appId}" period="${period}" limit="${limit}" />`,
-          i18n,
-          vuetify,
+            template: `<users-leaderboard id='${appId}'></users-leaderboard>`,
+            i18n,
+            vuetify,
         }).$mount(`#${appId}`);
     });
 }

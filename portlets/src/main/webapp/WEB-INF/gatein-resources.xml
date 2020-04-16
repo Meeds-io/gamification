@@ -39,6 +39,14 @@
     <css-priority>1</css-priority>
   </portlet-skin>
 
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>UsersLeaderboard</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/usersLeaderboard.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+
   <portlet>
     <name>GamificationInformationsboard</name>
     <module>
@@ -169,6 +177,32 @@
       <script>
         <minify>false</minify>
         <path>/javascript/popularSpaces/popularSpaces.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>UsersLeaderboard</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/javascript/usersLeaderboard/usersLeaderboard.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>

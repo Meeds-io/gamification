@@ -16,7 +16,8 @@ module.exports = {
         earnpoints: "./earnpoints.js",
         spaceleaderboard: "./spaceleaderboard.js",
         profileStats: "./profileStats/main.js",
-        popularSpaces: "./popularSpaces/main.js"
+        popularSpaces: "./popularSpaces/main.js",
+        usersLeaderboard: "./usersLeaderboard/main.js"
     },
     output: {
         filename: '[name]/[name].bundle.js',
@@ -48,16 +49,10 @@ module.exports = {
             }
         ]
     },
-/**
-     plugins: [
-            new DashboardPlugin()
-        ],
-
-*/
     resolve: {
-            alias: {
-                'vue$': 'vue/dist/vue.esm.js'
-            },
-            extensions: ['*', '.js', '.vue', '.json']
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js'
         },
+        extensions: ['*', '.js', '.vue', '.json']
+    },
 };

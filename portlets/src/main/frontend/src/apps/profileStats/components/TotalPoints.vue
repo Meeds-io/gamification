@@ -19,7 +19,9 @@
           <v-icon
             color="grey darken-2"
             size="20"
-            @click="toProfileStats()">mdi-arrow-left</v-icon>
+            @click="toProfileStats()">
+            mdi-arrow-left
+          </v-icon>
         </v-flex>
         <v-flex
           d-flex
@@ -111,7 +113,7 @@
       },
       initChart(option) {
         $(document).ready(function(){
-          var chartContainerId = document.getElementById('echartTotalPoint');
+          const chartContainerId = document.getElementById('echartTotalPoint');
           const chart = echarts.init(chartContainerId);
           chart.setOption(option, true);
          });
