@@ -23,7 +23,8 @@
     "jQuery": true,
     "global": true,
     "exoi18n": true,
-    "echarts": true
+    "echarts": true,
+    "extensionRegistry": true
   },
   "parserOptions": {
     "sourceType": "module",

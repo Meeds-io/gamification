@@ -21,6 +21,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
         +
         " FROM GamificationActionsHistory g" +
+        "     WHERE g.earnerType = :earnerType" +
         "     GROUP BY  g.earnerId" +
         "     ORDER BY total DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByEarnerIdSortedByDate", query = "SELECT g " +

@@ -13,8 +13,7 @@
           :max-height="avatarSize"
           :max-width="avatarSize"
           :class="skeleton && 'skeleton-background'"
-          class="mx-auto spaceAvatar">
-        </v-img>
+          class="mx-auto spaceAvatar" />
       </v-avatar>
     </v-list-item-avatar>
     <v-list-item-content
@@ -22,13 +21,27 @@
       :href="url"
       class="pa-0">
       <v-list-item-title>
-        <v-skeleton-loader v-if="skeleton" type="text" boilerplate class="mt-3 mr-3 skeleton-background" height="11px" />
-        <a v-else :href="url" class="text-color text-truncate">
+        <v-skeleton-loader
+          v-if="skeleton"
+          type="text"
+          boilerplate
+          class="mt-3 mr-3 skeleton-background"
+          height="11px" />
+        <a
+          v-else
+          :href="url"
+          class="text-color text-truncate">
           {{ space.displayName }}
         </a>
       </v-list-item-title>
       <v-list-item-subtitle>
-        <v-skeleton-loader v-if="skeleton" type="text" boilerplate class="mb-2 mt-1 skeleton-background" height="8px" width="70px" />
+        <v-skeleton-loader
+          v-if="skeleton"
+          type="text"
+          boilerplate
+          class="mb-2 mt-1 skeleton-background"
+          height="8px"
+          width="70px" />
         <template v-else>
           {{ $t('popularSpaces.label.points', {0: space.score}) }}
         </template>
@@ -49,7 +62,7 @@
           icon
           depressed
           @click="acceptToJoin">
-          <v-icon small  size="18">mdi-check</v-icon>
+          <v-icon small size="18">mdi-check</v-icon>
         </v-btn>
         <v-btn
           :title="$t('popularSpaces.button.refuseToJoin')"
@@ -64,7 +77,7 @@
           icon
           depressed
           @click="refuseToJoin">
-          <v-icon small  size="18">mdi-close</v-icon>
+          <v-icon small size="18">mdi-close</v-icon>
         </v-btn>
       </template>
       <v-btn
@@ -79,7 +92,7 @@
         icon
         depressed
         @click="cancelRequest">
-        <v-icon small  size="18">mdi-close</v-icon>
+        <v-icon small size="18">mdi-close</v-icon>
       </v-btn>
       <template v-else-if="!space.isMember || skeleton">
         <v-btn
@@ -95,7 +108,7 @@
           icon
           depressed
           @click="join">
-          <v-icon small  size="18">mdi-plus</v-icon>
+          <v-icon small size="18">mdi-plus</v-icon>
         </v-btn>
         <v-btn
           v-else-if="space.subscription === 'validation'"
@@ -110,7 +123,7 @@
           icon
           depressed
           @click="requestJoin">
-          <v-icon small  size="18">mdi-plus</v-icon>
+          <v-icon small size="18">mdi-plus</v-icon>
         </v-btn>
       </template>
     </v-list-item-action>

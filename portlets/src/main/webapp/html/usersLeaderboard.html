@@ -1,0 +1,433 @@
+<div class="VuetifyApp">
+  <div data-app="true"
+    class="v-application v-application--is-ltr theme--light"
+    id="usersLeaderboard">
+    <script>
+      require([ 'PORTLET/gamification-portlets/UsersLeaderboard' ],
+          function(app) {
+            app.init();
+          });
+    </script>
+    <div class="v-application--wrap">
+      <div class="pa-3 v-card v-card--flat v-sheet theme--light">
+        <div
+          class="UserGamificationHeader text-color text-uppercase d-flex">
+          <div class="align-start d-flex">
+            <div
+              class="d-inline-block skeleton-background skeleton-text skeleton-border-radius skeleton-text-width skeleton-text-height">
+              &nbsp;&nbsp;&nbsp;</div>
+            <a href="/portal/meeds/gamification-earn-points"
+              title="Comment puis-je gagner des points?"
+              class="d-inline-block mx-3 skeleton-background skeleton-text"><i
+              class="uiIconInformation uiIconLightBlue"></i></a>
+          </div>
+          <div class="flex-grow-1"></div>
+          <div class="align-end selectDomainFilterParent">
+            <select
+              class="selectDomainFilter ignore-vuetify-classes mb-0 skeleton-background skeleton-text skeleton-text-width"><option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="All">&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="Social">&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="Attendance">&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="reward">&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="Feedback">&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="Teamwork">&nbsp;&nbsp;&nbsp;&nbsp;</option>
+              <option
+                class="skeleton-background skeleton-text skeleton-text-width"
+                value="Knowledge">&nbsp;&nbsp;&nbsp;&nbsp;</option></select>
+          </div>
+        </div>
+        <div class="v-tabs v-tabs--grow theme--light">
+          <div role="tablist"
+            class="v-item-group theme--light v-slide-group v-tabs-bar primary--text"
+            data-booted="true">
+            <div
+              class="v-slide-group__prev v-slide-group__prev--disabled">
+              <!---->
+            </div>
+            <div class="v-slide-group__wrapper">
+              <div class="v-slide-group__content v-tabs-bar__content">
+                <div class="v-tabs-slider-wrapper"
+                  style="height: 2px; left: 8px; width: 284px;">
+                  <div class="v-tabs-slider skeleton-text"></div>
+                </div>
+                <a tabindex="0" href="#WEEK" aria-selected="true"
+                  role="tab"
+                  class="v-tab v-tab--active skeleton-background skeleton-text skeleton-border-radius skeleton-text-height mx-2">
+                  &nbsp; </a><a tabindex="0" href="#MONTH"
+                  aria-selected="false" role="tab"
+                  class="v-tab skeleton-background skeleton-text skeleton-border-radius skeleton-text-height mx-2">
+                  &nbsp; </a><a tabindex="0" href="#ALL"
+                  aria-selected="false" role="tab"
+                  class="v-tab skeleton-background skeleton-text skeleton-border-radius skeleton-text-height mx-2">
+                  &nbsp; </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="v-window v-item-group theme--light v-tabs-items">
+          <div class="v-window__container">
+            <div class="v-window-item v-window-item--active" id="WEEK">
+              <div role="list"
+                class="v-list v-sheet v-sheet--tile theme--light">
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <div class="v-menu">
+                  <!---->
+                </div>
+                <div tabindex="0" id="users-leaderboarditem-undefined"
+                  role="menuitem"
+                  class="v-list-item v-list-item--link theme--light">
+                  <div class="mr-3">
+                    <div class="v-avatar"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      <span
+                        class="skeleton-background skeleton-border-radius">
+                        &nbsp;&nbsp;&nbsp; </span>
+                    </div>
+                  </div>
+                  <div
+                    class="v-avatar v-list-item__avatar mr-4 skeleton-background"
+                    style="height: 40px; min-width: 40px; width: 40px;">
+                    <div class="v-responsive v-image">
+                      <div class="v-responsive__content"></div>
+                    </div>
+                  </div>
+                  <div class="v-list-item__content">
+                    <div class="v-list-item__title">
+                      <a
+                        class="text-color skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                        &nbsp; </a>
+                    </div>
+                  </div>
+                  <div
+                    class="v-list-item__action mr-4 skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block">
+                    &nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+                <hr role="separator" aria-orientation="horizontal"
+                  class="ma-0 v-divider theme--light">
+                <div tabindex="-1" role="listitem"
+                  class="disabled-background v-list-item theme--light">
+                  <div
+                    class="mr-4 skeleton-background skeleton-text skeleton-text-width skeleton-text-height">
+                    Votre rang actuel</div>
+                  <div>
+                    <div class="v-avatar skeleton-background"
+                      style="height: 32px; min-width: 32px; width: 32px;">
+                      &nbsp;&nbsp;</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!---->
+            <!---->
+          </div>
+        </div>
+        <div class="v-card__actions">
+          <div class="spacer"></div>
+          <button type="button" disabled="disabled"
+            class="v-btn v-btn--depressed v-btn--disabled v-btn--flat v-btn--outlined theme--light v-size--default skeleton-background skeleton-text skeleton-text-width skeleton-text-height">
+            <span class="v-btn__content"> Afficher Plus </span>
+          </button>
+          <div class="spacer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -14,15 +14,15 @@
           <user-dashbord
             v-if="!isFlipped"
             class="profileFlippedCard profileStats"
-            @specific-card="setFlippedCard"/>
+            @specific-card="setFlippedCard" />
           <v-flex
-            v-if="isFlipped"
             :is="currentComponent"
+            v-if="isFlipped"
             d-flex
             xs12
             sm12
             class="profileFlippedCard ConnexionsRequests"
-            @isProfileStats="setFlippedCard"/>
+            @isProfileStats="setFlippedCard" />
         </v-layout>
       </v-container>
     </main>

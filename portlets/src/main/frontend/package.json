@@ -8,7 +8,7 @@
     "dev": "webpack --mode development --config webpack.dev.js",
     "watch": "webpack --config webpack.dev.js --progress --colors --watch -d",
     "build": "webpack --config webpack.prod.js --mode production",
-    "lint": "eslint --fix ./src/apps/*.js  ./src/apps/**/*.js ./src/apps/components/**/*.vue ./src/apps/components/**/**/*.vue",
+    "lint": "eslint --fix ./src/apps/*.js ./src/apps/**/*.js ./src/apps/**/**/*.js ./src/apps/**/**/*.vue ./src/apps/**/**/**/*.vue",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check"
   },
   "author": "eXo",
