@@ -37,7 +37,9 @@
           <v-icon
             color="grey darken-2"
             size="20"
-            @click="toProfileStats()">mdi-arrow-left</v-icon>
+            @click="toProfileStats()">
+            mdi-arrow-left
+          </v-icon>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -49,12 +51,12 @@
             :key="item.id"
             class="py-0 px-2">
             <v-list-item-avatar class="my-1 mr-2" size="30">
-              <v-img :src="item.senderAvatar"/>
+              <v-img :src="item.senderAvatar" />
             </v-list-item-avatar>
 
             <v-list-item-content class="py-0">
-              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.senderFullName"/>
-              <v-list-item-subtitle class="caption grey-color" v-text="item.commonConnections+ ' ' + $t('homepage.profileStatus.commonConnections')"/>
+              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.senderFullName" />
+              <v-list-item-subtitle class="caption grey-color" v-text="item.commonConnections+ ' ' + $t('homepage.profileStatus.commonConnections')" />
             </v-list-item-content>
             <v-list-item-action>
               <v-btn-toggle
@@ -94,10 +96,11 @@
         depressed
         small
         class="caption text-uppercase grey--text"
-        :href="receivedInvitationsUrl">{{ this.$t('homepage.seeAll') }}</v-btn>
+        :href="receivedInvitationsUrl">
+        {{ this.$t('homepage.seeAll') }}
+      </v-btn>
     </v-flex>
   </v-layout>
-
 </template>
 <script>
   import {getConnectionsRequests, getCommonConnections, replyInvitationToConnect} from '../profilStatsAPI'

@@ -29,9 +29,10 @@
           <v-icon
             color="grey darken-2"
             size="20"
-            @click="toProfileStats()">mdi-arrow-left</v-icon>
+            @click="toProfileStats()">
+            mdi-arrow-left
+          </v-icon>
         </v-flex>
-
       </v-layout>
     </v-flex>
     <v-flex
@@ -46,7 +47,6 @@
           d-flex
           justify-center
           align-end>
-
           <div v-if="(typeof leaderBoardArray[1] != 'undefined')" class="transparent mx-1 align-center">
             <a ref="tooltip" :title="leaderBoardArray[1].fullname">
               <v-avatar 
@@ -64,7 +64,7 @@
             </v-card-text>
           </div>
 
-          <div v-if="(typeof leaderBoardArray[0] != 'undefined')" class="transparent mx-1 align-center" >
+          <div v-if="(typeof leaderBoardArray[0] != 'undefined')" class="transparent mx-1 align-center">
             <a ref="tooltip" :title="leaderBoardArray[0].fullname">
               <v-avatar 
                 size="35" 
@@ -109,11 +109,11 @@
             class="py-0 px-4 mt-n3">
             <span v-if="(typeof item != 'undefined')" class="mr-2">{{ item.rank }}</span>
             <v-list-item-avatar size="25" class="my-0 mr-2">
-              <v-img :src="getUserAvatar(item.remoteId)"/>
+              <v-img :src="getUserAvatar(item.remoteId)" />
             </v-list-item-avatar>
 
             <v-list-item-content v-if="(typeof item != 'undefined')" class="py-0">
-              <v-list-item-title class="body-2 " v-html="item.fullname"/>
+              <v-list-item-title class="body-2 " v-html="item.fullname" />
             </v-list-item-content>
             <v-list-item-action v-if="(typeof item != 'undefined')" class="my-0">
               <span>{{ item.score }}</span>
