@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-card flat class="pa-3">
-      <div class="UserGamificationHeader text-color text-uppercase d-flex">
+      <div class="UserGamificationHeader text-color d-flex">
         <div class="align-start d-flex">
           <div
             :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius skeleton-text-width skeleton-text-height'"
@@ -31,7 +31,7 @@
         </div>
       </div>
       <v-tabs v-model="selectedPeriod" grow>
-        <v-tabs-slider :color="skeleton && 'skeleton-text' || 'primary'" />
+        <v-tabs-slider :color="skeleton && 'skeleton-text' || 'tertiary'" />
         <v-tab
           v-for="period in periods"
           :key="period.value"
