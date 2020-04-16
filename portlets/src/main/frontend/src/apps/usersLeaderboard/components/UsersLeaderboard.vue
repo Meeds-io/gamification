@@ -87,6 +87,7 @@
         <v-btn
           :disabled="skeleton"
           :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width skeleton-text-height'"
+          class="primary--text"
           outlined
           link
           @click="loadNextPage">
