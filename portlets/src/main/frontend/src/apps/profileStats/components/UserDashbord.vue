@@ -168,7 +168,7 @@
     },
     
     created(){
-      this.avatar=`/portal/rest/v1/social/users/${eXo.env.portal.userName}/avatar`;
+      this.avatar=`/portal/rest/v1/social/users/${eXo.env.portal.profileOwner}/avatar`;
       this.getFirstName();
       this.getSpacesSize();
       this.getSpacesRequestsSize();
