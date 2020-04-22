@@ -142,7 +142,7 @@
       getUsersByGamificationRank() {
         getUsersByGamificationRank().then(
           (data) => {
-            const currentUser = eXo.env.portal.userName;
+            const currentUser = eXo.env.portal.profileOwner;
             const index = data.findIndex(function (item, i) {
               return item.remoteId === currentUser
             }) + 1;
