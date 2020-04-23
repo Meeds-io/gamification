@@ -10,7 +10,8 @@
     <template v-slot:activator="{ on }">
       <v-list-item
         :id="id"
-        v-on="on">
+        v-on="on"
+        @hover="$refs.chart.init()">
         <div class="mr-3">
           <v-avatar
             :color="!skeleton && currentUser && 'tertiary' || ''" size="32">
@@ -42,7 +43,10 @@
       </v-list-item>
     </template>
 
-    <users-leaderboard-chart :username="username" :domains="domains" />
+    <users-leaderboard-chart
+      ref="chart"
+      :username="username"
+      :domains="domains" />
   </v-menu>
 </template>
 <script>

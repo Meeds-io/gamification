@@ -270,7 +270,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         int rank = gamificationService.getLeaderboardRank(earnerIdentity, date, domain);
         if (rank > 0) {
           leaderboardInfo = new LeaderboardInfo();
-          leaderboardInfo.setScore(rank);
+          leaderboardInfo.setRank(rank);
           leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);
           leaderboardInfo.setFullname(YOUR_CURRENT_RANK_MSG);
           leaderboardInfo.setAvatarUrl(YOUR_CURRENT_RANK_MSG);
