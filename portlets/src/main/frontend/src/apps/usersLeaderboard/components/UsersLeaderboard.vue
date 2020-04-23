@@ -74,7 +74,7 @@
                   <v-avatar
                     :color="skeleton && 'skeleton-background' || 'tertiary'"
                     size="32">
-                    {{ skeleton && '&nbsp;&nbsp;' || currentRank.rank }}
+                    {{ skeleton && '&nbsp;&nbsp;' || currentRank }}
                   </v-avatar>
                 </div>
               </v-list-item>
@@ -166,10 +166,11 @@ export default {
           credentials: 'include',
         }).then(resp => resp && resp.ok && resp.json())
           .then(data => {
-            this.currentRank = data && data.find(user => !user.socialId);
-            if (this.currentRank) {
-              this.currentRank.rank = this.currentRank.rank + 1;
+            const currentUser = data && data.find(user => !user.socialId);
+            if (currentUser) {
+              this.currentRank = currentUser.rank;
             }
+
             this.users = data && data.filter(user => user.socialId);
             this.users.sort((a, b) => b.score - a.score);
             this.users.forEach((user, index) => {

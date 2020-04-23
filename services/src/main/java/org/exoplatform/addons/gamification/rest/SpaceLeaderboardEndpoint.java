@@ -268,7 +268,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
 
         // Set score
-        leaderboardInfo.setScore(rank);
+        leaderboardInfo.setRank(rank);
 
         // Set username
         leaderboardInfo.setRemoteId(YOUR_CURRENT_RANK_MSG);

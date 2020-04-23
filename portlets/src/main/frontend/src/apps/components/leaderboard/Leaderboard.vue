@@ -118,7 +118,7 @@
               <div class="desc-user">
                 {{ getRankLabel() }}
               </div>
-              <div class="number-user">{{ user.score }}</div>
+              <div class="number-user">{{ user.rank }}</div>
             </div>
           </div>
           <div v-if="users.length>1" class="load-more">
