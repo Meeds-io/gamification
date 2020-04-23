@@ -3,6 +3,7 @@
     v-model="menu"
     :open-on-content-click="false"
     :disabled="skeleton"
+    content-class="userLeaderboardMenu"
     max-width="250"
     open-on-hover
     offset-x
