@@ -18,7 +18,7 @@
           mt-n2
           justify-center>
           <div>
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.connectionsRequests') }}</span>
+            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
             <v-btn
               fab
               depressed
@@ -97,7 +97,7 @@
         small
         class="caption text-uppercase grey--text"
         :href="receivedInvitationsUrl">
-        {{ this.$t('homepage.seeAll') }}
+        {{ $t('homepage.seeAll') }}
       </v-btn>
     </v-flex>
   </v-layout>
@@ -141,7 +141,7 @@
                     throw new Error ('Error when getting connection request sender');
                   }
                 }).then((data) => {
-                  connection.senderAvatar = data.avatar !== undefined ? data.avatar : `/rest/v1/social/users/${data.username}/avatar`;
+                  connection.senderAvatar = data.avatar || data.avatarUrl || `/rest/v1/social/users/${data.username}/avatar`;
                   connection.senderFullName = data.fullname;
                   getCommonConnections(data.id).then((data) => {
                     connection.commonConnections = data.size;
