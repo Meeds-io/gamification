@@ -68,6 +68,19 @@ export function getSpacesRequests() {
   })
 }
 
+export function getAchievements(providerId, remoteId, limit) {
+  return fetch(`/portal/rest/gamification/gameficationinformationsboard/history/all?capacity=${limit}&providerId=${providerId}&remoteId=${remoteId}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if(resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error ('Error when getting achievements');
+    }
+  })
+}
+
 export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
   const data = {status: `${reply}`}; 
   return fetch(`/portal/rest/v1/social/spacesMemberships/${spaceMembershipId}`, {
