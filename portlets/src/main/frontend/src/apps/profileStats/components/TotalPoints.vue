@@ -25,11 +25,16 @@
         </v-flex>
         <v-flex
           d-flex
-          xs11
+          xs10
           justify-center>
           <div>
             <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.totalPoints') }}</span>
           </div>
+        </v-flex>
+        <v-flex class="text-right" d-flex xs1>
+          <i
+            class="uiIconInformation clickable primary--text my-auto ml-3 pb-2"
+            @click="openHistoryDrawer"></i>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -45,6 +50,7 @@
 
     data() {
       return {
+        totalPoints: 0,
         option : {
            tooltip : {
             trigger: 'item',
@@ -91,7 +97,8 @@
       getGamificationPoints() {
         getGamificationPoints().then(
           (data) => {
-            this.option.graphic.style.text = `Total\n ${data.points}`
+            this.totalPoints = data.points;
+            this.option.graphic.style.text = `Total\n ${data.points}`;
           }      
         )
       },
@@ -117,7 +124,10 @@
           const chart = echarts.init(chartContainerId);
           chart.setOption(option, true);
          });
-      }
+      },
+      openHistoryDrawer() {
+        this.$root.$emit('open-achievement', this.totalPoints);
+      },
     }
   }
 </script>

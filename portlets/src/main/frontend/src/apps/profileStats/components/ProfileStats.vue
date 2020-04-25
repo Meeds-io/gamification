@@ -4,28 +4,27 @@
     class="ml-md-2"
     flat
     dark>
-    <main>
-      <v-container pa-0>
-        <v-layout
-          row
-          wrap
-          mx-0
-          class="white profileCard">
-          <user-dashbord
-            v-if="!isFlipped"
-            class="profileFlippedCard profileStats"
-            @specific-card="setFlippedCard" />
-          <v-flex
-            :is="currentComponent"
-            v-if="isFlipped"
-            d-flex
-            xs12
-            sm12
-            class="profileFlippedCard ConnexionsRequests"
-            @isProfileStats="setFlippedCard" />
-        </v-layout>
-      </v-container>
-    </main>
+    <v-container pa-0>
+      <v-layout
+        row
+        wrap
+        mx-0
+        class="white profileCard">
+        <user-dashbord
+          v-if="!isFlipped"
+          class="profileFlippedCard profileStats"
+          @specific-card="setFlippedCard" />
+        <v-flex
+          :is="currentComponent"
+          v-if="isFlipped"
+          d-flex
+          xs12
+          sm12
+          class="profileFlippedCard ConnexionsRequests"
+          @isProfileStats="setFlippedCard" />
+      </v-layout>
+    </v-container>
+    <achievements-drawer ref="achievementsDrawer" :total-points="totalPoints" />
   </v-app>
 </template>
 <script>
@@ -36,7 +35,6 @@
             isFlipped: false
           };
         },
-
         methods: {
             setFlippedCard(component) {
                 const profileWrapper = document.querySelector('.profileCard');
@@ -44,6 +42,11 @@
                 this.currentComponent = component;
                 this.isFlipped = !this.isFlipped;
             },
+        },
+        created() {
+          this.$root.$on('open-achievement', (totalPoints) => {
+            this.$refs.achievementsDrawer.open(totalPoints);
+          });
         }
     }
 </script>
