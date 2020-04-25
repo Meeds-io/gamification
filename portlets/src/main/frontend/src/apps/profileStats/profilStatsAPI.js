@@ -27,7 +27,7 @@ export function getReputationStatus() {
 }
 
 export function getUserInformations() {
-  return fetch(`/portal/rest/v1/social/users/${eXo.env.portal.profileOwner}`, {
+  return fetch(`/portal/rest/v1/social/users/${eXo.env.portal.profileOwner}?expand=spacesCount,connectionsCount`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

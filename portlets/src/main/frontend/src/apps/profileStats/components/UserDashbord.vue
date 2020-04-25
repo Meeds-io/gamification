@@ -158,7 +158,7 @@
         totalPoints: '',
         profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
         spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
-        connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network')`,
+        connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network`,
         firstLoadingName: true,
         firstLoadingSpaces: true,
         firstLoadingConnexion: true,
@@ -168,52 +168,42 @@
     },
     
     created(){
-      this.avatar=`/portal/rest/v1/social/users/${eXo.env.portal.profileOwner}/avatar`;
-      this.getFirstName();
-      this.getSpacesSize();
+      document.addEventListener('userModified', event => {
+        if (event && event.detail) {
+          this.avatar = event.detail.avatar || event.detail.avatarUrl;
+          this.firstName = event.detail.firstname;
+        }
+      });
+
+      this.retrieveUserData();
       this.getSpacesRequestsSize();
-      this.getConnectionsSize();
       this.getConnectionsRequestsSize();
       this.getGamificationRank();
       this.getGamificationPoints();
-
     },
     
     methods: {
-      getFirstName() {
-        getUserInformations().then(
-          (data) => {
-            this.firstName = data.firstname;
-            if(this.firstLoadingName) {
-              this.firstLoadingName = false;
-            }
+      retrieveUserData() {
+        return getUserInformations().then(data => {
+          this.avatar = data.avatar || data.avatarUrl;
+          this.firstName = data.firstname;
+          if(this.firstLoadingName) {
+            this.firstLoadingName = false;
           }
-        )
-      },
-      getSpacesSize() {
-        getSpaces().then(
-          (data) => {
-            this.spacesSize = data.size;
-             if(this.firstLoadingSpaces) {
-              this.firstLoadingSpaces = false;
-            }
+          this.spacesSize = data.spacesCount;
+          if(this.firstLoadingSpaces) {
+             this.firstLoadingSpaces = false;
           }
-        )
+          this.connectionsSize = data.connectionsCount;
+          if(this.firstLoadingConnexion) {
+            this.firstLoadingConnexion = false;
+          }
+        })
       },
       getSpacesRequestsSize() {
         getSpacesRequests().then(
           (data) => {
             this.spacesRequestsSize = data.size;
-          }
-        )
-      },
-      getConnectionsSize() {
-        getConnections().then(
-          (data) => {
-            this.connectionsSize = data.size;
-             if(this.firstLoadingConnexion) {
-              this.firstLoadingConnexion = false;
-            }
           }
         )
       },

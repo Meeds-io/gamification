@@ -28,7 +28,7 @@
           xs11
           justify-center>
           <div>
-            <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.totalPoints') }}</span>
+            <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.totalPoints') }}</span>
           </div>
         </v-flex>
       </v-layout>
