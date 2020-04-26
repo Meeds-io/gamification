@@ -47,7 +47,8 @@ export default {
           this.badges = data || [];
           this.badges.forEach(badge => {
             badge.avatar = badge.url;
-            badge.domainLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain.', badge.zone);
+            badge.domainLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.zone);
+            badge.badgeLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.title);
           });
         })
         .finally(() => {
