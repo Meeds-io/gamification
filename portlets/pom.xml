@@ -169,6 +169,7 @@
                                 <include>profileStats.less</include>
                                 <include>popularSpaces.less</include>
                                 <include>usersLeaderboard.less</include>
+                                <include>badgesOverview.less</include>
                             </includes>
                         </configuration>
                         <goals>

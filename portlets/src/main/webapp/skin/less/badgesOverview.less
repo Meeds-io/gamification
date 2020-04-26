@@ -1,0 +1,21 @@
+@import "variables.less";
+@import "mixins.less";
+
+#badgesOverview {
+  .BadgeItemAvatar.badgeNotAquired {
+    filter: grayscale(100%);
+    &:before {
+      font-family: "PLF-FONT-ICONS";
+      content: "\e794";
+      position: absolute;
+      font-size: 18px;
+      color: #000;
+      right: 11px;
+      z-index: 10000;
+    }
+  }
+  .BadgeItemPoints {
+    min-width: 85px;
+    padding-left: 10px;
+  }
+}

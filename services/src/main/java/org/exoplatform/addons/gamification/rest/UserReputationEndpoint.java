@@ -126,6 +126,20 @@ public class UserReputationEndpoint implements ResourceContainer {
         }
     }
 
+  @GET
+  @Path("badges/{identityId}")
+  @RolesAllowed("users")
+  public Response getUserBadges(@PathParam("identityId") long identityId) {
+    String earnerId = String.valueOf(identityId);
+    Identity identity = identityManager.getIdentity(earnerId, true);
+    if (identity == null) {
+      return Response.status(400).entity("Identity not found with id " + identityId).build();
+    }
+    List<ProfileReputation> badgesByDomain = gamificationService.buildDomainScoreByIdentityId(earnerId);
+    JSONArray profileBadges = buildProfileBadges(badgesByDomain);
+    return Response.ok().cacheControl(cacheControl).entity(profileBadges.toString()).build();
+  }
+
     @GET
     @Path("badges")
     public Response getUserBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
@@ -370,7 +384,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 reputation.put("zone", badgeDTO.getDomain());
                 reputation.put("level", index);
                 reputation.put("startScore", badgeDTO.getNeededScore());
-
+                reputation.put("score", score);
                 reputation.put("endScore", computeBadgeNextLevel(allBadges, index));
 
                 userBadges.put(reputation);

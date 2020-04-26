@@ -35,6 +35,11 @@
             isFlipped: false
           };
         },
+        created() {
+          this.$root.$on('open-achievement', (totalPoints) => {
+            this.$refs.achievementsDrawer.open(totalPoints);
+          });
+        },
         methods: {
             setFlippedCard(component) {
                 const profileWrapper = document.querySelector('.profileCard');
@@ -42,11 +47,6 @@
                 this.currentComponent = component;
                 this.isFlipped = !this.isFlipped;
             },
-        },
-        created() {
-          this.$root.$on('open-achievement', (totalPoints) => {
-            this.$refs.achievementsDrawer.open(totalPoints);
-          });
         }
     }
 </script>
