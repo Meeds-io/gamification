@@ -15,7 +15,8 @@
         @hover="$refs.chart.init()">
         <div class="mr-3">
           <v-avatar
-            :color="!skeleton && currentUser && 'tertiary' || ''" size="32">
+            :color="!skeleton && currentUser && 'tertiary' || ''"
+            size="32">
             <span :class="skeleton && 'skeleton-background skeleton-border-radius'">
               {{ skeleton && '&nbsp;&nbsp;&nbsp;' || user.rank }}
             </span>

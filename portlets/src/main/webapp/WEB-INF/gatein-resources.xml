@@ -47,6 +47,14 @@
     <css-priority>1</css-priority>
   </portlet-skin>
 
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>BadgesOverview</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/badgesOverview.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+
   <portlet>
     <name>GamificationInformationsboard</name>
     <module>
@@ -185,6 +193,9 @@
         <module>vuetify</module>
       </depends>
       <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
         <module>jquery</module>
         <as>$</as>
       </depends>
@@ -209,6 +220,41 @@
       </depends>
       <depends>
         <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>eCharts</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>BadgesOverview</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/javascript/badgesOverview/badgesOverview.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
       </depends>
       <depends>
         <module>jquery</module>

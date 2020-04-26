@@ -19,7 +19,7 @@
               <v-list-item-avatar>
                 <v-img
                   :src="!firstLoadingName && avatar || ''"
-                  :class="firstLoadingName && 'skeleton-background'"/>
+                  :class="firstLoadingName && 'skeleton-background'" />
               </v-list-item-avatar>
             </a>
             <v-list-item-content>
@@ -52,8 +52,9 @@
                     width="22"
                     @click="getSpecificCard('spaces-requests')">{{ spacesRequestsSize }}
                   </v-btn>
-                  <a class="headline text-color font-weight-bold pa-1"
-                     :href="spacesUrl">
+                  <a
+                    class="headline text-color font-weight-bold pa-1"
+                    :href="spacesUrl">
                     <span :class="firstLoadingSpaces && 'skeleton-text'">{{ spacesSize }}</span>
                   </a>
                 </v-badge>

@@ -17,7 +17,8 @@ module.exports = {
         spaceleaderboard: "./spaceleaderboard.js",
         profileStats: "./profileStats/main.js",
         popularSpaces: "./popularSpaces/main.js",
-        usersLeaderboard: "./usersLeaderboard/main.js"
+        usersLeaderboard: "./usersLeaderboard/main.js",
+        badgesOverview: "./badgesOverview/main.js"
     },
     output: {
         filename: '[name]/[name].bundle.js',

@@ -31,7 +31,10 @@
             <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.totalPoints') }}</span>
           </div>
         </v-flex>
-        <v-flex class="text-right" d-flex xs1>
+        <v-flex
+          class="text-right"
+          d-flex
+          xs1>
           <i
             class="uiIconInformation clickable primary--text my-auto ml-3 pb-2"
             @click="openHistoryDrawer"></i>
