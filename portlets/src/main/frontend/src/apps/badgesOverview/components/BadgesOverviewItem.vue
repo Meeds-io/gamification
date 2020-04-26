@@ -1,6 +1,7 @@
 <template>
   <v-avatar
     class="d-flex flex-column py-5 content-box-sizing clickable"
+    :title="badge.badgeLabel"
     tile
     @click="openDrawer">
     <img :src="badge.avatar">
