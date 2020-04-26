@@ -6,16 +6,27 @@
       color="white"
       flat
       class="border-box-sizing">
-      <div class="text-header-title text-sub-title">
+      <div
+        :class="skeleton && 'skeleton-text skeleton-text-width skeleton-background skeleton-text-height-thick skeleton-border-radius'"
+        class="text-header-title text-sub-title">
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
     </v-toolbar>
     <v-card flat>
-      <v-card-text class="mx-auto d-flex justify-center py-0">
-        <badges-overview-item
-          v-for="badge in badges"
-          :key="badge.id"
-          :badge="badge" />
+      <v-card-text class="mx-auto d-flex flex-wrap justify-center pt-0">
+        <template v-if="skeleton">
+          <badges-overview-item
+            v-for="i in 5"
+            :key="i"
+            :badge="{}"
+            skeleton />
+        </template>
+        <template v-else>
+          <badges-overview-item
+            v-for="badge in badges"
+            :key="badge.id"
+            :badge="badge" />
+        </template>
       </v-card-text>
     </v-card>
     <badges-overview-drawer />
@@ -26,6 +37,7 @@
 export default {
   data: () => ({
     badges: [],
+    skeleton: true,
   }),
   created() {
     this.refresh();
@@ -52,6 +64,7 @@ export default {
           });
         })
         .finally(() => {
+          this.skeleton = false;
           document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         });
     },
