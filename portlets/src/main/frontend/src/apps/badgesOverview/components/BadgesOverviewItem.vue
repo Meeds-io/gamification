@@ -1,14 +1,20 @@
 <template>
-  <v-avatar
-    class="d-flex flex-column py-5 content-box-sizing clickable"
-    :title="badge.badgeLabel"
-    tile
-    @click="openDrawer">
-    <img :src="badge.avatar">
-    <div class="d-block text-center">
-      {{ badge.domainLabel }}
+  <div class="px-2">
+    <v-avatar
+      class="d-flex flex-column BadgeOverviewAvatar content-box-sizing clickable"
+      :title="badge.badgeLabel"
+      :tile="!skeleton"
+      @click="openDrawer">
+      <img
+        :class="skeleton && 'skeleton-background no-border'"
+        :src="badge.avatar" />
+    </v-avatar>
+    <div
+      :class="skeleton && 'skeleton-text skeleton-background skeleton-text-height skeleton-border-radius px-6'"
+      class="d-block text-center mt-2">
+      {{ skeleton && '&nbsp;' || badge.domainLabel }}
     </div>
-  </v-avatar>
+  </div>
 </template>
 
 <script>
@@ -17,6 +23,10 @@ export default {
     badge: {
       type: Object,
       default: () => ({}),
+    },
+    skeleton: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
