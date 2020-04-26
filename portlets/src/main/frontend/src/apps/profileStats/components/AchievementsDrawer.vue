@@ -60,6 +60,7 @@ export default {
   data: () => ({
     pageSize: 20,
     totalPoints: 0,
+    loading: false,
     limit: 20,
     achievements: [],
   }),
@@ -68,7 +69,7 @@ export default {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/gamification-earn-points`;
     },
     hasMore() {
-      return this.achievements.length >= this.limit;
+      return this.loading || this.achievements.length >= this.limit;
     },
   },
   methods: {
@@ -83,6 +84,7 @@ export default {
       this.$refs.achievementsDrawer.open();
     },
     loadMore() {
+      this.loading = true;
       this.limit += this.pageSize;
       this.retrieveList();
     },
@@ -91,6 +93,7 @@ export default {
       return getAchievements('user', eXo.env.portal.profileOwner, this.limit)
         .then(data => this.achievements = data || [])
         .finally(() => {
+          this.loading = false;
           this.$refs.achievementsDrawer.endLoading();
         });
     },
