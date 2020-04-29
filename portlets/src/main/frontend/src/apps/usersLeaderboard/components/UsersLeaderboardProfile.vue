@@ -30,7 +30,7 @@
         <v-list-item-content>
           <v-list-item-title>
             <a
-              :href="user.profileUrl"
+              :href="profileUrl"
               :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block'"
               class="text-color">
               {{ !skeleton && user.fullname || '&nbsp;' }}
@@ -76,6 +76,9 @@ export default {
     },
     userAvatar() {
       return this.user && this.user.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${this.user.username}/avatar`;
+    },
+    profileUrl() {
+      return this.username && `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${this.username}`;
     },
     username() {
       return this.user && this.user.remoteId;
