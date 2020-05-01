@@ -1,11 +1,11 @@
 <template>
-  <v-app v-if="spaces && spaces.length || firstLoading">
+  <v-app>
     <v-card flat>
       <v-card-title class="text-sub-title subtitle-1 text-uppercase pb-2">
         {{ $t('popularSpaces.title') }}
       </v-card-title>
       <v-list
-        v-if="firstLoading"
+        v-if="skeleton"
         two-line
         class="mx-3 pt-0">
         <popular-spaces-item
@@ -25,6 +25,13 @@
           :space="space"
           @refresh="refresh" />
       </v-list>
+      <div
+        v-else
+        class="d-flex justify-center">
+          <span class="emptySpacesLeaderboardIcon mb-2">
+            Ø
+          </span>
+      </div>
     </v-card>
   </v-app>
 </template>
@@ -44,7 +51,7 @@ export default {
   },
   data: () => ({
     spaces: [],
-    firstLoading: true,
+    skeleton: true,
   }),
   created() {
     this.refresh();
@@ -70,7 +77,7 @@ export default {
           return Promise.all(promises);
         }).then((spacesByPoints) => {
           this.spaces = spacesByPoints.sort((s1, s2) => s1.rank - s2.rank);
-          this.firstLoading = false;
+          this.skeleton = false;
           return spacesByPoints;
         }).finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
     },
