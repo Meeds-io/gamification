@@ -1,6 +1,6 @@
 <template>
   <v-app
-    :class="owner && 'profileAboutMe' || 'profileAboutMeOther'"
+    :class="owner && 'profileBadge' || 'profileBadgeOther'"
     class="white">
     <v-toolbar
       color="white"
@@ -21,12 +21,17 @@
             :badge="{}"
             skeleton />
         </template>
-        <template v-else>
+        <template v-else-if="badges && badges.length">
           <badges-overview-item
             v-for="badge in badges"
             :key="badge.id"
             :badge="badge" />
         </template>
+        <div v-else class="d-flex justify-center py-10">
+          <span class="emptyBadgesIcon mb-2">
+            Ø
+          </span>
+        </div>
       </v-card-text>
     </v-card>
     <badges-overview-drawer />
