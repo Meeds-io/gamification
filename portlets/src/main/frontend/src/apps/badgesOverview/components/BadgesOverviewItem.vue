@@ -1,7 +1,7 @@
 <template>
   <div class="px-2">
     <v-avatar
-      class="d-flex flex-column BadgeOverviewAvatar content-box-sizing clickable"
+      class="d-flex flex-column BadgeOverviewAvatar content-box-sizing clickable mx-auto"
       :title="badge.badgeLabel"
       :tile="!skeleton"
       @click="openDrawer">
@@ -11,7 +11,8 @@
     </v-avatar>
     <div
       :class="skeleton && 'skeleton-text skeleton-background skeleton-text-height skeleton-border-radius px-6'"
-      class="d-block text-center mt-2">
+      class="d-block text-center mt-2 clickable"
+      @click="openDrawer">
       {{ skeleton && '&nbsp;' || badge.domainLabel }}
     </div>
   </div>
