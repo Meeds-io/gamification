@@ -217,7 +217,7 @@ export default {
             });
     },
     created() {
-        axios.get(`/portal/rest/gamification/leaderboard/rank/all`)
+        axios.get(`/portal/rest/gamification/leaderboard/rank/all?period=${this.selectedPeriod}`)
             .then(response => {
                 this.users = response.data;
             })
