@@ -6,11 +6,13 @@
       {{ score }}
       {{ $t('exoplatform.gamification.gamificationinformation.Points') }}
     </v-list-item-action-text>
-    <v-list-item-avatar
-      :tile="!isCurrent"
-      :class="!isCurrent && !isAquired && 'badgeNotAquired'"
-      class="BadgeItemAvatar mx-2">
-      <v-img :src="avatar" />
+    <v-list-item-avatar tile class="BadgeItemAvatarParent">
+      <v-list-item-avatar
+        :tile="!isCurrent"
+        :class="!isCurrent && !isAquired && 'badgeNotAquired'"
+        class="BadgeItemAvatar mx-2">
+        <v-img :src="avatar" />
+      </v-list-item-avatar>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title
