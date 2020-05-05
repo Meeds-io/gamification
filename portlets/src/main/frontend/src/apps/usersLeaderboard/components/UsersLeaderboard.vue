@@ -30,13 +30,13 @@
           </select>
         </div>
       </div>
-      <v-tabs v-model="selectedPeriod" grow>
+      <v-tabs v-model="selectedPeriod">
         <v-tabs-slider :color="skeleton && 'skeleton-text' || 'tertiary'" />
         <v-tab
           v-for="period in periods"
           :key="period.value"
           :href="`#${period.value}`"
-          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius skeleton-text-height mx-2' || ''">
+          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius skeleton-text-height' || ''">
           {{ skeleton && '&nbsp;' || period.text }}
         </v-tab>
       </v-tabs>
