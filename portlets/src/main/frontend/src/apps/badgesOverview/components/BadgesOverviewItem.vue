@@ -1,7 +1,7 @@
 <template>
   <div class="px-2">
     <v-avatar
-      class="d-flex flex-column BadgeOverviewAvatar content-box-sizing clickable mx-auto"
+      class="d-flex flex-column BadgeItemAvatar content-box-sizing clickable mx-auto"
       :title="badge.badgeLabel"
       :tile="!skeleton"
       @click="openDrawer">

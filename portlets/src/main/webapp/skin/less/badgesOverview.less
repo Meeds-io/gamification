@@ -2,16 +2,34 @@
 @import "mixins.less";
 
 #badgesOverview {
-  .BadgeItemAvatar.badgeNotAquired {
-    filter: grayscale(100%);
-    &:before {
-      font-family: "PLF-FONT-ICONS";
-      content: "\e794";
-      position: absolute;
-      font-size: 18px;
-      color: #000;
-      right: 11px;
-      z-index: 10000;
+  .BadgeItemAvatarParent {
+    min-height: 40px !important;
+    min-width: 52px !important;
+    height: auto !important;
+    width: auto !important;
+    max-height: 52px !important;
+    max-width: 52px !important;
+  }
+  .BadgeItemAvatar {
+    margin: auto;
+    min-height: 40px !important;
+    min-width: 40px !important;
+    height: auto !important;
+    width: auto !important;
+    max-height: 52px !important;
+    max-width: 52px !important;
+
+    &.badgeNotAquired {
+      filter: grayscale(100%);
+      &:before {
+        font-family: "PLF-FONT-ICONS";
+        content: "\e794";
+        position: absolute;
+        font-size: 18px;
+        color: #000;
+        right: ~"calc(50% - 9px)";
+        z-index: 10000;
+      }
     }
   }
   .BadgeItemPoints {
