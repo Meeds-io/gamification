@@ -55,7 +55,26 @@
       return {
         totalPoints: 0,
         option : {
-           tooltip : {
+          title: [{
+            text: 'Total',
+            left: '63%',
+            textStyle: {
+              fontStyle: 'normal',
+              color: '#4d5466',
+              fontWeight: 'normal',
+              fontSize: '16',
+            },
+            subtext :``,
+            subtextStyle: {
+              fontStyle: 'normal',
+              color: '#4d5466',
+              fontWeight: 'bold',
+              fontSize: '18',
+            },
+            top:'40%',
+            textAlign: 'center'
+          }],
+          tooltip : { 
             trigger: 'item',
             formatter: '{b} : {c} ({d}%)'
           },
@@ -64,18 +83,6 @@
             left: 5,
             top:12,
           },
-          graphic:{
-            type:'text',
-            right:96,
-            top: 95,
-            style: {
-              text: '',
-              font: '16px arial',
-              fill:'#4d5466',
-              width: 30,
-              height: 30
-            }
-            },
           series : [
             {
               type: 'pie',
@@ -101,7 +108,7 @@
         getGamificationPoints().then(
           (data) => {
             this.totalPoints = data.points;
-            this.option.graphic.style.text = `Total\n ${data.points}`;
+            this.option.title[0].subtext = data.points;
           }      
         )
       },
