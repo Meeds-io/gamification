@@ -9,7 +9,7 @@
     <v-list-item-avatar tile class="BadgeItemAvatarParent">
       <v-list-item-avatar
         :tile="!isCurrent"
-        :class="!isCurrent && !isAquired && 'badgeNotAquired'"
+        :class="isCurrent && 'BadgeItemAvatarProfile' || !isAquired && 'badgeNotAquired'"
         class="BadgeItemAvatar mx-2">
         <v-img :src="avatar" />
       </v-list-item-avatar>
