@@ -140,7 +140,7 @@
 
     methods: {
       getUsersByGamificationRank() {
-        getUsersByGamificationRank().then(
+        getUsersByGamificationRank('WEEK').then(
           (data) => {
             const currentUser = eXo.env.portal.profileOwner;
             const index = data.findIndex(function (item, i) {

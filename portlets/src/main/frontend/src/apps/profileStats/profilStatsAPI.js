@@ -1,5 +1,5 @@
-export function getUsersByGamificationRank() {
-  return fetch( `/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false`, {
+export function getUsersByGamificationRank(period) {
+  return fetch( `/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false&period=${period || 'WEEK'}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
