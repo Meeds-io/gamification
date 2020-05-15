@@ -184,7 +184,7 @@
           </preference>
           <preference>
             <name>limit</name>
-            <value>5</value>
+            <value>10</value>
           </preference>
         </portlet-preferences>
     </portlet>
