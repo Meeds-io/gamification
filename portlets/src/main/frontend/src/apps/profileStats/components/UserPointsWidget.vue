@@ -44,7 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs10
           justify-center>
           <div>
-            <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.totalPoints') }}</span>
+            <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.userPoints') }}</span>
           </div>
         </v-flex>
         <v-flex
@@ -58,7 +58,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-flex>
     <div style="margin:auto;">
-      <div id="echartTotalPoint" style="width:320px; height:220px; "></div>
+      <div id="echartUserPoints" style="width:320px; height:220px; "></div>
     </div>
   </v-layout>
 </template>
@@ -69,7 +69,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     data() {
       return {
-        totalPoints: 0,
+        userPoints: 0,
+        period: 'WEEK',
         option : {
           title: [{
             text: 'Total',
@@ -121,15 +122,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     methods: {
       getGamificationPoints() {
-        getGamificationPoints().then(
+        getGamificationPoints(this.period).then(
           (data) => {
-            this.totalPoints = data.points;
+            this.userPoints = data.points;
             this.option.title[0].subtext = data.points;
           }      
         )
       },
       getGamificationPointsStats() {
-        getGamificationPointsStats().then(
+        getGamificationPointsStats(this.period).then(
           (data) => {
             this.option.series[0].data = JSON.parse(JSON.stringify(data).split('"label":').join('"name":'));
             for(let i=0;i<data.length;i++) {
@@ -146,13 +147,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       },
       initChart(option) {
         $(document).ready(function(){
-          const chartContainerId = document.getElementById('echartTotalPoint');
+          const chartContainerId = document.getElementById('echartUserPoints');
           const chart = echarts.init(chartContainerId);
           chart.setOption(option, true);
          });
       },
       openHistoryDrawer() {
-        this.$root.$emit('open-achievement', this.totalPoints);
+        this.$root.$emit('open-achievement', this.userPoints);
       },
     }
   }

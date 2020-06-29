@@ -18,7 +18,7 @@ import ProfileStats from './components/ProfileStats.vue';
 import ConnectionsRequests from './components/ConnectionsRequests.vue';
 import GamificationRank from './components/GamificationRank.vue';
 import SpacesRequests from './components/SpacesRequests.vue';
-import TotalPoints from './components/TotalPoints.vue';
+import UserPointsWidget from './components/UserPointsWidget.vue';
 import UserDashbord from './components/UserDashbord.vue';
 import AchievementItem from './components/AchievementItem.vue';
 import AchievementsDrawer from './components/AchievementsDrawer.vue';
@@ -28,7 +28,7 @@ const components = {
   'connections-requests': ConnectionsRequests,
   'gamification-rank': GamificationRank,
   'spaces-requests': SpacesRequests,
-  'total-points': TotalPoints,
+  'user-points-widget': UserPointsWidget,
   'user-dashbord': UserDashbord,
   'achievements-drawer': AchievementsDrawer,
   'achievement-item': AchievementItem,

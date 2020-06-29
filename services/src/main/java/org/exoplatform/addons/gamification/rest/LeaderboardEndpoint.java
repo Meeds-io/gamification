@@ -125,11 +125,21 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
 
       if (identityType.isUser()) {
+        Date date = null;
+        switch (leaderboardFilter.getPeriod()) {
+        case "WEEK":
+          date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+          break;
+        case "MONTH":
+          date = Date.from(LocalDate.now()
+                                    .with(TemporalAdjusters.firstDayOfMonth())
+                                    .atStartOfDay(ZoneId.systemDefault())
+                                    .toInstant());
+          break;
+        }
+
         // Check if the current user is already in top10
-        LeaderboardInfo leader = buildCurrentUserRank(Date.from(LocalDate.now()
-                                                                         .with(DayOfWeek.MONDAY)
-                                                                         .atStartOfDay(ZoneId.systemDefault())
-                                                                         .toInstant()),
+        LeaderboardInfo leader = buildCurrentUserRank(date,
                                                       leaderboardFilter.getDomain(),
                                                       leaderboardList);
         // Complete the final leaderboard
@@ -228,15 +238,30 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @GET
   @Path("stats")
   @RolesAllowed("users")
-  public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String userSocialId) {
+  public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String userSocialId, @QueryParam("period") String period) {
     ConversationState conversationState = ConversationState.getCurrent();
     if (conversationState != null) {
       try {
         if (userSocialId != null) {
           userSocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userSocialId).getId();
         }
+        period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
+        // Check if the current user is already in top10
+        Date startDate = null;
+        switch (period) {
+        case "WEEK":
+          startDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+          break;
+        case "MONTH":
+          startDate = Date.from(LocalDate.now()
+                                    .with(TemporalAdjusters.firstDayOfMonth())
+                                    .atStartOfDay(ZoneId.systemDefault())
+                                    .toInstant());
+          break;
+        }
+
         // Find user's stats
-        List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(userSocialId);
+        List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(userSocialId, startDate, Calendar.getInstance().getTime());
 
         return Response.ok(userStats, MediaType.APPLICATION_JSON).build();
 

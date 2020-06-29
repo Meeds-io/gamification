@@ -571,18 +571,18 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 }
 
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
                 if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
                 }
 
                 String actorId = id.getId();
 
 
                 // Find user's stats
-                List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(actorId);
+                List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(actorId, null, null);
 
                 return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 

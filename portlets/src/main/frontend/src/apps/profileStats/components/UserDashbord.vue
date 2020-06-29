@@ -125,13 +125,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             align-center>
             <v-card
               flat
-              :class="firstLoadingTotalPoints && 'skeleton-background skeleton-border-radius'">
-              <a @click="getSpecificCard('total-points')">
+              :class="firstLoadingUserPoints && 'skeleton-background skeleton-border-radius'">
+              <a @click="getSpecificCard('user-points-widget')">
                 <v-card-text class="headline text-color font-weight-bold pa-1">
-                  <span :class="firstLoadingTotalPoints && 'skeleton-text'">{{ totalPoints }}</span>
+                  <span :class="firstLoadingUserPoints && 'skeleton-text'">{{ userPoints }}</span>
                 </v-card-text>
                 <v-card-text class="pa-1 subtitle-1 text-color">
-                  <span :class="firstLoadingTotalPoints && 'skeleton-text'">{{ $t('homepage.profileStatus.totalPoints') }}</span>
+                  <span :class="firstLoadingUserPoints && 'skeleton-text'">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
                 </v-card-text>
               </a>
             </v-card>
@@ -150,7 +150,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <span :class="firstLoadingRank && 'skeleton-text'">{{ gamificationRank }}</span>
                 </v-card-text>
                 <v-card-text class="pa-1 subtitle-1 text-color">
-                  <span :class="firstLoadingRank && 'skeleton-text'">{{ $t('homepage.profileStatus.totalRank') }}</span>
+                  <span :class="firstLoadingRank && 'skeleton-text'">{{ $t('homepage.profileStatus.weeklyRank') }}</span>
                 </v-card-text>
               </a>
             </v-card>
@@ -165,6 +165,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   export default {
     data() {
       return {
+        period: 'WEEK',
         firstName: '',
         avatar:'',
         spacesSize: '',
@@ -172,14 +173,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         connectionsSize: '',
         connectionsRequestsSize: '',
         gamificationRank:'',
-        totalPoints: '',
+        userPoints: '',
         profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
         spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
         connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network`,
         firstLoadingName: true,
         firstLoadingSpaces: true,
         firstLoadingConnexion: true,
-        firstLoadingTotalPoints: true,
+        firstLoadingUserPoints: true,
         firstLoadingRank: true
       }
     },
@@ -242,11 +243,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           )
       },
       getGamificationPoints() {
-        getGamificationPoints().then(
+        getGamificationPoints(this.period).then(
           (data) => {
-            this.totalPoints = data.points;
-             if(this.firstLoadingTotalPoints) {
-               this.firstLoadingTotalPoints = false;
+            this.userPoints = data.points;
+             if(this.firstLoadingUserPoints) {
+               this.firstLoadingUserPoints = false;
              }
           }
         )
