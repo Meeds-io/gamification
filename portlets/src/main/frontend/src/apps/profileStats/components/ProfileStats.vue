@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           @isProfileStats="setFlippedCard" />
       </v-layout>
     </v-container>
-    <achievements-drawer ref="achievementsDrawer" :total-points="totalPoints" />
+    <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
   </v-app>
 </template>
 <script>
@@ -52,8 +52,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           };
         },
         created() {
-          this.$root.$on('open-achievement', (totalPoints) => {
-            this.$refs.achievementsDrawer.open(totalPoints);
+          this.$root.$on('open-achievement', (userPoints) => {
+            this.$refs.achievementsDrawer.open(userPoints);
           });
         },
         methods: {

@@ -177,8 +177,8 @@ export function replyInvitationToConnect(relationId, reply) {
   })
 }
 
-export function getGamificationPoints() {
-  return fetch(`/portal/rest/gamification/api/v1/points?userId=${eXo.env.portal.profileOwner}`, {
+export function getGamificationPoints(period) {
+  return fetch(`/portal/rest/gamification/api/v1/points?userId=${eXo.env.portal.profileOwner}&period=${period || ''}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -191,8 +191,8 @@ export function getGamificationPoints() {
   })
 }
 
-export function getGamificationPointsStats() {
-  return fetch(`/portal/rest/gamification/leaderboard/stats?username=${eXo.env.portal.profileOwner}`, {
+export function getGamificationPointsStats(period) {
+  return fetch(`/portal/rest/gamification/leaderboard/stats?username=${eXo.env.portal.profileOwner}&period=${period || ''}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

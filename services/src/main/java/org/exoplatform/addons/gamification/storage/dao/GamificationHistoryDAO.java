@@ -246,12 +246,24 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
    * Get earner stats
    * 
    * @param earnerId identity id of earner
+   * @param fromDate
+   * @param toDate
    * @return a list of objects of type PiechartLeaderboard
    */
-  public List<PiechartLeaderboard> findStatsByUserId(String earnerId) {
-    TypedQuery<PiechartLeaderboard> query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUser",
-                                                                                PiechartLeaderboard.class);
-    query.setParameter("earnerId", earnerId);
+  public List<PiechartLeaderboard> findStatsByUserId(String earnerId, Date fromDate, Date toDate) {
+    TypedQuery<PiechartLeaderboard> query = null;
+
+    if (fromDate != null && toDate != null) {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUserByDates",
+                                                  PiechartLeaderboard.class);
+      query.setParameter("earnerId", earnerId)
+           .setParameter("fromDate", fromDate)
+           .setParameter("toDate", toDate);
+    } else {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUser",
+                                                  PiechartLeaderboard.class);
+      query.setParameter("earnerId", earnerId);
+    }
     try {
       return query.getResultList();
     } catch (NoResultException e) {

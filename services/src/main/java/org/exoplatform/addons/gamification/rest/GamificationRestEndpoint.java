@@ -24,6 +24,7 @@ import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
+import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
@@ -40,6 +41,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
 import java.text.ParseException;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 
@@ -67,22 +70,44 @@ public class GamificationRestEndpoint implements ResourceContainer {
      * Return all earned points by a user
      *
      * @param userId : user social id
+     * @param period : Period of time
      * @return : and object of type GamificationPoints
      */
     @Path("points")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
-    public Response getAllPointsByUserId(@QueryParam("userId") String userId) {
+    public Response getAllPointsByUserId(@QueryParam("userId") String userId, @QueryParam("period") String period) {
         if (StringUtils.isBlank(userId)) {
             LOG.warn("Enable to serve request due to bad request parameter «userId»");
             return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("userId parameter must be specified")).build();
         }
         try {
-            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
-            Long earnedXP = gamificationService.findReputationByEarnerId(identity.getId());
+            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
+            Long earnedXP = 0L;
+            if (period == null || StringUtils.equalsIgnoreCase(Period.ALL.name(), period)) {
+              earnedXP = gamificationService.findReputationByEarnerId(identity.getId());
+            } else {
+              period = period.toUpperCase();
+              // Check if the current user is already in top10
+              Date fromDate = null;
+              switch (period) {
+              case "WEEK":
+                fromDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+                break;
+              case "MONTH":
+                fromDate = Date.from(LocalDate.now()
+                                              .with(TemporalAdjusters.firstDayOfMonth())
+                                              .atStartOfDay(ZoneId.systemDefault())
+                                              .toInstant());
+                break;
+              }
+              Date toDate = Date.from(LocalDate.now()
+                                               .atStartOfDay(ZoneId.systemDefault())
+                                               .toInstant());
+              earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), fromDate, toDate);
+            }
             return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
-
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} - Gamification public API", userId, e);
             return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching all earned points")).build();

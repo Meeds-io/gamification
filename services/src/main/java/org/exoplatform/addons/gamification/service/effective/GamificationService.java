@@ -239,10 +239,12 @@ public class GamificationService {
    * Build stats dashboard of a given user (based on domain)
    * 
    * @param earnerId earner identity id
+   * @param startDate
+   * @param endDate
    * @return a list of object of type PiechartLeaderboard
    */
-  public List<PiechartLeaderboard> buildStatsByUser(String earnerId) {
-    return gamificationHistoryDAO.findStatsByUserId(earnerId);
+  public List<PiechartLeaderboard> buildStatsByUser(String earnerId, Date startDate, Date endDate) {
+    return gamificationHistoryDAO.findStatsByUserId(earnerId, startDate, endDate);
   }
 
   public long findUserReputationScoreBetweenDate(String earnerId, Date fromDate, Date toDate) {

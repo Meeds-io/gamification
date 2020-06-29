@@ -39,10 +39,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
           <div class="d-block-inline pull-right px-2">
             <div class="caption">
-              {{ $t('homepage.profileStatus.totalPoints') }}
+              {{ $t('homepage.profileStatus.weeklyPoints') }}
             </div>
             <div class="title">
-              {{ totalPoints }}
+              {{ userPoints }}
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@ import {getAchievements} from '../profilStatsAPI'
 export default {
   data: () => ({
     pageSize: 20,
-    totalPoints: 0,
+    userPoints: 0,
     loading: false,
     limit: 20,
     achievements: [],
@@ -93,10 +93,10 @@ export default {
       this.limit = 20;
       this.achievements = [];
     },
-    open(totalPoints) {
+    open(userPoints) {
       this.reset();
       this.retrieveList();
-      this.totalPoints = totalPoints;
+      this.userPoints = userPoints;
       this.$refs.achievementsDrawer.open();
     },
     loadMore() {
