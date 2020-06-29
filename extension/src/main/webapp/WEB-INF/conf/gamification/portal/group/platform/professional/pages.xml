@@ -27,7 +27,7 @@
         <name>rules</name>
         <title>Manage Rules</title>
         <access-permissions>*:/platform/professional</access-permissions>
-        <edit-permission>manager:/platform/professional</edit-permission>
+        <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -41,8 +41,8 @@
     <page>
         <name>badges</name>
         <title>Gamification Manage Badges</title>
-        <access-permissions>manager:/platform/professional</access-permissions>
-        <edit-permission>manager:/platform/professional</edit-permission>
+        <access-permissions>*:/platform/professional</access-permissions>
+        <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>gamification-portlets</application-ref>
@@ -56,8 +56,8 @@
     <page>
         <name>domains</name>
         <title>Gamification Manage Domains</title>
-        <access-permissions>manager:/platform/professional</access-permissions>
-        <edit-permission>manager:/platform/professional</edit-permission>
+        <access-permissions>*:/platform/professional</access-permissions>
+        <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>gamification-portlets</application-ref>
