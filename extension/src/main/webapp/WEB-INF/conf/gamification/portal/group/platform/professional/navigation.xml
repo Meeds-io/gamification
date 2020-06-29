@@ -14,7 +14,7 @@
                 <name>rules</name>
                 <label xml:lang="en">Manage rules</label>
                 <label xml:lang="fr">Gérer les règles</label>
-                <page-reference>group::/platform/professional::rules</page-reference>
+                <page-reference>group::/platform/administrators::rules</page-reference>
             </node>
             <node>
                 <uri>badges</uri>
@@ -22,14 +22,14 @@
                 <label>Manage Badges</label>
                 <label xml:lang="en">Manage Badges</label>
                 <label xml:lang="fr">Gérer les badges</label>
-                <page-reference>group::/platform/professional::badges</page-reference>
+                <page-reference>group::/platform/administrators::badges</page-reference>
             </node>
             <node>
                 <uri>domains</uri>
                 <name>domains</name>
                 <label xml:lang="en">Manage Domains</label>
                 <label xml:lang="fr">Gérer les domaines</label>
-                <page-reference>group::/platform/professional::domains</page-reference>
+                <page-reference>group::/platform/administrators::domains</page-reference>
             </node>
         </node>
     </page-nodes>
