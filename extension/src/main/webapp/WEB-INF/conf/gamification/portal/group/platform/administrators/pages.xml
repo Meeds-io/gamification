@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <page>
         <name>rules</name>
         <title>Manage Rules</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
+        <access-permissions>*:/platform/administrators</access-permissions>
         <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <page>
         <name>badges</name>
         <title>Gamification Manage Badges</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
+        <access-permissions>*:/platform/administrators</access-permissions>
         <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
@@ -53,7 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <page>
         <name>domains</name>
         <title>Gamification Manage Domains</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
+        <access-permissions>*:/platform/administrators</access-permissions>
         <edit-permission>manager:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
