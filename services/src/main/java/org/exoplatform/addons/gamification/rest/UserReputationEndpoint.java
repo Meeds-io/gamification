@@ -83,30 +83,23 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     @GET
     @Path("status")
-    public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
+    public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("username") String username, @QueryParam("url") String url) {
 
-        ConversationState conversationState = ConversationState.getCurrent();
         long userReputationScore = 0;
         int userRank = 0;
 
         // Get profile owner from url
-        String profileOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
-        if(profileOwner.equals("profile") || StringUtils.isBlank(profileOwner)){
-            profileOwner= conversationState.getIdentity().getUserId();
+        String profileOwner = StringUtils.isBlank(username) ? GamificationUtils.extractProfileOwnerFromUrl(url,"/") : username;
+        if (profileOwner.equals("profile") || StringUtils.isBlank(profileOwner)) {
+          Response.status(Response.Status.NOT_FOUND).build();
         }
 
-
-
-        if (conversationState != null) {
+        if (StringUtils.isNotBlank(profileOwner)) {
             try {
-
                 // Compute user id
-
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false);
-
-                if(id==null){
-                    profileOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profileOwner);
+                if (id == null) {
+                  Response.status(Response.Status.NOT_FOUND).entity("User " + profileOwner + " not found").build();
                 }
 
                 String actorId = id.getId();
