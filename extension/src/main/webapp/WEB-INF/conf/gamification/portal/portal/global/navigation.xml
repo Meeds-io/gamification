@@ -23,14 +23,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <page-nodes>
     <node>
       <name>gamification-earn-points</name>
-      <label>How to earn point</label>
+      <label>#{gamification.intranet.gamificationHelp}</label>
       <visibility>SYSTEM</visibility>
       <page-reference>portal::global::gameficationhelp</page-reference>
     </node>
 
     <node>
       <name>achievements</name>
-      <label>Gamification Achievements</label>
+      <label>#{gamification.intranet.achievements}</label>
       <visibility>SYSTEM</visibility>
       <page-reference>portal::global::achievements</page-reference>
     </node>
