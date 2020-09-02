@@ -81,7 +81,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <textarea
                   id="ruleDescription"
                   v-model="rule.description"
-                  placeholder="Enter description"
+                  :placeholder="$t(`exoplatform.gamification.rules.description`)"
                   :rows="3"
                   :max-rows="6">
                             </textarea>
@@ -97,7 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   v-model="rule.score"
                   type="number"
                   required
-                  placeholder="Enter rule's score">
+                  :placeholder="$t(`exoplatform.gamification.rules.score`)">
 
                 <div
                   v-if="formErrors.score"
@@ -115,7 +115,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <label class="uiSwitchBtn">
 
                   <input v-model="rule.enabled" type="checkbox">
-                  <span class="slider round"></span>
+                  <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                   <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`) }}</span>
                 </label>
 
@@ -413,7 +413,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         position: absolute;
         left: -20px;
         z-index: 1;
-        content: "YES";
+        content: "";
         font-size: 13px;
         text-align: left!important;
         line-height: 19px;
@@ -444,6 +444,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         -webkit-transform: translateX(-190px);
         -ms-transform: translateX(-190px);
         transform: translateX(-190px);
+        transition: all 0.4s ease-in-out;
+    }
+    input:not(:checked)+.slider > .absolute-yes {
+        z-index: -1;
+        position: absolute;
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
+        left: 2px;
+        color: white;
+        text-align: right;
+        font-size: 16px;
+        width: calc(100% - 25px);
+        line-height: 22px;
+        cursor: pointer;
+        transition: all 0.4s ease-in-out;
+    }
+    input:checked+.slider> .absolute-yes {
+        -webkit-transform: translateX(0px);
+        -ms-transform: translateX(0px);
+        transform: translateX(0px);
+        z-index: 15;
+        position: absolute;
+        left: 2px;
+        color: white;
+        text-align: right;
+        font-size: 16px;
+        width: calc(100% - 25px);
+        line-height: 22px;
+        cursor: pointer;
         transition: all 0.4s ease-in-out;
     }
     input:checked + .slider:after {

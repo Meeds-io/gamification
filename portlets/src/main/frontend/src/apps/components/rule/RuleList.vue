@@ -142,7 +142,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-model="editedrule.enabled"
                       :disabled="editedrule.domainDTO==null||!editedrule.domainDTO.enabled"
                       type="checkbox">
-                    <span class="slider round"></span>
+                    <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`) }}</span>
                   </label>
                   <div v-if="editedrule.domainDTO==null||!editedrule.domainDTO.enabled" class="error"> *{{ $t(`exoplatform.gamification.disabledDomainForRules`,"This rule cannot be enabled as long as the related domain is disabled") }}.</div>
@@ -298,7 +298,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-model="rule.enabled"
                       disabled
                       type="checkbox">
-                    <span class="slider round"></span>
+                    <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no" data-value="rule.enabled">{{ $t(`exoplatform.gamification.NO`) }}</span>
                   </label>
                 </div>
@@ -581,7 +581,7 @@ input.rule-desc-col {
     position: absolute;
     left: -20px;
     z-index: 1;
-    content: "YES";
+    content: "";
     font-size: 13px;
     text-align: left !important;
     line-height: 19px;
@@ -880,7 +880,7 @@ div#collapseOne {
     position: absolute;
     left: -20px;
     z-index: 1;
-    content: "YES";
+    content: "";
     font-size: 13px;
     text-align: left !important;
     line-height: 19px;
@@ -913,7 +913,36 @@ div#collapseOne {
     transform: translateX(-190px);
     transition: all 0.4s ease-in-out;
 }
-
+input:not(:checked)+.slider > .absolute-yes {
+    z-index: -1;
+    position: absolute;
+    -webkit-transform: translateX(-190px);
+    -ms-transform: translateX(-190px);
+    transform: translateX(-190px);
+    left: 2px;
+    color: white;
+    text-align: right;
+    font-size: 16px;
+    width: calc(100% - 25px);
+    line-height: 22px;
+    cursor: pointer;
+    transition: all 0.4s ease-in-out;
+}
+input:checked+.slider> .absolute-yes {
+    -webkit-transform: translateX(0px);
+    -ms-transform: translateX(0px);
+    transform: translateX(0px);
+    z-index: 15;
+    position: absolute;
+    left: 2px;
+    color: white;
+    text-align: right;
+    font-size: 16px;
+    width: calc(100% - 25px);
+    line-height: 22px;
+    cursor: pointer;
+    transition: all 0.4s ease-in-out;
+}
 input:checked + .slider:after {
     -webkit-transform: translateX(0px);
     -ms-transform: translateX(0px);
@@ -950,6 +979,7 @@ input:checked + .slider:before {
     text-align: right !important;
     font-size: 16px;
     /* width: calc(100% - 25px); */
+    width: auto;
     line-height: 30px;
     cursor: pointer;
 }
