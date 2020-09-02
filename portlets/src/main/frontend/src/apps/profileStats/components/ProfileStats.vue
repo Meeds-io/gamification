@@ -29,7 +29,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <user-dashbord
           v-if="!isFlipped"
           class="profileFlippedCard profileStats"
-          @specific-card="setFlippedCard" />
+          @specific-card="setFlippedCard"
+          @openConnectionsDrawer="openConnectionsDrawer" />
         <v-flex
           :is="currentComponent"
           v-if="isFlipped"
@@ -41,6 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
+    <connections-drawer :connections-drawer="connectionsDrawer" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
   </v-app>
 </template>
 <script>
@@ -48,7 +50,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         data: function() {
           return {
             currentComponent: null,
-            isFlipped: false
+            isFlipped: false,
+            connectionsDrawer: false,
           };
         },
         created() {
@@ -57,12 +60,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           });
         },
         methods: {
-            setFlippedCard(component) {
-                const profileWrapper = document.querySelector('.profileCard');
-                profileWrapper.classList.toggle('is-flipped');
-                this.currentComponent = component;
-                this.isFlipped = !this.isFlipped;
-            },
+          setFlippedCard(component) {
+            const profileWrapper = document.querySelector('.profileCard');
+            profileWrapper.classList.toggle('is-flipped');
+            this.currentComponent = component;
+            this.isFlipped = !this.isFlipped;
+          },
+          openConnectionsDrawer() {
+            this.connectionsDrawer = true;
+          },
+          closeConnectionsDrawer() {
+            this.connectionsDrawer = false;
+          },
         }
     }
 </script>

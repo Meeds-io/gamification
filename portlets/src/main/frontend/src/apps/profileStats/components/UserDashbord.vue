@@ -101,9 +101,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     height="20"
                     width="20"
                     @click="getSpecificCard('connections-requests')">{{ connectionsRequestsSize }}</v-btn>
-                  <a class="headline text-color font-weight-bold pa-1" :href="connexionsUrl">
+                  <div class="headline text-color font-weight-bold pa-1" @click="openConnectionsDrawer">
                     <span :class="firstLoadingConnexion && 'skeleton-text'">{{ connectionsSize }}</span>
-                  </a>
+                  </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
@@ -254,6 +254,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       },
       getSpecificCard(component) {
         this.$emit('specific-card',component);
+      },
+      openConnectionsDrawer() {
+        this.$emit('openConnectionsDrawer');
       },
       toProfileStats() {
         this.$emit('isProfileStats');
