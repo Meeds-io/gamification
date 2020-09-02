@@ -229,6 +229,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getConnectionsRequests().then(
           (data) => {
             this.connectionsRequestsSize = data.size;
+            this.$emit('shouldShowRequests', this.connectionsRequestsSize > 0)
           }
         )
       },

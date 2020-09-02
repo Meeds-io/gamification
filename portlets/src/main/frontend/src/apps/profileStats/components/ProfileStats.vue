@@ -30,7 +30,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-if="!isFlipped"
           class="profileFlippedCard profileStats"
           @specific-card="setFlippedCard"
-          @openConnectionsDrawer="openConnectionsDrawer" />
+          @openConnectionsDrawer="openConnectionsDrawer"
+          @shouldShowRequests="shouldShowRequests" />
         <v-flex
           :is="currentComponent"
           v-if="isFlipped"
@@ -42,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
-    <connections-drawer :connections-drawer="connectionsDrawer" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
+    <connections-drawer :connections-drawer="connectionsDrawer" :show-connection-requests="showConnectionRequests" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
   </v-app>
 </template>
 <script>
@@ -52,6 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             currentComponent: null,
             isFlipped: false,
             connectionsDrawer: false,
+            showConnectionRequests: false,
           };
         },
         created() {
@@ -71,6 +73,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           },
           closeConnectionsDrawer() {
             this.connectionsDrawer = false;
+          },
+          shouldShowRequests(show) {
+            console.log('#### Works !!!')
+            this.showConnectionRequests = show;
           },
         }
     }

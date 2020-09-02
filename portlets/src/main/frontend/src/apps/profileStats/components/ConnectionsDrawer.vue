@@ -31,6 +31,24 @@
         </v-list-item-action>
       </v-list-item>
     </v-row>
+
+    <v-divider class="my-0 appHeaderBorder" />
+
+    <div class="content">
+      <v-row>
+        <v-col>
+          <connections-requests v-if="showConnectionRequests"></connections-requests>
+        </v-col>
+      </v-row>
+      <v-row v-if="showConnectionRequests">
+        <v-divider></v-divider>
+      </v-row>
+      <v-row>
+        <v-col>
+          
+        </v-col>
+      </v-row>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -38,6 +56,10 @@
   export default {
     props: {
       connectionsDrawer: {
+        type: Boolean,
+        default: false,
+      },
+      showConnectionRequests: {
         type: Boolean,
         default: false,
       },
