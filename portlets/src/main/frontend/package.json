@@ -40,7 +40,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.8",
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "vue": "^2.5.16",
     "vue-avatar": "^2.1.4",
     "vue-bootstrap-datetimepicker": "^4.1.3",
