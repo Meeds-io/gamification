@@ -55,7 +55,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <input
                   id="titleInput"
                   v-model="domain.title"
-                  placeholder="Enter domain's title"
+                  :placeholder="$t('exoplatform.gamification.gamificationinformation.add.domain.title')"
                   required
                   type="text">
                 </input>
@@ -69,7 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   v-model="domain.description"
                   :max-rows="6"
                   :rows="3"
-                  placeholder="Enter description">
+                  :placeholder="$t('exoplatform.gamification.gamificationinformation.add.domain.description')">
                             </textarea>
               </form>
 
@@ -77,7 +77,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
                 <label class="uiSwitchBtn">
                   <input v-model="domain.enabled" type="checkbox">
-                  <span class="slider round"></span>
+                  <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                   <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
                 </label>
               </form>
@@ -360,14 +360,45 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
         -webkit-transition: .4s;
         transition: all 0.4s ease-in-out;
+
+    }
+    input:not(:checked)+.slider > .absolute-yes {
+      z-index: -1;
+      position: absolute;
+      -webkit-transform: translateX(-190px);
+      -ms-transform: translateX(-190px);
+      transform: translateX(-190px);
+      left: 2px;
+      color: white;
+      text-align: right;
+      font-size: 16px;
+      width: calc(100% - 25px);
+      line-height: 22px;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
     }
 
+    input:checked+.slider> .absolute-yes {
+      -webkit-transform: translateX(0px);
+      -ms-transform: translateX(0px);
+      transform: translateX(0px);
+      z-index: 15;
+      position: absolute;
+      left: 2px;
+      color: white;
+      text-align: right;
+      font-size: 16px;
+      width: calc(100% - 25px);
+      line-height: 22px;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
+    }
 
     .slider:after {
         position: absolute;
         left: -20px;
         z-index: 1;
-        content: "YES";
+        content: "";
         font-size: 13px;
         text-align: left !important;
         line-height: 19px;
