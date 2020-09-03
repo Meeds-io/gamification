@@ -100,7 +100,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     dark
                     height="20"
                     width="20"
-                    @click="getSpecificCard('connections-requests')">{{ connectionsRequestsSize }}</v-btn>
+                    @click="openConnectionsDrawer">{{ connectionsRequestsSize }}</v-btn>
                   <div class="headline text-color font-weight-bold pa-1" @click="openConnectionsDrawer">
                     <span :class="firstLoadingConnexion && 'skeleton-text'">{{ connectionsSize }}</span>
                   </div>
@@ -229,7 +229,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getConnectionsRequests().then(
           (data) => {
             this.connectionsRequestsSize = data.size;
-            this.$emit('shouldShowRequests', this.connectionsRequestsSize > 0)
+            this.$emit('shouldShowRequests', this.connectionsRequestsSize);
           }
         )
       },
