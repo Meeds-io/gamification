@@ -56,19 +56,19 @@
       </v-row>
       <v-row class="px-4">
         <v-col>
-          <template v-if="connections.length > 0" v-for="item in filteredConnections">
-            <v-list-item
-                :key="item.id"
-                class="py-0 px-2">
-              <v-list-item-avatar class="my-1 mr-2" size="30">
-                <v-img :src="item.avatar" />
-              </v-list-item-avatar>
+          <v-list-item
+            v-if="showConnection"
+            v-for="item in filteredConnections"
+            :key="item.id"
+            class="py-0 px-2">
+            <v-list-item-avatar class="my-1 mr-2" size="30">
+              <v-img :src="item.avatar" />
+            </v-list-item-avatar>
 
-              <v-list-item-content class="py-0">
-                <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
-              </v-list-item-content>
-            </v-list-item>
-          </template>
+            <v-list-item-content class="py-0">
+              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
+            </v-list-item-content>
+          </v-list-item>
           <v-row v-else class="d-flex text-center noPeopleYetBlock my-12">
             <div class="ma-auto noPeopleYet">
               <p class="noPeopleYetIcons">
@@ -112,7 +112,11 @@
       },
       showConnectionRequests() {
         return this.connectionRequests > 0;
-      }
+      },
+      showConnection() {
+        console.log('changed !');
+        return this.connections.length > 0;
+      },
     },
     watch: {
       connectionsDrawer() {
@@ -139,6 +143,7 @@
       initConnections() {
         getUserConnections().then(data => {
           this.connections = data.users;
+          console.log('### connections: ', this.connections);
         });
       },
       refreshConnections(connection) {
