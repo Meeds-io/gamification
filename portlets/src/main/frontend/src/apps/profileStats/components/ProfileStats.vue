@@ -29,7 +29,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <user-dashbord
           v-if="!isFlipped"
           class="profileFlippedCard profileStats"
-          @specific-card="setFlippedCard" />
+          :key="userDashBordKey"
+          @specific-card="setFlippedCard"
+          @openConnectionsDrawer="openConnectionsDrawer"
+          @shouldShowRequests="shouldShowRequests" />
         <v-flex
           :is="currentComponent"
           v-if="isFlipped"
@@ -41,6 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
+    <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
   </v-app>
 </template>
 <script>
@@ -48,7 +52,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         data: function() {
           return {
             currentComponent: null,
-            isFlipped: false
+            isFlipped: false,
+            connectionsDrawer: false,
+            connectionRequests: null,
+            userDashBordKey: 0,
           };
         },
         created() {
@@ -57,12 +64,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           });
         },
         methods: {
-            setFlippedCard(component) {
-                const profileWrapper = document.querySelector('.profileCard');
-                profileWrapper.classList.toggle('is-flipped');
-                this.currentComponent = component;
-                this.isFlipped = !this.isFlipped;
-            },
+          setFlippedCard(component) {
+            const profileWrapper = document.querySelector('.profileCard');
+            profileWrapper.classList.toggle('is-flipped');
+            this.currentComponent = component;
+            this.isFlipped = !this.isFlipped;
+          },
+          openConnectionsDrawer() {
+            this.connectionsDrawer = true;
+          },
+          closeConnectionsDrawer() {
+            this.reRenderUserDashBord();
+            this.connectionsDrawer = false;
+          },
+          shouldShowRequests(requests) {
+            this.connectionRequests = requests;
+          },
+          reRenderUserDashBord() {
+            this.userDashBordKey += 1;
+          },
         }
     }
 </script>

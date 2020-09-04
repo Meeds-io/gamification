@@ -100,10 +100,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     dark
                     height="20"
                     width="20"
-                    @click="getSpecificCard('connections-requests')">{{ connectionsRequestsSize }}</v-btn>
-                  <a class="headline text-color font-weight-bold pa-1" :href="connexionsUrl">
+                    @click="openConnectionsDrawer">{{ connectionsRequestsSize }}</v-btn>
+                  <div class="headline text-color font-weight-bold pa-1" @click="openConnectionsDrawer">
                     <span :class="firstLoadingConnexion && 'skeleton-text'">{{ connectionsSize }}</span>
-                  </a>
+                  </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
@@ -185,7 +185,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       }
     },
     
-    created(){
+    created() {
       document.addEventListener('userModified', event => {
         if (event && event.detail) {
           this.avatar = event.detail.avatar || event.detail.avatarUrl;
@@ -229,6 +229,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getConnectionsRequests().then(
           (data) => {
             this.connectionsRequestsSize = data.size;
+            this.$emit('shouldShowRequests', this.connectionsRequestsSize);
           }
         )
       },
@@ -254,6 +255,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       },
       getSpecificCard(component) {
         this.$emit('specific-card',component);
+      },
+      openConnectionsDrawer() {
+        this.$emit('openConnectionsDrawer');
       },
       toProfileStats() {
         this.$emit('isProfileStats');

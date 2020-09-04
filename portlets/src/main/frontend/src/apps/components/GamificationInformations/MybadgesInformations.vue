@@ -335,7 +335,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         },
         created() {
             const url = window.location.pathname;
-            console.log(url);
             axios.get(`/portal/rest/gamification/reputation/AllofBadges`, { params: { 'url': url } })
                 .then(response => {
                     this.badges = response.data;

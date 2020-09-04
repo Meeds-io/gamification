@@ -317,7 +317,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
          watch: {
             'editedDomain.enabled'() {
-                console.log(this.editedEnabled);
                 if(this.editedEnabled!=this.editedDomain.enabled){
                     if(this.editedDomain.enabled==true){
                         this.enabledMessage=this.$t(`exoplatform.gamification.domain.warning.enable`,"*All related rules and badges will be enabled")
