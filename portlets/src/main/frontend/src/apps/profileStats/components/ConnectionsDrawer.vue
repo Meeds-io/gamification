@@ -114,7 +114,6 @@
         return this.connectionRequests > 0;
       },
       showConnection() {
-        console.log('changed !');
         return this.connections.length > 0;
       },
     },
@@ -143,7 +142,6 @@
       initConnections() {
         getUserConnections().then(data => {
           this.connections = data.users;
-          console.log('### connections: ', this.connections);
         });
       },
       refreshConnections(connection) {
