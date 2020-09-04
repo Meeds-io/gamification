@@ -115,6 +115,19 @@ export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
   })
 }
 
+export function getUserConnections(query, offset, limit, expand) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/connections?q=${query || ''}&offset=${offset || 0}&limit=${limit|| 0}&expand=${expand || ''}&returnSize=true`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    } else {
+      return resp.json();
+    }
+  });
+}
+
 export function getConnections() {
   return fetch('/portal/rest/v1/social/relationships?status=confirmed&returnSize=true', {
     method: 'GET',
@@ -130,7 +143,7 @@ export function getConnections() {
 }
 
 export function getConnectionsRequests() {
-  return fetch('/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=3', {
+  return fetch('/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=0', {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
