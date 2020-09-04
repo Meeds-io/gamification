@@ -29,6 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <user-dashbord
           v-if="!isFlipped"
           class="profileFlippedCard profileStats"
+          :key="userDashBordKey"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @shouldShowRequests="shouldShowRequests" />
@@ -54,6 +55,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             isFlipped: false,
             connectionsDrawer: false,
             connectionRequests: null,
+            userDashBordKey: 0,
           };
         },
         created() {
@@ -72,10 +74,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             this.connectionsDrawer = true;
           },
           closeConnectionsDrawer() {
+            this.reRenderUserDashBord();
             this.connectionsDrawer = false;
           },
           shouldShowRequests(requests) {
             this.connectionRequests = requests;
+          },
+          reRenderUserDashBord() {
+            this.userDashBordKey += 1;
           },
         }
     }

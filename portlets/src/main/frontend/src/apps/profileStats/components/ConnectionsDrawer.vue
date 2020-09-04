@@ -53,29 +53,32 @@
       </v-row>
       <v-row class="px-4">
         <v-col>
-          <v-list-item
-            v-if="showConnection"
-            v-for="item in filteredConnections"
-            :key="item.id"
-            class="py-0 px-2">
-            <v-list-item-avatar class="my-1 mr-2" size="30">
-              <v-img :src="item.avatar" />
-            </v-list-item-avatar>
+          <div v-if="showConnections">
+            <v-list-item
+              v-for="item in filteredConnections"
+              :key="item.id"
+              class="py-0 px-2">
+              <v-list-item-avatar class="my-1 mr-2" size="30">
+                <v-img :src="item.avatar" />
+              </v-list-item-avatar>
 
-            <v-list-item-content class="py-0">
-              <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
-            </v-list-item-content>
-          </v-list-item>
-          <v-row v-else class="d-flex text-center noPeopleYetBlock my-12">
-            <div class="ma-auto noPeopleYet">
-              <p class="noPeopleYetIcons">
-                <v-icon>fa-users</v-icon>
-              </p>
-              <p class="title font-weight-bold">
-                {{ $t('peopleList.label.noConnection') }}
-              </p>
-            </div>
-          </v-row>
+              <v-list-item-content class="py-0">
+                <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+          <div v-else>
+            <v-row class="d-flex text-center noPeopleYetBlock my-12">
+              <div class="ma-auto noPeopleYet">
+                <p class="noPeopleYetIcons">
+                  <v-icon>fa-users</v-icon>
+                </p>
+                <p class="title font-weight-bold">
+                  {{ $t('peopleList.label.noConnection') }}
+                </p>
+              </div>
+            </v-row>
+          </div>
         </v-col>
       </v-row>
     </div>
@@ -107,11 +110,11 @@
           return this.connections;
         }
       },
+      showConnections() {
+        return this.connections && this.connections.length > 0;
+      },
       showConnectionRequests() {
         return this.connectionRequests > 0;
-      },
-      showConnection() {
-        return this.connections.length > 0;
       },
     },
     watch: {
