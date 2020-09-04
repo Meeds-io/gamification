@@ -5,9 +5,6 @@
     right
     stateless
     temporary
-    width="420"
-    max-width="100vw"
-    max-height="100vh"
     class="connectionsDrawer"
   >
     <v-row class="mx-0 title">
