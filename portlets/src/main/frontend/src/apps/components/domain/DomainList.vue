@@ -128,7 +128,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <input
                       id="titleInput"
                       v-model="editedDomain.title"
-                      placeholder="Enter domain's title"
+                      :placeholder="$t('exoplatform.gamification.gamificationinformation.domain.edit.label.title')"
                       required
                       type="text">
                     </input>
@@ -144,7 +144,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-model="editedDomain.description"
                       :max-rows="6"
                       :rows="3"
-                      placeholder="Enter description">
+                      :placeholder="$t('exoplatform.gamification.gamificationinformation.domain.edit.label.description')">
                                         </textarea>
                   </form>
                   <form>
@@ -381,6 +381,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 this.confirm = confirm;
                 this.editedDomain = domain;
                 this.editedEnabled = domain.enabled;
+                this.editedDomain.title= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.title}`,this.editedDomain.title);
+                this.editedDomain.description= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.description}`,this.editedDomain.description);
+                console.log(this.editedDomain);
                 this.isShown = !this.isShown;
             },
 
