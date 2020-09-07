@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-text-field
                   v-model="search"
                   :placeholder="$t(`profile.label.search.connections`)"
-                  class="connectionsSearch"
+                  class="spacesSearch"
                   single-line
                   solo
                   flat
@@ -57,9 +57,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-row>
 
     <div class="content">
-      <v-row class="px-4">
+      <v-row v-if="showSpacesRequests" class="px-4">
         <v-col>
-          <spaces-requests  ></spaces-requests>
+          <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" ></spaces-requests>
         </v-col>
       </v-row>
       <v-row v-if="showSpacesRequests" class="px-4">
@@ -70,7 +70,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-row class="px-4">
         <v-col>
           <div v-if="showSpaces">
-            <v-list-item
+            <v-flex
+                    d-flex
+                    xs12
+                    mt-n2
+                    justify-center>
+            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
+              <v-btn
+                      color="primary-color"
+                      fab
+                      depressed
+                      dark
+                      height="20"
+                      width="20"
+                      class="mb-1">
+                <span class="white--text caption">{{ spacesSize }}</span>
+              </v-btn>
+            </v-flex>
+              <v-list-item
                     v-for="item in filteredSpaces"
                     :key="item.id"
                     class="py-0 px-2">
@@ -103,16 +120,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-  import {getSpacesOfUser} from '../profilStatsAPI';
+  import {getUserInformations, getSpacesOfUser} from '../profilStatsAPI';
   export default {
     props: {
       spaceDrawer: {
         type: Boolean,
         default: false,
       },
+      spaceRequests: {
+        type: Number,
+        default: 0,
+      },
     },
     data: () => ({
       spaces: [],
+      spacesSize: '',
       search: null,
     }),
     computed: {
@@ -124,10 +146,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         }
       },
       showSpaces() {
+        this.spacesSize = this.spaces.length;
         return this.spaces && this.spaces.length > 0;
       },
       showSpacesRequests() {
-        return this.connectionRequests > 0;
+        return this.spaceRequests > 0;
       },
     },
     watch: {
@@ -146,6 +169,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     created() {
       this.initSpaces();
+      this.getSpaceSize();
     },
     methods: {
       closeDrawer() {
@@ -156,6 +180,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spaces = data.spaces;
 
         });
+      },
+      updateRequestsSize(spacesRequestsSize) {
+        this.spaceRequests = spacesRequestsSize;
+      },
+      getSpaceSize() {
+        return getUserInformations().then(data => {
+          this.spacesSize = data.spacesCount;
+          })
+      },
+      refreshSpaces(spaceList) {
+        this.spaces.unshift(spaceList);
       },
     }
   }

@@ -47,22 +47,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-btn>
           </div>
         </v-flex>
-        <v-flex
-          d-flex
-          xs12
-          mt-n6>
-          <v-icon
-            color="grey darken-2"
-            size="20"
-            @click="toProfileStats()">
-            mdi-arrow-left
-          </v-icon>
-        </v-flex>
       </v-layout>
     </v-flex>
     <v-flex
       xs12 
-      style="height: 180px">
+      style="height: auto">
       <v-list>
         <template v-for="item in sort(spacesRequests)">
           <v-list-item
@@ -103,21 +92,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </v-list>
     </v-flex>
-    <v-flex
-      d-flex
-      xs12
-      px-4
-      pb-2
-      justify-end>
-      <v-btn
-        v-if="spacesRequestsSize > 3"
-        depressed
-        small
-        class="caption text-uppercase grey--text"
-        :href="invitationSpaceUrl">
-        {{ this.$t('homepage.seeAll') }}
-      </v-btn>
-    </v-flex>
   </v-layout>
 </template>
 <script>
@@ -140,10 +114,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getSpacesRequests().then(
           (data) => {
             this.spacesRequestsSize = data.size;
-            if (this.spacesRequestsSize === 0) {
-              this.toProfileStats();
-            } 
-            else {
+            this.$emit('showRequestsSpace', this.spacesRequestsSize);
+            if (this.spacesRequestsSize > 0) {
               for (let i = 0; i < data.spacesMemberships.length; i++) {
                 const spaceRequest = {};
                 spaceRequest.id = data.spacesMemberships[i].id;
@@ -160,16 +132,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 }).then((data) => {
                   spaceRequest.avatar = data.avatarUrl !== undefined ? data.avatarUrl : `/portal/rest/v1/social/spaces/${spaceRequest.id.split(":")[0]}/avatar`;
                   spaceRequest.displayName = data.displayName;
-                  spaceRequest.description = data.description;
                   this.spacesRequests.splice(i, 0, spaceRequest);
                 })
               }
             }
           }
         )
-      },
-      toProfileStats() {
-        this.$emit('isProfileStats');
       },
       sort(array) {
         return array.slice().sort(function(a, b) {
@@ -179,14 +147,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       replyInvitationToJoinSpace(spaceId, reply) {
         replyInvitationToJoinSpace(spaceId, reply).then(
           (data) => {
-            if (this.spacesRequestsSize === 1) {
-              this.toProfileStats();
-            } 
-            else {
-              this.getSpacesRequests();
+            if (reply === 'approved') {
+              const confirmedRequest = this.spacesRequests.filter(request => request.id === spaceId)[0];
+              const space = {
+                id: confirmedRequest.id,
+                displayName:confirmedRequest.displayName,
+                avatarUrl:confirmedRequest.avatar,
+
+              };
+              this.$emit('invitationReplied', space);
             }
+            this.getSpacesRequests();
           }
-        )
+        );
       },
     }
   }

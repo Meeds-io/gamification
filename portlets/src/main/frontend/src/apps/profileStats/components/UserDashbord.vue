@@ -66,7 +66,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     dark
                     height="22"
                     width="22"
-                    @click="getSpecificCard('spaces-requests')">{{ spacesRequestsSize }}
+                    @click="openSpaceDrawer">{{ spacesRequestsSize }}
                   </v-btn>
                   <div
                     class="headline text-color font-weight-bold pa-1"
@@ -222,6 +222,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getSpacesRequests().then(
           (data) => {
             this.spacesRequestsSize = data.size;
+             this.$emit('showRequestsSpace', this.spacesRequestsSize);
           }
         )
       },
