@@ -383,7 +383,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 this.editedEnabled = domain.enabled;
                 this.editedDomain.title= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.title}`,this.editedDomain.title);
                 this.editedDomain.description= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.description}`,this.editedDomain.description);
-                console.log(this.editedDomain);
                 this.isShown = !this.isShown;
             },
 
