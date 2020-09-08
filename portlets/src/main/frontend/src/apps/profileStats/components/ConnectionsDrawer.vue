@@ -12,16 +12,22 @@
         <v-list-item-content>
           <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
         </v-list-item-content>
-        <v-list-item-action>
-          <v-text-field
-            v-model="search"
-            :placeholder="$t(`profile.label.search.connections`)"
-            class="connectionsSearch"
-            single-line
-            solo
-            flat
-            hide-details>
-          </v-text-field>
+        <v-list-item-action class="ma-0">
+          <template v-if="showSearch">
+            <v-row>
+              <v-text-field
+                v-model="search"
+                :placeholder="$t(`profile.label.search.connections`)"
+                class="connectionsSearch"
+                single-line
+                solo
+                flat
+                hide-details>
+              </v-text-field>
+              <v-icon class="my-auto" @click="closeConnectionSearch">mdi-filter-remove</v-icon>
+            </v-row>
+          </template>
+          <v-icon v-show = "!showSearch" @click="openConnectionSearch">mdi-filter</v-icon>
         </v-list-item-action>
         <v-list-item-action>
           <v-btn
@@ -29,11 +35,14 @@
             class="rightIcon"
             @click="closeDrawer">
             <v-icon
-              small
               class="closeIcon">
               close
             </v-icon>
           </v-btn>
+          <i
+            class="uiCloseIcon appLauncherDrawerClose"
+            @click="closeDrawer"
+          ></i>
         </v-list-item-action>
       </v-list-item>
     </v-row>
@@ -47,12 +56,28 @@
         </v-col>
       </v-row>
       <v-row v-if="showConnectionRequests" class="px-4">
-        <v-col>
+        <v-col class="pb-0">
           <v-divider class="my-0" />
         </v-col>
       </v-row>
       <v-row class="px-4">
         <v-col>
+          <div v-if="showConnections">
+            <v-row align="center">
+              <v-col>
+                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsList') }}</span>
+                <v-btn
+                  fab
+                  depressed
+                  dark
+                  height="20"
+                  width="20"
+                  class="mb-1 header-badge-color">
+                  <span class="white--text caption">{{ this.connections.length }}</span>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </div>
           <div v-if="showConnections">
             <v-list-item
               v-for="item in filteredConnections"
@@ -100,6 +125,7 @@
     },
     data: () => ({
       connections: [],
+      showSearch: false,
       search: null,
     }),
     computed: {
@@ -137,7 +163,8 @@
     },
       methods: {
       closeDrawer() {
-        this.$emit('closeDrawer');  
+        this.$emit('closeDrawer');
+        this.showSearch = false;
       },
       initConnections() {
         getUserConnections().then(data => {
@@ -149,6 +176,12 @@
       },
       updateRequestsSize(requests) {
         this.connectionRequests = requests;
+      },
+      closeConnectionSearch() {
+        this.showSearch = false;
+      },
+      openConnectionSearch() {
+        this.showSearch = true;
       },
     }
   }
