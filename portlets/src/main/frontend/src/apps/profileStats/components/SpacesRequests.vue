@@ -34,15 +34,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           mt-n2
           justify-center>
           <div>
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
+            <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
             <v-btn
-              color="primary-color"
               fab
               depressed
               dark
               height="20"
               width="20"
-              class="mb-1">
+              class="mb-1 header-badge-color">
               <span class="white--text caption">{{ spacesRequestsSize }}</span>
             </v-btn>
           </div>
@@ -50,8 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-flex>
     <v-flex
-      xs12 
-      style="height: auto">
+      xs12 >
       <v-list>
         <template v-for="item in sort(spacesRequests)">
           <v-list-item
@@ -80,6 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-btn>
                 <v-btn 
                   text
+                  icon
                   small
                   min-width="auto"
                   class="px-0 connexion-refuse-btn"

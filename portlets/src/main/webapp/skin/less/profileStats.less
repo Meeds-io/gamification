@@ -58,6 +58,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           	color: @primaryColor !important;
         }
 
+        .spaceRequestedTitle{
+            font-size: 14px!important;
+            font-weight: bold;
+            color: @darkGrey;
+        }
+
         .connexion-refuse-btn .v-icon {
            background-color: transparent !important;
            border-color: @greyColorLighten1 !important;
@@ -108,7 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             font-weight: bold;
             color: @darkGrey;
           }
-          .spacesSearch {
+          .connectionsSearch {
             padding: 0;
           }
           .closeIcon {
@@ -138,13 +144,35 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             font-weight: bold;
             color: @darkGrey;
           }
-          .connectionsSearch {
+          .searchBlock {
+            .closeSearchFilter{
+             margin-top: 2%;
+            }
+            display: flex;
+          }
+          .spacesSearch {
             padding: 0;
           }
           .closeIcon {
             color: @greyColorLighten1Default;
           }
         }
+        .content {
+          .spaceListTitle {
+            font-size: 14px!important;
+            font-weight: bold;
+            color: @darkGrey;
+          }
+          .noSpaceYetBlock {
+            .noSpaceYet {
+              color: @greyColorLighten1!important;
+              i {
+                color: @greyColorLighten1!important;
+              }
+            }
+          }
+        }
+
       }
 
 

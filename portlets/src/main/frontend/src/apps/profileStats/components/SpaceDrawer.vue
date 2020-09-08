@@ -31,8 +31,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             }}</span>
         </v-list-item-content>
         <v-list-item-action>
+          <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)" >
+            <v-icon v-show = "!showSearch" class="my-auto" @click="openContactSearch">mdi-filter</v-icon>
+          </a>
+          <div class="searchBlock">
           <v-text-field
                   v-model="search"
+                  v-show = "showSearch"
                   :placeholder="$t(`profile.label.search.connections`)"
                   class="spacesSearch"
                   single-line
@@ -40,6 +45,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   flat
                   hide-details>
           </v-text-field>
+          <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)" class="closeSearchFilter">
+            <v-icon v-show = "showSearch" class="my-auto" @click="closeContactSearch">mdi-filter-remove</v-icon>
+          </a>
+          </div>
         </v-list-item-action>
         <v-list-item-action>
           <v-btn
@@ -75,15 +84,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     xs12
                     mt-n2
                     justify-center>
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
+            <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
               <v-btn
-                      color="primary-color"
                       fab
                       depressed
                       dark
                       height="20"
                       width="20"
-                      class="mb-1">
+                      class="mb-1 header-badge-color">
                 <span class="white--text caption">{{ spacesSize }}</span>
               </v-btn>
             </v-flex>
@@ -101,9 +109,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item>
           </div>
           <div v-else>
-            <v-row class="d-flex text-center noPeopleYetBlock my-12">
-              <div class="ma-auto noPeopleYet">
-                <p class="noPeopleYetIcons">
+            <v-row class="d-flex text-center noSpaceYetBlock my-12">
+              <div class="ma-auto noSpaceYet">
+                <p class="noSpaceYetIcons">
                   <v-icon>fa-users</v-icon>
                 </p>
                 <p class="title font-weight-bold">
@@ -134,14 +142,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     data: () => ({
       spaces: [],
+      spacesFiltred: [],
       spacesSize: '',
+      showSearch:false,
       search: null,
     }),
     computed: {
       filteredSpaces() {
         if (this.search) {
-          return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
+          this.spacesFiltred = this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
+          this.spacesSize = this.spacesFiltred.length;
+          return this.spacesFiltred ;
         } else {
+          this.spacesSize = this.spaces.length;
           return this.spaces;
         }
       },
@@ -192,6 +205,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       refreshSpaces(spaceList) {
         this.spaces.unshift(spaceList);
       },
+      openContactSearch() {
+        this.showSearch = true;
+      },
+      closeContactSearch() {
+        this.showSearch = false;
+        this.search = '';
+      }
     }
   }
 
