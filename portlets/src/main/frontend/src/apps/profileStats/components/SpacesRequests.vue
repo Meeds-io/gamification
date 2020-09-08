@@ -49,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-flex>
     <v-flex
-      xs12 >
+      xs12>
       <v-list>
         <template v-for="item in sort(spacesRequests)">
           <v-list-item

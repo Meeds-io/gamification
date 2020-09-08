@@ -16,59 +16,61 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-navigation-drawer
-          v-model="spaceDrawer"
-          absolute
-          right
-          stateless
-          temporary
-          class="spaceDrawer"
-  >
+    v-model="spaceDrawer"
+    absolute
+    right
+    stateless
+    temporary
+    class="spaceDrawer">
     <v-row class="mx-0 title">
       <v-list-item>
         <v-list-item-content>
-            <span class="spaceDrawerTitle">{{
-              $t("homepage.profileStatus.spaces")
-            }}</span>
+          <span class="spaceDrawerTitle">{{
+            $t("homepage.profileStatus.spaces")
+          }}</span>
         </v-list-item-content>
         <v-list-item-action>
-          <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)" >
-            <v-icon v-show = "!showSearch" class="my-auto" @click="openContactSearch">mdi-filter</v-icon>
+          <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)">
+            <v-icon
+              v-show="!showSearch"
+              class="my-auto openIconSearch"
+              @click="openContactSearch">mdi-filter</v-icon>
           </a>
           <div class="searchBlock">
-          <v-text-field
-                  v-model="search"
-                  v-show = "showSearch"
-                  :placeholder="$t(`profile.label.search.connections`)"
-                  class="spacesSearch"
-                  single-line
-                  solo
-                  flat
-                  hide-details>
-          </v-text-field>
-          <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)" class="closeSearchFilter">
-            <v-icon v-show = "showSearch" class="my-auto" @click="closeContactSearch">mdi-filter-remove</v-icon>
-          </a>
+            <v-text-field
+              v-show="showSearch"
+              v-model="search"
+              :placeholder="$t(`profile.label.search.connections`)"
+              class="spacesSearch"
+              single-line
+              solo
+              flat
+              hide-details />
+            <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)" class="closeSearchFilter">
+              <v-icon
+                v-show="showSearch"
+                class="my-auto closeIconSearch"
+                @click="closeContactSearch">mdi-filter-remove</v-icon>
+            </a>
           </div>
         </v-list-item-action>
-        <v-list-item-action>
-          <v-btn
-                  icon
-                  class="rightIcon"
-                  @click="closeDrawer">
+        <div>
             <v-icon
-                    small
-                    class="closeIcon">
+              @click="closeDrawer"
+              small
+              class="closeIcon rightIcon">
               close
             </v-icon>
-          </v-btn>
-        </v-list-item-action>
+        </div>
       </v-list-item>
     </v-row>
+
+    <v-divider class="my-0" />
 
     <div class="content">
       <v-row v-if="showSpacesRequests" class="px-4">
         <v-col>
-          <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" ></spaces-requests>
+          <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
         </v-col>
       </v-row>
       <v-row v-if="showSpacesRequests" class="px-4">
@@ -80,25 +82,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-col>
           <div v-if="showSpaces">
             <v-flex
-                    d-flex
-                    xs12
-                    mt-n2
-                    justify-center>
-            <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
+              d-flex
+              xs12
+              mt-n2
+              justify-center>
+              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
               <v-btn
-                      fab
-                      depressed
-                      dark
-                      height="20"
-                      width="20"
-                      class="mb-1 header-badge-color">
+                fab
+                depressed
+                dark
+                height="20"
+                width="20"
+                class="mb-1 header-badge-color">
                 <span class="white--text caption">{{ spacesSize }}</span>
               </v-btn>
             </v-flex>
-              <v-list-item
-                    v-for="item in filteredSpaces"
-                    :key="item.id"
-                    class="py-0 px-2">
+            <v-list-item
+              v-for="item in filteredSpaces"
+              :key="item.id"
+              class="py-0 px-2">
               <v-list-item-avatar class="my-1 mr-2" size="30">
                 <v-img :src="item.avatarUrl" />
               </v-list-item-avatar>
@@ -123,12 +125,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-col>
       </v-row>
     </div>
-
   </v-navigation-drawer>
 </template>
 
 <script>
-  import {getUserInformations, getSpacesOfUser} from '../profilStatsAPI';
+  import {getSpacesOfUser} from '../profilStatsAPI';
   export default {
     props: {
       spaceDrawer: {
@@ -152,14 +153,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         if (this.search) {
           this.spacesFiltred = this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
           this.spacesSize = this.spacesFiltred.length;
-          return this.spacesFiltred ;
+          return this.spacesFiltred;
         } else {
           this.spacesSize = this.spaces.length;
           return this.spaces;
         }
       },
       showSpaces() {
-        this.spacesSize = this.spaces.length;
         return this.spaces && this.spaces.length > 0;
       },
       showSpacesRequests() {
@@ -182,11 +182,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     created() {
       this.initSpaces();
-      this.getSpaceSize();
     },
     methods: {
       closeDrawer() {
         this.$emit('closeDrawer');
+        this.showSearch = false;
       },
       initSpaces() {
         getSpacesOfUser().then(data => {
@@ -196,11 +196,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       },
       updateRequestsSize(spacesRequestsSize) {
         this.spaceRequests = spacesRequestsSize;
-      },
-      getSpaceSize() {
-        return getUserInformations().then(data => {
-          this.spacesSize = data.spacesCount;
-          })
       },
       refreshSpaces(spaceList) {
         this.spaces.unshift(spaceList);
