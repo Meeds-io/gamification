@@ -9,25 +9,31 @@
   >
     <v-row class="mx-0 title">
       <v-list-item>
-        <v-list-item-content>
-          <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
-        </v-list-item-content>
-        <v-list-item-action class="ma-0">
-          <template v-if="showSearch">
+        <v-list-item-content  class="ma-0 pa-0">
+          <template v-if="!showSearch">
+            <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
+          </template>
+          <template v-else>
             <v-row>
               <v-text-field
-                v-model="search"
-                :placeholder="$t(`profile.label.search.connections`)"
-                class="connectionsSearch"
-                single-line
-                solo
-                flat
-                hide-details>
+                  v-model="search"
+                  :placeholder="$t(`profile.label.search.connections`)"
+                  class="connectionsSearch"
+                  single-line
+                  solo
+                  flat
+                  hide-details>
               </v-text-field>
-              <v-icon class="my-auto" @click="closeConnectionSearch">mdi-filter-remove</v-icon>
             </v-row>
           </template>
-          <v-icon v-show = "!showSearch" @click="openConnectionSearch">mdi-filter</v-icon>
+        </v-list-item-content>
+        <v-list-item-action>
+          <template v-if = "!showSearch">
+            <v-icon @click="openConnectionSearch">mdi-filter</v-icon>
+          </template>
+          <template v-else>
+            <v-icon @click="closeConnectionSearch">mdi-filter-remove</v-icon>
+          </template>
         </v-list-item-action>
         <v-list-item-action>
           <v-btn
@@ -39,10 +45,6 @@
               close
             </v-icon>
           </v-btn>
-          <i
-            class="uiCloseIcon appLauncherDrawerClose"
-            @click="closeDrawer"
-          ></i>
         </v-list-item-action>
       </v-list-item>
     </v-row>
@@ -50,12 +52,12 @@
     <v-divider class="my-0" />
 
     <div class="content">
-      <v-row v-if="showConnectionRequests" class="px-4">
+      <v-row v-if="showConnectionRequests && !showSearch" class="px-4">
         <v-col>
           <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
         </v-col>
       </v-row>
-      <v-row v-if="showConnectionRequests" class="px-4">
+      <v-row v-if="showConnectionRequests && !showSearch" class="px-4">
         <v-col class="pb-0">
           <v-divider class="my-0" />
         </v-col>
