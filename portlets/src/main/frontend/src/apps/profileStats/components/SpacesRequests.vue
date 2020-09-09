@@ -129,7 +129,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     throw new Error ('Error when getting space');
                   }
                 }).then((data) => {
-                  spaceRequest.avatar = data.avatarUrl !== undefined ? data.avatarUrl : `/portal/rest/v1/social/spaces/${spaceRequest.id.split(":")[0]}/avatar`;
+                  spaceRequest.avatar = data.avatarUrl || data.avatarUrl || `/portal/rest/v1/social/spaces/${spaceRequest.id.split(":")[0]}/avatar`;
                   spaceRequest.displayName = data.displayName;
                   this.spacesRequests.splice(i, 0, spaceRequest);
                 })
