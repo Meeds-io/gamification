@@ -107,7 +107,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     v-model="editedrule.description"
                     :max-rows="6"
                     :rows="3"
-                    placeholder="Enter description">
+                    :placeholder=" $t(`exoplatform.gamification.gamificationinformation.domain.edit.label.description`) ">
                             </textarea>
                 </form>
                 <b-form id="scoreInputGroup">
@@ -435,6 +435,7 @@ export default {
         collapseButtonn(rule) {
             this.editedrule = rule;
             this.isShown = !this.isShown;
+            this.editedrule.description =  this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${this.editedrule.title}`,this.editedrule.description) ;
         },
         closeAlert(item) {
             setTimeout(function () {
