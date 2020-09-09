@@ -69,6 +69,20 @@ export function getSpaces() {
   })
 }
 
+export function getSpacesOfUser() {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if(resp && resp.ok) {
+      return resp.json();
+    }
+    else {
+      throw new Error ('Error when getting spaces of current user');
+    }
+  })
+}
+
 export function getSpacesRequests() {
   return fetch( '/portal/rest/v1/social/spacesMemberships?status=invited&returnSize=true&limit=3', {
     method: 'GET',
