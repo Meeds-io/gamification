@@ -34,35 +34,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           mt-n2
           justify-center>
           <div>
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
+            <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
             <v-btn
-              color="primary-color"
               fab
               depressed
               dark
               height="20"
               width="20"
-              class="mb-1">
+              class="mb-1 header-badge-color">
               <span class="white--text caption">{{ spacesRequestsSize }}</span>
             </v-btn>
           </div>
         </v-flex>
-        <v-flex
-          d-flex
-          xs12
-          mt-n6>
-          <v-icon
-            color="grey darken-2"
-            size="20"
-            @click="toProfileStats()">
-            mdi-arrow-left
-          </v-icon>
-        </v-flex>
       </v-layout>
     </v-flex>
     <v-flex
-      xs12 
-      style="height: 180px">
+      xs12>
       <v-list>
         <template v-for="item in sort(spacesRequests)">
           <v-list-item
@@ -91,6 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-btn>
                 <v-btn 
                   text
+                  icon
                   small
                   min-width="auto"
                   class="px-0 connexion-refuse-btn"
@@ -102,21 +90,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item>
         </template>
       </v-list>
-    </v-flex>
-    <v-flex
-      d-flex
-      xs12
-      px-4
-      pb-2
-      justify-end>
-      <v-btn
-        v-if="spacesRequestsSize > 3"
-        depressed
-        small
-        class="caption text-uppercase grey--text"
-        :href="invitationSpaceUrl">
-        {{ this.$t('homepage.seeAll') }}
-      </v-btn>
     </v-flex>
   </v-layout>
 </template>
@@ -140,10 +113,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getSpacesRequests().then(
           (data) => {
             this.spacesRequestsSize = data.size;
-            if (this.spacesRequestsSize === 0) {
-              this.toProfileStats();
-            } 
-            else {
+            this.$emit('showRequestsSpace', this.spacesRequestsSize);
+            if (this.spacesRequestsSize > 0) {
               for (let i = 0; i < data.spacesMemberships.length; i++) {
                 const spaceRequest = {};
                 spaceRequest.id = data.spacesMemberships[i].id;
@@ -158,18 +129,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     throw new Error ('Error when getting space');
                   }
                 }).then((data) => {
-                  spaceRequest.avatar = data.avatarUrl !== undefined ? data.avatarUrl : `/portal/rest/v1/social/spaces/${spaceRequest.id.split(":")[0]}/avatar`;
+                  spaceRequest.avatar = data.avatarUrl || data.avatarUrl || `/portal/rest/v1/social/spaces/${spaceRequest.id.split(":")[0]}/avatar`;
                   spaceRequest.displayName = data.displayName;
-                  spaceRequest.description = data.description;
                   this.spacesRequests.splice(i, 0, spaceRequest);
                 })
               }
             }
           }
         )
-      },
-      toProfileStats() {
-        this.$emit('isProfileStats');
       },
       sort(array) {
         return array.slice().sort(function(a, b) {
@@ -179,14 +146,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       replyInvitationToJoinSpace(spaceId, reply) {
         replyInvitationToJoinSpace(spaceId, reply).then(
           (data) => {
-            if (this.spacesRequestsSize === 1) {
-              this.toProfileStats();
-            } 
-            else {
-              this.getSpacesRequests();
+            if (reply === 'approved') {
+              const confirmedRequest = this.spacesRequests.filter(request => request.id === spaceId)[0];
+              const space = {
+                id: confirmedRequest.id,
+                displayName:confirmedRequest.displayName,
+                avatarUrl:confirmedRequest.avatar,
+
+              };
+              this.$emit('invitationReplied', space);
             }
+            this.getSpacesRequests();
           }
-        )
+        );
       },
     }
   }
