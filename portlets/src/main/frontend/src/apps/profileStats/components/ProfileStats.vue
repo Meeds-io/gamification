@@ -32,7 +32,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :key="userDashBordKey"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
-          @shouldShowRequests="shouldShowRequests" />
+          @openSpaceDrawer="openSpaceDrawer"
+          @shouldShowRequests="shouldShowRequests"
+          @showRequestsSpace="showRequestsSpace"/>
         <v-flex
           :is="currentComponent"
           v-if="isFlipped"
@@ -45,6 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
     <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
+    <space-drawer :space-drawer="spaceDrawer" :space-requests="spaceRequests" @closeDrawer="closeSpaceDrawer" />
   </v-app>
 </template>
 <script>
@@ -54,7 +57,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             currentComponent: null,
             isFlipped: false,
             connectionsDrawer: false,
+            spaceDrawer: false,
             connectionRequests: null,
+            spaceRequests: null,
             userDashBordKey: 0,
           };
         },
@@ -80,8 +85,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           shouldShowRequests(requests) {
             this.connectionRequests = requests;
           },
+          showRequestsSpace(spaces) {
+            this.spaceRequests = spaces;
+          },
           reRenderUserDashBord() {
             this.userDashBordKey += 1;
+          },
+          openSpaceDrawer() {
+            this.spaceDrawer = true;
+          },
+          closeSpaceDrawer() {
+            this.reRenderUserDashBord();
+            this.spaceDrawer = false;
           },
         }
     }
