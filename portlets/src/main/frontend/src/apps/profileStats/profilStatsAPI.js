@@ -130,7 +130,7 @@ export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
 }
 
 export function getUserConnections(query, offset, limit, expand) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/connections?q=${query || ''}&offset=${offset || 0}&limit=${limit|| 0}&expand=${expand || ''}&returnSize=true`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/connections?q=${query || ''}&offset=${offset || 0}&limit=${limit|| 0}&expand=${expand || ''}&returnSize=true`, {
     method: 'GET',
     credentials: 'include',
   }).then(resp => {

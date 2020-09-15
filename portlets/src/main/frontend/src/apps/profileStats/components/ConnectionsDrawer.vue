@@ -16,26 +16,26 @@
           <template v-else>
             <v-row>
               <v-text-field
-                  v-model="search"
-                  :placeholder="$t(`profile.label.search.connections`)"
-                  class="connectionsSearch"
-                  single-line
-                  solo
-                  flat
-                  hide-details>
+                v-model="search"
+                :placeholder="$t(`profile.label.search.connections`)"
+                class="connectionsSearch pa-0"
+                single-line
+                solo
+                flat
+                hide-details>
               </v-text-field>
             </v-row>
           </template>
         </v-list-item-content>
-        <v-list-item-action>
+        <v-list-item-action class="ma-0">
           <template v-if = "!showSearch">
-            <v-icon @click="openConnectionSearch">mdi-filter</v-icon>
+            <v-icon size="20" @click="openConnectionSearch">mdi-filter</v-icon>
           </template>
           <template v-else>
-            <v-icon @click="closeConnectionSearch">mdi-filter-remove</v-icon>
+            <v-icon size="20" @click="closeConnectionSearch">mdi-filter-remove</v-icon>
           </template>
         </v-list-item-action>
-        <v-list-item-action>
+        <v-list-item-action class="ma-0">
           <v-btn
             icon
             class="rightIcon"
