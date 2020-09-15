@@ -40,7 +40,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </a>
             <v-list-item-content>
               <v-list-item-title class="text-uppercase subtitle-1 profile-card-header">
-                <span :class="firstLoadingName && 'skeleton-background skeleton-text skeleton-header skeleton-border-radius'">{{ $t('homepage.profileStatus.header') }} {{ firstName }}</span>
+                <span :class="firstLoadingName && 'skeleton-background skeleton-text skeleton-header skeleton-border-radius'">
+                  {{ isCurrentUserProfile ? $t('homepage.profileStatus.header') : '' }} {{ firstName }}
+                </span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -181,7 +183,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         firstLoadingSpaces: true,
         firstLoadingConnexion: true,
         firstLoadingUserPoints: true,
-        firstLoadingRank: true
+        firstLoadingRank: true,
+        isCurrentUserProfile: false,
       }
     },
     
@@ -193,6 +196,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         }
       });
 
+      this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
       this.retrieveUserData();
       this.getSpacesRequestsSize();
       this.getConnectionsRequestsSize();
