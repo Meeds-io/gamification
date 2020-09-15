@@ -86,7 +86,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     :max-rows="6"
                     :rows="3"
                     class="form-control"
-                    placeholder="Enter description">
+                    :placeholder="this.$t('exoplatform.gamification.badge.edit.description.label')">
                     </textarea>
                 </div>
 
@@ -101,19 +101,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     type="number"
                     class="form-control"
                     required
-                    placeholder="Enter badge's needed score">
+                    :placeholder="this.$t('exoplatform.gamification.badge.edit.score.label')">
                 </form>
                 <form id="iconInputGroup">
-                  <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon') }}: </label>
+                  <label for="iconInputBadge" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon') }}: </label>
+                  <button type="button" onclick="document.getElementById('iconInputBadge').click()"> {{ this.$t('exoplatform.gamification.badge.icon.label','Choose file') }} </button>  {{ this.imageName }}
 
                   <input
-                    id="iconInput"
+                    id="iconInputBadge"
                     type="file"
                     name="badge.icon"
+                    style="display:none"
                     accept="image/jpeg, image/png, image/gif"
                     placeholder="+"
                     @change="onFilePicked">
-                </form> 
+                </form>
 
                 <form id="domainSelectboxGroup">
                   <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
@@ -125,7 +127,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     </option>
                     <option v-for="option in domains" :value="option">
                       {{
-                        $t('exoplatform.gamification.gamificationinformation.domain.${option.title}',option.title)
+                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
                       }}
                     </option>
                   </select>
@@ -140,7 +142,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-model="editedbadge.enabled"
                       :disabled="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled"
                       type="checkbox">
-                    <span class="slider round"></span>
+                    <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
                   </label>
                   <div v-if="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" class="error"> *{{ $t(`exoplatform.gamification.disabledDomainForBadges`,"This domain cannot be enabled as long as the related domain is disabled") }}.</div>
@@ -264,10 +266,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </div>
               </td>
               <td class="badge-title-col">
-                <div>{{ $t(`badge.title.${badge.title}`,badge.title) }}</div>
+                <div>{{ $t(`badge.title.${badge.title.replace(' ','')}`,badge.title) }}</div>
               </td>
               <td class="badge-desc-col">
-                <div>{{ $t(`badge.description.${badge.title}_${badge.domain}`,badge.description) }}</div>
+                <div>{{ $t(`badge.description.${badge.title.replace(' ','')}_${badge.domain}`,badge.description) }}</div>
               </td>
               <td class="badge-needed-score-col">
                 <div>
@@ -287,7 +289,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-model="badge.enabled"
                       type="checkbox"
                       disabled>
-                    <span class="slider round"></span>
+                    <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no">{{ $t('exoplatform.gamification.NO') }}</span>
                   </label>
                 </div>
@@ -355,6 +357,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 filerlabel:"all",
                 editedEnabled: null,
                 enabledMessage:"",
+                imageName: '',
             }
         },
         computed: {
@@ -412,9 +415,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 }
             },
             collapseEditButton(badge) {
+              if ( badge ) {
                 this.badge = badge;
                 this.editedbadge=badge;
-                this.isEditShown = !this.isEditShown;
+                this.editedbadge.description =  this.$t(`badge.description.${this.editedbadge.title.replace(' ','')}_${this.editedbadge.domain}`,this.editedbadge.description) ;
+                this.editedbadge.title =  this.$t(`badge.title.${this.editedbadge.title.replace(' ','')}`,this.editedbadge.title) ;
+              }
+               this.isEditShown = !this.isEditShown;
             },
             closeAlertt(item) {
                 setTimeout(function () {
@@ -454,7 +461,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                             'Content-Type': 'multipart/form-data'
                         }
                     }).then(response => {
-                this.editedbadge.uploadId=uploadId                    
+                this.editedbadge.uploadId=uploadId
             })
 
   			} else {
@@ -557,7 +564,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         position: absolute;
         left: -20px;
         z-index: 1;
-        content: "YES";
+        content: "";
         font-size: 13px;
         text-align: left !important;
         line-height: 19px;
@@ -589,6 +596,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         -ms-transform: translateX(-190px);
         transform: translateX(-190px);
         transition: all 0.4s ease-in-out;
+    }
+    input:not(:checked)+.slider > .absolute-yes {
+        z-index: -1;
+        position: absolute;
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
+        left: 2px;
+        color: white;
+        text-align: right;
+        font-size: 16px;
+        width: calc(100% - 25px);
+        line-height: 22px;
+        cursor: pointer;
+        transition: all 0.4s ease-in-out;
+    }
+    input:checked+.slider> .absolute-yes {
+      -webkit-transform: translateX(0px);
+      -ms-transform: translateX(0px);
+      transform: translateX(0px);
+      z-index: 15;
+      position: absolute;
+      left: 2px;
+      color: white;
+      text-align: right;
+      font-size: 16px;
+      width: calc(100% - 25px);
+      line-height: 22px;
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
     }
 
     input:checked + .slider:after {

@@ -46,22 +46,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-btn>
           </div>
         </v-flex>
-        <v-flex
-          d-flex
-          xs12
-          mt-n6>
-          <v-icon
-            color="grey darken-2"
-            size="20"
-            @click="toProfileStats()">
-            mdi-arrow-left
-          </v-icon>
-        </v-flex>
       </v-layout>
     </v-flex>
     <v-flex
       xs12>
-      <v-list height="180">
+      <v-list>
         <template v-for="item in sort(connectionsRequests)">
           <v-list-item
             :key="item.id"
@@ -89,6 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-btn>
                 <v-btn
                   text
+                  icon
                   small
                   min-width="auto"
                   class="px-0 connexion-refuse-btn"
@@ -100,21 +90,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item>
         </template>
       </v-list>
-    </v-flex>
-    <v-flex
-      d-flex
-      xs12
-      px-4
-      pb-2
-      justify-end>
-      <v-btn
-        v-if="connectionsRequestsSize > 3"
-        depressed
-        small
-        class="caption text-uppercase grey--text"
-        :href="receivedInvitationsUrl">
-        {{ $t('homepage.seeAll') }}
-      </v-btn>
     </v-flex>
   </v-layout>
 </template>
@@ -139,10 +114,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         getConnectionsRequests().then(
           (data) => {
             this.connectionsRequestsSize = data.size;
-            if (this.connectionsRequestsSize === 0) {
-              this.toProfileStats();
-            } 
-            else {
+            this.$emit('shouldShowRequests', this.connectionsRequestsSize);
+            if(this.connectionsRequestsSize > 0) {
               for (let i = 0; i < data.relationships.length; i++) {
                 const connection = {};
                 connection.id = data.relationships[i].id;
@@ -169,9 +142,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           }
         )
       },
-      toProfileStats() {
-        this.$emit('isProfileStats');
-      },
       sort(array) {
         return array.slice().sort(function(a, b) {
           return a.senderFullName.localeCompare(b.senderFullName);
@@ -180,14 +150,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       replyInvitationToConnect(relationId, reply) {
         replyInvitationToConnect(relationId, reply).then(
           (data) => {
-            if (this.connectionsRequestsSize === 1) {
-              this.toProfileStats();
+            if (reply === 'confirmed') {
+              const confirmedRequest = this.connectionsRequests.filter(request => request.id === relationId)[0];
+              const connection = {
+                id: confirmedRequest.id,
+                fullname:confirmedRequest.senderFullName,
+                avatar:confirmedRequest.senderAvatar,
+                
+              };
+              this.$emit('invitationReplied', connection);
             } 
-            else {
-              this.getConnectionsRequests();
-            }
+            this.getConnectionsRequests();
           }
-        )
+        );
       }
     }
   }

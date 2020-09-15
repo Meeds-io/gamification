@@ -128,7 +128,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <input
                       id="titleInput"
                       v-model="editedDomain.title"
-                      placeholder="Enter domain's title"
+                      :placeholder="$t('exoplatform.gamification.gamificationinformation.domain.edit.label.title')"
                       required
                       type="text">
                     </input>
@@ -144,21 +144,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-model="editedDomain.description"
                       :max-rows="6"
                       :rows="3"
-                      placeholder="Enter description">
+                      :placeholder="$t('exoplatform.gamification.gamificationinformation.domain.edit.label.description')">
                                         </textarea>
                   </form>
                   <form>
                     <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}:</label>
                     <label class="uiSwitchBtn">
                       <input v-model="editedDomain.enabled" type="checkbox">
-                      <span class="slider round"></span>
+                      <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                       <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
                     </label>
                     <div class="error">{{ enabledMessage }}</div>
                   </form>
                                     
-                  <div class="row">
-                    <b-col>
+                  <div>
+                    <b-col class="action">
                       <button
                         class="btn secondary pull-right"
                         type="submit"
@@ -170,7 +170,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         class="btn-primary pull-right"
                         type="submit"
                         :disabled="isDisabled"
-                        style="margin-left: 500px;"
                         @click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)">
                         {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
                       </button>
@@ -224,7 +223,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         v-model="domain.enabled"
                         type="checkbox"
                         disabled>
-                      <span class="slider round"></span>
+                      <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                       <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"No") }}</span>
                     </label>
                   </div>
@@ -318,7 +317,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
          watch: {
             'editedDomain.enabled'() {
-                console.log(this.editedEnabled);
                 if(this.editedEnabled!=this.editedDomain.enabled){
                     if(this.editedDomain.enabled==true){
                         this.enabledMessage=this.$t(`exoplatform.gamification.domain.enable.warning`,"*All related rules and badges will be enabled")
@@ -383,6 +381,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 this.confirm = confirm;
                 this.editedDomain = domain;
                 this.editedEnabled = domain.enabled;
+                this.editedDomain.title= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.title}`,this.editedDomain.title);
+                this.editedDomain.description= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.description}`,this.editedDomain.description);
                 this.isShown = !this.isShown;
             },
 
@@ -592,7 +592,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     .collapse {
         top: 15px;
     }
-
+    .action{
+      display: flex;
+      flex-direction: row;
+      float: right;
+    }
     div#collapseTwo {
         position: fixed;
         z-index: 10000;
@@ -660,7 +664,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         position: absolute;
         left: -20px;
         z-index: 1;
-        content: "YES";
+        content: "";
         font-size: 13px;
         text-align: left !important;
         line-height: 19px;
@@ -693,7 +697,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         transform: translateX(-190px);
         transition: all 0.4s ease-in-out;
     }
-
+    input:not(:checked)+.slider > .absolute-yes {
+        z-index: -1;
+        position: absolute;
+        -webkit-transform: translateX(-190px);
+        -ms-transform: translateX(-190px);
+        transform: translateX(-190px);
+        left: 2px;
+        color: white;
+        text-align: right;
+        font-size: 16px;
+        width: calc(100% - 25px);
+        line-height: 22px;
+        cursor: pointer;
+        transition: all 0.4s ease-in-out;
+    }
+    input:checked+.slider> .absolute-yes {
+        -webkit-transform: translateX(0px);
+        -ms-transform: translateX(0px);
+        transform: translateX(0px);
+        z-index: 15;
+        position: absolute;
+        left: 2px;
+        color: white;
+        text-align: right;
+        font-size: 16px;
+        width: calc(100% - 25px);
+        line-height: 22px;
+        cursor: pointer;
+        transition: all 0.4s ease-in-out;
+    }
     input:checked+.slider:after {
         -webkit-transform: translateX(0px);
         -ms-transform: translateX(0px);
