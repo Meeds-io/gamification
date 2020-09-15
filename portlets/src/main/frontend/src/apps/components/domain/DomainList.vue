@@ -321,9 +321,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 console.log(this.editedEnabled);
                 if(this.editedEnabled!=this.editedDomain.enabled){
                     if(this.editedDomain.enabled==true){
-                        this.enabledMessage=this.$t(`exoplatform.gamification.domain.warning.enable`,"*All related rules and badges will be enabled")
+                        this.enabledMessage=this.$t(`exoplatform.gamification.domain.enable.warning`,"*All related rules and badges will be enabled")
                     }else{
-                        this.enabledMessage=this.$t(`exoplatform.gamification.domain.warning.disable`,"*All related rules and badges will be disabled")
+                        this.enabledMessage=this.$t(`exoplatform.gamification.domain.disable.warning`,"*All related rules and badges will be disabled")
                     }
                 }else{
                    this.enabledMessage="" 
