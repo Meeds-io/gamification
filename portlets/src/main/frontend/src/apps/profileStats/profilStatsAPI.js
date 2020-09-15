@@ -70,7 +70,7 @@ export function getSpaces() {
 }
 
 export function getSpacesOfUser() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
