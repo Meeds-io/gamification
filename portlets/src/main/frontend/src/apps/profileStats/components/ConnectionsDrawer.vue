@@ -8,7 +8,7 @@
     class="connectionsDrawer"
   >
     <v-row class="mx-0 title">
-      <v-list-item>
+      <v-list-item class="pr-0">
         <v-list-item-content  class="ma-0 pa-0">
           <template v-if="!showSearch">
             <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
@@ -41,7 +41,8 @@
             class="rightIcon"
             @click="closeDrawer">
             <v-icon
-              class="closeIcon">
+              class="closeIcon"
+              size="20">
               close
             </v-icon>
           </v-btn>
