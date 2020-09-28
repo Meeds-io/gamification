@@ -197,6 +197,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       });
 
       this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
+      this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
       this.retrieveUserData();
       this.getSpacesRequestsSize();
       this.getConnectionsRequestsSize();
