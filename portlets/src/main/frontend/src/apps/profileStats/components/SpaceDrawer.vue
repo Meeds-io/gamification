@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     temporary
     class="spaceDrawer">
     <v-row class="mx-0 title">
-      <v-list-item>
+      <v-list-item class="pr-0">
         <v-list-item-content class="ma-0 pa-0">
           <template v-if="!showSearch">
             <span class="spaceDrawerTitle">{{
@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-text-field
                 v-model="search"
                 :placeholder="$t(`profile.label.search.connections`)"
-                class="spacesSearch"
+                class="spacesSearch pa-0"
                 single-line
                 solo
                 flat
@@ -43,29 +43,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-row>
           </template>
         </v-list-item-content>
-        <v-list-item-action>
+        <v-list-item-action class="ma-0">
           <template v-if="!showSearch">
             <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)">
               <v-icon
-                class="my-auto openIconSearch"
+                class="openIconSearch"
                 @click="openSpacesSearch">mdi-filter</v-icon>
             </a>
           </template>
           <template v-else>
             <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)">
               <v-icon
-                class="my-auto closeIconSearch"
+                class="closeIconSearch"
                 @click="closeSpacesSearch">mdi-filter-remove</v-icon>
             </a>
           </template>
         </v-list-item-action>
-        <v-list-item-action>
-          <v-icon
-            small
-            class="closeIcon rightIcon"
-            @click="closeDrawer">
-            close
-          </v-icon>
+        <v-list-item-action class="ma-0">
+          <v-btn
+             icon
+             class="rightIcon"
+             @click="closeDrawer">
+           <v-icon
+             small
+             class="closeIcon"
+             @click="closeDrawer">
+             close
+           </v-icon>
+          </v-btn>
         </v-list-item-action>
       </v-list-item>
     </v-row>
@@ -110,7 +115,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <v-img :src="item.avatarUrl" />
               </v-list-item-avatar>
 
-              <v-list-item-content class="py-0">
+              <v-list-item-content class="py-0" @click="getUrl(item.groupId)">
                 <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.displayName" />
               </v-list-item-content>
             </v-list-item>
@@ -198,7 +203,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       initSpaces() {
         getSpacesOfUser().then(data => {
           this.spaces = data.spaces;
-
         });
       },
       updateRequestsSize(spacesRequestsSize) {
@@ -213,6 +217,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       closeSpacesSearch() {
         this.showSearch = false;
         this.search = '';
+      },
+      getUrl(groupId) {
+         window.location.href = `${eXo.env.portal.context}/g/${groupId.replace(/\//g, ':')}`;
       }
     }
   }
