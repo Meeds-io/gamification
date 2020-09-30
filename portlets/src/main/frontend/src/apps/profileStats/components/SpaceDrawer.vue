@@ -61,15 +61,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-list-item-action>
         <v-list-item-action class="ma-0">
           <v-btn
-             icon
-             class="rightIcon"
-             @click="closeDrawer">
-           <v-icon
-             small
-             class="closeIcon"
-             @click="closeDrawer">
-             close
-           </v-icon>
+            icon
+            class="rightIcon"
+            @click="closeDrawer">
+            <v-icon
+              small
+              class="closeIcon"
+              @click="closeDrawer">
+              close
+            </v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -77,7 +77,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <v-divider class="my-0" />
 
-    <div class="content">
+    <template class="content">
       <v-row v-if="showSpacesRequests" class="px-4">
         <v-col>
           <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
@@ -90,7 +90,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row class="px-4">
         <v-col>
-          <div v-if="showSpaces">
+          <template v-if="showSpaces">
             <v-flex
               d-flex
               xs12
@@ -109,33 +109,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-flex>
             <v-list-item
               v-for="item in filteredSpaces"
+              :id="id"
               :key="item.id"
               class="py-0 px-2">
-              <v-list-item-avatar class="my-1 mr-2" size="30" @click="getUrl(item.groupId)">
+              <v-list-item-avatar
+                class="my-1 mr-2"
+                size="30"
+                @click="getUrl(item.groupId)">
                 <v-img :src="item.avatarUrl" />
               </v-list-item-avatar>
 
               <v-list-item-content class="py-0" @click="getUrl(item.groupId)">
-                <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.displayName" />
+                  <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.displayName" />
               </v-list-item-content>
             </v-list-item>
-            <v-row class="mx-0" v-if="showLoadMoreSpaces">
-              <v-card
-                      flat
-                      class="d-flex flex justify-center mx-2 px-1"
-              >
-                <v-btn
-                        class="text-uppercase caption"
-                        depressed
-                        height="40"
-                        width="320"
-                        @click="loadNextPage"
-                >
-                  {{ $t('spacesList.button.showMore') }}
-                </v-btn>
-              </v-card>
-            </v-row>
-          </div>
+          </template>
           <div v-else>
             <v-row class="d-flex text-center noSpaceYetBlock my-12">
               <div class="ma-auto noSpaceYet">
@@ -150,11 +138,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-col>
       </v-row>
-    </div>
+    </template>
+
+    <v-divider class="my-0" />
+    <template v-if="showLoadMoreSpaces">
+      <v-row class="mt-3 mb-3">
+        <v-card
+          flat
+          class="d-flex flex justify-center px-1">
+          <v-btn
+            class="text-uppercase caption ma-auto btn"
+            depressed
+            height="36"
+            width="350"
+            @click="loadNextPage">
+            {{ $t('spacesList.button.showMore') }}
+          </v-btn>
+        </v-card>
+      </v-row>
+    </template>
   </v-navigation-drawer>
 </template>
 
 <script>
+  const randomMax = 10000;
   import {getSpacesOfUser} from '../profilStatsAPI';
   export default {
     props: {
@@ -167,7 +174,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         default: 0,
       },
     },
-    data: () => ({
+    data() {
+     return {
       spaces: [],
       offset: 0,
       spaceSize: 0,
@@ -176,8 +184,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       showSearch:false,
       showLoadMoreSpaces:true,
       search: null,
-    }),
+      id: `react${parseInt(Math.random() * randomMax)
+        .toString()
+        }`,
+     }
+    },
     computed: {
+    labels() {
+      return {
+        CancelRequest: this.$t('profile.label.CancelRequest'),
+        Confirm: this.$t('profile.label.Confirm'),
+        Connect: this.$t('profile.label.Connect'),
+        Ignore: this.$t('profile.label.Ignore'),
+        RemoveConnection: this.$t('profile.label.RemoveConnection'),
+        StatusTitle: this.$t('profile.label.StatusTitle'),
+        join: this.$t('profile.label.join'),
+        leave: this.$t('profile.label.leave'),
+        members: this.$t('profile.label.members'),
+      };
+    },
       filteredSpaces() {
         if (this.search) {
           return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
@@ -190,9 +215,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       },
       showSpaces() {
         return this.spaces && this.spaces.length > 0;
-      },
-      showSLoadMorepaces() {
-        return showSLoadMorepaces;
       },
       spacesSize() {
         if (this.search) {
@@ -222,17 +244,41 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     created() {
       this.limitToFetch = this.limit;
       this.initSpaces();
+      this.initTiptip();
     },
     methods: {
+    initTiptip() {
+      console.log('test idddd: ', this.id);
+      this.$nextTick(() => {
+        $(`#${this.id}`).spacePopup({
+          userName: eXo.env.portal.userName,
+          spaceID: this.id,
+          restURL: '/portal/rest/v1/social/spaces/{0}',
+          membersRestURL: '/portal/rest/v1/social/spaces/{0}/users?returnSize=true',
+          managerRestUrl: '/portal/rest/v1/social/spaces/{0}/users?role=manager&returnSize=true',
+          membershipRestUrl: '/portal/rest/v1/social/spacesMemberships?space={0}&returnSize=true',
+          defaultAvatarUrl: this.avatar,
+          deleteMembershipRestUrl: '/portal/rest/v1/social/spacesMemberships/{0}:{1}:{2}',
+          labels: this.labels,
+          content: false,
+          keepAlive: true,
+          defaultPosition: 'left_bottom',
+          maxWidth: '420px',
+        });
+      });
+    },
       closeDrawer() {
         this.$emit('closeDrawer');
-        this.showSearch = false;
         getSpacesOfUser(this.offset, this.limit).then(data => {
           this.spaces = data.spaces;
           this.spaceSize = data.size;
         });
+        this.limitToFetch = 0;
+        this.showSearch = false;
+        this.showLoadMoreSpaces = true;
       },
       initSpaces() {
+        this.showLoadMoreSpaces = true;
         getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
           this.spaces = data.spaces;
           this.spaceSize = data.size;

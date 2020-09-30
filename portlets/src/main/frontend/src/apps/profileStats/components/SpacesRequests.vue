@@ -124,7 +124,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 }).then((resp) => {
                   if(resp && resp.ok) {
                     return resp.json();
-                  } 
+                  }
                   else {
                     throw new Error ('Error when getting space');
                   }
