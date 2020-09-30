@@ -69,8 +69,8 @@ export function getSpaces() {
   })
 }
 
-export function getSpacesOfUser() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces`, {
+export function getSpacesOfUser(offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces?offset=${offset || 0}&limit=${limit|| 0}&returnSize=true`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

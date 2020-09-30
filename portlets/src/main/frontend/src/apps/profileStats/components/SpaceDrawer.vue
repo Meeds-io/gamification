@@ -111,7 +111,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-for="item in filteredSpaces"
               :key="item.id"
               class="py-0 px-2">
-              <v-list-item-avatar class="my-1 mr-2" size="30">
+              <v-list-item-avatar class="my-1 mr-2" size="30" @click="getUrl(item.groupId)">
                 <v-img :src="item.avatarUrl" />
               </v-list-item-avatar>
 
@@ -119,6 +119,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.displayName" />
               </v-list-item-content>
             </v-list-item>
+            <v-row class="mx-0" v-if="showLoadMoreSpaces">
+              <v-card
+                      flat
+                      class="d-flex flex justify-center mx-2 px-1"
+              >
+                <v-btn
+                        class="text-uppercase caption"
+                        depressed
+                        height="40"
+                        width="320"
+                        @click="loadNextPage"
+                >
+                  {{ $t('spacesList.button.showMore') }}
+                </v-btn>
+              </v-card>
+            </v-row>
           </div>
           <div v-else>
             <v-row class="d-flex text-center noSpaceYetBlock my-12">
@@ -153,7 +169,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     data: () => ({
       spaces: [],
+      offset: 0,
+      spaceSize: 0,
+      limit: 10,
+      limitToFetch: 0,
       showSearch:false,
+      showLoadMoreSpaces:true,
       search: null,
     }),
     computed: {
@@ -161,11 +182,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         if (this.search) {
           return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
         } else {
+          if((this.spaceSize <= this.limit) || (this.limitToFetch >= this.spaceSize)) {
+            this.showLoadMoreSpaces = false;
+          }
           return this.spaces;
         }
       },
       showSpaces() {
         return this.spaces && this.spaces.length > 0;
+      },
+      showSLoadMorepaces() {
+        return showSLoadMorepaces;
       },
       spacesSize() {
         if (this.search) {
@@ -193,16 +220,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       },
     },
     created() {
+      this.limitToFetch = this.limit;
       this.initSpaces();
     },
     methods: {
       closeDrawer() {
         this.$emit('closeDrawer');
         this.showSearch = false;
+        getSpacesOfUser(this.offset, this.limit).then(data => {
+          this.spaces = data.spaces;
+          this.spaceSize = data.size;
+        });
       },
       initSpaces() {
-        getSpacesOfUser().then(data => {
+        getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
           this.spaces = data.spaces;
+          this.spaceSize = data.size;
         });
       },
       updateRequestsSize(spacesRequestsSize) {
@@ -217,6 +250,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       closeSpacesSearch() {
         this.showSearch = false;
         this.search = '';
+      },
+      loadNextPage() {
+        if(this.limitToFetch <= this.spaceSize) {
+          this.limitToFetch = this.limitToFetch += this.limit;
+          getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
+             this.spaces = data.spaces;
+        });
+        }
       },
       getUrl(groupId) {
          window.location.href = `${eXo.env.portal.context}/g/${groupId.replace(/\//g, ':')}`;
