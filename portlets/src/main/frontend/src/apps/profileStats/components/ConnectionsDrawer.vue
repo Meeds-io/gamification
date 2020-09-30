@@ -182,9 +182,6 @@
     },
     methods: {
       initTiptip() {
-        console.log('Working !!!');
-        console.log('ID: ', this.id);
-        console.log('Labels: ', this.labels);
         this.$nextTick(() => {
           $(`#${this.cmpId}`).userPopup({
             restURL: '/portal/rest/social/people/getPeopleInfo/{0}.json',
