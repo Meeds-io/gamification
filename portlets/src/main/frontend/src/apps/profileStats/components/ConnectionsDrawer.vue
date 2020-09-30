@@ -86,15 +86,15 @@
               v-for="item in filteredConnections"
               :key="item.id"
               class="py-0 px-2">
-              <a class="connectionProfileLink" :href="PROFILE_URI + item.id">              
-                <v-list-item-avatar class="my-1 mr-2" size="30">
-                  <v-img :src="item.avatar" />
-                </v-list-item-avatar>
-  
-                <v-list-item-content class="py-0">
+              <v-list-item-avatar class="my-1 mr-2" size="30">
+                <v-img :src="item.avatar" />
+              </v-list-item-avatar>
+
+              <v-list-item-content class="py-0">
+                <a :id="cmpId" class="connectionProfileLink" :href="item.profileLink" rel="nofollow">
                   <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
-                </v-list-item-content>
-              </a>
+                </a>
+              </v-list-item-content>
             </v-list-item>
           </div>
           <div v-else>
@@ -128,12 +128,24 @@
         default: 0,
       },
     },
-    data: () => ({
-      connections: [],
-      showSearch: false,
-      search: null,
-      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile`,
-    }),
+    data() {
+      return {
+        cmpId: `react${parseInt(Math.random() * 10000)
+          .toString()}`,
+        labels: {
+          CancelRequest: this.$t('profile.label.CancelRequest'),
+          Confirm: this.$t('profile.label.Confirm'),
+          Connect: this.$t('profile.label.Connect'),
+          Ignore: this.$t('.profile.Ignore'),
+          RemoveConnection: this.$t('profile.label.RemoveConnection'),
+          StatusTitle: `${this.$t('profile.label.StatusTitle')}...`,
+        },
+        connections: [],
+        showSearch: false,
+        search: null,
+        PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
+      }
+    },
     computed: {
       filteredConnections() {
         if (this.search) {
@@ -166,8 +178,25 @@
     },
     created() {
       this.initConnections();
+      this.initTiptip();
     },
-      methods: {
+    methods: {
+      initTiptip() {
+        console.log('Working !!!');
+        console.log('ID: ', this.id);
+        console.log('Labels: ', this.labels);
+        this.$nextTick(() => {
+          $(`#${this.cmpId}`).userPopup({
+            restURL: '/portal/rest/social/people/getPeopleInfo/{0}.json',
+            userId: this.id,
+            labels: this.labels,
+            content: false,
+            keepAlive: true,
+            defaultPosition: 'top_left',
+            maxWidth: '240px',
+          });
+        });
+      },
       closeDrawer() {
         this.$emit('closeDrawer');
         this.showSearch = false;
@@ -175,7 +204,9 @@
       initConnections() {
         getUserConnections().then(data => {
           this.connections = data.users;
-          console.log('connections: ', this.connections);
+          this.connections.forEach(connection => {
+            connection.profileLink = this.PROFILE_URI + connection.username;
+          });
         });
       },
       refreshConnections(connection) {
