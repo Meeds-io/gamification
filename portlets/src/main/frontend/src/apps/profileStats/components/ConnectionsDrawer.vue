@@ -86,13 +86,15 @@
               v-for="item in filteredConnections"
               :key="item.id"
               class="py-0 px-2">
-              <v-list-item-avatar class="my-1 mr-2" size="30">
-                <v-img :src="item.avatar" />
-              </v-list-item-avatar>
-
-              <v-list-item-content class="py-0">
-                <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
-              </v-list-item-content>
+              <a class="connectionProfileLink" :href="PROFILE_URI + item.id">              
+                <v-list-item-avatar class="my-1 mr-2" size="30">
+                  <v-img :src="item.avatar" />
+                </v-list-item-avatar>
+  
+                <v-list-item-content class="py-0">
+                  <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
+                </v-list-item-content>
+              </a>
             </v-list-item>
           </div>
           <div v-else>
@@ -130,6 +132,7 @@
       connections: [],
       showSearch: false,
       search: null,
+      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile`,
     }),
     computed: {
       filteredConnections() {
@@ -172,6 +175,7 @@
       initConnections() {
         getUserConnections().then(data => {
           this.connections = data.users;
+          console.log('connections: ', this.connections);
         });
       },
       refreshConnections(connection) {
