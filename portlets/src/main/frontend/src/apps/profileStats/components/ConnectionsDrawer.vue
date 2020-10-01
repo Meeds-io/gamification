@@ -6,6 +6,7 @@
     stateless
     temporary
     class="connectionsDrawer"
+    max-height="100vh"
   >
     <v-row class="mx-0 title">
       <v-list-item class="pr-0">
@@ -81,7 +82,7 @@
               </v-col>
             </v-row>
           </div>
-          <div v-if="showConnections">
+          <div v-if="showConnections" class="connectionsItems">
             <v-list-item
               v-for="item in filteredConnections"
               :key="item.id"
@@ -112,6 +113,20 @@
         </v-col>
       </v-row>
     </div>
+
+    <v-divider v-if="connections && showMore" class="my-0" />
+    
+    <v-row v-if="connections && showMore" class="loadMoreFooterAction mx-0">
+      <v-col>
+        <v-btn
+          class="loadMoreBtn"
+          block
+          @click="getConnections(connections.length)"
+        >
+          {{ $t('UIIntranetNotificationsPortlet.label.seeAll') }}
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-navigation-drawer>
 </template>
 
@@ -144,6 +159,9 @@
         showSearch: false,
         search: null,
         PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
+        connexionsSize: 0,
+        limit: 20,
+        showMore: false,
       }
     },
     computed: {
@@ -175,9 +193,12 @@
           $('body').removeClass('hide-scroll');
         }
       },
+      connections() {
+        this.showMore = this.connexionsSize > this.connections.length;
+      },
     },
     created() {
-      this.initConnections();
+      this.getConnections(0);
       this.initTiptip();
     },
     methods: {
@@ -198,9 +219,11 @@
         this.$emit('closeDrawer');
         this.showSearch = false;
       },
-      initConnections() {
-        getUserConnections().then(data => {
-          this.connections = data.users;
+      getConnections(offset) {
+        // this.connections.length
+        getUserConnections('', offset, this.limit).then(data => {
+          this.connexionsSize = data.size;
+          this.connections.push(...data.users);
           this.connections.forEach(connection => {
             connection.profileLink = this.PROFILE_URI + connection.username;
           });
