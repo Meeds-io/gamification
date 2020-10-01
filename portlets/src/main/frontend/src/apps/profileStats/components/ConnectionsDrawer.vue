@@ -76,13 +76,19 @@
                   dark
                   height="20"
                   width="20"
-                  class="mb-1 header-badge-color">
+                  class="mb-1 header-badge-color"
+                  @click="test"
+                >
                   <span class="white--text caption">{{ this.connections.length }}</span>
                 </v-btn>
               </v-col>
             </v-row>
           </div>
-          <div v-if="showConnections" class="connectionsItems" :class="connectionRequests > 0 ? 'requestsNotEmpty' : ''">
+          <div 
+            v-if="showConnections" 
+            class="connectionsItems" 
+            :class="(showMore ? 'showMore ' : '').concat(connectionRequests > 0 ? 'requestsNotEmpty' : '')"
+          >
             <v-list-item
               v-for="item in filteredConnections"
               :key="item.id"
