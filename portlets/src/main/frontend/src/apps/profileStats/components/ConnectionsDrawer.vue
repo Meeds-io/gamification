@@ -54,7 +54,7 @@
     <v-divider class="my-0" />
 
     <div class="content">
-      <v-row v-if="showConnectionRequests && !showSearch" class="px-4">
+      <v-row v-if="showConnectionRequests && !showSearch" class="connectionsRequests px-4">
         <v-col>
           <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
         </v-col>
@@ -64,7 +64,7 @@
           <v-divider class="my-0" />
         </v-col>
       </v-row>
-      <v-row class="px-4">
+      <v-row class="connectionsList px-4">
         <v-col>
           <div v-if="showConnections">
             <v-row align="center">
@@ -82,7 +82,7 @@
               </v-col>
             </v-row>
           </div>
-          <div v-if="showConnections" class="connectionsItems">
+          <div v-if="showConnections" class="connectionsItems" :class="connectionRequests > 0 ? 'requestsNotEmpty' : ''">
             <v-list-item
               v-for="item in filteredConnections"
               :key="item.id"
@@ -123,7 +123,7 @@
           block
           @click="getConnections(connections.length)"
         >
-          {{ $t('UIIntranetNotificationsPortlet.label.seeAll') }}
+          {{ $t('homepage.loadMore') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -161,7 +161,6 @@
         PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
         connexionsSize: 0,
         limit: 20,
-        showMore: false,
       }
     },
     computed: {
@@ -178,6 +177,9 @@
       showConnectionRequests() {
         return this.connectionRequests > 0;
       },
+      showMore() {
+        return this.connexionsSize > this.connections.length;
+      },
     },
     watch: {
       connectionsDrawer() {
@@ -192,9 +194,6 @@
         } else {
           $('body').removeClass('hide-scroll');
         }
-      },
-      connections() {
-        this.showMore = this.connexionsSize > this.connections.length;
       },
     },
     created() {
