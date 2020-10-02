@@ -62,22 +62,24 @@
         </v-row>
       </div>
       <div v-else>
-        <v-row class="peopleSuggestions px-4">
-          <v-col>
-            <v-row class="align-center">
-              <v-col>
-                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.suggestions.label') }}</span>
-              </v-col>
-            </v-row>
-            <v-list>
-              <exo-suggestions-people-list-item
-                v-for="people in peoplesToDisplay"
-                :key="people.suggestionId"
-                :people="people"
-                :people-suggestions-list="peopleSuggestionsList"/>
-            </v-list>
-          </v-col>
-        </v-row>        
+        <div v-if="showSuggestions">
+          <v-row class="peopleSuggestions px-4">
+            <v-col>
+              <v-row class="align-center">
+                <v-col>
+                  <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.suggestions.label') }}</span>
+                </v-col>
+              </v-row>
+              <v-list>
+                <exo-suggestions-people-list-item
+                  v-for="people in peoplesToDisplay"
+                  :key="people.suggestionId"
+                  :people="people"
+                  :people-suggestions-list="peopleSuggestionsList"/>
+              </v-list>
+            </v-col>
+          </v-row>
+        </div>
       </div>
       <v-row v-if="showConnectionRequests && !showSearch || !isCurrentUserProfile" class="px-4">
         <v-col class="pb-0">
@@ -89,7 +91,7 @@
           <div v-if="showConnections">
             <v-row align="center">
               <v-col>
-                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsList') }}</span>
+                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.profileStatus.commonConnections') }}</span>
                 <v-btn
                   fab
                   depressed
@@ -99,42 +101,65 @@
                   class="mb-1 header-badge-color"
                   @click="test"
                 >
-                  <span class="white--text caption">{{ this.connections.length }}</span>
+                  <span class="white--text caption">{{ isCurrentUserProfile ? this.connections.length : this.commonConnections.length }}</span>
                 </v-btn>
               </v-col>
             </v-row>
           </div>
-          <div 
-            v-if="showConnections" 
-            class="connectionsItems" 
+          <div v-if="isCurrentUserProfile">
+            <div 
+              v-if="showConnections" 
+              class="connectionsItems" 
+              :class="(showMore ? 'showMore ' : '').concat(connectionRequests > 0 ? 'requestsNotEmpty' : '')"
+            >
+              <v-list-item
+                v-for="item in filteredConnections"
+                :key="item.id"
+                class="py-0 px-2">
+                <v-list-item-avatar class="my-1 mr-2" size="30">
+                  <v-img :src="item.avatar" />
+                </v-list-item-avatar>
+  
+                <v-list-item-content class="py-0">
+                  <a :id="cmpId" class="connectionProfileLink" :href="item.profileLink" rel="nofollow">
+                    <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
+                  </a>
+                </v-list-item-content>
+              </v-list-item>
+            </div>
+            <div v-else>
+              <v-row class="d-flex text-center noPeopleYetBlock my-12">
+                <div class="ma-auto noPeopleYet">
+                  <p class="noPeopleYetIcons">
+                    <v-icon>fa-users</v-icon>
+                  </p>
+                  <p class="title font-weight-bold">
+                    {{ $t('peopleList.label.noConnection') }}
+                  </p>
+                </div>
+              </v-row>
+            </div>
+          </div>
+          
+          <div
+            v-else
+            class="connectionsItems"
             :class="(showMore ? 'showMore ' : '').concat(connectionRequests > 0 ? 'requestsNotEmpty' : '')"
           >
             <v-list-item
-              v-for="item in filteredConnections"
-              :key="item.id"
-              class="py-0 px-2">
+                v-for="identity in commonConnections"
+                :key="identity.profile.id"
+                class="py-0 px-2">
               <v-list-item-avatar class="my-1 mr-2" size="30">
-                <v-img :src="item.avatar" />
+                <v-img :src="identity.profile.avatar" />
               </v-list-item-avatar>
 
               <v-list-item-content class="py-0">
-                <a :id="cmpId" class="connectionProfileLink" :href="item.profileLink" rel="nofollow">
-                  <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
+                <a :id="cmpId" class="connectionProfileLink" :href="identity.profile.profileLink" rel="nofollow">
+                  <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="identity.profile.fullname" />
                 </a>
               </v-list-item-content>
             </v-list-item>
-          </div>
-          <div v-else>
-            <v-row class="d-flex text-center noPeopleYetBlock my-12">
-              <div class="ma-auto noPeopleYet">
-                <p class="noPeopleYetIcons">
-                  <v-icon>fa-users</v-icon>
-                </p>
-                <p class="title font-weight-bold">
-                  {{ $t('peopleList.label.noConnection') }}
-                </p>
-              </div>
-            </v-row>
           </div>
         </v-col>
       </v-row>
@@ -157,7 +182,7 @@
 </template>
 
 <script>
-  import {getUserConnections} from '../profilStatsAPI';
+  import {getUserConnections, getCommonConnections} from '../profilStatsAPI';
   export default {
     props: {
       connectionsDrawer: {
@@ -192,6 +217,7 @@
         connexionsSize: 0,
         limit: 20,
         peopleSuggestionsList: [],
+        commonConnections: [],
       }
     },
     computed: {
@@ -207,6 +233,9 @@
       },
       showConnectionRequests() {
         return this.connectionRequests > 0;
+      },
+      showSuggestions() {
+        return this.peopleSuggestionsList.length > 0;
       },
       showMore() {
         return this.connexionsSize > this.connections.length;
@@ -234,6 +263,9 @@
       this.getConnections(0);
       this.initTiptip();
       this.initPeopleSuggestionsList();
+      if (!this.isCurrentUserProfile) {
+        this.retrieveCommonConnections(parseInt(eXo.env.portal.profileOwnerIdentityId));
+      }
     },
     methods: {
       initTiptip() {
@@ -278,6 +310,14 @@
       initPeopleSuggestionsList() {
         this.$userService.getSuggestionsUsers().then(data => {
           this.peopleSuggestionsList = data.items;
+        });
+      },
+      retrieveCommonConnections(id) {
+        getCommonConnections(id).then(data => {
+          this.commonConnections = data.identities;
+          this.commonConnections.forEach(identity => {
+              identity.profile.profileLink = this.PROFILE_URI + identity.profile.username;
+          });
         });
       },
     }
