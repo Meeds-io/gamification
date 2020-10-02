@@ -32,25 +32,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           xs12
           mt-n2
-          justify-center>
-          <div class="actions">
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
-            <v-btn
-              fab
-              depressed
-              dark
-              height="20"
-              width="20"
-              class="mb-1 header-badge-color mr-8">
-              <span class="white--text caption">{{ connectionsRequestsSize }}</span>
-            </v-btn>
-            <v-btn
-              depressed
-              small
-              class="caption text-uppercase grey--text" :href="receivedInvitationsUrl"> 
-              {{ $t('homepage.seeAll') }}
-            </v-btn>
-          </div>
+          justify-center>          
+          <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
+          <v-btn
+            fab
+            depressed
+            dark
+            height="20"
+            width="20"
+            class="mb-1 header-badge-color mr-8">
+            <span class="white--text caption">{{ connectionsRequestsSize }}</span>
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -96,6 +88,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item>
         </template>
       </v-list>
+    </v-flex>
+    <v-flex
+      d-flex
+      xs12>
+      <v-layout
+        row
+        wrap
+        mx-2
+        align-start>
+        <v-flex
+          d-flex
+          xs12
+          mt-n2
+          justify-center>
+          <div class="actions">
+            <v-btn
+              depressed
+              small
+              class="caption text-uppercase grey--text" :href="receivedInvitationsUrl">
+              {{ $t('homepage.seeAll') }}
+            </v-btn>
+          </div>
+        </v-flex>
+      </v-layout>
     </v-flex>
   </v-layout>
 </template>
