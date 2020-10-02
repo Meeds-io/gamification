@@ -54,12 +54,32 @@
     <v-divider class="my-0" />
 
     <div class="content">
-      <v-row v-if="showConnectionRequests && !showSearch" class="connectionsRequests px-4">
-        <v-col>
-          <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
-        </v-col>
-      </v-row>
-      <v-row v-if="showConnectionRequests && !showSearch" class="px-4">
+      <div v-if="isCurrentUserProfile">
+        <v-row v-if="showConnectionRequests && !showSearch" class="connectionsRequests px-4">
+          <v-col>
+            <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
+          </v-col>
+        </v-row>
+      </div>
+      <div v-else>
+        <v-row class="peopleSuggestions px-4">
+          <v-col>
+            <v-row class="align-center">
+              <v-col>
+                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.suggestions.label') }}</span>
+              </v-col>
+            </v-row>
+            <v-list>
+              <exo-suggestions-people-list-item
+                v-for="people in peoplesToDisplay"
+                :key="people.suggestionId"
+                :people="people"
+                :people-suggestions-list="peopleSuggestionsList"/>
+            </v-list>
+          </v-col>
+        </v-row>        
+      </div>
+      <v-row v-if="showConnectionRequests && !showSearch || !isCurrentUserProfile" class="px-4">
         <v-col class="pb-0">
           <v-divider class="my-0" />
         </v-col>
@@ -171,6 +191,7 @@
         PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
         connexionsSize: 0,
         limit: 20,
+        peopleSuggestionsList: [],
       }
     },
     computed: {
@@ -189,6 +210,9 @@
       },
       showMore() {
         return this.connexionsSize > this.connections.length;
+      },
+      peoplesToDisplay() {
+        return this.peopleSuggestionsList.slice(0, 2);
       },
     },
     watch: {
@@ -209,6 +233,7 @@
     created() {
       this.getConnections(0);
       this.initTiptip();
+      this.initPeopleSuggestionsList();
     },
     methods: {
       initTiptip() {
@@ -249,6 +274,11 @@
       },
       openConnectionSearch() {
         this.showSearch = true;
+      },
+      initPeopleSuggestionsList() {
+        this.$userService.getSuggestionsUsers().then(data => {
+          this.peopleSuggestionsList = data.items;
+        });
       },
     }
   }
