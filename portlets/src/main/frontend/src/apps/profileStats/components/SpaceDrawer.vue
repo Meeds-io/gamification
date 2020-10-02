@@ -21,6 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     right
     stateless
     temporary
+    max-height="100vh"
     class="spaceDrawer">
     <v-row class="mx-0 title">
       <v-list-item class="pr-0">
@@ -77,7 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <v-divider class="my-0" />
 
-    <template class="content">
+    <div class="content">
       <v-row v-if="showSpacesRequests" class="px-4">
         <v-col>
           <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
@@ -94,9 +95,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-flex
               d-flex
               xs12
-              mt-n2
               justify-center>
-              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
+              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
               <v-btn
                 fab
                 depressed
@@ -107,6 +107,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <span class="white--text caption">{{ spacesSize }}</span>
               </v-btn>
             </v-flex>
+            <div v-if="showSpaces" class="spacesItems">
             <v-list-item
               v-for="item in filteredSpaces"
               :id="id"
@@ -123,8 +124,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.displayName" />
               </v-list-item-content>
             </v-list-item>
+            </div>
           </template>
-          <div v-else>
+          <template v-else>
             <v-row class="d-flex text-center noSpaceYetBlock my-12">
               <div class="ma-auto noSpaceYet">
                 <p class="noSpaceYetIcons">
@@ -135,28 +137,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </p>
               </div>
             </v-row>
-          </div>
+          </template>
         </v-col>
       </v-row>
-    </template>
+    </div>
 
-    <v-divider class="my-0" />
-    <template v-if="showLoadMoreSpaces">
-      <v-row class="mt-3 mb-3">
+   <template v-if="showSpaces && showLoadMoreSpaces">
+    <v-divider class="my-0"/>
+      <v-row class="my-2 mx-0 loadMoreButton">
         <v-card
           flat
           class="d-flex flex justify-center px-1">
           <v-btn
             class="text-uppercase caption ma-auto btn"
             depressed
-            height="36"
             width="350"
             @click="loadNextPage">
             {{ $t('spacesList.button.showMore') }}
           </v-btn>
         </v-card>
       </v-row>
-    </template>
+   </template>
   </v-navigation-drawer>
 </template>
 
@@ -177,6 +178,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     data() {
      return {
       spaces: [],
+      SpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
       offset: 0,
       spaceSize: 0,
       limit: 10,
@@ -248,7 +250,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     methods: {
     initTiptip() {
-      console.log('test idddd: ', this.id);
       this.$nextTick(() => {
         $(`#${this.id}`).spacePopup({
           userName: eXo.env.portal.userName,
@@ -283,6 +284,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spaces = data.spaces;
           this.spaceSize = data.size;
         });
+      },
+      openSpace() {
+        window.location.href =  `${this.SpaceUrl}`;
       },
       updateRequestsSize(spacesRequestsSize) {
         this.spaceRequests = spacesRequestsSize;

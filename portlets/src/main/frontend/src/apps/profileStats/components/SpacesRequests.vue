@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           mt-n2
           justify-center>
           <div>
-            <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
+            <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header" @click="openSpaceRequests()">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
             <v-btn
               fab
               depressed
@@ -142,6 +142,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         return array.slice().sort(function(a, b) {
           return a.displayName.localeCompare(b.displayName);
         });
+      },
+      openSpaceRequests() {
+        window.location.href =  `${this.invitationSpaceUrl}`;
       },
       replyInvitationToJoinSpace(spaceId, reply) {
         replyInvitationToJoinSpace(spaceId, reply).then(
