@@ -182,7 +182,7 @@
 </template>
 
 <script>
-  import {getUserConnections, getCommonConnections} from '../profilStatsAPI';
+  import {getUserConnections} from '../profilStatsAPI';
   export default {
     props: {
       connectionsDrawer: {
@@ -196,6 +196,12 @@
       isCurrentUserProfile: {
         type: Boolean,
         default: false,
+      },
+      commonConnections: {
+        type: Array,
+        default: function() {
+          return [];
+        },
       },
     },
     data() {
@@ -217,7 +223,6 @@
         connexionsSize: 0,
         limit: 20,
         peopleSuggestionsList: [],
-        commonConnections: [],
       }
     },
     computed: {
@@ -263,9 +268,6 @@
       this.getConnections(0);
       this.initTiptip();
       this.initPeopleSuggestionsList();
-      if (!this.isCurrentUserProfile) {
-        this.retrieveCommonConnections(parseInt(eXo.env.portal.profileOwnerIdentityId));
-      }
     },
     methods: {
       initTiptip() {
@@ -310,14 +312,6 @@
       initPeopleSuggestionsList() {
         this.$userService.getSuggestionsUsers().then(data => {
           this.peopleSuggestionsList = data.items;
-        });
-      },
-      retrieveCommonConnections(id) {
-        getCommonConnections(id).then(data => {
-          this.commonConnections = data.identities;
-          this.commonConnections.forEach(identity => {
-              identity.profile.profileLink = this.PROFILE_URI + identity.profile.username;
-          });
         });
       },
     }
