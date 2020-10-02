@@ -30,6 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-if="!isFlipped"
           class="profileFlippedCard profileStats"
           :key="userDashBordKey"
+          :is-current-user-profile="isCurrentUserProfile"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
@@ -46,7 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
-    <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
+    <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" :is-current-user-profile="isCurrentUserProfile" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
     <space-drawer :space-drawer="spaceDrawer" :space-requests="spaceRequests" @closeDrawer="closeSpaceDrawer" />
   </v-app>
 </template>
@@ -61,12 +62,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             connectionRequests: null,
             spaceRequests: null,
             userDashBordKey: 0,
+            isCurrentUserProfile: false,
           };
         },
         created() {
           this.$root.$on('open-achievement', (userPoints) => {
             this.$refs.achievementsDrawer.open(userPoints);
           });
+          this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
         },
         methods: {
           setFlippedCard(component) {

@@ -165,6 +165,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
   import {getUserInformations, getSpaces, getSpacesRequests, getConnections, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI'
   export default {
+    props: {
+      isCurrentUserProfile: {
+        type: Boolean,
+        default: false,
+      },
+    },
     data() {
       return {
         period: 'WEEK',
@@ -184,7 +190,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         firstLoadingConnexion: true,
         firstLoadingUserPoints: true,
         firstLoadingRank: true,
-        isCurrentUserProfile: false,
       }
     },
     
@@ -195,8 +200,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.firstName = event.detail.firstname;
         }
       });
-
-      this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
+      
       this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
       this.retrieveUserData();
       this.getSpacesRequestsSize();

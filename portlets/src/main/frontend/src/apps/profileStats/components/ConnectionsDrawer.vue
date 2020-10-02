@@ -148,6 +148,10 @@
         type: Number,
         default: 0,
       },
+      isCurrentUserProfile: {
+        type: Boolean,
+        default: false,
+      },
     },
     data() {
       return {
