@@ -109,7 +109,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
-                <span :class="firstLoadingConnexion && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connections') : $t('homepage.profileStatus.commonConnections') }}</span>
+                <span :class="firstLoadingConnexion && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connections') : $t('homepage.commonConnections.label') }}</span>
               </v-card-text>
             </v-card>
           </v-flex>

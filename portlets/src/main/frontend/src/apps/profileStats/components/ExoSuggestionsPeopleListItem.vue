@@ -16,7 +16,7 @@
       </v-list-item-title>
       <v-list-item-subtitle
         class="caption text-sub-title suggestions-list-item-subtitle">
-        <span :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-subtitle skeleton-border-radius'">{{ people.number }} {{ $t('homepage.profileStatus.commonConnections') }}</span>
+        <span :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-subtitle skeleton-border-radius'">{{ people.number }} {{ $t('homepage.commonConnections.label') }}</span>
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action class="suggestions-list-item-actions">

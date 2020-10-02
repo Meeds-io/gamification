@@ -62,7 +62,7 @@
         </v-row>
       </div>
       <div v-else>
-        <div v-if="showSuggestions">
+        <div v-if="showSuggestions && !showSearch">
           <v-row class="peopleSuggestions px-4">
             <v-col>
               <v-row class="align-center">
@@ -81,7 +81,7 @@
           </v-row>
         </div>
       </div>
-      <v-row v-if="showConnectionRequests && !showSearch || !isCurrentUserProfile" class="px-4">
+      <v-row v-if="isCurrentUserProfile && showConnectionRequests && !showSearch || !isCurrentUserProfile && showSuggestions && !showSearch" class="px-4">
         <v-col class="pb-0">
           <v-divider class="my-0" />
         </v-col>
@@ -91,7 +91,7 @@
           <div v-if="showConnections">
             <v-row align="center">
               <v-col>
-                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.profileStatus.commonConnections') }}</span>
+                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.commonConnections.label') }}</span>
                 <v-btn
                   fab
                   depressed
@@ -110,7 +110,7 @@
             <div 
               v-if="showConnections" 
               class="connectionsItems" 
-              :class="(showMore ? 'showMore ' : '').concat(connectionRequests > 0 ? 'requestsNotEmpty' : '')"
+              :class="(showMore ? 'showMore ' : '').concat(showConnectionRequests && !showSearch ? 'requestsNotEmpty' : '')"
             >
               <v-list-item
                 v-for="item in filteredConnections"
@@ -144,10 +144,10 @@
           <div
             v-else
             class="connectionsItems"
-            :class="(showMore ? 'showMore ' : '').concat(connectionRequests > 0 ? 'requestsNotEmpty' : '')"
+            :class="showSuggestions && !showSearch ? 'suggestionsNotEmpty' : ''"
           >
             <v-list-item
-                v-for="identity in commonConnections"
+                v-for="identity in filteredCommonConnections"
                 :key="identity.profile.id"
                 class="py-0 px-2">
               <v-list-item-avatar class="my-1 mr-2" size="30">
@@ -233,6 +233,13 @@
           return this.connections;
         }
       },
+      filteredCommonConnections() {
+        if (this.search) {
+          return this.commonConnections.filter(item => item.profile.fullname.toLowerCase().match(this.search.toLowerCase()));
+        } else {
+          return this.commonConnections;
+        }
+      },
       showConnections() {
         return this.connections && this.connections.length > 0;
       },
@@ -304,6 +311,7 @@
         this.connectionRequests = requests;
       },
       closeConnectionSearch() {
+        this.search = null;
         this.showSearch = false;
       },
       openConnectionSearch() {
