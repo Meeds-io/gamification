@@ -83,6 +83,20 @@ export function getSpacesOfUser(offset, limit) {
   })
 }
 
+export function getCommonsSpaces(offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces/${eXo.env.portal.profileOwner}?offset=${offset || 0}&limit=${100|| 0}&returnSize=true`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if(resp && resp.ok) {
+      return resp.json();
+    }
+    else {
+      throw new Error ('Error when getting commons spaces');
+    }
+  })
+}
+
 export function getSpacesRequests() {
   return fetch( '/portal/rest/v1/social/spacesMemberships?status=invited&returnSize=true&limit=3', {
     method: 'GET',

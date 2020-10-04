@@ -25,6 +25,7 @@ import AchievementsDrawer from './components/AchievementsDrawer.vue';
 import ConnectionsDrawer from './components/ConnectionsDrawer.vue';
 import SpaceDrawer from './components/SpaceDrawer.vue';
 import SpaceDrawerItems from './components/SpaceDrawerItems.vue';
+import CommonsSpaceItems from './components/CommonsSpaceItems.vue';
 
 const components = {
   'profile-stats': ProfileStats,
@@ -38,6 +39,7 @@ const components = {
   'connections-drawer': ConnectionsDrawer,
   'space-drawer': SpaceDrawer,
   'space-drawer-items': SpaceDrawerItems,
+  'commons-space-items': CommonsSpaceItems,
 };
 
 for(const key in components) {

@@ -78,13 +78,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <v-divider class="my-0" />
 
-    <div class="content spacesItems">
-      <v-row v-if="showSpacesRequests" class="px-4">
+    <div class="content">
+      <v-row v-if="showSpacesRequests && checkCurrentUserProfile" class="px-4">
         <v-col>
           <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
         </v-col>
       </v-row>
-      <v-row v-if="showSpacesRequests" class="px-4">
+      <v-row v-if="showSpacesRequests && checkCurrentUserProfile" class="px-4">
         <v-col>
           <v-divider class="my-0" />
         </v-col>
@@ -96,7 +96,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               d-flex
               xs12
               justify-center>
-              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
+              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ checkCurrentUserProfile ? this.$t('homepage.profileStatus.spaceList') : this.$t('homepage.profileStatus.commonSpaceList')}}</span>
               <v-btn
                 fab
                 depressed
@@ -104,13 +104,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 height="20"
                 width="20"
                 class="mb-1 header-badge-color">
-                <span class="white--text caption">{{ spacesSize }}</span>
+                <span class="white--text caption">{{ checkCurrentUserProfile ? spacesSize : commonsSpaces.length  }}</span>
               </v-btn>
             </v-flex>
                <space-drawer-items
-                    v-for="space in spaces"
+                     v-if="checkCurrentUserProfile"
+                     v-for="space in filteredSpaces"
                     :key="space.id"
                     :space="space"
+                    :skeleton="firstLoadingSpaces"
+               />
+               <commons-space-items
+                    v-if="!checkCurrentUserProfile"
+                    v-for="commonSpace in filteredCommonsSpaces"
+                    :key="commonSpace.id"
+                    :commonSpace="commonSpace"
                     :skeleton="firstLoadingSpaces"
                />
           </template>
@@ -148,7 +156,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 
-  import {getSpacesOfUser} from '../profilStatsAPI';
+  import {getSpacesOfUser, getCommonsSpaces} from '../profilStatsAPI';
   export default {
     props: {
       spaceDrawer: {
@@ -158,6 +166,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       spaceRequests: {
         type: Number,
         default: 0,
+      },
+      checkCurrentUserProfile: {
+        type: Boolean,
+        default: false,
+      },
+      commonsSpaces: {
+        type: Array,
+        default: function() {
+          return [];
+        },
       },
     },
     data() {
@@ -170,7 +188,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       limitToFetch: 0,
       showSearch:false,
       firstLoadingSpaces: true,
-      showLoadMoreSpaces:true,
       search: null,
      }
     },
@@ -179,14 +196,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         if (this.search) {
           return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
         } else {
-          if((this.spaceSize <= this.limit) || (this.limitToFetch >= this.spaceSize)) {
-            this.showLoadMoreSpaces = false;
-          }
           return this.spaces;
+        }
+      },
+      filteredCommonsSpaces() {
+        if (this.search) {
+          return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
+        } else {
+          return this.commonsSpaces;
         }
       },
       showSpaces() {
         return this.spaces && this.spaces.length > 0;
+      },
+      showLoadMoreSpaces() {
+        return this.spaceSize > this.limitToFetch;
       },
       spacesSize() {
         if (this.search) {
@@ -215,7 +239,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     created() {
       this.limitToFetch = this.limit;
-      this.initSpaces();
+      this.getMySpaces();
     },
     methods: {
       closeDrawer() {
@@ -224,12 +248,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spaces = data.spaces;
           this.spaceSize = data.size;
         });
-        this.limitToFetch = 0;
+        this.limitToFetch = this.limit;
         this.showSearch = false;
         this.showLoadMoreSpaces = true;
       },
-      initSpaces() {
-        this.showLoadMoreSpaces = true;
+      getMySpaces() {
         this.firstLoadingSpaces = false;
         getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
           this.spaces = data.spaces;

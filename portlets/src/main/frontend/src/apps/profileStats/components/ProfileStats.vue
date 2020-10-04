@@ -30,6 +30,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-if="!isFlipped"
           class="profileFlippedCard profileStats"
           :key="userDashBordKey"
+          :check-current-user-profile="checkCurrentUserProfile"
+          :commons-space-size="commonsSpaceSize"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
@@ -47,23 +49,31 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
     <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
-    <space-drawer :space-drawer="spaceDrawer" :space-requests="spaceRequests" @closeDrawer="closeSpaceDrawer" />
+    <space-drawer :space-drawer="spaceDrawer" :space-requests="spaceRequests" :check-current-user-profile="checkCurrentUserProfile" :commons-spaces="commonsSpaces" @closeDrawer="closeSpaceDrawer" />
   </v-app>
 </template>
 <script>
+   import {getCommonsSpaces} from '../profilStatsAPI';
     export default {
         data: function() {
           return {
             currentComponent: null,
             isFlipped: false,
             connectionsDrawer: false,
+            checkCurrentUserProfile: false,
             spaceDrawer: false,
             connectionRequests: null,
             spaceRequests: null,
             userDashBordKey: 0,
+            commonsSpaceSize: 0,
+            commonsSpaces: [],
           };
         },
         created() {
+          this.checkCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
+          if (!this.checkCurrentUserProfile) {
+            this.CommonsSpaces();
+          }
           this.$root.$on('open-achievement', (userPoints) => {
             this.$refs.achievementsDrawer.open(userPoints);
           });
@@ -74,6 +84,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             profileWrapper.classList.toggle('is-flipped');
             this.currentComponent = component;
             this.isFlipped = !this.isFlipped;
+          },
+          CommonsSpaces() {
+              getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+               this.commonsSpaces = data.spaces;
+               this.commonsSpaceSize = data.size;
+            });
           },
           openConnectionsDrawer() {
             this.connectionsDrawer = true;
