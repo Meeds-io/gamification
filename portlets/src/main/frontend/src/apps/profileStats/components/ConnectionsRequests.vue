@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             dark
             height="20"
             width="20"
-            class="mb-1 header-badge-color">
+            class="mb-1 header-badge-color" :href="receivedInvitationsUrl">
             <span class="white--text caption">{{ connectionsRequestsSize }}</span>
           </v-btn>
         </v-flex>
@@ -99,6 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         connectionsRequests: [],
         connectionsRequestsSize: '',
         items: [],
+        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
       }
     },
     created(){
