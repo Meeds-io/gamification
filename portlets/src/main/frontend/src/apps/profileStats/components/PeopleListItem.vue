@@ -47,7 +47,7 @@
         this.$nextTick(() => {
           $(`#${this.cmpId}`).userPopup({
             restURL: '/portal/rest/social/people/getPeopleInfo/{0}.json',
-            userId: this.id,
+            userId: this.person.username,
             labels: this.labels,
             content: false,
             keepAlive: true,
