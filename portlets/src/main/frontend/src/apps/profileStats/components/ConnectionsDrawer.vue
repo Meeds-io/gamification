@@ -123,20 +123,12 @@
               class="connectionsItems" 
               :class="(showMore ? 'showMore ' : '').concat(showConnectionRequests && !showSearch ? 'requestsNotEmpty' : '')"
             >
-              <v-list-item
-                v-for="item in filteredConnections"
-                :key="item.id"
-                class="py-0 px-2">
-                <v-list-item-avatar class="my-1 mr-2" size="30">
-                  <v-img :src="item.avatar" />
-                </v-list-item-avatar>
-  
-                <v-list-item-content class="py-0">
-                  <a :id="cmpId" class="connectionProfileLink" :href="item.profileLink" rel="nofollow">
-                    <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="item.fullname" />
-                  </a>
-                </v-list-item-content>
-              </v-list-item>
+              <people-list-item
+                v-for="person in filteredConnections"
+                :key="person.id"
+                :person="person"
+                :people="filteredConnections"
+              />
             </div>
             <div v-else>
               <v-row class="d-flex text-center noPeopleYetBlock my-12">
@@ -157,20 +149,12 @@
             class="connectionsItems"
             :class="showSuggestions && !showSearch ? 'suggestionsNotEmpty' : ''"
           >
-            <v-list-item
-                v-for="identity in filteredCommonConnections"
-                :key="identity.profile.id"
-                class="py-0 px-2">
-              <v-list-item-avatar class="my-1 mr-2" size="30">
-                <v-img :src="identity.profile.avatar" />
-              </v-list-item-avatar>
-
-              <v-list-item-content class="py-0">
-                <a :id="cmpId" class="connectionProfileLink" :href="identity.profile.profileLink" rel="nofollow">
-                  <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="identity.profile.fullname" />
-                </a>
-              </v-list-item-content>
-            </v-list-item>
+            <people-list-item
+              v-for="person in filteredCommonConnections"
+              :key="person.id"
+              :person="person"
+              :people="filteredCommonConnections"
+            />
           </div>
         </v-col>
       </v-row>
@@ -215,16 +199,6 @@
     },
     data() {
       return {
-        cmpId: `react${parseInt(Math.random() * 10000)
-          .toString()}`,
-        labels: {
-          CancelRequest: this.$t('profile.label.CancelRequest'),
-          Confirm: this.$t('profile.label.Confirm'),
-          Connect: this.$t('profile.label.Connect'),
-          Ignore: this.$t('.profile.Ignore'),
-          RemoveConnection: this.$t('profile.label.RemoveConnection'),
-          StatusTitle: `${this.$t('profile.label.StatusTitle')}...`,
-        },
         connections: [],
         showSearch: false,
         search: null,
@@ -245,7 +219,7 @@
       },
       filteredCommonConnections() {
         if (this.search) {
-          return this.commonConnections.filter(item => item.profile.fullname.toLowerCase().match(this.search.toLowerCase()));
+          return this.commonConnections.filter(item => item.fullname.toLowerCase().match(this.search.toLowerCase()));
         } else {
           return this.commonConnections;
         }
@@ -284,26 +258,12 @@
     created() {
       if (this.isCurrentUserProfile) {
         this.getConnections(0);
-        this.initTiptip(); 
       } else {
         this.getConnections(0, 0);
         this.initPeopleSuggestionsList();
       }
     },
     methods: {
-      initTiptip() {
-        this.$nextTick(() => {
-          $(`#${this.cmpId}`).userPopup({
-            restURL: '/portal/rest/social/people/getPeopleInfo/{0}.json',
-            userId: this.id,
-            labels: this.labels,
-            content: false,
-            keepAlive: true,
-            defaultPosition: 'top_left',
-            maxWidth: '240px',
-          });
-        });
-      },
       closeDrawer() {
         this.$emit('closeDrawer');
         this.showSearch = false;

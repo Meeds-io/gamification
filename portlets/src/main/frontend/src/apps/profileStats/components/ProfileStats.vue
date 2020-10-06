@@ -87,9 +87,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           },
           retrieveCommonConnections(id) {
             getCommonConnections(id).then(data => {
-              this.commonConnections = data.identities;
-              this.commonConnections.forEach(identity => {
-                identity.profile.profileLink = this.PROFILE_URI + identity.profile.username;
+              const identities = [];
+              identities.push(...data.identities);
+              this.commonConnections = identities.map(identity => identity.profile);
+              this.commonConnections.forEach(commonConnection => {
+                commonConnection.profileLink = this.PROFILE_URI + commonConnection.username;
               });
             });
           },

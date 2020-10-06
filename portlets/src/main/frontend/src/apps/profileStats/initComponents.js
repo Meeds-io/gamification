@@ -24,6 +24,7 @@ import AchievementItem from './components/AchievementItem.vue';
 import AchievementsDrawer from './components/AchievementsDrawer.vue';
 import ConnectionsDrawer from './components/ConnectionsDrawer.vue';
 import ExoSuggestionsPeopleListItem from './components/ExoSuggestionsPeopleListItem';
+import PeopleListItem from './components/PeopleListItem';
 import SpaceDrawer from './components/SpaceDrawer.vue';
 
 const components = {
@@ -38,6 +39,7 @@ const components = {
   'connections-drawer': ConnectionsDrawer,
   'space-drawer': SpaceDrawer,
   'exo-suggestions-people-list-item' : ExoSuggestionsPeopleListItem,
+  'people-list-item': PeopleListItem,
 };
 
 for(const key in components) {
