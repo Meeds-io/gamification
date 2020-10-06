@@ -139,7 +139,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             max-height: inherit;
           }
           .peopleSuggestions, .connectionsRequests {
-            height: 33.5vh;
+            height: 30vh;
+          }
+          .seeAllRequests {
           }
           .peopleSuggestions {
             .connexion-accept-btn {
@@ -165,10 +167,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               max-height: 51vh;
             }
             .showMore {
-              max-height: 78vh;
+              max-height: 79vh;
             }
             .showMore.requestsNotEmpty {
-              max-height: 43.4vh;
+              max-height: 44.4vh;
             }
           }
           .noPeopleYetBlock {
@@ -276,4 +278,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   .uiIconAppachievements:before {
       content: "\ebdb"!important;
+  }
+  
+  @media screen and (max-height: 780px) {
+    .connectionsDrawer {
+      .connectionsRequests {
+        height: 35vh!important;
+      }
+      .connectionsList {
+        .connectionsItems {
+          max-height: 83vh!important;
+        }
+        .suggestionsNotEmpty, .requestsNotEmpty {
+          max-height: 42vh!important;
+        }
+        .showMore {
+          max-height: 74vh!important;
+        }
+        .showMore.requestsNotEmpty {
+          max-height: 33vh!important;
+        }
+      }
+    }
   }

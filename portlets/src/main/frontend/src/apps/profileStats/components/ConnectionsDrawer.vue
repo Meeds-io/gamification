@@ -55,11 +55,23 @@
 
     <div class="content">
       <div v-if="isCurrentUserProfile">
-        <v-row v-if="showConnectionRequests && !showSearch" class="connectionsRequests px-4">
-          <v-col>
-            <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
-          </v-col>
-        </v-row>
+        <div v-if="showConnectionRequests && !showSearch">        
+          <v-row class="connectionsRequests px-4">
+            <v-col class="pb-0">
+              <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
+            </v-col>
+          </v-row>
+          <v-row class="seeAllRequests">
+            <v-col class="align-center py-0">
+              <v-btn
+                depressed
+                small
+                class="caption text-uppercase grey--text ma-0" :href="receivedInvitationsUrl">
+                {{ $t('homepage.seeAll') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </div>
       </div>
       <div v-else>
         <div v-if="showSuggestions && !showSearch">
@@ -87,7 +99,7 @@
         </v-col>
       </v-row>
       <v-row class="connectionsList px-4">
-        <v-col>
+        <v-col class="py-1">
           <div v-if="showConnections">
             <v-row align="center">
               <v-col>
@@ -164,8 +176,6 @@
         </v-col>
       </v-row>
     </div>
-
-    <v-divider v-if="connections && showMore" class="my-0" />
     
     <v-row v-if="connections && showMore" class="loadMoreFooterAction mx-0">
       <v-col>
@@ -220,6 +230,7 @@
         showSearch: false,
         search: null,
         PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
+        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
         connexionsSize: 0,
         limit: 20,
         peopleSuggestionsList: [],

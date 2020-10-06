@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-flex
       d-flex
       xs12
-      my-5>
+      my-3>
       <v-layout
         row
         wrap
@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             dark
             height="20"
             width="20"
-            class="mb-1 header-badge-color mr-8">
+            class="mb-1 header-badge-color">
             <span class="white--text caption">{{ connectionsRequestsSize }}</span>
           </v-btn>
         </v-flex>
@@ -89,30 +89,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </v-list>
     </v-flex>
-    <v-flex
-      d-flex
-      xs12>
-      <v-layout
-        row
-        wrap
-        mx-2
-        align-start>
-        <v-flex
-          d-flex
-          xs12
-          mt-n2
-          justify-center>
-          <div class="actions">
-            <v-btn
-              depressed
-              small
-              class="caption text-uppercase grey--text" :href="receivedInvitationsUrl">
-              {{ $t('homepage.seeAll') }}
-            </v-btn>
-          </div>
-        </v-flex>
-      </v-layout>
-    </v-flex>
   </v-layout>
 </template>
 <script>
@@ -123,7 +99,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         connectionsRequests: [],
         connectionsRequestsSize: '',
         items: [],
-        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`
       }
     },
     created(){
