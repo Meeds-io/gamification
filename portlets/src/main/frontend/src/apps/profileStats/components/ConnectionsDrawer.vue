@@ -111,7 +111,6 @@
                   height="20"
                   width="20"
                   class="mb-1 header-badge-color"
-                  @click="test"
                 >
                   <span class="white--text caption">{{ isCurrentUserProfile ? this.connections.length : this.commonConnections.length }}</span>
                 </v-btn>
@@ -177,7 +176,7 @@
       </v-row>
     </div>
     
-    <v-row v-if="connections && showMore" class="loadMoreFooterAction mx-0">
+    <v-row v-if="isCurrentUserProfile && connections && showMore" class="loadMoreFooterAction mx-0">
       <v-col>
         <v-btn
           class="loadMoreBtn"
@@ -283,9 +282,13 @@
       },
     },
     created() {
-      this.getConnections(0);
-      this.initTiptip();
-      this.initPeopleSuggestionsList();
+      if (this.isCurrentUserProfile) {
+        this.getConnections(0);
+        this.initTiptip(); 
+      } else {
+        this.getConnections(0, 0);
+        this.initPeopleSuggestionsList();
+      }
     },
     methods: {
       initTiptip() {
@@ -305,9 +308,8 @@
         this.$emit('closeDrawer');
         this.showSearch = false;
       },
-      getConnections(offset) {
-        // this.connections.length
-        getUserConnections('', offset, this.limit).then(data => {
+      getConnections(offset, limit) {
+        getUserConnections('', offset, limit >= 0 ? limit : this.limit).then(data => {
           this.connexionsSize = data.size;
           this.connections.push(...data.users);
           this.connections.forEach(connection => {
@@ -331,6 +333,12 @@
       initPeopleSuggestionsList() {
         this.$userService.getSuggestionsUsers().then(data => {
           this.peopleSuggestionsList = data.items;
+          
+          // get suggestions from profile owner's connections
+          const connectionsIds = this.connections.map(connection => connection.username);
+          this.peopleSuggestionsList.filter(suggestion => {
+            connectionsIds.some(connectionId => suggestion.username === connectionId);
+          });          
         });
       },
     }
