@@ -79,24 +79,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-divider class="my-0" />
 
     <div class="content">
-      <v-row v-if="showSpacesRequests && checkCurrentUserProfile" class="px-4">
-        <v-col>
-          <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
-        </v-col>
-      </v-row>
-      <v-row v-if="showSpacesRequests && checkCurrentUserProfile" class="px-4">
-        <v-col>
-          <v-divider class="my-0" />
-        </v-col>
-      </v-row>
-      <v-row class="px-4">
-        <v-col>
-          <template v-if="showSpaces">
+      <template v-if="checkCurrentUserProfile && showSpaces">
+        <v-row v-if="showSpacesRequests" class="px-4">
+          <v-col>
+            <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
+          </v-col>
+        </v-row>
+        <v-row v-if="showSpacesRequests" class="px-4">
+          <v-col>
+            <v-divider class="my-0" />
+          </v-col>
+        </v-row>
+        <v-row class="px-4">
+          <v-col>
             <v-flex
               d-flex
               xs12
               justify-center>
-              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ checkCurrentUserProfile ? this.$t('homepage.profileStatus.spaceList') : this.$t('homepage.profileStatus.commonSpaceList')}}</span>
+              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
               <v-btn
                 fab
                 depressed
@@ -104,42 +104,112 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 height="20"
                 width="20"
                 class="mb-1 header-badge-color">
-                <span class="white--text caption">{{ checkCurrentUserProfile ? spacesSize : commonsSpaces.length  }}</span>
+                <span class="white--text caption">{{ spacesSize }}</span>
               </v-btn>
             </v-flex>
-               <space-drawer-items
-                     v-if="checkCurrentUserProfile"
-                     v-for="space in filteredSpaces"
-                    :key="space.id"
-                    :space="space"
-                    :skeleton="firstLoadingSpaces"
-               />
-               <commons-space-items
-                    v-if="!checkCurrentUserProfile"
-                    v-for="commonSpace in filteredCommonsSpaces"
-                    :key="commonSpace.id"
-                    :commonSpace="commonSpace"
-                    :skeleton="firstLoadingSpaces"
-               />
-          </template>
-          <template v-else>
-            <v-row class="d-flex text-center noSpaceYetBlock my-12">
-              <div class="ma-auto noSpaceYet">
-                <p class="noSpaceYetIcons">
-                  <v-icon>fa-users</v-icon>
-                </p>
-                <p class="title font-weight-bold">
-                  {{ $t('homepage.profileStatus.noSpaces') }}
-                </p>
-              </div>
-            </v-row>
-          </template>
-        </v-col>
-      </v-row>
+            <template>
+              <space-drawer-items
+                v-for="space in filteredSpaces"
+                :key="space.id"
+                :space="space"
+                :skeleton="firstLoadingSpaces" />
+            </template>
+          </v-col>
+        </v-row>
+      </template>
+
+      <template v-if="!checkCurrentUserProfile">
+        <v-row class="px-4">
+          <v-col>
+            <template v-if="showSpaces">
+              <v-list
+                v-if="spacesSuggestionsList.length > 0 && suggestionsType !== 'people'"
+                dense
+                class="py-4">
+                <v-flex
+                  d-flex
+                  xs12
+                  my-5>
+                  <v-layout
+                    row
+                    wrap
+                    mx-2
+                    align-start>
+                    <v-flex
+                      d-flex
+                      xs12
+                      mt-n2
+                      justify-center>
+                      <div>
+                        <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.SuggestionsSpaces') }}</span>
+                        <v-btn
+                          fab
+                          depressed
+                          dark
+                          height="20"
+                          width="20"
+                          class="mb-1 header-badge-color">
+                          <span class="white--text caption">{{ spacesSuggestionsList.length > 3 ? 3 : spacesSuggestionsList.length }}</span>
+                        </v-btn>
+                      </div>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+                <suggestions-space-list-item
+                  v-for="spaceSuggestion in spacesToDisplay"
+                  :key="spaceSuggestion.spaceId"
+                  :space-suggestion="spaceSuggestion"
+                  :spaces-suggestions-list="spacesSuggestionsList"
+                  :skeleton="firstLoadingSpaces" />
+              </v-list>
+
+              <v-row v-if="spacesSuggestionsList.length > 0" class="px-4">
+                <v-col>
+                  <v-divider class="my-0" />
+                </v-col>
+              </v-row>
+
+              <v-flex
+                d-flex
+                xs12
+                justify-center>
+                <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.commonSpaceList') }}</span>
+                <v-btn
+                  fab
+                  depressed
+                  dark
+                  height="20"
+                  width="20"
+                  class="mb-1 header-badge-color">
+                  <span class="white--text caption">{{ commonsSpaces.length }}</span>
+                </v-btn>
+              </v-flex>
+              <space-commons-items
+                v-for="commonSpace in filteredCommonsSpaces"
+                :key="commonSpace.id"
+                :common-space="commonSpace"
+                :skeleton="firstLoadingSpaces" />
+            </template>
+          </v-col>
+        </v-row>
+      </template>
+
+      <template v-if="!showSpaces">
+        <v-row class="d-flex text-center noSpaceYetBlock my-12">
+          <div class="ma-auto noSpaceYet">
+            <p class="noSpaceYetIcons">
+              <v-icon>fa-users</v-icon>
+            </p>
+            <p class="title font-weight-bold">
+              {{ checkCurrentUserProfile ? $t('homepage.profileStatus.noSpaces') : $t('homepage.profileStatus.noCommonSpaces') }}
+            </p>
+          </div>
+        </v-row>
+      </template>
     </div>
 
-   <template v-if="showSpaces && showLoadMoreSpaces">
-    <v-divider class="my-0"/>
+    <template v-if="showSpaces && showLoadMoreSpaces">
+      <v-divider class="my-0" />
       <v-row class="mx-0 loadMoreButton">
         <v-col>
           <v-btn
@@ -150,18 +220,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-btn>
         </v-col>
       </v-row>
-   </template>
+    </template>
   </v-navigation-drawer>
 </template>
 
 <script>
 
-  import {getSpacesOfUser, getCommonsSpaces} from '../profilStatsAPI';
+  import {getSpacesOfUser, getCommonsSpaces, getSuggestionsSpace} from '../profilStatsAPI';
   export default {
     props: {
       spaceDrawer: {
         type: Boolean,
         default: false,
+      },
+      suggestionsType: {
+        type: String,
+        default: 'all',
       },
       spaceRequests: {
         type: Number,
@@ -181,6 +255,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     data() {
      return {
       spaces: [],
+      spacesSuggestionsList: [],
       SpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
       offset: 0,
       spaceSize: 0,
@@ -199,6 +274,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           return this.spaces;
         }
       },
+      displaySpacesSuggestions() {
+        return !this.suggestionsType || this.suggestionsType === 'all' || this.suggestionsType === 'space';
+      },
+      spacesToDisplay() {
+        return this.spacesSuggestionsList.slice(0, 3);
+      },
       filteredCommonsSpaces() {
         if (this.search) {
           return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
@@ -207,10 +288,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         }
       },
       showSpaces() {
-        return this.spaces && this.spaces.length > 0;
+        return this.spaces && this.spaces.length > 0 || this.commonsSpaces && this.commonsSpaces.length;
       },
       showLoadMoreSpaces() {
-        return this.spaceSize > this.limitToFetch;
+        return this.spaceSize > this.limitToFetch || this.commonsSpaces.length > this.limitToFetch  ;
       },
       spacesSize() {
         if (this.search) {
@@ -239,7 +320,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     created() {
       this.limitToFetch = this.limit;
-      this.getMySpaces();
+      if (this.checkCurrentUserProfile){
+         this.getMySpaces();}
+      else {
+        if (this.displaySpacesSuggestions) {
+         this. initSpaceSuggestionsList();
+         }
+      }
     },
     methods: {
       closeDrawer() {
@@ -282,6 +369,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
              this.spaces = data.spaces;
         });
         }
+      },
+      initSpaceSuggestionsList() {
+       this.firstLoadingSpaces = false;
+        getSuggestionsSpace().then(data => {
+          this.spacesSuggestionsList = data.items;
+        });
       },
       getUrl(groupId) {
          window.location.href = `${eXo.env.portal.context}/g/${groupId.replace(/\//g, ':')}`;

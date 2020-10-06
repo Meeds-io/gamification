@@ -111,6 +111,20 @@ export function getSpacesRequests() {
   })
 }
 
+export function getSuggestionsSpace(){
+  return fetch('/portal/rest/homepage/intranet/spaces/suggestions', {
+    credentials: 'include'
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      return resp.text().then((text) => {
+        throw new Error(text);
+      });
+    } else {
+      return resp.json();
+    }
+  });
+}
+
 export function getAchievements(providerId, remoteId, limit) {
   return fetch(`/portal/rest/gamification/gameficationinformationsboard/history/all?capacity=${limit}&providerId=${providerId}&remoteId=${remoteId}`, {
     method: 'GET',

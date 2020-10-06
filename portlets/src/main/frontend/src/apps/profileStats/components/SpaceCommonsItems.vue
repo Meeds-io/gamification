@@ -15,35 +15,32 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-      <v-row userItem>
-          <template>
-            <v-list-item
-              :id="id"
-              href="url"
-              :key="commonSpace.id"
-              class="py-0 px-2">
-              <v-list-item-avatar
-                class="my-1 mr-2"
-                size="30"
-              >
-                <v-img :src="!skeleton && avatarUrl || ''" :class="skeleton && 'skeleton-background'"/>
-              </v-list-item-avatar>
+  <v-row user-item>
+    <template>
+      <v-list-item
+        :id="id"
+        :key="commonSpace.id"
+        href="url"
+        class="py-0 px-2">
+        <v-list-item-avatar
+          class="my-1 mr-2"
+          size="30">
+          <v-img :src="!skeleton && avatarUrl || ''" :class="skeleton && 'skeleton-background'" />
+        </v-list-item-avatar>
 
-              <v-list-item-content class="py-0" :href="url">
-                  <v-list-item-title>
-                    <a
-                      :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-title skeleton-border-radius'"
-                      class="font-weight-bold subtitle-2 request-user-name darken-2"
-                      :href="url"
-                    >
-                      {{ commonSpace.displayName }}
-                    </a>
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
-      </v-row>
-
+        <v-list-item-content class="py-0" :href="url">
+          <v-list-item-title>
+            <a
+              :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-title skeleton-border-radius'"
+              class="font-weight-bold subtitle-2 request-user-name darken-2"
+              :href="url">
+              {{ commonSpace.displayName }}
+            </a>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
+  </v-row>
 </template>
 
 <script>

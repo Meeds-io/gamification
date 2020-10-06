@@ -28,15 +28,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="white profileCard">
         <user-dashbord
           v-if="!isFlipped"
-          class="profileFlippedCard profileStats"
           :key="userDashBordKey"
+          class="profileFlippedCard profileStats"
           :check-current-user-profile="checkCurrentUserProfile"
           :commons-space-size="commonsSpaceSize"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
           @shouldShowRequests="shouldShowRequests"
-          @showRequestsSpace="showRequestsSpace"/>
+          @showRequestsSpace="showRequestsSpace" />
         <v-flex
           :is="currentComponent"
           v-if="isFlipped"
@@ -48,8 +48,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
-    <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
-    <space-drawer :space-drawer="spaceDrawer" :space-requests="spaceRequests" :check-current-user-profile="checkCurrentUserProfile" :commons-spaces="commonsSpaces" @closeDrawer="closeSpaceDrawer" />
+    <connections-drawer
+      :connections-drawer="connectionsDrawer"
+      :connection-requests="connectionRequests"
+      @closeDrawer="closeConnectionsDrawer" />
+    <space-drawer
+      :space-drawer="spaceDrawer"
+      :space-requests="spaceRequests"
+      :check-current-user-profile="checkCurrentUserProfile"
+      :commons-spaces="commonsSpaces"
+      @closeDrawer="closeSpaceDrawer" />
   </v-app>
 </template>
 <script>

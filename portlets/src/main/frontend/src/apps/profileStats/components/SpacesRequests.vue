@@ -91,6 +91,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </v-list>
     </v-flex>
+    <v-flex
+      d-flex
+      xs12
+      px-4
+      pb-2
+      justify-center>
+      <v-btn
+        v-if="spacesRequestsSize > 3"
+        depressed
+        small
+        class="caption text-uppercase grey--text"
+        :href="invitationSpaceUrl">
+        {{ this.$t('homepage.seeAll') }}
+      </v-btn>
+    </v-flex>
   </v-layout>
 </template>
 <script>
