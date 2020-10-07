@@ -39,18 +39,18 @@
                   icon
                   small
                   min-width="auto"
-                  class="px-0 suggestions-btn-action connexion-accept-btn"
+                  class="px-1 suggestions-btn-action connexion-accept-btn"
                   @click="joinSpace(spaceSuggestion)">
-                  <i class="uiIconPlusLight"></i>
+                  <v-icon color="primary-color" size="20">mdi-plus-circle</v-icon>
                 </a>
                 <a
                   :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
                   text
                   small
                   min-width="auto"
-                  class="px-0 suggestions-btn-action connexion-refuse-btn"
+                  class="px-1 suggestions-btn-action connexion-refuse-btn"
                   @click="ignoredSuggestionSpace(spaceSuggestion)">
-                  <i class="uiIconCloseCircled"></i>
+                  <v-icon color="grey lighten-1" size="20">mdi-close-circle</v-icon>
                 </a>
               </v-btn-toggle>
             </v-list-item-action>

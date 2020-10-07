@@ -73,12 +73,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <div
                     class="headline text-color font-weight-bold pa-1"
                     @click="openSpaceDrawer">
-                    <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? spacesSize : commonsSpaceSize }}</span>
+                    <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? spacesSize : commonsSpaceDefaultSize }}</span>
                   </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
-                <span :class="firstLoadingSpaces && 'skeleton-text'">{{ $t('homepage.profileStatus.spaces') }}</span>
+                <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.spaces') : $t('homepage.profileStatus.Commonspaces') }}</span>
               </v-card-text>
             </v-card>
           </v-flex>
@@ -170,7 +170,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         type: Boolean,
         default: false,
       },
-      commonsSpaceSize: {
+      commonsSpaceDefaultSize: {
         type: Number,
         default: 0,
       },

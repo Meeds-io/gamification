@@ -103,7 +103,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 dark
                 height="20"
                 width="20"
-                class="mb-1 header-badge-color">
+                class="mb-1 header-badge-color"
+                @click="openSpace()">
                 <span class="white--text caption">{{ spacesSize }}</span>
               </v-btn>
             </v-flex>
@@ -123,7 +124,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-col>
             <template v-if="showSpaces">
               <v-list
-                v-if="spacesSuggestionsList.length > 0 && suggestionsType !== 'people'"
+                v-if="spacesSuggestionsList.length > 0 && suggestionsType !== 'people' && !this.showSearch"
                 dense
                 class="py-4">
                 <v-flex
@@ -156,14 +157,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </v-layout>
                 </v-flex>
                 <suggestions-space-list-item
-                  v-for="spaceSuggestion in spacesToDisplay"
+                  v-for="spaceSuggestion in suggestionSpacesToDisplay"
                   :key="spaceSuggestion.spaceId"
                   :space-suggestion="spaceSuggestion"
                   :spaces-suggestions-list="spacesSuggestionsList"
                   :skeleton="firstLoadingSpaces" />
               </v-list>
-
-              <v-row v-if="spacesSuggestionsList.length > 0" class="px-4">
+              <v-row v-if="spacesSuggestionsList.length > 0 && !this.showSearch" class="px-4">
                 <v-col>
                   <v-divider class="my-0" />
                 </v-col>
@@ -181,7 +181,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   height="20"
                   width="20"
                   class="mb-1 header-badge-color">
-                  <span class="white--text caption">{{ commonsSpaces.length }}</span>
+                  <span class="white--text caption">{{ commonSpacesSize }}</span>
                 </v-btn>
               </v-flex>
               <space-commons-items
@@ -245,20 +245,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         type: Boolean,
         default: false,
       },
-      commonsSpaces: {
-        type: Array,
-        default: function() {
-          return [];
-        },
+      commonsSpaceDefaultSize: {
+        type: Number,
+        default: 0,
       },
     },
     data() {
      return {
       spaces: [],
       spacesSuggestionsList: [],
+      commonsSpaces: [],
       SpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
       offset: 0,
       spaceSize: 0,
+      commonsSpaceSize: 0,
       limit: 10,
       limitToFetch: 0,
       showSearch:false,
@@ -277,7 +277,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       displaySpacesSuggestions() {
         return !this.suggestionsType || this.suggestionsType === 'all' || this.suggestionsType === 'space';
       },
-      spacesToDisplay() {
+      suggestionSpacesToDisplay() {
         return this.spacesSuggestionsList.slice(0, 3);
       },
       filteredCommonsSpaces() {
@@ -291,13 +291,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         return this.spaces && this.spaces.length > 0 || this.commonsSpaces && this.commonsSpaces.length;
       },
       showLoadMoreSpaces() {
-        return this.spaceSize > this.limitToFetch || this.commonsSpaces.length > this.limitToFetch  ;
+        return this.spaceSize > this.limitToFetch || this.commonsSpaceDefaultSize > this.limitToFetch;
       },
       spacesSize() {
         if (this.search) {
           return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase())).length;
         } else {
           return this.spaces.length;
+        }
+      },
+      commonSpacesSize() {
+        if (this.search) {
+          return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase())).length;
+        } else {
+          return this.commonsSpaces.length;
         }
       },
       showSpacesRequests() {
@@ -323,6 +330,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       if (this.checkCurrentUserProfile){
          this.getMySpaces();}
       else {
+       this.CommonsSpaces();
         if (this.displaySpacesSuggestions) {
          this. initSpaceSuggestionsList();
          }
@@ -335,9 +343,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spaces = data.spaces;
           this.spaceSize = data.size;
         });
-        this.limitToFetch = this.limit;
+        this.checkCurrentUserProfile ? this.limitToFetch = this.limit : this.limitToFetch = this.commonsSpaceDefaultSize ;
         this.showSearch = false;
-        this.showLoadMoreSpaces = true;
       },
       getMySpaces() {
         this.firstLoadingSpaces = false;
@@ -346,6 +353,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spaceSize = data.size;
         });
       },
+       CommonsSpaces() {
+        this.firstLoadingSpaces = false;
+         getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+            this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
+            this.commonsSpaceSize = data.size;
+         });
+       },
       openSpace() {
         window.location.href =  `${this.SpaceUrl}`;
       },
@@ -363,12 +377,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         this.search = '';
       },
       loadNextPage() {
+      if(this.checkCurrentUserProfile){
         if(this.limitToFetch <= this.spaceSize) {
           this.limitToFetch = this.limitToFetch += this.limit;
           getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
              this.spaces = data.spaces;
         });
         }
+       }else if(this.limitToFetch <= this.commonsSpaceDefaultSize){
+        this.limitToFetch = this.limitToFetch += this.limit;
+        getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+            this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
+            this.commonsSpaceSize = data.size;
+         });
+       }
       },
       initSpaceSuggestionsList() {
        this.firstLoadingSpaces = false;
@@ -376,9 +398,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spacesSuggestionsList = data.items;
         });
       },
-      getUrl(groupId) {
-         window.location.href = `${eXo.env.portal.context}/g/${groupId.replace(/\//g, ':')}`;
-      }
     }
   }
 

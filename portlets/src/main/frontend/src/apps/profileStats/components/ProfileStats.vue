@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :key="userDashBordKey"
           class="profileFlippedCard profileStats"
           :check-current-user-profile="checkCurrentUserProfile"
-          :commons-space-size="commonsSpaceSize"
+          :commons-space-default-size="commonsSpaceDefaultSize"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
@@ -56,7 +56,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :space-drawer="spaceDrawer"
       :space-requests="spaceRequests"
       :check-current-user-profile="checkCurrentUserProfile"
-      :commons-spaces="commonsSpaces"
+      :commons-space-default-size="commonsSpaceDefaultSize"
       @closeDrawer="closeSpaceDrawer" />
   </v-app>
 </template>
@@ -73,8 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             connectionRequests: null,
             spaceRequests: null,
             userDashBordKey: 0,
-            commonsSpaceSize: 0,
-            commonsSpaces: [],
+            commonsSpaceDefaultSize: 0,
           };
         },
         created() {
@@ -95,8 +94,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           },
           CommonsSpaces() {
               getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
-               this.commonsSpaces = data.spaces;
-               this.commonsSpaceSize = data.size;
+               this.commonsSpaceDefaultSize = data.size;
             });
           },
           openConnectionsDrawer() {
