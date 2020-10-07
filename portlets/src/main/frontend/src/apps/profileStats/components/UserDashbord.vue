@@ -93,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :class="firstLoadingConnexion && 'skeleton-background skeleton-border-radius'">
               <a class="white--text">
                 <v-badge
-                  :value="connectionsRequestsSize > 0"
+                  :value="isCurrentUserProfile && connectionsRequestsSize > 0"
                   pa-0
                   class="badge-color">
                   <v-btn
@@ -104,12 +104,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     width="20"
                     @click="openConnectionsDrawer">{{ connectionsRequestsSize }}</v-btn>
                   <div class="headline text-color font-weight-bold pa-1" @click="openConnectionsDrawer">
-                    <span :class="firstLoadingConnexion && 'skeleton-text'">{{ connectionsSize }}</span>
+                    <span :class="firstLoadingConnexion && 'skeleton-text'">{{ isCurrentUserProfile ? connectionsSize : commonConnectionsSize }}</span>
                   </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
-                <span :class="firstLoadingConnexion && 'skeleton-text'">{{ $t('homepage.profileStatus.connections') }}</span>
+                <span :class="firstLoadingConnexion && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connections') : $t('homepage.commonConnections.label') }}</span>
               </v-card-text>
             </v-card>
           </v-flex>
@@ -165,6 +165,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
   import {getUserInformations, getSpaces, getSpacesRequests, getConnections, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI'
   export default {
+    props: {
+      isCurrentUserProfile: {
+        type: Boolean,
+        default: false,
+      },
+      commonConnectionsSize: {
+        type: Number,
+        default: 0,
+      },
+    },
     data() {
       return {
         period: 'WEEK',
@@ -184,7 +194,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         firstLoadingConnexion: true,
         firstLoadingUserPoints: true,
         firstLoadingRank: true,
-        isCurrentUserProfile: false,
       }
     },
     
@@ -195,8 +204,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.firstName = event.detail.firstname;
         }
       });
-
-      this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
+      
       this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
       this.retrieveUserData();
       this.getSpacesRequestsSize();
