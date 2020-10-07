@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-flex
       d-flex
       xs12
-      my-5>
+      my-3>
       <v-layout
         row
         wrap
@@ -33,18 +33,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs12
           mt-n2
           justify-center>
-          <div>
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
-            <v-btn
-              fab
-              depressed
-              dark
-              height="20"
-              width="20"
-              class="mb-1 header-badge-color">
-              <span class="white--text caption">{{ connectionsRequestsSize }}</span>
-            </v-btn>
-          </div>
+          <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
+          <v-btn
+            fab
+            depressed
+            dark
+            height="20"
+            width="20"
+            class="mb-1 header-badge-color" :href="receivedInvitationsUrl">
+            <span class="white--text caption">{{ connectionsRequestsSize }}</span>
+          </v-btn>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -101,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         connectionsRequests: [],
         connectionsRequestsSize: '',
         items: [],
-        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`
+        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
       }
     },
     created(){
@@ -163,7 +161,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             this.getConnectionsRequests();
           }
         );
-      }
+      },
     }
   }
 </script>
