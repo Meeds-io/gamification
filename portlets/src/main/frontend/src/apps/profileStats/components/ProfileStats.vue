@@ -32,6 +32,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="profileFlippedCard profileStats"
           :check-current-user-profile="checkCurrentUserProfile"
           :commons-space-default-size="commonsSpaceDefaultSize"
+          :is-current-user-profile="isCurrentUserProfile"
+          :common-connections-size="commonConnections.length"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
@@ -48,10 +50,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
-    <connections-drawer
-      :connections-drawer="connectionsDrawer"
-      :connection-requests="connectionRequests"
-      @closeDrawer="closeConnectionsDrawer" />
+    <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" :is-current-user-profile="isCurrentUserProfile" :common-connections="commonConnections" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
     <space-drawer
       :space-drawer="spaceDrawer"
       :space-requests="spaceRequests"
@@ -61,7 +60,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-app>
 </template>
 <script>
-   import {getCommonsSpaces} from '../profilStatsAPI';
+   import {getCommonsSpaces, getCommonConnections} from '../profilStatsAPI';
     export default {
         data: function() {
           return {
@@ -74,6 +73,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             spaceRequests: null,
             userDashBordKey: 0,
             commonsSpaceDefaultSize: 0,
+            isCurrentUserProfile: false,
+            commonConnections: [],
+
           };
         },
         created() {
@@ -84,6 +86,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.$root.$on('open-achievement', (userPoints) => {
             this.$refs.achievementsDrawer.open(userPoints);
           });
+          this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
+          if (!this.isCurrentUserProfile) {
+            this.retrieveCommonConnections(parseInt(eXo.env.portal.profileOwnerIdentityId));
+          }
         },
         methods: {
           setFlippedCard(component) {
@@ -95,6 +101,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           CommonsSpaces() {
               getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
                this.commonsSpaceDefaultSize = data.size;
+
+          retrieveCommonConnections(id) {
+            getCommonConnections(id).then(data => {
+              const identities = [];
+              identities.push(...data.identities);
+              this.commonConnections = identities.map(identity => identity.profile);
+              this.commonConnections.forEach(commonConnection => {
+                commonConnection.profileLink = this.PROFILE_URI + commonConnection.username;
+              });
             });
           },
           openConnectionsDrawer() {

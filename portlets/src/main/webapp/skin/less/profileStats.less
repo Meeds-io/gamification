@@ -16,6 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 @import "variables.less";
 @import "mixins.less";
+@scrollDefaultTrackColor: #ced2d5;
 
 .VuetifyApp {
     #profile-stats-portlet {
@@ -110,6 +111,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         width: 420px!important;
         max-width: 100vw;
         max-height: 100vh;
+        
+        .v-navigation-drawer__content {
+          overflow: hidden;
+        }
         .title {
           .connectionsDrawerTitle {
             font-size: 18px;
@@ -131,6 +136,45 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         }
         
         .content {
+          max-height: 86.3vh;
+          .row {
+            max-height: inherit;
+          }
+          .peopleSuggestions, .connectionsRequests {
+            height: 30vh;
+          }
+          .seeAllRequests {
+          }
+          .peopleSuggestions {
+            .connexion-accept-btn {
+              margin-right: 10px;
+            }
+          }
+          .connectionsList {
+            .connectionsItems {
+              max-height: 86vh;
+              overflow-y: auto;
+              &::-webkit-scrollbar {
+                width: 5px;
+              }
+              &::-webkit-scrollbar-track {
+                background: @scrollDefaultTrackColor;
+              }
+              &::-webkit-scrollbar-thumb {
+                background: @primaryColor;
+                border-radius: 3px;
+              }
+            }
+            .suggestionsNotEmpty, .requestsNotEmpty {
+              max-height: 51vh;
+            }
+            .showMore {
+              max-height: 79vh;
+            }
+            .showMore.requestsNotEmpty {
+              max-height: 44.4vh;
+            }
+          }
           .noPeopleYetBlock {
             .noPeopleYet {
               color: @greyColorLighten1!important;
@@ -142,6 +186,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           
           .separator {
             padding-bottom: 0;
+          }
+          
+          .connectionProfileLink {
+            display: flex;
+          }
+        }
+        
+        .loadMoreFooterAction {
+          position: fixed;
+          bottom: 0;
+          left:0;
+          width: 100%;
+          border-top: 1px solid rgba(13, 13, 13, 0.05);
+          background: white;
+          padding-right: 12px;
+          max-width: 100%;
+          box-sizing: border-box;
+          .loadMoreBtn {
+            padding: 0;
+            border: 1px solid @greyColor;
+            color: @darkGrey;
+            background-color: @baseBackground!important;
+            box-shadow: none;
+            text-shadow: none;
           }
         }
       }
@@ -240,4 +308,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   .uiIconAppachievements:before {
       content: "\ebdb"!important;
+  }
+  
+  @media screen and (max-height: 780px) {
+    .connectionsDrawer {
+      .connectionsRequests {
+        height: 35vh!important;
+      }
+      .connectionsList {
+        .connectionsItems {
+          max-height: 83vh!important;
+        }
+        .requestsNotEmpty {
+          max-height: 42vh!important;
+        }
+        .suggestionsNotEmpty {
+          max-height: 51vh!important;
+        }
+        .showMore {
+          max-height: 74vh!important;
+        }
+        .showMore.requestsNotEmpty {
+          max-height: 33vh!important;
+        }
+      }
+    }
   }

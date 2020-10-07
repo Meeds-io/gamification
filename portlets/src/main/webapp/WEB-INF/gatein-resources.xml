@@ -306,6 +306,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>eCharts</module>
     </depends>
+    <depends>
+      <module>userPopupPlugin</module>
+    </depends>
   </module>
   <module>
     <name>manageRules</name>

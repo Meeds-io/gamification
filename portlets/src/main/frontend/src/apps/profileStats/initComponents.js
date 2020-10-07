@@ -23,6 +23,8 @@ import UserDashbord from './components/UserDashbord.vue';
 import AchievementItem from './components/AchievementItem.vue';
 import AchievementsDrawer from './components/AchievementsDrawer.vue';
 import ConnectionsDrawer from './components/ConnectionsDrawer.vue';
+import ExoSuggestionsPeopleListItem from './components/ExoSuggestionsPeopleListItem';
+import PeopleListItem from './components/PeopleListItem';
 import SpaceDrawer from './components/SpaceDrawer.vue';
 import SpaceDrawerItems from './components/SpaceDrawerItems.vue';
 import SpaceCommonsItems from './components/SpaceCommonsItems.vue';
@@ -42,6 +44,9 @@ const components = {
   'space-drawer-items': SpaceDrawerItems,
   'space-commons-items': SpaceCommonsItems,
   'suggestions-space-list-item': SuggestionsSpaceListItem,
+  'exo-suggestions-people-list-item' : ExoSuggestionsPeopleListItem,
+  'people-list-item': PeopleListItem,
+
 };
 
 for(const key in components) {

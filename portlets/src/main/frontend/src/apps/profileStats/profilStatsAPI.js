@@ -185,7 +185,7 @@ export function getConnections() {
 }
 
 export function getConnectionsRequests() {
-  return fetch('/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=0', {
+  return fetch('/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=3', {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
