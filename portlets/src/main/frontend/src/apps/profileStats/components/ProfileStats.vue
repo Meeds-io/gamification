@@ -30,7 +30,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-if="!isFlipped"
           :key="userDashBordKey"
           class="profileFlippedCard profileStats"
-          :check-current-user-profile="checkCurrentUserProfile"
           :commons-space-default-size="commonsSpaceDefaultSize"
           :is-current-user-profile="isCurrentUserProfile"
           :common-connections-size="commonConnections.length"
@@ -54,7 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <space-drawer
       :space-drawer="spaceDrawer"
       :space-requests="spaceRequests"
-      :check-current-user-profile="checkCurrentUserProfile"
+      :is-current-user-profile="isCurrentUserProfile"
       :commons-space-default-size="commonsSpaceDefaultSize"
       @closeDrawer="closeSpaceDrawer" />
   </v-app>
@@ -67,7 +66,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             currentComponent: null,
             isFlipped: false,
             connectionsDrawer: false,
-            checkCurrentUserProfile: false,
             spaceDrawer: false,
             connectionRequests: null,
             spaceRequests: null,
@@ -79,15 +77,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           };
         },
         created() {
-          this.checkCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
-          if (!this.checkCurrentUserProfile) {
-            this.CommonsSpaces();
-          }
           this.$root.$on('open-achievement', (userPoints) => {
             this.$refs.achievementsDrawer.open(userPoints);
           });
           this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
           if (!this.isCurrentUserProfile) {
+            this.CommonsSpaces();
             this.retrieveCommonConnections(parseInt(eXo.env.portal.profileOwnerIdentityId));
           }
         },
@@ -101,7 +96,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           CommonsSpaces() {
               getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
                this.commonsSpaceDefaultSize = data.size;
-
+            });
+          },
           retrieveCommonConnections(id) {
             getCommonConnections(id).then(data => {
               const identities = [];

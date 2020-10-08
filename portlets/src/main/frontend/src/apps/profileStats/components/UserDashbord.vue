@@ -166,11 +166,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   import {getUserInformations, getSpaces, getSpacesRequests, getConnections, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI'
   export default {
     props: {
-      checkCurrentUserProfile: {
-        type: Boolean,
-        default: false,
-      },
       commonsSpaceDefaultSize: {
+        type: Number,
+        default: 0,
+      },
       isCurrentUserProfile: {
         type: Boolean,
         default: false,

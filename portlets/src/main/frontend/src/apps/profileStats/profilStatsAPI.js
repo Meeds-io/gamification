@@ -70,7 +70,7 @@ export function getSpaces() {
 }
 
 export function getSpacesOfUser(offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces?offset=${offset || 0}&limit=${limit|| 0}&returnSize=true`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces?offset=${offset || 0}&limit=${limit|| 10}&returnSize=true`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -84,7 +84,7 @@ export function getSpacesOfUser(offset, limit) {
 }
 
 export function getCommonsSpaces(offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces/${eXo.env.portal.profileOwner}?offset=${offset || 0}&limit=${100|| 0}&returnSize=true`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces/${eXo.env.portal.profileOwner}?offset=${offset || 0}&limit=${100|| 10}&returnSize=true`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

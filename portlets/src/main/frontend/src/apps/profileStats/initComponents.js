@@ -27,7 +27,6 @@ import ExoSuggestionsPeopleListItem from './components/ExoSuggestionsPeopleListI
 import PeopleListItem from './components/PeopleListItem';
 import SpaceDrawer from './components/SpaceDrawer.vue';
 import SpaceDrawerItems from './components/SpaceDrawerItems.vue';
-import SpaceCommonsItems from './components/SpaceCommonsItems.vue';
 import SuggestionsSpaceListItem from './components/SuggestionsSpaceListItem.vue';
 
 const components = {
@@ -42,7 +41,6 @@ const components = {
   'connections-drawer': ConnectionsDrawer,
   'space-drawer': SpaceDrawer,
   'space-drawer-items': SpaceDrawerItems,
-  'space-commons-items': SpaceCommonsItems,
   'suggestions-space-list-item': SuggestionsSpaceListItem,
   'exo-suggestions-people-list-item' : ExoSuggestionsPeopleListItem,
   'people-list-item': PeopleListItem,

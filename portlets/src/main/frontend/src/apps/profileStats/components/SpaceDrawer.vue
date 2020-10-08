@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-divider class="my-0" />
 
     <div class="content">
-      <template v-if="checkCurrentUserProfile && showSpaces">
+      <template v-if="isCurrentUserProfile && showSpaces">
         <v-row v-if="showSpacesRequests" class="px-4">
           <v-col>
             <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
@@ -119,7 +119,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-row>
       </template>
 
-      <template v-if="!checkCurrentUserProfile">
+      <template v-if="!isCurrentUserProfile">
         <v-row class="px-4">
           <v-col>
             <template v-if="showSpaces">
@@ -184,10 +184,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <span class="white--text caption">{{ commonSpacesSize }}</span>
                 </v-btn>
               </v-flex>
-              <space-commons-items
+              <space-drawer-items
                 v-for="commonSpace in filteredCommonsSpaces"
                 :key="commonSpace.id"
-                :common-space="commonSpace"
+                :space="commonSpace"
                 :skeleton="firstLoadingSpaces" />
             </template>
           </v-col>
@@ -201,7 +201,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-icon>fa-users</v-icon>
             </p>
             <p class="title font-weight-bold">
-              {{ checkCurrentUserProfile ? $t('homepage.profileStatus.noSpaces') : $t('homepage.profileStatus.noCommonSpaces') }}
+              {{ isCurrentUserProfile ? $t('homepage.profileStatus.noSpaces') : $t('homepage.profileStatus.noCommonSpaces') }}
             </p>
           </div>
         </v-row>
@@ -241,7 +241,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         type: Number,
         default: 0,
       },
-      checkCurrentUserProfile: {
+      isCurrentUserProfile: {
         type: Boolean,
         default: false,
       },
@@ -327,7 +327,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     created() {
       this.limitToFetch = this.limit;
-      if (this.checkCurrentUserProfile){
+      if (this.isCurrentUserProfile){
          this.getMySpaces();}
       else {
        this.CommonsSpaces();
@@ -343,7 +343,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spaces = data.spaces;
           this.spaceSize = data.size;
         });
-        this.checkCurrentUserProfile ? this.limitToFetch = this.limit : this.limitToFetch = this.commonsSpaceDefaultSize ;
+        this.isCurrentUserProfile ? this.limitToFetch = this.limit : this.limitToFetch = this.commonsSpaceDefaultSize ;
         this.showSearch = false;
       },
       getMySpaces() {
@@ -377,7 +377,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         this.search = '';
       },
       loadNextPage() {
-      if(this.checkCurrentUserProfile){
+      if(this.isCurrentUserProfile){
         if(this.limitToFetch <= this.spaceSize) {
           this.limitToFetch = this.limitToFetch += this.limit;
           getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
