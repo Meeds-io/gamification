@@ -57,4 +57,66 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     color: @skeletonColor;
     font-family: sans-serif;
   }
+  .joinSpaceButton:not(.skeleton-text), .acceptToJoinSpaceButton:not(.skeleton-text), .spaceButtonMenu:not(.skeleton-text) {
+    border: 1px solid @btnPrimaryBorder !important;
+    color: @btnPrimaryBorder !important;
+    i {
+      color: @btnPrimaryBorder !important;
+    }
+  }
+  .refuseToJoinSpaceButton {
+    border: 1px solid @errorColor !important;
+    color: @errorColor !important;
+
+    .v-btn__content {
+      max-width: 100%;
+      span {
+        width: auto;
+        max-width: calc( 100% - 28px );
+        min-width: auto;
+        display: inline-block !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+    }
+  }
+  .acceptToJoinSpaceButtonParent {
+    white-space: nowrap;
+    .acceptToJoinSpaceButton {
+      max-width: 85%;
+      width: 85%;
+      border-right: 0;
+      border-bottom-right-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+
+      .v-btn__content {
+        max-width: 100%;
+        span {
+          width: auto;
+          max-width: calc( 100% - 28px );
+          min-width: auto;
+          display: inline-block !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+        }
+      }
+    }
+    .spaceButtonMenu {
+      max-width: 15%;
+      width: 15%;
+      padding: 2px 0;
+      height: auto;
+      border-left: 0;
+      margin-left: -11px;
+      border-bottom-left-radius: 0 !important;
+      border-top-left-radius: 0 !important;
+
+      i {
+        margin: 0;
+      }
+    }
+  }
+  .secondButtonDisplayed {
+    display: grid;
+  }
 }
