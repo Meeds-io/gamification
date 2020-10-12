@@ -339,11 +339,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     methods: {
       closeDrawer() {
         this.$emit('closeDrawer');
-        getSpacesOfUser(this.offset, this.limit).then(data => {
-          this.spaces = data.spaces;
-          this.spaceSize = data.size;
-        });
-        this.isCurrentUserProfile ? this.limitToFetch = this.limit : this.limitToFetch = this.commonsSpaceDefaultSize ;
         this.showSearch = false;
       },
       getMySpaces() {
