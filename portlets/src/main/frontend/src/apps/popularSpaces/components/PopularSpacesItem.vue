@@ -63,83 +63,86 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-action class="ma-0 flex-row align-self-center">
+    <v-list-item-action class="ma-0 pr-4 flex-row align-self-center" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
       <template v-if="space.isInvited || skeleton" class="invitationButtons">
+        <div class="acceptToJoinSpaceButtonParent">
+          <v-btn
+            :loading="sendingAction"
+            :disabled="sendingAction"
+            class="btn mx-auto spaceMembershipButton acceptToJoinSpaceButton"
+            depressed
+            small
+            @click="acceptToJoin">
+            <v-icon>mdi-check</v-icon>
+            <span class="d-flex">
+              {{ $t('popularSpaces.button.acceptToJoin') }}
+            </span>
+          </v-btn>
+          <v-btn
+            class="btn spaceButtonMenu d-inline"
+            depressed
+            x-small
+            @click="displaySecondButton = !displaySecondButton">
+            <v-icon>mdi-menu-down</v-icon>
+          </v-btn>
+        </div>
         <v-btn
-          :title="$t('popularSpaces.button.acceptToJoin')"
-          :width="actionIconSize"
-          :height="actionIconSize"
-          :loading="sendingAction"
-          :disabled="skeleton"
-          :class="skeleton && 'skeleton-background skeleton-text'"
-          class="mr-1 popularSpacesAction popularSpacesCheck"
-          fab
-          dark
-          icon
+          v-show="displaySecondButton"
+          :loading="sendingSecondAction"
+          :disabled="sendingSecondAction"
+          class="btn mx-auto px-0 spaceMembershipButton refuseToJoinSpaceButton"
           depressed
-          @click="acceptToJoin">
-          <v-icon small size="18">mdi-check</v-icon>
-        </v-btn>
-        <v-btn
-          :title="$t('popularSpaces.button.refuseToJoin')"
-          :width="actionIconSize"
-          :height="actionIconSize"
-          :loading="sendingAction"
-          :disabled="skeleton"
-          :class="skeleton && 'skeleton-background skeleton-text'"
-          class="mr-1 popularSpacesAction popularSpacesClose"
-          fab
-          dark
-          icon
-          depressed
+          block
+          small
           @click="refuseToJoin">
-          <v-icon small size="18">mdi-close</v-icon>
+          <v-icon>mdi-close</v-icon>
+          <span class="d-flex">
+            {{ $t('popularSpaces.button.refuseToJoin') }}
+          </span>
         </v-btn>
       </template>
       <v-btn
         v-else-if="space.isPending"
-        :title="$t('popularSpaces.button.cancelRequest')"
-        :width="actionIconSize"
-        :height="actionIconSize"
         :loading="sendingAction"
-        class="mr-1 popularSpacesAction popularSpacesClose"
-        fab
-        dark
-        icon
+        class="btn mx-auto spaceMembershipButton"
         depressed
+        block
+        small
         @click="cancelRequest">
-        <v-icon small size="18">mdi-close</v-icon>
+        <v-icon>mdi-close</v-icon>
+        <span class="spaceMembershipButtonText d-inline">
+          {{ $t('popularSpaces.button.cancelRequest') }}
+        </span>
       </v-btn>
       <template v-else-if="!space.isMember || skeleton">
         <v-btn
           v-if="space.subscription === 'open'"
           :disabled="skeleton"
-          :title="$t('popularSpaces.button.join')"
-          :width="actionIconSize"
-          :height="actionIconSize"
           :loading="sendingAction"
-          class="mr-1 popularSpacesAction popularSpacesCheck"
-          fab
-          dark
-          icon
+          class="btn mx-auto spaceMembershipButton joinSpaceButton"
           depressed
+          block
+          small
           @click="join">
-          <v-icon small size="18">mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
+          <span class="spaceMembershipButtonText d-inline">
+            {{ $t('popularSpaces.button.join') }}
+          </span>
         </v-btn>
         <v-btn
           v-else-if="space.subscription === 'validation'"
           :disabled="skeleton"
           :title="$t('popularSpaces.button.requestJoin')"
-          :width="actionIconSize"
-          :height="actionIconSize"
           :loading="sendingAction"
-          class="mr-1 popularSpacesAction popularSpacesCheck"
-          fab
-          dark
-          icon
+          class="btn mx-auto spaceMembershipButton joinSpaceButton"
           depressed
+          block
+          small
           @click="requestJoin">
-          <v-icon small size="18">mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
+          <span class="spaceMembershipButtonText d-inline">
+            {{ $t('popularSpaces.button.requestJoin') }}
+          </span>
         </v-btn>
       </template>
     </v-list-item-action>
@@ -168,6 +171,8 @@ export default {
     return {
       actionIconSize: 20,
       sendingAction: false,
+      displaySecondButton: false,
+      sendingSecondAction: false,
       spaceItemClass: `popularSpace${parseInt(Math.random() * randomMax)
         .toString()
         .toString()}`,
