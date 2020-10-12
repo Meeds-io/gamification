@@ -28,15 +28,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="white profileCard">
         <user-dashbord
           v-if="!isFlipped"
-          class="profileFlippedCard profileStats"
           :key="userDashBordKey"
+          class="profileFlippedCard profileStats"
+          :commons-space-default-size="commonsSpaceDefaultSize"
           :is-current-user-profile="isCurrentUserProfile"
           :common-connections-size="commonConnections.length"
           @specific-card="setFlippedCard"
           @openConnectionsDrawer="openConnectionsDrawer"
           @openSpaceDrawer="openSpaceDrawer"
           @shouldShowRequests="shouldShowRequests"
-          @showRequestsSpace="showRequestsSpace"/>
+          @showRequestsSpace="showRequestsSpace" />
         <v-flex
           :is="currentComponent"
           v-if="isFlipped"
@@ -49,12 +50,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
     <connections-drawer :connections-drawer="connectionsDrawer" :connection-requests="connectionRequests" :is-current-user-profile="isCurrentUserProfile" :common-connections="commonConnections" @closeDrawer="closeConnectionsDrawer"></connections-drawer>
-    <space-drawer :space-drawer="spaceDrawer" :space-requests="spaceRequests" @closeDrawer="closeSpaceDrawer" />
+    <space-drawer
+      :space-drawer="spaceDrawer"
+      :space-requests="spaceRequests"
+      :is-current-user-profile="isCurrentUserProfile"
+      :commons-space-default-size="commonsSpaceDefaultSize"
+      @closeDrawer="closeSpaceDrawer" />
   </v-app>
 </template>
 <script>
-    import {getCommonConnections} from "../profilStatsAPI";
-
+   import {getCommonsSpaces, getCommonConnections} from '../profilStatsAPI';
     export default {
         data: function() {
           return {
@@ -65,6 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             connectionRequests: null,
             spaceRequests: null,
             userDashBordKey: 0,
+            commonsSpaceDefaultSize: 0,
             isCurrentUserProfile: false,
             commonConnections: [],
             PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
@@ -76,6 +82,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           });
           this.isCurrentUserProfile = eXo.env.portal.userName === eXo.env.portal.profileOwner;
           if (!this.isCurrentUserProfile) {
+            this.CommonsSpaces();
             this.retrieveCommonConnections(parseInt(eXo.env.portal.profileOwnerIdentityId));
           }
         },
@@ -85,6 +92,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             profileWrapper.classList.toggle('is-flipped');
             this.currentComponent = component;
             this.isFlipped = !this.isFlipped;
+          },
+          CommonsSpaces() {
+              getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+               this.commonsSpaceDefaultSize = data.size;
+            });
           },
           retrieveCommonConnections(id) {
             getCommonConnections(id).then(data => {

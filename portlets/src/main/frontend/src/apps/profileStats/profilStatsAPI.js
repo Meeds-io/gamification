@@ -69,8 +69,8 @@ export function getSpaces() {
   })
 }
 
-export function getSpacesOfUser() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces`, {
+export function getSpacesOfUser(offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/spaces?offset=${offset || 0}&limit=${limit|| 10}&returnSize=true`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -79,6 +79,20 @@ export function getSpacesOfUser() {
     }
     else {
       throw new Error ('Error when getting spaces of current user');
+    }
+  })
+}
+
+export function getCommonsSpaces(offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces/${eXo.env.portal.profileOwner}?offset=${offset || 0}&limit=${1000 || 10}&returnSize=true`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if(resp && resp.ok) {
+      return resp.json();
+    }
+    else {
+      throw new Error ('Error when getting commons spaces');
     }
   })
 }
@@ -95,6 +109,20 @@ export function getSpacesRequests() {
       throw new Error ('Error when getting spaces requests');
     }
   })
+}
+
+export function getSuggestionsSpace(){
+  return fetch('/portal/rest/homepage/intranet/spaces/suggestions', {
+    credentials: 'include'
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      return resp.text().then((text) => {
+        throw new Error(text);
+      });
+    } else {
+      return resp.json();
+    }
+  });
 }
 
 export function getAchievements(providerId, remoteId, limit) {

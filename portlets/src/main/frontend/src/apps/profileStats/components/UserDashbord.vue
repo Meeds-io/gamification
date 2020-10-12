@@ -61,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               flat
               :class="firstLoadingSpaces && 'skeleton-background skeleton-border-radius'">
               <a class="white--text">
-                <v-badge :value="spacesRequestsSize > 0" class="badge-color">
+                <v-badge :value="isCurrentUserProfile && spacesRequestsSize > 0" class="badge-color">
                   <v-btn
                     slot="badge"
                     icon
@@ -73,12 +73,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <div
                     class="headline text-color font-weight-bold pa-1"
                     @click="openSpaceDrawer">
-                    <span :class="firstLoadingSpaces && 'skeleton-text'">{{ spacesSize }}</span>
+                    <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? spacesSize : commonsSpaceDefaultSize }}</span>
                   </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
-                <span :class="firstLoadingSpaces && 'skeleton-text'">{{ $t('homepage.profileStatus.spaces') }}</span>
+                <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.spaces') : $t('homepage.profileStatus.Commonspaces') }}</span>
               </v-card-text>
             </v-card>
           </v-flex>
@@ -166,6 +166,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   import {getUserInformations, getSpaces, getSpacesRequests, getConnections, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI'
   export default {
     props: {
+      commonsSpaceDefaultSize: {
+        type: Number,
+        default: 0,
+      },
       isCurrentUserProfile: {
         type: Boolean,
         default: false,

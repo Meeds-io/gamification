@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           mt-n2
           justify-center>
           <div>
-            <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
+            <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header" @click="openSpaceRequests()">{{ this.$t('homepage.profileStatus.spaceRequests') }}</span>
             <v-btn
               fab
               depressed
@@ -91,6 +91,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </v-list>
     </v-flex>
+    <v-flex
+      d-flex
+      xs12
+      px-4
+      pb-2
+      justify-center>
+      <v-btn
+        v-if="spacesRequestsSize > 3"
+        depressed
+        small
+        class="caption text-uppercase grey--text"
+        :href="invitationSpaceUrl">
+        {{ this.$t('homepage.seeAll') }}
+      </v-btn>
+    </v-flex>
   </v-layout>
 </template>
 <script>
@@ -103,7 +118,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         invitationSpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/invitationSpace`
       }
     },
-    created(){
+	created(){
       this.getSpacesRequests();
 	},
 	
@@ -124,7 +139,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 }).then((resp) => {
                   if(resp && resp.ok) {
                     return resp.json();
-                  } 
+                  }
                   else {
                     throw new Error ('Error when getting space');
                   }
@@ -142,6 +157,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         return array.slice().sort(function(a, b) {
           return a.displayName.localeCompare(b.displayName);
         });
+      },
+      openSpaceRequests() {
+        window.location.href =  `${this.invitationSpaceUrl}`;
       },
       replyInvitationToJoinSpace(spaceId, reply) {
         replyInvitationToJoinSpace(spaceId, reply).then(
