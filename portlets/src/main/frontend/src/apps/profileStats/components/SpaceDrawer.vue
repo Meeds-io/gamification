@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-divider class="my-0" />
 
     <div class="content">
-      <template v-if="isCurrentUserProfile && showSpaces">
+      <template v-if="isCurrentUserProfile">
         <v-row v-if="showSpacesRequests" class="px-4">
           <v-col>
             <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
@@ -90,7 +90,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-divider class="my-0" />
           </v-col>
         </v-row>
-        <v-row class="px-4">
+        <v-row v-if="showSpaces" class="px-4">
           <v-col>
             <v-flex
               d-flex
@@ -288,7 +288,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         }
       },
       showSpaces() {
-        return this.spaces && this.spaces.length > 0 || this.commonsSpaces && this.commonsSpaces.length;
+        return this.spaces && this.spaces.length > 0 || this.commonsSpaces && this.commonsSpaces.length || this.spacesSuggestionsList && this.spacesSuggestionsList.length;
       },
       showLoadMoreSpaces() {
         return this.spaceSize > this.limitToFetch || this.commonsSpaceDefaultSize > this.limitToFetch;
