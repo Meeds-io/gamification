@@ -18,7 +18,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-menu
     v-model="menu"
     :open-on-content-click="false"
-    :disabled="skeleton"
     content-class="userLeaderboardMenu"
     max-width="250"
     open-on-hover
@@ -31,32 +30,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         @hover="$refs.chart.init()">
         <div class="mr-3">
           <v-avatar
-            :color="!skeleton && currentUser && 'tertiary' || ''"
+            :color="currentUser && 'tertiary' || ''"
             size="32">
-            <span :class="skeleton && 'skeleton-background skeleton-border-radius'">
-              {{ skeleton && '&nbsp;&nbsp;&nbsp;' || user.rank }}
-            </span>
+            {{ user.rank }}
           </v-avatar>
         </div>
-        <v-list-item-avatar
-          :class="skeleton && 'skeleton-background'"
-          class="mr-4">
-          <v-img :src="!skeleton && userAvatar || ''" />
+        <v-list-item-avatar class="mr-4">
+          <v-img
+            :lazy-src="userAvatar"
+            :src="userAvatar"
+            transition="none"
+            eager />
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
-            <a
-              :href="profileUrl"
-              :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width skeleton-text-height d-inline-block'"
-              class="text-color">
-              {{ !skeleton && user.fullname || '&nbsp;' }}
+            <a :href="profileUrl" class="text-color">
+              {{ user.fullname }}
             </a>
           </v-list-item-title>
         </v-list-item-content>
-        <v-list-item-action
-          :class="skeleton && 'skeleton-background skeleton-border-radius skeleton-text skeleton-text-width skeleton-text-height d-inline-block'"
-          class="mr-4">
-          {{ !skeleton && user.score || '&nbsp;&nbsp;&nbsp;&nbsp;' }}
+        <v-list-item-action class="mr-4">
+          {{ user.score }}
         </v-list-item-action>
       </v-list-item>
     </template>
@@ -70,10 +64,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    skeleton: {
-      type: Boolean,
-      default: () => false,
-    },
     user: {
       type: Object,
       default: () => null,

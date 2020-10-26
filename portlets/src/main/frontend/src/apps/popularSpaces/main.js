@@ -46,11 +46,14 @@ export function init(period, limit) {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
-        // init Vue app when locale ressources are ready
-        new Vue({
-          template: `<popular-spaces id="${appId}" period="${period}" limit="${limit}" />`,
-          i18n,
-          vuetify,
-        }).$mount(`#${appId}`);
+      const appElement = document.createElement('div');
+      appElement.id = appId;
+  
+      // init Vue app when locale ressources are ready
+      new Vue({
+        template: `<popular-spaces id="${appId}" v-cacheable period="${period}" limit="${limit}" />`,
+        i18n,
+        vuetify,
+      }).$mount(appElement);
     });
 }

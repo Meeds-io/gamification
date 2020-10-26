@@ -34,11 +34,14 @@ export function init() {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
-        // init Vue app when locale ressources are ready
-        new Vue({
-            template: `<users-leaderboard id='${appId}'></users-leaderboard>`,
-            i18n,
-            vuetify,
-        }).$mount(`#${appId}`);
+      const appElement = document.createElement('div');
+      appElement.id = appId;
+
+      // init Vue app when locale ressources are ready
+      new Vue({
+        template: `<users-leaderboard id='${appId}' v-cacheable />`,
+        i18n,
+        vuetify,
+      }).$mount(appElement);
     });
 }

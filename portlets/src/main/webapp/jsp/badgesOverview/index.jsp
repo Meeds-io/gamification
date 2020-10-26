@@ -14,27 +14,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
+<%@ page import="org.exoplatform.social.webui.Utils"%>
 <%
-  Object period = request.getAttribute("period");
-			if (period == null) {
-				period = "WEEK";
-			} else {
-				period = ((String[]) period)[0];
-			}
-			Object limit = request.getAttribute("limit");
-			if (limit == null) {
-				limit = 5;
-			} else {
-				limit = ((String[]) limit)[0];
-			}
+  String profileOwnerId = Utils.getOwnerIdentityId();
 %>
 <div class="VuetifyApp">
   <div data-app="true"
-    class="v-application v-application--is-ltr theme--light"
-    id="popularSpacesApplication">
-    <v-cacheable-dom-app cache-id="popularSpacesApplication"></v-cacheable-dom-app>
-    <script type="text/javascript">
-      require(['PORTLET/gamification-portlets/PopularSpaces'], app => app.init('<%=period%>', <%=limit%>));
+    class="v-application white v-application--is-ltr theme--light profileAboutMeOther"
+    id="badgesOverview">
+    <v-cacheable-dom-app cache-id="badgesOverview_<%=profileOwnerId%>"></v-cacheable-dom-app>
+    <script>
+      require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init());
     </script>
   </div>
 </div>

@@ -23,18 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-layout>
         <v-col>
           <v-list
-            v-if="skeleton"
-            two-line
-            class="pt-0 px-3">
-            <popular-spaces-item
-              v-for="i in 5"
-              :key="i"
-              :space="{}"
-              skeleton
-              @refresh="refresh" />
-          </v-list>
-          <v-list
-            v-else-if="spaces && spaces.length"
+            v-if="spaces && spaces.length"
             two-line
             class="pt-0 px-3">
             <popular-spaces-item
@@ -71,7 +60,6 @@ export default {
   },
   data: () => ({
     spaces: [],
-    skeleton: true,
   }),
   created() {
     this.refresh();
@@ -97,9 +85,11 @@ export default {
           return Promise.all(promises);
         }).then((spacesByPoints) => {
           this.spaces = spacesByPoints.sort((s1, s2) => s1.rank - s2.rank);
-          this.skeleton = false;
-          return spacesByPoints;
-        }).finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
+          return this.$nextTick();
+        }).finally(() => {
+          this.$root.$emit('application-loaded');
+          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        });
     },
   },
 }
