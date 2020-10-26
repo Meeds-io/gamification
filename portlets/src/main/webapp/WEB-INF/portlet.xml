@@ -141,7 +141,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
         <init-param>
             <name>portlet-view-dispatched-file-path</name>
-            <value>/html/profileStats.html</value>
+            <value>/jsp/profileStats/index.jsp</value>
         </init-param>
         <init-param>
             <description>List of profiles that can be used to enable this portlet</description>
@@ -211,7 +211,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
-        <value>/html/badgesOverview.html</value>
+        <value>/jsp/badgesOverview/index.jsp</value>
       </init-param>
       <init-param>
         <description>List of profiles that can be used to enable this portlet</description>

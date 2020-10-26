@@ -16,7 +16,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app
-    id="profile-stats-portlet"
     class="ml-md-2"
     flat
     dark>
@@ -99,14 +98,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             });
           },
           retrieveCommonConnections(id) {
-            getCommonConnections(id).then(data => {
-              const identities = [];
-              identities.push(...data.identities);
-              this.commonConnections = identities.map(identity => identity.profile);
-              this.commonConnections.forEach(commonConnection => {
-                commonConnection.profileLink = this.PROFILE_URI + commonConnection.username;
-              });
-            });
+            getCommonConnections(id)
+              .then(data => {
+                const identities = [];
+                identities.push(...data.identities);
+                this.commonConnections = identities.map(identity => identity.profile);
+                this.commonConnections.forEach(commonConnection => {
+                  commonConnection.profileLink = this.PROFILE_URI + commonConnection.username;
+                });
+                return this.$nextTick();
+              })
+              .finally(() => this.$root.$emit('application-loaded'));
           },
           openConnectionsDrawer() {
             this.connectionsDrawer = true;
