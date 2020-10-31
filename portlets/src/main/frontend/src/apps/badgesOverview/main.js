@@ -53,6 +53,9 @@ export function init() {
     .then(i18n => {
       // init Vue app when locale ressources are ready
       new Vue({
+        mounted() {
+          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        },
         template: `<badges-overview id='${appId}' v-cacheable="{cacheId: '${cacheId}'}" />`,
         i18n,
         vuetify,

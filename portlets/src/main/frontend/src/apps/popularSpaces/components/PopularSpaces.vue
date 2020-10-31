@@ -88,7 +88,6 @@ export default {
           return this.$nextTick();
         }).finally(() => {
           this.$root.$emit('application-loaded');
-          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
         });
     },
   },

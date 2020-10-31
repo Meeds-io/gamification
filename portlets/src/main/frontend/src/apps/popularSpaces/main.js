@@ -51,6 +51,9 @@ export function init(period, limit) {
   
       // init Vue app when locale ressources are ready
       new Vue({
+        mounted() {
+          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        },
         template: `<popular-spaces id="${appId}" v-cacheable period="${period}" limit="${limit}" />`,
         i18n,
         vuetify,
