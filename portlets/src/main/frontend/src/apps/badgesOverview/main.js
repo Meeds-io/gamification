@@ -40,17 +40,25 @@ const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en'
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+
 const appId = 'badgesOverview';
+const cacheId = `${appId}_${eXo.env.portal.profileOwnerIdentityId}`;
 
 export function init() {
+  const appElement = document.createElement('div');
+  appElement.id = appId;
+
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
-        // init Vue app when locale ressources are ready
-        new Vue({
-            template: `<badges-overview id='${appId}'></badges-overview>`,
-            i18n,
-            vuetify,
-        }).$mount(`#${appId}`);
+      // init Vue app when locale ressources are ready
+      new Vue({
+        mounted() {
+          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+        },
+        template: `<badges-overview id='${appId}' v-cacheable="{cacheId: '${cacheId}'}" />`,
+        i18n,
+        vuetify,
+      }).$mount(appElement);
     });
 }

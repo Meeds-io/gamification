@@ -20,13 +20,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="UserGamificationHeader text-color d-flex">
         <div class="align-start d-flex">
           <div
-            :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius skeleton-text-width skeleton-text-height'"
             class="d-inline-block">
-            {{ skeleton && '&nbsp;&nbsp;&nbsp;' || $t('exoplatform.gamification.userLeaderboard.title') }}
+            {{ $t('exoplatform.gamification.userLeaderboard.title') }}
           </div>
           <a
             :href="infoUrl"
-            :class="skeleton && 'skeleton-background skeleton-text'"
             :title="$t('exoplatform.gamification.leaderboard.Howearnpoints')"
             class="d-inline-block mx-3">
             <i class="uiIconInformation uiIconLightBlue"></i>
@@ -36,24 +34,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div class="align-end selectDomainFilterParent">
           <select
             v-model="selectedDomain"
-            :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width'"
             class="selectDomainFilter ignore-vuetify-classes mb-0">
             <users-leaderboard-domain-option
               v-for="domain in domains"
               :key="domain.title"
-              :skeleton="skeleton"
               :domain="domain" />
           </select>
         </div>
       </div>
       <v-tabs v-model="selectedPeriod">
-        <v-tabs-slider :color="skeleton && 'skeleton-text' || 'tertiary'" />
+        <v-tabs-slider color="tertiary" />
         <v-tab
           v-for="period in periods"
           :key="period.value"
-          :href="`#${period.value}`"
-          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius skeleton-text-height' || ''">
-          {{ skeleton && '&nbsp;' || period.text }}
+          :href="`#${period.value}`">
+          {{ period.text }}
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="selectedPeriod">
@@ -63,34 +58,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :key="period.value"
           :value="period.value">
           <v-list>
-            <template v-if="skeleton">
-              <users-leaderboard-profile
-                v-for="i in 10"
-                :key="i"
-                :user="{}"
-                :domains="[]"
-                skeleton />
-            </template>
-            <template v-else>
-              <users-leaderboard-profile
-                v-for="user in users"
-                :key="user.username"
-                :user="user"
-                :domains="domains" />
-            </template>
-            <template v-if="currentRank || skeleton">
+            <users-leaderboard-profile
+              v-for="user in users"
+              :key="user.username"
+              :user="user"
+              :domains="domains" />
+            <template v-if="currentRank">
               <v-divider class="ma-0" />
               <v-list-item class="disabled-background">
-                <div
-                  :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width skeleton-text-height'"
-                  class="mr-4">
+                <div class="mr-4">
                   {{ $t('exoplatform.gamification.leaderboard.rank') }}
                 </div>
                 <div>
-                  <v-avatar
-                    :color="skeleton && 'skeleton-background' || 'tertiary'"
-                    size="32">
-                    {{ skeleton && '&nbsp;&nbsp;' || currentRank }}
+                  <v-avatar color="tertiary" size="32">
+                    {{ currentRank }}
                   </v-avatar>
                 </div>
               </v-list-item>
@@ -98,11 +79,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list>
         </v-tab-item>
       </v-tabs-items>
-      <v-card-actions v-if="canLoadMore || skeleton">
+      <v-card-actions v-if="canLoadMore">
         <v-spacer />
         <v-btn
-          :disabled="skeleton"
-          :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width skeleton-text-height'"
           class="primary--text"
           outlined
           link
@@ -131,7 +110,6 @@ export default {
     }],
     pageSize: 10,
     limit: 10,
-    skeleton: true,
     currentRank: null,
     selectedDomain: null,
     selectedPeriod: 'WEEK',
@@ -169,10 +147,10 @@ export default {
           value: 'ALL',
           text: this.$t('exoplatform.gamification.leaderboard.selectedPeriod.ALL'),
         }];
+        return this.$nextTick();
       })
       .finally(() => {
-        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
-        this.skeleton = false;
+        this.$root.$emit('application-loaded');
       });
   },
   methods: {

@@ -190,6 +190,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         connectionsRequestsSize: '',
         gamificationRank:'',
         userPoints: '',
+        loadingWidgets: 0,
         profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
         spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
         connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network`,
@@ -200,7 +201,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         firstLoadingRank: true,
       }
     },
-    
+    watch: {
+      loadingWidgets(newVal, oldVal) {
+        if (!newVal && newVal !== oldVal) {
+          this.$nextTick().then(() => this.$root.$emit('application-loaded'));
+        }
+      },
+    },
     created() {
       document.addEventListener('userModified', event => {
         if (event && event.detail) {
@@ -208,13 +215,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.firstName = event.detail.firstname;
         }
       });
-      
+
       this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
-      this.retrieveUserData();
-      this.getSpacesRequestsSize();
-      this.getConnectionsRequestsSize();
-      this.getGamificationRank();
-      this.getGamificationPoints();
+
+      this.loadingWidgets = 5;
+      this.retrieveUserData().then(() => this.loadingWidgets--);
+      this.getSpacesRequestsSize().then(() => this.loadingWidgets--);
+      this.getConnectionsRequestsSize().then(() => this.loadingWidgets--);
+      this.getGamificationRank().then(() => this.loadingWidgets--);
+      this.getGamificationPoints().then(() => this.loadingWidgets--);
     },
     
     methods: {
@@ -236,7 +245,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         })
       },
       getSpacesRequestsSize() {
-        getSpacesRequests().then(
+        return getSpacesRequests().then(
           (data) => {
             this.spacesRequestsSize = data.size;
              this.$emit('showRequestsSpace', this.spacesRequestsSize);
@@ -244,7 +253,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         )
       },
       getConnectionsRequestsSize() {
-        getConnectionsRequests().then(
+        return getConnectionsRequests().then(
           (data) => {
             this.connectionsRequestsSize = data.size;
             this.$emit('shouldShowRequests', this.connectionsRequestsSize);
@@ -252,7 +261,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         )
       },
       getGamificationRank() {
-          getReputationStatus().then(
+          return getReputationStatus().then(
               (data) => {
                   this.gamificationRank = data.rank;
                   if(this.firstLoadingRank) {
@@ -262,7 +271,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           )
       },
       getGamificationPoints() {
-        getGamificationPoints(this.period).then(
+        return getGamificationPoints(this.period).then(
           (data) => {
             this.userPoints = data.points;
              if(this.firstLoadingUserPoints) {

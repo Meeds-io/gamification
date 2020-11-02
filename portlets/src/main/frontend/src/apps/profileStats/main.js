@@ -29,15 +29,21 @@ const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en'
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
 
+const appId = 'profile-stats-portlet';
+const cacheId = `${appId}_${eXo.env.portal.profileOwnerIdentityId}`;
+
 export function init() {
-//getting locale ressources
-exoi18n.loadLanguageAsync(lang, url)
+  const appElement = document.createElement('div');
+  appElement.id = appId;
+
+  //getting locale ressources
+  exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
-        // init Vue app when locale ressources are ready
-        new Vue({
-            template: '<profile-stats></profile-stats>',
-            i18n,
-            vuetify,
-        }).$mount('#profile-stats');
+      // init Vue app when locale ressources are ready
+      new Vue({
+        template: `<profile-stats id="${appId}" v-cacheable="{cacheId: '${cacheId}'}" />`,
+        i18n,
+        vuetify,
+      }).$mount(appElement);
     });
 }

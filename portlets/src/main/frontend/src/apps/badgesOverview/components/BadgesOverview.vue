@@ -22,22 +22,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       color="white"
       flat
       class="border-box-sizing">
-      <div
-        :class="skeleton && 'skeleton-text skeleton-text-width skeleton-background skeleton-text-height-thick skeleton-border-radius'"
-        class="text-header-title text-sub-title">
+      <div class="text-header-title text-sub-title">
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
     </v-toolbar>
     <v-card flat>
       <v-card-text class="mx-auto d-flex flex-wrap justify-center pt-0">
-        <template v-if="skeleton">
-          <badges-overview-item
-            v-for="i in 5"
-            :key="i"
-            :badge="{}"
-            skeleton />
-        </template>
-        <template v-else-if="badges && badges.length">
+        <template v-if="badges && badges.length">
           <badges-overview-item
             v-for="badge in badges"
             :key="badge.id"
@@ -58,7 +49,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data: () => ({
     badges: [],
-    skeleton: true,
   }),
   created() {
     this.refresh();
@@ -83,10 +73,10 @@ export default {
             badge.domainLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.zone);
             badge.badgeLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.title);
           });
+          return this.$nextTick();
         })
         .finally(() => {
-          this.skeleton = false;
-          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+          this.$root.$emit('application-loaded');
         });
     },
     getLabel(base, key) {

@@ -15,10 +15,8 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <option
-    :class="skeleton && 'skeleton-background skeleton-text skeleton-text-width'"
-    :value="domain.title">
-    {{ skeleton && '&nbsp;&nbsp;&nbsp;&nbsp;' || domain.label }}
+  <option :value="domain.title">
+    {{ domain.label }}
   </option>
 </template>
 <script>
@@ -27,10 +25,6 @@ export default {
     domain: {
       type: Object,
       default: () => null,
-    },
-    skeleton: {
-      type: Boolean,
-      default: () => false,
     },
   },
 }
