@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   String profileOwnerId = Utils.getOwnerIdentityId();
   Identity ownerIdentity = Utils.getOwnerIdentity(true);
   Profile profile = ownerIdentity.getProfile();
-  boolean isExternal = profile.getProperty("Profile.EXTERNAL") != null && ((String) profile.getProperty("Profile.EXTERNAL")).equals("true");
+  boolean isExternal = profile.getProperty(Profile.EXTERNAL) != null && ((String) profile.getProperty(Profile.EXTERNAL)).equals("true");
 %>
 <% if (!isExternal) { %>
   <div class="VuetifyApp">
