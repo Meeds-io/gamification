@@ -15,18 +15,26 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <%@ page import="org.exoplatform.social.webui.Utils"%>
+<%@ page import="org.exoplatform.social.core.identity.model.Identity" %>
+<%@ page import="org.exoplatform.social.core.identity.model.Profile" %>
 <%
   String profileOwnerId = Utils.getOwnerIdentityId();
+  Identity ownerIdentity = Utils.getOwnerIdentity(true);
+  Profile profile = ownerIdentity.getProfile();
+  boolean isExternal = profile.getProperty(Profile.EXTERNAL) != null && ((String) profile.getProperty(Profile.EXTERNAL)).equals("true");
 %>
-<div class="VuetifyApp">
-  <div data-app="true"
-    class="v-application ml-md-2 v-application--is-ltr theme--light"
-    id="profile-stats-portlet" flat="">
-    <v-cacheable-dom-app cache-id="profile-stats-portlet_<%=profileOwnerId%>"></v-cacheable-dom-app>
-    <script>
-      require([ 'SHARED/profileStatsBundle' ], function(profileStatsApp) {
-        profileStatsApp.init();
-      });
-    </script>
+
+<% if (!isExternal) { %>
+  <div class="VuetifyApp">
+    <div data-app="true"
+      class="v-application ml-md-2 v-application--is-ltr theme--light"
+      id="profile-stats-portlet" flat="">
+      <v-cacheable-dom-app cache-id="profile-stats-portlet_<%=profileOwnerId%>"></v-cacheable-dom-app>
+      <script>
+        require([ 'SHARED/profileStatsBundle' ], function(profileStatsApp) {
+          profileStatsApp.init();
+        });
+      </script>
+    </div>
   </div>
-</div>
+<% } %>
