@@ -441,7 +441,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>You posted an activity on a traget user stream</value>
+                    <value>You posted an activity on a target user stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
