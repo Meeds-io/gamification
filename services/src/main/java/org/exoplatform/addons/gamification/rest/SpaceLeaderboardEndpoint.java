@@ -76,6 +76,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
   }
 
   @GET
+  @RolesAllowed("users")
   @Path("overall")
   public Response getAllLeadersByRank(@Context UriInfo uriInfo, @QueryParam("url") String url) {
     ConversationState conversationState = ConversationState.getCurrent();
@@ -146,6 +147,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
   }
 
   @GET
+  @RolesAllowed("users")
   @Path("filter")
   public Response filter(@Context UriInfo uriInfo,
                          @QueryParam("domain") String domain,

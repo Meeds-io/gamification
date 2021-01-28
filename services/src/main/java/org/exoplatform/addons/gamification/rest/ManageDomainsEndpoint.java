@@ -62,6 +62,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @GET
+  @RolesAllowed("administrators")
   @Path("/domains")
   public Response getAllDomains(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
@@ -88,6 +89,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
   @POST
   @Consumes({ MediaType.APPLICATION_JSON })
+  @RolesAllowed("administrators")
   @Path("/domains")
   public Response addDomain(@Context SecurityContext securityContext, @Context UriInfo uriInfo, DomainDTO domainDTO) {
 
@@ -125,6 +127,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @PUT
+  @RolesAllowed("administrators")
   @Path("/domains/{id}")
   public Response updateDomain(@Context UriInfo uriInfo,
                                @Context HttpServletRequest request,
@@ -165,6 +168,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @DELETE
+  @RolesAllowed("administrators")
   @Path("/domains/{id}")
   public Response deleteRule(@Context UriInfo uriInfo, @PathParam("id") Long id) {
 
