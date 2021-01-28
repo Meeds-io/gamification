@@ -63,6 +63,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
     }
 
     @GET
+    @RolesAllowed("administrators")
     @Path("/all")
     public Response getAllRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
@@ -96,6 +97,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
+    @RolesAllowed("administrators")
     @Path("/add")
     public Response addRule(@Context SecurityContext securityContext, @Context UriInfo uriInfo, RuleDTO ruleDTO) {
 
@@ -149,6 +151,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
     }
 
     @PUT
+    @RolesAllowed("administrators")
     @Path("/update")
     public Response updateRule(@Context UriInfo uriInfo, @Context HttpServletRequest request, RuleDTO ruleDTO) {
 
@@ -207,6 +210,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
 
     @DELETE
+    @RolesAllowed("administrators")
     @Path("/delete/{id}")
     public Response deleteRule(@Context UriInfo uriInfo, @PathParam("id") Long id) {
 

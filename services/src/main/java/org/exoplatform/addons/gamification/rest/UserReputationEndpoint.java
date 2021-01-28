@@ -82,6 +82,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
+    @RolesAllowed("users")
     @Path("status")
     public Response getReputationStatus(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("username") String username, @QueryParam("url") String url) {
 
@@ -205,6 +206,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         }
     }
     @GET
+    @RolesAllowed("users")
     @Path("badgestry")
     public Response getBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -265,6 +267,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         }
     }
     @GET
+    @RolesAllowed("users")
     @Path("badge/{badge}/avatar")
     public Response getSpaceAvatarById(@Context UriInfo uriInfo,
                                        @Context Request request,
@@ -429,6 +432,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
     @GET
+    @RolesAllowed("users")
     @Path("/try")
     public Response getAllBadges(@Context UriInfo uriInfo,@Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -491,6 +495,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
     @GET
+    @RolesAllowed("users")
     @Path("won")
     public Response getallBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -546,6 +551,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
+    @RolesAllowed("users")
     @Path("stats")
     public Response stat(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -598,6 +604,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
+    @RolesAllowed("users")
     @Path("otherBadges")
     public Response getotherBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 
@@ -736,6 +743,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     }
 
     @GET
+    @RolesAllowed("users")
     @Path("AllofBadges")
     public Response getAllofBadges(@Context UriInfo uriInfo, @Context HttpServletRequest request, @QueryParam("url") String url) {
 

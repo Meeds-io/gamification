@@ -95,6 +95,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
   }
 
   @GET
+  @RolesAllowed("administrators")
   @Path("/all")
   public Response getAllBadges(@Context UriInfo uriInfo) {
 
@@ -124,6 +125,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
   }
 
   @POST
+  @RolesAllowed("administrators")
   @Path("/add")
   public Response addBadge(@Context UriInfo uriInfo, BadgeDTO badgeDTO) {
 
@@ -219,6 +221,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
   }
 
   @PUT
+  @RolesAllowed("administrators")
   @Path("/update")
   public Response updateBadge(@Context UriInfo uriInfo, @Context HttpServletRequest request, BadgeDTO badgeDTO) {
 
@@ -290,6 +293,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
   }
 
   @DELETE
+  @RolesAllowed("administrators")
   @Path("/delete/{id}")
   public Response deleteBadge(@Context UriInfo uriInfo, @PathParam("id") Long id) {
 
