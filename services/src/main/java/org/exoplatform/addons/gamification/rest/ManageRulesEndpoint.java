@@ -37,7 +37,6 @@ import java.util.Locale;
 
 @Path("/gamification/rules")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("administrators")
 public class ManageRulesEndpoint implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
@@ -64,6 +63,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
     @GET
     @Path("/all")
+    @RolesAllowed("users")
     public Response getAllRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
         ConversationState conversationState = ConversationState.getCurrent();
