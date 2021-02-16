@@ -20,11 +20,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="col">
         <h5 class="mt-0 title">Top users</h5>
         <a
+          :title="$t('exoplatform.gamification.leaderboard.Howearnpoint')"
           href="gamification-earn-points"
           class="ico-info actionIco"
           target="_blank"
-          rel="tooltip"
-          data-original-title="How can I earn points ?">
+          rel="tooltip">
           <i class="uiIconInformation"></i>
         </a>
       </div>
