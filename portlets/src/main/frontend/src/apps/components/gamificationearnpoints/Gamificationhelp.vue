@@ -16,17 +16,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div id="uiHowEarnPoint">
-    <h1 class="how-title">How can I earn points ?</h1>
+    <h1 class="how-title">{{ $t('exoplatform.gamification.leaderboard.Howearnpoints') }}</h1>
 
     <!-- Tabulation of domains -->
     <div class="tab">
-      <button class="tablinks active">   <a href="gamification-earn-points">All Elements </a> </button>
-
-      <button class="tablinks" @click="openCategory($event, 'soc')">Social</button>
-      <button class="tablinks" @click="openCategory($event, 'Team')">Team Work</button>
-      <button class="tablinks" @click="openCategory($event, 'Know')">Knowledge</button>
-      <button class="tablinks" @click="openCategory($event, 'feed')">Feedback</button>
-      <button class="tablinks" @click="openCategory($event, 'reward')">Reward</button>
+      <button class="tablinks active">   <a href="gamification-earn-points">{{ $t('exoplatform.gamification.all') }}</a> </button>
+      <button class="tablinks" @click="openCategory($event, 'soc')">{{ $t('exoplatform.gamification.gamificationinformation.domain.Social') }}</button>
+      <button class="tablinks" @click="openCategory($event, 'Team')">{{ $t('exoplatform.gamification.gamificationinformation.domain.Teamwork') }}</button>
+      <button class="tablinks" @click="openCategory($event, 'Know')">{{ $t('exoplatform.gamification.gamificationinformation.domain.Knowledge') }}</button>
+      <button class="tablinks" @click="openCategory($event, 'feed')">{{ $t('exoplatform.gamification.gamificationinformation.domain.Feedback') }}</button>
+      <button class="tablinks" @click="openCategory($event, 'reward')">{{ $t('exoplatform.gamification.gamificationinformation.domain.reward') }}</button>
     </div>
 
 
@@ -45,7 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   data-target="#collapseOne"
                   data-toggle="collapse"
                   type="button">
-                  Social&nbsp;
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Social') }}
                 </button>
               </h5>
             </div>
@@ -62,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 type="hidden">
                 <div class="alignright">
                   <div class="uiBox">
-                    <h6 class="title clearfix">Social Activities</h6>
+                    <h6 class="title clearfix">{{ $t('exoplatform.gamification.gamificationinformation.domain.SocialActivities') }}</h6>
 
                     <div class="noContent">
                       <div
@@ -70,9 +69,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         v-if="rule.area === 'Social' "
                         :key="rule.id"
                         class="row">
-                        <div class="first-col">{{ rule.description }}</div>
+                        <div class="first-col">
+                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
+                          -
+                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
+                        </div>
 
-                        <div class="second-col">{{ rule.score }} Pts</div>
+                        <div class="second-col">{{ $t('exoplatform.gamification.gamificationinformation.domain.points', {0: rule.score}) }}</div>
                       </div>
                     </div>
                   </div>
@@ -93,7 +96,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   data-target="#collapseTwo"
                   data-toggle="collapse"
                   type="button">
-                  Team work
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Teamwork') }}
                 </button>
               </h5>
             </div>
@@ -108,7 +111,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 name="Team">
                 <div class="alignright">
                   <div class="uiBox">
-                    <h6 class="title clearfix">Teamwork Activities</h6>
+                    <h6 class="title clearfix">{{ $t('exoplatform.gamification.gamificationinformation.domain.TeamworkActivities') }}</h6>
 
                     <div class="noContent">
                       <div
@@ -116,9 +119,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         v-if="rule.area === 'Teamwork'"
                         :key="rule.id"
                         class="row">
-                        <div class="first-col">{{ rule.description }}</div>
+                        <div class="first-col">
+                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
+                          -
+                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
+                        </div>
 
-                        <div class="second-col">{{ rule.score }} Pts</div>
+                        <div class="second-col">{{ $t('exoplatform.gamification.gamificationinformation.domain.points', {0: rule.score}) }}</div>
                       </div>
                     </div>
                     <!-- page iterator -->
@@ -140,7 +147,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   data-target="#collapseThree"
                   data-toggle="collapse"
                   type="button">
-                  Knowledge
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Knowledge') }}
                 </button>
               </h5>
             </div>
@@ -156,7 +163,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <div class="clearfix">
                   <div class="alignright">
                     <div class="uiBox">
-                      <h6 class="title clearfix">Knowledge Activities</h6>
+                      <h6 class="title clearfix">{{ $t('exoplatform.gamification.gamificationinformation.domain.KnowledgeActivities') }}</h6>
 
                       <div class="noContent">
                         <div
@@ -164,9 +171,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           v-if="rule.area === 'Knowledge'"
                           :key="rule.id"
                           class="row">
-                          <div class="first-col">{{ rule.description }}</div>
+                          <div class="first-col">
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
+                            -
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
+                          </div>
 
-                          <div class="second-col">{{ rule.score }} Pts</div>
+                          <div class="second-col">{{ $t('exoplatform.gamification.gamificationinformation.domain.points', {0: rule.score}) }}</div>
                         </div>
                       </div>
                     </div>
@@ -187,7 +198,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   data-target="#collapseFOur"
                   data-toggle="collapse"
                   type="button">
-                  Feedback
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Feedback') }}
                 </button>
               </h5>
             </div>
@@ -205,7 +216,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
                   <div class="alignright">
                     <div class="uiBox">
-                      <h6 class="title clearfix">Feedback Activities</h6>
+                      <h6 class="title clearfix">{{ $t('exoplatform.gamification.gamificationinformation.domain.FeedbackActivities') }}</h6>
 
                       <div class="noContent">
                         <div
@@ -213,9 +224,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           v-if="rule.area === 'Feedback'"
                           :key="rule.id"
                           class="row">
-                          <div class="first-col">{{ rule.description }}</div>
+                          <div class="first-col">
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
+                            -
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
+                          </div>
 
-                          <div class="second-col">{{ rule.score }} Pts</div>
+                          <div class="second-col">{{ $t('exoplatform.gamification.gamificationinformation.domain.points', {0: rule.score}) }}</div>
                         </div>
                       </div>
                     </div>
@@ -236,7 +251,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   data-target="#collapseFive"
                   data-toggle="collapse"
                   type="button">
-                  Reward
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Reward') }}
                 </button>
               </h5>
             </div>
@@ -255,7 +270,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
                   <div class="alignright">
                     <div class="uiBox">
-                      <h6 class="title clearfix">Reward Activities</h6>
+                      <h6 class="title clearfix">{{ $t('exoplatform.gamification.gamificationinformation.domain.RewardActivities') }}</h6>
 
                       <div class="noContent">
                         <div
@@ -263,9 +278,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           v-if="rule.area === 'reward'"
                           :key="rule.id"
                           class="row">
-                          <div class="first-col">{{ rule.description }}</div>
+                          <div class="first-col">
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
+                            -
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
+                          </div>
 
-                          <div class="second-col">{{ rule.score }} Pts</div>
+                          <div class="second-col">{{ $t('exoplatform.gamification.gamificationinformation.domain.points', {0: rule.score}) }}</div>
                         </div>
                       </div>
                     </div>
