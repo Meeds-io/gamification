@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         :key="rule.id"
                         class="row">
                         <div class="first-col">
-                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`, rule.title) }}
+                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
                           -
                           {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
                         </div>
@@ -120,7 +120,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         :key="rule.id"
                         class="row">
                         <div class="first-col">
-                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`, rule.title) }}
+                          {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
                           -
                           {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
                         </div>
@@ -172,7 +172,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           :key="rule.id"
                           class="row">
                           <div class="first-col">
-                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`, rule.title) }}
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
                             -
                             {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
                           </div>
@@ -225,7 +225,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           :key="rule.id"
                           class="row">
                           <div class="first-col">
-                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`, rule.title) }}
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
                             -
                             {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
                           </div>
@@ -279,7 +279,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           :key="rule.id"
                           class="row">
                           <div class="first-col">
-                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.title}`, rule.title) }}
+                            {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`, rule.event) }}
                             -
                             {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`, rule.description) }}
                           </div>
