@@ -6,11 +6,10 @@
     stateless
     temporary
     class="connectionsDrawer"
-    max-height="100vh"
-  >
+    max-height="100vh">
     <v-row class="mx-0 title">
       <v-list-item class="pr-0">
-        <v-list-item-content  class="ma-0 pa-0">
+        <v-list-item-content class="ma-0 pa-0">
           <template v-if="!showSearch">
             <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
           </template>
@@ -23,13 +22,12 @@
                 single-line
                 solo
                 flat
-                hide-details>
-              </v-text-field>
+                hide-details />
             </v-row>
           </template>
         </v-list-item-content>
         <v-list-item-action class="ma-0">
-          <template v-if = "!showSearch">
+          <template v-if="!showSearch">
             <v-icon size="20" @click="openConnectionSearch">mdi-filter</v-icon>
           </template>
           <template v-else>
@@ -58,7 +56,7 @@
         <div v-if="showConnectionRequests && !showSearch">        
           <v-row class="connectionsRequests px-4">
             <v-col class="pb-0">
-              <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" ></connections-requests>
+              <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" />
             </v-col>
           </v-row>
           <v-row class="seeAllRequests">
@@ -66,7 +64,8 @@
               <v-btn
                 depressed
                 small
-                class="caption text-uppercase grey--text ma-0" :href="receivedInvitationsUrl">
+                class="caption text-uppercase grey--text ma-0"
+                :href="receivedInvitationsUrl">
                 {{ $t('homepage.seeAll') }}
               </v-btn>
             </v-col>
@@ -87,7 +86,7 @@
                   v-for="people in peoplesToDisplay"
                   :key="people.suggestionId"
                   :people="people"
-                  :people-suggestions-list="peopleSuggestionsList"/>
+                  :people-suggestions-list="peopleSuggestionsList" />
               </v-list>
             </v-col>
           </v-row>
@@ -110,8 +109,7 @@
                   dark
                   height="20"
                   width="20"
-                  class="mb-1 header-badge-color"
-                >
+                  class="mb-1 header-badge-color">
                   <span class="white--text caption">{{ isCurrentUserProfile ? this.connections.length : this.commonConnections.length }}</span>
                 </v-btn>
               </v-col>
@@ -121,14 +119,12 @@
             <div 
               v-if="showConnections" 
               class="connectionsItems" 
-              :class="(showMore ? 'showMore ' : '').concat(showConnectionRequests && !showSearch ? 'requestsNotEmpty' : '')"
-            >
+              :class="(showMore ? 'showMore ' : '').concat(showConnectionRequests && !showSearch ? 'requestsNotEmpty' : '')">
               <people-list-item
                 v-for="person in filteredConnections"
                 :key="person.id"
                 :person="person"
-                :people="filteredConnections"
-              />
+                :people="filteredConnections" />
             </div>
             <div v-else>
               <v-row class="d-flex text-center noPeopleYetBlock my-12">
@@ -147,14 +143,12 @@
           <div
             v-else
             class="connectionsItems"
-            :class="showSuggestions && !showSearch ? 'suggestionsNotEmpty' : ''"
-          >
+            :class="showSuggestions && !showSearch ? 'suggestionsNotEmpty' : ''">
             <people-list-item
               v-for="person in filteredCommonConnections"
               :key="person.id"
               :person="person"
-              :people="filteredCommonConnections"
-            />
+              :people="filteredCommonConnections" />
           </div>
         </v-col>
       </v-row>
@@ -165,8 +159,7 @@
         <v-btn
           class="loadMoreBtn"
           block
-          @click="getConnections(connections.length)"
-        >
+          @click="getConnections(connections.length)">
           {{ $t('homepage.loadMore') }}
         </v-btn>
       </v-col>
@@ -175,132 +168,132 @@
 </template>
 
 <script>
-  import {getUserConnections} from '../profilStatsAPI';
-  export default {
-    props: {
-      connectionsDrawer: {
-        type: Boolean,
-        default: false,
-      },
-      connectionRequests: {
-        type: Number,
-        default: 0,
-      },
-      isCurrentUserProfile: {
-        type: Boolean,
-        default: false,
-      },
-      commonConnections: {
-        type: Array,
-        default: function() {
-          return [];
-        },
+import {getUserConnections} from '../profilStatsAPI';
+export default {
+  props: {
+    connectionsDrawer: {
+      type: Boolean,
+      default: false,
+    },
+    connectionRequests: {
+      type: Number,
+      default: 0,
+    },
+    isCurrentUserProfile: {
+      type: Boolean,
+      default: false,
+    },
+    commonConnections: {
+      type: Array,
+      default: function() {
+        return [];
       },
     },
-    data() {
-      return {
-        connections: [],
-        showSearch: false,
-        search: null,
-        PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
-        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
-        connexionsSize: 0,
-        limit: 20,
-        peopleSuggestionsList: [],
-      }
-    },
-    computed: {
-      filteredConnections() {
-        if (this.search) {
-          return this.connections.filter(item => item.fullname.toLowerCase().match(this.search.toLowerCase())); 
-        } else {
-          return this.connections;
-        }
-      },
-      filteredCommonConnections() {
-        if (this.search) {
-          return this.commonConnections.filter(item => item.fullname.toLowerCase().match(this.search.toLowerCase()));
-        } else {
-          return this.commonConnections;
-        }
-      },
-      showConnections() {
-        return this.connections && this.connections.length > 0;
-      },
-      showConnectionRequests() {
-        return this.connectionRequests > 0;
-      },
-      showSuggestions() {
-        return this.peopleSuggestionsList.length > 0;
-      },
-      showMore() {
-        return this.connexionsSize > this.connections.length;
-      },
-      peoplesToDisplay() {
-        return this.peopleSuggestionsList.slice(0, 2);
-      },
-    },
-    watch: {
-      connectionsDrawer() {
-        if (this.connectionsDrawer) {
-          $('body').addClass('hide-scroll');
-
-          this.$nextTick().then(() => {
-            $('#profile-stats-portlet .v-overlay').click(() => {
-              this.closeDrawer();
-            });
-          });
-        } else {
-          $('body').removeClass('hide-scroll');
-        }
-      },
-    },
-    created() {
-      if (this.isCurrentUserProfile) {
-        this.getConnections(0);
+  },
+  data() {
+    return {
+      connections: [],
+      showSearch: false,
+      search: null,
+      PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
+      receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
+      connexionsSize: 0,
+      limit: 20,
+      peopleSuggestionsList: [],
+    };
+  },
+  computed: {
+    filteredConnections() {
+      if (this.search) {
+        return this.connections.filter(item => item.fullname.toLowerCase().match(this.search.toLowerCase())); 
       } else {
-        this.getConnections(0, 0);
-        this.initPeopleSuggestionsList();
+        return this.connections;
       }
     },
-    methods: {
-      closeDrawer() {
-        this.$emit('closeDrawer');
-        this.showSearch = false;
-      },
-      getConnections(offset, limit) {
-        getUserConnections('', offset, limit >= 0 ? limit : this.limit).then(data => {
-          this.connexionsSize = data.size;
-          this.connections.push(...data.users);
-          this.connections.forEach(connection => {
-            connection.profileLink = this.PROFILE_URI + connection.username;
+    filteredCommonConnections() {
+      if (this.search) {
+        return this.commonConnections.filter(item => item.fullname.toLowerCase().match(this.search.toLowerCase()));
+      } else {
+        return this.commonConnections;
+      }
+    },
+    showConnections() {
+      return this.connections && this.connections.length > 0;
+    },
+    showConnectionRequests() {
+      return this.connectionRequests > 0;
+    },
+    showSuggestions() {
+      return this.peopleSuggestionsList.length > 0;
+    },
+    showMore() {
+      return this.connexionsSize > this.connections.length;
+    },
+    peoplesToDisplay() {
+      return this.peopleSuggestionsList.slice(0, 2);
+    },
+  },
+  watch: {
+    connectionsDrawer() {
+      if (this.connectionsDrawer) {
+        $('body').addClass('hide-scroll');
+
+        this.$nextTick().then(() => {
+          $('#profile-stats-portlet .v-overlay').click(() => {
+            this.closeDrawer();
           });
         });
-      },
-      refreshConnections(connection) {
-        this.connections.unshift(connection);
-      },
-      updateRequestsSize(requests) {
-        this.connectionRequests = requests;
-      },
-      closeConnectionSearch() {
-        this.search = null;
-        this.showSearch = false;
-      },
-      openConnectionSearch() {
-        this.showSearch = true;
-      },
-      initPeopleSuggestionsList() {
-        this.$userService.getSuggestionsUsers().then(data => {
-          this.peopleSuggestionsList = data.items;
-          
-          // get suggestions from profile owner's connections
-          const connectionsIds = this.connections.map(connection => connection.username);
-          this.peopleSuggestionsList.filter(suggestion => {
-            connectionsIds.some(connectionId => suggestion.username === connectionId);
-          });          
-        });
-      },
+      } else {
+        $('body').removeClass('hide-scroll');
+      }
+    },
+  },
+  created() {
+    if (this.isCurrentUserProfile) {
+      this.getConnections(0);
+    } else {
+      this.getConnections(0, 0);
+      this.initPeopleSuggestionsList();
     }
+  },
+  methods: {
+    closeDrawer() {
+      this.$emit('closeDrawer');
+      this.showSearch = false;
+    },
+    getConnections(offset, limit) {
+      getUserConnections('', offset, limit >= 0 ? limit : this.limit).then(data => {
+        this.connexionsSize = data.size;
+        this.connections.push(...data.users);
+        this.connections.forEach(connection => {
+          connection.profileLink = this.PROFILE_URI + connection.username;
+        });
+      });
+    },
+    refreshConnections(connection) {
+      this.connections.unshift(connection);
+    },
+    updateRequestsSize(requests) {
+      this.connectionRequests = requests;
+    },
+    closeConnectionSearch() {
+      this.search = null;
+      this.showSearch = false;
+    },
+    openConnectionSearch() {
+      this.showSearch = true;
+    },
+    initPeopleSuggestionsList() {
+      this.$userService.getSuggestionsUsers().then(data => {
+        this.peopleSuggestionsList = data.items;
+          
+        // get suggestions from profile owner's connections
+        const connectionsIds = this.connections.map(connection => connection.username);
+        this.peopleSuggestionsList.filter(suggestion => {
+          connectionsIds.some(connectionId => suggestion.username === connectionId);
+        });          
+      });
+    },
   }
+};
 </script>

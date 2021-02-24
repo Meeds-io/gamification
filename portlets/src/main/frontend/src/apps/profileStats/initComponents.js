@@ -42,11 +42,11 @@ const components = {
   'space-drawer': SpaceDrawer,
   'space-drawer-items': SpaceDrawerItems,
   'suggestions-space-list-item': SuggestionsSpaceListItem,
-  'exo-suggestions-people-list-item' : ExoSuggestionsPeopleListItem,
+  'exo-suggestions-people-list-item': ExoSuggestionsPeopleListItem,
   'people-list-item': PeopleListItem,
 
 };
 
-for(const key in components) {
+for (const key in components) {
   Vue.component(key, components[key]);
 }

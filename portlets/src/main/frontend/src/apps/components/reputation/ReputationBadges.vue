@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -67,56 +68,56 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </b-container>
 </template>
 <script>
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import { Popover } from 'bootstrap-vue/es/components';
+import { Image } from 'bootstrap-vue/es/components';
+import axios from 'axios';
 
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import { Popover } from 'bootstrap-vue/es/components';
-    import { Image } from 'bootstrap-vue/es/components';
-    import axios from 'axios';
+Vue.use(BootstrapVue);
+Vue.use(Popover);
+Vue.use(Image);
 
-    Vue.use(BootstrapVue);
-    Vue.use(Popover);
-    Vue.use(Image);
+const initialData = () => {
+  return {
+    badges: [],
 
-    const initialData = () => {
-        return {
-            badges: [],
+  };
+};
 
-        }
+export default {
+  data: initialData,
+
+  created() {
+    const url = window.location.pathname;
+    console.log(url);
+    axios.get('/portal/rest/gamification/reputation/badges', { params: { 'url': url  } })
+      .then(response => {
+
+        this.badges = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  },
+  methods: {
+    showBadgeDetail(badgeDTO) {
+      axios.get('/portal/rest/gamification/reputation/update', badgeDTO)
+        .then(response => {
+
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    bgBadges: function (badge) {
+
+      return badge.endScore == 0;
+
     }
-
-    export default {
-        data: initialData,
-
-        created() {
-            const url = window.location.pathname
-            console.log(url)
-            axios.get(`/portal/rest/gamification/reputation/badges`, { params: { 'url': url  } })
-                .then(response => {
-
-                    this.badges = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        },
-        methods: {
-            showBadgeDetail(badgeDTO) {
-                axios.get(`/portal/rest/gamification/reputation/update`, badgeDTO)
-                    .then(response => {
-
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-            },
-            bgBadges: function (badge) {
-
-                return badge.endScore == 0;
-
-            }
-        }
-    }
+  }
+};
 </script>
 
 <style scoped>

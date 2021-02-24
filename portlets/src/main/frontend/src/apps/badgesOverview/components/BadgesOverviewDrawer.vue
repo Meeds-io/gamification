@@ -66,7 +66,7 @@ export default {
           let badges = data || [];
           badges = badges.filter(tmp => tmp.domain === this.badge.zone);
           badges.push({
-            isCurrent : true,
+            isCurrent: true,
             neededScore: this.badge.score,
             avatar: `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.profileOwner}/avatar`,
           });

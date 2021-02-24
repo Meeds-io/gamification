@@ -109,75 +109,74 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-layout>
 </template>
 <script>
-  import {getSpacesRequests, replyInvitationToJoinSpace} from '../profilStatsAPI'
-  export default {
-    data() {
-      return {
-        spacesRequests: [],
-        spacesRequestsSize: '',
-        invitationSpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/invitationSpace`
-      }
+import {getSpacesRequests, replyInvitationToJoinSpace} from '../profilStatsAPI';
+export default {
+  data() {
+    return {
+      spacesRequests: [],
+      spacesRequestsSize: '',
+      invitationSpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/invitationSpace`
+    };
+  },
+  created(){
+    this.getSpacesRequests();
+  },
+  
+  methods: {
+    getSpacesRequests() {
+      this.spacesRequests = [];
+      getSpacesRequests().then(
+        (data) => {
+          this.spacesRequestsSize = data.size;
+          this.$emit('showRequestsSpace', this.spacesRequestsSize);
+          if (this.spacesRequestsSize > 0) {
+            for (let i = 0; i < data.spacesMemberships.length; i++) {
+              const spaceRequest = {};
+              spaceRequest.id = data.spacesMemberships[i].id;
+              fetch(`${data.spacesMemberships[i].space}`, {
+                method: 'GET',
+                credentials: 'include',
+              }).then((resp) => {
+                if (resp && resp.ok) {
+                  return resp.json();
+                }
+                else {
+                  throw new Error ('Error when getting space');
+                }
+              }).then((data) => {
+                spaceRequest.avatar = data.avatarUrl || data.avatarUrl || `/portal/rest/v1/social/spaces/${spaceRequest.id.split(':')[0]}/avatar`;
+                spaceRequest.displayName = data.displayName;
+                this.spacesRequests.splice(i, 0, spaceRequest);
+              });
+            }
+          }
+        }
+      );
     },
-	created(){
-      this.getSpacesRequests();
-	},
-	
-    methods: {
-      getSpacesRequests() {
-        this.spacesRequests = [];
-        getSpacesRequests().then(
-          (data) => {
-            this.spacesRequestsSize = data.size;
-            this.$emit('showRequestsSpace', this.spacesRequestsSize);
-            if (this.spacesRequestsSize > 0) {
-              for (let i = 0; i < data.spacesMemberships.length; i++) {
-                const spaceRequest = {};
-                spaceRequest.id = data.spacesMemberships[i].id;
-                fetch(`${data.spacesMemberships[i].space}`, {
-                  method: 'GET',
-                  credentials: 'include',
-                }).then((resp) => {
-                  if(resp && resp.ok) {
-                    return resp.json();
-                  }
-                  else {
-                    throw new Error ('Error when getting space');
-                  }
-                }).then((data) => {
-                  spaceRequest.avatar = data.avatarUrl || data.avatarUrl || `/portal/rest/v1/social/spaces/${spaceRequest.id.split(":")[0]}/avatar`;
-                  spaceRequest.displayName = data.displayName;
-                  this.spacesRequests.splice(i, 0, spaceRequest);
-                })
-              }
-            }
-          }
-        )
-      },
-      sort(array) {
-        return array.slice().sort(function(a, b) {
-          return a.displayName.localeCompare(b.displayName);
-        });
-      },
-      openSpaceRequests() {
-        window.location.href =  `${this.invitationSpaceUrl}`;
-      },
-      replyInvitationToJoinSpace(spaceId, reply) {
-        replyInvitationToJoinSpace(spaceId, reply).then(
-          (data) => {
-            if (reply === 'approved') {
-              const confirmedRequest = this.spacesRequests.filter(request => request.id === spaceId)[0];
-              const space = {
-                id: confirmedRequest.id,
-                displayName:confirmedRequest.displayName,
-                avatarUrl:confirmedRequest.avatar,
+    sort(array) {
+      return array.slice().sort(function(a, b) {
+        return a.displayName.localeCompare(b.displayName);
+      });
+    },
+    openSpaceRequests() {
+      window.location.href =  `${this.invitationSpaceUrl}`;
+    },
+    replyInvitationToJoinSpace(spaceId, reply) {
+      replyInvitationToJoinSpace(spaceId, reply)
+        .then(() => {
+          if (reply === 'approved') {
+            const confirmedRequest = this.spacesRequests.filter(request => request.id === spaceId)[0];
+            const space = {
+              id: confirmedRequest.id,
+              displayName: confirmedRequest.displayName,
+              avatarUrl: confirmedRequest.avatar,
 
-              };
-              this.$emit('invitationReplied', space);
-            }
-            this.getSpacesRequests();
+            };
+            this.$emit('invitationReplied', space);
           }
-        );
-      },
-    }
+          this.getSpacesRequests();
+        });
+    },
   }
+};
 </script>

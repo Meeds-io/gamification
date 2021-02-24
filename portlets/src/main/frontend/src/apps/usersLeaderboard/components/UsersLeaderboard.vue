@@ -157,20 +157,20 @@ export default {
     refreshBoard() {
       const params = `domain=${this.selectedDomain && this.selectedDomain.title || this.selectedDomain || ''}&period=${this.selectedPeriod || 'WEEK'}&capacity=${this.limit}`;
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/filter?${params}`, {
-          credentials: 'include',
-        }).then(resp => resp && resp.ok && resp.json())
-          .then(data => {
-            const currentUser = data && data.find(user => !user.socialId);
-            if (currentUser) {
-              this.currentRank = currentUser.rank;
-            }
+        credentials: 'include',
+      }).then(resp => resp && resp.ok && resp.json())
+        .then(data => {
+          const currentUser = data && data.find(user => !user.socialId);
+          if (currentUser) {
+            this.currentRank = currentUser.rank;
+          }
 
-            this.users = data && data.filter(user => user.socialId);
-            this.users.sort((a, b) => b.score - a.score);
-            this.users.forEach((user, index) => {
-              user.rank = index + 1;
-            });
+          this.users = data && data.filter(user => user.socialId);
+          this.users.sort((a, b) => b.score - a.score);
+          this.users.forEach((user, index) => {
+            user.rank = index + 1;
           });
+        });
     },
     retrieveDomains() {
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/api/v1/domains`, {
@@ -188,7 +188,7 @@ export default {
           });
           const defaultDomain = {
             title: 'All',
-            label: this.$t(`exoplatform.gamification.leaderboard.domain.all`),
+            label: this.$t('exoplatform.gamification.leaderboard.domain.all'),
           };
           this.domains = [defaultDomain, ...domains];
           this.selectedDomain = defaultDomain.title;
@@ -198,5 +198,5 @@ export default {
       this.limit += this.pageSize;
     },
   },
-}
+};
 </script>

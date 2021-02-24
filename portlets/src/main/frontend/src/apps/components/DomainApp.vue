@@ -21,13 +21,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 
 
-    import ManageDomains from './domain/ManageDomains'
+import ManageDomains from './domain/ManageDomains';
 
-    export default {
-        components: {
-            ManageDomains
-        }
-    }
+export default {
+  components: {
+    ManageDomains
+  }
+};
 </script>
 
 <style>

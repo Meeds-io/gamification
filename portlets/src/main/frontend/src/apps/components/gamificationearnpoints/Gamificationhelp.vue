@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -301,76 +302,76 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import axios from 'axios';
-    import _ from 'lodash';
-    Vue.use(BootstrapVue);
-
-
-    export default {
-
-        data() {
-            return {
-                users: [],
-                description: '',
-                actionTitle: '',
-                rules: [],
-                categoryName:['soc','Know','Team','feed']
-            }
-        },
-        computed: {
-            orderedRules: function () {
-                return _.orderBy(this.rules, ['score','description'], ['asc', 'asc'])
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import axios from 'axios';
+import _ from 'lodash';
+Vue.use(BootstrapVue);
 
 
-            }
-        },
-        created() {
-            axios.get(`/portal/rest/gamification/gameficationinformationsboard/history/all`, {
-                  params: {
-                    providerId: 'user',
-                    remoteId: eXo.env.portal.profileOwner,
-                  }
-                })
-                .then(response => {
-                    this.users = response.data;
-                });
-            axios.get(`/portal/rest/gamification/rules/all`)
-                .then(response => {
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        },
+export default {
 
-        methods: {
-
-            openCategory:function ($evt,categoryName){
-
-                let i,tabcontent,tablinks;
-                tabcontent = document.getElementsByClassName('tabcontent');
-                for (i = 0; i < tabcontent.length; i++) {
-
-                    tabcontent[i].style.display = 'none';
-                }
-                tablinks = document.getElementsByClassName('tablinks');
-                for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].className = tablinks[i].className.replace('active', '');
-                    document.getElementById(categoryName).style.display = 'block';
-                }
-                document.getElementById(categoryName).style.display = 'block';
-                $evt.currentTarget.className += " active";
+  data() {
+    return {
+      users: [],
+      description: '',
+      actionTitle: '',
+      rules: [],
+      categoryName: ['soc','Know','Team','feed']
+    };
+  },
+  computed: {
+    orderedRules: function () {
+      return _.orderBy(this.rules, ['score','description'], ['asc', 'asc']);
 
 
-
-
-            }
-
-        }
     }
+  },
+  created() {
+    axios.get('/portal/rest/gamification/gameficationinformationsboard/history/all', {
+      params: {
+        providerId: 'user',
+        remoteId: eXo.env.portal.profileOwner,
+      }
+    })
+      .then(response => {
+        this.users = response.data;
+      });
+    axios.get('/portal/rest/gamification/rules/all')
+      .then(response => {
+        this.rules = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  },
+
+  methods: {
+
+    openCategory: function ($evt,categoryName){
+
+      let i,tabcontent,tablinks;
+      tabcontent = document.getElementsByClassName('tabcontent');
+      for (i = 0; i < tabcontent.length; i++) {
+
+        tabcontent[i].style.display = 'none';
+      }
+      tablinks = document.getElementsByClassName('tablinks');
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace('active', '');
+        document.getElementById(categoryName).style.display = 'block';
+      }
+      document.getElementById(categoryName).style.display = 'block';
+      $evt.currentTarget.className += ' active';
+
+
+
+
+    }
+
+  }
+};
 
 
 

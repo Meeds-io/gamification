@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -162,112 +163,113 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </div>
 </template>
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import axios from 'axios';
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import axios from 'axios';
 
-    Vue.use(BootstrapVue);
-    export default {
-        props: ['rule', 'domains', 'events', 'errorType'],
-        data: function (){
-            return {
-                SaveRuleForm:'',
-                formErrors: {},
-                selectedFile: undefined,
-                selectedFileName: '',
-                dismissSecs: 5,
-                dismissCountDown: 0,
-                date: new Date(),
-                isShown: false,
-                config: {
-                    format: 'YYYY-MM-DD',
-                    useCurrent: false,
-                },
-                dynamicAreas: []
-            }
-        },
-        computed: {
-         isDisabled: function(){
-                return !(this.isNotEmpty(this.rule.event)&&this.isNotEmpty(this.rule.score)&&this.rule.domainDTO!=null)
-                }
-        },
-
-        watch: {
-            'rule.id'() {
-                this.formErrors = {};
-                this.selectedFile = undefined;
-                this.selectedFileName = this.rule.imageName
-            },
-            'rule.domainDTO'() {
-                if (typeof(this.rule.domainDTO) !== "undefined"){this.rule.area = this.rule.domainDTO.title}
-            },
-            'rule.ruleDTO'() {
-                this.rule.title = this.rule.ruleDTO.title
-            }
-        },
-        methods: {
-            isNotEmpty(str){
-              return(str!=null&&str!="")
-            },
-            onImageChanged(event) {
-                this.selectedFile = event.target.files[0];
-                this.selectedFileName = event.target.files[0].name
-            },
-            onCancel() {
-                this.$emit('cancel')
-
-            },
-            onSubmit() {
-                    this.createRule(this.rule);
-                if (this.isShown) {
-                    this.closeAlert(".alert")
-                }
-            },
-            closeAlert(item) {
-                setTimeout(function () {
-                    $(item).fadeOut('fast')
-                }, 4000);
-
-            },
-
-
-            collapseButton() {
-                this.isShown = !this.isShown;
-            },
-
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
-            confirm() {
-                this.$modals.confirm({
-                    message: 'Confirm?',
-                    onApprove: () => {
-                    },
-                    onCancel: () => {
-                    },
-                });
-            },
-            createRule(ruleDTO) {
-                axios.post(`/portal/rest/gamification/rules/add`, ruleDTO)
-                    .then(response => {
-                        this.$emit('sucessAdd', this.rule)
-                    })
-                    .catch(e => {
-                         this.addError = true;
-                         this.uploadId="";
-                        if(e.response.status===304){
-                            this.errorType="ruleExists"
-                        }else{
-                            this.errorType="addRuleError"
-                        }
-                       this.$emit('failAdd', this.rule, this.errorType)
-                    })
-                //this.resetRuleInForm()
-            }
-        }
+Vue.use(BootstrapVue);
+export default {
+  props: ['rule', 'domains', 'events', 'errorType'],
+  data: function (){
+    return {
+      SaveRuleForm: '',
+      formErrors: {},
+      selectedFile: undefined,
+      selectedFileName: '',
+      dismissSecs: 5,
+      dismissCountDown: 0,
+      date: new Date(),
+      isShown: false,
+      config: {
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+      },
+      dynamicAreas: []
+    };
+  },
+  computed: {
+    isDisabled: function(){
+      return !(this.isNotEmpty(this.rule.event)&&this.isNotEmpty(this.rule.score)&&this.rule.domainDTO!=null);
     }
+  },
+
+  watch: {
+    'rule.id'() {
+      this.formErrors = {};
+      this.selectedFile = undefined;
+      this.selectedFileName = this.rule.imageName;
+    },
+    'rule.domainDTO'() {
+      if (typeof(this.rule.domainDTO) !== 'undefined'){this.rule.area = this.rule.domainDTO.title;}
+    },
+    'rule.ruleDTO'() {
+      this.rule.title = this.rule.ruleDTO.title;
+    }
+  },
+  methods: {
+    isNotEmpty(str){
+      return (str!=null&&str!='');
+    },
+    onImageChanged(event) {
+      this.selectedFile = event.target.files[0];
+      this.selectedFileName = event.target.files[0].name;
+    },
+    onCancel() {
+      this.$emit('cancel');
+
+    },
+    onSubmit() {
+      this.createRule(this.rule);
+      if (this.isShown) {
+        this.closeAlert('.alert');
+      }
+    },
+    closeAlert(item) {
+      setTimeout(function () {
+        $(item).fadeOut('fast');
+      }, 4000);
+
+    },
+
+
+    collapseButton() {
+      this.isShown = !this.isShown;
+    },
+
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown;
+    },
+    confirm() {
+      this.$modals.confirm({
+        message: 'Confirm?',
+        onApprove: () => {
+        },
+        onCancel: () => {
+        },
+      });
+    },
+    createRule(ruleDTO) {
+      axios.post('/portal/rest/gamification/rules/add', ruleDTO)
+        .then(response => {
+          this.$emit('sucessAdd', this.rule);
+        })
+        .catch(e => {
+          this.addError = true;
+          this.uploadId='';
+          if (e.response.status===304){
+            this.errorType='ruleExists';
+          } else {
+            this.errorType='addRuleError';
+          }
+          this.$emit('failAdd', this.rule, this.errorType);
+        });
+      //this.resetRuleInForm()
+    }
+  }
+};
 </script>
 
 <style scoped>

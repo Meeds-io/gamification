@@ -19,8 +19,8 @@ import './initComponents.js';
 Vue.use(Vuetify);
 
 const vuetify = new Vuetify({
-    dark: true,
-    iconfont: '',
+  dark: true,
+  iconfont: '',
 });
 
 // getting language of user

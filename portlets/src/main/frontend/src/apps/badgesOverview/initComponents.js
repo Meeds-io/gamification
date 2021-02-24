@@ -26,6 +26,6 @@ const components = {
   'badges-overview-drawer-item': BadgesOverviewDrawerItem,
 };
 
-for(const key in components) {
+for (const key in components) {
   Vue.component(key, components[key]);
 }

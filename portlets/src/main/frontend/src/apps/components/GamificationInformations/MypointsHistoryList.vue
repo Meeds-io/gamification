@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -71,145 +72,146 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import {Image, Popover} from 'bootstrap-vue/es/components';
-    import axios from 'axios';
-    import Avatar from 'vue-avatar'
-    import TotalPointsFilter from "./TotalPointsFilter";
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import {Image, Popover} from 'bootstrap-vue/es/components';
+import axios from 'axios';
+import Avatar from 'vue-avatar';
+import TotalPointsFilter from './TotalPointsFilter';
 
-    Vue.use(BootstrapVue);
-    Vue.use(Popover);
-    Vue.use(Image);
+Vue.use(BootstrapVue);
+Vue.use(Popover);
+Vue.use(Image);
 
 
-    const initialData = () => {
-        return {
-            users: [],
-            selected: null,
-            show: false,
-            loadCapacity: 10,
-            title: '',
-            rules: [],
-            id: null,
-            description: '',
-            actionTitle:'',
-            isFiltered: false,
-            selected: null,
-            activeBtn: 'btn1',
-            domain: 'null',
-            show: false,
-            selectedPeriod: 'ALL',
-        }
-    };
-    export default {
-        components: {
-            TotalPointsFilter,
-            Avatar,
-        },
-        directives: {
-            mouseover: {
-                mounted: function () {
-                    jQuery('[data-toggle="popover"]').popover({
-                        html: true,
-                        content: $('#popover')
-                    }).on('mouseenter', function () {
-                        true;
-                    })
-                    .on('mouseleave', function () {
-                        false;
-                    });
-                },
-            }
-        },
-        data: initialData,
-        localFiltering() {
-            return this.hasProvider ? !!this.noProviderFiltering : true
-        },
-        computed: {
-          earnedPointsUrl() {
-            return `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
-          },
-        },
-        watch: {
-            domain() {
-                this.loadCapacity=10
-            }
-        },
-        created() {
-            axios.get(`/portal/rest/gamification/gameficationinformationsboard/history/all`, { params: {
-                  providerId: 'user',
-                  remoteId: eXo.env.portal.profileOwner,
-                }})
-                .then(response => {
-                    this.users = response.data || [];
-                });
-            axios.get(`/portal/rest/gamification/rules/all`)
-                .then(response => {
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        },
-        methods: {
-            replaceCurrentPortalUrl(url) {
-              return url && url.replace(/\/portal\/[0-9a-zA-Z]+\//g, `/portal/${eXo.env.portal.portalName}/`);
-            },
-            filter() {
-                const self = this;
-                axios.get(`/portal/rest/gamification/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
-                    .then(response => {
-                        this.users = response.data || [];
-                    })
-                    .catch(e => {
-                        console.warn(e)
-                    })
-            },
-            showMore() {
-                const self = this;
-                self.loadCapacity += 10;
-                axios.get(`/portal/rest/gamification/gameficationinformationsboard/history/all`, { params: {
-                      'domain': self.domain,
-                      'period': self.selectedPeriod,
-                      'capacity': self.loadCapacity,
-                      providerId: 'user',
-                      remoteId: eXo.env.portal.profileOwner,
-                    }})
-                    .then(response => {
-                        this.users = response.data;
-                    })
-                    .catch(e => {
-                        console.warn(e)
-                    })
-            },
-            popOpen() {
-                jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
-                    .on("mouseenter", function () {
-                        true;
-                    }).on("mouseleave", function () {
-                    false;
-                });
-            },
-            disableByRef() {
-                if (this.disabled) {
-                    this.$refs.popover.$emit('enable')
-                } else {
-                    this.$refs.popover.$emit('disable')
-                }
-            },
-            mouseOver() {
-                jQuery(this).popover("show");
-            },
-            isActive(value) {
-                return;
-                this.active === value
-            },
-            toggleClass() {
-                this.isActive = !this.isActive;
-            },
-        }
+const initialData = () => {
+  return {
+    users: [],
+    selected: null,
+    show: false,
+    loadCapacity: 10,
+    title: '',
+    rules: [],
+    id: null,
+    description: '',
+    actionTitle: '',
+    isFiltered: false,
+    selected: null,
+    activeBtn: 'btn1',
+    domain: 'null',
+    show: false,
+    selectedPeriod: 'ALL',
+  };
+};
+export default {
+  components: {
+    TotalPointsFilter,
+    Avatar,
+  },
+  directives: {
+    mouseover: {
+      mounted: function () {
+        jQuery('[data-toggle="popover"]').popover({
+          html: true,
+          content: $('#popover')
+        }).on('mouseenter', function () {
+          true;
+        })
+          .on('mouseleave', function () {
+            false;
+          });
+      },
     }
+  },
+  data: initialData,
+  localFiltering() {
+    return this.hasProvider ? !!this.noProviderFiltering : true;
+  },
+  computed: {
+    earnedPointsUrl() {
+      return `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
+    },
+  },
+  watch: {
+    domain() {
+      this.loadCapacity=10;
+    }
+  },
+  created() {
+    axios.get('/portal/rest/gamification/gameficationinformationsboard/history/all', { params: {
+      providerId: 'user',
+      remoteId: eXo.env.portal.profileOwner,
+    }})
+      .then(response => {
+        this.users = response.data || [];
+      });
+    axios.get('/portal/rest/gamification/rules/all')
+      .then(response => {
+        this.rules = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  },
+  methods: {
+    replaceCurrentPortalUrl(url) {
+      return url && url.replace(/\/portal\/[0-9a-zA-Z]+\//g, `/portal/${eXo.env.portal.portalName}/`);
+    },
+    filter() {
+      const self = this;
+      axios.get('/portal/rest/gamification/leaderboard/filter', { params: { 'domain': self.domain, 'period': self.selectedPeriod } })
+        .then(response => {
+          this.users = response.data || [];
+        })
+        .catch(e => {
+          console.warn(e);
+        });
+    },
+    showMore() {
+      const self = this;
+      self.loadCapacity += 10;
+      axios.get('/portal/rest/gamification/gameficationinformationsboard/history/all', { params: {
+        'domain': self.domain,
+        'period': self.selectedPeriod,
+        'capacity': self.loadCapacity,
+        providerId: 'user',
+        remoteId: eXo.env.portal.profileOwner,
+      }})
+        .then(response => {
+          this.users = response.data;
+        })
+        .catch(e => {
+          console.warn(e);
+        });
+    },
+    popOpen() {
+      jQuery('.popover').popover({ trigger: 'hover', html: true, animation: false })
+        .on('mouseenter', function () {
+          true;
+        }).on('mouseleave', function () {
+          false;
+        });
+    },
+    disableByRef() {
+      if (this.disabled) {
+        this.$refs.popover.$emit('enable');
+      } else {
+        this.$refs.popover.$emit('disable');
+      }
+    },
+    mouseOver() {
+      jQuery(this).popover('show');
+    },
+    isActive(value) {
+      return;
+      this.active === value;
+    },
+    toggleClass() {
+      this.isActive = !this.isActive;
+    },
+  }
+};
 </script>
 
 

@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -331,103 +332,104 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-    import Vue from 'vue'
-    import moment from 'moment'
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-     import axios from 'axios'
+/* eslint-disable */
+import Vue from 'vue';
+import moment from 'moment';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import axios from 'axios';
 
-    Vue.prototype.moment = moment;
-    Vue.use(BootstrapVue);
-    export default {
-        props: ['badges','domains'],
-        data() {
-            return {
-                search: '',
-                formErrors: {},
-                selectedFile: undefined,
-                selectedFileName: '',
-                editedbadge : {},
-                isEnabled: false,
-                isdeleted: false,
-                isShown: false,
-                isEditShown: false,
-                enabledFilter: null,
-                filerlabel:"all",
-                editedEnabled: null,
-                enabledMessage:"",
-                imageName: '',
-            }
-        },
-        computed: {
-            filteredBadges() {
-                return this.badges.filter(item => {
-                    return (this.$t(`badge.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1
+Vue.prototype.moment = moment;
+Vue.use(BootstrapVue);
+export default {
+  props: ['badges','domains'],
+  data() {
+    return {
+      search: '',
+      formErrors: {},
+      selectedFile: undefined,
+      selectedFileName: '',
+      editedbadge: {},
+      isEnabled: false,
+      isdeleted: false,
+      isShown: false,
+      isEditShown: false,
+      enabledFilter: null,
+      filerlabel: 'all',
+      editedEnabled: null,
+      enabledMessage: '',
+      imageName: '',
+    };
+  },
+  computed: {
+    filteredBadges() {
+      return this.badges.filter(item => {
+        return (this.$t(`badge.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || this.$t(`badge.title.${item.title}`,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.domainDTO.title}`,item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1)
-                        && (this.enabledFilter === null || item.enabled === this.enabledFilter)
+                        && (this.enabledFilter === null || item.enabled === this.enabledFilter);
 
-                })
-            },
-            isDisabled: function(){
-                return !(this.isNotEmpty(this.editedbadge.neededScore)&&this.isNotEmpty(this.editedbadge.title)&&this.editedbadge.domainDTO!=null)
+      });
+    },
+    isDisabled: function(){
+      return !(this.isNotEmpty(this.editedbadge.neededScore)&&this.isNotEmpty(this.editedbadge.title)&&this.editedbadge.domainDTO!=null);
 
-                }
-        },
-        watch: {
-            'badge.id'() {
-                this.formErrors = {};
-                this.selectedFile = undefined;
-                this.selectedFileName = this.badge.imageName
-            }
-        },
+    }
+  },
+  watch: {
+    'badge.id'() {
+      this.formErrors = {};
+      this.selectedFile = undefined;
+      this.selectedFileName = this.badge.imageName;
+    }
+  },
        
-        methods: {
-            isNotEmpty(str){
-              return(str!=null&&str!="")
-            },
-            onSave() {
-                this.$emit('save', this.editedbadge);
-                this.editedbadge= {};
-                this.isEditShown = !this.isEditShown;               
-            },
+  methods: {
+    isNotEmpty(str){
+      return (str!=null&&str!='');
+    },
+    onSave() {
+      this.$emit('save', this.editedbadge);
+      this.editedbadge= {};
+      this.isEditShown = !this.isEditShown;               
+    },
 
-            onImageChanged(event) {
-                this.selectedFile = event.target.files[0];
-                this.selectedFileName = event.target.files[0].name
-            },
-            onCancel(badge) {
-                this.editedbadge= {}
-            },
-            onRemove(id, title) {
-                this.$emit('remove', id, title);
-            },
-            change() {
-                console.log('filechange');
-            },
-            collapseConfirm(badge) {
-                this.badge = badge;
-                this.isShown = !this.isShown;
-                if (this.isShown) {
-                    this.closeAlertt(".alert")
-                }
-            },
-            collapseEditButton(badge) {
-              if ( badge ) {
-                this.badge = badge;
-                this.editedbadge=badge;
-                this.editedbadge.description =  this.$t(`badge.description.${this.editedbadge.title.replace(' ','')}_${this.editedbadge.domain}`,this.editedbadge.description) ;
-                this.editedbadge.title =  this.$t(`badge.title.${this.editedbadge.title.replace(' ','')}`,this.editedbadge.title) ;
-              }
-               this.isEditShown = !this.isEditShown;
-            },
-            closeAlertt(item) {
-                setTimeout(function () {
-                    $(item).fadeOut('fast')
-                }, 8000);
-            } ,         
+    onImageChanged(event) {
+      this.selectedFile = event.target.files[0];
+      this.selectedFileName = event.target.files[0].name;
+    },
+    onCancel(badge) {
+      this.editedbadge= {};
+    },
+    onRemove(id, title) {
+      this.$emit('remove', id, title);
+    },
+    change() {
+      console.log('filechange');
+    },
+    collapseConfirm(badge) {
+      this.badge = badge;
+      this.isShown = !this.isShown;
+      if (this.isShown) {
+        this.closeAlertt('.alert');
+      }
+    },
+    collapseEditButton(badge) {
+      if ( badge ) {
+        this.badge = badge;
+        this.editedbadge=badge;
+        this.editedbadge.description =  this.$t(`badge.description.${this.editedbadge.title.replace(' ','')}_${this.editedbadge.domain}`,this.editedbadge.description) ;
+        this.editedbadge.title =  this.$t(`badge.title.${this.editedbadge.title.replace(' ','')}`,this.editedbadge.title) ;
+      }
+      this.isEditShown = !this.isEditShown;
+    },
+    closeAlertt(item) {
+      setTimeout(function () {
+        $(item).fadeOut('fast');
+      }, 8000);
+    } ,         
     getFormData(files) {
       const data = new FormData();
       [...files].forEach((file) => {
@@ -437,41 +439,41 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
 
 
-               onFilePicked (e) {
-  			const files = e.target.files
-  			if(files[0] !== undefined) {
-  				this.imageName = files[0].name
-  				if(this.imageName.lastIndexOf('.') <= 0) {
-  					return
-  				}
-  				const fr = new FileReader ()
-  				fr.readAsDataURL(files[0])
-  				fr.addEventListener('load', () => {
-  					this.imageUrl = fr.result
-  					this.imageFile = files[0]
-          })
+    onFilePicked (e) {
+      const files = e.target.files;
+      if (files[0] !== undefined) {
+        this.imageName = files[0].name;
+        if (this.imageName.lastIndexOf('.') <= 0) {
+          return;
+        }
+        const fr = new FileReader ();
+        fr.readAsDataURL(files[0]);
+        fr.addEventListener('load', () => {
+          this.imageUrl = fr.result;
+          this.imageFile = files[0];
+        });
 
-                const MAX_RANDOM_NUMBER = 100000;
-      const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
-      console.log(uploadId);
-      const form = this.getFormData(files);
-       axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then(response => {
-                this.editedbadge.uploadId=uploadId
-            })
+        const MAX_RANDOM_NUMBER = 100000;
+        const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+        console.log(uploadId);
+        const form = this.getFormData(files);
+        axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then(response => {
+          this.editedbadge.uploadId=uploadId;
+        });
 
-  			} else {
-  				this.imageName = ''
-  				this.imageFile = ''
-  				this.imageUrl = ''
-  			}
-  		}
-        },
+      } else {
+        this.imageName = '';
+        this.imageFile = '';
+        this.imageUrl = '';
+      }
     }
+  },
+};
 </script>
 <style scoped>
     .container-fluid {

@@ -14,9 +14,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import Vue from 'vue'
-import SpaceLeaderboardApp from './components/SpaceLeaderboardApp.vue'
+import Vue from 'vue';
+import SpaceLeaderboardApp from './components/SpaceLeaderboardApp.vue';
 
 new Vue({
-    render: h => h(SpaceLeaderboardApp)
+  render: h => h(SpaceLeaderboardApp)
 }).$mount('#leaderboard-portlet > .container');

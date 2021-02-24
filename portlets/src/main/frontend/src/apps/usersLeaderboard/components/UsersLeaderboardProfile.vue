@@ -93,5 +93,5 @@ export default {
       return this.username === eXo.env.portal.userName;
     },
   },
-}
+};
 </script>

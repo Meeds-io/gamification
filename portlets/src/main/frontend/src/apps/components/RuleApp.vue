@@ -19,12 +19,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 
-    import ManageRules from './rule/ManageRules'
-  export default {
-    components: {
-      ManageRules
-    }
+import ManageRules from './rule/ManageRules';
+export default {
+  components: {
+    ManageRules
   }
+};
 </script>
 
 <style>

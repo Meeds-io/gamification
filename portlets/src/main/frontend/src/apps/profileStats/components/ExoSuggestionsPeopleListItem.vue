@@ -2,8 +2,9 @@
   <v-list-item class="suggestions-list-item pa-0">
     <v-list-item-avatar
       :size="avatarSize">
-      <v-img :src="!skeleton && avatarUrl || ''"
-             :class="skeleton && 'skeleton-background'"></v-img>
+      <v-img
+        :src="!skeleton && avatarUrl || ''"
+        :class="skeleton && 'skeleton-background'" />
     </v-list-item-avatar>
     <v-list-item-content class="pb-3">
       <v-list-item-title class="body-2 font-weight-bold text-color suggestions-list-item-title">
@@ -21,21 +22,23 @@
     </v-list-item-content>
     <v-list-item-action class="suggestions-list-item-actions">
       <v-btn-toggle class="transparent">
-        <a :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
-           text
-           icon
-           small
-           min-width="auto"
-           class="px-0 suggestions-btn-action connexion-accept-btn"
-           @click="connectionRequest(people)">
+        <a
+          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
+          text
+          icon
+          small
+          min-width="auto"
+          class="px-0 suggestions-btn-action connexion-accept-btn"
+          @click="connectionRequest(people)">
           <i class="uiIconInviteUser"></i>
         </a>
-        <a :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
-           text
-           small
-           min-width="auto"
-           class="px-0 suggestions-btn-action connexion-refuse-btn"
-           @click="ignoredConnectionUser(people)">
+        <a
+          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
+          text
+          small
+          min-width="auto"
+          class="px-0 suggestions-btn-action connexion-refuse-btn"
+          @click="ignoredConnectionUser(people)">
           <i class="uiIconCloseCircled"></i>
         </a>
       </v-btn-toggle>

@@ -19,13 +19,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 
-    import ManageBadges from './badge/ManageBadges'
+import ManageBadges from './badge/ManageBadges';
 
-    export default {
-        components: {
-            ManageBadges
-        }
-    }
+export default {
+  components: {
+    ManageBadges
+  }
+};
 </script>
 
 <style>

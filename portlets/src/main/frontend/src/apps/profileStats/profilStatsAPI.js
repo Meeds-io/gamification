@@ -19,26 +19,26 @@ export function getUsersByGamificationRank(period) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
-      throw new Error ('Error when getting users by gamification rank')
+      throw new Error ('Error when getting users by gamification rank');
     }
-  })
+  });
 }
 export function getReputationStatus() {
   return fetch( `/rest/gamification/reputation/status?username=${eXo.env.portal.profileOwner}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
-      throw new Error ('Error when getting the user reputation status')
+      throw new Error ('Error when getting the user reputation status');
     }
-  })
+  });
 }
 
 export function getUserInformations() {
@@ -46,13 +46,13 @@ export function getUserInformations() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
       throw new Error ('Error when getting user informations');
     }
-  })
+  });
 }
 
 export function getSpaces() {
@@ -60,13 +60,13 @@ export function getSpaces() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
       throw new Error ('Error when getting spaces');
     }
-  })
+  });
 }
 
 export function getSpacesOfUser(offset, limit) {
@@ -74,27 +74,27 @@ export function getSpacesOfUser(offset, limit) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     }
     else {
       throw new Error ('Error when getting spaces of current user');
     }
-  })
+  });
 }
 
 export function getCommonsSpaces(offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces/${eXo.env.portal.profileOwner}?offset=${offset || 0}&limit=${1000 || 10}&returnSize=true`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users/${eXo.env.portal.userName}/spaces/${eXo.env.portal.profileOwner}?offset=${offset || 0}&limit=${limit || 10}&returnSize=true`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     }
     else {
       throw new Error ('Error when getting commons spaces');
     }
-  })
+  });
 }
 
 export function getSpacesRequests() {
@@ -102,13 +102,13 @@ export function getSpacesRequests() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
       throw new Error ('Error when getting spaces requests');
     }
-  })
+  });
 }
 
 export function getSuggestionsSpace(){
@@ -130,12 +130,12 @@ export function getAchievements(providerId, remoteId, limit) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } else {
       throw new Error ('Error when getting achievements');
     }
-  })
+  });
 }
 
 export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
@@ -148,13 +148,13 @@ export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
       'Content-Type': 'application/json'
     }
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
       throw new Error ('Error when replying invitation to join space');
     }
-  })
+  });
 }
 
 export function getUserConnections(query, offset, limit, expand) {
@@ -175,13 +175,13 @@ export function getConnections() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
-	} 
-	else {
+    } 
+    else {
       throw new Error ('Error when getting connections');
-	}
-  })
+    }
+  });
 }
 
 export function getConnectionsRequests() {
@@ -189,13 +189,13 @@ export function getConnectionsRequests() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
-	} 
-	else {
+    } 
+    else {
       throw new Error ('Error when getting connections requests');
     }
-  })
+  });
 }
 
 export function getConnectionRequestSender(senderUrl) {
@@ -203,13 +203,13 @@ export function getConnectionRequestSender(senderUrl) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
       throw new Error ('Error when getting connection request sender');
-	}
-  })
+    }
+  });
 }
 
 export function replyInvitationToConnect(relationId, reply) {
@@ -217,18 +217,18 @@ export function replyInvitationToConnect(relationId, reply) {
   return fetch(`/portal/rest/v1/social/relationships/${relationId}`, {
     method: 'PUT',
     credentials: 'include',
-  	body: JSON.stringify(data),
-  	headers: {
-        'Content-Type': 'application/json'
-  	}
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
-	} 
-	else {
+    } 
+    else {
       throw new Error ('Error when replying invitation to connect');
-	}
-  })
+    }
+  });
 }
 
 export function getGamificationPoints(period) {
@@ -236,13 +236,13 @@ export function getGamificationPoints(period) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     }
     else {
       throw new Error ('Error when getting gamification points');
     }
-  })
+  });
 }
 
 export function getGamificationPointsStats(period) {
@@ -250,13 +250,13 @@ export function getGamificationPointsStats(period) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     }
     else {
       throw new Error ('Error when getting gamification points stats');
     }
-  })
+  });
 }
 
 export function getCommonConnections(relationId) {
@@ -264,11 +264,11 @@ export function getCommonConnections(relationId) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if(resp && resp.ok) {
+    if (resp && resp.ok) {
       return resp.json();
     } 
     else {
       throw new Error ('Error when getting common connections');
     }
-  })
+  });
 }

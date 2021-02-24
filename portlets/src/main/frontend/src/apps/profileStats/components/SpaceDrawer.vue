@@ -226,32 +226,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 
-  import {getSpacesOfUser, getCommonsSpaces, getSuggestionsSpace} from '../profilStatsAPI';
-  export default {
-    props: {
-      spaceDrawer: {
-        type: Boolean,
-        default: false,
-      },
-      suggestionsType: {
-        type: String,
-        default: 'all',
-      },
-      spaceRequests: {
-        type: Number,
-        default: 0,
-      },
-      isCurrentUserProfile: {
-        type: Boolean,
-        default: false,
-      },
-      commonsSpaceDefaultSize: {
-        type: Number,
-        default: 0,
-      },
+import {getSpacesOfUser, getCommonsSpaces, getSuggestionsSpace} from '../profilStatsAPI';
+export default {
+  props: {
+    spaceDrawer: {
+      type: Boolean,
+      default: false,
     },
-    data() {
-     return {
+    suggestionsType: {
+      type: String,
+      default: 'all',
+    },
+    spaceRequests: {
+      type: Number,
+      default: 0,
+    },
+    isCurrentUserProfile: {
+      type: Boolean,
+      default: false,
+    },
+    commonsSpaceDefaultSize: {
+      type: Number,
+      default: 0,
+    },
+  },
+  data() {
+    return {
       spaces: [],
       spacesSuggestionsList: [],
       commonsSpaces: [],
@@ -261,139 +261,139 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       commonsSpaceSize: 0,
       limit: 10,
       limitToFetch: 0,
-      showSearch:false,
+      showSearch: false,
       firstLoadingSpaces: true,
       search: null,
-     }
-    },
-    computed: {
-      filteredSpaces() {
-        if (this.search) {
-          return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
-        } else {
-          return this.spaces;
-        }
-      },
-      displaySpacesSuggestions() {
-        return !this.suggestionsType || this.suggestionsType === 'all' || this.suggestionsType === 'space';
-      },
-      suggestionSpacesToDisplay() {
-        return this.spacesSuggestionsList.slice(0, 3);
-      },
-      filteredCommonsSpaces() {
-        if (this.search) {
-          return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
-        } else {
-          return this.commonsSpaces;
-        }
-      },
-      showSpaces() {
-        return this.spaces && this.spaces.length > 0 || this.commonsSpaces && this.commonsSpaces.length || this.spacesSuggestionsList && this.spacesSuggestionsList.length;
-      },
-      showLoadMoreSpaces() {
-        return this.spaceSize > this.limitToFetch || this.commonsSpaceDefaultSize > this.limitToFetch;
-      },
-      spacesSize() {
-        if (this.search) {
-          return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase())).length;
-        } else {
-          return this.spaces.length;
-        }
-      },
-      commonSpacesSize() {
-        if (this.search) {
-          return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase())).length;
-        } else {
-          return this.commonsSpaces.length;
-        }
-      },
-      showSpacesRequests() {
-        return this.spaceRequests > 0 && !this.showSearch;
-      },
-    },
-    watch: {
-      spaceDrawer() {
-        if (this.spaceDrawer) {
-          $('body').addClass('hide-scroll');
-          this.$nextTick().then(() => {
-            $('#profile-stats-portlet .v-overlay').click(() => {
-              this.closeDrawer();
-            });
-          });
-        } else {
-          $('body').removeClass('hide-scroll');
-        }
-      },
-    },
-    created() {
-      this.limitToFetch = this.limit;
-      if (this.isCurrentUserProfile){
-         this.getMySpaces();}
-      else {
-       this.CommonsSpaces();
-        if (this.displaySpacesSuggestions) {
-         this. initSpaceSuggestionsList();
-         }
+    };
+  },
+  computed: {
+    filteredSpaces() {
+      if (this.search) {
+        return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
+      } else {
+        return this.spaces;
       }
     },
-    methods: {
-      closeDrawer() {
-        this.$emit('closeDrawer');
-        this.showSearch = false;
-      },
-      getMySpaces() {
-        this.firstLoadingSpaces = false;
-        getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
-          this.spaces = data.spaces;
-          this.spaceSize = data.size;
+    displaySpacesSuggestions() {
+      return !this.suggestionsType || this.suggestionsType === 'all' || this.suggestionsType === 'space';
+    },
+    suggestionSpacesToDisplay() {
+      return this.spacesSuggestionsList.slice(0, 3);
+    },
+    filteredCommonsSpaces() {
+      if (this.search) {
+        return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase()));
+      } else {
+        return this.commonsSpaces;
+      }
+    },
+    showSpaces() {
+      return this.spaces && this.spaces.length > 0 || this.commonsSpaces && this.commonsSpaces.length || this.spacesSuggestionsList && this.spacesSuggestionsList.length;
+    },
+    showLoadMoreSpaces() {
+      return this.spaceSize > this.limitToFetch || this.commonsSpaceDefaultSize > this.limitToFetch;
+    },
+    spacesSize() {
+      if (this.search) {
+        return this.spaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase())).length;
+      } else {
+        return this.spaces.length;
+      }
+    },
+    commonSpacesSize() {
+      if (this.search) {
+        return this.commonsSpaces.filter(item => item.displayName.toLowerCase().match(this.search.toLowerCase())).length;
+      } else {
+        return this.commonsSpaces.length;
+      }
+    },
+    showSpacesRequests() {
+      return this.spaceRequests > 0 && !this.showSearch;
+    },
+  },
+  watch: {
+    spaceDrawer() {
+      if (this.spaceDrawer) {
+        $('body').addClass('hide-scroll');
+        this.$nextTick().then(() => {
+          $('#profile-stats-portlet .v-overlay').click(() => {
+            this.closeDrawer();
+          });
         });
-      },
-       CommonsSpaces() {
-        this.firstLoadingSpaces = false;
-         getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
-            this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
-            this.commonsSpaceSize = data.size;
-         });
-       },
-      openSpace() {
-        window.location.href =  `${this.SpaceUrl}`;
-      },
-      updateRequestsSize(spacesRequestsSize) {
-        this.spaceRequests = spacesRequestsSize;
-      },
-      refreshSpaces(spaceList) {
-        this.spaces.unshift(spaceList);
-      },
-      openSpacesSearch() {
-        this.showSearch = true;
-      },
-      closeSpacesSearch() {
-        this.showSearch = false;
-        this.search = '';
-      },
-      loadNextPage() {
-      if(this.isCurrentUserProfile){
-        if(this.limitToFetch <= this.spaceSize) {
+      } else {
+        $('body').removeClass('hide-scroll');
+      }
+    },
+  },
+  created() {
+    this.limitToFetch = this.limit;
+    if (this.isCurrentUserProfile){
+      this.getMySpaces();}
+    else {
+      this.getCommonsSpaces();
+      if (this.displaySpacesSuggestions) {
+        this. initSpaceSuggestionsList();
+      }
+    }
+  },
+  methods: {
+    closeDrawer() {
+      this.$emit('closeDrawer');
+      this.showSearch = false;
+    },
+    getMySpaces() {
+      this.firstLoadingSpaces = false;
+      getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
+        this.spaces = data.spaces;
+        this.spaceSize = data.size;
+      });
+    },
+    getCommonsSpaces() {
+      this.firstLoadingSpaces = false;
+      getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+        this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
+        this.commonsSpaceSize = data.size;
+      });
+    },
+    openSpace() {
+      window.location.href =  `${this.SpaceUrl}`;
+    },
+    updateRequestsSize(spacesRequestsSize) {
+      this.spaceRequests = spacesRequestsSize;
+    },
+    refreshSpaces(spaceList) {
+      this.spaces.unshift(spaceList);
+    },
+    openSpacesSearch() {
+      this.showSearch = true;
+    },
+    closeSpacesSearch() {
+      this.showSearch = false;
+      this.search = '';
+    },
+    loadNextPage() {
+      if (this.isCurrentUserProfile){
+        if (this.limitToFetch <= this.spaceSize) {
           this.limitToFetch = this.limitToFetch += this.limit;
           getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
-             this.spaces = data.spaces;
-        });
+            this.spaces = data.spaces;
+          });
         }
-       }else if(this.limitToFetch <= this.commonsSpaceDefaultSize){
+      } else if (this.limitToFetch <= this.commonsSpaceDefaultSize){
         this.limitToFetch = this.limitToFetch += this.limit;
         getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
-            this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
-            this.commonsSpaceSize = data.size;
-         });
-       }
-      },
-      initSpaceSuggestionsList() {
-       this.firstLoadingSpaces = false;
-        getSuggestionsSpace().then(data => {
-          this.spacesSuggestionsList = data.items;
+          this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
+          this.commonsSpaceSize = data.size;
         });
-      },
-    }
+      }
+    },
+    initSpaceSuggestionsList() {
+      this.firstLoadingSpaces = false;
+      getSuggestionsSpace().then(data => {
+        this.spacesSuggestionsList = data.items;
+      });
+    },
   }
+};
 
 </script>

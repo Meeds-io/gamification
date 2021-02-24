@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -38,50 +39,50 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <!--    GamificationInformations portlets  -->
 
 <script>
+/* eslint-disable */
+import MypointsHistoryList from './GamificationInformations/MypointsHistoryList';
+import GamificationInformationStyle from  '../../../../webapp/Style/GamificationInformationStyle.css';
 
-    import MypointsHistoryList from './GamificationInformations/MypointsHistoryList'
-    import GamificationInformationStyle from  '../../../../webapp/Style/GamificationInformationStyle.css'
-
-    import MybadgesInformations from "./GamificationInformations/MybadgesInformations"
-    import Gamificationhelp from "./gamificationearnpoints/Gamificationhelp"
-
-
-    import TotalPointsFilter from "./GamificationInformations/TotalPointsFilter"
-    import Tabs from 'vue-tabs-with-active-line';
-
-    const TABS = [{
-        title: "MyPoints",
-        value: "MyPoints",
-    },
-        {
-            title: 'MyBadges',
-            value: 'MyBadges',
-        }];
-    const initialData = () => {
-        return {
-
-        }}
-    export default {
-
-        components:   {
-            MybadgesInformations,
-            Tabs,
-            MypointsHistoryList,
-            TotalPointsFilter,
+import MybadgesInformations from './GamificationInformations/MybadgesInformations';
+import Gamificationhelp from './gamificationearnpoints/Gamificationhelp';
 
 
-        },
-        data: () => ({
-            isGamificationEnabled: false,
-            tabs: TABS,
-            currentTab: 'MyPoints',
-        }),
-        methods:{
-            handleClick(newTab) {
-                this.currentTab = newTab;
-            }
-        }    
+import TotalPointsFilter from './GamificationInformations/TotalPointsFilter';
+import Tabs from 'vue-tabs-with-active-line';
+
+const TABS = [{
+  title: 'MyPoints',
+  value: 'MyPoints',
+},
+{
+  title: 'MyBadges',
+  value: 'MyBadges',
+}];
+const initialData = () => {
+  return {
+
+  };};
+export default {
+
+  components: {
+    MybadgesInformations,
+    Tabs,
+    MypointsHistoryList,
+    TotalPointsFilter,
+
+
+  },
+  data: () => ({
+    isGamificationEnabled: false,
+    tabs: TABS,
+    currentTab: 'MyPoints',
+  }),
+  methods: {
+    handleClick(newTab) {
+      this.currentTab = newTab;
     }
+  }    
+};
 
 </script>
 

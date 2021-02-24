@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -147,16 +148,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-import Vue from 'vue'
-import BootstrapVue from 'bootstrap-vue'
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
 import {
-    ChartPie
-} from 'vue-d2b'
+  ChartPie
+} from 'vue-d2b';
 import {
-    Popover
+  Popover
 } from 'bootstrap-vue/es/components';
 import {
-    Image
+  Image
 } from 'bootstrap-vue/es/components';
 import axios from 'axios';
 import Avatar from 'vue-avatar';
@@ -164,180 +166,180 @@ Vue.use(BootstrapVue);
 Vue.use(Popover);
 Vue.use(Image);
 const initialData = () => {
-    return {
-        chartData: [],
-        chartConfig(chart) {
-            chart.donutRatio(0.5)
-        },
-        users: [],
-        domains: [],
-        type: '',
-        category: '',
-        connection: 'everyone',
-        selected: null,
-        activeBtn: 'btn1',
-        domain: 'null',
-        show: false,
-        selectedPeriod: 'WEEK',
-        locale: 'lang',
-        popoverShow: false,
-        loadCapacity: 10,
-    }
-}
+  return {
+    chartData: [],
+    chartConfig(chart) {
+      chart.donutRatio(0.5);
+    },
+    users: [],
+    domains: [],
+    type: '',
+    category: '',
+    connection: 'everyone',
+    selected: null,
+    activeBtn: 'btn1',
+    domain: 'null',
+    show: false,
+    selectedPeriod: 'WEEK',
+    locale: 'lang',
+    popoverShow: false,
+    loadCapacity: 10,
+  };
+};
 export default {
-    components: {
-        Avatar,
-        ChartPie,
-    },
-    directives: {
-        mouseover: {
-            mounted: function () {
-                jQuery('[data-toggle="popover"]').popover({
-                        html: true,
-                        content: $('#popover')
-                    }).on('mouseenter', function () {
-                        true;
-                    })
-                    .on('mouseleave', function () {
-                        false;
-                    });
-            },
-        }
-    },
-    data: initialData,
-    watch: {
-        domain() {
-            this.loadCapacity = 10
-            this.filter()
-        }
-    },
-    mounted: function () {
-        jQuery(".pop").popover({
-                trigger: "hover",
-                html: true,
-                animation: false
-            })
-            .on("mouseenter", function () {
-                const _this = this;
-                jQuery(this).popover("show");
-                jQuery(".popover").on("mouseleave", function () {
-                    jQuery(_this).popover('hide');
-                });
-            }).on("mouseleave", function () {
-                const _this = this;
-                setTimeout(function () {
-                    if (!jQuery(".popover:hover").length) {
-                        jQuery(_this).popover("hide");
-                    }
-                }, 300);
-            });
-    },
-    created() {
-        axios.get(`/portal/rest/gamification/leaderboard/rank/all?period=${this.selectedPeriod}`)
-            .then(response => {
-                this.users = response.data;
-            })
-            .catch(e => {
-                this.errors.push(e)
-            })
-
-        axios.get(`/portal/rest/gamification/api/v1/domains`)
-            .then(response => {
-                this.domains = response.data;
-            })
-            .catch(e => {
-                this.errors.push(e)
-            })
-    },
-    methods: {
-        filter() {
-            const self = this
-            axios.get(`/portal/rest/gamification/leaderboard/filter`, {
-                    params: {
-                        'domain': self.domain,
-                        'period': self.selectedPeriod
-                    }
-                })
-                .then(response => {
-                    this.users = response.data;
-                })
-                .catch(e => {
-                    console.warn(e)
-                })
-        },
-        showMore() {
-            const self = this
-            self.loadCapacity += 10;
-            axios.get(`/portal/rest/gamification/leaderboard/filter`, {
-                    params: {
-                        'domain': self.domain,
-                        'period': self.selectedPeriod,
-                        'capacity': self.loadCapacity
-                    }
-                })
-                .then(response => {
-                    this.users = response.data;
-                })
-                .catch(e => {
-                    console.warn(e)
-                })
-        },
-        onShown(username) {
-            window.dispatchEvent(new Event('resize'));
-            axios.get(`/portal/rest/gamification/leaderboard/stats`, {
-                    params: {
-                        'username': username
-                    }
-                })
-                .then(response => {
-                    this.chartData = response.data;
-                    for (let i = 0; i < this.chartData.length; i++) {
-                        this.chartData[i].label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.chartData[i].label}`,this.chartData[i].label)
-                    }
-                })
-                .catch(e => {
-                    console.warn(e)
-                })
-        },
-        popOpen() {
-            jQuery(".popover").popover({
-                    trigger: "hover",
-                    html: true,
-                    animation: false
-                })
-                .on("mouseenter", function () {
-                    true;
-                }).on("mouseleave", function () {
-                    false;
-                });
-        },
-        disableByRef() {
-            if (this.disabled) {
-                this.$refs.popover.$emit('enable')
-            } else {
-                this.$refs.popover.$emit('disable')
-            }
-        },
-        mouseOver() {
-            jQuery(this).popover("show");
-        },
-        isActive(value) {
-            return this.active === value
-        },
-        toggleClass() {
-            this.isActive = !this.isActive;
-        },
-        onLoad() {
-            console.log("Pie chart loading")
-        },
-        onOpen() {
-            console.log("Pie chart onOpen")
-        },
-        getRankLabel: function () {
-            return this.$t('exoplatform.gamification.leaderboard.rank');
-        }
+  components: {
+    Avatar,
+    ChartPie,
+  },
+  directives: {
+    mouseover: {
+      mounted: function () {
+        jQuery('[data-toggle="popover"]').popover({
+          html: true,
+          content: $('#popover')
+        }).on('mouseenter', function () {
+          true;
+        })
+          .on('mouseleave', function () {
+            false;
+          });
+      },
     }
-}
+  },
+  data: initialData,
+  watch: {
+    domain() {
+      this.loadCapacity = 10;
+      this.filter();
+    }
+  },
+  mounted: function () {
+    jQuery('.pop').popover({
+      trigger: 'hover',
+      html: true,
+      animation: false
+    })
+      .on('mouseenter', function () {
+        const _this = this;
+        jQuery(this).popover('show');
+        jQuery('.popover').on('mouseleave', function () {
+          jQuery(_this).popover('hide');
+        });
+      }).on('mouseleave', function () {
+        const _this = this;
+        setTimeout(function () {
+          if (!jQuery('.popover:hover').length) {
+            jQuery(_this).popover('hide');
+          }
+        }, 300);
+      });
+  },
+  created() {
+    axios.get(`/portal/rest/gamification/leaderboard/rank/all?period=${this.selectedPeriod}`)
+      .then(response => {
+        this.users = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+
+    axios.get('/portal/rest/gamification/api/v1/domains')
+      .then(response => {
+        this.domains = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  },
+  methods: {
+    filter() {
+      const self = this;
+      axios.get('/portal/rest/gamification/leaderboard/filter', {
+        params: {
+          'domain': self.domain,
+          'period': self.selectedPeriod
+        }
+      })
+        .then(response => {
+          this.users = response.data;
+        })
+        .catch(e => {
+          console.warn(e);
+        });
+    },
+    showMore() {
+      const self = this;
+      self.loadCapacity += 10;
+      axios.get('/portal/rest/gamification/leaderboard/filter', {
+        params: {
+          'domain': self.domain,
+          'period': self.selectedPeriod,
+          'capacity': self.loadCapacity
+        }
+      })
+        .then(response => {
+          this.users = response.data;
+        })
+        .catch(e => {
+          console.warn(e);
+        });
+    },
+    onShown(username) {
+      window.dispatchEvent(new Event('resize'));
+      axios.get('/portal/rest/gamification/leaderboard/stats', {
+        params: {
+          'username': username
+        }
+      })
+        .then(response => {
+          this.chartData = response.data;
+          for (let i = 0; i < this.chartData.length; i++) {
+            this.chartData[i].label = this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.chartData[i].label}`,this.chartData[i].label);
+          }
+        })
+        .catch(e => {
+          console.warn(e);
+        });
+    },
+    popOpen() {
+      jQuery('.popover').popover({
+        trigger: 'hover',
+        html: true,
+        animation: false
+      })
+        .on('mouseenter', function () {
+          true;
+        }).on('mouseleave', function () {
+          false;
+        });
+    },
+    disableByRef() {
+      if (this.disabled) {
+        this.$refs.popover.$emit('enable');
+      } else {
+        this.$refs.popover.$emit('disable');
+      }
+    },
+    mouseOver() {
+      jQuery(this).popover('show');
+    },
+    isActive(value) {
+      return this.active === value;
+    },
+    toggleClass() {
+      this.isActive = !this.isActive;
+    },
+    onLoad() {
+      console.log('Pie chart loading');
+    },
+    onOpen() {
+      console.log('Pie chart onOpen');
+    },
+    getRankLabel: function () {
+      return this.$t('exoplatform.gamification.leaderboard.rank');
+    }
+  }
+};
 </script>
 
 <style scoped>

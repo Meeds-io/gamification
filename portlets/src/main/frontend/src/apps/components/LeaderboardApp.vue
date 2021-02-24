@@ -19,12 +19,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 
-    import Leaderboard from './leaderboard/Leaderboard'
-    export default {
-        components: {
-            Leaderboard
-        }
-    }
+import Leaderboard from './leaderboard/Leaderboard';
+export default {
+  components: {
+    Leaderboard
+  }
+};
 </script>
 
 <style>

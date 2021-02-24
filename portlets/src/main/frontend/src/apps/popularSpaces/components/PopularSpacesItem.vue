@@ -183,8 +183,8 @@ export default {
   computed: {
     avatarUrl() {
       return this.skeleton ?
-          '':
-          this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.prettyName}/avatar`;
+        '':
+        this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.prettyName}/avatar`;
     },
     url() {
       if (this.skeleton || !this.space || !this.space.groupId) {

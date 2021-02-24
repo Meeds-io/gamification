@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -148,191 +149,191 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </div>
 </template>
 <script>
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import { ChartPie } from 'vue-d2b';
+import { Popover } from 'bootstrap-vue/es/components';
+import { Image } from 'bootstrap-vue/es/components';
+import axios from 'axios';
+import Avatar from 'vue-avatar';
 
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import { ChartPie } from 'vue-d2b'
-    import { Popover } from 'bootstrap-vue/es/components';
-    import { Image } from 'bootstrap-vue/es/components';
-    import axios from 'axios';
-    import Avatar from 'vue-avatar'
+Vue.use(BootstrapVue);
+Vue.use(Popover);
+Vue.use(Image);
 
-    Vue.use(BootstrapVue);
-    Vue.use(Popover);
-    Vue.use(Image);
+const initialData = () => {
+  return {
+    chartData: [],
+    chartConfig(chart) {
+      chart.donutRatio(0.5);
+    },
 
-    const initialData = () => {
-        return {
-            chartData: [],
-            chartConfig(chart) {
-                chart.donutRatio(0.5)
-            },
-
-            users: [],
-            type: '',
-            category: '',
-            connection: 'everyone',
-            selected: null,
-            activeBtn: 'btn1',
-            domain: 'null',
-            show: false,
-            selectedPeriod: 'WEEK',
-            popoverShow: false,
-            loadCapacity: 10
+    users: [],
+    type: '',
+    category: '',
+    connection: 'everyone',
+    selected: null,
+    activeBtn: 'btn1',
+    domain: 'null',
+    show: false,
+    selectedPeriod: 'WEEK',
+    popoverShow: false,
+    loadCapacity: 10
 
 
-        }
+  };
+};
+
+export default {
+
+  components: {
+    Avatar,
+    ChartPie,
+
+
+  },
+  directives: {
+    mouseover: {
+      mounted: function () {
+        jQuery('[data-toggle="popover"]').popover({
+          html: true,
+          content: $('#popover')
+        }).on('mouseenter', function () {
+
+          true;
+
+        })
+          .on('mouseleave', function () {
+
+            false;
+          });
+      },
+    }
+  },
+  data: initialData,
+  watch: {
+    domain() {
+      this.loadCapacity = 10;
+      this.filter();
     }
 
-    export default {
+  },
+  mounted: function () {
+    jQuery('.pop').popover({ trigger: 'hover', html: true, animation: false })
+      .on('mouseenter', function () {
+        const _this = this;
+        jQuery(this).popover('show');
+        jQuery('.popover').on('mouseleave', function () {
+          jQuery(_this).popover('hide');
+        });
+      }).on('mouseleave', function () {
+        const _this = this;
+        setTimeout(function () {
+          if (!jQuery('.popover:hover').length) {
+            jQuery(_this).popover('hide');
+          }
+        }, 300);
+      });
 
-        components: {
-            Avatar,
-            ChartPie,
+  },
 
+  created() {
+    const url = window.location.pathname;
+    axios.get('/portal/rest/gamification/space/leaderboard/overall', { params: { 'url': url } })
+      .then(response => {
+        this.users = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  },
 
-        },
-        directives: {
-            mouseover: {
-                mounted: function () {
-                    jQuery('[data-toggle="popover"]').popover({
-                        html: true,
-                        content: $('#popover')
-                    }).on('mouseenter', function () {
+  methods: {
+    filter() {
+      const url = window.location.pathname;
+      const self = this;
+      axios.get('/portal/rest/gamification/space/leaderboard/filter', { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
+        .then(response => {
+          this.users = response.data;
 
-                        true;
+        })
+        .catch(e => {
+          console.warn(e);
 
-                    })
-                        .on('mouseleave', function () {
+        });
 
-                            false;
-                        });
-                },
-            }
-        },
-        data: initialData,
-        watch: {
-            domain() {
-                this.loadCapacity = 10
-                this.filter()
-            }
+    },
+    showMore() {
+      const url = window.location.pathname;
+      const self = this;
+      self.loadCapacity += 10;
+      axios.get('/portal/rest/gamification/space/leaderboard/filter', { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
+        .then(response => {
+          this.users = response.data;
+        })
+        .catch(e => {
+          console.warn(e);
+        });
+    },
+    onShown(username) {
 
-        },
-        mounted: function () {
-            jQuery(".pop").popover({ trigger: "hover", html: true, animation: false })
-                .on("mouseenter", function () {
-                    const _this = this;
-                    jQuery(this).popover("show");
-                    jQuery(".popover").on("mouseleave", function () {
-                        jQuery(_this).popover('hide');
-                    });
-                }).on("mouseleave", function () {
-                    const _this = this;
-                    setTimeout(function () {
-                        if (!jQuery(".popover:hover").length) {
-                            jQuery(_this).popover("hide");
-                        }
-                    }, 300);
-                });
+      window.dispatchEvent(new Event('resize'));
+      axios.get('/portal/rest/gamification/leaderboard/stats', { params: { 'username': username } })
+        .then(response => {
+          this.chartData = response.data;
 
-        },
+        })
+        .catch(e => {
+          console.warn(e);
 
-        created() {
-            const url = window.location.pathname
-            axios.get(`/portal/rest/gamification/space/leaderboard/overall`, { params: { 'url': url } })
-                .then(response => {
-                    this.users = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        },
+        });
 
-        methods: {
-            filter() {
-                const url = window.location.pathname
-                const self = this
-                axios.get(`/portal/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
-                    .then(response => {
-                        this.users = response.data;
+    },
+    popOpen() {
+      jQuery('.popover').popover({ trigger: 'hover', html: true, animation: false })
+        .on('mouseenter', function () {
+          true;
+        }).on('mouseleave', function () {
+          false;
+        });
+    },
 
-                    })
-                    .catch(e => {
-                        console.warn(e)
+    disableByRef() {
+      if (this.disabled) {
+        this.$refs.popover.$emit('enable');
+      } else {
+        this.$refs.popover.$emit('disable');
+      }
+    },
 
-                    })
+    mouseOver() {
 
-            },
-            showMore() {
-                const url = window.location.pathname
-                const self = this
-                self.loadCapacity += 10;
-                axios.get(`/portal/rest/gamification/space/leaderboard/filter`, { params: { 'domain': self.domain, 'period': self.selectedPeriod, 'url': url, 'capacity': self.loadCapacity } })
-                    .then(response => {
-                        this.users = response.data;
-                    })
-                    .catch(e => {
-                        console.warn(e)
-                    })
-            },
-            onShown(username) {
+      jQuery(this).popover('show');
 
-                window.dispatchEvent(new Event('resize'));
-                axios.get(`/portal/rest/gamification/leaderboard/stats`, { params: { 'username': username } })
-                    .then(response => {
-                        this.chartData = response.data;
+    },
+    isActive(value) {
+      return this.active === value;
+    },
+    toggleClass() {
+      this.isActive = !this.isActive;
+    },
+    onLoad() {
+      console.log('Pie chart loading');
 
-                    })
-                    .catch(e => {
-                        console.warn(e)
+    },
+    onOpen() {
+      console.log('Pie chart onOpen');
+    },
 
-                    })
+    currentRank: function (user) {
 
-            },
-            popOpen() {
-                jQuery(".popover").popover({ trigger: "hover", html: true, animation: false })
-                    .on("mouseenter", function () {
-                        true;
-                    }).on("mouseleave", function () {
-                        false;
-                    });
-            },
-
-            disableByRef() {
-                if (this.disabled) {
-                    this.$refs.popover.$emit('enable')
-                } else {
-                    this.$refs.popover.$emit('disable')
-                }
-            },
-
-            mouseOver() {
-
-                jQuery(this).popover("show");
-
-            },
-            isActive(value) {
-                return this.active === value
-            },
-            toggleClass() {
-                this.isActive = !this.isActive;
-            },
-            onLoad() {
-                console.log("Pie chart loading")
-
-            },
-            onOpen() {
-                console.log("Pie chart onOpen")
-            },
-
-            currentRank: function (user) {
-
-                return user.fullname == 'Your current rank';
-
-            }
-        }
+      return user.fullname == 'Your current rank';
 
     }
+  }
+
+};
 
 </script>
 

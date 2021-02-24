@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -109,93 +110,94 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </div>
 </template>
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import axios from 'axios';
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import axios from 'axios';
 
-    Vue.use(BootstrapVue);
-    export default {
+Vue.use(BootstrapVue);
+export default {
 
-        props: ['domain'],
-
-
-        data: function () {
-            return {
-                formErrors: {},
-                dismissSecs: 5,
-                dismissCountDown: 0,
-                date: new Date(),
-                isShown: false,
-                config: {
-                    format: 'YYYY-MM-DD',
-                    useCurrent: false,
-                },
-                dynamicAreas: []
-            }
-        },
-        computed: {
-            isDisabled: function(){
-                return (this.domain.title==null||this.domain.title=="")
-            }
-        },
-
-        watch: {
-            'domain.id'() {
-                this.formErrors = {}
-            },
-
-        },
-        methods: {
+  props: ['domain'],
 
 
-            onCancel() {
-                this.$emit('cancel')
-            },
-
-            onSubmit() {
-                this.isShown = !this.isShown;
-                this.createDomain(this.domain);
-                if (this.isShown) {
-
-                    this.closeAlert(".alert")
-                    this.collapseButton();
-                }
-            },
-
-            closeAlert(item) {
-                setTimeout(function () {
-                    $(item).fadeOut('fast')
-                }, 4000);
-
-            },
-            collapseButton() {
-                this.isShown = !this.isShown;
-
-            },
-
-            confirm() {
-                this.$modals.confirm({
-                    message: 'Confirm?',
-                    onApprove: () => {
-                    },
-                    onCancel: () => {
-                    },
-                });
-            },
-
-            createDomain(domainDTO) {
-                axios.post(`/portal/rest/gamification/domains`, domainDTO)
-                    .then(response => {
-                        this.$emit('sucessAdd', this.domain)
-                    })
-                    .catch(e => {
-                        this.$emit('failAdd', this.domain)
-                    })
-            }
-        }
+  data: function () {
+    return {
+      formErrors: {},
+      dismissSecs: 5,
+      dismissCountDown: 0,
+      date: new Date(),
+      isShown: false,
+      config: {
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+      },
+      dynamicAreas: []
+    };
+  },
+  computed: {
+    isDisabled: function(){
+      return (this.domain.title==null||this.domain.title=='');
     }
+  },
+
+  watch: {
+    'domain.id'() {
+      this.formErrors = {};
+    },
+
+  },
+  methods: {
+
+
+    onCancel() {
+      this.$emit('cancel');
+    },
+
+    onSubmit() {
+      this.isShown = !this.isShown;
+      this.createDomain(this.domain);
+      if (this.isShown) {
+
+        this.closeAlert('.alert');
+        this.collapseButton();
+      }
+    },
+
+    closeAlert(item) {
+      setTimeout(function () {
+        $(item).fadeOut('fast');
+      }, 4000);
+
+    },
+    collapseButton() {
+      this.isShown = !this.isShown;
+
+    },
+
+    confirm() {
+      this.$modals.confirm({
+        message: 'Confirm?',
+        onApprove: () => {
+        },
+        onCancel: () => {
+        },
+      });
+    },
+
+    createDomain(domainDTO) {
+      axios.post('/portal/rest/gamification/domains', domainDTO)
+        .then(response => {
+          this.$emit('sucessAdd', this.domain);
+        })
+        .catch(e => {
+          this.$emit('failAdd', this.domain);
+        });
+    }
+  }
+};
 </script>
 
 <style scoped>
