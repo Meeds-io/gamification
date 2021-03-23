@@ -41,6 +41,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationActivityListener extends ActivityListenerPlugin {
 
+
   private static final Log  LOG = ExoLogger.getLogger(GamificationActivityListener.class);
 
   protected RuleService     ruleService;
@@ -94,7 +95,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
         if (space.getManagers() != null && space.getManagers().length > 0) {
           String spaceManager = space.getManagers()[0];
-          createActivityGamificationHistoryEntry(activity.getPosterId(),
+          createActivityGamificationHistoryEntry(spaceManager,
                                                  spaceManager,
                                                  GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM,
                                                  activityUrl);
