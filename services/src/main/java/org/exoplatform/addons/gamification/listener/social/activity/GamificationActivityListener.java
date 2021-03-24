@@ -95,13 +95,11 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                                activityUrl);
 
         if (space.getManagers() != null && space.getManagers().length > 0) {
-          String [] spaceManagers = space.getManagers();
-          for(String spaceManager : spaceManagers) {
-            createActivityGamificationHistoryEntry(spaceManager,
-                    spaceManager,
-                    GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET,
-                    activityUrl);
-          }
+          String spaceManager = space.getManagers()[0];
+          createActivityGamificationHistoryEntry(spaceManager,
+                                                 spaceManager,
+                                                 GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM,
+                                                 activityUrl);
         }
 
         createSpaceGamificationHistoryEntry(space.getPrettyName(),
