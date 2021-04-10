@@ -85,9 +85,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     .acceptToJoinSpaceButton {
       max-width: 85%;
       width: 85%;
-      border-right: 0;
-      border-bottom-right-radius: 0 !important;
-      border-top-right-radius: 0 !important;
+      border-right: 0 ~'; /** orientation=lt */ ';
+      border-bottom-right-radius: 0 ~'!important; /** orientation=lt */ ';
+      border-top-right-radius: 0 ~'!important; /** orientation=lt */ ';
+      border-left: 0 ~'; /** orientation=rt */ ';
+      border-bottom-left-radius: 0 ~'!important; /** orientation=rt */ ';
+      border-top-left-radius: 0 ~'!important; /** orientation=rt */ ';
 
       .v-btn__content {
         max-width: 100%;
@@ -106,10 +109,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       width: 15%;
       padding: 2px 0;
       height: auto;
-      border-left: 0;
-      margin-left: -11px;
-      border-bottom-left-radius: 0 !important;
-      border-top-left-radius: 0 !important;
+      border-left: 0 ~'; /** orientation=lt */ ';
+      margin-left: -11px ~'; /** orientation=lt */ ';
+      border-bottom-left-radius: 0 ~'!important; /** orientation=lt */ ';
+      border-top-left-radius: 0 ~'!important; /** orientation=lt */ ';
+      border-right: 0 ~'; /** orientation=rt */ ';
+      margin-right: -11px ~'; /** orientation=rt */ ';
+      border-bottom-right-radius: 0 ~'!important; /** orientation=rt */ ';
+      border-top-right-radius: 0 ~'!important; /** orientation=rt */ ';
 
       i {
         margin: 0;

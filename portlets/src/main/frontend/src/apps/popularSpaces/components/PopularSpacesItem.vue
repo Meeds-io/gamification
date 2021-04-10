@@ -43,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-if="skeleton"
           type="text"
           boilerplate
-          class="mt-3 mr-3 skeleton-background"
+          class="mt-3 me-3 skeleton-background"
           height="11px" />
         <a
           v-else
@@ -65,7 +65,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </v-list-item-subtitle>
     </v-list-item-content>
-    <v-list-item-action class="ma-0 pr-4 flex-row align-self-center" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
+    <v-list-item-action class="ma-0 pe-4 flex-row align-self-center" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
       <template v-if="space.isInvited || skeleton" class="invitationButtons">
         <div class="acceptToJoinSpaceButtonParent">
           <v-btn
