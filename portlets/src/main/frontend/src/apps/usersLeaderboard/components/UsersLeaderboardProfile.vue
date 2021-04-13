@@ -28,14 +28,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :id="id"
         v-on="on"
         @hover="$refs.chart.init()">
-        <div class="mr-3">
+        <div class="me-3">
           <v-avatar
             :color="currentUser && 'tertiary' || ''"
             size="32">
             {{ user.rank }}
           </v-avatar>
         </div>
-        <v-list-item-avatar class="mr-4">
+        <v-list-item-avatar class="me-4">
           <v-img
             :lazy-src="userAvatar"
             :src="userAvatar"
@@ -49,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </a>
           </v-list-item-title>
         </v-list-item-content>
-        <v-list-item-action class="mr-4">
+        <v-list-item-action class="me-4">
           {{ user.score }}
         </v-list-item-action>
       </v-list-item>

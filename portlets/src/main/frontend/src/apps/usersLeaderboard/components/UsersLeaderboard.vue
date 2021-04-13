@@ -66,7 +66,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <template v-if="currentRank">
               <v-divider class="ma-0" />
               <v-list-item class="disabled-background">
-                <div class="mr-4">
+                <div class="me-4">
                   {{ $t('exoplatform.gamification.leaderboard.rank') }}
                 </div>
                 <div>

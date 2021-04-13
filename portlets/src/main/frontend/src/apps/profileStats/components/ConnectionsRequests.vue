@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs12
           mt-n2
           justify-center>
-          <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
+          <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.connectionsRequests') }}</span>
           <v-btn
             fab
             depressed
@@ -53,7 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item
             :key="item.id"
             class="py-0 px-2">
-            <v-list-item-avatar class="my-1 mr-2" size="30">
+            <v-list-item-avatar class="my-1 me-2" size="30">
               <v-img :src="item.senderAvatar" />
             </v-list-item-avatar>
 

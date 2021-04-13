@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     max-height="100vh"
     class="spaceDrawer">
     <v-row class="mx-0 title">
-      <v-list-item class="pr-0">
+      <v-list-item class="pe-0">
         <v-list-item-content class="ma-0 pa-0">
           <template v-if="!showSearch">
             <span class="spaceDrawerTitle">{{
@@ -96,7 +96,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               d-flex
               xs12
               justify-center>
-              <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
+              <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
               <v-btn
                 fab
                 depressed
@@ -142,7 +142,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       mt-n2
                       justify-center>
                       <div>
-                        <span class="pr-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.SuggestionsSpaces') }}</span>
+                        <span class="pe-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.SuggestionsSpaces') }}</span>
                         <v-btn
                           fab
                           depressed
@@ -173,7 +173,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 d-flex
                 xs12
                 justify-center>
-                <span class="pr-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.commonSpaceList') }}</span>
+                <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.commonSpaceList') }}</span>
                 <v-btn
                   fab
                   depressed

@@ -36,7 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             color="grey darken-2"
             size="20"
             @click="toProfileStats()">
-            mdi-arrow-left
+            {{ $vuetify.rtl && 'mdi-arrow-right' || 'mdi-arrow-left' }}
           </v-icon>
         </v-flex>
         <v-flex
@@ -44,7 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs10
           justify-center>
           <div>
-            <span class="pr-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
+            <span class="pe-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
           </div>
         </v-flex>
         <v-flex
@@ -52,7 +52,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           xs1>
           <i
-            class="uiIconInformation clickable primary--text my-auto ml-3 pb-2"
+            class="uiIconInformation clickable primary--text my-auto ms-3 pb-2"
             @click="openHistoryDrawer"></i>
         </v-flex>
       </v-layout>
