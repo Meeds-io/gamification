@@ -8,8 +8,8 @@
     class="connectionsDrawer"
     max-height="100vh">
     <v-row class="mx-0 title">
-      <v-list-item class="pr-0">
-        <v-list-item-content class="ma-0 pa-0">
+      <v-list-item class="pe-0">
+        <v-list-item-content  class="ma-0 pa-0">
           <template v-if="!showSearch">
             <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
           </template>
@@ -78,7 +78,7 @@
             <v-col>
               <v-row class="align-center">
                 <v-col>
-                  <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.suggestions.label') }}</span>
+                  <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.suggestions.label') }}</span>
                 </v-col>
               </v-row>
               <v-list>
@@ -102,7 +102,7 @@
           <div v-if="showConnections">
             <v-row align="center">
               <v-col>
-                <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.commonConnections.label') }}</span>
+                <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connectionsList') : $t('homepage.commonConnections.label') }}</span>
                 <v-btn
                   fab
                   depressed

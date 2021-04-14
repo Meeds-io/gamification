@@ -20,6 +20,7 @@ import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.EVENT_NAME;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationActivityListener extends ActivityListenerPlugin {
+
 
   private static final Log  LOG = ExoLogger.getLogger(GamificationActivityListener.class);
 
@@ -93,11 +95,13 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                                activityUrl);
 
         if (space.getManagers() != null && space.getManagers().length > 0) {
-          String spaceManager = space.getManagers()[0];
-          createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                                 spaceManager,
-                                                 GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM,
-                                                 activityUrl);
+          String [] spaceManagers = space.getManagers();
+          for(String spaceManager : spaceManagers) {
+            createActivityGamificationHistoryEntry(spaceManager,
+                    spaceManager,
+                    GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_TARGET,
+                    activityUrl);
+          }
         }
 
         createSpaceGamificationHistoryEntry(space.getPrettyName(),

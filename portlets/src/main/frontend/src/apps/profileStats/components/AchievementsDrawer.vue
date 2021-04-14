@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <a
         :href="infoUrl"
         :title="$t('exoplatform.gamification.leaderboard.Howearnpoints')"
-        class="d-inline-block">
+        class="d-inline-block mb-1">
         <i class="uiIconInformation text-sub-title"></i>
       </a>
     </template>

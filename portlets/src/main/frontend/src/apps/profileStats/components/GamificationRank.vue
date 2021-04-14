@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           mt-n2
           justify-center>
           <div>
-            <span class="pr-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.weeklyRank') }}</span>
+            <span class="pe-2 text-uppercase subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.weeklyRank') }}</span>
           </div>
         </v-flex>
         <v-flex
@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             color="grey darken-2"
             size="20"
             @click="toProfileStats()">
-            mdi-arrow-left
+            {{ $vuetify.rtl && 'mdi-arrow-right' || 'mdi-arrow-left' }}
           </v-icon>
         </v-flex>
       </v-layout>
@@ -123,8 +123,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="(typeof item != 'undefined')"
             :key="item.remoteId"
             class="py-0 px-4 mt-n3">
-            <span v-if="(typeof item != 'undefined')" class="mr-2">{{ item.rank }}</span>
-            <v-list-item-avatar size="25" class="my-0 mr-2">
+            <span v-if="(typeof item != 'undefined')" class="me-2">{{ item.rank }}</span>
+            <v-list-item-avatar size="25" class="my-0 me-2">
               <v-img :src="getUserAvatar(item.remoteId)" />
             </v-list-item-avatar>
 
