@@ -66,7 +66,7 @@ export default {
       return this.isCurrent || this.currentScore >= this.badge.neededScore;
     },
     avatar() {
-      return this.badge.avatar || `${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/reputation/badge/${this.badge.iconFileId || this.badge.id}/avatar`
+      return this.badge.avatar || `${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/reputation/badge/${this.badge.iconFileId || this.badge.id}/avatar`;
     },
     title() {
       if (this.isCurrent) {

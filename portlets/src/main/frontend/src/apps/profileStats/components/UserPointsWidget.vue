@@ -64,97 +64,97 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-  import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI'
-  export default {
+import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI';
+export default {
 
-    data() {
-      return {
-        userPoints: 0,
-        period: 'WEEK',
-        option : {
-          title: [{
-            text: 'Total',
-            left: '63%',
-            textStyle: {
-              fontStyle: 'normal',
-              color: '#4d5466',
-              fontWeight: 'normal',
-              fontSize: '16',
-            },
-            subtext :``,
-            subtextStyle: {
-              fontStyle: 'normal',
-              color: '#4d5466',
-              fontWeight: 'bold',
-              fontSize: '18',
-            },
-            top:'40%',
-            textAlign: 'center'
-          }],
-          tooltip : { 
-            trigger: 'item',
-            formatter: '{b} : {c} ({d}%)'
+  data() {
+    return {
+      userPoints: 0,
+      period: 'WEEK',
+      option: {
+        title: [{
+          text: 'Total',
+          left: '63%',
+          textStyle: {
+            fontStyle: 'normal',
+            color: '#4d5466',
+            fontWeight: 'normal',
+            fontSize: '16',
           },
-          legend: {
-            orient: 'vertical',
-            left: 5,
-            top:12,
+          subtext: '',
+          subtextStyle: {
+            fontStyle: 'normal',
+            color: '#4d5466',
+            fontWeight: 'bold',
+            fontSize: '18',
           },
-          series : [
-            {
-              type: 'pie',
-              radius: ['45%', '88%'],
-              center: ['65%', '50%'],
-              label: {
-                normal: {
-                  show: false
-                },
-
+          top: '40%',
+          textAlign: 'center'
+        }],
+        tooltip: { 
+          trigger: 'item',
+          formatter: '{b} : {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 5,
+          top: 12,
+        },
+        series: [
+          {
+            type: 'pie',
+            radius: ['45%', '88%'],
+            center: ['65%', '50%'],
+            label: {
+              normal: {
+                show: false
               },
-            }, 
-          ]
-        }
-      };
+
+            },
+          }, 
+        ]
+      }
+    };
+  },
+  created() {
+    this.getGamificationPointsStats();
+    this.getGamificationPoints();
+  },
+  methods: {
+    getGamificationPoints() {
+      getGamificationPoints(this.period).then(
+        (data) => {
+          this.userPoints = data.points;
+          this.option.title[0].subtext = data.points;
+        }      
+      );
     },
-    created() {
-      this.getGamificationPointsStats();
-      this.getGamificationPoints();
-    },
-    methods: {
-      getGamificationPoints() {
-        getGamificationPoints(this.period).then(
-          (data) => {
-            this.userPoints = data.points;
-            this.option.title[0].subtext = data.points;
-          }      
-        )
-      },
-      getGamificationPointsStats() {
-        getGamificationPointsStats(this.period).then(
-          (data) => {
-            this.option.series[0].data = JSON.parse(JSON.stringify(data).split('"label":').join('"name":'));
-            for(let i=0;i<data.length;i++) {
-              const optionSeriesName = this.option.series[0].data[i].name;
-              this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase() + optionSeriesName.slice(1);
-            }
-            this.option.legend.data = this.option.series[0].data.name;
-            this.initChart(this.option);
+    getGamificationPointsStats() {
+      getGamificationPointsStats(this.period).then(
+        (data) => {
+          this.option.series[0].data = JSON.parse(JSON.stringify(data).split('"label":').join('"name":'));
+          for (let i=0;i<data.length;i++) {
+            const optionSeriesName = this.option.series[0].data[i].name;
+            this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase() + optionSeriesName.slice(1);
           }
-        )
-      },
-      toProfileStats() {
-        this.$emit('isProfileStats');
-      },
-      initChart(option) {
-        $(document).ready(function(){
-          const chartContainerId = document.getElementById('echartUserPoints');
-          const chart = echarts.init(chartContainerId);
-          chart.setOption(option, true);
-         });
-      },
-      openHistoryDrawer() {
-        this.$root.$emit('open-achievement', this.userPoints);
-      },
-    }
+          this.option.legend.data = this.option.series[0].data.name;
+          this.initChart(this.option);
+        }
+      );
+    },
+    toProfileStats() {
+      this.$emit('isProfileStats');
+    },
+    initChart(option) {
+      $(document).ready(function(){
+        const chartContainerId = document.getElementById('echartUserPoints');
+        const chart = echarts.init(chartContainerId);
+        chart.setOption(option, true);
+      });
+    },
+    openHistoryDrawer() {
+      this.$root.$emit('open-achievement', this.userPoints);
+    },
   }
+};
 </script>

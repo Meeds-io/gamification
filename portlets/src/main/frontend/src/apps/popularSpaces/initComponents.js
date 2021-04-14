@@ -22,6 +22,6 @@ const components = {
   'popular-spaces-item': PopularSpacesItem,
 };
 
-for(const key in components) {
+for (const key in components) {
   Vue.component(key, components[key]);
 }

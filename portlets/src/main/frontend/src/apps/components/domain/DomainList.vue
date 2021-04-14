@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -261,142 +262,143 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </b-container>
 </template>
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import moment from 'moment'
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import moment from 'moment';
 
-    Vue.use(BootstrapVue);
-    Vue.prototype.moment = moment;
+Vue.use(BootstrapVue);
+Vue.prototype.moment = moment;
 
-    const domain = {};
-    export default {
+const domain = {};
+export default {
 
-        props: ['domains', 'domain'],
-        data() {
-            return {
-                search: '',
-                id: null,
-                isEnabled: false,
-                SaveDomainForm: '',
-                editedDomain: {},
-                formErrors: {},
-                dismissSecs: 5,
-                dismissCountDown: 0,
-                date: new Date(),
-                isShown: false,
-                isValidateShown:false,
-                editedEnabled: null,
-                enabledMessage:"",
-                enabledFilter: null,
-                filerlabel:"all",
-                confirm: false,
-                isdeleted: false,
-                config: {
-                    format: 'YYYY-MM-DD',
-                    useCurrent: false,
-                },
-                dynamicAreas: [],
-            }
-        },
+  props: ['domains', 'domain'],
+  data() {
+    return {
+      search: '',
+      id: null,
+      isEnabled: false,
+      SaveDomainForm: '',
+      editedDomain: {},
+      formErrors: {},
+      dismissSecs: 5,
+      dismissCountDown: 0,
+      date: new Date(),
+      isShown: false,
+      isValidateShown: false,
+      editedEnabled: null,
+      enabledMessage: '',
+      enabledFilter: null,
+      filerlabel: 'all',
+      confirm: false,
+      isdeleted: false,
+      config: {
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+      },
+      dynamicAreas: [],
+    };
+  },
 
-        computed: {
-            filteredDomains() {
-                return this.domains.filter(item => {
-                    return ((item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
+  computed: {
+    filteredDomains() {
+      return this.domains.filter(item => {
+        return ((item.description.toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.title}`,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1)
                         && (this.enabledFilter === null || item.enabled === this.enabledFilter)
-                    )
-                })
-            },
-            isDisabled: function(){
-                return (this.editedDomain.title==null||this.editedDomain.title=="")
-            }
-        },
-
-         watch: {
-            'editedDomain.enabled'() {
-                if(this.editedEnabled!=this.editedDomain.enabled){
-                    if(this.editedDomain.enabled==true){
-                        this.enabledMessage=this.$t(`exoplatform.gamification.domain.enable.warning`,"*All related rules and badges will be enabled")
-                    }else{
-                        this.enabledMessage=this.$t(`exoplatform.gamification.domain.disable.warning`,"*All related rules and badges will be disabled")
-                    }
-                }else{
-                   this.enabledMessage="" 
-                }
-            }
-        },
-        methods: {
-
-            onRemove(id) {
-
-                this.isShown = !this.isShown;
-                this.$emit('remove', id);
-                this.isdeleted = true;
-            },
-
-
-            onRemovealertclose() {
-               this.isShown = !this.isShown; 
-               this.isdeleted = true;
-                if (this.isShown) {
-                    this.isdeleted = true;
-                }
-            },
-            onSave(domain) {
-                this.$emit('edit', domain);
-                this.editedDomain = domain;
-            },
-            onCancel(editedDomain) {
-                this.editedDomain = {};
-            },
-            onEdit(domain) {
-            
-                this.domain = domain;
-                this.editedDomain = domain;
-            },
-            onSubmit() {
-                this.isShown = !this.isShown;
-                this.createDomain(this.domain);
-                this.collapseButton()
-            },
-
-            closeAlert(item) {
-                setTimeout(function () {
-                    $(item).fadeOut('fast')
-                }, 4000);
-
-            },
-
-            showAlert() {
-                this.dismissCountDown = this.dismissSecs
-            },
-            onSubmit(domain) {
-                this.updateDomain(this.editedDomain);
-                this.collapseButtonn(domain)
-            },
-            collapseButtonn(domain,confirm) {
-                this.confirm = confirm;
-                this.editedDomain = domain;
-                this.editedEnabled = domain.enabled;
-                this.editedDomain.title= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.title}`,this.editedDomain.title);
-                this.editedDomain.description= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.description}`,this.editedDomain.description);
-                this.isShown = !this.isShown;
-            },
-
-            confirm() {
-                this.$modals.confirm({
-                    message: 'Confirm?',
-                    onApprove: () => {
-                    },
-                    onCancel: () => {
-                    },
-                });
-            },
-        }
+        );
+      });
+    },
+    isDisabled: function(){
+      return (this.editedDomain.title==null||this.editedDomain.title=='');
     }
+  },
+
+  watch: {
+    'editedDomain.enabled'() {
+      if (this.editedEnabled!=this.editedDomain.enabled){
+        if (this.editedDomain.enabled==true){
+          this.enabledMessage=this.$t('exoplatform.gamification.domain.enable.warning','*All related rules and badges will be enabled');
+        } else {
+          this.enabledMessage=this.$t('exoplatform.gamification.domain.disable.warning','*All related rules and badges will be disabled');
+        }
+      } else {
+        this.enabledMessage=''; 
+      }
+    }
+  },
+  methods: {
+
+    onRemove(id) {
+
+      this.isShown = !this.isShown;
+      this.$emit('remove', id);
+      this.isdeleted = true;
+    },
+
+
+    onRemovealertclose() {
+      this.isShown = !this.isShown; 
+      this.isdeleted = true;
+      if (this.isShown) {
+        this.isdeleted = true;
+      }
+    },
+    onSave(domain) {
+      this.$emit('edit', domain);
+      this.editedDomain = domain;
+    },
+    onCancel(editedDomain) {
+      this.editedDomain = {};
+    },
+    onEdit(domain) {
+            
+      this.domain = domain;
+      this.editedDomain = domain;
+    },
+    onSubmit() {
+      this.isShown = !this.isShown;
+      this.createDomain(this.domain);
+      this.collapseButton();
+    },
+
+    closeAlert(item) {
+      setTimeout(function () {
+        $(item).fadeOut('fast');
+      }, 4000);
+
+    },
+
+    showAlert() {
+      this.dismissCountDown = this.dismissSecs;
+    },
+    onSubmit(domain) {
+      this.updateDomain(this.editedDomain);
+      this.collapseButtonn(domain);
+    },
+    collapseButtonn(domain,confirm) {
+      this.confirm = confirm;
+      this.editedDomain = domain;
+      this.editedEnabled = domain.enabled;
+      this.editedDomain.title= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.title}`,this.editedDomain.title);
+      this.editedDomain.description= this.$t(`exoplatform.gamification.gamificationinformation.domain.${this.editedDomain.description}`,this.editedDomain.description);
+      this.isShown = !this.isShown;
+    },
+
+    confirm() {
+      this.$modals.confirm({
+        message: 'Confirm?',
+        onApprove: () => {
+        },
+        onCancel: () => {
+        },
+      });
+    },
+  }
+};
 
 </script>
 

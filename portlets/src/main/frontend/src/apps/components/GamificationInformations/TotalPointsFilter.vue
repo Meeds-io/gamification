@@ -30,43 +30,43 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import axios from 'axios';
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import axios from 'axios';
 
-    Vue.use(BootstrapVue);
+Vue.use(BootstrapVue);
 
-    const initialData = () => {
-        return {
-            reputation: {
-                score: null,
-                selectedPeriod: 'ALL',
-                locale: 'lang',
+const initialData = () => {
+  return {
+    reputation: {
+      score: null,
+      selectedPeriod: 'ALL',
+      locale: 'lang',
 
-            },
+    },
 
-        }
-    }
- export default {
-        data: initialData,
-
-
-        created() {
-            const url = window.location.pathname
-            axios.get(`/portal/rest/gamification/reputation/status`, { params: { 'url': url } })
-                .then(response => {
-
-                    this.reputation = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
+  };
+};
+export default {
+  data: initialData,
 
 
-        }
+  created() {
+    const url = window.location.pathname;
+    axios.get('/portal/rest/gamification/reputation/status', { params: { 'url': url } })
+      .then(response => {
+
+        this.reputation = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
 
 
-    }
+  }
+
+
+};
 </script>
 
 <style scoped>

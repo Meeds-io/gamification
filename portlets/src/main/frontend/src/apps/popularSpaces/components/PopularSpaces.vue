@@ -35,9 +35,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div
             v-else
             class="d-flex justify-center">
-          <span class="emptySpacesLeaderboardIcon mb-2">
-            Ø
-          </span>
+            <span class="emptySpacesLeaderboardIcon mb-2">
+              Ø
+            </span>
           </div>
         </v-col>
       </v-layout>
@@ -91,5 +91,5 @@ export default {
         });
     },
   },
-}
+};
 </script>

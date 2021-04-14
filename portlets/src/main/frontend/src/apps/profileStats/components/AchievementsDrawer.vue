@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-import {getAchievements} from '../profilStatsAPI'
+import {getAchievements} from '../profilStatsAPI';
 
 export default {
   data: () => ({

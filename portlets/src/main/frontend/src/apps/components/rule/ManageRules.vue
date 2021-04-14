@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -52,139 +53,140 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </section>
 </template>
 <script>
-    import Vue from 'vue'
-    import RuleList from './RuleList'
-    import SaveRuleForm from './SaveRuleForm'
-    import BootstrapVue from 'bootstrap-vue'
-    import axios from 'axios';
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
+/* eslint-disable */
+import Vue from 'vue';
+import RuleList from './RuleList';
+import SaveRuleForm from './SaveRuleForm';
+import BootstrapVue from 'bootstrap-vue';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-    Vue.use(BootstrapVue);
-    const initialData = () => {
-        return {
-            ruleInForm: {
-                id: null,
-                title: '',
-                description: '',
-                score: null,
-                enabled: true,
-                area: '',
-                lastModifiedBy: '',
-                lastModifiedDate: null
-            },
-            addSuccess: false,
-            addError: false,
-            updateMessage: '',
-            rules: [],
-            domains: [],
-            domain: '',
-            events: [],
-            isadded: false,
-            isShown: false,
-            errorType:"errorrule"
-        }
-    };
-    export default {
-        components: {
-            RuleList,
-            SaveRuleForm
-        },
-        data: initialData,
-        created() {
-            this.getRules() 
-            this.getDomains() 
-            this.getEvents()
-        },
-        methods: {
-            getRules() {
-                axios.get(`/portal/rest/gamification/rules/all`)
-                .then(response => {
-                    this.rules = response.data;
-                })
-                .catch(e => {
-                    this.addError = true;
-                    this.errorType="getRulesError"
-                });
-            },
-            getDomains() {
-                axios.get(`/portal/rest/gamification/domains`)
-                .then(response => {
-                    this.domains = response.data;
-                })
-                .catch(e => {
-                    console.log(e)
-                });
-            },
-            getEvents() {
-                 axios.get(`/portal/rest/gamification/api/v1/events`)
-                .then(response => {
-                    this.events = response.data;
-                })
-                .catch(e => {
-                    console.log(e)
-                })
-            },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
-            resetRuleInForm() {
-                this.ruleInForm = initialData().ruleInForm
-            },
-            onSaveClicked (rule) {
-                this.updateRule(rule);
-                this.isShown = !this.isShown;
-            },
+Vue.use(BootstrapVue);
+const initialData = () => {
+  return {
+    ruleInForm: {
+      id: null,
+      title: '',
+      description: '',
+      score: null,
+      enabled: true,
+      area: '',
+      lastModifiedBy: '',
+      lastModifiedDate: null
+    },
+    addSuccess: false,
+    addError: false,
+    updateMessage: '',
+    rules: [],
+    domains: [],
+    domain: '',
+    events: [],
+    isadded: false,
+    isShown: false,
+    errorType: 'errorrule'
+  };
+};
+export default {
+  components: {
+    RuleList,
+    SaveRuleForm
+  },
+  data: initialData,
+  created() {
+    this.getRules(); 
+    this.getDomains(); 
+    this.getEvents();
+  },
+  methods: {
+    getRules() {
+      axios.get('/portal/rest/gamification/rules/all')
+        .then(response => {
+          this.rules = response.data;
+        })
+        .catch(e => {
+          this.addError = true;
+          this.errorType='getRulesError';
+        });
+    },
+    getDomains() {
+      axios.get('/portal/rest/gamification/domains')
+        .then(response => {
+          this.domains = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    getEvents() {
+      axios.get('/portal/rest/gamification/api/v1/events')
+        .then(response => {
+          this.events = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown;
+    },
+    resetRuleInForm() {
+      this.ruleInForm = initialData().ruleInForm;
+    },
+    onSaveClicked (rule) {
+      this.updateRule(rule);
+      this.isShown = !this.isShown;
+    },
 
-            onRuleCreated(rule) {
-                this.isadded = true;
-                this.addSuccess = true;
-                this.updateMessage = 'added';
-                this.rules.push(rule);
-                this.resetRuleInForm()
-            },
+    onRuleCreated(rule) {
+      this.isadded = true;
+      this.addSuccess = true;
+      this.updateMessage = 'added';
+      this.rules.push(rule);
+      this.resetRuleInForm();
+    },
 
-            onRuleFail(rule,errorType) {                
-                this.addError = true
-                this.errorType=errorType
-                this.resetRuleInForm()
-                this.dismissCountDown = 15
-            },
+    onRuleFail(rule,errorType) {                
+      this.addError = true;
+      this.errorType=errorType;
+      this.resetRuleInForm();
+      this.dismissCountDown = 15;
+    },
 
-            onRemoveClicked(ruleId, ruleTitle) {
-                const index = this.rules.findIndex((p) => p.id === ruleId);
-                axios.delete(`/portal/rest/gamification/rules/delete/${ruleId}`)
-                    .then(response => {
-                        this.rules.splice(index, 1)
-                    })
-                    .catch(e => {
-                        this.getRules()
-                        this.errorType="deleteRuleError"
-                    });
-                if (ruleId === this.ruleInForm.id) {
-                    this.resetRuleInForm()
-                }
-            },
-            updateRule(ruleDTO) {
-                axios.put(`/portal/rest/gamification/rules/update`, ruleDTO)
-                    .then(response => {
-                        this.addSuccess = true;
-                        this.updateMessage = 'updated';
-                        this.rules.push(rule);
-                        this.dismissCountDown = 15
-                    })
-                    .catch(e => {
-                        if(e.response.status===304){
-                            this.errorType="ruleExists"
-                        }else{
-                            this.errorType="updateRuleError"
-                        }
-                        this.addError = true
-                        this.getRules()
-                    })
-            }
-        }
+    onRemoveClicked(ruleId, ruleTitle) {
+      const index = this.rules.findIndex((p) => p.id === ruleId);
+      axios.delete(`/portal/rest/gamification/rules/delete/${ruleId}`)
+        .then(response => {
+          this.rules.splice(index, 1);
+        })
+        .catch(e => {
+          this.getRules();
+          this.errorType='deleteRuleError';
+        });
+      if (ruleId === this.ruleInForm.id) {
+        this.resetRuleInForm();
+      }
+    },
+    updateRule(ruleDTO) {
+      axios.put('/portal/rest/gamification/rules/update', ruleDTO)
+        .then(response => {
+          this.addSuccess = true;
+          this.updateMessage = 'updated';
+          this.rules.push(rule);
+          this.dismissCountDown = 15;
+        })
+        .catch(e => {
+          if (e.response.status===304){
+            this.errorType='ruleExists';
+          } else {
+            this.errorType='updateRuleError';
+          }
+          this.addError = true;
+          this.getRules();
+        });
     }
+  }
+};
 </script>
 <style scoped>
     .alert {

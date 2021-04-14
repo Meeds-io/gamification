@@ -44,26 +44,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-  const randomMax = 10000;
-  export default {
-    props: {
-     space: {
-       type: Object,
-       default: () => null,
-     },
-     skeleton: {
-       type: Boolean,
-       default: false,
-     },
+const randomMax = 10000;
+export default {
+  props: {
+    space: {
+      type: Object,
+      default: () => null,
     },
-    data() {
-     return {
+    skeleton: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
       id: `spaceItem${parseInt(Math.random() * randomMax)
         .toString()
         .toString()}`,
-     }
-    },
-    computed: {
+    };
+  },
+  computed: {
     url() {
       if (!this.space || !this.space.groupId) {
         return '#';
@@ -87,17 +87,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         members: this.$t('profile.label.members'),
       };
     },
-   },
-    mounted() {
-      if (this.space.id && this.space.groupId) {
-        // TODO disable tiptip because of high CPU usage using its code
-        this.initTiptip();
+  },
+  mounted() {
+    if (this.space.id && this.space.groupId) {
+      // TODO disable tiptip because of high CPU usage using its code
+      this.initTiptip();
     }
   },
-    methods: {
+  methods: {
     initTiptip() {
       this.$nextTick(() => {
-       $(`#${this.id}`).spacePopup({
+        $(`#${this.id}`).spacePopup({
           userName: eXo.env.portal.userName,
           spaceID: this.space.id,
           restURL: '/portal/rest/v1/social/spaces/{0}',
@@ -114,7 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         });
       });
     },
-    }
   }
+};
 
 </script>

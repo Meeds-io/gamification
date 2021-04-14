@@ -20,9 +20,9 @@ import './initComponents.js';
 if (extensionRegistry) {
   const components = extensionRegistry.loadComponents('PopularSpaces');
   if (components && components.length > 0) {
-   components.forEach(cmp => {
-     Vue.component(cmp.componentName, cmp.componentOptions);
-   });
+    components.forEach(cmp => {
+      Vue.component(cmp.componentName, cmp.componentOptions);
+    });
   }
 }
 

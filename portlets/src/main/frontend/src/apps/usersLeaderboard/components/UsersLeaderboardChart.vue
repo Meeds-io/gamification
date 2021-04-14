@@ -49,7 +49,7 @@ export default {
       id: `Chart${parseInt(Math.random() * 10000)
         .toString()
         .toString()}`,
-    }
+    };
   },
   computed: {
     colors() {
@@ -58,8 +58,8 @@ export default {
     chartSettings() {
       return this.chartData && {
         tooltip: {
-            trigger: 'item',
-            formatter: '{b}: {c} ({d}%)'
+          trigger: 'item',
+          formatter: '{b}: {c} ({d}%)'
         },
         color: this.chartData.map(data => data.color),
         series: [{
@@ -113,5 +113,5 @@ export default {
       chart.setOption(this.chartSettings, true);
     }
   }
-}
+};
 </script>

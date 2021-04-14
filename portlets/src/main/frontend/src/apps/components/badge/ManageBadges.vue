@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -50,151 +51,152 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-import Vue from 'vue'
-import BadgeList from './BadgeList'
-import SaveBadgeForm from './SaveBadgeForm'
-import BootstrapVue from 'bootstrap-vue'
+/* eslint-disable */
+import Vue from 'vue';
+import BadgeList from './BadgeList';
+import SaveBadgeForm from './SaveBadgeForm';
+import BootstrapVue from 'bootstrap-vue';
 import axios from 'axios';
 
 
 Vue.use(BootstrapVue);
 const initialData = () => {
-    return {
-        badgeInForm: {
-            id: null,
-            title: '',
-            description: '',
-            neededScore: null,
-            icon: null,
-            dismissSecs: 5,
-            countDown: 0,
-            showDismissibleAlert: false,
-            domain: '',
-            enabled: true,
-            createdDate: null,
-            lastModifiedBy: '',
-            lastModifiedDate: null,
-            isShown: false,
-        },
-        addSuccess: false,
-        addError: false,
-        updateMessage: '',
-        badges: [],
-        domains: [],
-        errorType: ""
-    }
+  return {
+    badgeInForm: {
+      id: null,
+      title: '',
+      description: '',
+      neededScore: null,
+      icon: null,
+      dismissSecs: 5,
+      countDown: 0,
+      showDismissibleAlert: false,
+      domain: '',
+      enabled: true,
+      createdDate: null,
+      lastModifiedBy: '',
+      lastModifiedDate: null,
+      isShown: false,
+    },
+    addSuccess: false,
+    addError: false,
+    updateMessage: '',
+    badges: [],
+    domains: [],
+    errorType: ''
+  };
 };
 export default {
-    components: {
-        BadgeList,
-        SaveBadgeForm
+  components: {
+    BadgeList,
+    SaveBadgeForm
+  },
+  data: initialData,
+  created() {
+    this.getBadges();
+    this.getDomains(); 
+  },
+  methods: {
+    resetBadgeInForm() {
+      this.badgeInForm = initialData().badgeInForm;
     },
-    data: initialData,
-    created() {
-        this.getBadges()
-        this.getDomains() 
+    onSaveClicked(badge) {
+      this.updateBadge(badge);
+      this.isShown = !this.isShown;
     },
-    methods: {
-        resetBadgeInForm() {
-            this.badgeInForm = initialData().badgeInForm
-        },
-        onSaveClicked(badge) {
-            this.updateBadge(badge)
-            this.isShown = !this.isShown;
-        },
-        onBadgeCreated(badge) {
-            this.addSuccess = true;
-            this.updateMessage = 'added';
-            this.badges.push(badge);
-            this.resetBadgeInForm()
-        },
-        collapseButton() {
-            this.isShown = !this.isShown;
-        },
-        onBadgeFail(badge,errorType) {
-            this.addError = true
-            this.errorType=errorType
-            this.resetBadgeInForm()
-            this.dismissCountDown();
-        },
-         dismissCountDown() {
-                setTimeout(() => {
-                this.addError = false
-                this.addSuccess = false
-            }, 3000);
-            }, 
-        onBadgeAction(badge) {
-            const index = this.badges.findIndex((p) => p.id === badge.id);
-            if (index !== -1) {
-                this.updateBadge(badge);
-                this.badges.splice(index, 1, badge)
-            } else {
-                this.createBadge(badge);
-                this.badges.push(badge)
-            }
-            this.resetBadgeInForm()
-        },
-        onRemoveClicked(badgeId, badgeTitle) {
-            const index = this.badges.findIndex((p) => p.id === badgeId);
-            axios.delete(`/portal/rest/gamification/badges/delete/${  badgeId}`)
-                .then(response => {
-                    this.addSuccess = true
-                    this.updateMessage = 'deleted'
-                    this.badges.splice(index, 1)
-                    this.dismissCountDown();
-                })
-                .catch(e => {
-                    this.errorType="deleteBadgeError"
-                    this.addError=true
-                    this.dismissCountDown();
-                });
-            if (badgeId === this.badgeInForm.id) {
-                this.resetBadgeInForm()
-            }
-        },
-        updateBadge(badgeDTO) {
-            axios.put(`/portal/rest/gamification/badges/update`, badgeDTO)
-                .then(response => {
-                    this.addSuccess = true;
-                    this.updateMessage = 'updated';
-                    this.dismissCountDown();
-                    this.getBadges()
-                })
-                .catch(e => {
-                        if(e.response.status===304){
-                            this.errorType="badgeExists"
-                        }else{
-                            this.errorType="updateBadgeError"
-                        }
-                        this.addError=true
-                        this.dismissCountDown();
-                        this.getBadges()
-                })
+    onBadgeCreated(badge) {
+      this.addSuccess = true;
+      this.updateMessage = 'added';
+      this.badges.push(badge);
+      this.resetBadgeInForm();
+    },
+    collapseButton() {
+      this.isShown = !this.isShown;
+    },
+    onBadgeFail(badge,errorType) {
+      this.addError = true;
+      this.errorType=errorType;
+      this.resetBadgeInForm();
+      this.dismissCountDown();
+    },
+    dismissCountDown() {
+      setTimeout(() => {
+        this.addError = false;
+        this.addSuccess = false;
+      }, 3000);
+    }, 
+    onBadgeAction(badge) {
+      const index = this.badges.findIndex((p) => p.id === badge.id);
+      if (index !== -1) {
+        this.updateBadge(badge);
+        this.badges.splice(index, 1, badge);
+      } else {
+        this.createBadge(badge);
+        this.badges.push(badge);
+      }
+      this.resetBadgeInForm();
+    },
+    onRemoveClicked(badgeId, badgeTitle) {
+      const index = this.badges.findIndex((p) => p.id === badgeId);
+      axios.delete(`/portal/rest/gamification/badges/delete/${  badgeId}`)
+        .then(response => {
+          this.addSuccess = true;
+          this.updateMessage = 'deleted';
+          this.badges.splice(index, 1);
+          this.dismissCountDown();
+        })
+        .catch(e => {
+          this.errorType='deleteBadgeError';
+          this.addError=true;
+          this.dismissCountDown();
+        });
+      if (badgeId === this.badgeInForm.id) {
+        this.resetBadgeInForm();
+      }
+    },
+    updateBadge(badgeDTO) {
+      axios.put('/portal/rest/gamification/badges/update', badgeDTO)
+        .then(response => {
+          this.addSuccess = true;
+          this.updateMessage = 'updated';
+          this.dismissCountDown();
+          this.getBadges();
+        })
+        .catch(e => {
+          if (e.response.status===304){
+            this.errorType='badgeExists';
+          } else {
+            this.errorType='updateBadgeError';
+          }
+          this.addError=true;
+          this.dismissCountDown();
+          this.getBadges();
+        });
 
-        },
-        getBadges() {
-            axios.get(`/portal/rest/gamification/badges/all`)
-            .then(response => {
-                this.badges = response.data;
-            })
-            .catch(e => {
-                this.errorType="getBadgesError"
-                this.addError=true
-                this.dismissCountDown();
-                console.log(e)
-            });
-        },
-        getDomains(){
-            axios.get(`/portal/rest/gamification/domains`)
-            .then(response => {
-                this.domains = response.data;
-            })
-            .catch(e => {
-                console.log(e)
-            })
-        }
+    },
+    getBadges() {
+      axios.get('/portal/rest/gamification/badges/all')
+        .then(response => {
+          this.badges = response.data;
+        })
+        .catch(e => {
+          this.errorType='getBadgesError';
+          this.addError=true;
+          this.dismissCountDown();
+          console.log(e);
+        });
+    },
+    getDomains(){
+      axios.get('/portal/rest/gamification/domains')
+        .then(response => {
+          this.domains = response.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
-}
+  }
+};
 </script>
 
 <style>

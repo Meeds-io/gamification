@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -52,149 +53,150 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </section>
 </template>
 <script>
-    import DomainList from './DomainList'
-    import SaveDomainForm from './SaveDomainForm'
-    import BootstrapVue from 'bootstrap-vue'
-    import axios from 'axios';
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
+/* eslint-disable */
+import DomainList from './DomainList';
+import SaveDomainForm from './SaveDomainForm';
+import BootstrapVue from 'bootstrap-vue';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-    Vue.use(BootstrapVue);
+Vue.use(BootstrapVue);
 
-    const initialData = () => {
-        return {
-            domainInForm: {
-                id: null,
-                enabled:true,
-                title: '',
-                description: '',
+const initialData = () => {
+  return {
+    domainInForm: {
+      id: null,
+      enabled: true,
+      title: '',
+      description: '',
 
-            },
-            editeddomain: {},
-            addSuccess: false,
-            addError: false,
-            updateMessage: '',
-            errorMessage:'',
-            domains: [],
-            dismissSecs: 5,
-            dismissCountDown: 0,
-            isShown: false,
-            isadded: false,
-        }
-    };
-    export default {
+    },
+    editeddomain: {},
+    addSuccess: false,
+    addError: false,
+    updateMessage: '',
+    errorMessage: '',
+    domains: [],
+    dismissSecs: 5,
+    dismissCountDown: 0,
+    isShown: false,
+    isadded: false,
+  };
+};
+export default {
 
-        components: {
-            SaveDomainForm,
-            DomainList
-        },
-        data: initialData,
-        created() {
-            axios.get(`/portal/rest/gamification/domains`)
-                .then(response => {
-                    this.domains = response.data;
-                })
-                .catch(e => {
-                    this.addError = true;
-                    this.errors.push(e)
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-        },
-        methods: {
-            validateForm() {
-                const errors = {};
-                if (this.addSuccess = true) {
-                    errors.title = 'success';
-                    this.dismissCountDown = 5
-                }
-                if (this.addError = true) {
-                    errors.title = 'error';
-                    this.dismissCountDown = 5
-                }
-                if (this.addSuccess = true) {
-                    errors.description = 'success';
-                    this.dismissCountDown = 5
-                }
-                if (this.addError = true) {
-                    errors.description = 'error';
-                    this.dismissCountDown = 5
-                }
+  components: {
+    SaveDomainForm,
+    DomainList
+  },
+  data: initialData,
+  created() {
+    axios.get('/portal/rest/gamification/domains')
+      .then(response => {
+        this.domains = response.data;
+      })
+      .catch(e => {
+        this.addError = true;
+        this.errors.push(e);
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+  },
+  methods: {
+    validateForm() {
+      const errors = {};
+      if (this.addSuccess = true) {
+        errors.title = 'success';
+        this.dismissCountDown = 5;
+      }
+      if (this.addError = true) {
+        errors.title = 'error';
+        this.dismissCountDown = 5;
+      }
+      if (this.addSuccess = true) {
+        errors.description = 'success';
+        this.dismissCountDown = 5;
+      }
+      if (this.addError = true) {
+        errors.description = 'error';
+        this.dismissCountDown = 5;
+      }
 
-                this.formErrors = errors;
-                return Object.keys(errors).length === 0
-            },
-            countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
-            },
+      this.formErrors = errors;
+      return Object.keys(errors).length === 0;
+    },
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown;
+    },
 
-            showAlert() {
-                this.dismissCountDown = this.dismissSecs
-            },
-            resetDomainInForm() {
-                this.domainInForm = initialData().domainInForm
-            },
-            onSaveClicked(domain) {
-                this.updateDomain(domain)
-                this.isShown = !this.isShown;
+    showAlert() {
+      this.dismissCountDown = this.dismissSecs;
+    },
+    resetDomainInForm() {
+      this.domainInForm = initialData().domainInForm;
+    },
+    onSaveClicked(domain) {
+      this.updateDomain(domain);
+      this.isShown = !this.isShown;
 
 
-            },
-            onDomainCreated(domain) {
-                this.isadded = true;
-                this.addSuccess = true;
-                this.updateMessage = this.$t('exoplatform.gamification.message.domain.added',"Domain added successfully");
-                this.domains.push(domain);
-                this.resetDomainInForm();
+    },
+    onDomainCreated(domain) {
+      this.isadded = true;
+      this.addSuccess = true;
+      this.updateMessage = this.$t('exoplatform.gamification.message.domain.added','Domain added successfully');
+      this.domains.push(domain);
+      this.resetDomainInForm();
 
-            },
-            onDomainUpdated(domain) {
-                this.addSuccess = true;
-                this.updateMessage = this.$t('exoplatform.gamification.message.domain.updated',"Domain updated successfully");
-                this.domains.push(domain);
-                this.resetDomainInForm();
-                this.dismissCountDown = 5
+    },
+    onDomainUpdated(domain) {
+      this.addSuccess = true;
+      this.updateMessage = this.$t('exoplatform.gamification.message.domain.updated','Domain updated successfully');
+      this.domains.push(domain);
+      this.resetDomainInForm();
+      this.dismissCountDown = 5;
 
-            },
-            onDomainFail(domain) {
-                this.addError = true;
-                this.errorMessage= this.$t('exoplatform.gamification.message.domain.fail',"An error happen when adding a domain"); 
-                // this.errors.push(e);
-                this.resetDomainInForm()
-            },
-            onRemoveClicked(domainId) {
-                const index = this.domains.findIndex((p) => p.id === domainId);
+    },
+    onDomainFail(domain) {
+      this.addError = true;
+      this.errorMessage= this.$t('exoplatform.gamification.message.domain.fail','An error happen when adding a domain'); 
+      // this.errors.push(e);
+      this.resetDomainInForm();
+    },
+    onRemoveClicked(domainId) {
+      const index = this.domains.findIndex((p) => p.id === domainId);
 
-                axios.delete(`/portal/rest/gamification/domains/${  domainId}`)
-                    .then(response => {
-                        this.domains.splice(index, 1)
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    });
-                if (domainId === this.domainInForm.id) {
-                    this.resetDomainInForm()
-                }
-            },
+      axios.delete(`/portal/rest/gamification/domains/${  domainId}`)
+        .then(response => {
+          this.domains.splice(index, 1);
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+      if (domainId === this.domainInForm.id) {
+        this.resetDomainInForm();
+      }
+    },
 
-            updateDomain(domainDTO) {
-                axios.put(`/portal/rest/gamification/domains/${  domainDTO.id}`, domainDTO)
-                    .then(response => {
-                        this.addSuccess = true;
-                        this.updateMessage = 'updated';
-                        this.domains.push(domain)
-                            .catch(e => {
-                                this.addError = true;
-                                this.errors.push(e)
-                            })
-                    })
-                    .catch(e => {
-                        console.log("Error")
-                    })
-            }
-        }
+    updateDomain(domainDTO) {
+      axios.put(`/portal/rest/gamification/domains/${  domainDTO.id}`, domainDTO)
+        .then(response => {
+          this.addSuccess = true;
+          this.updateMessage = 'updated';
+          this.domains.push(domain)
+            .catch(e => {
+              this.addError = true;
+              this.errors.push(e);
+            });
+        })
+        .catch(e => {
+          console.log('Error');
+        });
     }
+  }
+};
 </script>
 <style scoped>
     .alert {

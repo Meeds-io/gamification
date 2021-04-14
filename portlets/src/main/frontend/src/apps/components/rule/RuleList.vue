@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -342,108 +343,109 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import 'bootstrap/dist/css/bootstrap.css'
-    import 'bootstrap-vue/dist/bootstrap-vue.css'
-    import moment from 'moment'
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import moment from 'moment';
 
-    Vue.use(BootstrapVue);
+Vue.use(BootstrapVue);
 Vue.prototype.moment = moment;
 export default {
-    props: ['rules', 'domains', 'events', 'rule', 'domain'],
-    data() {
-        return {
-            search: '',
-            formErrors: {},
-            editedrule: {},
-            isdeleted: false,
-            isShown: false,
-            isShowndeleted: false,
-            enabledFilter: null,
-            isEnabled: false,
-            editedEnabled: null,
-            enabledMessage:"",
-            filerlabel:"all",
-        }
-    },
+  props: ['rules', 'domains', 'events', 'rule', 'domain'],
+  data() {
+    return {
+      search: '',
+      formErrors: {},
+      editedrule: {},
+      isdeleted: false,
+      isShown: false,
+      isShowndeleted: false,
+      enabledFilter: null,
+      isEnabled: false,
+      editedEnabled: null,
+      enabledMessage: '',
+      filerlabel: 'all',
+    };
+  },
 
-    computed: {
-        filteredRules() {
-            return this.rules.filter(item => {
-                return ((
-                    this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
+  computed: {
+    filteredRules() {
+      return this.rules.filter(item => {
+        return ((
+          this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
                     this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${item.event}`,item.event).toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
                     this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.domainDTO.title}`,item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1||
                     item.score.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1)
                     && (this.enabledFilter === null || item.enabled === this.enabledFilter)
-                )
-            })
-        },
-        isDisabled() {
-            // evaluate whatever you need to determine disabled here...
-            this.disabled = false;
-            return !this.domain.enabled;
-        },
-
-        isEnabled() {
-            // evaluate whatever you need to determine disabled here...
-            this.disabled = true;
-            return this.domain.enabled;
-        }        ,
-        isBottonDisabled: function(){
-             return !(this.isNotEmpty(this.editedrule.event)&&this.isNotEmpty(this.editedrule.score)&&this.editedrule.domainDTO!=null)
-        }
-
+        );
+      });
+    },
+    isDisabled() {
+      // evaluate whatever you need to determine disabled here...
+      this.disabled = false;
+      return !this.domain.enabled;
     },
 
-
-    methods: {
-        onEdit(rule) {
-            this.rule = rule;
-            this.editedrule = rule;
-        },
-        isNotEmpty(str){
-              return(str!=null&&str!="")
-            },
-        onRemove(id, title) {
-            this.$emit('remove', id, title);
-            this.isdeleted = true
-        },
-        onSave(rule) {
-            this.$emit('save', rule);
-            this.editedrule = {};
-            if (this.isShown) {
-                this.closeAlert(".alert")
-            }
-        },
-        onCancel(rule) {
-            this.editedrule = {};
-        },
-        collapseConfirm(rule) {
-            this.rule = rule;
-            this.isShowndeleted = !this.isShowndeleted;
-            if (this.isShowndeleted) {
-                this.closeAlert(".alert")
-            }
-        },
-
-        onSubmit(rule) {
-            this.updateDomain(this.editedrule);
-            this.collapseButtonn(rule)
-        },
-        collapseButtonn(rule) {
-            this.editedrule = rule;
-            this.isShown = !this.isShown;
-            this.editedrule.description =  this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${this.editedrule.title}`,this.editedrule.description) ;
-        },
-        closeAlert(item) {
-            setTimeout(function () {
-                $(item).fadeOut('fast')
-            }, 4000);
-        }
+    isEnabled() {
+      // evaluate whatever you need to determine disabled here...
+      this.disabled = true;
+      return this.domain.enabled;
+    }        ,
+    isBottonDisabled: function(){
+      return !(this.isNotEmpty(this.editedrule.event)&&this.isNotEmpty(this.editedrule.score)&&this.editedrule.domainDTO!=null);
     }
-}
+
+  },
+
+
+  methods: {
+    onEdit(rule) {
+      this.rule = rule;
+      this.editedrule = rule;
+    },
+    isNotEmpty(str){
+      return (str!=null&&str!='');
+    },
+    onRemove(id, title) {
+      this.$emit('remove', id, title);
+      this.isdeleted = true;
+    },
+    onSave(rule) {
+      this.$emit('save', rule);
+      this.editedrule = {};
+      if (this.isShown) {
+        this.closeAlert('.alert');
+      }
+    },
+    onCancel(rule) {
+      this.editedrule = {};
+    },
+    collapseConfirm(rule) {
+      this.rule = rule;
+      this.isShowndeleted = !this.isShowndeleted;
+      if (this.isShowndeleted) {
+        this.closeAlert('.alert');
+      }
+    },
+
+    onSubmit(rule) {
+      this.updateDomain(this.editedrule);
+      this.collapseButtonn(rule);
+    },
+    collapseButtonn(rule) {
+      this.editedrule = rule;
+      this.isShown = !this.isShown;
+      this.editedrule.description =  this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${this.editedrule.title}`,this.editedrule.description) ;
+    },
+    closeAlert(item) {
+      setTimeout(function () {
+        $(item).fadeOut('fast');
+      }, 4000);
+    }
+  }
+};
 </script>
 
 <style scoped>

@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -283,144 +284,145 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </div>
 </template>
 <script>
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import {Image} from 'bootstrap-vue/es/components';
-    import ProgressBar from 'vuejs-progress-bar'
-    import Popper from 'vue-popperjs';
-    import 'vue-popperjs/dist/vue-popper.css';
-    import axios from 'axios';
-    Vue.use(ProgressBar);
-    Vue.use(BootstrapVue);
-    Vue.use(Image);
-    const initialData = () => {
-        return {
-            badges: [],
-            progs: [],
-            value: '',
-            defaultOptions: Object,
-        }
-    };
-    export default {
-        components: {
-            'popper': Popper
-        },
-        props: {
-            options: {
-                type: Object,
-                required: false
-            },
-            value: {
-                type: Number,
-                required: false,
-                default: 0
-            }
-        },
-        data: initialData,
-        computed: {
-            cylinder () {
-                return this.defaultOptions.layout.type === 'cylinder'
-            },
-            line () {
-                return this.defaultOptions.layout.type === 'line'
-            },
-            width () {
-                return this.defaultOptions.layout.width
-            },
-            height () {
-                return this.defaultOptions.layout.height
-            },
-            striped: true,
-            animate: true
-        },
-        created() {
-            const url = window.location.pathname;
-            axios.get(`/portal/rest/gamification/reputation/AllofBadges`, { params: { 'url': url } })
-                .then(response => {
-                    this.badges = response.data;
-                });
-            axios.get(`/portal/rest/gamification/reputation/stats`, { params: { 'url': url }})
-                .then(response => {
-                    this.progs = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                });
-            this.defaultOptions = {
-                text: {
-                    color: '#FFFFFF',
-                    shadowEnable: true,
-                    shadowColor: '#000000',
-                    fontSize: 14,
-                    fontFamily: 'Helvetica',
-                    dynamicPosition: false,
-                    hideText: false
-                },
-                progress: {
-                    color: 'rgba(0,255,0,0.2)',
-                    filter:'contrast(19%)',
-                    animation: 'drift 2s infinite linear',
-                    background: 'm-1 img-thumbnail img-fluid',
-                    opacity: 0.4,
-                },
-                layout: {
-                    height: 90,
-                    width: 90,
-                    verticalTextAlign: 61,
-                    horizontalTextAlign: 43,
-                    zeroOffset: 0,
-                    strokeWidth: 100,
-                    progressPadding: 0,
-                    type: 'line'
-                }}
-        },
-        methods: {
-            showBadgeDetail(badgeDTO) {
-                axios.get(`/portal/rest/gamification/update`, badgeDTO)
-                    .then(response => {
-                    })
-                    .catch(e => {
-                        this.errors.push(e)
-                    })
-            },
-            bgBadges: function (badge) {
-                return badge.endScore == 0 ;
-            },
-            mergeDefaultOptionsWithProp: function (options) {
-                const result = this.defaultOptions;
-                for (const option in options)
-                {
-                    if (options[option] !== null && typeof(options[option]) === 'object') {
-                        for (const subOption in options[option]) {
-                            if (options[option][subOption] !== undefined && options[option][subOption] !== null) {
-                                result[option][subOption] = options[option][subOption]
-                            }
-                        }
-                    } else {
-                        result[option] = options[option]
-                    }
-                }
-            },
-            LightenColor: function (color, level) {
-                let usePound = false;
-                if (color[0] == "#") {
-                    color = color.slice(1);
-                    usePound = true;
-                }
-                const num = parseInt(color,16);
-                let r = (num >> 16) + level;
-                if (r > 255) {r = 255;}
-                else if (r < 0) {r = 0;}
-                let b = ((num >> 8) & 0x00FF) + level;
-                if (b > 255) {b = 255;}
-                else if (b < 0) {b = 0;}
-                let g = (num & 0x0000FF) + level;
-                if (g > 255) {g = 255;}
-                else if (g < 0) {g = 0;}
-                return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
-            }
-        }
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import {Image} from 'bootstrap-vue/es/components';
+import ProgressBar from 'vuejs-progress-bar';
+import Popper from 'vue-popperjs';
+import 'vue-popperjs/dist/vue-popper.css';
+import axios from 'axios';
+Vue.use(ProgressBar);
+Vue.use(BootstrapVue);
+Vue.use(Image);
+const initialData = () => {
+  return {
+    badges: [],
+    progs: [],
+    value: '',
+    defaultOptions: Object,
+  };
+};
+export default {
+  components: {
+    'popper': Popper
+  },
+  props: {
+    options: {
+      type: Object,
+      required: false
+    },
+    value: {
+      type: Number,
+      required: false,
+      default: 0
     }
+  },
+  data: initialData,
+  computed: {
+    cylinder () {
+      return this.defaultOptions.layout.type === 'cylinder';
+    },
+    line () {
+      return this.defaultOptions.layout.type === 'line';
+    },
+    width () {
+      return this.defaultOptions.layout.width;
+    },
+    height () {
+      return this.defaultOptions.layout.height;
+    },
+    striped: true,
+    animate: true
+  },
+  created() {
+    const url = window.location.pathname;
+    axios.get('/portal/rest/gamification/reputation/AllofBadges', { params: { 'url': url } })
+      .then(response => {
+        this.badges = response.data;
+      });
+    axios.get('/portal/rest/gamification/reputation/stats', { params: { 'url': url }})
+      .then(response => {
+        this.progs = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
+    this.defaultOptions = {
+      text: {
+        color: '#FFFFFF',
+        shadowEnable: true,
+        shadowColor: '#000000',
+        fontSize: 14,
+        fontFamily: 'Helvetica',
+        dynamicPosition: false,
+        hideText: false
+      },
+      progress: {
+        color: 'rgba(0,255,0,0.2)',
+        filter: 'contrast(19%)',
+        animation: 'drift 2s infinite linear',
+        background: 'm-1 img-thumbnail img-fluid',
+        opacity: 0.4,
+      },
+      layout: {
+        height: 90,
+        width: 90,
+        verticalTextAlign: 61,
+        horizontalTextAlign: 43,
+        zeroOffset: 0,
+        strokeWidth: 100,
+        progressPadding: 0,
+        type: 'line'
+      }};
+  },
+  methods: {
+    showBadgeDetail(badgeDTO) {
+      axios.get('/portal/rest/gamification/update', badgeDTO)
+        .then(response => {
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
+    },
+    bgBadges: function (badge) {
+      return badge.endScore == 0 ;
+    },
+    mergeDefaultOptionsWithProp: function (options) {
+      const result = this.defaultOptions;
+      for (const option in options)
+      {
+        if (options[option] !== null && typeof(options[option]) === 'object') {
+          for (const subOption in options[option]) {
+            if (options[option][subOption] !== undefined && options[option][subOption] !== null) {
+              result[option][subOption] = options[option][subOption];
+            }
+          }
+        } else {
+          result[option] = options[option];
+        }
+      }
+    },
+    LightenColor: function (color, level) {
+      let usePound = false;
+      if (color[0] == '#') {
+        color = color.slice(1);
+        usePound = true;
+      }
+      const num = parseInt(color,16);
+      let r = (num >> 16) + level;
+      if (r > 255) {r = 255;}
+      else if (r < 0) {r = 0;}
+      let b = ((num >> 8) & 0x00FF) + level;
+      if (b > 255) {b = 255;}
+      else if (b < 0) {b = 0;}
+      let g = (num & 0x0000FF) + level;
+      if (g > 255) {g = 255;}
+      else if (g < 0) {g = 0;}
+      return (usePound?'#':'') + (g | (b << 8) | (r << 16)).toString(16);
+    }
+  }
+};
 </script>
 
 <style>

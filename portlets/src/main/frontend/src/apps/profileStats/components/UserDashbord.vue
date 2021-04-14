@@ -163,135 +163,135 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-flex>
 </template>
 <script>
-  import {getUserInformations, getSpaces, getSpacesRequests, getConnections, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI'
-  export default {
-    props: {
-      commonsSpaceDefaultSize: {
-        type: Number,
-        default: 0,
-      },
-      isCurrentUserProfile: {
-        type: Boolean,
-        default: false,
-      },
-      commonConnectionsSize: {
-        type: Number,
-        default: 0,
-      },
+import {getUserInformations, getSpacesRequests, getConnectionsRequests, getGamificationPoints, getReputationStatus} from '../profilStatsAPI';
+export default {
+  props: {
+    commonsSpaceDefaultSize: {
+      type: Number,
+      default: 0,
     },
-    data() {
-      return {
-        period: 'WEEK',
-        firstName: '',
-        avatar:'',
-        spacesSize: '',
-        spacesRequestsSize: '',
-        connectionsSize: '',
-        connectionsRequestsSize: '',
-        gamificationRank:'',
-        userPoints: '',
-        loadingWidgets: 0,
-        profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
-        spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
-        connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network`,
-        firstLoadingName: true,
-        firstLoadingSpaces: true,
-        firstLoadingConnexion: true,
-        firstLoadingUserPoints: true,
-        firstLoadingRank: true,
+    isCurrentUserProfile: {
+      type: Boolean,
+      default: false,
+    },
+    commonConnectionsSize: {
+      type: Number,
+      default: 0,
+    },
+  },
+  data() {
+    return {
+      period: 'WEEK',
+      firstName: '',
+      avatar: '',
+      spacesSize: '',
+      spacesRequestsSize: '',
+      connectionsSize: '',
+      connectionsRequestsSize: '',
+      gamificationRank: '',
+      userPoints: '',
+      loadingWidgets: 0,
+      profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
+      spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
+      connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network`,
+      firstLoadingName: true,
+      firstLoadingSpaces: true,
+      firstLoadingConnexion: true,
+      firstLoadingUserPoints: true,
+      firstLoadingRank: true,
+    };
+  },
+  watch: {
+    loadingWidgets(newVal, oldVal) {
+      if (!newVal && newVal !== oldVal) {
+        this.$nextTick().then(() => this.$root.$emit('application-loaded'));
       }
     },
-    watch: {
-      loadingWidgets(newVal, oldVal) {
-        if (!newVal && newVal !== oldVal) {
-          this.$nextTick().then(() => this.$root.$emit('application-loaded'));
+  },
+  created() {
+    document.addEventListener('userModified', event => {
+      if (event && event.detail) {
+        this.avatar = event.detail.avatar || event.detail.avatarUrl;
+        this.firstName = event.detail.firstname;
+      }
+    });
+
+    this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
+
+    this.loadingWidgets = 5;
+    this.retrieveUserData().then(() => this.loadingWidgets--);
+    this.getSpacesRequestsSize().then(() => this.loadingWidgets--);
+    this.getConnectionsRequestsSize().then(() => this.loadingWidgets--);
+    this.getGamificationRank().then(() => this.loadingWidgets--);
+    this.getGamificationPoints().then(() => this.loadingWidgets--);
+  },
+    
+  methods: {
+    retrieveUserData() {
+      return getUserInformations().then(data => {
+        this.avatar = data.avatar || data.avatarUrl;
+        this.firstName = data.firstname;
+        if (this.firstLoadingName) {
+          this.firstLoadingName = false;
         }
-      },
-    },
-    created() {
-      document.addEventListener('userModified', event => {
-        if (event && event.detail) {
-          this.avatar = event.detail.avatar || event.detail.avatarUrl;
-          this.firstName = event.detail.firstname;
+        this.spacesSize = data.spacesCount;
+        if (this.firstLoadingSpaces) {
+          this.firstLoadingSpaces = false;
+        }
+        this.connectionsSize = data.connectionsCount;
+        if (this.firstLoadingConnexion) {
+          this.firstLoadingConnexion = false;
         }
       });
-
-      this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
-
-      this.loadingWidgets = 5;
-      this.retrieveUserData().then(() => this.loadingWidgets--);
-      this.getSpacesRequestsSize().then(() => this.loadingWidgets--);
-      this.getConnectionsRequestsSize().then(() => this.loadingWidgets--);
-      this.getGamificationRank().then(() => this.loadingWidgets--);
-      this.getGamificationPoints().then(() => this.loadingWidgets--);
     },
-    
-    methods: {
-      retrieveUserData() {
-        return getUserInformations().then(data => {
-          this.avatar = data.avatar || data.avatarUrl;
-          this.firstName = data.firstname;
-          if(this.firstLoadingName) {
-            this.firstLoadingName = false;
+    getSpacesRequestsSize() {
+      return getSpacesRequests().then(
+        (data) => {
+          this.spacesRequestsSize = data.size;
+          this.$emit('showRequestsSpace', this.spacesRequestsSize);
+        }
+      );
+    },
+    getConnectionsRequestsSize() {
+      return getConnectionsRequests().then(
+        (data) => {
+          this.connectionsRequestsSize = data.size;
+          this.$emit('shouldShowRequests', this.connectionsRequestsSize);
+        }
+      );
+    },
+    getGamificationRank() {
+      return getReputationStatus().then(
+        (data) => {
+          this.gamificationRank = data.rank;
+          if (this.firstLoadingRank) {
+            this.firstLoadingRank = false;
           }
-          this.spacesSize = data.spacesCount;
-          if(this.firstLoadingSpaces) {
-             this.firstLoadingSpaces = false;
+        }
+      );
+    },
+    getGamificationPoints() {
+      return getGamificationPoints(this.period).then(
+        (data) => {
+          this.userPoints = data.points;
+          if (this.firstLoadingUserPoints) {
+            this.firstLoadingUserPoints = false;
           }
-          this.connectionsSize = data.connectionsCount;
-          if(this.firstLoadingConnexion) {
-            this.firstLoadingConnexion = false;
-          }
-        })
-      },
-      getSpacesRequestsSize() {
-        return getSpacesRequests().then(
-          (data) => {
-            this.spacesRequestsSize = data.size;
-             this.$emit('showRequestsSpace', this.spacesRequestsSize);
-          }
-        )
-      },
-      getConnectionsRequestsSize() {
-        return getConnectionsRequests().then(
-          (data) => {
-            this.connectionsRequestsSize = data.size;
-            this.$emit('shouldShowRequests', this.connectionsRequestsSize);
-          }
-        )
-      },
-      getGamificationRank() {
-          return getReputationStatus().then(
-              (data) => {
-                  this.gamificationRank = data.rank;
-                  if(this.firstLoadingRank) {
-                    this.firstLoadingRank = false;
-                  }
-              }
-          )
-      },
-      getGamificationPoints() {
-        return getGamificationPoints(this.period).then(
-          (data) => {
-            this.userPoints = data.points;
-             if(this.firstLoadingUserPoints) {
-               this.firstLoadingUserPoints = false;
-             }
-          }
-        )
-      },
-      getSpecificCard(component) {
-        this.$emit('specific-card',component);
-      },
-      openConnectionsDrawer() {
-        this.$emit('openConnectionsDrawer');
-      },
-      openSpaceDrawer() {
-        this.$emit('openSpaceDrawer');
-      },
-      toProfileStats() {
-        this.$emit('isProfileStats');
-      },
-    }
+        }
+      );
+    },
+    getSpecificCard(component) {
+      this.$emit('specific-card',component);
+    },
+    openConnectionsDrawer() {
+      this.$emit('openConnectionsDrawer');
+    },
+    openSpaceDrawer() {
+      this.$emit('openSpaceDrawer');
+    },
+    toProfileStats() {
+      this.$emit('isProfileStats');
+    },
   }
+};
 </script>

@@ -142,58 +142,56 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-  import {getUsersByGamificationRank} from "../profilStatsAPI";
-  export default {
-    data() {
-      return {
-        leaderBoardArray: [],
-        listBelowPoduim: []
-      }
-    },
-    created() {
-      this.getUsersByGamificationRank();
-    },
+import {getUsersByGamificationRank} from '../profilStatsAPI';
+export default {
+  data() {
+    return {
+      leaderBoardArray: [],
+      listBelowPoduim: []
+    };
+  },
+  created() {
+    this.getUsersByGamificationRank();
+  },
 
-    methods: {
-      getUsersByGamificationRank() {
-        getUsersByGamificationRank('WEEK').then(
-          (data) => {
-            const currentUser = eXo.env.portal.profileOwner;
-            const index = data.findIndex(function (item, i) {
-              return item.remoteId === currentUser
-            }) + 1;
+  methods: {
+    getUsersByGamificationRank() {
+      getUsersByGamificationRank('WEEK').then(
+        (data) => {
+          const currentUser = eXo.env.portal.profileOwner;
+          const index = data.findIndex(item => item.remoteId === currentUser) + 1;
+          for (let i = 0; i < data.length; i++) {
+            this.leaderBoardArray.push(data[i]);
+          }
+          if (data.length === 6) {
+            for (let i = 3; i < 6; i++) {
+              this.listBelowPoduim.push(data[i]);
+            }
+          } else if (data.length === 3) {
             for (let i = 0; i < data.length; i++) {
-              this.leaderBoardArray.push(data[i])
+              this.listBelowPoduim.push(data[i]);
             }
-            if (data.length === 6) {
-              for (let i = 3; i < 6; i++) {
-                this.listBelowPoduim.push(data[i])
-              }
-            } else if (data.length === 3) {
-              for (let i = 0; i < data.length; i++) {
-                this.listBelowPoduim.push(data[i])
-              }
-            } else if ((data.length > 3 && data.length < 6) || index === data.length) {
-              for (let i = data.length - 3; i < data.length; i++) {
-                this.listBelowPoduim.push(data[i])
-              }
-            } else if (index < 7) {
-              for (let i = 3; i < 6; i++) {
-                this.listBelowPoduim.push(data[i])
-              }
-            } else {
-              for (let i = index - 2; i < index + 1; i++) {
-                this.listBelowPoduim.push(data[i])
-              }
+          } else if ((data.length > 3 && data.length < 6) || index === data.length) {
+            for (let i = data.length - 3; i < data.length; i++) {
+              this.listBelowPoduim.push(data[i]);
             }
-        })
-      },
-      getUserAvatar(username) {
-        return `/rest/v1/social/users/${username}/avatar`;
-      },
-      toProfileStats() {
-        this.$emit('isProfileStats');
-      }
+          } else if (index < 7) {
+            for (let i = 3; i < 6; i++) {
+              this.listBelowPoduim.push(data[i]);
+            }
+          } else {
+            for (let i = index - 2; i < index + 1; i++) {
+              this.listBelowPoduim.push(data[i]);
+            }
+          }
+        });
+    },
+    getUserAvatar(username) {
+      return `/rest/v1/social/users/${username}/avatar`;
+    },
+    toProfileStats() {
+      this.$emit('isProfileStats');
     }
   }
+};
 </script>

@@ -14,23 +14,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import BadgeApp from './components/BadgeApp.vue'
+import BadgeApp from './components/BadgeApp.vue';
 
 $(document).ready(() => {
-    const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language;
-    const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`;
+  const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language;
+  const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`;
 
-    exoi18n.loadLanguageAsync(lang, url).then(i18n => {
-        const vueApp = new Vue({
-            render: (h) => h(BadgeApp),
-            i18n
-        }).$mount('#manage-badges-portlet > .container');
-        Vue.prototype.$vueT = Vue.prototype.$t;
-        Vue.prototype.$t = (key, defaultValue) => {
-            const translation = vueApp.$vueT(key);
-            return translation !== key && translation || defaultValue;
-        }
-    });
+  exoi18n.loadLanguageAsync(lang, url).then(i18n => {
+    const vueApp = new Vue({
+      render: (h) => h(BadgeApp),
+      i18n
+    }).$mount('#manage-badges-portlet > .container');
+    Vue.prototype.$vueT = Vue.prototype.$t;
+    Vue.prototype.$t = (key, defaultValue) => {
+      const translation = vueApp.$vueT(key);
+      return translation !== key && translation || defaultValue;
+    };
+  });
 });
 
 

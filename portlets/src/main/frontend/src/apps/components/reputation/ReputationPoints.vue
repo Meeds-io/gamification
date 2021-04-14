@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -23,51 +24,51 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </section>
 </template>
 <script>
+/* eslint-disable */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import axios from 'axios';
 
-    import Vue from 'vue'
-    import BootstrapVue from 'bootstrap-vue'
-    import axios from 'axios';
+Vue.use(BootstrapVue);
 
-    Vue.use(BootstrapVue);
+const initialData = () => {
+  return {
+    reputation: {
+      score: null,
+      rank: ''
+    },
 
-    const initialData = () => {
-        return {
-            reputation: {
-                score: null,
-                rank: ''
-            },
+  };
+};
 
-        }
-    }
+export default {
+  data: initialData,
+  created() {
+    const url = window.location.pathname;
+    axios.get('/portal/rest/gamification/reputation/status', { params: { 'url': url } })
+      .then(response => {
 
-    export default {
-        data: initialData,
-        created() {
-            const url = window.location.pathname
-            axios.get(`/portal/rest/gamification/reputation/status`, { params: { 'url': url } })
-                .then(response => {
-
-                    this.reputation = response.data;
-                })
-                .catch(e => {
-                    this.errors.push(e)
-                })
-
-
-
-        },
-        //isPointsEnabled: false,
-
-        methods: {
-
-            gotoLink() {
-                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
-
-            },
-        }
+        this.reputation = response.data;
+      })
+      .catch(e => {
+        this.errors.push(e);
+      });
 
 
-    }
+
+  },
+  //isPointsEnabled: false,
+
+  methods: {
+
+    gotoLink() {
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
+
+    },
+  }
+
+
+};
 </script>
 
 <style scoped>

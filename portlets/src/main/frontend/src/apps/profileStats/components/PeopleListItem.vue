@@ -5,7 +5,11 @@
     </v-list-item-avatar>
 
     <v-list-item-content class="py-0">
-      <a :id="cmpId" class="connectionProfileLink" :href="person.profileLink" rel="nofollow">
+      <a
+        :id="cmpId"
+        class="connectionProfileLink"
+        :href="person.profileLink"
+        rel="nofollow">
         <v-list-item-title class="font-weight-bold subtitle-2 request-user-name darken-2" v-html="person.fullname" />
       </a>
     </v-list-item-content>
@@ -13,44 +17,44 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      person: {
-        type: Object,
-        default: () => ({}),
-      },
-      people: {
-        type: Array,
-        default: function() {
-          return [];
-        },
-      },
-      labels: {
-        type: Object,
-        default: null,
+export default {
+  props: {
+    person: {
+      type: Object,
+      default: () => ({}),
+    },
+    people: {
+      type: Array,
+      default: function() {
+        return [];
       },
     },
-    data() {
-      return {
-        cmpId: `react${parseInt(Math.random() * 10000).toString()}`,
+    labels: {
+      type: Object,
+      default: null,
+    },
+  },
+  data() {
+    return {
+      cmpId: `react${parseInt(Math.random() * 10000).toString()}`,
+    };
+  },
+  created() {
+    if (!this.labels) {
+      this.labels = {
+        CancelRequest: this.$t('profile.label.CancelRequest'),
+        Confirm: this.$t('profile.label.Confirm'),
+        Connect: this.$t('profile.label.Connect'),
+        Ignore: this.$t('.profile.Ignore'),
+        RemoveConnection: this.$t('profile.label.RemoveConnection'),
+        StatusTitle: `${this.$t('profile.label.StatusTitle')}...`,
       };
-    },
-    created() {
-      if (!this.labels) {
-        this.labels = {
-          CancelRequest: this.$t('profile.label.CancelRequest'),
-          Confirm: this.$t('profile.label.Confirm'),
-          Connect: this.$t('profile.label.Connect'),
-          Ignore: this.$t('.profile.Ignore'),
-          RemoveConnection: this.$t('profile.label.RemoveConnection'),
-          StatusTitle: `${this.$t('profile.label.StatusTitle')}...`,
-        };
-      }
-    },
-    mounted() {
-      this.initTiptip();
-    },
-    methods: {
+    }
+  },
+  mounted() {
+    this.initTiptip();
+  },
+  methods: {
     initTiptip() {
       this.$nextTick(() => {
         $(`#${this.cmpId}`).userPopup({
@@ -65,5 +69,5 @@
       });
     },      
   },
-  }
+};
 </script>

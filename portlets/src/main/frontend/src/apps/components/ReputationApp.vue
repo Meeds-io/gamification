@@ -22,29 +22,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 
-    import ReputationBadges from './reputation/ReputationBadges'
-    import ReputationPoints from './reputation/ReputationPoints'
+import ReputationBadges from './reputation/ReputationBadges';
+import ReputationPoints from './reputation/ReputationPoints';
 
-    export default {
-        components: {
-            ReputationBadges,
-            ReputationPoints
+export default {
+  components: {
+    ReputationBadges,
+    ReputationPoints
 
-        },
-       data: () => ({
-            currentTab: 'MyPoints'
-        }),
-        methods:{
-            handleClick(newTab) {
-                this.currentTab = newTab;
-            },
-            maximize() {
-                window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
-
-            }
-        }
+  },
+  data: () => ({
+    currentTab: 'MyPoints'
+  }),
+  methods: {
+    handleClick(newTab) {
+      this.currentTab = newTab;
+    },
+    maximize() {
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/achievements/${eXo.env.portal.profileOwner}`;
 
     }
+  }
+
+};
 </script>
 
 

@@ -14,9 +14,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import Vue from 'vue'
-import ReputationApp from './components/ReputationApp.vue'
+import Vue from 'vue';
+import ReputationApp from './components/ReputationApp.vue';
 
 new Vue({
-    render: h => h(ReputationApp)
+  render: h => h(ReputationApp)
 }).$mount('#reputation-portlet > .container');

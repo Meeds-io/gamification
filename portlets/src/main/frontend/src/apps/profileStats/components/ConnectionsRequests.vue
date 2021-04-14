@@ -40,7 +40,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             dark
             height="20"
             width="20"
-            class="mb-1 header-badge-color" :href="receivedInvitationsUrl">
+            class="mb-1 header-badge-color"
+            :href="receivedInvitationsUrl">
             <span class="white--text caption">{{ connectionsRequestsSize }}</span>
           </v-btn>
         </v-flex>
@@ -92,76 +93,76 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-layout>
 </template>
 <script>
-  import {getConnectionsRequests, getCommonConnections, replyInvitationToConnect} from '../profilStatsAPI'
-  export default {
-    data() {
-      return {
-        connectionsRequests: [],
-        connectionsRequestsSize: '',
-        items: [],
-        receivedInvitationsUrl : `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
-      }
-    },
-    created(){
-      this.getConnectionsRequests();
-    },
+import {getConnectionsRequests, getCommonConnections, replyInvitationToConnect} from '../profilStatsAPI';
+export default {
+  data() {
+    return {
+      connectionsRequests: [],
+      connectionsRequestsSize: '',
+      items: [],
+      receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
+    };
+  },
+  created(){
+    this.getConnectionsRequests();
+  },
 
-    methods: {
-      getConnectionsRequests() {
-        this.connectionsRequests = [];
-        getConnectionsRequests().then(
-          (data) => {
-            this.connectionsRequestsSize = data.size;
-            this.$emit('shouldShowRequests', this.connectionsRequestsSize);
-            if(this.connectionsRequestsSize > 0) {
-              for (let i = 0; i < data.relationships.length; i++) {
-                const connection = {};
-                connection.id = data.relationships[i].id;
-                fetch(`${data.relationships[i].sender}`, {
-                  method: 'GET',
-                  credentials: 'include',
-                }).then((resp) => {
-                  if(resp && resp.ok) {
-                    return resp.json();
-                  } 
-                  else {
-                    throw new Error ('Error when getting connection request sender');
-                  }
-                }).then((data) => {
-                  connection.senderAvatar = data.avatar || data.avatarUrl || `/rest/v1/social/users/${data.username}/avatar`;
-                  connection.senderFullName = data.fullname;
-                  getCommonConnections(data.id).then((data) => {
-                    connection.commonConnections = data.size;
-                    this.connectionsRequests.splice(i, 0, connection);
-                  });
-                })
-              }
+  methods: {
+    getConnectionsRequests() {
+      this.connectionsRequests = [];
+      getConnectionsRequests().then(
+        (data) => {
+          this.connectionsRequestsSize = data.size;
+          this.$emit('shouldShowRequests', this.connectionsRequestsSize);
+          if (this.connectionsRequestsSize > 0) {
+            for (let i = 0; i < data.relationships.length; i++) {
+              const connection = {};
+              connection.id = data.relationships[i].id;
+              fetch(`${data.relationships[i].sender}`, {
+                method: 'GET',
+                credentials: 'include',
+              }).then((resp) => {
+                if (resp && resp.ok) {
+                  return resp.json();
+                } 
+                else {
+                  throw new Error ('Error when getting connection request sender');
+                }
+              }).then((data) => {
+                connection.senderAvatar = data.avatar || data.avatarUrl || `/rest/v1/social/users/${data.username}/avatar`;
+                connection.senderFullName = data.fullname;
+                getCommonConnections(data.id).then((data) => {
+                  connection.commonConnections = data.size;
+                  this.connectionsRequests.splice(i, 0, connection);
+                });
+              });
             }
           }
-        )
-      },
-      sort(array) {
-        return array.slice().sort(function(a, b) {
-          return a.senderFullName.localeCompare(b.senderFullName);
-        });
-      },
-      replyInvitationToConnect(relationId, reply) {
-        replyInvitationToConnect(relationId, reply).then(
-          (data) => {
-            if (reply === 'confirmed') {
-              const confirmedRequest = this.connectionsRequests.filter(request => request.id === relationId)[0];
-              const connection = {
-                id: confirmedRequest.id,
-                fullname:confirmedRequest.senderFullName,
-                avatar:confirmedRequest.senderAvatar,
+        }
+      );
+    },
+    sort(array) {
+      return array.slice().sort(function(a, b) {
+        return a.senderFullName.localeCompare(b.senderFullName);
+      });
+    },
+    replyInvitationToConnect(relationId, reply) {
+      replyInvitationToConnect(relationId, reply)
+        .then(() => {
+          if (reply === 'confirmed') {
+            const confirmedRequest = this.connectionsRequests.filter(request => request.id === relationId)[0];
+            const connection = {
+              id: confirmedRequest.id,
+              fullname: confirmedRequest.senderFullName,
+              avatar: confirmedRequest.senderAvatar,
                 
-              };
-              this.$emit('invitationReplied', connection);
-            } 
-            this.getConnectionsRequests();
-          }
+            };
+            this.$emit('invitationReplied', connection);
+          } 
+          this.getConnectionsRequests();
+        }
         );
-      },
-    }
+    },
   }
+};
 </script>

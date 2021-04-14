@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <!--
 This file is part of the Meeds project (https://meeds.io/).
 Copyright (C) 2020 Meeds Association
@@ -88,7 +89,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <form id="iconInputGroup">
                 <label for="iconInput" class="pt-0"> {{ this.$t('exoplatform.gamification.badge.icon','Icon') }}: </label>
                 <button type="button" onclick="document.getElementById('iconInput').click()"> {{ this.$t('exoplatform.gamification.badge.icon.label','Choose file') }} </button>  {{ this.imageName }}
-                <input type='file'
+                <input
+                  type="file"
                   id="iconInput"
                   style="display:none"
                   name="badge.icon"
@@ -149,142 +151,143 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-import Vue from 'vue'
-import axios from 'axios'
-import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+/* eslint-disable */
+import Vue from 'vue';
+import axios from 'axios';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 export default {
-    props: ['badge', 'domains', 'errorType'],
-    data: function () {
-        return {
-            formErrors: {},
-            selectedFile: undefined,
-            selectedFileName: '',
-            dismissSecs: 5,
-            isShown: false,
-            imageName: '',
-            imageFile: '',
-            imageUrl: '',
-            uploadId: '',
-            date: new Date(),
-            config: {
-                format: 'YYYY-MM-DD',
-                useCurrent: false,
-            },
-            dynamicRules: []
-        }
-    },
-    computed: {
-         isDisabled: function(){
-                return !(this.isNotEmpty(this.badge.neededScore)&&this.isNotEmpty(this.badge.title)&&this.isNotEmpty(this.uploadId)&&this.badge.domainDTO!=null)
-                }
-        },
-    watch: {
-        'badge.id'() {
-            this.formErrors = {};
-            this.selectedFile = undefined;
-            this.selectedFileName = this.badge.imageName
-        },
-    },
-    methods: {
-        isNotEmpty(str){
-              return(str!=null&&str!="")
-            },
-
-        collapseButton() {
-            this.isShown = !this.isShown;
-        },
-        createBadge(badgeDTO) {
-
-            if (this.uploadId != '') {badgeDTO.uploadId = this.uploadId}
-            axios.post(`/portal/rest/gamification/badges/add`, badgeDTO)
-
-                .then(response => {
-                    this.addSuccess = true;
-                    this.updateMessage = 'added';
-                    this.$emit('submit', this.badge)
-                    this.uploadId="";
-                })
-                .catch(e => {
-                    this.addError = true;
-                    this.uploadId="";
-                    if(e.response.status===304){
-                            this.errorType="badgeExists"
-                        }else{
-                            this.errorType="createBadgeError"
-                        }
-                   this.$emit('failAdd', this.badgeDTO, this.errorType)
-                })
-        },
-
-        onCancel() {
-            this.$emit('cancel')
-            this.uploadId="";
-        },
-        onSubmit() {
-             this.createBadge(this.badge);
-
-            if (this.isShown) {
-                this.closeAlert(".alert")
-            }
-        },
-
-        getFormData(files) {
-            const data = new FormData();
-            [...files].forEach((file) => {
-                data.append('data', file, file.name);
-            });
-            return data;
-        },
-
-        onFilePicked(e) {
-            const files = e.target.files
-            if (files[0] !== undefined) {
-                this.imageName = files[0].name
-                if (this.imageName.lastIndexOf('.') <= 0) {
-                    return
-                }
-                const fr = new FileReader()
-                fr.readAsDataURL(files[0])
-                fr.addEventListener('load', () => {
-                    this.imageUrl = fr.result
-                    this.imageFile = files[0]
-                })
-
-                const MAX_RANDOM_NUMBER = 100000;
-                const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
-                console.log(uploadId);
-                const form = this.getFormData(files);
-                axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }).then(response => {
-                    this.uploadId = uploadId
-                })
-            } else {
-                this.imageName = ''
-                this.imageFile = ''
-                this.imageUrl = ''
-            }
-        },
-
-        confirm() {
-            this.$modals.confirm({
-                message: 'Confirm?',
-                onApprove: () => {},
-                onCancel: () => {},
-            });
-        },
-        closeAlert(item) {
-            setTimeout(function () {
-                $(item).fadeOut('fast')
-            }, 4000);
-
-        },
+  props: ['badge', 'domains', 'errorType'],
+  data: function () {
+    return {
+      formErrors: {},
+      selectedFile: undefined,
+      selectedFileName: '',
+      dismissSecs: 5,
+      isShown: false,
+      imageName: '',
+      imageFile: '',
+      imageUrl: '',
+      uploadId: '',
+      date: new Date(),
+      config: {
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+      },
+      dynamicRules: []
+    };
+  },
+  computed: {
+    isDisabled: function(){
+      return !(this.isNotEmpty(this.badge.neededScore)&&this.isNotEmpty(this.badge.title)&&this.isNotEmpty(this.uploadId)&&this.badge.domainDTO!=null);
     }
-}
+  },
+  watch: {
+    'badge.id'() {
+      this.formErrors = {};
+      this.selectedFile = undefined;
+      this.selectedFileName = this.badge.imageName;
+    },
+  },
+  methods: {
+    isNotEmpty(str){
+      return (str!=null&&str!='');
+    },
+
+    collapseButton() {
+      this.isShown = !this.isShown;
+    },
+    createBadge(badgeDTO) {
+
+      if (this.uploadId != '') {badgeDTO.uploadId = this.uploadId;}
+      axios.post('/portal/rest/gamification/badges/add', badgeDTO)
+
+        .then(response => {
+          this.addSuccess = true;
+          this.updateMessage = 'added';
+          this.$emit('submit', this.badge);
+          this.uploadId='';
+        })
+        .catch(e => {
+          this.addError = true;
+          this.uploadId='';
+          if (e.response.status===304){
+            this.errorType='badgeExists';
+          } else {
+            this.errorType='createBadgeError';
+          }
+          this.$emit('failAdd', this.badgeDTO, this.errorType);
+        });
+    },
+
+    onCancel() {
+      this.$emit('cancel');
+      this.uploadId='';
+    },
+    onSubmit() {
+      this.createBadge(this.badge);
+
+      if (this.isShown) {
+        this.closeAlert('.alert');
+      }
+    },
+
+    getFormData(files) {
+      const data = new FormData();
+      [...files].forEach((file) => {
+        data.append('data', file, file.name);
+      });
+      return data;
+    },
+
+    onFilePicked(e) {
+      const files = e.target.files;
+      if (files[0] !== undefined) {
+        this.imageName = files[0].name;
+        if (this.imageName.lastIndexOf('.') <= 0) {
+          return;
+        }
+        const fr = new FileReader();
+        fr.readAsDataURL(files[0]);
+        fr.addEventListener('load', () => {
+          this.imageUrl = fr.result;
+          this.imageFile = files[0];
+        });
+
+        const MAX_RANDOM_NUMBER = 100000;
+        const uploadId = Math.round(Math.random() * MAX_RANDOM_NUMBER);
+        console.log(uploadId);
+        const form = this.getFormData(files);
+        axios.post(`/portal/upload?uploadId=${uploadId}&action=upload`, form, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then(response => {
+          this.uploadId = uploadId;
+        });
+      } else {
+        this.imageName = '';
+        this.imageFile = '';
+        this.imageUrl = '';
+      }
+    },
+
+    confirm() {
+      this.$modals.confirm({
+        message: 'Confirm?',
+        onApprove: () => {},
+        onCancel: () => {},
+      });
+    },
+    closeAlert(item) {
+      setTimeout(function () {
+        $(item).fadeOut('fast');
+      }, 4000);
+
+    },
+  }
+};
 </script>
 
 <style scoped>
