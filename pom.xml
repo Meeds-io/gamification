@@ -66,8 +66,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <profile.liquibase/>
         <!-- Lombok driver-->
         <lombok.version>1.16.22</lombok.version>
-        <!-- Maven Plugin for JS and CSS bundling and Unit Test execution -->
-        <com.github.eirslett.frontend.version>1.6</com.github.eirslett.frontend.version>
     </properties>
 
     <dependencyManagement>
@@ -278,17 +276,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </profile>
 
     </profiles>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.github.eirslett</groupId>
-                    <artifactId>frontend-maven-plugin</artifactId>
-                    <version>${com.github.eirslett.frontend.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 
 </project>
