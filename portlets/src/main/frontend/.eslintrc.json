@@ -5,5 +5,8 @@
   "globals": {
     "jQuery": true,
     "echarts": true
+  },
+  "rules": {
+    "no-restricted-imports": ["warn", "axios"]
   }
 }
