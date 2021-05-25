@@ -40,32 +40,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </modules>
 
     <scm>
-        <connection>scm:git:git://github.com/exoplatform/gamification.git</connection>
-        <developerConnection>scm:git:git@github.com:exoplatform/gamification.git</developerConnection>
+        <connection>scm:git:git://github.com/meeds-io/gamification.git</connection>
+        <developerConnection>scm:git:git@github.com:meeds-io/gamification.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/exo-addons/gamification</url>
+        <url>https://github.com/meeds-io/gamification</url>
     </scm>
 
     <properties>
-        <!-- Defaut compiler settings -->
-        <maven.compiler.optimize>true</maven.compiler.optimize>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <!-- eXo Modules -->
         <!-- **************************************** -->
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
         <org.exoplatform.social.version>6.2.x-SNAPSHOT</org.exoplatform.social.version>
         <org.exoplatform.platform-ui.version>6.2.x-SNAPSHOT</org.exoplatform.platform-ui.version>
-        <!-- Liquibase stack -->
-        <org.liquibase.version>3.5.5</org.liquibase.version>
-        <org.liquibase-hibernate4.version>3.6</org.liquibase-hibernate4.version>
-        <org.javassist.version>3.20.0-GA</org.javassist.version>
-        <validation-api.version>1.1.0.Final</validation-api.version>
-        <xml-apis.version>1.4.01</xml-apis.version>
-        <profile.liquibase/>
-        <!-- Lombok driver-->
-        <lombok.version>1.16.22</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -89,192 +75,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
             <!-- Gamification Calls extension -->
             <dependency>
-                <groupId>org.exoplatform.addons.gamification</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>gamification-services</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
             </dependency>
             <dependency>
-                <groupId>org.exoplatform.addons.gamification</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>gamification-portlets</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>org.exoplatform.addons.gamification</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>gamification-extension</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>gamification-packaging</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <profiles>
-        <profile>
-            <id>liquibase</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-maven-plugin</artifactId>
-                        <version>${org.liquibase.version}</version>
-                        <configuration>
-                            <changeLogFile>
-                                services/src/main/resources/db/changelog/gamification.db.changelog-master.xml
-                            </changeLogFile>
-                            <diffChangeLogFile>
-                                services/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml
-                            </diffChangeLogFile>
-                            <outputChangeLogFile>
-                                services/src/main/resources/db/changelog/gamification.db.changelog.xml
-                            </outputChangeLogFile>
-                            <driver>com.mysql.jdbc.Driver</driver>
-                            <url>jdbc:mysql://${db.host}:${db.port}/${db.schema}</url>
-                            <defaultSchemaName>tribe</defaultSchemaName>
-                            <username>${db.username}</username>
-                            <password>${db.password}</password>
-                            <referenceUrl>
-                                hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
-                            </referenceUrl>
-                            <verbose>true</verbose>
-                            <logging>debug</logging>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.javassist</groupId>
-                                <artifactId>javassist</artifactId>
-                                <version>${org.javassist.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.liquibase</groupId>
-                                <artifactId>liquibase-core</artifactId>
-                                <version>${org.liquibase.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.liquibase.ext</groupId>
-                                <artifactId>liquibase-hibernate4</artifactId>
-                                <version>${org.liquibase-hibernate4.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>javax.validation</groupId>
-                                <artifactId>validation-api</artifactId>
-                                <version>${validation-api.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                                <!-- Replace with the version of the MySQL driver you want to use -->
-                                <version>${mysql.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.exoplatform.commons</groupId>
-                                <artifactId>commons-component-common</artifactId>
-                                <version>${org.exoplatform.social.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>xml-apis</groupId>
-                                <artifactId>xml-apis</artifactId>
-                                <version>${xml-apis.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-            <properties>
-                <profile.liquibase>liquibase</profile.liquibase>
-                <db.host>localhost</db.host>
-                <db.port>3306</db.port>
-                <db.schema>tribe</db.schema>
-                <db.username>root</db.username>
-                <db.password>exoplatform</db.password>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>liquibase-from-db</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-maven-plugin</artifactId>
-                        <version>${org.liquibase.version}</version>
-                        <configuration>
-                            <changeLogFile>
-                                services/src/main/resources/db/changelog/gamification.db.changelog-master.xml
-                            </changeLogFile>
-                            <diffChangeLogFile>
-                                services/src/main/resources/db/changelog/gamification.db.changelog-${maven.build.timestamp}.xml
-                            </diffChangeLogFile>
-                            <outputChangeLogFile>
-                                services/src/main/resources/db/changelog/gamification.db.changelog.xml
-                            </outputChangeLogFile>
-                            <driver>com.mysql.jdbc.Driver</driver>
-                            <url>jdbc:mysql://${db.host}:${db.port}/${db.schema}</url>
-                            <defaultSchemaName>tribe</defaultSchemaName>
-                            <username>${db.username}</username>
-                            <password>${db.password}</password>
-                            <referenceUrl>
-                                hibernate:ejb3:exo-pu?hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
-                            </referenceUrl>
-                            <verbose>true</verbose>
-                            <logging>debug</logging>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.javassist</groupId>
-                                <artifactId>javassist</artifactId>
-                                <version>${org.javassist.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.liquibase</groupId>
-                                <artifactId>liquibase-core</artifactId>
-                                <version>${org.liquibase.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.liquibase.ext</groupId>
-                                <artifactId>liquibase-hibernate4</artifactId>
-                                <version>${org.liquibase-hibernate4.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>javax.validation</groupId>
-                                <artifactId>validation-api</artifactId>
-                                <version>${validation-api.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                                <!-- Replace with the version of the MySQL driver you want to use -->
-                                <version>${mysql.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.exoplatform.commons</groupId>
-                                <artifactId>commons-component-common</artifactId>
-                                <version>${org.exoplatform.social.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.exoplatform.gatein.portal</groupId>
-                                <artifactId>exo.portal.component.web.security</artifactId>
-                                <version>${org.exoplatform.social.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>xml-apis</groupId>
-                                <artifactId>xml-apis</artifactId>
-                                <version>${xml-apis.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-            <properties>
-                <profile.liquibase>liquibase</profile.liquibase>
-                <db.host>localhost</db.host>
-                <db.port>3306</db.port>
-                <db.schema>tribe</db.schema>
-                <db.username>root</db.username>
-                <db.password>exoplatform</db.password>
-            </properties>
-        </profile>
-
-    </profiles>
-
 </project>

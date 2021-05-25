@@ -247,10 +247,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                             <java.naming.factory.initial>org.exoplatform.services.naming.SimpleContextFactory</java.naming.factory.initial>
                             <org.apache.commons.logging.Log>org.apache.commons.logging.impl.SimpleLog</org.apache.commons.logging.Log>
                             <org.apache.commons.logging.simplelog.defaultlog>info</org.apache.commons.logging.simplelog.defaultlog>
-                            <org.apache.commons.logging.simplelog.log.org.exoplatform>debug</org.apache.commons.logging.simplelog.log.org.exoplatform>
-                            <org.apache.commons.logging.simplelog.log.net.hibernate>debug</org.apache.commons.logging.simplelog.log.net.hibernate>
-                            <org.apache.commons.logging.simplelog.log.exo.kernel.container.RootContainer>debug</org.apache.commons.logging.simplelog.log.exo.kernel.container.RootContainer>
-
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
