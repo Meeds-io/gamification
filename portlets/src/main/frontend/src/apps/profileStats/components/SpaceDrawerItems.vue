@@ -18,9 +18,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-row user-item>
     <template>
       <v-list-item
-        :id="id"
+        :class="spaceItemClass"
         :key="space.id"
-        href="url"
+        :href="url"
         class="py-0 px-2">
         <v-list-item-avatar
           class="my-1 me-2"
@@ -58,7 +58,7 @@ export default {
   },
   data() {
     return {
-      id: `spaceItem${parseInt(Math.random() * randomMax)
+      spaceItemClass: `spaceItem${parseInt(Math.random() * randomMax)
         .toString()
         .toString()}`,
     };
@@ -69,7 +69,7 @@ export default {
         return '#';
       }
       const uri = this.space.groupId.replace(/\//g, ':');
-      return `${eXo.env.portal.context}/g/${uri}/`;
+      return `${eXo.env.portal.context}/g/${uri}/${this.space.prettyName}`;
     },
     avatarUrl() {
       return this.space && this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.avatarUrl}/avatar`;
@@ -97,7 +97,7 @@ export default {
   methods: {
     initTiptip() {
       this.$nextTick(() => {
-        $(`#${this.id}`).spacePopup({
+        $(`.${this.spaceItemClass}`).spacePopup({
           userName: eXo.env.portal.userName,
           spaceID: this.space.id,
           restURL: '/portal/rest/v1/social/spaces/{0}',
