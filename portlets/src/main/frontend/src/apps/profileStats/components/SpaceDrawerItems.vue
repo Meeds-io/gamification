@@ -92,6 +92,12 @@ export default {
     if (this.space.id && this.space.groupId) {
       // TODO disable tiptip because of high CPU usage using its code
       this.initTiptip();
+      document.addEventListener('space_membership_updated', (event) => {
+        this.$emit('removeLeavedSpace', event.detail);
+      });
+      document.addEventListener('exo-chat-room-open-requested', () => {
+        this.$emit('closeDrawer');
+      });
     }
   },
   methods: {
