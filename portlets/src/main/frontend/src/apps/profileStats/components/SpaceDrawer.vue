@@ -114,7 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :key="space.id"
                 :space="space"
                 :skeleton="firstLoadingSpaces"
-                @removeLeavedSpace="removeLeavedSpace"
+                @removeLeavedSpace="removeLeftSpace"
                 @closeDrawer="closeDrawer" />
             </template>
           </v-col>
@@ -395,7 +395,7 @@ export default {
         this.spacesSuggestionsList = data.items;
       });
     },
-    removeLeavedSpace(spaceName) {
+    removeLeftSpace(spaceName) {
       const filtered = this.spaces.filter(space => space.prettyName !== spaceName);
       this.spaces =  [];
       this.spaces.push(...filtered);
