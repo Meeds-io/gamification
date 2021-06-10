@@ -113,7 +113,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 v-for="space in filteredSpaces"
                 :key="space.id"
                 :space="space"
-                :skeleton="firstLoadingSpaces" />
+                :skeleton="firstLoadingSpaces"
+                @removeLeavedSpace="removeLeftSpace"
+                @closeDrawer="closeDrawer" />
             </template>
           </v-col>
         </v-row>
@@ -327,7 +329,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     },
     created() {
       this.limitToFetch = this.limit;
-      if (this.isCurrentUserProfile){
+      if (this.isCurrentUserProfile) {
          this.getMySpaces();}
       else {
        this.CommonsSpaces();
@@ -393,6 +395,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           this.spacesSuggestionsList = data.items;
         });
       },
+      removeLeftSpace(spaceName) {
+      const filtered = this.spaces.filter(space => space.prettyName !== spaceName);
+      this.spaces =  [];
+      this.spaces.push(...filtered);
+    },
     }
   }
 
