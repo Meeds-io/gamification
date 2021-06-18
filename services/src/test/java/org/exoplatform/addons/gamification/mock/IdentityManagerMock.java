@@ -31,7 +31,6 @@ import org.exoplatform.social.core.profile.ProfileListener;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.storage.api.IdentityStorage;
-import org.exoplatform.webui.exception.MessageException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,7 +152,7 @@ public class IdentityManagerMock implements IdentityManager {
   }
 
   @Override
-  public void updateProfile(Profile specificProfile) throws MessageException {
+  public void updateProfile(Profile specificProfile) {
     // empty
   }
 
@@ -259,7 +258,7 @@ public class IdentityManagerMock implements IdentityManager {
   }
 
   @Override
-  public void updateAvatar(Profile p) throws MessageException {
+  public void updateAvatar(Profile p) {
     throw new UnsupportedOperationException();
   }
 
