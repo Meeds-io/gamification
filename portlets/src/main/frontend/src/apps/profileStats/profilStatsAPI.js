@@ -28,7 +28,7 @@ export function getUsersByGamificationRank(period) {
   });
 }
 export function getReputationStatus() {
-  return fetch( `/rest/gamification/reputation/status?username=${eXo.env.portal.profileOwner}`, {
+  return fetch( `/portal/rest/gamification/reputation/status?username=${eXo.env.portal.profileOwner}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
