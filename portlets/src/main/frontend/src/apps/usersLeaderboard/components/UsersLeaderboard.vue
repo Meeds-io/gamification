@@ -112,6 +112,7 @@ export default {
     limit: 10,
     currentRank: null,
     selectedDomain: null,
+    loading: null,
     selectedPeriod: 'WEEK',
   }),
   computed: {
@@ -123,14 +124,20 @@ export default {
     },
   },
   watch: {
-    selectedPeriod() {
-      this.refreshBoard();
+    selectedPeriod(newVal, oldVal) {
+      if (oldVal) {
+        this.refreshBoard();
+      }
     },
-    selectedDomain() {
-      this.refreshBoard();
+    selectedDomain(newVal, oldVal) {
+      if (oldVal) {
+        this.refreshBoard();
+      }
     },
-    limit() {
-      this.refreshBoard();
+    limit(newVal, oldVal) {
+      if (oldVal) {
+        this.refreshBoard();
+      }
     },
   },
   created() {
