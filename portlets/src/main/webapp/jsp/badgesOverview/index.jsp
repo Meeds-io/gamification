@@ -29,8 +29,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="v-application white v-application--is-ltr theme--light profileAboutMeOther"
       id="badgesOverview">
       <v-cacheable-dom-app cache-id="badgesOverview_<%=profileOwnerId%>"></v-cacheable-dom-app>
-      <script>
-        require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init());
+      <script type="text/javascript" defer="defer">
+        eXo.env.portal.addOnLoadCallback(() => {
+          require(['PORTLET/gamification-portlets/BadgesOverview'], app => app.init());
+        });
       </script>
     </div>
   </div>
