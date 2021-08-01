@@ -26,8 +26,6 @@ if (extensionRegistry) {
   }
 }
 
-document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-
 Vue.use(Vuetify);
 
 const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
@@ -50,9 +48,6 @@ export function init() {
     .then(i18n => {
       // init Vue app when locale ressources are ready
       new Vue({
-        mounted() {
-          document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
-        },
         template: `<badges-overview id='${appId}' v-cacheable="{cacheId: '${cacheId}'}" />`,
         i18n,
         vuetify,
