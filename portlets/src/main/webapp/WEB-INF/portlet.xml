@@ -144,11 +144,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <value>/jsp/profileStats/index.jsp</value>
         </init-param>
         <init-param>
-          <name>preload.resource.bundles</name>
+          <name>prefetch.resources</name>
+          <value>true</value>
+        </init-param>
+        <init-param>
+          <name>prefetch.resource.bundles</name>
           <value>locale.addon.Gamification</value>
         </init-param>
         <init-param>
-          <name>preload.resource.rest</name>
+          <name>prefetch.resource.rest</name>
           <value><![CDATA[/portal/rest/gamification/api/v1/points?userId={username}&period=WEEK|/portal/rest/gamification/reputation/status?username={username}|/portal/rest/v1/social/users/{username}?expand=spacesCount,connectionsCount|/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=3|/portal/rest/v1/social/spacesMemberships?status=invited&returnSize=true&limit=3|/portal/rest/v1/social/users/{username}/spaces?offset=0&limit=10&returnSize=true|/portal/rest/v1/social/users/{username}/connections?q=&offset=0&limit=20&expand=&returnSize=true]]></value>
         </init-param>
         <init-param>
@@ -172,11 +176,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <value>/jsp/popularSpaces/index.jsp</value>
         </init-param>
         <init-param>
-          <name>preload.resource.bundles</name>
+          <name>prefetch.resources</name>
+          <value>true</value>
+        </init-param>
+        <init-param>
+          <name>prefetch.resource.bundles</name>
           <value>locale.addon.Gamification</value>
         </init-param>
         <init-param>
-          <name>preload.resource.rest</name>
+          <name>prefetch.resource.rest</name>
           <value><![CDATA[/portal/rest/gamification/leaderboard/rank/all?earnerType=space&limit=10&period=WEEK]]></value>
         </init-param>
         <init-param>
@@ -210,11 +218,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <value>/html/usersLeaderboard.html</value>
       </init-param>
       <init-param>
-        <name>preload.resource.bundles</name>
+        <name>prefetch.resources</name>
+        <value>true</value>
+      </init-param>
+      <init-param>
+        <name>prefetch.resource.bundles</name>
         <value>locale.addon.Gamification</value>
       </init-param>
       <init-param>
-        <name>preload.resource.rest</name>
+        <name>prefetch.resource.rest</name>
         <value><![CDATA[/portal/rest/gamification/api/v1/domains|/portal/rest/gamification/leaderboard/filter?domain=All&period=WEEK&capacity=10]]></value>
       </init-param>
       <init-param>
@@ -238,11 +250,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <value>/jsp/badgesOverview/index.jsp</value>
       </init-param>
       <init-param>
-        <name>preload.resource.bundles</name>
+        <name>prefetch.resources</name>
+        <value>true</value>
+      </init-param>
+      <init-param>
+        <name>prefetch.resource.bundles</name>
         <value>locale.addon.Gamification</value>
       </init-param>
       <init-param>
-        <name>preload.resource.rest</name>
+        <name>prefetch.resource.rest</name>
         <value><![CDATA[/portal/rest/gamification/reputation/badges/{userId}]]></value>
       </init-param>
       <init-param>

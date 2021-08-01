@@ -33,8 +33,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="v-application v-application--is-ltr theme--light"
     id="popularSpacesApplication">
     <v-cacheable-dom-app cache-id="popularSpacesApplication"></v-cacheable-dom-app>
-    <script type="text/javascript">
-      require(['PORTLET/gamification-portlets/PopularSpaces'], app => app.init('<%=period%>', <%=limit%>));
+    <script type="text/javascript" defer="defer">
+      eXo.env.portal.addOnLoadCallback(() => {
+        require(['PORTLET/gamification-portlets/PopularSpaces'], app => app.init('<%=period%>', <%=limit%>));
+      });
     </script>
   </div>
 </div>
