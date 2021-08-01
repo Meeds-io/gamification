@@ -30,9 +30,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="v-application ml-md-2 v-application--is-ltr theme--light"
       id="profile-stats-portlet" flat="">
       <v-cacheable-dom-app cache-id="profile-stats-portlet_<%=profileOwnerId%>"></v-cacheable-dom-app>
-      <script>
-        require([ 'SHARED/profileStatsBundle' ], function(profileStatsApp) {
-          profileStatsApp.init();
+      <script type="text/javascript" defer="defer">
+        eXo.env.portal.addOnLoadCallback(() => {
+          require([ 'SHARED/profileStatsBundle' ], function(profileStatsApp) {
+            profileStatsApp.init();
+          });
         });
       </script>
     </div>
