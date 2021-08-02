@@ -140,8 +140,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <portlet-name>ProfileStats</portlet-name>
         <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
         <init-param>
-            <name>portlet-view-dispatched-file-path</name>
-            <value>/jsp/profileStats/index.jsp</value>
+          <name>portlet-view-dispatched-file-path</name>
+          <value>/jsp/profileStats/index.jsp</value>
+        </init-param>
+        <init-param>
+          <name>use-js-manager</name>
+          <value>true</value>
+        </init-param>
+        <init-param>
+          <name>js-manager-jsModule</name>
+          <value>SHARED/profileStatsBundle</value>
         </init-param>
         <init-param>
           <name>prefetch.resources</name>
@@ -216,6 +224,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
         <value>/html/usersLeaderboard.html</value>
+      </init-param>
+      <init-param>
+        <name>use-js-manager</name>
+        <value>true</value>
+      </init-param>
+      <init-param>
+        <name>js-manager-jsModule</name>
+        <value>PORTLET/gamification-portlets/UsersLeaderboard</value>
       </init-param>
       <init-param>
         <name>prefetch.resources</name>
