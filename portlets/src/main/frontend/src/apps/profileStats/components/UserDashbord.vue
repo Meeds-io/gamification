@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item>
             <a :href="profileUrl">
               <v-list-item-avatar eager>
-                <v-img
+                <img
                   :src="!firstLoadingName && avatar || ''"
                   :class="firstLoadingName && 'skeleton-background'"
                   eager />
