@@ -135,7 +135,7 @@ export default {
           this.option.series[0].data = JSON.parse(JSON.stringify(data).split('"label":').join('"name":'));
           for (let i=0;i<data.length;i++) {
             const optionSeriesName = this.option.series[0].data[i].name;
-            this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase() + optionSeriesName.slice(1);
+            this.option.series[0].data[i].name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
           }
           this.option.legend.data = this.option.series[0].data.name;
           this.initChart(this.option);
