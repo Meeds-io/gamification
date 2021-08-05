@@ -32,11 +32,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           flat>
           <v-list-item>
             <a :href="profileUrl">
-              <v-list-item-avatar eager>
+              <v-list-item-avatar>
                 <img
-                  :src="!firstLoadingName && avatar || ''"
-                  :class="firstLoadingName && 'skeleton-background'"
-                  eager />
+                  :src="avatar"
+                  :style="{minHeight: 'fit-content', minWidth: 'fit-content', objectFit: 'cover'}"
+                  class="ma-auto">
               </v-list-item-avatar>
             </a>
             <v-list-item-content>
