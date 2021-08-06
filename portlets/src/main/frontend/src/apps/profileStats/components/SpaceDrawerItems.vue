@@ -25,13 +25,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-list-item-avatar
           class="my-1 me-2"
           size="30">
-          <v-img :src="!skeleton && avatarUrl || ''" :class="skeleton && 'skeleton-background'" />
+          <v-img :src="avatarUrl" />
         </v-list-item-avatar>
 
         <v-list-item-content class="py-0" :href="url">
           <v-list-item-title>
             <a
-              :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-title skeleton-border-radius'"
               class="font-weight-bold subtitle-2 request-user-name darken-2"
               :href="url">
               {{ space.displayName }}
@@ -50,10 +49,6 @@ export default {
     space: {
       type: Object,
       default: () => null,
-    },
-    skeleton: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
