@@ -75,9 +75,7 @@ export default {
           });
           return this.$nextTick();
         })
-        .finally(() => {
-          this.$root.$emit('application-loaded');
-        });
+        .finally(() => this.$root.$applicationLoaded());
     },
     getLabel(base, key) {
       const label = `${base}.${key}`;

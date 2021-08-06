@@ -86,9 +86,7 @@ export default {
         }).then((spacesByPoints) => {
           this.spaces = spacesByPoints.sort((s1, s2) => s1.rank - s2.rank);
           return this.$nextTick();
-        }).finally(() => {
-          this.$root.$emit('application-loaded');
-        });
+        }).finally(() => this.$root.$applicationLoaded());
     },
   },
 };
