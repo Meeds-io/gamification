@@ -113,7 +113,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 v-for="space in filteredSpaces"
                 :key="space.id"
                 :space="space"
-                :skeleton="firstLoadingSpaces"
                 @removeLeavedSpace="removeLeftSpace"
                 @closeDrawer="closeDrawer" />
             </template>
@@ -162,8 +161,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   v-for="spaceSuggestion in suggestionSpacesToDisplay"
                   :key="spaceSuggestion.spaceId"
                   :space-suggestion="spaceSuggestion"
-                  :spaces-suggestions-list="spacesSuggestionsList"
-                  :skeleton="firstLoadingSpaces" />
+                  :spaces-suggestions-list="spacesSuggestionsList" />
               </v-list>
               <v-row v-if="spacesSuggestionsList.length > 0 && !this.showSearch" class="px-4">
                 <v-col>
@@ -189,8 +187,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <space-drawer-items
                 v-for="commonSpace in filteredCommonsSpaces"
                 :key="commonSpace.id"
-                :space="commonSpace"
-                :skeleton="firstLoadingSpaces" />
+                :space="commonSpace" />
             </template>
           </v-col>
         </v-row>

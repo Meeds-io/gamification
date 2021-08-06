@@ -35,10 +35,10 @@ export function init() {
       appElement.id = appId;
 
       // init Vue app when locale ressources are ready
-      new Vue({
+      Vue.createApp({
         template: `<users-leaderboard id='${appId}' v-cacheable />`,
         i18n,
         vuetify,
-      }).$mount(appElement);
+      }, appElement, 'Users Leaderboard');
     });
 }

@@ -10,23 +10,20 @@
           <v-list-item class="suggestions-list-item pa-0">
             <v-list-item-avatar
               :size="avatarSize">
-              <v-img
-                :src="!skeleton && avatarUrl || ''"
-                :class="skeleton && 'skeleton-background'" />
+              <v-img :src="avatarUrl" />
             </v-list-item-avatar>
             <v-list-item-content class="py-0">
               <v-list-item-title
                 class="body-2 font-weight-bold suggestions-list-item-title">
                 <a
                   :href="url"
-                  :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-title skeleton-border-radius'"
                   class="font-weight-bold subtitle-2 request-user-name darken-2">
                   {{ spaceSuggestion.displayName }}
                 </a>
               </v-list-item-title>
               <v-list-item-subtitle
                 class="caption text-sub-title suggestions-list-item-subtitle">
-                <span :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-subtitle skeleton-border-radius'">
+                <span>
                   {{ spaceSuggestion.members }} {{ $t('spacemember.Label') }}
                 </span>
               </v-list-item-subtitle>
@@ -34,7 +31,6 @@
             <v-list-item-action class="suggestions-list-item-actions">
               <v-btn-toggle class="transparent">
                 <a
-                  :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
                   text
                   icon
                   small
@@ -44,7 +40,6 @@
                   <v-icon color="primary-color" size="20">mdi-plus-circle</v-icon>
                 </a>
                 <a
-                  :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
                   text
                   small
                   min-width="auto"
@@ -72,10 +67,6 @@ export default {
     avatarSize: {
       type: Number,
       default: () => 30,
-    },
-    skeleton: {
-      type: Boolean,
-      default: false,
     },
     spacesSuggestionsList: {
       type: Array,

@@ -1,29 +1,24 @@
 <template>
   <v-list-item class="suggestions-list-item pa-0">
-    <v-list-item-avatar
-      :size="avatarSize">
-      <v-img
-        :src="!skeleton && avatarUrl || ''"
-        :class="skeleton && 'skeleton-background'" />
+    <v-list-item-avatar :size="avatarSize">
+      <v-img :src="avatarUrl" />
     </v-list-item-avatar>
     <v-list-item-content class="pb-3">
       <v-list-item-title class="body-2 font-weight-bold text-color suggestions-list-item-title">
         <a
           :href="url"
-          :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-title skeleton-border-radius'"
           class="text-color">
           {{ people.suggestionName }}
         </a>
       </v-list-item-title>
       <v-list-item-subtitle
         class="caption text-sub-title suggestions-list-item-subtitle">
-        <span :class="skeleton && 'skeleton-background skeleton-text skeleton-list-item-subtitle skeleton-border-radius'">{{ people.number }} {{ $t('homepage.profileStatus.commonConnections') }}</span>
+        <span>{{ people.number }} {{ $t('homepage.profileStatus.commonConnections') }}</span>
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action class="suggestions-list-item-actions">
       <v-btn-toggle class="transparent">
         <a
-          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
           text
           icon
           small
@@ -33,7 +28,6 @@
           <i class="uiIconInviteUser"></i>
         </a>
         <a
-          :class="skeleton && 'skeleton-background skeleton-text skeleton-border-radius'"
           text
           small
           min-width="auto"
@@ -55,10 +49,6 @@ export default {
     avatarSize: {
       type: Number,
       default: () => 37,
-    },
-    skeleton: {
-      type: Boolean,
-      default: false,
     },
     peopleSuggestionsList: {
       type: Array,

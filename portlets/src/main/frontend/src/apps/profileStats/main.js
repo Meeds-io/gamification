@@ -37,10 +37,10 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       // init Vue app when locale ressources are ready
-      new Vue({
+      Vue.createApp({
         template: `<profile-stats id="${appId}" v-cacheable="{cacheId: '${cacheId}'}" />`,
         i18n,
         vuetify,
-      }).$mount(appElement);
+      }, appElement, 'Profile Stats');
     });
 }

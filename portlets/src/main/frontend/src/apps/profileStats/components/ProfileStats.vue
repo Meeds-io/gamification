@@ -112,8 +112,7 @@ export default {
             commonConnection.profileLink = this.PROFILE_URI + commonConnection.username;
           });
           return this.$nextTick();
-        })
-        .finally(() => this.$root.$emit('application-loaded'));
+        });
     },
     openConnectionsDrawer() {
       this.connectionsDrawer = true;

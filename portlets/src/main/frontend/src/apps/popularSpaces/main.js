@@ -45,10 +45,10 @@ export function init(period, limit) {
       appElement.id = appId;
   
       // init Vue app when locale ressources are ready
-      new Vue({
+      Vue.createApp({
         template: `<popular-spaces id="${appId}" v-cacheable period="${period}" limit="${limit}" />`,
         i18n,
         vuetify,
-      }).$mount(appElement);
+      }, appElement, 'Popular Spaces');
     });
 }
