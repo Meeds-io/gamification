@@ -41,7 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </a>
             <v-list-item-content>
               <v-list-item-title class="text-uppercase subtitle-1 profile-card-header">
-                <span :class="firstLoadingName && 'skeleton-background skeleton-text skeleton-header skeleton-border-radius'">
+                <span>
                   {{ isCurrentUserProfile ? $t('homepage.profileStatus.header') : '' }} {{ firstName }}
                 </span>
               </v-list-item-title>
@@ -58,9 +58,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             d-flex
             justify-center
             align-center>
-            <v-card
-              flat
-              :class="firstLoadingSpaces && 'skeleton-background skeleton-border-radius'">
+            <v-card flat>
               <a class="white--text">
                 <v-badge :value="isCurrentUserProfile && spacesRequestsSize > 0" class="badge-color">
                   <v-btn
@@ -74,12 +72,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <div
                     class="headline text-color font-weight-bold pa-1"
                     @click="openSpaceDrawer">
-                    <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? spacesSize : commonsSpaceDefaultSize }}</span>
+                    <span>{{ isCurrentUserProfile ? spacesSize : commonsSpaceDefaultSize }}</span>
                   </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
-                <span :class="firstLoadingSpaces && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.spaces') : $t('homepage.profileStatus.Commonspaces') }}</span>
+                <span>{{ isCurrentUserProfile ? $t('homepage.profileStatus.spaces') : $t('homepage.profileStatus.Commonspaces') }}</span>
               </v-card-text>
             </v-card>
           </v-flex>
@@ -88,10 +86,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             xs6
             justify-center
             align-center>
-            <v-card
-              tile
-              flat
-              :class="firstLoadingConnexion && 'skeleton-background skeleton-border-radius'">
+            <v-card tile flat>
               <a class="white--text">
                 <v-badge
                   :value="isCurrentUserProfile && connectionsRequestsSize > 0"
@@ -105,12 +100,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     width="20"
                     @click="openConnectionsDrawer">{{ connectionsRequestsSize }}</v-btn>
                   <div class="headline text-color font-weight-bold pa-1" @click="openConnectionsDrawer">
-                    <span :class="firstLoadingConnexion && 'skeleton-text'">{{ isCurrentUserProfile ? connectionsSize : commonConnectionsSize }}</span>
+                    <span>{{ isCurrentUserProfile ? connectionsSize : commonConnectionsSize }}</span>
                   </div>
                 </v-badge>
               </a>
               <v-card-text class="pa-1 subtitle-1 text-color">
-                <span :class="firstLoadingConnexion && 'skeleton-text'">{{ isCurrentUserProfile ? $t('homepage.profileStatus.connections') : $t('homepage.commonConnections.label') }}</span>
+                <span>{{ isCurrentUserProfile ? $t('homepage.profileStatus.connections') : $t('homepage.commonConnections.label') }}</span>
               </v-card-text>
             </v-card>
           </v-flex>
@@ -126,15 +121,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             d-flex
             justify-center
             align-center>
-            <v-card
-              flat
-              :class="firstLoadingUserPoints && 'skeleton-background skeleton-border-radius'">
+            <v-card flat>
               <a @click="getSpecificCard('user-points-widget')">
                 <v-card-text class="headline text-color font-weight-bold pa-1">
-                  <span :class="firstLoadingUserPoints && 'skeleton-text'">{{ userPoints }}</span>
+                  <span>{{ userPoints }}</span>
                 </v-card-text>
                 <v-card-text class="pa-1 subtitle-1 text-color">
-                  <span :class="firstLoadingUserPoints && 'skeleton-text'">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
+                  <span>{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
                 </v-card-text>
               </a>
             </v-card>
@@ -144,16 +137,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             xs6
             justify-center
             align-center>
-            <v-card
-              flat
-              :class="firstLoadingRank && 'skeleton-background skeleton-border-radius'"
-              align-center>
+            <v-card flat align-center>
               <a @click="getSpecificCard('gamification-rank')">
                 <v-card-text class="headline text-color font-weight-bold pa-1">
-                  <span :class="firstLoadingRank && 'skeleton-text'">{{ gamificationRank }}</span>
+                  <span>{{ gamificationRank }}</span>
                 </v-card-text>
                 <v-card-text class="pa-1 subtitle-1 text-color">
-                  <span :class="firstLoadingRank && 'skeleton-text'">{{ $t('homepage.profileStatus.weeklyRank') }}</span>
+                  <span>{{ $t('homepage.profileStatus.weeklyRank') }}</span>
                 </v-card-text>
               </a>
             </v-card>
@@ -205,7 +195,7 @@ export default {
   watch: {
     loadingWidgets(newVal, oldVal) {
       if (!newVal && newVal !== oldVal) {
-        this.$nextTick().then(() => this.$root.$emit('application-loaded'));
+        this.$nextTick().then(() => this.$root.$applicationLoaded());
       }
     },
   },
