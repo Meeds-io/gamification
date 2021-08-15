@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     temporary
     max-height="100vh"
     class="spaceDrawer">
-    <v-row class="mx-0 title">
+    <v-row v-if="spaceDrawer" class="mx-0 title">
       <v-list-item class="pe-0">
         <v-list-item-content class="ma-0 pa-0">
           <template v-if="!showSearch">
@@ -76,6 +76,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-list-item>
     </v-row>
 
+    <v-progress-linear
+      v-if="loading"
+      color="primary"
+      height="2" />
     <v-divider class="my-0" />
 
     <div class="content">
@@ -260,6 +264,7 @@ export default {
       commonsSpaceSize: 0,
       limit: 10,
       limitToFetch: 0,
+      loading: false,
       showSearch: false,
       firstLoadingSpaces: true,
       search: null,
@@ -313,6 +318,9 @@ export default {
   watch: {
     spaceDrawer() {
       if (this.spaceDrawer) {
+        this.loading = true;
+        Promise.resolve(this.init())
+          .then(() => this.loading = false);
         $('body').addClass('hide-scroll');
         this.$nextTick().then(() => {
           $('#profile-stats-portlet .v-overlay').click(() => {
@@ -324,32 +332,34 @@ export default {
       }
     },
   },
-  created() {
-    this.limitToFetch = this.limit;
-    if (this.isCurrentUserProfile){
-      this.getMySpaces();}
-    else {
-      this.getCommonsSpaces();
-      if (this.displaySpacesSuggestions) {
-        this. initSpaceSuggestionsList();
-      }
-    }
-  },
   methods: {
+    init() {
+      this.limitToFetch = this.limit;
+      if (this.isCurrentUserProfile){
+        return this.getMySpaces();
+      } else {
+        return this.getCommonsSpaces()
+          .then(() => {
+            if (this.displaySpacesSuggestions) {
+              this. initSpaceSuggestionsList();
+            }
+          });
+      }
+    },
     closeDrawer() {
       this.$emit('closeDrawer');
       this.showSearch = false;
     },
     getMySpaces() {
       this.firstLoadingSpaces = false;
-      getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
+      return getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
         this.spaces = data.spaces;
         this.spaceSize = data.size;
       });
     },
     getCommonsSpaces() {
       this.firstLoadingSpaces = false;
-      getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+      return getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
         this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
         this.commonsSpaceSize = data.size;
       });
