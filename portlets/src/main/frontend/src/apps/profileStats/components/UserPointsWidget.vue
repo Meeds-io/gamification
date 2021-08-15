@@ -148,8 +148,10 @@ export default {
     initChart(option) {
       $(document).ready(function(){
         const chartContainerId = document.getElementById('echartUserPoints');
-        const chart = echarts.init(chartContainerId);
-        chart.setOption(option, true);
+        window.require(['SHARED/eCharts'], echarts => {
+          const chart = echarts.init(chartContainerId);
+          chart.setOption(option, true);
+        });
       });
     },
     openHistoryDrawer() {

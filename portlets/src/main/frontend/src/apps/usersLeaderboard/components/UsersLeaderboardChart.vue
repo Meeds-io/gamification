@@ -42,6 +42,10 @@ export default {
         return [];
       },
     },
+    open: {
+      type: Boolean,
+      default: false,
+    },
   },
   data () {
     return {
@@ -71,6 +75,9 @@ export default {
     }
   },
   watch: {
+    open() {
+      this.init();
+    },
     chartSettings() {
       window.setTimeout(() => {
         this.init();
@@ -89,6 +96,7 @@ export default {
       }
     });
     this.loadChartData();
+    this.init();
   },
   methods: {
     loadChartData() {
@@ -109,8 +117,10 @@ export default {
       if (!this.chartSettings) {
         return;
       }
-      const chart = echarts.init($(`#${this.id}`)[0]);
-      chart.setOption(this.chartSettings, true);
+      window.require(['SHARED/eCharts'], echarts => {
+        const chart = echarts.init($(`#${this.id}`)[0]);
+        chart.setOption(this.chartSettings, true);
+      });
     }
   }
 };

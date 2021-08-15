@@ -231,9 +231,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <depends>
         <module>extensionRegistry</module>
       </depends>
-      <depends>
-        <module>eCharts</module>
-      </depends>
     </module>
   </portlet>
 
@@ -262,9 +259,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>eCharts</module>
       </depends>
     </module>
   </portlet>
@@ -302,9 +296,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>extensionRegistry</module>
-    </depends>
-    <depends>
-      <module>eCharts</module>
     </depends>
     <depends>
       <module>userPopupPlugin</module>
