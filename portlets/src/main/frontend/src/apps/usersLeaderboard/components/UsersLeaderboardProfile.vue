@@ -57,6 +57,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <users-leaderboard-chart
       ref="chart"
+      :open="menu"
       :username="username"
       :domains="domains" />
   </v-menu>
@@ -75,6 +76,7 @@ export default {
   },
   data: () => ({
     chartData: null,
+    menu: false,
   }),
   computed: {
     id() {
