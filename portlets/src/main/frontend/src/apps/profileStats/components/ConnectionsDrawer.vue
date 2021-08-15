@@ -7,7 +7,7 @@
     temporary
     class="connectionsDrawer"
     max-height="100vh">
-    <v-row class="mx-0 title">
+    <v-row v-if="connectionsDrawer" class="mx-0 title">
       <v-list-item class="pe-0">
         <v-list-item-content  class="ma-0 pa-0">
           <template v-if="!showSearch">
@@ -49,6 +49,10 @@
       </v-list-item>
     </v-row>
 
+    <v-progress-linear
+      v-if="loading"
+      color="primary"
+      height="2" />
     <v-divider class="my-0" />
 
     <div class="content">
@@ -197,6 +201,7 @@ export default {
       search: null,
       PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
       receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
+      loading: false,
       connexionsSize: 0,
       limit: 20,
       peopleSuggestionsList: [],
@@ -236,8 +241,10 @@ export default {
   watch: {
     connectionsDrawer() {
       if (this.connectionsDrawer) {
+        this.loading = true;
+        Promise.resolve(this.init())
+          .then(() => this.loading = false);
         $('body').addClass('hide-scroll');
-
         this.$nextTick().then(() => {
           $('#profile-stats-portlet .v-overlay').click(() => {
             this.closeDrawer();
@@ -248,21 +255,20 @@ export default {
       }
     },
   },
-  created() {
-    if (this.isCurrentUserProfile) {
-      this.getConnections(0);
-    } else {
-      this.getConnections(0, 0);
-      this.initPeopleSuggestionsList();
-    }
-  },
   methods: {
+    init() {
+      if (this.isCurrentUserProfile) {
+        return this.getConnections(0);
+      } else {
+        return this.getConnections(0, 0).then(() => this.initPeopleSuggestionsList());
+      }
+    },
     closeDrawer() {
       this.$emit('closeDrawer');
       this.showSearch = false;
     },
     getConnections(offset, limit) {
-      getUserConnections('', offset, limit >= 0 ? limit : this.limit).then(data => {
+      return getUserConnections('', offset, limit >= 0 ? limit : this.limit).then(data => {
         this.connexionsSize = data.size;
         this.connections.push(...data.users);
         this.connections.forEach(connection => {

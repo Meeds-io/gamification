@@ -137,43 +137,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </portlet>
 
     <portlet>
-        <portlet-name>ProfileStats</portlet-name>
-        <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
-        <init-param>
-          <name>portlet-view-dispatched-file-path</name>
-          <value>/jsp/profileStats/index.jsp</value>
-        </init-param>
-        <init-param>
-          <name>use-js-manager</name>
-          <value>true</value>
-        </init-param>
-        <init-param>
-          <name>js-manager-jsModule</name>
-          <value>SHARED/profileStatsBundle</value>
-        </init-param>
-        <init-param>
-          <name>prefetch.resources</name>
-          <value>true</value>
-        </init-param>
-        <init-param>
-          <name>prefetch.resource.bundles</name>
-          <value>locale.addon.Gamification</value>
-        </init-param>
-        <init-param>
-          <name>prefetch.resource.rest</name>
-          <value><![CDATA[/portal/rest/gamification/api/v1/points?userId={username}&period=WEEK|/portal/rest/gamification/reputation/status?username={username}|/portal/rest/v1/social/users/{username}?expand=spacesCount,connectionsCount|/portal/rest/v1/social/relationships?status=incoming&returnSize=true&limit=3|/portal/rest/v1/social/spacesMemberships?status=invited&returnSize=true&limit=3|/portal/rest/v1/social/users/{username}/spaces?offset=0&limit=10&returnSize=true|/portal/rest/v1/social/users/{username}/connections?q=&offset=0&limit=20&expand=&returnSize=true]]></value>
-        </init-param>
-        <init-param>
-            <description>List of profiles that can be used to enable this portlet</description>
-            <name>exo.profiles</name>
-            <value>gamification,social</value>
-        </init-param>
-        <supports>
-            <mime-type>text/html</mime-type>
-        </supports>
-        <portlet-info>
-            <title>Profile Stats</title>
-        </portlet-info>
+      <portlet-name>ProfileStats</portlet-name>
+      <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+      <init-param>
+        <name>portlet-view-dispatched-file-path</name>
+        <value>/jsp/profileStats/index.jsp</value>
+      </init-param>
+      <init-param>
+        <description>List of profiles that can be used to enable this portlet</description>
+        <name>exo.profiles</name>
+        <value>gamification,social</value>
+      </init-param>
+      <supports>
+        <mime-type>text/html</mime-type>
+      </supports>
+      <portlet-info>
+        <title>Profile Stats</title>
+      </portlet-info>
     </portlet>
 
     <portlet>
@@ -182,18 +162,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <init-param>
             <name>portlet-view-dispatched-file-path</name>
             <value>/jsp/popularSpaces/index.jsp</value>
-        </init-param>
-        <init-param>
-          <name>prefetch.resources</name>
-          <value>true</value>
-        </init-param>
-        <init-param>
-          <name>prefetch.resource.bundles</name>
-          <value>locale.addon.Gamification</value>
-        </init-param>
-        <init-param>
-          <name>prefetch.resource.rest</name>
-          <value><![CDATA[/portal/rest/gamification/leaderboard/rank/all?earnerType=space&limit=10&period=WEEK]]></value>
         </init-param>
         <init-param>
             <description>List of profiles that can be used to enable this portlet</description>
@@ -234,14 +202,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <value>PORTLET/gamification-portlets/UsersLeaderboard</value>
       </init-param>
       <init-param>
-        <name>prefetch.resources</name>
-        <value>true</value>
-      </init-param>
-      <init-param>
-        <name>prefetch.resource.bundles</name>
-        <value>locale.addon.Gamification</value>
-      </init-param>
-      <init-param>
         <name>prefetch.resource.rest</name>
         <value><![CDATA[/portal/rest/gamification/api/v1/domains|/portal/rest/gamification/leaderboard/filter?domain=All&period=WEEK&capacity=10]]></value>
       </init-param>
@@ -264,14 +224,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
         <value>/jsp/badgesOverview/index.jsp</value>
-      </init-param>
-      <init-param>
-        <name>prefetch.resources</name>
-        <value>true</value>
-      </init-param>
-      <init-param>
-        <name>prefetch.resource.bundles</name>
-        <value>locale.addon.Gamification</value>
       </init-param>
       <init-param>
         <name>prefetch.resource.rest</name>
