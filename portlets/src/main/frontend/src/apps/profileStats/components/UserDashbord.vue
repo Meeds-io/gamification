@@ -180,7 +180,7 @@ export default {
       connectionsRequestsSize: '',
       gamificationRank: '',
       userPoints: '',
-      loadingWidgets: 0,
+      loadingWidgets: false,
       profileUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/profile`,
       spacesUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
       connexionsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/network`,
@@ -208,12 +208,14 @@ export default {
 
     this.profileUrl = this.profileUrl + (this.isCurrentUserProfile ? '' : `/${ eXo.env.portal.profileOwner}`);
 
-    this.loadingWidgets = 5;
-    this.retrieveUserData().then(() => this.loadingWidgets--);
-    this.getSpacesRequestsSize().then(() => this.loadingWidgets--);
-    this.getConnectionsRequestsSize().then(() => this.loadingWidgets--);
-    this.getGamificationRank().then(() => this.loadingWidgets--);
-    this.getGamificationPoints().then(() => this.loadingWidgets--);
+    this.loadingWidgets = true;
+    Promise.all([
+      this.retrieveUserData(),
+      this.getSpacesRequestsSize(),
+      this.getConnectionsRequestsSize(),
+      this.getGamificationRank(),
+      this.getGamificationPoints(),
+    ]).finally(() => this.loadingWidgets = false);
   },
     
   methods: {
