@@ -164,6 +164,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <value>/jsp/popularSpaces/index.jsp</value>
         </init-param>
         <init-param>
+          <name>use-js-manager</name>
+          <value>true</value>
+        </init-param>
+        <init-param>
+          <name>js-manager-jsModule</name>
+          <value>PORTLET/gamification-portlets/PopularSpaces</value>
+        </init-param>
+        <init-param>
             <description>List of profiles that can be used to enable this portlet</description>
             <name>exo.profiles</name>
             <value>gamification,social</value>
@@ -191,7 +199,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
-        <value>/html/usersLeaderboard.html</value>
+        <value>/jsp/usersLeaderboard/index.jsp</value>
       </init-param>
       <init-param>
         <name>use-js-manager</name>
