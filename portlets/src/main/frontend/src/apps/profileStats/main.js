@@ -24,7 +24,10 @@ const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
 
 const resourceBundleName = 'locale.addon.Gamification';
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+const urls = [
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`,
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.social.PeopleListApplication-${lang}.json`
+];
 
 const appId = 'profile-stats-portlet';
 const cacheId = `${appId}_${eXo.env.portal.profileOwnerIdentityId}`;
@@ -34,7 +37,7 @@ export function init() {
   appElement.id = appId;
 
   //getting locale ressources
-  exoi18n.loadLanguageAsync(lang, url)
+  exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
