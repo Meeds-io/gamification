@@ -182,16 +182,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <portlet-info>
             <title>Popular Spaces</title>
         </portlet-info>
-        <portlet-preferences>
-          <preference>
-            <name>period</name>
-            <value>WEEK</value>
-          </preference>
-          <preference>
-            <name>limit</name>
-            <value>10</value>
-          </preference>
-        </portlet-preferences>
     </portlet>
 
     <portlet>

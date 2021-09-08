@@ -37,13 +37,13 @@ const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
 const appId = 'popularSpacesApplication';
 
-export function init(period, limit) {
+export function init() {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
-        template: `<popular-spaces id="${appId}" period="${period}" limit="${limit}" />`,
+        template: `<popular-spaces id="${appId}" />`,
         i18n,
         vuetify,
       }, `#${appId}`, 'Popular Spaces');
