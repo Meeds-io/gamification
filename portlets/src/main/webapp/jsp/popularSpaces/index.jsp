@@ -11,19 +11,6 @@
   	bundle = ExoContainerContext.getService(ResourceBundleService.class).getResourceBundle("locale.addon.Gamification",
   			Locale.ENGLISH);
   }
-  
-  Object period = request.getAttribute("period");
-  if (period == null) {
-  	period = "WEEK";
-  } else {
-  	period = ((String[]) period)[0];
-  }
-  Object limit = request.getAttribute("limit");
-  if (limit == null) {
-  	limit = 5;
-  } else {
-  	limit = ((String[]) limit)[0];
-  }
 %>
 <div class="VuetifyApp">
   <div data-app="true"
