@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :href="achievementUrl"
     two-line
     class="ma-4">
-    <v-list-item-avatar :tile="isSpace" :class="isSpace && 'spaceAvatar'">
+    <v-list-item-avatar :tile="isSpace" :class="isSpace && 'spaceAvatar'" :id="id">
       <v-img :src="avatar" />
     </v-list-item-avatar>
     <v-list-item-content class="py-0">
@@ -63,12 +63,6 @@ export default {
   computed: {
     labels() {
       return {
-        CancelRequest: this.$t('profile.label.CancelRequest'),
-        Confirm: this.$t('profile.label.Confirm'),
-        Connect: this.$t('profile.label.Connect'),
-        Ignore: this.$t('profile.label.Ignore'),
-        RemoveConnection: this.$t('profile.label.RemoveConnection'),
-        StatusTitle: this.$t('profile.label.StatusTitle'),
         join: this.$t('profile.label.join'),
         leave: this.$t('profile.label.leave'),
         members: this.$t('profile.label.members'),
