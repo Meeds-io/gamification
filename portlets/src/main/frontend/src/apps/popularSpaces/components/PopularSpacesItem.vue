@@ -193,19 +193,6 @@ export default {
       const uri = this.space.groupId.replace(/\//g, ':');
       return `${eXo.env.portal.context}/g/${uri}/`;
     },
-    labels() {
-      return {
-        CancelRequest: this.$t('profile.label.CancelRequest'),
-        Confirm: this.$t('profile.label.Confirm'),
-        Connect: this.$t('profile.label.Connect'),
-        Ignore: this.$t('profile.label.Ignore'),
-        RemoveConnection: this.$t('profile.label.RemoveConnection'),
-        StatusTitle: this.$t('profile.label.StatusTitle'),
-        join: this.$t('profile.label.join'),
-        leave: this.$t('profile.label.leave'),
-        members: this.$t('profile.label.members'),
-      };
-    },
   },
   mounted() {
     if (!this.skeleton && this.space && this.space.groupId) {
@@ -225,7 +212,6 @@ export default {
           membershipRestUrl: '/portal/rest/v1/social/spacesMemberships?space={0}&returnSize=true',
           defaultAvatarUrl: `/portal/rest/v1/social/spaces/${this.space.prettyName}/avatar`,
           deleteMembershipRestUrl: '/portal/rest/v1/social/spacesMemberships/{0}:{1}:{2}',
-          labels: this.labels,
           content: false,
           keepAlive: true,
           defaultPosition: this.tiptipPosition || 'left_bottom',
