@@ -64,15 +64,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           justify-center
           align-end>
           <div v-if="(typeof leaderBoardArray[1] != 'undefined')" class="transparent mx-1 align-center">
-            <a ref="tooltip" :title="leaderBoardArray[1].fullname">
-              <v-avatar 
-                size="35" 
-                class="mb-1 elevation-1" 
-                v-on="on">
-                <img
-                  :src="getUserAvatar(leaderBoardArray[1].remoteId)">
-              </v-avatar>
-            </a>
+            <exo-user-avatar
+              :username="leaderBoardArray[1].remoteId"
+              :title="leaderBoardArray[1].fullname"
+              :avatar-url="leaderBoardArray[1].avatarUrl"
+              :size="35"
+              :retrieve-extra-information="false"
+              class="me-1 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
             <v-card-text
               class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text align-center font-weight-bold"
               style="height: 40px">
@@ -81,15 +79,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
 
           <div v-if="(typeof leaderBoardArray[0] != 'undefined')" class="transparent mx-1 align-center">
-            <a ref="tooltip" :title="leaderBoardArray[0].fullname">
-              <v-avatar 
-                size="35" 
-                class="mb-1 elevation-1" 
-                v-on="on">
-                <img
-                  :src="getUserAvatar(leaderBoardArray[0].remoteId)">
-              </v-avatar>
-            </a>
+            <exo-user-avatar
+              :username="leaderBoardArray[0].remoteId"
+              :title="leaderBoardArray[0].fullname"
+              :avatar-url="leaderBoardArray[0].avatarUrl"
+              :size="35"
+              :retrieve-extra-information="false"
+              class="me-1 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
             <v-card-text
               class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text  align-center font-weight-bold"
               style="height: 55px">
@@ -98,14 +94,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
 
           <div v-if="(typeof leaderBoardArray[2] != 'undefined')" class="transparent mx-1 align-center">
-            <a ref="tooltip" :title="leaderBoardArray[2].fullname">
-              <v-avatar 
-                size="35" 
-                class="mb-1 elevation-1" 
-                v-on="on1">
-                <img :src="getUserAvatar(leaderBoardArray[2].remoteId)">
-              </v-avatar>
-            </a>
+            <exo-user-avatar
+              :username="leaderBoardArray[2].remoteId"
+              :title="leaderBoardArray[2].fullname"
+              :avatar-url="leaderBoardArray[2].avatarUrl"
+              :size="35"
+              :retrieve-extra-information="false"
+              class="me-1 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
             <v-card-text
               class="top3 amber darken-1 px-3 py-2 flex d-flex white--text align-center font-weight-bold"
               style="height: 25px">
@@ -123,9 +118,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="(typeof item != 'undefined')"
             :key="item.remoteId"
             class="py-0 px-4 mt-n3">
-            <span v-if="(typeof item != 'undefined')" class="me-2">{{ item.rank }}</span>
-            <v-list-item-avatar size="25" class="my-0 me-2">
-              <v-img :src="getUserAvatar(item.remoteId)" />
+            <span v-if="(typeof item != 'undefined')" class="me-0">{{ item.rank }}</span>
+            <v-list-item-avatar :size="35">
+              <exo-user-avatar
+                :username="item.remoteId"
+                :title="item.fullname"
+                :avatar-url="item.avatarUrl"
+                :size="25"
+                :retrieve-extra-information="false"
+                class="me-0 pa-0 my-0"/>
             </v-list-item-avatar>
 
             <v-list-item-content v-if="(typeof item != 'undefined')" class="py-0">
