@@ -79,7 +79,7 @@ export default {
       if (this.isCurrent) {
         return null;
       } else {
-        return this.badge.description;
+        return this.getDescription('badge.description', this.badge.title.replace(' ', ''), this.badge.domain, this.badge.description);
       }
     },
     score() {
@@ -95,6 +95,11 @@ export default {
       const translation = this.$t(label);
       return translation === label && key || translation;
     },
+    getDescription(base, title, domain, value) {
+      const label = `${base}.${title}_${domain}`;
+      const translation = this.$t(label);
+      return translation === label && value || translation;
+    }
   },
 };
 </script>
