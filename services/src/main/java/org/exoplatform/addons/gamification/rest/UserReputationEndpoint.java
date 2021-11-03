@@ -141,12 +141,14 @@ public class UserReputationEndpoint implements ResourceContainer {
   @RolesAllowed("users")
   public Response getUserBadges(@PathParam("identityId") long identityId) {
     String earnerId = String.valueOf(identityId);
-    Identity identity = identityManager.getIdentity(earnerId, true);
+    Long userGlobalScore = gamificationService.findReputationByEarnerId(earnerId);
+
+      Identity identity = identityManager.getIdentity(earnerId, true);
     if (identity == null) {
       return Response.status(400).entity("Identity not found with id " + identityId).build();
     }
     List<ProfileReputation> badgesByDomain = gamificationService.buildDomainScoreByIdentityId(earnerId);
-    JSONArray profileBadges = buildProfileBadges(badgesByDomain);
+    JSONArray profileBadges = buildProfileBadges(badgesByDomain, userGlobalScore);
     return Response.ok().cacheControl(cacheControl).entity(profileBadges.toString()).build();
   }
 
@@ -183,8 +185,9 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
+                Long userGlobalScore = gamificationService.findReputationByEarnerId(actorId);
 
-                allBadges = buildProfileBadges(badgesByDomain);
+                allBadges = buildProfileBadges(badgesByDomain, userGlobalScore);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -244,8 +247,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
                 List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
+                Long userGlobalScore = gamificationService.findReputationByEarnerId(actorId);
 
-                allBadges = buildProfileBadges(badgesByDomain);
+                allBadges = buildProfileBadges(badgesByDomain, userGlobalScore);
 
                 return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
 
@@ -350,7 +354,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         return file.getAsStream();
     }
 
-    private JSONArray buildProfileBadges(List<ProfileReputation> reputationLis) {
+    private JSONArray buildProfileBadges(List<ProfileReputation> reputationLis, Long userGlobalScore) {
 
         JSONArray allBadges = new JSONArray();
 
@@ -358,7 +362,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
            for (ProfileReputation rep : reputationLis) {
                // Compute won badge
-               buildLatestWonBadge(rep.getDomain(), rep.getScore(), allBadges);
+               buildLatestWonBadge(rep.getDomain(), userGlobalScore, allBadges);
            }
 
         }
