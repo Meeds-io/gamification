@@ -258,6 +258,7 @@ export default {
   methods: {
     init() {
       if (this.isCurrentUserProfile) {
+        this.connections = [];
         return this.getConnections(0);
       } else {
         return this.getConnections(0, 0).then(() => this.initPeopleSuggestionsList());
