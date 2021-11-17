@@ -95,7 +95,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
   }
 
   @GET
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Path("/all")
   public Response getAllBadges(@Context UriInfo uriInfo) {
 
