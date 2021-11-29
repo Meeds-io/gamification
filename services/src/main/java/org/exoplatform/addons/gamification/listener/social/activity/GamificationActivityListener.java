@@ -88,7 +88,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     // Add activity on Space Stream : Compute actor reward
     Space space = getSpaceOfActivity(activity);
     if (space != null) {
-      if (!activity.getType().equals("SPACE_ACTIVITY")) {
+      if (activity.getType() == null || !activity.getType().equals("SPACE_ACTIVITY")) {
         createActivityGamificationHistoryEntry(activity.getPosterId(),
                                                activity.getPosterId(),
                                                GAMIFICATION_SOCIAL_ADD_ACTIVITY_SPACE_STREAM,
