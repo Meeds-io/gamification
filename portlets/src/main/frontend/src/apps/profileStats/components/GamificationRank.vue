@@ -68,9 +68,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :username="leaderBoardArray[1].remoteId"
               :title="leaderBoardArray[1].fullname"
               :avatar-url="leaderBoardArray[1].avatarUrl"
-              :size="35"
+              :size="40"
               :retrieve-extra-information="false"
-              class="me-1 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
+              class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
             <v-card-text
               class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text align-center font-weight-bold"
               style="height: 40px">
@@ -83,9 +83,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :username="leaderBoardArray[0].remoteId"
               :title="leaderBoardArray[0].fullname"
               :avatar-url="leaderBoardArray[0].avatarUrl"
-              :size="35"
+              :size="40"
               :retrieve-extra-information="false"
-              class="me-1 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
+              class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
             <v-card-text
               class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text  align-center font-weight-bold"
               style="height: 55px">
@@ -98,9 +98,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :username="leaderBoardArray[2].remoteId"
               :title="leaderBoardArray[2].fullname"
               :avatar-url="leaderBoardArray[2].avatarUrl"
-              :size="35"
+              :size="40"
               :retrieve-extra-information="false"
-              class="me-1 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
+              class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"/>
             <v-card-text
               class="top3 amber darken-1 px-3 py-2 flex d-flex white--text align-center font-weight-bold"
               style="height: 25px">
