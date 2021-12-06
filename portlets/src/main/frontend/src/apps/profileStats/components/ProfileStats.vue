@@ -98,7 +98,7 @@ export default {
       this.isFlipped = !this.isFlipped;
     },
     commonsSpaces() {
-      getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
+      getCommonsSpaces(this.offset, -1).then(data => {
         this.commonsSpaceDefaultSize = data.size;
       });
     },
