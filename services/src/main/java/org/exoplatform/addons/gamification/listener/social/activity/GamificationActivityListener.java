@@ -209,16 +209,16 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     Space space = getSpaceOfActivity(activity);
     boolean isSpaceActivity = space != null;
 
-    createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                           liker,
+    createActivityGamificationHistoryEntry(liker,
+                                           activity.getPosterId(),
                                            isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM
                                                            : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_NETWORK_STREAM,
                                            activityUrl);
 
     // Reward user when his activity within a stream is liked by someone
     // else Get associated rule : a user like an activity on space stream
-    createActivityGamificationHistoryEntry(liker,
-                                           activity.getPosterId(),
+    createActivityGamificationHistoryEntry(activity.getPosterId(),
+                                           liker,
                                            isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_TARGET
                                                            : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_TARGET_USER_STREAM,
                                            activityUrl);
