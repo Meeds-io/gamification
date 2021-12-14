@@ -293,7 +293,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private boolean isDocumentShareActivity(ExoSocialActivity activity) {
     return activity.getType() != null && (activity.getType().equalsIgnoreCase("files:spaces") || activity.getType().equalsIgnoreCase("DOC_ACTIVITY")
-            || activity.getType().equalsIgnoreCase("contents:spaces"));
+        || activity.getType().equalsIgnoreCase("contents:spaces"));
   }
 
   private String getActivityUrl(ExoSocialActivity activity) {
