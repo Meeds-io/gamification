@@ -23,6 +23,8 @@ public interface GamificationConstant {
     /***************************************************************************************************************************************************/
     /** LIKE COMMENT ON USER CONTEXT */
     String GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM                           = "likeCommentOnNetworkStream";
+    /** LIKE COMMENT ON USER CONTEXT */
+    String GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET                      = "likeCommentOnSpaceStreamTarget";
     /** LIKE COMMENT ON SPACE CONTEXT */
     String GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM                             = "likeCommentOnspaceStream";
     /** LIKE COMMENT BY A USER */
