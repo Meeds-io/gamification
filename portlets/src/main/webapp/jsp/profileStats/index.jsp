@@ -56,7 +56,7 @@
                 </div>
                 <div class="flex d-flex xs12">
                   <div class="layout row mx-0">
-                    <div class="flex xs6 d-flex justify-center align-center">
+                    <div id="profile-stats-spacesCount" class="flex xs6 d-flex justify-center align-center">
                       <div class="v-card v-card--flat v-sheet theme--light">
                         <a class="white--text">
                           <span class="v-badge badge-color theme--light">
@@ -71,7 +71,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="flex d-flex xs6 justify-center align-center">
+                    <div id="profile-stats-connectionsCount" class="flex d-flex xs6 justify-center align-center">
                       <div class="v-card v-card--flat v-sheet theme--light rounded-0">
                         <a class="white--text">
                           <span class="v-badge badge-color theme--light">
@@ -89,7 +89,7 @@
                 </div>
                 <div class="flex d-flex xs12 align-center">
                   <div class="layout row mx-0">
-                    <div class="flex xs6 d-flex justify-center align-center">
+                    <div id="profile-stats-weeklyPoints" class="flex xs6 d-flex justify-center align-center">
                       <div class="v-card v-card--flat v-sheet theme--light">
                         <a>
                           <div class="v-card__text headline text-color font-weight-bold pa-1">
@@ -101,7 +101,7 @@
                         </a>
                       </div>
                     </div>
-                    <div class="flex d-flex xs6 justify-center align-center">
+                    <div id="profile-stats-weeklyRank" class="flex d-flex xs6 justify-center align-center">
                       <div class="v-card v-card--flat v-sheet theme--light">
                         <a>
                           <div class="v-card__text headline text-color font-weight-bold pa-1">
