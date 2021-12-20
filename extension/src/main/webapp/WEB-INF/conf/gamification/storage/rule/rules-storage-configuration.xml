@@ -86,21 +86,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
-            <name>rule.addComment</name>
+            <name>rule.addCommentOnNetworkStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>addComment</value>
+                    <value>addCommentOnNetworkStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>You commented a post</value>
+                    <value>You commented a post on network stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
-                    <value>addComment</value>
+                    <value>addCommentOnNetworkStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -228,21 +228,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
-            <name>rule.AddComment</name>
+            <name>rule.addCommentOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>addComment</value>
+                    <value>addCommentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Comment a post</value>
+                    <value>Comment a post on space stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
-                    <value>addComment</value>
+                    <value>addCommentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -263,21 +263,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
-            <name>rule.AddCommenOnNetworkStream</name>
+            <name>rule.receiveCommentOnNetworkStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>commentOnNetworkStream</value>
+                    <value>receiveCommentOnNetworkStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Someone commented your post</value>
+                    <value>Someone commented your post on network stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
-                    <value>commentOnNetworkStream</value>
+                    <value>receiveCommentOnNetworkStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -299,21 +299,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
-            <name>rule.AddCommenOnSpaceStream</name>
+            <name>rule.receiveCommentOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>commentOnSpaceStream</value>
+                    <value>receiveCommentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Someone commented your post</value>
+                    <value>Someone commented your post on space stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
-                    <value>commentOnSpaceStream</value>
+                    <value>receiveCommentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
