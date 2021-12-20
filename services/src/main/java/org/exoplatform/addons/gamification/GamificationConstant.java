@@ -32,11 +32,13 @@ public interface GamificationConstant {
     /*************************************************** CONSTANTS TO MANAGE COMMENT GAMIFICATION PROCESS **********************************************/
     /***************************************************************************************************************************************************/
     /**  COMMENT ON USER CONTEXT */
-    String GAMIFICATION_SOCIAL_COMMENT_NETWORK_STREAM                                = "commentOnNetworkStream";
+    String GAMIFICATION_SOCIAL_RECEIVE_COMMENT_NETWORK_STREAM                        = "receiveCommentOnNetworkStream";
     /**  COMMENT ON SPACE CONTEXT */
-    String GAMIFICATION_SOCIAL_COMMENT_SPACE_STREAM                                  = "commentOnSpaceStream";
-    /**  COMMENT BY A USER */
-    String GAMIFICATION_SOCIAL_COMMENT_ADD                                           = "addComment";
+    String GAMIFICATION_SOCIAL_RECEIVE_COMMENT_SPACE_STREAM                          = "receiveCommentOnSpaceStream";
+    /**  COMMENT BY A USER ON NETWORK STREAM*/
+    String GAMIFICATION_SOCIAL_ADD_COMMENT_NETWORK_STREAM                            = "addCommentOnNetworkStream";
+    /**  COMMENT BY A USER ON SPACE STREAM*/
+    String GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM                              = "addCommentOnSpaceStream";
 
     /***************************************************************************************************************************************************/
     /*************************************************** CONSTANTS TO MANAGE COMMENT GAMIFICATION PROCESS **********************************************/
