@@ -133,7 +133,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>You liked a comment</value>
+                    <value>You liked a comment on space stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
@@ -167,11 +167,45 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Someone liked your comment in space stream</value>
+                    <value>Someone liked your comment on space stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
                     <value>likeCommentOnSpaceStreamTarget</value>
+                </value-param>
+                <value-param>
+                    <name>rule-score</name>
+                    <value>2</value>
+                </value-param>
+                <value-param>
+                    <name>rule-zone</name>
+                    <value>Social</value>
+                </value-param>
+                <value-param>
+                    <name>rule-enable</name>
+                    <value>true</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
+        <component-plugin>
+            <name>rule.likeCommentOnNetworkStreamTarget</name>
+            <set-method>addPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
+            <init-params>
+                <value-param>
+                    <name>rule-title</name>
+                    <value>likeCommentOnNetworkStreamTarget</value>
+                </value-param>
+                <value-param>
+                    <name>rule-description</name>
+                    <value>Someone liked your comment on network stream</value>
+                </value-param>
+                <value-param>
+                    <name>rule-event</name>
+                    <value>likeCommentOnNetworkStreamTarget</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
@@ -201,7 +235,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
-                    <value>Someone liked your comment</value>
+                    <value>You liked a comment on network stream</value>
                 </value-param>
                 <value-param>
                     <name>rule-event</name>

@@ -22,13 +22,13 @@ public interface GamificationConstant {
     /*************************************************** CONSTANTS TO MANAGE LIKE GAMIFICATION PROCESS *************************************************/
     /***************************************************************************************************************************************************/
     /** LIKE COMMENT ON USER CONTEXT */
-    String GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM                           = "likeCommentOnNetworkStream";
+    String GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET                    = "likeCommentOnNetworkStreamTarget";
     /** LIKE COMMENT ON USER CONTEXT */
     String GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET                      = "likeCommentOnSpaceStreamTarget";
     /** LIKE COMMENT ON SPACE CONTEXT */
     String GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM                             = "likeCommentOnspaceStream";
     /** LIKE COMMENT BY A USER */
-    String GAMIFICATION_SOCIAL_LIKE_COMMENT                                          = "likeComment";
+    String GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM                           = "likeCommentOnNetworkStream";
 
     /***************************************************************************************************************************************************/
     /*************************************************** CONSTANTS TO MANAGE COMMENT GAMIFICATION PROCESS **********************************************/
