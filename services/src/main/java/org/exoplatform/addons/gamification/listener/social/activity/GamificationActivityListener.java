@@ -160,23 +160,24 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
     String activityUrl = getActivityUrl(activity);
     Space space = getSpaceOfActivity(parent);
-
-    createActivityGamificationHistoryEntry(activity.getPosterId(),
-                                           activity.getPosterId(),
-                                           GAMIFICATION_SOCIAL_COMMENT_ADD,
-                                           activityUrl);
-
     boolean isSpaceActivity = space != null;
+
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            parent.getPosterId(),
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_COMMENT_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_COMMENT_NETWORK_STREAM,
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM
+                                                           : GAMIFICATION_SOCIAL_ADD_COMMENT_NETWORK_STREAM,
+                                           activityUrl);
+
+    createActivityGamificationHistoryEntry(parent.getPosterId(),
+                                           activity.getPosterId(),
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_RECEIVE_COMMENT_SPACE_STREAM
+                                                           : GAMIFICATION_SOCIAL_RECEIVE_COMMENT_NETWORK_STREAM,
                                            activityUrl);
 
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           activity.getPosterId(),
-                                          GAMIFICATION_SOCIAL_COMMENT_ADD,
+                                          GAMIFICATION_SOCIAL_ADD_COMMENT_SPACE_STREAM,
                                           activityUrl);
     }
   }
