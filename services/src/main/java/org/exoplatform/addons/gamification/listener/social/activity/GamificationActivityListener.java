@@ -262,20 +262,21 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
     createActivityGamificationHistoryEntry(activity.getPosterId(),
                                            liker,
-                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM
-                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM,
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET
+                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET,
                                            activityUrl);
 
     // a user like a comment made by another user on the stream of other user
     createActivityGamificationHistoryEntry(liker,
                                            activity.getPosterId(),
-                                           GAMIFICATION_SOCIAL_LIKE_COMMENT,
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM
+                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM,
                                            activityUrl);
 
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           liker,
-                                          GAMIFICATION_SOCIAL_LIKE_COMMENT,
+                                          GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET,
                                           activityUrl);
     }
   }
