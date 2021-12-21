@@ -276,7 +276,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     if (space != null) {
       createSpaceGamificationHistoryEntry(space.getPrettyName(),
                                           liker,
-                                          GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET,
+                                          GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET,
                                           activityUrl);
     }
   }

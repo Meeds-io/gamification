@@ -129,7 +129,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <init-params>
                 <value-param>
                     <name>rule-title</name>
-                    <value>likeCommentOnspaceStream</value>
+                    <value>likeCommentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-description</name>
@@ -137,7 +137,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value-param>
                 <value-param>
                     <name>rule-event</name>
-                    <value>likeCommentOnspaceStream</value>
+                    <value>likeCommentOnSpaceStream</value>
                 </value-param>
                 <value-param>
                     <name>rule-score</name>
