@@ -48,7 +48,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.findRuleByEventAndDomain",
-                query = "SELECT rule FROM Rule rule where rule.event = :event and rule.area = :domain and rule.isEnabled = true"
+                query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain) and rule.isEnabled = true"
         ),
         @NamedQuery(
                 name = "Rule.findEnabledRulesByEvent",
@@ -56,7 +56,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.findRuleByTitle",
-                query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle"
+                query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle)"
         ),
         @NamedQuery(
                 name = "Rule.getDomainList",
