@@ -36,7 +36,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.getAllRulesByDomain",
-                query = "SELECT rule FROM Rule rule where rule.area = :domain AND rule.isDeleted = false"
+                query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false"
         ),
         @NamedQuery(
                 name = "Rule.getAllRulesWithNullDomain",
@@ -44,7 +44,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.findEnabledRuleByTitle",
-                query = "SELECT rule FROM Rule rule where rule.title = :ruleTitle and rule.isEnabled = true"
+                query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true"
         ),
         @NamedQuery(
                 name = "Rule.findRuleByEventAndDomain",
@@ -52,7 +52,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.findEnabledRulesByEvent",
-                query = "SELECT rule FROM Rule rule where rule.event = :event and rule.isEnabled = true AND rule.isDeleted = false"
+                query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false"
         ),
         @NamedQuery(
                 name = "Rule.findRuleByTitle",
@@ -68,7 +68,7 @@ import java.util.Objects;
         ),
         @NamedQuery(
                 name = "Rule.deleteRuleByTitle",
-                query = "DELETE FROM Rule rule WHERE rule.title = :ruleTitle "
+                query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) "
         ),
         @NamedQuery(
                 name = "Rule.deleteRuleById",
