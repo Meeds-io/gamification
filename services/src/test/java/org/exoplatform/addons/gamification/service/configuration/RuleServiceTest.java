@@ -138,6 +138,7 @@ public class RuleServiceTest extends AbstractServiceTest {
       rule.setDeleted(false);
       rule.setEvent(RULE_NAME);
       rule.setCreatedBy(TEST_USER_SENDER);
+      rule.setCreatedDate(new Date());
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain());

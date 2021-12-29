@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div
             v-if="isdeleted"
             class="alert alert-success"
-            v-on:="onRemovealertclose()">
+            v-on:="onRemoveAlertClose()">
             <button
               aria-label="Close"
               class="close"
@@ -334,13 +334,12 @@ export default {
 
     onRemove(id) {
 
-      this.isShown = !this.isShown;
       this.$emit('remove', id);
       this.isdeleted = true;
     },
 
 
-    onRemovealertclose() {
+    onRemoveAlertClose() {
       this.isShown = !this.isShown; 
       this.isdeleted = true;
       if (this.isShown) {
