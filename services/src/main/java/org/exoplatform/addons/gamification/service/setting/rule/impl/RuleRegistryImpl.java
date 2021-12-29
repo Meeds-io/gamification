@@ -77,7 +77,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
             for (RuleConfig rule : ruleMap.values()) {
                 RuleDTO ruleDTO = ruleService.findRuleByTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+rule.getTitle());
-                if (ruleDTO == null || !(ruleDTO.getEvent().equals(rule.getEvent()))) {
+                if (ruleDTO == null || !(ruleDTO.getEvent().equals(rule.getEvent())) || !(ruleDTO.getTitle().equals(GAMIFICATION_DEFAULT_DATA_PREFIX+rule.getTitle()))) {
                     store(rule,ruleDTO);
                 }
             }
