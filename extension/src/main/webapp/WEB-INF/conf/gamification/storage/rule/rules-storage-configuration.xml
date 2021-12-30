@@ -123,7 +123,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <external-component-plugins>
         <target-component>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</target-component>
         <component-plugin>
-            <name>rule.likeCommentOnSpace</name>
+            <name>rule.likeCommentOnSpaceStream</name>
             <set-method>addPlugin</set-method>
             <type>org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig</type>
             <init-params>
