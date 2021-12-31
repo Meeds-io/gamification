@@ -66,10 +66,12 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         try {
             // Processing registered domains
 
-            for (ZoneConfig domain : zoneMap.values()) {
-                DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
-                if (domainDTO == null) {
-                    store(domain);
+            if(domainService.getAllDomains().size() == 0){
+                for (ZoneConfig domain : zoneMap.values()) {
+                    DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
+                    if (domainDTO == null) {
+                        store(domain);
+                    }
                 }
             }
         } catch (Exception e) {
