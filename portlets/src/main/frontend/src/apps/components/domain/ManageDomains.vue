@@ -92,6 +92,11 @@ export default {
   },
   data: initialData,
   created() {
+    this.getAllDomains();
+  },
+  methods: {
+    getAllDomains(){
+    console.log('domains are displayed !');
     axios.get('/portal/rest/gamification/domains')
       .then(response => {
         this.domains = response.data;
@@ -103,8 +108,7 @@ export default {
       .catch(e => {
         this.errors.push(e);
       });
-  },
-  methods: {
+    },
     validateForm() {
       const errors = {};
       if (this.addSuccess = true) {
@@ -147,7 +151,7 @@ export default {
       this.isadded = true;
       this.addSuccess = true;
       this.updateMessage = this.$t('exoplatform.gamification.message.domain.added','Domain added successfully');
-      this.domains.push(domain);
+      this.getAllDomains();
       this.resetDomainInForm();
 
     },
