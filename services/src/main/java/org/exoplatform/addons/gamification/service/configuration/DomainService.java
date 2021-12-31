@@ -53,6 +53,7 @@ public class DomainService {
      * Return all domains within the DB
      * @return a list of DomainDTO
      */
+    @ExoTransactional
     public List<DomainDTO> getAllDomains() {
         try {
             //--- load all Domains

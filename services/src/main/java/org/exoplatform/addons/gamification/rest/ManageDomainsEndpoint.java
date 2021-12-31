@@ -103,6 +103,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
         // Compute domain's data
         domainDTO.setId(null);
         domainDTO.setCreatedBy(currentUserName);
+        domainDTO.setCreatedDate(new Date());
         domainDTO.setLastModifiedBy(currentUserName);
         domainDTO.setLastModifiedDate(new Date());
 

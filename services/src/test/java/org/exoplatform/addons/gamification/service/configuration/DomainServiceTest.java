@@ -51,6 +51,7 @@ public class DomainServiceTest extends AbstractServiceTest {
     domain.setTitle(GAMIFICATION_DOMAIN);
     domain.setDescription("Description");
     domain.setCreatedBy(TEST_USER_SENDER);
+    domain.setCreatedDate(new Date());
     domain.setLastModifiedBy(TEST_USER_SENDER);
     domain.setDeleted(false);
     domain.setEnabled(true);
