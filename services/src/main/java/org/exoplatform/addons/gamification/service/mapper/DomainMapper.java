@@ -56,10 +56,12 @@ public class DomainMapper {
             domain.setTitle(domainDTO.getTitle());
             domain.setDescription(domainDTO.getDescription());
             domain.setCreatedBy(domainDTO.getCreatedBy());
+            domain.setCreatedDate(domainDTO.getCreatedDate());
             domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
             domain.setDeleted(domainDTO.isDeleted());
             domain.setEnabled(domainDTO.isEnabled());
             domain.setLastModifiedDate(domainDTO.getLastModifiedDate());
+            domain.setPriority(domainDTO.getPriority());
             return domain;
         }
     }
