@@ -94,6 +94,39 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
     }
 
+    @GET
+    @Path("/active")
+    @RolesAllowed("users")
+    public Response getActiveRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+
+        ConversationState conversationState = ConversationState.getCurrent();
+
+        if (conversationState != null) {
+            try {
+                List<RuleDTO> allRules = ruleService.getActiveRules();
+
+                return Response.ok().cacheControl(cacheControl).entity(allRules).build();
+
+            } catch (Exception e) {
+
+                LOG.error("Error listing active rules ", e);
+
+                return Response.serverError()
+                        .cacheControl(cacheControl)
+                        .entity("Error listing active rules")
+                        .build();
+            }
+
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                    .cacheControl(cacheControl)
+                    .entity("Unauthorized user")
+                    .build();
+        }
+
+
+    }
+
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @RolesAllowed("administrators")
