@@ -96,7 +96,6 @@ export default {
   },
   methods: {
     getAllDomains(){
-    console.log('domains are displayed !');
     axios.get('/portal/rest/gamification/domains')
       .then(response => {
         this.domains = response.data;
