@@ -26,6 +26,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import javax.persistence.EntityExistsException;
+import java.util.Collections;
 import java.util.List;
 
 public class RuleService {
@@ -101,7 +102,7 @@ public class RuleService {
             List<RuleEntity> entities = ruleDAO.findEnabledRulesByEvent(ruleTitle);
             //--- Convert Entity to DTO
             if (entities != null ) {
-                return ruleMapper.rulesToRoleDTOs(entities);
+                return ruleMapper.rulesToRuleDTOs(entities);
             }else{
                 return null;
             }
@@ -174,13 +175,34 @@ public class RuleService {
             //--- load all Rules
             List<RuleEntity> rules =  ruleDAO.getAllRules();
             if (rules != null) {
-                return ruleMapper.rulesToRoleDTOs(rules);
+                return ruleMapper.rulesToRuleDTOs(rules);
             }else{
                 return null;
             }
 
         } catch (Exception e) {
             LOG.error("Error to find Rules",e);
+            throw(e);
+        }
+    }
+
+    /**
+     * Get all Rules from DB
+     * @return RuleDTO list
+     */
+    @ExoTransactional
+    public List<RuleDTO> getActiveRules() {
+        try {
+            //--- load actives Rules
+            List<RuleEntity> rules =  ruleDAO.getActiveRules();
+            if (rules != null) {
+                return ruleMapper.rulesToRuleDTOs(rules);
+            }else{
+                return Collections.emptyList();
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error to find active rules",e);
             throw(e);
         }
     }
@@ -195,7 +217,7 @@ public class RuleService {
             //--- load all Rules by Domain
             List<RuleEntity> rules =  ruleDAO.getAllRulesByDomain(domain);
             if (rules != null) {
-                return ruleMapper.rulesToRoleDTOs(rules);
+                return ruleMapper.rulesToRuleDTOs(rules);
             }else{
                 return null;
             }
@@ -214,7 +236,7 @@ public class RuleService {
         try {
             List<RuleEntity> rules =  ruleDAO.getAllRulesWithNullDomain();
             if (rules != null) {
-                return ruleMapper.rulesToRoleDTOs(rules);
+                return ruleMapper.rulesToRuleDTOs(rules);
             }else{
                 return null;
             }
