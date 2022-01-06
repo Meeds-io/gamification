@@ -192,7 +192,7 @@ public class RuleService {
     @ExoTransactional
     public List<RuleDTO> getActiveRules() {
         try {
-            //--- load all Rules
+            //--- load actives Rules
             List<RuleEntity> rules =  ruleDAO.getActiveRules();
             if (rules != null) {
                 return ruleMapper.rulesToRuleDTOs(rules);

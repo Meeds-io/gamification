@@ -103,14 +103,12 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
         if (conversationState != null) {
             try {
-                List<RuleDTO> allRules = ruleService.getActiveRules();
+                List<RuleDTO> activesRules = ruleService.getActiveRules();
 
-                return Response.ok().cacheControl(cacheControl).entity(allRules).build();
+                return Response.ok().cacheControl(cacheControl).entity(activesRules).build();
 
             } catch (Exception e) {
-
                 LOG.error("Error listing active rules ", e);
-
                 return Response.serverError()
                         .cacheControl(cacheControl)
                         .entity("Error listing active rules")
@@ -123,8 +121,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
                     .entity("Unauthorized user")
                     .build();
         }
-
-
     }
 
     @POST

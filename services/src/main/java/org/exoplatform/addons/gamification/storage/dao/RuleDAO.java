@@ -23,6 +23,7 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
@@ -97,12 +98,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     public List<RuleEntity> getActiveRules() throws PersistenceException {
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getActiveRules", RuleEntity.class);
-
+        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
+                .setParameter("isEnabled",true);
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return null;
+            return Collections.emptyList();
         }
 
     }

@@ -31,10 +31,6 @@ import java.util.Objects;
                 query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false"
         ),
         @NamedQuery(
-                name = "Rule.getActiveRules",
-                query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false AND rule.isEnabled = true"
-        ),
-        @NamedQuery(
                 name = "Rule.getEnabledRules",
                 query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false"
         ),
