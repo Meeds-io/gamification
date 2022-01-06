@@ -66,7 +66,7 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         try {
             // Processing registered domains
 
-            if(domainService.getAllDomains().size() == 0){
+            if(domainService.getAllDomains().isEmpty()){
                 for (ZoneConfig domain : zoneMap.values()) {
                     DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
                     if (domainDTO == null) {

@@ -71,7 +71,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
         try {
             // Processing registered rules
 
-            if(badgeService.getAllBadges().size() == 0){
+            if(badgeService.getAllBadges().isEmpty()){
                 for (BadgeConfig badge : badgesMap.values()) {
                     BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(),badge.getDomain());
 
