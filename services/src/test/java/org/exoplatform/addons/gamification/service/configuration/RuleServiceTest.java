@@ -73,6 +73,15 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testGetActiveRules() {
+    assertEquals(ruleService.getActiveRules().size(), 0);
+    newRule("rule1", "domain1", false);
+    newRule("rule2", "domain2", true);
+    newRule("rule3", "domain3", true);
+    assertEquals(ruleService.getActiveRules().size(), 2);
+  }
+
+  @Test
   public void testGetAllRulesByDomain() {
     assertEquals(ruleStorage.findAll().size(), 0);
     newRule("rule1", "domain1");

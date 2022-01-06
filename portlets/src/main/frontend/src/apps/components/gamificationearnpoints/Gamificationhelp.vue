@@ -338,7 +338,7 @@ export default {
       .then(response => {
         this.users = response.data;
       });
-    axios.get('/portal/rest/gamification/rules/all')
+    axios.get('/portal/rest/gamification/rules/active')
       .then(response => {
         this.rules = response.data;
       })
