@@ -57,11 +57,11 @@ public class DomainDTO implements Serializable {
         this.description = domainEntity.getDescription();
         this.createdBy = domainEntity.getCreatedBy();
         this.priority = domainEntity.getPriority();
-        this.priority = domainEntity.getPriority();
         this.deleted = domainEntity.isDeleted();
         this.enabled = domainEntity.isEnabled();
         this.createdDate = domainEntity.getCreatedDate();
         this.lastModifiedDate = domainEntity.getLastModifiedDate();
+        this.lastModifiedBy = domainEntity.getLastModifiedBy();
 
     }
 

@@ -56,6 +56,7 @@ public class RuleMapper {
             rule.setDeleted(ruleDTO.isDeleted());
             rule.setEvent(ruleDTO.getEvent());
             rule.setCreatedBy(ruleDTO.getCreatedBy());
+            rule.setCreatedDate(ruleDTO.getCreatedDate());
             rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
             rule.setLastModifiedDate(ruleDTO.getLastModifiedDate());
             rule.setDomainEntity(domainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));

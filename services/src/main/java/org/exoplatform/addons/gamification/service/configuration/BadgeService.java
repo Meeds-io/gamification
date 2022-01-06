@@ -114,6 +114,7 @@ public class BadgeService {
      * Return all badges within the DB
      * @return a list of BadgeDTO
      */
+    @ExoTransactional
     public List<BadgeDTO> getAllBadges() {
         try {
             //--- load all Rules

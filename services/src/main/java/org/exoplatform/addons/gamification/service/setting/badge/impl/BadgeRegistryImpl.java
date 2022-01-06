@@ -71,13 +71,15 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
         try {
             // Processing registered rules
 
-            for (BadgeConfig badge : badgesMap.values()) {
-                BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(),badge.getDomain());
+            if(badgeService.getAllBadges().isEmpty()){
+                for (BadgeConfig badge : badgesMap.values()) {
+                    BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(),badge.getDomain());
 
-                if (badgeDTO == null) {
-                    store(badge);
+                    if (badgeDTO == null) {
+                        store(badge);
+                    }
+
                 }
-
             }
 
 
