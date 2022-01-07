@@ -26,7 +26,6 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import javax.persistence.EntityExistsException;
-import java.util.Collections;
 import java.util.List;
 
 public class RuleService {
@@ -187,24 +186,14 @@ public class RuleService {
     }
 
     /**
-     * Get all Rules from DB
+     * Get all active Rules from DB
      * @return RuleDTO list
      */
     @ExoTransactional
     public List<RuleDTO> getActiveRules() {
-        try {
-            //--- load actives Rules
-            List<RuleEntity> rules =  ruleDAO.getActiveRules();
-            if (rules != null) {
-                return ruleMapper.rulesToRuleDTOs(rules);
-            }else{
-                return Collections.emptyList();
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find active rules",e);
-            throw(e);
-        }
+        //--- load actives Rules
+        List<RuleEntity> rules = ruleDAO.getActiveRules();
+        return ruleMapper.rulesToRuleDTOs(rules);
     }
     /**
      * Get all Rules by Domain from DB
