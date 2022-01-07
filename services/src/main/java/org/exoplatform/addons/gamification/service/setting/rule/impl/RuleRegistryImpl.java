@@ -77,10 +77,9 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
             for (RuleConfig rule : ruleMap.values()) {
                 RuleDTO ruleDTO = ruleService.findRuleByTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+rule.getTitle());
-                if (ruleDTO == null) {
-                    store(rule);
+                if (ruleDTO == null || !(ruleDTO.getEvent().equals(rule.getEvent())) || !(ruleDTO.getTitle().equals(GAMIFICATION_DEFAULT_DATA_PREFIX+rule.getTitle()))) {
+                    store(rule,ruleDTO);
                 }
-
             }
 
 
@@ -99,15 +98,16 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
      *
      * @param ruleConfig
      */
-    private void store(RuleConfig ruleConfig) {
+    private void store(RuleConfig ruleConfig,RuleDTO ruleDTO) {
 
         domainService = CommonsUtils.getService(DomainService.class);
 
         try {
 
-            RuleDTO ruleDTO = ruleService.findRuleByTitle(ruleConfig.getTitle());
             if (ruleDTO != null) {
                 ruleDTO.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+ruleConfig.getTitle());
+                ruleDTO.setDescription(ruleConfig.getDescription());
+                ruleDTO.setEvent(ruleConfig.getEvent());
                 CommonsUtils.getService(RuleService.class).updateRule(ruleDTO);
             }else{
                 RuleDTO ruleDto = new RuleDTO();
