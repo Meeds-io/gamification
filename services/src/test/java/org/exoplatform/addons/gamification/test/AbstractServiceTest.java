@@ -216,6 +216,27 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return rule;
   }
 
+  protected RuleEntity newRule(String name, String domain, Boolean isEnabled) {
+
+    RuleEntity rule = ruleStorage.findRuleByTitle(name+"_"+domain);
+    if (rule == null) {
+      rule = new RuleEntity();
+      rule.setScore(Integer.parseInt(TEST__SCORE));
+      rule.setTitle(name+"_"+domain);
+      rule.setDescription("Description");
+      rule.setArea(domain);
+      rule.setEnabled(isEnabled);
+      rule.setDeleted(false);
+      rule.setEvent(name);
+      rule.setCreatedBy(TEST_USER_SENDER);
+      rule.setLastModifiedBy(TEST_USER_SENDER);
+      rule.setLastModifiedDate(new Date());
+      rule.setDomainEntity(newDomain(domain));
+      rule = ruleStorage.create(rule);
+    }
+    return rule;
+  }
+
   protected DomainEntity newDomain() {
     DomainEntity domain = domainStorage.findDomainByTitle(GAMIFICATION_DOMAIN);
     if (domain == null) {

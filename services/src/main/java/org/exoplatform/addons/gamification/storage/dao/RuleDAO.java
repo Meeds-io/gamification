@@ -19,13 +19,19 @@ package org.exoplatform.addons.gamification.storage.dao;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
+
+    private static final Log LOG = ExoLogger.getLogger(RuleDAO.class);
+
 
     public RuleDAO() {
     }
@@ -91,6 +97,19 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
             return query.getResultList();
         } catch (NoResultException e) {
             return null;
+        }
+
+    }
+
+    public List<RuleEntity> getActiveRules() {
+
+        try {
+            TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
+                    .setParameter("isEnabled",true);
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            LOG.error("Error : Unable to fetch active rules",e);
+            return Collections.emptyList();
         }
 
     }

@@ -101,7 +101,7 @@ public class RuleService {
             List<RuleEntity> entities = ruleDAO.findEnabledRulesByEvent(ruleTitle);
             //--- Convert Entity to DTO
             if (entities != null ) {
-                return ruleMapper.rulesToRoleDTOs(entities);
+                return ruleMapper.rulesToRuleDTOs(entities);
             }else{
                 return null;
             }
@@ -174,7 +174,7 @@ public class RuleService {
             //--- load all Rules
             List<RuleEntity> rules =  ruleDAO.getAllRules();
             if (rules != null) {
-                return ruleMapper.rulesToRoleDTOs(rules);
+                return ruleMapper.rulesToRuleDTOs(rules);
             }else{
                 return null;
             }
@@ -183,6 +183,17 @@ public class RuleService {
             LOG.error("Error to find Rules",e);
             throw(e);
         }
+    }
+
+    /**
+     * Get all active Rules from DB
+     * @return RuleDTO list
+     */
+    @ExoTransactional
+    public List<RuleDTO> getActiveRules() {
+        //--- load actives Rules
+        List<RuleEntity> rules = ruleDAO.getActiveRules();
+        return ruleMapper.rulesToRuleDTOs(rules);
     }
     /**
      * Get all Rules by Domain from DB
@@ -195,7 +206,7 @@ public class RuleService {
             //--- load all Rules by Domain
             List<RuleEntity> rules =  ruleDAO.getAllRulesByDomain(domain);
             if (rules != null) {
-                return ruleMapper.rulesToRoleDTOs(rules);
+                return ruleMapper.rulesToRuleDTOs(rules);
             }else{
                 return null;
             }
@@ -214,7 +225,7 @@ public class RuleService {
         try {
             List<RuleEntity> rules =  ruleDAO.getAllRulesWithNullDomain();
             if (rules != null) {
-                return ruleMapper.rulesToRoleDTOs(rules);
+                return ruleMapper.rulesToRuleDTOs(rules);
             }else{
                 return null;
             }
