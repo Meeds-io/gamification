@@ -106,22 +106,24 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
       for (StandardLeaderboard element : standardLeaderboards) {
         Identity identity = identityManager.getIdentity(element.getEarnerId(), true);
-        LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
-        leaderboardInfo.setSocialId(identity.getId());
-        String technicalId = computeTechnicalId(identity);
-        leaderboardInfo.setTechnicalId(technicalId);
-        leaderboardInfo.setScore(element.getReputationScore());
-        leaderboardInfo.setRemoteId(identity.getRemoteId());
-        leaderboardInfo.setFullname(identity.getProfile().getFullName());
-        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-        leaderboardInfo.setRank(gamificationService.getLeaderboardRank(identity.getId(),
-                                                                       Date.from(LocalDate.now()
-                                                                                          .with(DayOfWeek.MONDAY)
-                                                                                          .atStartOfDay(ZoneId.systemDefault())
-                                                                                          .toInstant()),
-                                                                       "all"));
-        leaderboardList.add(leaderboardInfo);
+        if(identity.isEnable()){
+          LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
+          leaderboardInfo.setSocialId(identity.getId());
+          String technicalId = computeTechnicalId(identity);
+          leaderboardInfo.setTechnicalId(technicalId);
+          leaderboardInfo.setScore(element.getReputationScore());
+          leaderboardInfo.setRemoteId(identity.getRemoteId());
+          leaderboardInfo.setFullname(identity.getProfile().getFullName());
+          leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+          leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+          leaderboardInfo.setRank(gamificationService.getLeaderboardRank(identity.getId(),
+                  Date.from(LocalDate.now()
+                          .with(DayOfWeek.MONDAY)
+                          .atStartOfDay(ZoneId.systemDefault())
+                          .toInstant()),
+                  "all"));
+          leaderboardList.add(leaderboardInfo);
+        }
       }
 
       if (identityType.isUser()) {
