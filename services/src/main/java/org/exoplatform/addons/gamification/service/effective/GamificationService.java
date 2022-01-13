@@ -164,6 +164,23 @@ public class GamificationService {
     }
   }
 
+  public void createHistoryWithRule(RuleDTO ruleDto, String sender, String receiver, String object) {
+    GamificationActionsHistory aHistory = null;
+
+    aHistory = build(ruleDto, sender, receiver, object);
+    if (aHistory != null) {
+      saveActionHistory(aHistory);
+      // Gamification simple audit logger
+      LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
+              LocalDate.now(),
+              aHistory.getEarnerId(),
+              aHistory.getGlobalScore(),
+              ruleDto.getArea(),
+              ruleDto.getEvent(),
+              ruleDto.getScore());
+    }
+  }
+
   public GamificationActionsHistory findLatestActionHistoryByEarnerId(String earnerId) {
     List<GamificationActionsHistory> entities = gamificationHistoryDAO.findActionsHistoryByEarnerId(earnerId, 1);
     // Return the first element since the underluing API returns entities
