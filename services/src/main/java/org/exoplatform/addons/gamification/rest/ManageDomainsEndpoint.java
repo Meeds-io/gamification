@@ -36,7 +36,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 @Path("/gamification")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("administrators")
+@RolesAllowed("users")
 public class ManageDomainsEndpoint implements ResourceContainer {
 
   private static final Log   LOG           = ExoLogger.getLogger(ManageDomainsEndpoint.class);
@@ -62,7 +62,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @GET
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Path("/domains")
   public Response getAllDomains(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
 
