@@ -309,4 +309,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </addColumn>
     </changeSet>
 
+    <changeSet author="exo-gamification" id="1.0.0-21" dbms="hsqldb">
+      <createSequence sequenceName="SEQ_GAMIFICATION_BADGE_ID" startValue="1"/>
+      <createSequence sequenceName="SEQ_GAMIFICATION_RULE_ID" startValue="1"/>
+      <createSequence sequenceName="SEQ_GAMIFICATION_DOMAIN_ID" startValue="1"/>
+      <createSequence sequenceName="SEQ_GAMIFICATION_SCORE_HISTORY_ID" startValue="1"/>
+    </changeSet>
+
 </databaseChangeLog>
