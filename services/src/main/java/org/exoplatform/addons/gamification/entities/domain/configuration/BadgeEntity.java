@@ -83,7 +83,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     private static final long serialVersionUID = 2L;
 
     @Id
-    @SequenceGenerator(name="SEQ_GAMIFICATION_BADGE_ID", sequenceName="SEQ_GAMIFICATION_BADGE_ID")
+    @SequenceGenerator(name="SEQ_GAMIFICATION_BADGE_ID", sequenceName="SEQ_GAMIFICATION_BADGE_ID", allocationSize = 1)
     @GeneratedValue(strategy=GenerationType.AUTO, generator="SEQ_GAMIFICATION_BADGE_ID")
     @Column(name = "BADGE_ID")
     protected Long id;
