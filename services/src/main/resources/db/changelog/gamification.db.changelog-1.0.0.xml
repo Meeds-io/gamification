@@ -310,12 +310,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </addColumn>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-22">
+    <changeSet author="exo-gamification" id="1.0.0-21">
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
             <column name="RULE_ID" type="BIGINT" defaultValueNumeric="0">
                 <constraints foreignKeyName="FK_GAMIFICATION_ACTIONS_HISTORY_RULE" references="GAMIFICATION_RULE(ID)"/>
             </column>
             <column name="ACTIVITY_ID" type="BIGINT" defaultValueNumeric="0"/>
+            <column name="COMMENT" type="NVARCHAR(2000)"/>
         </addColumn>
     </changeSet>
 
