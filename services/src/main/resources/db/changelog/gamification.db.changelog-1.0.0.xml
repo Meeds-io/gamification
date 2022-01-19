@@ -204,7 +204,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </createIndex>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-11">
+    <changeSet  author="exo-gamification" id="1.0.0-11">
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
             <column name="RECEIVER" type="NVARCHAR(200)">
             </column>
@@ -239,36 +239,35 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </modifySql>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-13">
+    <changeSet  author="exo-gamification" id="1.0.0-13">
         <addColumn tableName="GAMIFICATION_RULE">
             <column name="DOMAIN_ID" type="BIGINT">
-                <constraints foreignKeyName="FK_GAMIFICATION_RULES_DOMAIN" references="GAMIFICATION_DOMAIN(ID)"/>
+                <constraints foreignKeyName="FK_GAMIFICATION_RULES_DOMAIN" references="GAMIFICATION_DOMAIN(ID)" />
             </column>
         </addColumn>
         <addColumn tableName="GAMIFICATION_BADGES">
             <column name="DOMAIN_ID" type="BIGINT">
-                <constraints foreignKeyName="FK_GAMIFICATION_BADGES_DOMAIN" references="GAMIFICATION_DOMAIN(ID)"/>
+                <constraints foreignKeyName="FK_GAMIFICATION_BADGES_DOMAIN" references="GAMIFICATION_DOMAIN(ID)" />
             </column>
         </addColumn>
         <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
             <column name="DOMAIN_ID" type="BIGINT">
-                <constraints foreignKeyName="FK_GAMIFICATION_ACTIONS_HISTORY_DOMAIN"
-                             references="GAMIFICATION_DOMAIN(ID)"/>
+                <constraints foreignKeyName="FK_GAMIFICATION_ACTIONS_HISTORY_DOMAIN" references="GAMIFICATION_DOMAIN(ID)" />
             </column>
         </addColumn>
     </changeSet>
 
 
-    <changeSet author="exo-gamification" id="1.0.0-14">
+    <changeSet  author="exo-gamification" id="1.0.0-14">
         <addColumn tableName="GAMIFICATION_RULE">
             <column name="EVENT" type="NVARCHAR(70)">
             </column>
         </addColumn>
     </changeSet>
 
-    <changeSet author="exo-gamification" id="1.0.0-15">
+    <changeSet  author="exo-gamification" id="1.0.0-15">
         <addColumn tableName="GAMIFICATION_DOMAIN">
-            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="true">
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean = "true">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -297,27 +296,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <changeSet author="exo-gamification" id="1.0.0-17">
         <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
                         columnName="USER_SOCIAL_ID"
-                        newDataType="NVARCHAR(200)"/>
+                        newDataType="NVARCHAR(200)"
+        />
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-20">
-        <renameColumn oldColumnName="USER_SOCIAL_ID" newColumnName="EARNER_ID" columnDataType="BIGINT"
-                      tableName="GAMIFICATION_ACTIONS_HISTORY"/>
-        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
-            <column name="EARNER_TYPE" type="INT" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet author="exo-gamification" id="1.0.0-21">
-        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
-            <column name="RULE_ID" type="BIGINT" defaultValueNumeric="0">
-                <constraints foreignKeyName="FK_GAMIFICATION_ACTIONS_HISTORY_RULE" references="GAMIFICATION_RULE(ID)"/>
-            </column>
-            <column name="ACTIVITY_ID" type="BIGINT" defaultValueNumeric="0"/>
-            <column name="COMMENT" type="NVARCHAR(2000)"/>
-        </addColumn>
+      <renameColumn oldColumnName="USER_SOCIAL_ID" newColumnName="EARNER_ID" columnDataType="BIGINT" tableName="GAMIFICATION_ACTIONS_HISTORY" />
+      <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+        <column name="EARNER_TYPE" type="INT" defaultValueNumeric="0">
+          <constraints nullable="false" />
+        </column>
+      </addColumn>
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-21" dbms="hsqldb">
