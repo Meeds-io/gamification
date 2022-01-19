@@ -108,7 +108,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         for (StandardLeaderboard element : standardLeaderboards) {
 
           // Load Social identity
-          identity = identityManager.getIdentity(element.getEarnerId(), true);
+          identity = identityManager.getIdentity(element.getEarnerId());
 
           if (spaceService.isMember(space, identity.getRemoteId())) {
             leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
@@ -191,13 +191,12 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         // Get current User identity
 
         Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-                                                                       conversationState.getIdentity().getUserId(),
-                                                                       false);
+                                                                       conversationState.getIdentity().getUserId());
 
         for (StandardLeaderboard leader : standardLeaderboards) {
 
           // Load Social identity
-          identity = identityManager.getIdentity(leader.getEarnerId(), true);
+          identity = identityManager.getIdentity(leader.getEarnerId());
 
           if (spaceService.isMember(space, identity.getRemoteId()) && leaderboardInfoList.size() < Integer.parseInt(capacity)) {
             leaderboardInfo = new LeaderboardEndpoint.LeaderboardInfo();
@@ -275,7 +274,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
     if (leaderboardList.size() == 0)
       return null;
     LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
-    String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, identityId, false).getId();
+    String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, identityId).getId();
     if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
       // Get GaamificationScore for current user

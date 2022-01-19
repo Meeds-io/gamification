@@ -112,7 +112,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       // Build GamificationActionsHistory flow only when the returned list is not null
       for (GamificationActionsHistory element : ss) {
         // Load Social identity
-        Identity receiverIdentity = identityManager.getIdentity(element.getReceiver(), true);
+        Identity receiverIdentity = identityManager.getIdentity(element.getReceiver());
         Profile profile = receiverIdentity.getProfile();
         GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
         // Set SocialIds

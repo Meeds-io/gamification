@@ -200,7 +200,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
                 ruleDTO = ruleService.updateRule(ruleDTO);
 
                 // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName, false).getId();
+                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
                 LOG.info("service=gamification operation=edit-rule parameters=\"user_social_id:{},rule_id:{},rule_title:{},rule_description:{}\"", actorId, ruleDTO.getId(), ruleDTO.getTitle(), ruleDTO.getDescription());
 
                 return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();

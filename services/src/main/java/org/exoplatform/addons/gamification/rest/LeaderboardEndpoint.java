@@ -105,7 +105,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
       }
       for (StandardLeaderboard element : standardLeaderboards) {
-        Identity identity = identityManager.getIdentity(element.getEarnerId(), true);
+        Identity identity = identityManager.getIdentity(element.getEarnerId());
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
         leaderboardInfo.setSocialId(identity.getId());
         String technicalId = computeTechnicalId(identity);
@@ -188,7 +188,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
 
       for (StandardLeaderboard leader : standardLeaderboards) {
-        Identity identity = identityManager.getIdentity(leader.getEarnerId(), true);
+        Identity identity = identityManager.getIdentity(leader.getEarnerId());
         leaderboardInfo = new LeaderboardInfo();
         String technicalId = computeTechnicalId(identity);
         leaderboardInfo.setTechnicalId(technicalId);
