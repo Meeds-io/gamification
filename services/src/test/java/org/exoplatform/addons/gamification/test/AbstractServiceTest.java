@@ -66,12 +66,14 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
+import org.exoplatform.social.core.storage.api.IdentityStorage;
 
 @ConfiguredBy({
     @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.social.component.service-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml") })
 
 public abstract class AbstractServiceTest extends BaseExoTestCase {
@@ -150,9 +152,13 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ExoContainer container = getContainer();
     binder = container.getComponentInstanceOfType(ResourceBinder.class);
     RequestHandlerImpl requestHandler = container.getComponentInstanceOfType(RequestHandlerImpl.class);
+    // reset default providers to be sure it is clean.
+    ProviderBinder.setInstance(new ProviderBinder());
+    providers = ProviderBinder.getInstance();
+
+    binder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
     launcher = new ResourceLauncher(requestHandler);
-
   }
 
   @Override

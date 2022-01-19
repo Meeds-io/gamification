@@ -140,9 +140,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
                 ruleDTO.setId(null);
                 ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
                 ruleDTO.setCreatedBy(currentUserName);
-                ruleDTO.setCreatedDate(new Date());
                 ruleDTO.setLastModifiedBy(currentUserName);
-                ruleDTO.setLastModifiedDate(new Date());
 
                 //--- Add rule
                 ruleDTO = ruleService.addRule(ruleDTO);
@@ -197,7 +195,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
                 // Compute rule's data
                 ruleDTO.setCreatedBy(currentUserName);
                 ruleDTO.setLastModifiedBy(currentUserName);
-                ruleDTO.setLastModifiedDate(new Date());
 
                 //--- Add rule
                 ruleDTO = ruleService.updateRule(ruleDTO);

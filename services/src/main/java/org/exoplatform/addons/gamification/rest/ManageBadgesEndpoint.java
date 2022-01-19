@@ -263,7 +263,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         badgeDTO = badgeService.updateBadge(badgeDTO);
 
         // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName, false).getId();
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
         LOG.info("service=gamification operation=edit-badge parameters=\"user_social_id:{},badge_id:{},badge_title:{},badge_description:{}\"", actorId, badgeDTO.getId(), badgeDTO.getTitle(), badgeDTO.getDescription());
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
