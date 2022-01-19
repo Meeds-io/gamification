@@ -29,7 +29,7 @@ public class RuleMapper {
 
     private DomainMapper domainMapper;
 
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public RuleMapper(DomainMapper domainMapper) {
         this.domainMapper=domainMapper;

@@ -24,8 +24,6 @@ import java.util.Date;
 
 public class RuleDTO implements Serializable {
 
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
     protected Long id;
 
     protected String title;
