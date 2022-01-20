@@ -141,7 +141,7 @@ public class UserReputationEndpoint implements ResourceContainer {
   @RolesAllowed("users")
   public Response getUserBadges(@PathParam("identityId") long identityId) {
     String earnerId = String.valueOf(identityId);
-    Identity identity = identityManager.getIdentity(earnerId, true);
+    Identity identity = identityManager.getIdentity(earnerId);
     if (identity == null) {
       return Response.status(400).entity("Identity not found with id " + identityId).build();
     }
@@ -174,11 +174,11 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
                 if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
                 }
                 String actorId = id.getId();
 
@@ -233,11 +233,11 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 // Compute user id
 
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
                 if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
                 }
 
                 String actorId = id.getId();
@@ -516,11 +516,11 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 // Compute user id
 
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
                 if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
                 }
 
                 String actorId = id.getId();
@@ -624,11 +624,11 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
                 if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
                 }
 
                 String actorId = id.getId();
@@ -763,11 +763,11 @@ public class UserReputationEndpoint implements ResourceContainer {
                 JSONArray allBadges = new JSONArray();
 
                 // Compute user id
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
                 if(id==null){
                     profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
                 }
 
                 String actorId = id.getId();
@@ -828,11 +828,11 @@ public class UserReputationEndpoint implements ResourceContainer {
             }
 
         }
-        Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+        Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
 
         if(id==null){
             profilePageOwner= conversationState.getIdentity().getUserId();
-            id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner, false);
+            id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
         }
 
         String actorId = id.getId();

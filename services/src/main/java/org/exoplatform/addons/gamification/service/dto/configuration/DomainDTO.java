@@ -36,11 +36,11 @@ public class DomainDTO implements Serializable {
 
     private String createdBy;
 
-    private Date createdDate;
+    private String createdDate;
 
     private String lastModifiedBy;
 
-    private Date lastModifiedDate;
+    private String lastModifiedDate;
 
     protected boolean deleted;
 
@@ -59,8 +59,8 @@ public class DomainDTO implements Serializable {
         this.priority = domainEntity.getPriority();
         this.deleted = domainEntity.isDeleted();
         this.enabled = domainEntity.isEnabled();
-        this.createdDate = domainEntity.getCreatedDate();
-        this.lastModifiedDate = domainEntity.getLastModifiedDate();
+        this.createdDate = formatter.format(domainEntity.getCreatedDate());
+        this.lastModifiedDate = formatter.format(domainEntity.getLastModifiedDate());
         this.lastModifiedBy = domainEntity.getLastModifiedBy();
 
     }
@@ -105,11 +105,11 @@ public class DomainDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -121,11 +121,11 @@ public class DomainDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Date getLastModifiedDate() {
+    public String getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
+    public void setLastModifiedDate(String lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
@@ -147,7 +147,7 @@ public class DomainDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "RuleDTO{" +
+        return "{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", createdBy=" + createdBy +

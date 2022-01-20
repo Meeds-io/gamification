@@ -115,7 +115,6 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                 ruleDto.setScore(ruleConfig.getScore());
                 ruleDto.setEnabled(ruleConfig.isEnable());
                 ruleDto.setEvent(ruleConfig.getEvent());
-                ruleDto.setLastModifiedDate(new Date());
                 ruleDto.setLastModifiedBy("Gamification");
                 ruleDto.setCreatedBy("Gamification");
                 ruleDto.setArea(ruleConfig.getZone());
@@ -126,7 +125,6 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                     ruleDto.setEnabled(false);
                 }
                 ruleDto.setDescription(ruleConfig.getDescription());
-                ruleDto.setCreatedDate(new Date());
                 CommonsUtils.getService(RuleService.class).addRule(ruleDto);
             }
 

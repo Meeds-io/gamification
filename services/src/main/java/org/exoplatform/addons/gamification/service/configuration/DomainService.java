@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
@@ -121,25 +122,29 @@ public class DomainService {
      * @return BadgeDTO object
      */
     @ExoTransactional
-    public DomainDTO addDomain (DomainDTO domainDTO) throws PersistenceException {
+    public DomainDTO addDomain(DomainDTO domainDTO) throws PersistenceException {
 
         DomainEntity domainEntity = null;
 
         try {
             domainEntity = domainStorage.findDomainByTitle(domainDTO.getTitle());
             if(domainEntity==null){
-                domainEntity = domainStorage.create(domainMapper.domainDTOToDomain(domainDTO));
+                domainEntity = domainMapper.domainDTOToDomain(domainDTO);
+                domainEntity.setCreatedDate(new Date());
+                domainEntity.setLastModifiedDate(new Date());
+                domainEntity = domainStorage.create(domainEntity);
             }else if(domainEntity.isDeleted()){
                 Long id = domainEntity.getId();
                 domainEntity = domainMapper.domainDTOToDomain(domainDTO);
                 domainEntity.setId(id);
+                domainEntity.setLastModifiedDate(new Date());
                 domainEntity = domainStorage.update(domainEntity);
             }else{
                 throw(new EntityExistsException());
             }
 
         } catch (Exception e) {
-            LOG.error("Error to create badge with title {}", domainDTO.getTitle() , e);
+            LOG.error("Error to create domain with title {}", domainDTO.getTitle() , e);
             throw(e);
         }
         return domainMapper.domainToDomainDTO(domainEntity);
@@ -157,8 +162,10 @@ public class DomainService {
 
         try {
             Boolean oldValue = domainStorage.find(domainDTO.getId()).isEnabled();
-            domainEntity = domainStorage.update(domainMapper.domainDTOToDomain(domainDTO));
-            if(oldValue&&!domainDTO.isEnabled() ){
+            domainEntity = domainMapper.domainDTOToDomain(domainDTO);
+            domainEntity.setLastModifiedDate(new Date());
+            domainEntity = domainStorage.update(domainEntity);
+            if(oldValue && !domainDTO.isEnabled() ){
                 listenerService.broadcast("exo.gamification.domain.action", domainEntity, "disable");
             }
             if(!oldValue&&domainDTO.isEnabled() ){
