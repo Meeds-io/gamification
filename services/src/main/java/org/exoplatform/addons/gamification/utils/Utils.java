@@ -25,7 +25,7 @@ public class Utils {
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  public Utils() {
+  private Utils() { //NOSONAR
   }
 
   public static Identity getIdentityByTypeAndId(String type, String name) {
