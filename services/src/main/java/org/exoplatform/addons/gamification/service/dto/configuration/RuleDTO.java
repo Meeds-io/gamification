@@ -16,11 +16,7 @@
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class RuleDTO implements Serializable {
 
