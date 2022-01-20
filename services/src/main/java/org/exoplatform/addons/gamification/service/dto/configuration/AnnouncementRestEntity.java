@@ -1,7 +1,5 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import java.util.List;
-
 public class AnnouncementRestEntity implements Cloneable {
 
   private long     id;
@@ -32,6 +30,10 @@ public class AnnouncementRestEntity implements Cloneable {
     this.creator = creator;
     this.createdDate = createdDate;
     this.activityId = activityId;
+  }
+  @Override
+  public AnnouncementRestEntity clone() { // NOSONAR
+    return new AnnouncementRestEntity(id, challengeId, assignee, comment, creator, createdDate, activityId);
   }
 
   public AnnouncementRestEntity() {

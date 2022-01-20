@@ -41,6 +41,11 @@ public class Challenge implements Cloneable {
     this.managers = managers;
   }
 
+  @Override
+  public Challenge clone() { // NOSONAR
+    return new Challenge(id, title, description, audience, startDate, endDate, canEdit, canAnnounce, managers);
+  }
+
   public Challenge() {
   }
 

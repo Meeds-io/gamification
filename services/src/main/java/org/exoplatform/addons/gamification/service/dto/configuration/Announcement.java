@@ -31,9 +31,10 @@ public class Announcement implements Cloneable {
     this.activityId = activityId;
   }
 
-  public Announcement() {
+  @Override
+  public Announcement clone() { // NOSONAR
+    return new Announcement(id, challengeId, assignee, comment, creator, createdDate, activityId);
   }
-
   public long getId() {
     return id;
   }

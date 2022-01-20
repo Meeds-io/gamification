@@ -26,15 +26,18 @@ public class ChallengeRestEntity implements Cloneable {
 
   private List<AnnouncementRestEntity> announcements;
 
-  public ChallengeRestEntity() {
-  }
-
-  public List<AnnouncementRestEntity> getAnnouncements() {
-    return announcements;
-  }
-
-  public void setAnnouncements(List<AnnouncementRestEntity> announcements) {
-    this.announcements = announcements;
+  @Override
+  public ChallengeRestEntity clone() { // NOSONAR
+    return new ChallengeRestEntity(id,
+                                   title,
+                                   description,
+                                   space,
+                                   startDate,
+                                   endDate,
+                                   userInfo,
+                                   managers,
+                                   announcementsCount,
+                                   announcements);
   }
 
   public ChallengeRestEntity(long id,
@@ -56,6 +59,17 @@ public class ChallengeRestEntity implements Cloneable {
     this.userInfo = userInfo;
     this.managers = managers;
     this.announcementsCount = announcementsCount;
+    this.announcements = announcements;
+  }
+
+  public ChallengeRestEntity() {
+  }
+
+  public List<AnnouncementRestEntity> getAnnouncements() {
+    return announcements;
+  }
+
+  public void setAnnouncements(List<AnnouncementRestEntity> announcements) {
     this.announcements = announcements;
   }
 

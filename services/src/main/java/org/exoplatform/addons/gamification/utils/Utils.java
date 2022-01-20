@@ -10,8 +10,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -21,12 +19,14 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class Utils {
 
-  private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
-
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "announcement.activity";
 
-  public static final DateTimeFormatter RFC_3339_FORMATTER          = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
+  public static final DateTimeFormatter RFC_3339_FORMATTER          =
+                                                           DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
+
+  public Utils() {
+  }
 
   public static Identity getIdentityByTypeAndId(String type, String name) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
@@ -40,7 +40,7 @@ public class Utils {
   public static final boolean canEditChallenge(List<Long> managersId) {
     Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, getCurrentUser());
 
-    return  managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()) );
+    return managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
   }
 
   public static final boolean canAnnounce(String id) {
@@ -49,7 +49,8 @@ public class Utils {
     if (space == null) {
       throw new IllegalArgumentException("space is not exist");
     }
-    return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, getCurrentUser()) || spaceService.isManager(space, getCurrentUser()): spaceService.isMember(space, getCurrentUser());
+    return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, getCurrentUser())
+        || spaceService.isManager(space, getCurrentUser()) : spaceService.isMember(space, getCurrentUser());
   }
 
   public static String toRFC3339Date(Date dateTime) {
