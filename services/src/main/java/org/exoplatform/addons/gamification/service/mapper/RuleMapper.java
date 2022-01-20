@@ -65,6 +65,8 @@ public class RuleMapper {
       }
       if (ruleDTO.getType() != null) {
         rule.setType(ruleDTO.getType());
+      } else {
+        rule.setType(TypeRule.AUTOMATIC);
       }
       try {
         rule.setCreatedDate(formatter.parse(ruleDTO.getCreatedDate()));
@@ -104,6 +106,8 @@ public class RuleMapper {
       }
       if (ruleEntity.getType() != null) {
         rule.setType(ruleEntity.getType());
+      } else {
+        rule.setType(TypeRule.AUTOMATIC);
       }
       try {
         rule.setCreatedDate(formatter.format(ruleEntity.getCreatedDate()));
