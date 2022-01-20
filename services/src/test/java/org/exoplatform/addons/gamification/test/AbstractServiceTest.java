@@ -35,6 +35,7 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
@@ -197,6 +198,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain());
+      rule.setType(TypeRule.AUTOMATIC);
       rule = ruleStorage.create(rule);
     }
     return rule;
@@ -217,6 +219,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));
+      rule.setType(TypeRule.AUTOMATIC);
       rule = ruleStorage.create(rule);
     }
     return rule;
@@ -238,6 +241,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));
+      rule.setType(TypeRule.AUTOMATIC);
       rule = ruleStorage.create(rule);
     }
     return rule;
