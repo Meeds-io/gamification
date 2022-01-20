@@ -20,6 +20,34 @@ public class UserInfo implements Cloneable {
 
   private boolean isManager;
 
+  @Override
+  protected UserInfo clone() {
+    return new UserInfo(id, remoteId, fullName, avatarUrl, canEdit, canAnnounce, isMember, isRedactor, isManager);
+  }
+
+  public UserInfo(String id,
+                  String remoteId,
+                  String fullName,
+                  String avatarUrl,
+                  boolean canEdit,
+                  boolean canAnnounce,
+                  boolean isMember,
+                  boolean isRedactor,
+                  boolean isManager) {
+    this.id = id;
+    this.remoteId = remoteId;
+    this.fullName = fullName;
+    this.avatarUrl = avatarUrl;
+    this.canEdit = canEdit;
+    this.canAnnounce = canAnnounce;
+    this.isMember = isMember;
+    this.isRedactor = isRedactor;
+    this.isManager = isManager;
+  }
+
+  public UserInfo() {
+  }
+
   public String getId() {
     return id;
   }
