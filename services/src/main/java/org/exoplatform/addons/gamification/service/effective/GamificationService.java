@@ -278,7 +278,7 @@ public class GamificationService {
   public GamificationActionsHistory build(RuleDTO ruleDto, String actor, String receiver, String objectId) {
     GamificationActionsHistory aHistory = null;
     // check if the current user is not a bot
-    Identity actorIdentity = identityManager.getIdentity(actor, false);
+    Identity actorIdentity = identityManager.getIdentity(actor);
     if (actorIdentity == null || StringUtils.isBlank(actorIdentity.getRemoteId())) {
       LOG.warn("Actor {} has earned some points but doesn't have a social identity", actor);
       return null;
@@ -331,7 +331,7 @@ public class GamificationService {
                                                            int limit) {
     result = result.stream().filter(spacePoint -> {
       String spaceIdentityId = spacePoint.getEarnerId();
-      Identity identity = identityManager.getIdentity(spaceIdentityId, false);
+      Identity identity = identityManager.getIdentity(spaceIdentityId);
       if (identity == null) {
         LOG.debug("Space Identity with id {} was deleted, ignore it", spaceIdentityId);
         return false;

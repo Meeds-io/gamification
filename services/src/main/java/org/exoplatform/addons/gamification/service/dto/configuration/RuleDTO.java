@@ -16,13 +16,9 @@
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-
 import java.io.Serializable;
-import java.util.Date;
 
 public class RuleDTO implements Serializable {
-
 
     protected Long id;
 
@@ -36,39 +32,21 @@ public class RuleDTO implements Serializable {
 
     private DomainDTO domainDTO;
 
-    //protected boolean isEnabled;
     protected boolean enabled;
 
     protected boolean deleted;
 
     private String createdBy;
 
-    private Date createdDate;
+    private String createdDate;
 
     private String lastModifiedBy;
 
     private String event;
 
-    private Date lastModifiedDate;
+    private String lastModifiedDate;
 
     public RuleDTO() {
-
-    }
-
-    public RuleDTO(RuleEntity rule) {
-        this.id = rule.getId();
-        this.title = rule.getTitle();
-        this.description = rule.getDescription();
-        this.score = rule.getScore();
-        this.area = rule.getArea();
-        this.domainDTO = ((rule.getDomainEntity() == null) ? null : new DomainDTO(rule.getDomainEntity()));
-        this.enabled = rule.isEnabled();
-        this.createdBy = rule.getCreatedBy();
-        this.createdDate = rule.getCreatedDate();
-        this.lastModifiedBy = rule.getLastModifiedBy();
-        this.lastModifiedDate = rule.getLastModifiedDate();
-        this.event = rule.getEvent();
-        this.deleted = rule.isDeleted();
 
     }
 
@@ -133,11 +111,11 @@ public class RuleDTO implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -149,11 +127,11 @@ public class RuleDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Date getLastModifiedDate() {
+    public String getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
+    public void setLastModifiedDate(String lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 

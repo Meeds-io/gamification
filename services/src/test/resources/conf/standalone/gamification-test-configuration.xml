@@ -140,27 +140,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.services.jdbc.impl.DataSourceProviderImpl</type>
     </component>
 
-
-
-    <component>
-        <type>org.exoplatform.services.cms.impl.DMSConfiguration</type>
-        <component-plugins>
-            <component-plugin>
-                <name>dmsconfiguration.plugin</name>
-                <set-method>addPlugin</set-method>
-                <type>org.exoplatform.services.cms.impl.DMSRepositoryConfiguration
-                </type>
-                <description>DMS Repository configuration</description>
-                <init-params>
-                    <value-param>
-                        <name>systemWorkspace</name>
-                        <value>portal-test</value>
-                    </value-param>
-                </init-params>
-            </component-plugin>
-        </component-plugins>
-    </component>
-
     <component>
         <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
     </component>

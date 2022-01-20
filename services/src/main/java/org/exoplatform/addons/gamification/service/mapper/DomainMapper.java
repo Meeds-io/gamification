@@ -56,11 +56,15 @@ public class DomainMapper {
             domain.setTitle(domainDTO.getTitle());
             domain.setDescription(domainDTO.getDescription());
             domain.setCreatedBy(domainDTO.getCreatedBy());
-            domain.setCreatedDate(domainDTO.getCreatedDate());
             domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
             domain.setDeleted(domainDTO.isDeleted());
             domain.setEnabled(domainDTO.isEnabled());
-            domain.setLastModifiedDate(domainDTO.getLastModifiedDate());
+            try {
+                domain.setCreatedDate(formatter.parse(domainDTO.getCreatedDate()));
+                domain.setLastModifiedDate(formatter.parse(domainDTO.getLastModifiedDate()));
+            } catch (Exception exception) {
+                // Date format unknown, or missing properties, we can ignore
+            }
             domain.setPriority(domainDTO.getPriority());
             return domain;
         }
@@ -82,4 +86,26 @@ public class DomainMapper {
         return domain;
     }
 
+    public DomainDTO domainEntityToDomainDTO(DomainEntity domainEntity) {
+        if (domainEntity == null) {
+            return null;
+        } else {
+            DomainDTO domain = new DomainDTO();
+            domain.setId(domainEntity.getId());
+            domain.setTitle(domainEntity.getTitle());
+            domain.setDescription(domainEntity.getDescription());
+            domain.setCreatedBy(domainEntity.getCreatedBy());
+            domain.setLastModifiedBy(domainEntity.getLastModifiedBy());
+            domain.setDeleted(domainEntity.isDeleted());
+            domain.setEnabled(domainEntity.isEnabled());
+            try {
+                domain.setCreatedDate(formatter.format(domainEntity.getCreatedDate()));
+                domain.setLastModifiedDate(formatter.format(domainEntity.getLastModifiedDate()));
+            } catch (Exception exception) {
+                // Date format unknown, or missing properties, we can ignore
+            }
+            domain.setPriority(domainEntity.getPriority());
+            return domain;
+        }
+    }
 }
