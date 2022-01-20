@@ -27,16 +27,16 @@ import java.util.Objects;
 @Entity(name = "Rule")
 @ExoEntity
 @Table(name = "GAMIFICATION_RULE")
-@NamedQueries({ @NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false"),
-    @NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false"),
-    @NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false"),
-    @NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL "),
-    @NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true"),
-    @NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain) and rule.isEnabled = true"),
-    @NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false"),
-    @NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle)"),
-    @NamedQuery(name = "Rule.getDomainList", query = "SELECT rule.area  FROM Rule rule GROUP BY rule.area"),
-    @NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  GROUP BY rule.event"),
+@NamedQueries({ @NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type "),
+    @NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type"),
+    @NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain) and rule.isEnabled = true and rule.type = :type"),
+    @NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type"),
+    @NamedQuery(name = "Rule.getDomainList", query = "SELECT rule.area  FROM Rule rule where rule.type = :type GROUP BY rule.area "),
+    @NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  where rule.type = :type GROUP BY rule.event"),
     @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) "),
     @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ") })
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
