@@ -16,158 +16,185 @@
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+
 import java.io.Serializable;
 
 public class RuleDTO implements Serializable {
 
-    protected Long id;
+  protected Long    id;
 
-    protected String title;
+  protected String  title;
 
-    protected String description;
+  protected String  description;
 
-    protected int score;
+  protected int     score;
 
-    protected String area;
+  protected String  area;
 
-    private DomainDTO domainDTO;
+  private DomainDTO domainDTO;
 
-    protected boolean enabled;
+  protected boolean enabled;
 
-    protected boolean deleted;
+  protected boolean deleted;
 
-    private String createdBy;
+  private String    createdBy;
 
-    private String createdDate;
+  private String    createdDate;
 
-    private String lastModifiedBy;
+  private String    lastModifiedBy;
 
-    private String event;
+  private String    event;
 
-    private String lastModifiedDate;
+  private String    lastModifiedDate;
 
-    public RuleDTO() {
+  private long      audience;
 
-    }
+  private String    startDate;
 
-    public Long getId() {
-        return id;
-    }
+  private String    endDate;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  private TypeRule  type;
 
-    public String getTitle() {
-        return title;
-    }
+  public RuleDTO() {
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public int getScore() {
-        return score;
-    }
+  public TypeRule getType() {
+    return type;
+  }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
+  public void setType(TypeRule type) {
+    this.type = type;
+  }
 
-    public String getArea() {
-        if(this.domainDTO!=null)return this.domainDTO.getTitle();
-        return area;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public void setArea(String area) {
-        this.area = area;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public DomainDTO getDomainDTO() {
-        return domainDTO;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDomainDTO(DomainDTO domainDTO) {
-        this.domainDTO = domainDTO;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+  public int getScore() {
+    return score;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setScore(int score) {
+    this.score = score;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getArea() {
+    if (this.domainDTO != null)
+      return this.domainDTO.getTitle();
+    return area;
+  }
 
-    public String getCreatedDate() {
-        return createdDate;
-    }
+  public void setArea(String area) {
+    this.area = area;
+  }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
+  public DomainDTO getDomainDTO() {
+    return domainDTO;
+  }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+  public void setDomainDTO(DomainDTO domainDTO) {
+    this.domainDTO = domainDTO;
+  }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
-    public String getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public void setLastModifiedDate(String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public String getEvent() {
-        return event;
-    }
+  public String getCreatedDate() {
+    return createdDate;
+  }
 
-    public void setEvent(String event) {
-        this.event = event;
-    }
+  public void setCreatedDate(String createdDate) {
+    this.createdDate = createdDate;
+  }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+  public String getLastModifiedBy() {
+    return lastModifiedBy;
+  }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+  public void setLastModifiedBy(String lastModifiedBy) {
+    this.lastModifiedBy = lastModifiedBy;
+  }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+  public String getLastModifiedDate() {
+    return lastModifiedDate;
+  }
 
-    @Override
-    public String toString() {
-        return "RuleDTO{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", score='" + score + '\'' +
-                ", area='" + area + '\'' +
-                ", createdBy=" + createdBy +
-                ", createdDate=" + createdDate +
-                ", lastModifiedBy='" + lastModifiedBy + '\'' +
-                ", lastModifiedDate=" + lastModifiedDate +
-                ", deleted=" + deleted +
-                ", enabled=" + enabled +
-                "}";
-    }
+  public void setLastModifiedDate(String lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
+  }
+
+  public String getEvent() {
+    return event;
+  }
+
+  public void setEvent(String event) {
+    this.event = event;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
+
+  public long getAudience() {
+    return audience;
+  }
+
+  public void setAudience(long audience) {
+    this.audience = audience;
+  }
+
+  public String getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(String startDate) {
+    this.startDate = startDate;
+  }
+
+  public String getEndDate() {
+    return endDate;
+  }
+
+  public void setEndDate(String endDate) {
+    this.endDate = endDate;
+  }
 }
