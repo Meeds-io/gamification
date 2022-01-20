@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.service.mapper;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,12 +29,10 @@ public class RuleMapper {
 
     private DomainMapper domainMapper;
 
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
     public RuleMapper(DomainMapper domainMapper) {
         this.domainMapper=domainMapper;
-    }
-
-    public RuleDTO ruleToRuleDTO(RuleEntity rule) {
-        return new RuleDTO(rule);
     }
 
     public List<RuleDTO> rulesToRuleDTOs(List<RuleEntity> rules) {
@@ -56,10 +55,41 @@ public class RuleMapper {
             rule.setDeleted(ruleDTO.isDeleted());
             rule.setEvent(ruleDTO.getEvent());
             rule.setCreatedBy(ruleDTO.getCreatedBy());
-            rule.setCreatedDate(ruleDTO.getCreatedDate());
+            try {
+                rule.setCreatedDate(formatter.parse(ruleDTO.getCreatedDate()));
+                rule.setLastModifiedDate(formatter.parse(ruleDTO.getLastModifiedDate()));
+            } catch (Exception e) {
+                //ignore
+            }
             rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
-            rule.setLastModifiedDate(ruleDTO.getLastModifiedDate());
             rule.setDomainEntity(domainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
+
+            return rule;
+        }
+    }
+
+    public RuleDTO ruleToRuleDTO(RuleEntity ruleEntity) {
+        if (ruleEntity == null) {
+            return null;
+        } else {
+            RuleDTO rule = new RuleDTO();
+            rule.setId(ruleEntity.getId());
+            rule.setScore(ruleEntity.getScore());
+            rule.setTitle(ruleEntity.getTitle());
+            rule.setDescription(ruleEntity.getDescription());
+            rule.setArea(ruleEntity.getArea());
+            rule.setEnabled(ruleEntity.isEnabled());
+            rule.setDeleted(ruleEntity.isDeleted());
+            rule.setEvent(ruleEntity.getEvent());
+            rule.setCreatedBy(ruleEntity.getCreatedBy());
+            try {
+                rule.setCreatedDate(formatter.format(ruleEntity.getCreatedDate()));
+                rule.setLastModifiedDate(formatter.format(ruleEntity.getLastModifiedDate()));
+            } catch (Exception e) {
+                //ignore
+            }
+            rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
+            rule.setDomainDTO(domainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
 
             return rule;
         }

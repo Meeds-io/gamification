@@ -49,7 +49,8 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    startSessionAs("root");
+    startSessionAs("root1");
+    registry(getComponentClass());
   }
 
   /**
@@ -59,11 +60,8 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testGetAllBadges() {
 
     try {
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/all";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -85,11 +83,8 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testAddBadge() {
 
     try {
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/add";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -128,10 +123,8 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
   public void testDeleteBadge() {
     try {
       BadgeEntity badgeEntity = newBadge();
-      getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/delete/" + badgeEntity.getId();
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "DELETE", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -173,7 +166,6 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
       getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
       String restPath = "/gamification/badges/update";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -197,7 +189,7 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
       assertNotNull(response);
       assertEquals(200, response.getStatus());
       BadgeDTO entity = (BadgeDTO) response.getEntity();
-      assertEquals(entity.getDescription(), badgeEntity.getDescription() + "_test");
+      assertEquals(entity.getDescription(), "Description_test");
       LOG.info("Adding of badges is OK ", BadgeEntity.class, response.getStatus());
     } catch (Exception e) {
       LOG.error("Cannot add badges", e);

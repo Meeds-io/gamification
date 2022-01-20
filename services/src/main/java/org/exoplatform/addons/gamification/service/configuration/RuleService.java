@@ -26,6 +26,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import javax.persistence.EntityExistsException;
+import java.util.Date;
 import java.util.List;
 
 public class RuleService {
@@ -284,12 +285,14 @@ public class RuleService {
 
         try {
             ruleEntity = ruleDAO.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
-            if(ruleEntity==null){
-                ruleEntity = ruleDAO.create(ruleMapper.ruleDTOToRule(ruleDTO));
+            if(ruleEntity == null){
+                ruleEntity = ruleMapper.ruleDTOToRule(ruleDTO);
+                ruleEntity = ruleDAO.create(ruleEntity);
             }else if(ruleEntity.isDeleted()){
                 Long id = ruleEntity.getId();
                 ruleEntity = ruleMapper.ruleDTOToRule(ruleDTO);
                 ruleEntity.setId(id);
+                ruleEntity.setLastModifiedDate(new Date());
                 ruleEntity = ruleDAO.update(ruleEntity);
             }else{
                 throw(new EntityExistsException("Rule with same event and domain already exist"));
@@ -320,7 +323,9 @@ public class RuleService {
             if(!ruleDTO.getTitle().startsWith(GAMIFICATION_DEFAULT_DATA_PREFIX)){
                 ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
             }
-            ruleEntity = ruleDAO.update(ruleMapper.ruleDTOToRule(ruleDTO)); 
+            ruleEntity = ruleMapper.ruleDTOToRule(ruleDTO);
+            ruleEntity.setLastModifiedDate(new Date());
+            ruleEntity = ruleDAO.update(ruleEntity);
         } catch (Exception e) {
             LOG.error("Error to update rule with title {}", ruleDTO.getTitle() , e);
             throw(e);

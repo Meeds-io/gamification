@@ -91,12 +91,10 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         DomainDTO domainDTO = new DomainDTO();
         domainDTO.setTitle(zoneConfig.getZoneName());
         domainDTO.setDescription(zoneConfig.getZoneDescription());
-        domainDTO.setLastModifiedDate(new Date());
         domainDTO.setLastModifiedBy("Gamification");
         domainDTO.setEnabled(true);
         domainDTO.setDeleted(false);
         domainDTO.setCreatedBy("Gamification");
-        domainDTO.setCreatedDate(new Date());
         try {
             domainDTO.setPriority(Integer.parseInt(zoneConfig.getZonePriority()));
         } catch (Exception e) {
