@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.services.log.ExoLogger;
@@ -30,134 +31,135 @@ import java.util.List;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
-    private static final Log LOG = ExoLogger.getLogger(RuleDAO.class);
+  private static final Log LOG = ExoLogger.getLogger(RuleDAO.class);
 
+  public RuleDAO() {
+  }
 
-    public RuleDAO() {
+  public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
+
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
+                                                     .setParameter("ruleTitle", ruleTitle);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
-                .setParameter("ruleTitle", ruleTitle);
+  public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
 
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
+                                                     .setParameter("event", event);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
-                .setParameter("event", event);
+  public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
 
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class)
+                                                     .setParameter("ruleTitle", ruleTitle);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class)
-                .setParameter("ruleTitle", ruleTitle);
+  public RuleEntity findRuleByEventAndDomain(String event, String domain) throws PersistenceException {
 
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
+                                                     .setParameter("event", event)
+                                                     .setParameter("domain", domain);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public RuleEntity findRuleByEventAndDomain(String event, String domain) throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
-                .setParameter("event", event)
-                .setParameter("domain", domain);
+  public List<RuleEntity> getAllRules() throws PersistenceException {
 
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRules", RuleEntity.class);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public List<RuleEntity> getAllRules() throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRules", RuleEntity.class);
+  public List<RuleEntity> getActiveRules() {
 
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+    try {
+      TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
+                                                       .setParameter("isEnabled", true);
+      query.setParameter("type", TypeRule.AUTOMATIC);
+      return query.getResultList();
+    } catch (PersistenceException e) {
+      LOG.error("Error : Unable to fetch active rules", e);
+      return Collections.emptyList();
     }
 
-    public List<RuleEntity> getActiveRules() {
+  }
 
-        try {
-            TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
-                    .setParameter("isEnabled",true);
-            return query.getResultList();
-        } catch (PersistenceException e) {
-            LOG.error("Error : Unable to fetch active rules",e);
-            return Collections.emptyList();
-        }
+  public List<RuleEntity> getAllRulesByDomain(String domain) throws PersistenceException {
 
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
+                                                     .setParameter("domain", domain);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public List<RuleEntity> getAllRulesByDomain(String domain) throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
-                .setParameter("domain", domain);
+  public List<RuleEntity> getAllRulesWithNullDomain() throws PersistenceException {
 
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesWithNullDomain", RuleEntity.class);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public List<RuleEntity> getAllRulesWithNullDomain() throws PersistenceException {
+  }
 
-        TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesWithNullDomain", RuleEntity.class);
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+  public List<String> getDomainList() throws PersistenceException {
+    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getDomainList", String.class);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public List<String>  getDomainList() throws PersistenceException {
-        TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getDomainList", String.class);
+  }
 
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-
+  public List<String> getAllEvents() throws PersistenceException {
+    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
     }
 
-    public List<String>  getAllEvents() throws PersistenceException {
-        TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
-
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-
-    }
+  }
 
 }

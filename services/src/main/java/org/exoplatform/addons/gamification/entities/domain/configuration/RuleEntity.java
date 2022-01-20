@@ -16,202 +16,198 @@
  */
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity(name = "Rule")
 @ExoEntity
 @Table(name = "GAMIFICATION_RULE")
-@NamedQueries({
-        @NamedQuery(
-                name = "Rule.getAllRules",
-                query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false"
-        ),
-        @NamedQuery(
-                name = "Rule.getEnabledRules",
-                query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false"
-        ),
-        @NamedQuery(
-                name = "Rule.getAllRulesByDomain",
-                query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false"
-        ),
-        @NamedQuery(
-                name = "Rule.getAllRulesWithNullDomain",
-                query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL "
-        ),
-        @NamedQuery(
-                name = "Rule.findEnabledRuleByTitle",
-                query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true"
-        ),
-        @NamedQuery(
-                name = "Rule.findRuleByEventAndDomain",
-                query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain) and rule.isEnabled = true"
-        ),
-        @NamedQuery(
-                name = "Rule.findEnabledRulesByEvent",
-                query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false"
-        ),
-        @NamedQuery(
-                name = "Rule.findRuleByTitle",
-                query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle)"
-        ),
-        @NamedQuery(
-                name = "Rule.getDomainList",
-                query = "SELECT rule.area  FROM Rule rule GROUP BY rule.area"
-        ),
-        @NamedQuery(
-                name = "Rule.getEventList",
-                query = "SELECT rule.event  FROM Rule rule  GROUP BY rule.event"
-        ),
-        @NamedQuery(
-                name = "Rule.deleteRuleByTitle",
-                query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) "
-        ),
-        @NamedQuery(
-                name = "Rule.deleteRuleById",
-                query = "DELETE FROM Rule rule WHERE rule.id = :ruleId "
-        )
-})
+@NamedQueries({ @NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type "),
+    @NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type"),
+    @NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain) and rule.isEnabled = true and rule.type = :type"),
+    @NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type"),
+    @NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type"),
+    @NamedQuery(name = "Rule.getDomainList", query = "SELECT rule.area  FROM Rule rule where rule.type = :type GROUP BY rule.area "),
+    @NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  where rule.type = :type GROUP BY rule.event"),
+    @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) "),
+    @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ") })
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @Id
-    @SequenceGenerator(name="SEQ_GAMIFICATION_RULE_ID", sequenceName="SEQ_GAMIFICATION_RULE_ID", allocationSize = 1)
-    @GeneratedValue(strategy=GenerationType.AUTO, generator="SEQ_GAMIFICATION_RULE_ID")
-    protected Long id;
+  @Id
+  @SequenceGenerator(name = "SEQ_GAMIFICATION_RULE_ID", sequenceName = "SEQ_GAMIFICATION_RULE_ID", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_RULE_ID")
+  protected Long            id;
 
-    @Column(name = "TITLE", unique = true, nullable = false)
-    protected String title;
+  @Column(name = "TITLE", unique = true, nullable = false)
+  protected String          title;
 
-    @Column(name = "DESCRIPTION")
-    protected String description;
+  @Column(name = "DESCRIPTION")
+  protected String          description;
 
-    @Column(name = "SCORE")
-    protected int score;
+  @Column(name = "SCORE")
+  protected int             score;
 
-    @Column(name = "AREA")
-    protected String area;
+  @Column(name = "AREA")
+  protected String          area;
 
+  @Column(name = "EVENT")
+  protected String          event;
 
-    @Column(name = "EVENT")
-    protected String event;
+  @ManyToOne
+  @JoinColumn(name = "DOMAIN_ID")
+  private DomainEntity      domainEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "DOMAIN_ID")
-    private DomainEntity domainEntity;
+  @Column(name = "ENABLED", nullable = false)
+  protected boolean         isEnabled;
 
-    @Column(name = "ENABLED", nullable = false)
-    protected boolean isEnabled;
+  @Column(name = "DELETED", nullable = false)
+  protected boolean         isDeleted;
 
-    @Column(name = "DELETED", nullable = false)
-    protected boolean isDeleted;
+  @Column(name = "AUDIENCE_ID")
+  private Long              audience;
 
-    public RuleEntity() {
+  @Column(name = "START_DATE")
+  private Date              startDate;
+
+  @Column(name = "END_DATE")
+  private Date              endDate;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "TYPE", nullable = false)
+  protected TypeRule        type;
+
+  public RuleEntity() {
+  }
+
+  public TypeRule getType() {
+    return type;
+  }
+
+  public void setType(TypeRule type) {
+    this.type = type;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public int getScore() {
+    return score;
+  }
+
+  public void setScore(int score) {
+    this.score = score;
+  }
+
+  public String getArea() {
+    return area;
+  }
+
+  public void setArea(String area) {
+    this.area = area;
+  }
+
+  public boolean isEnabled() {
+    return isEnabled;
+  }
+
+  public Long getAudience() {
+    return audience;
+  }
+
+  public void setAudience(Long audience) {
+    this.audience = audience;
+  }
+
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
+  }
+
+  public Date getEndDate() {
+    return endDate;
+  }
+
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
+
+  public void setEnabled(boolean enabled) {
+    isEnabled = enabled;
+  }
+
+  public DomainEntity getDomainEntity() {
+    return domainEntity;
+  }
+
+  public void setDomainEntity(DomainEntity domainEntity) {
+    this.domainEntity = domainEntity;
+  }
+
+  public String getEvent() {
+    return event;
+  }
+
+  public void setEvent(String event) {
+    this.event = event;
+  }
+
+  public boolean isDeleted() {
+    return isDeleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    isDeleted = deleted;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
 
-    public Long getId() {
-        return id;
-    }
+    RuleEntity ruleEntity = (RuleEntity) o;
+    return !(ruleEntity.getId() == null || getId() == null) && Objects.equals(getId(), ruleEntity.getId());
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    public DomainEntity getDomainEntity() {
-        return domainEntity;
-    }
-
-    public void setDomainEntity(DomainEntity domainEntity) {
-        this.domainEntity = domainEntity;
-    }
-
-    public String getEvent() {
-        return event;
-    }
-
-    public void setEvent(String event) {
-        this.event = event;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        RuleEntity ruleEntity = (RuleEntity) o;
-        return !(ruleEntity.getId() == null || getId() == null) && Objects.equals(getId(), ruleEntity.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "Badge{" +
-                "title='" + title + '\'' +
-                ", score='" + score + '\'' +
-                ", area='" + area + '\'' +
-                ", description='" + description + '\'' +
-                ", enable='" + isEnabled + '\'' +
-                "}";
-    }
-
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(getId());
+  }
 }

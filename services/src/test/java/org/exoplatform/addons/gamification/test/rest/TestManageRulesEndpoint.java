@@ -120,6 +120,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
                 .value("description")
                 .key("domain")
                 .value(newDomainDTO())
+                .key("type")
+                .value("AUTOMATIC")
                 .endObject();
       byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
       MultivaluedMap<String, String> h = new MultivaluedMapImpl();
@@ -200,6 +202,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
                 .value(ruleEntity.getDescription() + "_test")
                 .key("domain")
                 .value(ruleEntity.getDomainEntity().getTitle())
+                .key("type")
+                .value(ruleEntity.getType())
                 .endObject();
       byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
       MultivaluedMap<String, String> h = new MultivaluedMapImpl();
