@@ -204,7 +204,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
     // a user like an activity on space stream
     String[] likersId = activity.getLikeIdentityIds();
-    String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
+    String liker = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
 
     String activityUrl = getActivityUrl(activity);
     Space space = getSpaceOfActivity(activity);
@@ -242,7 +242,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
 
     String[] likersId = activity.getLikeIdentityIds();
-    String liker = identityManager.getIdentity(likersId[likersId.length - 1], false).getId();
+    String liker = identityManager.getIdentity(likersId[likersId.length - 1]).getId();
     /**
      * Three usescase Case 1 : Assign XP to user who has a comment liked on his
      * own stream Case 2 : Assign XP to user who has a comment liked on his own

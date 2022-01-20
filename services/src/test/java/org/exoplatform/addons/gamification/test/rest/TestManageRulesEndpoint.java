@@ -45,7 +45,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    startSessionAs("root");
+    startSessionAs("root1");
+    registry(getComponentClass());
   }
 
   /**
@@ -55,10 +56,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   public void testGetAllRules() {
 
     try {
-      getContainer().registerComponentInstance("ManageRulesEndpoint", ManageRulesEndpoint.class);
       String restPath = "/gamification/rules/all";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -80,10 +79,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   public void testGetActiveRules() {
 
     try {
-      getContainer().registerComponentInstance("ManageRulesEndpoint", ManageRulesEndpoint.class);
       String restPath = "/gamification/rules/active";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -105,10 +102,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   public void testAddRule() {
 
     try {
-      getContainer().registerComponentInstance("ManageRulesEndpoint", ManageRulesEndpoint.class);
       String restPath = "/gamification/rules/add";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -117,6 +112,10 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       jsonWriter.object()
                 .key("title")
                 .value("foo")
+                .key("event")
+                .value("eventName")
+                .key("area")
+                .value("areaName")
                 .key("description")
                 .value("description")
                 .key("domain")
@@ -131,7 +130,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       assertEquals(200, response.getStatus());
       RuleDTO entity = (RuleDTO) response.getEntity();
       assertEquals("description", entity.getDescription());
-      assertEquals("TeamWork", entity.getDomainDTO().getTitle());
+      assertEquals("eventName_areaName", entity.getTitle());
       LOG.info("Adding of rule is OK ", RuleEntity.class, response.getStatus());
     } catch (Exception e) {
       LOG.error("Cannot add rule", e);
@@ -146,10 +145,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   public void testDeleteRule() {
     try {
       RuleEntity ruleEntity = newRule();
-      getContainer().registerComponentInstance("ManageRulesEndpoint", ManageRulesEndpoint.class);
       String restPath = "/gamification/rules/delete/" + ruleEntity.getId();
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "DELETE", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -187,10 +184,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
 
     try {
       RuleEntity ruleEntity = newRule();
-      getContainer().registerComponentInstance("ManageRulesEndpoint", ManageRulesEndpoint.class);
       String restPath = "/gamification/rules/update";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
@@ -214,7 +209,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       assertNotNull(response);
       assertEquals(200, response.getStatus());
       RuleDTO entity = (RuleDTO) response.getEntity();
-      assertEquals(entity.getDescription(), ruleEntity.getDescription() + "_test");
+      assertEquals("Description_test", entity.getDescription());
       LOG.info("Updating of a rule is OK ", RuleEntity.class, response.getStatus());
     } catch (Exception e) {
       LOG.error("Cannot update rule", e);

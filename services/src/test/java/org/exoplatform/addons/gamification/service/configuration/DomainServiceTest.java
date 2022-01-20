@@ -51,11 +51,11 @@ public class DomainServiceTest extends AbstractServiceTest {
     domain.setTitle(GAMIFICATION_DOMAIN);
     domain.setDescription("Description");
     domain.setCreatedBy(TEST_USER_SENDER);
-    domain.setCreatedDate(new Date());
+    domain.setCreatedDate("01/01/2022");
     domain.setLastModifiedBy(TEST_USER_SENDER);
     domain.setDeleted(false);
     domain.setEnabled(true);
-    domain.setLastModifiedDate(new Date());
+    domain.setLastModifiedDate("10/01/2022");
     domain = domainService.addDomain(domain);
     assertNotNull(domainStorage.find(domain.getId()));
   }

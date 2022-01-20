@@ -19,19 +19,18 @@ package org.exoplatform.addons.gamification.test.rest;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.json.JSONObject;
 import org.json.JSONWriter;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.log.ExoLogger;
@@ -50,25 +49,41 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
     return ManageDomainsEndpoint.class;
   }
 
+  private DomainDTO domain;
 
+  @Override
+  @Before
+  public void setUp() throws Exception {
+    super.setUp();
+    startSessionAs("root0");
+    registry(getComponentClass());
+    DomainDTO domain = new DomainDTO();
+    domain.setTitle(GAMIFICATION_DOMAIN);
+    domain.setDescription("Description");
+    domain.setCreatedBy(TEST_USER_SENDER);
+    domain.setCreatedDate("01/01/2022");
+    domain.setLastModifiedBy(TEST_USER_SENDER);
+    domain.setDeleted(false);
+    domain.setEnabled(true);
+    domain.setLastModifiedDate("10/01/2022");
+    this.domain = domainService.addDomain(domain);
+  }
 
   /**
    * Testing the Status Code
    **/
   @Test
-  public void testgetAllDomains() {
+  public void testGetAllDomains() {
 
     try {
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
-      String restPath = "/gamification/domains/all";
+      String restPath = "/gamification/domains/";
       EnvironmentContext envctx = new EnvironmentContext();
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
       ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
       assertNotNull(response);
-      //assertEquals(200, response.getStatus());
+      assertEquals(200, response.getStatus());
       LOG.info("List of domains is OK ", DomainEntity.class, response.getStatus());
     } catch (Exception e) {
       LOG.error("Cannot get list of domains", e);
@@ -85,11 +100,8 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   public void testAddDomain() {
 
     try {
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
-      String restPath = "/gamification/domains/add";
+      String restPath = "/gamification/domains/";
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
 
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
       envctx.put(HttpServletRequest.class, httpRequest);
@@ -115,9 +127,9 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
 
       //assertEquals(200, response.getStatus());
 
-      DomainDTO entity = (DomainDTO) response.getEntity();
-      assertEquals("foo", entity.getTitle());
-      assertEquals("description", entity.getDescription());
+      JSONObject entity = new JSONObject(response.getEntity().toString());
+      assertEquals("foo", entity.get("title"));
+      assertEquals("description", entity.get("description"));
 
 
       LOG.info("List of domains is OK ", DomainEntity.class, response.getStatus());
@@ -134,9 +146,7 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   public void testUpdateDomain() {
 
     try {
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
-      String restPath = "/gamification/domains/update";
+      String restPath = "/gamification/domains/" + this.domain.getId();
       EnvironmentContext envctx = new EnvironmentContext();
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
       envctx.put(HttpServletRequest.class, httpRequest);
@@ -145,10 +155,16 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
       StringWriter writer = new StringWriter();
       JSONWriter jsonWriter = new JSONWriter(writer);
       jsonWriter.object()
+              .key("id")
+              .value(this.domain.getId())
               .key("title")
-              .value("foo")
+              .value("TeamWork modified")
               .key("description")
-              .value("descriptionn")
+              .value("description modified")
+              .key("createdDate")
+              .value("")
+              .key("createdBy")
+              .value(domain.getCreatedBy())
 
               .endObject();
 
@@ -160,9 +176,9 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
       ContainerResponse response = launcher.service(HTTPMethods.PUT.toString(), restPath, "", h, data, envctx);
       assertNotNull(response);
 
-      DomainDTO entity = (DomainDTO) response.getEntity();
-      assertEquals("foo", entity.getTitle());
-      assertEquals("descriptionn", entity.getDescription());
+      JSONObject entity = new JSONObject(response.getEntity().toString());
+      assertEquals("TeamWork modified", entity.get("title"));
+      assertEquals("description modified", entity.get("description"));
 
       LOG.info("List of domains is OK ", DomainEntity.class, response.getStatus());
     } catch (Exception e) {
@@ -177,11 +193,8 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
   @Test
   public void testDeleteDomain() {
     try {
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageDomainsEndpoint", ManageDomainsEndpoint.class);
-      String restPath = "/gamification/domains/delete";
+      String restPath = "/gamification/domains/" + this.domain.getId();
       EnvironmentContext envctx = new EnvironmentContext();
-      registry(getComponentClass());
 
       HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "DELETE", null);
       envctx.put(HttpServletRequest.class, httpRequest);
@@ -205,20 +218,11 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
       h.putSingle("content-length", "" + data.length);
       ContainerResponse response = launcher.service("DELETE", restPath, "", h, data, envctx);
       assertNotNull(response);
-
-      DomainDTO entity = (DomainDTO) response.getEntity();
-      assertEquals("foo", entity.getTitle());
-      assertEquals("description", entity.getDescription());
-
-
+      assertEquals(200, response.getStatus());
       LOG.info("Delete of domains is OK ", DomainEntity.class, response.getStatus());
     } catch (Exception e) {
-
       LOG.error("Cannot delete the list of domains", e);
     }
 
   }
-
-
-
 }
