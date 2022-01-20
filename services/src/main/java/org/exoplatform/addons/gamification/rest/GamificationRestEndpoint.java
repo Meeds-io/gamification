@@ -139,7 +139,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
             if (startDate.after(endDate)) {
                 return Response.ok(new GamificationPoints().userId(userId).points(0L).code("1").message("date parameters are not correctly set")).build();
             }
-            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId, false);
+            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
             Long earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), startDate, endDate);
             return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
         } catch (ParseException pe) {

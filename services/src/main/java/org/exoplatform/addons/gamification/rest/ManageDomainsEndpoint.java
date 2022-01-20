@@ -103,9 +103,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
         // Compute domain's data
         domainDTO.setId(null);
         domainDTO.setCreatedBy(currentUserName);
-        domainDTO.setCreatedDate(new Date());
         domainDTO.setLastModifiedBy(currentUserName);
-        domainDTO.setLastModifiedDate(new Date());
 
         // --- Add domain
         domainDTO = domainService.addDomain(domainDTO);
@@ -142,13 +140,12 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       String currentUserName = conversationState.getIdentity().getUserId();
       try {
         domainDTO.setLastModifiedBy(currentUserName);
-        domainDTO.setLastModifiedDate(new Date());
 
         // --- Update domain
         domainDTO = domainService.updateDomain(domainDTO);
 
         // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName, false).getId();
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
         LOG.info("service=gamification operation=edit-domain parameters=\"user_social_id:{},domain_id:{},domain_title:{},domain_description:{}\"", actorId, domainDTO.getId(), domainDTO.getTitle(), domainDTO.getDescription());
 
 
