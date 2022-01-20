@@ -29,19 +29,16 @@ import java.util.stream.Collectors;
 
 public class RuleMapper {
 
-  private DomainMapper     domainMapper;
+  private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-  private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-  public RuleMapper(DomainMapper domainMapper) {
-    this.domainMapper = domainMapper;
+  public RuleMapper() {
   }
 
   public List<RuleDTO> rulesToRuleDTOs(List<RuleEntity> rules) {
-    return rules.stream().filter(Objects::nonNull).map(this::ruleToRuleDTO).collect(Collectors.toList());
+    return rules.stream().filter(Objects::nonNull).map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
   }
 
-  public RuleEntity ruleDTOToRule(RuleDTO ruleDTO) {
+  public static RuleEntity ruleDTOToRule(RuleDTO ruleDTO) {
     if (ruleDTO == null) {
       return null;
     } else {
@@ -81,13 +78,13 @@ public class RuleMapper {
         // ignore
       }
       rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
-      rule.setDomainEntity(domainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
+      rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
 
       return rule;
     }
   }
 
-  public RuleDTO ruleToRuleDTO(RuleEntity ruleEntity) {
+  public static RuleDTO ruleToRuleDTO(RuleEntity ruleEntity) {
     if (ruleEntity == null) {
       return null;
     } else {
@@ -127,14 +124,14 @@ public class RuleMapper {
         // ignore
       }
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
-      rule.setDomainDTO(domainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
+      rule.setDomainDTO(DomainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
 
       return rule;
     }
   }
 
   public List<RuleEntity> ruleDTOsToRules(List<RuleDTO> ruleDTOs) {
-    return ruleDTOs.stream().filter(Objects::nonNull).map(this::ruleDTOToRule).collect(Collectors.toList());
+    return ruleDTOs.stream().filter(Objects::nonNull).map(RuleMapper::ruleDTOToRule).collect(Collectors.toList());
   }
 
   public RuleEntity ruleFromId(Long id) {
