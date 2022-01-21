@@ -18,8 +18,10 @@ package org.exoplatform.addons.gamification.test;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.SecurityContext;
 
@@ -199,6 +201,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain());
       rule.setType(TypeRule.AUTOMATIC);
+      rule.setManagers(Collections.emptyList());
       rule = ruleStorage.create(rule);
     }
     return rule;
@@ -220,6 +223,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));
       rule.setType(TypeRule.AUTOMATIC);
+      rule.setManagers(Collections.emptyList());
       rule = ruleStorage.create(rule);
     }
     return rule;
@@ -242,6 +246,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));
       rule.setType(TypeRule.AUTOMATIC);
+      rule.setManagers(Collections.emptyList());
       rule = ruleStorage.create(rule);
     }
     return rule;

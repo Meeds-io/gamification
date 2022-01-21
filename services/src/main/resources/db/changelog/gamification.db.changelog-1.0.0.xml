@@ -336,4 +336,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-24">
+        <createTable tableName="CHALLENGE_MANAGER_RULE">
+            <column name="CHALLENGE_MANAGER_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CHALLENGE_MANAGER_RULE_ID"/>
+            </column>
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CHALLENGE_MANAGER_RULE"
+                             foreignKeyName="FK_CHALLENGES_MANAGER_RULE" references="GAMIFICATION_RULE(ID)"/>
+            </column>
+            <column name="MANAGER_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
+    </changeSet>
 </databaseChangeLog>
