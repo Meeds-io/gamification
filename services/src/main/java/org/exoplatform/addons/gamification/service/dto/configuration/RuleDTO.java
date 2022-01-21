@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class RuleDTO implements Serializable {
 
@@ -54,10 +55,20 @@ public class RuleDTO implements Serializable {
 
   private String    endDate;
 
-  private TypeRule  type;
+  private TypeRule   type;
+
+  private List<Long> managers;
 
   public RuleDTO() {
 
+  }
+
+  public List<Long> getManagers() {
+    return managers;
+  }
+
+  public void setManagers(List<Long> managers) {
+    this.managers = managers;
   }
 
   public Long getId() {
