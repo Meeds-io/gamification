@@ -359,6 +359,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="RULE_ID" type="BIGINT"/>
             <column name="ACTIVITY_ID" type="BIGINT"/>
             <column name="COMMENT" type="NVARCHAR(2000)"/>
+            <column name="CREATOR_ID" type="BIGINT"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

@@ -26,6 +26,7 @@ public class GamificationActionsHistoryMapper {
     gActionsHistoryDTO.setRuleId(gamificationActionsHistoryEntity.getRuleId());
     gActionsHistoryDTO.setActivityId(gamificationActionsHistoryEntity.getActivityId());
     gActionsHistoryDTO.setComment(gamificationActionsHistoryEntity.getComment());
+    gActionsHistoryDTO.setCreator(gamificationActionsHistoryEntity.getCreator());
     return gActionsHistoryDTO;
   }
 
@@ -46,6 +47,7 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setDate(Utils.parseRFC3339Date(gamificationActionsHistoryDTO.getDate()));
     gHistoryEntity.setComment(gamificationActionsHistoryDTO.getComment());
     gHistoryEntity.setRuleId(gHistoryEntity.getRuleId());
+    gHistoryEntity.setCreator(gHistoryEntity.getCreator());
     return gHistoryEntity;
   }
 }

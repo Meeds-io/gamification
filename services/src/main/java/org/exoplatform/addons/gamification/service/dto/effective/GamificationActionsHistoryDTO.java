@@ -30,6 +30,8 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private String comment;
 
+  private Long creator;
+
   public GamificationActionsHistoryDTO() {
   }
 
@@ -50,6 +52,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
     gActionsHistoryDTO.setRuleId(ruleId);
     gActionsHistoryDTO.setActivityId(activityId);
     gActionsHistoryDTO.setComment(comment);
+    gActionsHistoryDTO.setCreator(creator);
     return gActionsHistoryDTO;
   }
 
@@ -163,5 +166,13 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   public void setComment(String comment) {
     this.comment = comment;
+  }
+
+  public Long getCreator() {
+    return creator;
+  }
+
+  public void setCreator(Long creator) {
+    this.creator = creator;
   }
 }

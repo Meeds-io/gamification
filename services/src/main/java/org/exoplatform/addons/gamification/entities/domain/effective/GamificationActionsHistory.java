@@ -141,6 +141,9 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   @Column(name = "COMMENT")
   private String            comment;
+  
+  @Column(name = "CREATOR_ID")
+  private Long            creator;
 
   public Long getId() {
     return id;
@@ -262,6 +265,14 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     this.comment = comment;
   }
 
+  public Long getCreator() {
+    return creator;
+  }
+
+  public void setCreator(Long creator) {
+    this.creator = creator;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -283,6 +294,7 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     eb.append(objectId, that.objectId);
     eb.append(comment, that.comment);
     eb.append(activityId, that.activityId);
+    eb.append(creator, that.creator);
     return eb.isEquals();
   }
 
@@ -299,6 +311,7 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     hcb.append(objectId);
     hcb.append(comment);
     hcb.append(activityId);
+    hcb.append(creator);
     return hcb.toHashCode();
   }
 
