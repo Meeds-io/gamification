@@ -54,10 +54,11 @@ public interface ChallengeService {
    * Retrieves all challenges by user.
    * @param offset Offset
    * @param limit Limit
-   * @param username User name accessing challenge
+   * @param username Username accessing challenge
    * @return A {@link List <Challenge>} object
    * @throws IllegalAccessException when user is not authorized to access
    *           challenges
+   * @throws Exception can't get list of spaces
    */
-  List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws IllegalAccessException;
+  List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws Exception;
 }

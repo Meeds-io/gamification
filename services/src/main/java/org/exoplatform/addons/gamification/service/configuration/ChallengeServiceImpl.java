@@ -100,7 +100,7 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws IllegalAccessException {
+  public List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws Exception {
     if (StringUtils.isBlank(username)) {
       throw new IllegalAccessException("user name must not be null");
     }
