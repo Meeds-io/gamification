@@ -22,6 +22,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Ty
 import org.exoplatform.addons.gamification.utils.Utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -68,6 +69,11 @@ public class RuleMapper {
       } else {
         rule.setType(TypeRule.AUTOMATIC);
       }
+      if (ruleDTO.getManagers() != null) {
+        rule.setManagers(ruleDTO.getManagers());
+      } else {
+        rule.setManagers(Collections.emptyList());
+      }
       try {
         rule.setCreatedDate(formatter.parse(ruleDTO.getCreatedDate()));
         rule.setLastModifiedDate(formatter.parse(ruleDTO.getLastModifiedDate()));
@@ -108,6 +114,11 @@ public class RuleMapper {
         rule.setType(ruleEntity.getType());
       } else {
         rule.setType(TypeRule.AUTOMATIC);
+      }
+      if (ruleEntity.getManagers() != null) {
+        rule.setManagers(ruleEntity.getManagers());
+      } else {
+        rule.setManagers(Collections.emptyList());
       }
       try {
         rule.setCreatedDate(formatter.format(ruleEntity.getCreatedDate()));
