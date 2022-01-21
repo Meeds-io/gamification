@@ -16,18 +16,16 @@
  */
 package org.exoplatform.addons.gamification.service.mapper;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 public class DomainMapper {
-
-  private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
   private static final Log        LOG       = ExoLogger.getLogger(DomainMapper.class);
 
@@ -35,7 +33,18 @@ public class DomainMapper {
   }
 
   public static DomainDTO domainToDomainDTO(DomainEntity domain) {
-    return new DomainDTO(domain);
+    DomainDTO domainDTO = new DomainDTO();
+    domainDTO.setId(domain.getId());
+    domainDTO.setTitle(domain.getTitle());
+    domainDTO.setDescription(domain.getDescription());
+    domainDTO.setPriority(domain.getPriority());
+    domainDTO.setCreatedBy(domain.getCreatedBy());
+    domainDTO.setCreatedDate(Utils.toRFC3339Date(domain.getCreatedDate()));
+    domainDTO.setLastModifiedBy(domain.getLastModifiedBy());
+    domainDTO.setLastModifiedDate(Utils.toRFC3339Date(domain.getLastModifiedDate()));
+    domainDTO.setDeleted(domainDTO.isDeleted());
+    domainDTO.setEnabled(domainDTO.isEnabled());
+    return  domainDTO;
   }
 
   public static List<DomainDTO> domainssToDomainDTOs(List<DomainEntity> domains) {
@@ -58,12 +67,8 @@ public class DomainMapper {
       domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
       domain.setDeleted(domainDTO.isDeleted());
       domain.setEnabled(domainDTO.isEnabled());
-      try {
-        domain.setCreatedDate(formatter.parse(domainDTO.getCreatedDate()));
-        domain.setLastModifiedDate(formatter.parse(domainDTO.getLastModifiedDate()));
-      } catch (Exception exception) {
-        // Date format unknown, or missing properties, we can ignore
-      }
+      domain.setCreatedDate(Utils.parseRFC3339Date(domainDTO.getCreatedDate()));
+      domain.setLastModifiedDate(Utils.parseRFC3339Date(domainDTO.getLastModifiedDate()));
       domain.setPriority(domainDTO.getPriority());
       return domain;
     }
@@ -97,12 +102,8 @@ public class DomainMapper {
       domain.setLastModifiedBy(domainEntity.getLastModifiedBy());
       domain.setDeleted(domainEntity.isDeleted());
       domain.setEnabled(domainEntity.isEnabled());
-      try {
-        domain.setCreatedDate(formatter.format(domainEntity.getCreatedDate()));
-        domain.setLastModifiedDate(formatter.format(domainEntity.getLastModifiedDate()));
-      } catch (Exception exception) {
-        // Date format unknown, or missing properties, we can ignore
-      }
+      domain.setCreatedDate(Utils.toRFC3339Date(domainEntity.getCreatedDate()));
+      domain.setLastModifiedDate(Utils.toRFC3339Date(domainEntity.getLastModifiedDate()));
       domain.setPriority(domainEntity.getPriority());
       return domain;
     }

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.junit.Before;
@@ -57,15 +58,17 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
     super.setUp();
     startSessionAs("root0");
     registry(getComponentClass());
+    Date createDate = new Date(System.currentTimeMillis());
+    Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
     DomainDTO domain = new DomainDTO();
     domain.setTitle(GAMIFICATION_DOMAIN);
     domain.setDescription("Description");
     domain.setCreatedBy(TEST_USER_SENDER);
-    domain.setCreatedDate("01/01/2022");
+    domain.setCreatedDate(Utils.toRFC3339Date(createDate));
     domain.setLastModifiedBy(TEST_USER_SENDER);
     domain.setDeleted(false);
     domain.setEnabled(true);
-    domain.setLastModifiedDate("10/01/2022");
+    domain.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
     this.domain = domainService.addDomain(domain);
   }
 

@@ -16,146 +16,127 @@
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+public class DomainDTO implements Cloneable {
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+  protected Long                  id;
 
-public class DomainDTO implements Serializable {
+  protected String                title;
 
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+  protected String                description;
 
-    protected Long id;
+  protected int                   priority;
 
-    protected String title;
+  private String                  createdBy;
 
-    protected String description;
+  private String                  createdDate;
 
-    protected int priority;
+  private String                  lastModifiedBy;
 
-    private String createdBy;
+  private String                  lastModifiedDate;
 
-    private String createdDate;
+  protected boolean               deleted;
 
-    private String lastModifiedBy;
-
-    private String lastModifiedDate;
-
-    protected boolean deleted;
-
-    protected boolean enabled;
+  protected boolean               enabled;
 
 
-    public DomainDTO() {
+  public DomainDTO() {
 
-    }
+  }
 
-    public DomainDTO(DomainEntity domainEntity) {
-        this.id = domainEntity.getId();
-        this.title = domainEntity.getTitle();
-        this.description = domainEntity.getDescription();
-        this.createdBy = domainEntity.getCreatedBy();
-        this.priority = domainEntity.getPriority();
-        this.deleted = domainEntity.isDeleted();
-        this.enabled = domainEntity.isEnabled();
-        this.createdDate = formatter.format(domainEntity.getCreatedDate());
-        this.lastModifiedDate = formatter.format(domainEntity.getLastModifiedDate());
-        this.lastModifiedBy = domainEntity.getLastModifiedBy();
+  @Override
+  protected DomainDTO clone() {
+   DomainDTO domainDTO =  new DomainDTO();
+    domainDTO.setId(id);
+    domainDTO.setTitle(title);
+    domainDTO.setDescription(description);
+    domainDTO.setPriority(priority);
+    domainDTO.setCreatedBy(createdBy);
+    domainDTO.setCreatedDate(createdDate);
+    domainDTO.setLastModifiedBy(lastModifiedBy);
+    domainDTO.setLastModifiedDate(lastModifiedDate);
+    domainDTO.setDeleted(deleted);
+    domainDTO.setEnabled(enabled);
+    return domainDTO;
+  }
 
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public int getPriority() {
+    return priority;
+  }
 
-    public int getPriority() {
-        return priority;
-    }
+  public void setPriority(int priority) {
+    this.priority = priority;
+  }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getCreatedDate() {
+    return createdDate;
+  }
 
-    public String getCreatedDate() {
-        return createdDate;
-    }
+  public void setCreatedDate(String createdDate) {
+    this.createdDate = createdDate;
+  }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
+  public String getLastModifiedBy() {
+    return lastModifiedBy;
+  }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+  public void setLastModifiedBy(String lastModifiedBy) {
+    this.lastModifiedBy = lastModifiedBy;
+  }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
+  public String getLastModifiedDate() {
+    return lastModifiedDate;
+  }
 
-    public String getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+  public void setLastModifiedDate(String lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
+  }
 
-    public void setLastModifiedDate(String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
+  public boolean isDeleted() {
+    return deleted;
+  }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", createdBy=" + createdBy +
-                ", createdDate=" + createdDate +
-                ", lastModifiedBy='" + lastModifiedBy + '\'' +
-                ", lastModifiedDate=" + lastModifiedDate +
-                ", deleted=" + deleted +
-                ", enabled=" + enabled +
-                "}";
-    }
 }

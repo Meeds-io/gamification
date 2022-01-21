@@ -27,7 +27,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 @ExoEntity
@@ -134,9 +133,8 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   @JoinColumn(name = "DOMAIN_ID")
   private DomainEntity      domainEntity;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "RULE_ID", referencedColumnName = "ID")
-  private RuleEntity        ruleEntity;
+  @Column(name = "RULE_ID")
+  private Long        ruleId;
 
   @Column(name = "ACTIVITY_ID")
   private Long              activityId;
@@ -240,12 +238,12 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     this.domainEntity = domainEntity;
   }
 
-  public RuleEntity getRuleEntity() {
-    return ruleEntity;
+  public Long getRuleId() {
+    return ruleId;
   }
 
-  public void setRuleEntity(RuleEntity ruleEntity) {
-    this.ruleEntity = ruleEntity;
+  public void setRuleId(Long ruleId) {
+    this.ruleId = ruleId;
   }
 
   public Long getActivityId() {
@@ -303,6 +301,5 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     hcb.append(activityId);
     return hcb.toHashCode();
   }
-
 
 }

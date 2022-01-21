@@ -30,52 +30,27 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private String comment;
 
-  public GamificationActionsHistoryDTO(Long id,
-                                       String date,
-                                       String earnerId,
-                                       String earnerType,
-                                       long globalScore,
-                                       String actionTitle,
-                                       String domain,
-                                       String context,
-                                       long actionScore,
-                                       String receiver,
-                                       String objectId,
-                                       Long ruleId,
-                                       Long activityId,
-                                       String comment) {
-    this.id = id;
-    this.date = date;
-    this.earnerId = earnerId;
-    this.earnerType = earnerType;
-    this.globalScore = globalScore;
-    this.actionTitle = actionTitle;
-    this.domain = domain;
-    this.context = context;
-    this.actionScore = actionScore;
-    this.receiver = receiver;
-    this.objectId = objectId;
-    this.ruleId = ruleId;
-    this.activityId = activityId;
-    this.comment = comment;
+  public GamificationActionsHistoryDTO() {
   }
 
   @Override
   public GamificationActionsHistoryDTO clone() { // NOSONAR
-    return new GamificationActionsHistoryDTO(id,
-                                             date,
-                                             earnerId,
-                                             earnerType,
-                                             globalScore,
-                                             actionTitle,
-                                             domain,
-                                             context,
-                                             actionScore,
-                                             receiver,
-                                             objectId,
-                                             ruleId,
-                                             activityId,
-                                             comment);
+    GamificationActionsHistoryDTO gActionsHistoryDTO = new GamificationActionsHistoryDTO();
+    gActionsHistoryDTO.setId(id);
+    gActionsHistoryDTO.setDate(date);
+    gActionsHistoryDTO.setEarnerId(earnerId);
+    gActionsHistoryDTO.setEarnerType(earnerType);
+    gActionsHistoryDTO.setReceiver(receiver);
+    gActionsHistoryDTO.setGlobalScore(globalScore);
+    gActionsHistoryDTO.setActionScore(actionScore);
+    gActionsHistoryDTO.setActionTitle(actionTitle);
+    gActionsHistoryDTO.setDomain(domain);
+    gActionsHistoryDTO.setContext(context);
+    gActionsHistoryDTO.setObjectId(objectId);
+    gActionsHistoryDTO.setRuleId(ruleId);
+    gActionsHistoryDTO.setActivityId(activityId);
+    gActionsHistoryDTO.setComment(comment);
+    return gActionsHistoryDTO;
   }
 
   public Long getId() {
