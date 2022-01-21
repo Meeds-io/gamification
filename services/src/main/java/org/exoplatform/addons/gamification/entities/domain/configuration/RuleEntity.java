@@ -21,7 +21,9 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "Rule")
@@ -86,7 +88,20 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   @Column(name = "TYPE", nullable = false)
   protected TypeRule        type;
 
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(name = "CHALLENGE_MANAGER_RULE", joinColumns = @JoinColumn(name = "ID"))
+  @Column(name = "MANAGER_ID")
+  private List<Long> managers;
+
   public RuleEntity() {
+  }
+
+  public List<Long> getManagers() {
+    return managers;
+  }
+
+  public void setManagers(List<Long> managers) {
+    this.managers = managers;
   }
 
   public TypeRule getType() {
@@ -210,4 +225,16 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   public int hashCode() {
     return Objects.hashCode(getId());
   }
+
+  @Override
+  public String toString() {
+    return "Badge{" +
+            "title='" + title + '\'' +
+            ", score='" + score + '\'' +
+            ", area='" + area + '\'' +
+            ", description='" + description + '\'' +
+            ", enable='" + isEnabled + '\'' +
+            "}";
+  }
+
 }
