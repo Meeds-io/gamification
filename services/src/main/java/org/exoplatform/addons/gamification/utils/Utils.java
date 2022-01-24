@@ -4,16 +4,24 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -25,11 +33,13 @@ public class Utils {
 
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "announcement.activity";
 
+  private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
+
   public static final DateTimeFormatter RFC_3339_FORMATTER          =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  private Utils() { //NOSONAR
+  private Utils() { // NOSONAR
   }
 
   public static Identity getIdentityByTypeAndId(String type, String name) {
@@ -94,4 +104,76 @@ public class Utils {
     return ruleService.findRuleById(ruleId);
   }
 
+  public static List<UserInfo> getManagersByIds(List<Long> ids, Long challengeId) {
+    try {
+      ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+      Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
+      Space space = getSpaceById(String.valueOf(challenge.getAudience()));
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+      if (ids.isEmpty()) {
+        return Collections.emptyList();
+      }
+      List<UserInfo> users = new ArrayList<>();
+      for (Long id : ids) {
+        Identity identity = identityManager.getIdentity(String.valueOf(id));
+        if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
+          users.add(createUser(identity, space, challenge.getManagers()));
+        }
+      }
+      return users;
+    } catch (Exception e) {
+      LOG.info("challenge not exist with this id {0}", challengeId);
+      return Collections.emptyList();
+    }
+
+  }
+
+  public static UserInfo getUserById(Long id, Long challengeId) {
+    try {
+      ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+      Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
+      Space space = getSpaceById(String.valueOf(challenge.getAudience()));
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+      if (id == null) {
+        return null;
+      }
+      Identity identity = identityManager.getIdentity(String.valueOf(id));
+      if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
+        return createUser(identity, space, challenge.getManagers());
+      } else {
+        return null;
+      }
+    } catch (Exception e) {
+      LOG.info("challenge not exist with this id {0}", challengeId);
+      return null;
+    }
+
+  }
+
+  public static UserInfo createUser(Identity identity, Space space, List<Long> managersId) {
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    UserInfo userInfo = new UserInfo();
+    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    userInfo.setFullName(identity.getProfile().getFullName());
+    userInfo.setRemoteId(identity.getRemoteId());
+    userInfo.setId(identity.getId());
+    if (space != null) {
+      userInfo.setManager(spaceService.isManager(space, getCurrentUser()));
+      userInfo.setMember(spaceService.isMember(space, getCurrentUser()));
+      userInfo.setRedactor(spaceService.isRedactor(space, getCurrentUser()));
+    }
+    userInfo.setCanAnnounce(canAnnounce(space.getId()));
+    userInfo.setCanEdit(canEditChallenge(managersId));
+    return userInfo;
+  }
+
+  public static Long countAnnouncementsByChallenge(Long challengeId) {
+    AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
+    try {
+      return announcementService.countAllAnnouncementsByChallenge(challengeId);
+    } catch (Exception e) {
+      // NOSONAR
+      return 0l;
+    }
+  }
 }

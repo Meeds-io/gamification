@@ -59,9 +59,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date)
-         .setParameter("domain", domain)
-         .setParameter("earnerType", earnerType);
+    query.setParameter("date", date).setParameter("domain", domain).setParameter("earnerType", earnerType);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -231,9 +229,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByDateByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date)
-         .setParameter("earnerType", earnerType)
-         .setParameter("domain", domain);
+    query.setParameter("date", date).setParameter("earnerType", earnerType).setParameter("domain", domain);
     query.setMaxResults(limit);
     try {
       return query.getResultList();
@@ -254,14 +250,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     TypedQuery<PiechartLeaderboard> query = null;
 
     if (fromDate != null && toDate != null) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUserByDates",
-                                                  PiechartLeaderboard.class);
-      query.setParameter("earnerId", earnerId)
-           .setParameter("fromDate", fromDate)
-           .setParameter("toDate", toDate);
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUserByDates", PiechartLeaderboard.class);
+      query.setParameter("earnerId", earnerId).setParameter("fromDate", fromDate).setParameter("toDate", toDate);
     } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUser",
-                                                  PiechartLeaderboard.class);
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUser", PiechartLeaderboard.class);
       query.setParameter("earnerId", earnerId);
     }
     try {
@@ -292,9 +284,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   public long findUserReputationScoreBetweenDate(String earnerId, Date fromDate, Date toDate) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreBetweenDate",
                                                                  Long.class);
-    query.setParameter("earnerId", earnerId)
-         .setParameter("fromDate", fromDate)
-         .setParameter("toDate", toDate);
+    query.setParameter("earnerId", earnerId).setParameter("fromDate", fromDate).setParameter("toDate", toDate);
     Long count = query.getSingleResult();
     return count == null ? 0 : count.longValue();
   }
@@ -302,16 +292,12 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   public long findUserReputationScoreByMonth(String earnerId, Date currentMonth) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByMonth",
                                                                  Long.class);
-    query.setParameter("earnerId", earnerId)
-         .setParameter("currentMonth", currentMonth);
+    query.setParameter("earnerId", earnerId).setParameter("currentMonth", currentMonth);
     Long count = query.getSingleResult();
     return count == null ? 0 : count.longValue();
   }
 
-  public long findUserReputationScoreByDomainBetweenDate(String earnerId,
-                                                         String domain,
-                                                         Date fromDate,
-                                                         Date toDate) {
+  public long findUserReputationScoreByDomainBetweenDate(String earnerId, String domain, Date fromDate, Date toDate) {
     TypedQuery<Long> query =
                            getEntityManager().createNamedQuery("GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate",
                                                                Long.class);
@@ -327,9 +313,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("GamificationActionsHistory.findAllLeaderboardBetweenDate",
                                                                               StandardLeaderboard.class);
-    query.setParameter("fromDate", fromDate)
-         .setParameter("toDate", toDate)
-         .setParameter("earnedType", earnedType);
+    query.setParameter("fromDate", fromDate).setParameter("toDate", toDate).setParameter("earnedType", earnedType);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -358,8 +342,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   public long getTotalScore(String earnerId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.computeTotalScore",
-                                                                 Long.class);
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.computeTotalScore", Long.class);
     query.setParameter("earnerId", earnerId);
     Long count = query.getSingleResult();
     return count == null ? 0 : count.longValue();
@@ -395,6 +378,18 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       return query.getResultList();
     } catch (NoResultException e) {
       return Collections.emptyList();
+    }
+  }
+
+  public Long countAnnouncementsByChallenge(Long challengeId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.countAnnouncementsByChallenge",
+                                                                 Long.class);
+    query.setParameter("challengeId", challengeId);
+    try {
+      Long count = query.getSingleResult();
+      return count == null ? 0l : count.longValue();
+    } catch (NoResultException e) {
+      return 0l;
     }
   }
 
