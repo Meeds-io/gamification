@@ -38,25 +38,43 @@ public class DomainDTO implements Cloneable {
 
   protected boolean               enabled;
 
+  public DomainDTO() {  }
 
-  public DomainDTO() {
-
+  public DomainDTO(Long id,
+                   String title,
+                   String description,
+                   int priority,
+                   String createdBy,
+                   String createdDate,
+                   String lastModifiedBy,
+                   String lastModifiedDate,
+                   boolean deleted,
+                   boolean enabled) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.priority = priority;
+    this.createdBy = createdBy;
+    this.createdDate = createdDate;
+    this.lastModifiedBy = lastModifiedBy;
+    this.lastModifiedDate = lastModifiedDate;
+    this.deleted = deleted;
+    this.enabled = enabled;
   }
 
   @Override
-  protected DomainDTO clone() {
-   DomainDTO domainDTO =  new DomainDTO();
-    domainDTO.setId(id);
-    domainDTO.setTitle(title);
-    domainDTO.setDescription(description);
-    domainDTO.setPriority(priority);
-    domainDTO.setCreatedBy(createdBy);
-    domainDTO.setCreatedDate(createdDate);
-    domainDTO.setLastModifiedBy(lastModifiedBy);
-    domainDTO.setLastModifiedDate(lastModifiedDate);
-    domainDTO.setDeleted(deleted);
-    domainDTO.setEnabled(enabled);
-    return domainDTO;
+  protected DomainDTO clone() { // NOSONAR
+   return new DomainDTO(id,
+           title,
+           description,
+           priority,
+           createdBy,
+           createdDate,
+           lastModifiedBy,
+           lastModifiedDate,
+           deleted,
+           enabled
+           );
   }
 
   public Long getId() {

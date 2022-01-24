@@ -11,22 +11,23 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
-    GamificationActionsHistoryDTO gActionsHistoryDTO = new GamificationActionsHistoryDTO();
-    gActionsHistoryDTO.setId(gamificationActionsHistoryEntity.getId());
-    gActionsHistoryDTO.setDate(Utils.toRFC3339Date(gamificationActionsHistoryEntity.getDate()));
-    gActionsHistoryDTO.setEarnerId(gamificationActionsHistoryEntity.getEarnerId());
-    gActionsHistoryDTO.setEarnerType(gamificationActionsHistoryEntity.getEarnerType().toString());
-    gActionsHistoryDTO.setGlobalScore(gamificationActionsHistoryEntity.getGlobalScore());
-    gActionsHistoryDTO.setActionTitle(gamificationActionsHistoryEntity.getActionTitle());
-    gActionsHistoryDTO.setDomain(gamificationActionsHistoryEntity.getDomain());
-    gActionsHistoryDTO.setContext(gamificationActionsHistoryEntity.getContext());
-    gActionsHistoryDTO.setActionScore(gamificationActionsHistoryEntity.getActionScore());
-    gActionsHistoryDTO.setReceiver(gamificationActionsHistoryEntity.getReceiver());
-    gActionsHistoryDTO.setObjectId(gamificationActionsHistoryEntity.getObjectId());
-    gActionsHistoryDTO.setRuleId(gamificationActionsHistoryEntity.getRuleId());
-    gActionsHistoryDTO.setActivityId(gamificationActionsHistoryEntity.getActivityId());
-    gActionsHistoryDTO.setComment(gamificationActionsHistoryEntity.getComment());
-    gActionsHistoryDTO.setCreator(gamificationActionsHistoryEntity.getCreator());
+    GamificationActionsHistoryDTO gActionsHistoryDTO = new GamificationActionsHistoryDTO(
+            gamificationActionsHistoryEntity.getId(),
+            Utils.toRFC3339Date(gamificationActionsHistoryEntity.getDate()),
+            gamificationActionsHistoryEntity.getEarnerId(),
+            gamificationActionsHistoryEntity.getEarnerType().toString(),
+            gamificationActionsHistoryEntity.getGlobalScore(),
+            gamificationActionsHistoryEntity.getActionTitle(),
+            gamificationActionsHistoryEntity.getDomain(),
+            gamificationActionsHistoryEntity.getContext(),
+            gamificationActionsHistoryEntity.getActionScore(),
+            gamificationActionsHistoryEntity.getReceiver(),
+            gamificationActionsHistoryEntity.getObjectId(),
+            gamificationActionsHistoryEntity.getRuleId(),
+            gamificationActionsHistoryEntity.getActivityId(),
+            gamificationActionsHistoryEntity.getComment(),
+            gamificationActionsHistoryEntity.getCreator()
+            );
     return gActionsHistoryDTO;
   }
 

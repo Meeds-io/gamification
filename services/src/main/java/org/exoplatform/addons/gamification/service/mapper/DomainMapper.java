@@ -33,18 +33,17 @@ public class DomainMapper {
   }
 
   public static DomainDTO domainToDomainDTO(DomainEntity domain) {
-    DomainDTO domainDTO = new DomainDTO();
-    domainDTO.setId(domain.getId());
-    domainDTO.setTitle(domain.getTitle());
-    domainDTO.setDescription(domain.getDescription());
-    domainDTO.setPriority(domain.getPriority());
-    domainDTO.setCreatedBy(domain.getCreatedBy());
-    domainDTO.setCreatedDate(Utils.toRFC3339Date(domain.getCreatedDate()));
-    domainDTO.setLastModifiedBy(domain.getLastModifiedBy());
-    domainDTO.setLastModifiedDate(Utils.toRFC3339Date(domain.getLastModifiedDate()));
-    domainDTO.setDeleted(domainDTO.isDeleted());
-    domainDTO.setEnabled(domainDTO.isEnabled());
-    return  domainDTO;
+   return new DomainDTO(domain.getId(),
+            domain.getTitle(),
+            domain.getDescription(),
+            domain.getPriority(),
+            domain.getCreatedBy(),
+            Utils.toRFC3339Date(domain.getCreatedDate()),
+            domain.getLastModifiedBy(),
+            Utils.toRFC3339Date(domain.getLastModifiedDate()),
+           domain.isDeleted(),
+           domain.isEnabled()
+            );
   }
 
   public static List<DomainDTO> domainssToDomainDTOs(List<DomainEntity> domains) {
@@ -94,18 +93,17 @@ public class DomainMapper {
     if (domainEntity == null) {
       return null;
     } else {
-      DomainDTO domain = new DomainDTO();
-      domain.setId(domainEntity.getId());
-      domain.setTitle(domainEntity.getTitle());
-      domain.setDescription(domainEntity.getDescription());
-      domain.setCreatedBy(domainEntity.getCreatedBy());
-      domain.setLastModifiedBy(domainEntity.getLastModifiedBy());
-      domain.setDeleted(domainEntity.isDeleted());
-      domain.setEnabled(domainEntity.isEnabled());
-      domain.setCreatedDate(Utils.toRFC3339Date(domainEntity.getCreatedDate()));
-      domain.setLastModifiedDate(Utils.toRFC3339Date(domainEntity.getLastModifiedDate()));
-      domain.setPriority(domainEntity.getPriority());
-      return domain;
+      return new DomainDTO(domainEntity.getId(),
+              domainEntity.getTitle(),
+              domainEntity.getDescription(),
+              domainEntity.getPriority(),
+              domainEntity.getCreatedBy(),
+              Utils.toRFC3339Date(domainEntity.getCreatedDate()),
+              domainEntity.getLastModifiedBy(),
+              Utils.toRFC3339Date(domainEntity.getLastModifiedDate()),
+              domainEntity.isDeleted(),
+              domainEntity.isEnabled()
+      );
     }
   }
 }
