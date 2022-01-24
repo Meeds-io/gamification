@@ -16,96 +16,94 @@
  */
 package org.exoplatform.addons.gamification.service.mapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-
 public class DomainMapper {
 
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    private static final Log LOG = ExoLogger.getLogger(DomainMapper.class);
+  private static final Log        LOG       = ExoLogger.getLogger(DomainMapper.class);
 
-    public DomainMapper() {
+  public DomainMapper() {
+  }
+
+  public static DomainDTO domainToDomainDTO(DomainEntity domain) {
+   return new DomainDTO(domain.getId(),
+            domain.getTitle(),
+            domain.getDescription(),
+            domain.getPriority(),
+            domain.getCreatedBy(),
+            Utils.toRFC3339Date(domain.getCreatedDate()),
+            domain.getLastModifiedBy(),
+            Utils.toRFC3339Date(domain.getLastModifiedDate()),
+           domain.isDeleted(),
+           domain.isEnabled()
+            );
+  }
+
+  public static List<DomainDTO> domainssToDomainDTOs(List<DomainEntity> domains) {
+    return domains.stream()
+                  .filter(Objects::nonNull)
+                  .map((DomainEntity domain) -> domainToDomainDTO(domain))
+                  .collect(Collectors.toList());
+  }
+
+  public static DomainEntity domainDTOToDomain(DomainDTO domainDTO) {
+
+    if (domainDTO == null) {
+      return null;
+    } else {
+      DomainEntity domain = new DomainEntity();
+      domain.setId(domainDTO.getId());
+      domain.setTitle(domainDTO.getTitle());
+      domain.setDescription(domainDTO.getDescription());
+      domain.setCreatedBy(domainDTO.getCreatedBy());
+      domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
+      domain.setDeleted(domainDTO.isDeleted());
+      domain.setEnabled(domainDTO.isEnabled());
+      domain.setCreatedDate(Utils.parseRFC3339Date(domainDTO.getCreatedDate()));
+      domain.setLastModifiedDate(Utils.parseRFC3339Date(domainDTO.getLastModifiedDate()));
+      domain.setPriority(domainDTO.getPriority());
+      return domain;
     }
+  }
 
-    public DomainDTO domainToDomainDTO(DomainEntity domain) {
-        return new DomainDTO(domain);
+  public static List<DomainEntity> domainDTOsToDomains(List<DomainDTO> domainDTOs) {
+    return domainDTOs.stream()
+                     .filter(Objects::nonNull)
+                     .map((DomainDTO domainDTO) -> domainDTOToDomain(domainDTO))
+                     .collect(Collectors.toList());
+  }
+
+  public static DomainEntity domainFromId(Long id) {
+    if (id == null) {
+      return null;
     }
+    DomainEntity domain = new DomainEntity();
+    domain.setId(id);
+    return domain;
+  }
 
-    public List<DomainDTO> domainssToDomainDTOs(List<DomainEntity> domains) {
-        return domains.stream()
-                .filter(Objects::nonNull)
-                .map((DomainEntity domain) -> domainToDomainDTO(domain))
-                .collect(Collectors.toList());
+  public static DomainDTO domainEntityToDomainDTO(DomainEntity domainEntity) {
+    if (domainEntity == null) {
+      return null;
+    } else {
+      return new DomainDTO(domainEntity.getId(),
+              domainEntity.getTitle(),
+              domainEntity.getDescription(),
+              domainEntity.getPriority(),
+              domainEntity.getCreatedBy(),
+              Utils.toRFC3339Date(domainEntity.getCreatedDate()),
+              domainEntity.getLastModifiedBy(),
+              Utils.toRFC3339Date(domainEntity.getLastModifiedDate()),
+              domainEntity.isDeleted(),
+              domainEntity.isEnabled()
+      );
     }
-
-    public DomainEntity domainDTOToDomain(DomainDTO domainDTO) {
-
-        if (domainDTO == null) {
-            return null;
-        } else {
-            DomainEntity domain = new DomainEntity();
-            domain.setId(domainDTO.getId());
-            domain.setTitle(domainDTO.getTitle());
-            domain.setDescription(domainDTO.getDescription());
-            domain.setCreatedBy(domainDTO.getCreatedBy());
-            domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
-            domain.setDeleted(domainDTO.isDeleted());
-            domain.setEnabled(domainDTO.isEnabled());
-            try {
-                domain.setCreatedDate(formatter.parse(domainDTO.getCreatedDate()));
-                domain.setLastModifiedDate(formatter.parse(domainDTO.getLastModifiedDate()));
-            } catch (Exception exception) {
-                // Date format unknown, or missing properties, we can ignore
-            }
-            domain.setPriority(domainDTO.getPriority());
-            return domain;
-        }
-    }
-
-    public List<DomainEntity> domainDTOsToDomains(List<DomainDTO> domainDTOs) {
-        return domainDTOs.stream()
-                .filter(Objects::nonNull)
-                .map((DomainDTO domainDTO) -> domainDTOToDomain(domainDTO))
-                .collect(Collectors.toList());
-    }
-
-    public DomainEntity domainFromId(Long id) {
-        if (id == null) {
-            return null;
-        }
-        DomainEntity domain = new DomainEntity();
-        domain.setId(id);
-        return domain;
-    }
-
-    public DomainDTO domainEntityToDomainDTO(DomainEntity domainEntity) {
-        if (domainEntity == null) {
-            return null;
-        } else {
-            DomainDTO domain = new DomainDTO();
-            domain.setId(domainEntity.getId());
-            domain.setTitle(domainEntity.getTitle());
-            domain.setDescription(domainEntity.getDescription());
-            domain.setCreatedBy(domainEntity.getCreatedBy());
-            domain.setLastModifiedBy(domainEntity.getLastModifiedBy());
-            domain.setDeleted(domainEntity.isDeleted());
-            domain.setEnabled(domainEntity.isEnabled());
-            try {
-                domain.setCreatedDate(formatter.format(domainEntity.getCreatedDate()));
-                domain.setLastModifiedDate(formatter.format(domainEntity.getLastModifiedDate()));
-            } catch (Exception exception) {
-                // Date format unknown, or missing properties, we can ignore
-            }
-            domain.setPriority(domainEntity.getPriority());
-            return domain;
-        }
-    }
+  }
 }
