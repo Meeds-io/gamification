@@ -16,146 +16,145 @@
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+public class DomainDTO implements Cloneable {
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+  protected Long                  id;
 
-public class DomainDTO implements Serializable {
+  protected String                title;
 
-    private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+  protected String                description;
 
-    protected Long id;
+  protected int                   priority;
 
-    protected String title;
+  private String                  createdBy;
 
-    protected String description;
+  private String                  createdDate;
 
-    protected int priority;
+  private String                  lastModifiedBy;
 
-    private String createdBy;
+  private String                  lastModifiedDate;
 
-    private String createdDate;
+  protected boolean               deleted;
 
-    private String lastModifiedBy;
+  protected boolean               enabled;
 
-    private String lastModifiedDate;
+  public DomainDTO() {  }
 
-    protected boolean deleted;
+  public DomainDTO(Long id,
+                   String title,
+                   String description,
+                   int priority,
+                   String createdBy,
+                   String createdDate,
+                   String lastModifiedBy,
+                   String lastModifiedDate,
+                   boolean deleted,
+                   boolean enabled) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.priority = priority;
+    this.createdBy = createdBy;
+    this.createdDate = createdDate;
+    this.lastModifiedBy = lastModifiedBy;
+    this.lastModifiedDate = lastModifiedDate;
+    this.deleted = deleted;
+    this.enabled = enabled;
+  }
 
-    protected boolean enabled;
+  @Override
+  protected DomainDTO clone() { // NOSONAR
+   return new DomainDTO(id,
+           title,
+           description,
+           priority,
+           createdBy,
+           createdDate,
+           lastModifiedBy,
+           lastModifiedDate,
+           deleted,
+           enabled
+           );
+  }
 
+  public Long getId() {
+    return id;
+  }
 
-    public DomainDTO() {
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public DomainDTO(DomainEntity domainEntity) {
-        this.id = domainEntity.getId();
-        this.title = domainEntity.getTitle();
-        this.description = domainEntity.getDescription();
-        this.createdBy = domainEntity.getCreatedBy();
-        this.priority = domainEntity.getPriority();
-        this.deleted = domainEntity.isDeleted();
-        this.enabled = domainEntity.isEnabled();
-        this.createdDate = formatter.format(domainEntity.getCreatedDate());
-        this.lastModifiedDate = formatter.format(domainEntity.getLastModifiedDate());
-        this.lastModifiedBy = domainEntity.getLastModifiedBy();
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public int getPriority() {
+    return priority;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setPriority(int priority) {
+    this.priority = priority;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getCreatedBy() {
+    return createdBy;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getCreatedDate() {
+    return createdDate;
+  }
 
-    public int getPriority() {
-        return priority;
-    }
+  public void setCreatedDate(String createdDate) {
+    this.createdDate = createdDate;
+  }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
+  public String getLastModifiedBy() {
+    return lastModifiedBy;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setLastModifiedBy(String lastModifiedBy) {
+    this.lastModifiedBy = lastModifiedBy;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getLastModifiedDate() {
+    return lastModifiedDate;
+  }
 
-    public String getCreatedDate() {
-        return createdDate;
-    }
+  public void setLastModifiedDate(String lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
+  }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
+  public boolean isDeleted() {
+    return deleted;
+  }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
-    }
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
-    }
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-    public String getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
-    public void setLastModifiedDate(String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", createdBy=" + createdBy +
-                ", createdDate=" + createdDate +
-                ", lastModifiedBy='" + lastModifiedBy + '\'' +
-                ", lastModifiedDate=" + lastModifiedDate +
-                ", deleted=" + deleted +
-                ", enabled=" + enabled +
-                "}";
-    }
 }

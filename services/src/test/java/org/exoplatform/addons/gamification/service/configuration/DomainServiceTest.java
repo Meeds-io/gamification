@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.Date;
 
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -47,15 +48,17 @@ public class DomainServiceTest extends AbstractServiceTest {
   @Test
   public void testAddDomain() {
     assertEquals(domainStorage.findAll().size(), 0);
+    Date createDate = new Date(System.currentTimeMillis());
+    Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
     DomainDTO domain = new DomainDTO();
     domain.setTitle(GAMIFICATION_DOMAIN);
     domain.setDescription("Description");
     domain.setCreatedBy(TEST_USER_SENDER);
-    domain.setCreatedDate("01/01/2022");
+    domain.setCreatedDate(Utils.toRFC3339Date(createDate));
     domain.setLastModifiedBy(TEST_USER_SENDER);
     domain.setDeleted(false);
     domain.setEnabled(true);
-    domain.setLastModifiedDate("10/01/2022");
+    domain.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
     domain = domainService.addDomain(domain);
     assertNotNull(domainStorage.find(domain.getId()));
   }

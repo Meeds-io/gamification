@@ -21,7 +21,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -29,19 +28,14 @@ import java.util.stream.Collectors;
 
 public class RuleMapper {
 
-  private DomainMapper     domainMapper;
-
-  private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-  public RuleMapper(DomainMapper domainMapper) {
-    this.domainMapper = domainMapper;
+  public RuleMapper() {
   }
 
   public List<RuleDTO> rulesToRuleDTOs(List<RuleEntity> rules) {
-    return rules.stream().filter(Objects::nonNull).map(this::ruleToRuleDTO).collect(Collectors.toList());
+    return rules.stream().filter(Objects::nonNull).map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
   }
 
-  public RuleEntity ruleDTOToRule(RuleDTO ruleDTO) {
+  public static RuleEntity ruleDTOToRule(RuleDTO ruleDTO) {
     if (ruleDTO == null) {
       return null;
     } else {
@@ -74,20 +68,15 @@ public class RuleMapper {
       } else {
         rule.setManagers(Collections.emptyList());
       }
-      try {
-        rule.setCreatedDate(formatter.parse(ruleDTO.getCreatedDate()));
-        rule.setLastModifiedDate(formatter.parse(ruleDTO.getLastModifiedDate()));
-      } catch (Exception e) {
-        // ignore
-      }
+      rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
+      rule.setLastModifiedDate(Utils.parseRFC3339Date(ruleDTO.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
-      rule.setDomainEntity(domainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
-
+      rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
       return rule;
     }
   }
 
-  public RuleDTO ruleToRuleDTO(RuleEntity ruleEntity) {
+  public static RuleDTO ruleToRuleDTO(RuleEntity ruleEntity) {
     if (ruleEntity == null) {
       return null;
     } else {
@@ -120,21 +109,17 @@ public class RuleMapper {
       } else {
         rule.setManagers(Collections.emptyList());
       }
-      try {
-        rule.setCreatedDate(formatter.format(ruleEntity.getCreatedDate()));
-        rule.setLastModifiedDate(formatter.format(ruleEntity.getLastModifiedDate()));
-      } catch (Exception e) {
-        // ignore
-      }
+      rule.setCreatedDate(Utils.toRFC3339Date(ruleEntity.getCreatedDate()));
+      rule.setLastModifiedDate(Utils.toRFC3339Date(ruleEntity.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
-      rule.setDomainDTO(domainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
+      rule.setDomainDTO(DomainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
 
       return rule;
     }
   }
 
   public List<RuleEntity> ruleDTOsToRules(List<RuleDTO> ruleDTOs) {
-    return ruleDTOs.stream().filter(Objects::nonNull).map(this::ruleDTOToRule).collect(Collectors.toList());
+    return ruleDTOs.stream().filter(Objects::nonNull).map(RuleMapper::ruleDTOToRule).collect(Collectors.toList());
   }
 
   public RuleEntity ruleFromId(Long id) {

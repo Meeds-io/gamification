@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -104,7 +105,7 @@ public class BadgeDTO implements Serializable {
 
         this.domain = badgeEntity.getDomain();
 
-        this.domainDTO = ((badgeEntity.getDomainEntity() == null) ? null : new DomainDTO(badgeEntity.getDomainEntity()));
+        this.domainDTO = ((badgeEntity.getDomainEntity() == null) ? null : DomainMapper.domainEntityToDomainDTO(badgeEntity.getDomainEntity()));
 
         this.iconFileId = badgeEntity.getIconFileId();
 
