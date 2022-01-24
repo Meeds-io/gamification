@@ -393,4 +393,15 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
+  public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit) {
+    TypedQuery<GamificationActionsHistory> query =
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
+                                                                                     GamificationActionsHistory.class);
+    query.setParameter("challengeId", challengeId);
+    query.setFirstResult(offset);
+    query.setMaxResults(limit);
+    List<GamificationActionsHistory> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
+
 }

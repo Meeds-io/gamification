@@ -86,7 +86,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity IS NULL "),
     @NamedQuery(name = "GamificationActionsHistory.getDomainList", query = "SELECT g.domain"
         + " FROM GamificationActionsHistory g" + "     GROUP BY  g.domain"),
-    @NamedQuery(name = "GamificationActionsHistory.countAnnouncementsByChallenge", query = "SELECT COUNT(us) FROM GamificationActionsHistory a where a.ruleId = :challengeId") })
+    @NamedQuery(name = "GamificationActionsHistory.countAnnouncementsByChallenge", query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"),
+    @NamedQuery(name = "GamificationActionsHistory.findAllAnnouncementByChallenge", query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.createdDate desc") })
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 

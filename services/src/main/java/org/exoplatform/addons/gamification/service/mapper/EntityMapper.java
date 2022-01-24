@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.service.mapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -90,6 +91,31 @@ public class EntityMapper {
                                       Utils.getUserById(announcement.getCreator(), announcement.getChallengeId()),
                                       announcement.getCreatedDate(),
                                       announcement.getActivityId());
+  }
+
+  public static Announcement fromEntity(GamificationActionsHistory announcementEntity) {
+    if (announcementEntity == null) {
+      return null;
+    }
+    return new Announcement(announcementEntity.getId(),
+                            announcementEntity.getRuleId(),
+                            Long.parseLong(announcementEntity.getEarnerId()),
+                            announcementEntity.getComment(),
+                            announcementEntity.getCreator(),
+                            announcementEntity.getCreatedDate() == null ? null
+                                                                        : Utils.toRFC3339Date(announcementEntity.getCreatedDate()),
+                            announcementEntity.getActivityId());
+  }
+
+  public static List<Announcement> fromAnnouncementEntities(List<GamificationActionsHistory> announcementEntities) {
+    if (CollectionUtils.isEmpty(announcementEntities)) {
+      return new ArrayList<>(Collections.emptyList());
+    } else {
+      List<Announcement> announcements = announcementEntities.stream()
+                                                             .map(announcementEntity -> fromEntity(announcementEntity))
+                                                             .collect(Collectors.toList());
+      return announcements;
+    }
   }
 
   public static List<AnnouncementRestEntity> fromAnnouncementList(List<Announcement> announcements) {
