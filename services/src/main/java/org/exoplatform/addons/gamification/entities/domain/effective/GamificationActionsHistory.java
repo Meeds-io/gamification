@@ -21,9 +21,6 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -271,48 +268,6 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   public void setCreator(Long creator) {
     this.creator = creator;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof GamificationActionsHistory)) {
-      return false;
-    }
-    GamificationActionsHistory that = (GamificationActionsHistory) obj;
-    EqualsBuilder eb = new EqualsBuilder();
-    eb.append(date, that.date);
-    eb.append(earnerId, that.earnerId);
-    eb.append(globalScore, that.globalScore);
-    eb.append(actionTitle, that.actionTitle);
-    eb.append(domain, that.domain);
-    eb.append(context, that.context);
-    eb.append(actionScore, that.actionScore);
-    eb.append(receiver, that.receiver);
-    eb.append(objectId, that.objectId);
-    eb.append(comment, that.comment);
-    eb.append(activityId, that.activityId);
-    eb.append(creator, that.creator);
-    return eb.isEquals();
-  }
-
-  @Override
-  public int hashCode() {
-    HashCodeBuilder hcb = new HashCodeBuilder();
-    hcb.append(date);
-    hcb.append(earnerId);
-    hcb.append(globalScore);
-    hcb.append(actionTitle);
-    hcb.append(domain);
-    hcb.append(actionScore);
-    hcb.append(receiver);
-    hcb.append(objectId);
-    hcb.append(comment);
-    hcb.append(activityId);
-    hcb.append(creator);
-    return hcb.toHashCode();
   }
 
 }

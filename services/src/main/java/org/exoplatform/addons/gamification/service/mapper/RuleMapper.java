@@ -21,15 +21,12 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RuleMapper {
-
-  private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
   public RuleMapper() {
   }
@@ -71,15 +68,10 @@ public class RuleMapper {
       } else {
         rule.setManagers(Collections.emptyList());
       }
-      try {
-        rule.setCreatedDate(formatter.parse(ruleDTO.getCreatedDate()));
-        rule.setLastModifiedDate(formatter.parse(ruleDTO.getLastModifiedDate()));
-      } catch (Exception e) {
-        // ignore
-      }
+      rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
+      rule.setLastModifiedDate(Utils.parseRFC3339Date(ruleDTO.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
       rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
-
       return rule;
     }
   }
@@ -117,12 +109,8 @@ public class RuleMapper {
       } else {
         rule.setManagers(Collections.emptyList());
       }
-      try {
-        rule.setCreatedDate(formatter.format(ruleEntity.getCreatedDate()));
-        rule.setLastModifiedDate(formatter.format(ruleEntity.getLastModifiedDate()));
-      } catch (Exception e) {
-        // ignore
-      }
+      rule.setCreatedDate(Utils.toRFC3339Date(ruleEntity.getCreatedDate()));
+      rule.setLastModifiedDate(Utils.toRFC3339Date(ruleEntity.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
       rule.setDomainDTO(DomainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
 
