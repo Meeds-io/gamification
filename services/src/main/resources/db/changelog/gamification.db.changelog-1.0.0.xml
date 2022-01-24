@@ -353,4 +353,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
         </modifySql>
     </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-25">
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="RULE_ID" type="BIGINT"/>
+            <column name="ACTIVITY_ID" type="BIGINT"/>
+            <column name="COMMENT" type="NVARCHAR(2000)"/>
+            <column name="CREATOR_ID" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

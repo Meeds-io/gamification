@@ -9,6 +9,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -78,6 +82,16 @@ public class Utils {
       throw new IllegalArgumentException("space is not exist");
     }
     return space;
+  }
+
+  public static DomainDTO getDomainByTitle(String domainTitle) {
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    return domainService.findDomainByTitle(domainTitle);
+  }
+
+  public static RuleDTO getRuleById(long ruleId) {
+    RuleService ruleService = CommonsUtils.getService(RuleService.class);
+    return ruleService.findRuleById(ruleId);
   }
 
 }
