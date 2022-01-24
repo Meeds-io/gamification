@@ -20,6 +20,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.rest.ManageRulesEndpoint;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -28,11 +29,16 @@ import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.json.JSONWriter;
 import org.junit.Test;
+import org.powermock.api.mockito.PowerMockito;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 import java.io.StringWriter;
+import java.util.Date;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class TestManageRulesEndpoint extends AbstractServiceTest {
 
@@ -127,6 +133,10 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       MultivaluedMap<String, String> h = new MultivaluedMapImpl();
       h.putSingle("content-type", "application/json");
       h.putSingle("content-length", "" + data.length);
+      PowerMockito.mockStatic(Utils.class);
+      Date date = new Date(System.currentTimeMillis());
+      when(Utils.parseRFC3339Date(any())).thenReturn(date);
+      when(Utils.toRFC3339Date(any())).thenReturn(date.toString());
       ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
       assertNotNull(response);
       assertEquals(200, response.getStatus());
@@ -209,6 +219,9 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       MultivaluedMap<String, String> h = new MultivaluedMapImpl();
       h.putSingle("content-type", "application/json");
       h.putSingle("content-length", "" + data.length);
+      Date date = new Date(System.currentTimeMillis());
+      when(Utils.parseRFC3339Date(any())).thenReturn(date);
+      when(Utils.toRFC3339Date(any())).thenReturn(date.toString());
       ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
       assertNotNull(response);
       assertEquals(200, response.getStatus());
