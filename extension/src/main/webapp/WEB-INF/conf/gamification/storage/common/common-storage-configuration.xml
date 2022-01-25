@@ -29,15 +29,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
     </component>
-    <!-- Announcement storage -->
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.AnnouncementStorage</type>
-    </component>
-    <!-- Announcement Service -->
-    <component>
-        <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
-    </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->
     <external-component-plugins>

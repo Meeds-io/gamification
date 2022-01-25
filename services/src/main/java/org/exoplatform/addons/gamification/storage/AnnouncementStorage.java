@@ -1,11 +1,15 @@
 package org.exoplatform.addons.gamification.storage;
 
+import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.utils.Utils;
 
 import java.util.Date;
 import java.util.List;
@@ -29,7 +33,7 @@ public class AnnouncementStorage {
         }
         Challenge challenge = challengeStorage.getChallengeById(announcement.getChallengeId());
         RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
-        GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement,challengeEntity);
+        GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement);
         Date nextToEndDate =   new Date(challengeEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
 
         if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
@@ -39,6 +43,14 @@ public class AnnouncementStorage {
             throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
         }
         if (announcementEntity.getId() == null) {
+            //to be changed after adding score and domain to challenge
+            DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"));
+            announcementEntity.setEarnerType(IdentityType.USER);
+            announcementEntity.setActionTitle(challengeEntity.getTitle());
+            announcementEntity.setActionScore(20);
+            announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
+            announcementEntity.setDomainEntity(domainEntity);
+            announcementEntity.setDomain(domainEntity.getTitle());
             announcementEntity = announcementDAO.create(announcementEntity);
         } else {
             announcementEntity = announcementDAO.update(announcementEntity);

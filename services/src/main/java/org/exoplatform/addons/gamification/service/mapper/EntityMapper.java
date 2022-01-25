@@ -68,8 +68,6 @@ public class EntityMapper {
     }
     challengeEntity.setAudience(challenge.getAudience());
     challengeEntity.setManagers(challenge.getManagers());
-    challengeEntity.setScore(20); // TODO: to be changed when add field score to DTO
-    challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"))); // TODO: to be changed when add field domain to DTO
     return challengeEntity;
   }
 
@@ -114,7 +112,7 @@ public class EntityMapper {
             Utils.toRFC3339Date(announcementEntity.getLastModifiedDate()));
   }
 
-  public static GamificationActionsHistory toEntity(Announcement announcement,RuleEntity challengeEntity) {
+  public static GamificationActionsHistory toEntity(Announcement announcement) {
     if (announcement == null) {
       return null;
     }
@@ -129,19 +127,13 @@ public class EntityMapper {
     if (announcement.getAssignee() != null) {
       announcementEntity.setEarnerId(String.valueOf(announcement.getAssignee()));
     }
-    announcementEntity.setEarnerType(IdentityType.USER);
-    announcementEntity.setActionTitle(challengeEntity.getTitle());
-    announcementEntity.setActionScore(challengeEntity.getScore());
-    announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
-    announcementEntity.setDomainEntity(DomainMapper.domainDTOToDomain(Utils.getDomainByTitle(challengeEntity.getDomainEntity().getTitle())));
-    announcementEntity.setDomain(challengeEntity.getDomainEntity().getTitle());
     announcementEntity.setComment(announcement.getComment());
     announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
     announcementEntity.setRuleId(announcement.getChallengeId());
     announcementEntity.setCreator(announcement.getCreator());
-    announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
     announcementEntity.setDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate()) : new Date(System.currentTimeMillis()));
     announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate()) : new Date(System.currentTimeMillis()));
+    announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
 
     if(announcement.getCreatedDate() != null) {
       announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
