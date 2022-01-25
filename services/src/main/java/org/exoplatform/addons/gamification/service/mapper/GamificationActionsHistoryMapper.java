@@ -5,15 +5,13 @@ import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.effective.GamificationActionsHistoryDTO;
 
-import java.util.Date;
-
 public class GamificationActionsHistoryMapper {
 
   private GamificationActionsHistoryMapper() {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
-    GamificationActionsHistoryDTO gActionsHistoryDTO = new GamificationActionsHistoryDTO(
+    return new GamificationActionsHistoryDTO(
             gamificationActionsHistoryEntity.getId(),
             Utils.toRFC3339Date(gamificationActionsHistoryEntity.getDate()),
             gamificationActionsHistoryEntity.getEarnerId(),
@@ -34,7 +32,6 @@ public class GamificationActionsHistoryMapper {
             gamificationActionsHistoryEntity.getLastModifiedBy(),
             Utils.toRFC3339Date(gamificationActionsHistoryEntity.getLastModifiedDate())
             );
-    return gActionsHistoryDTO;
   }
 
   public static GamificationActionsHistory toEntity(GamificationActionsHistoryDTO gamificationActionsHistoryDTO) {

@@ -16,8 +16,6 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 
 import java.util.List;
 
-import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_EVENT;
-
 public class AnnouncementServiceImpl implements AnnouncementService {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementServiceImpl.class);

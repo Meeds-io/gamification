@@ -16,7 +16,7 @@ public class AnnouncementStorage {
 
     private ChallengeStorage challengeStorage;
 
-    public static final long  MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;
+    public static final long  MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;  // NOSONAR
 
     public AnnouncementStorage(GamificationHistoryDAO announcementDAO, ChallengeStorage challengeStorage) {
         this.announcementDAO = announcementDAO;
@@ -56,7 +56,6 @@ public class AnnouncementStorage {
         return EntityMapper.fromAnnouncementEntities(announcementEntities);
     }
     public Long countAnnouncementsByChallenge(Long challengeId) {
-        Long countAnnounce = announcementDAO.countAnnouncementsByChallenge(challengeId);
-        return countAnnounce;
+        return announcementDAO.countAnnouncementsByChallenge(challengeId);
     }
 }
