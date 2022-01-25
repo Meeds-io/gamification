@@ -85,7 +85,9 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     @NamedQuery(name = "GamificationActionsHistory.getAllPointsWithNullDomain", query = "SELECT g"
         + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity IS NULL "),
     @NamedQuery(name = "GamificationActionsHistory.getDomainList", query = "SELECT g.domain"
-        + " FROM GamificationActionsHistory g" + "     GROUP BY  g.domain") })
+        + " FROM GamificationActionsHistory g" + "     GROUP BY  g.domain"),
+    @NamedQuery(name = "GamificationActionsHistory.countAnnouncementsByChallenge", query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"),
+    @NamedQuery(name = "GamificationActionsHistory.findAllAnnouncementByChallenge", query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.createdDate desc") })
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
@@ -131,16 +133,16 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   private DomainEntity      domainEntity;
 
   @Column(name = "RULE_ID")
-  private Long        ruleId;
+  private Long              ruleId;
 
   @Column(name = "ACTIVITY_ID")
   private Long              activityId;
 
   @Column(name = "COMMENT")
   private String            comment;
-  
+
   @Column(name = "CREATOR_ID")
-  private Long            creator;
+  private Long              creator;
 
   public Long getId() {
     return id;
