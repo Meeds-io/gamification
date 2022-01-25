@@ -26,7 +26,7 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 
 import io.swagger.annotations.*;
 
-@Path("/challenge/api")
+@Path("/gamification/challenge/api")
 @Api(value = "/challenge/api", description = "Manages challenge associated to users") // NOSONAR
 @RolesAllowed("users")
 public class ChallengeRest implements ResourceContainer {
