@@ -69,7 +69,6 @@ public class EntityMapper {
     challengeEntity.setAudience(challenge.getAudience());
     challengeEntity.setManagers(challenge.getManagers());
     challengeEntity.setScore(20); // TODO: to be changed when add field score to DTO
-    challengeEntity.setArea("social"); // TODO: to be changed when add field domain to DTO
     challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"))); // TODO: to be changed when add field domain to DTO
     return challengeEntity;
   }

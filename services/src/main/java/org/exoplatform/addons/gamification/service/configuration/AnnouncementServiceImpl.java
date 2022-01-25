@@ -58,16 +58,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, currentUser);
     announcement.setCreator(Long.parseLong(identity.getId()));
     announcement = announcementStorage.saveAnnouncement(announcement);
-    //TODO to be added after adding listener  and activity processeur
-    /*
-    try {
-      listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, announcement);
-
-    } catch (Exception e) {
-      LOG.error("Unexpected error", e);
-    }
-    */
-
     return announcement;
   }
 
