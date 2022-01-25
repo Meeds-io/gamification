@@ -43,6 +43,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <fileMode>0644</fileMode>
         </dependencySet>
         <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>org.exoplatform.addons.gamification:challenges-webapp:war</include>
+            </includes>
+            <outputFileNameMapping>challenges.war</outputFileNameMapping>
+            <scope>provided</scope>
+            <fileMode>0644</fileMode>
+        </dependencySet>
+        <dependencySet>
             <!-- Dependencies for deployment into eXo Platform instance -->
             <outputDirectory>/</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
