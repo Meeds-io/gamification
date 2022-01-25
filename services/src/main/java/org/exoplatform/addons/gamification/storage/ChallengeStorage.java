@@ -2,6 +2,7 @@ package org.exoplatform.addons.gamification.storage;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -31,10 +32,17 @@ public class ChallengeStorage {
         || challengeEntity.getEndDate().equals(challengeEntity.getStartDate())) {
       throw new IllegalArgumentException("endDate must be greater than startDate");
     }
+
+    challengeEntity.setScore(20); //We will change this so that the score is dynamic
     if (challenge.getId() == 0) {
       challengeEntity.setId(null);
+      challengeEntity.setCreatedBy(username);
+      challengeEntity.setType(TypeRule.MANUAL);
       challengeEntity = ruleDAO.create(challengeEntity);
     } else {
+      RuleEntity ruleEntity = ruleDAO.find(challengeEntity.getId());
+      challengeEntity.setCreatedBy(ruleEntity.getCreatedBy());
+      challengeEntity.setType(ruleEntity.getType());
       challengeEntity = ruleDAO.update(challengeEntity);
     }
 
