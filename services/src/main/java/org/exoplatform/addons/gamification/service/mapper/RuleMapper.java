@@ -68,8 +68,12 @@ public class RuleMapper {
       } else {
         rule.setManagers(Collections.emptyList());
       }
-      rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
-      rule.setLastModifiedDate(Utils.parseRFC3339Date(ruleDTO.getLastModifiedDate()));
+      if (ruleDTO.getCreatedDate() != null) {
+        rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
+      }
+      if (ruleDTO.getLastModifiedDate() != null) {
+        rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
+      }
       rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
       rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
       return rule;
