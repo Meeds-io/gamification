@@ -161,8 +161,8 @@ public class Utils {
       userInfo.setManager(spaceService.isManager(space, getCurrentUser()));
       userInfo.setMember(spaceService.isMember(space, getCurrentUser()));
       userInfo.setRedactor(spaceService.isRedactor(space, getCurrentUser()));
+      userInfo.setCanAnnounce(canAnnounce(space.getId()));
     }
-    userInfo.setCanAnnounce(canAnnounce(space.getId()));
     userInfo.setCanEdit(canEditChallenge(managersId));
     return userInfo;
   }
