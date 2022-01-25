@@ -29,8 +29,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.RuleService</type>
     </component>
-
-
+    <!-- Challenge storage-->
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
+    </component>
+    <!-- Challenge Service Layer-->
+    <component>
+        <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
+    </component>
     <!-- Rule entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>

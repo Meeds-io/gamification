@@ -32,6 +32,14 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private Long creator;
 
+  private String createdBy;
+
+  private String  createdDate;
+
+  private String lastModifiedBy;
+
+  private String lastModifiedDate;
+
   public GamificationActionsHistoryDTO(Long id,
                                        String date,
                                        String earnerId,
@@ -46,7 +54,11 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                        Long ruleId,
                                        Long activityId,
                                        String comment,
-                                       Long creator) {
+                                       Long creator,
+                                       String createdBy,
+                                       String createdDate,
+                                       String lastModifiedBy,
+                                       String lastModifiedDate) {
     this.id = id;
     this.date = date;
     this.earnerId = earnerId;
@@ -62,6 +74,10 @@ public class GamificationActionsHistoryDTO implements Cloneable {
     this.activityId = activityId;
     this.comment = comment;
     this.creator = creator;
+    this.createdBy = createdBy;
+    this.createdDate = createdDate;
+    this.lastModifiedBy = lastModifiedBy;
+    this.lastModifiedDate = lastModifiedDate;
   }
 
   @Override
@@ -80,7 +96,11 @@ public class GamificationActionsHistoryDTO implements Cloneable {
             ruleId,
             activityId,
             comment,
-            creator);
+            creator,
+            createdBy,
+            createdDate,
+            lastModifiedBy,
+            lastModifiedDate);
   }
 
   public Long getId() {
@@ -201,5 +221,37 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   public void setCreator(Long creator) {
     this.creator = creator;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public String getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(String createdDate) {
+    this.createdDate = createdDate;
+  }
+
+  public String getLastModifiedBy() {
+    return lastModifiedBy;
+  }
+
+  public void setLastModifiedBy(String lastModifiedBy) {
+    this.lastModifiedBy = lastModifiedBy;
+  }
+
+  public String getLastModifiedDate() {
+    return lastModifiedDate;
+  }
+
+  public void setLastModifiedDate(String lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
   }
 }

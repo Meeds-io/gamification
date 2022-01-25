@@ -89,20 +89,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
     </component>
     <!-- END -->
+ <!-- Announcement API Rest Service -->
     <component>
-        <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
+        <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
     </component>
-    <component>
-        <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.AnnouncementStorage</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
-    </component>
+    <!-- END -->
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.settings.ExoFeatureService</target-component>
         <component-plugin>

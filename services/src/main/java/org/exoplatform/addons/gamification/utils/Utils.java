@@ -19,6 +19,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
+import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -176,4 +177,8 @@ public class Utils {
       return 0l;
     }
   }
+   public static Long getUserGlobalScore( String earnerId){
+    return CommonsUtils.getService(GamificationService.class).computeTotalScore(earnerId);
+   }
+
 }
