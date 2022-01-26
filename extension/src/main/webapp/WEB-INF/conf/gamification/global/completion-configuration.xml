@@ -66,7 +66,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
     </component>
     <!-- END -->
-   <!-- Space Leaderboard Rest Service -->
+    <!-- Space Leaderboard Rest Service -->
     <component>
         <type>org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint</type>
     </component>
@@ -83,8 +83,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.rest.ChallengeRest</type>
     </component>
     <!-- END -->
-
- <!-- Gamification API Rest Service -->
+    <!-- Announcement API Rest Service -->
+    <component>
+        <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
+    </component>
+    <!-- END -->
+    <!-- Gamification API Rest Service -->
     <component>
         <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
     </component>
