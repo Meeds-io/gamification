@@ -42,8 +42,7 @@ public class AnnouncementRest implements ResourceContainer {
             @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
             @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
             @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"),})
-    public Response createAnnouncement(@ApiParam(value = "Announcement object to create", required = true) Announcement announcement,
-                                       @ApiParam(value = "List announcement assignee to create", required = true) @QueryParam ("assignee") List<Long> assignee) {
+    public Response createAnnouncement(@ApiParam(value = "Announcement object to create", required = true) Announcement announcement) {
         if (announcement == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("challenge object is mandatory").build();
         }
@@ -53,13 +52,8 @@ public class AnnouncementRest implements ResourceContainer {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         try {
-            List<AnnouncementRestEntity> announcementRestEntities = new ArrayList<>();
-            for (Long id : assignee) {
-                announcement.setAssignee(id);
-                Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser);
-                announcementRestEntities.add(EntityMapper.fromAnnouncement(newAnnouncement));
-            }
-            return Response.ok(announcementRestEntities).build();
+            Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser);
+            return Response.ok(EntityMapper.fromAnnouncement(newAnnouncement)).build();
         } catch (IllegalAccessException e) {
             LOG.warn("User '{}' attempts to create an announcement", e);
             return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
