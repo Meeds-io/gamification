@@ -42,15 +42,15 @@ public class AnnouncementStorage {
         if (!announcementEntity.getCreatedDate().after(challengeEntity.getStartDate())) {
             throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
         }
+        //TODO to be changed after adding score and domain to challenge
+        DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"));
+        announcementEntity.setEarnerType(IdentityType.USER);
+        announcementEntity.setActionTitle(challengeEntity.getTitle());
+        announcementEntity.setActionScore(20);
+        announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
+        announcementEntity.setDomainEntity(domainEntity);
+        announcementEntity.setDomain(domainEntity.getTitle());
         if (announcementEntity.getId() == null) {
-            //to be changed after adding score and domain to challenge
-            DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"));
-            announcementEntity.setEarnerType(IdentityType.USER);
-            announcementEntity.setActionTitle(challengeEntity.getTitle());
-            announcementEntity.setActionScore(20);
-            announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
-            announcementEntity.setDomainEntity(domainEntity);
-            announcementEntity.setDomain(domainEntity.getTitle());
             announcementEntity = announcementDAO.create(announcementEntity);
         } else {
             announcementEntity = announcementDAO.update(announcementEntity);
