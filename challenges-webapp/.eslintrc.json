@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "eslint-config-meedsio"
+  ],
+  "globals": {
+    "gapi": true,
+    "webConferencing": true
+  }
+}
