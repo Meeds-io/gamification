@@ -40,6 +40,8 @@ public class Utils {
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
+  private static GamificationService           gamificationService;
+
   private Utils() { // NOSONAR
   }
 
@@ -178,8 +180,15 @@ public class Utils {
     }
   }
 
+  public static GamificationService getGamificationService() {
+    if (gamificationService == null) {
+      gamificationService = CommonsUtils.getService(GamificationService.class);
+    }
+    return gamificationService;
+  }
+
   public static Long getUserGlobalScore(String earnerId) {
-    return StringUtils.isBlank(earnerId) ? null : CommonsUtils.getService(GamificationService.class).computeTotalScore(earnerId);
+    return StringUtils.isBlank(earnerId) ? 0L : getGamificationService().computeTotalScore(earnerId);
   }
 
 }
