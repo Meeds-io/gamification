@@ -177,8 +177,9 @@ public class Utils {
       return 0l;
     }
   }
-   public static Long getUserGlobalScore( String earnerId){
+
+  public static Long getUserGlobalScore(String earnerId) {
     return StringUtils.isBlank(earnerId) ? null : CommonsUtils.getService(GamificationService.class).computeTotalScore(earnerId);
-   }
+  }
 
 }

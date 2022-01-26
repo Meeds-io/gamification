@@ -1,6 +1,5 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -22,7 +21,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   private AnnouncementStorage announcementStorage;
 
-  private ChallengeStorage challengeStorage;
+  private ChallengeStorage    challengeStorage;
 
   private ListenerService     listenerService;
 
@@ -36,8 +35,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   @Override
   public Announcement createAnnouncement(Announcement announcement, String currentUser) throws IllegalArgumentException,
-          ObjectNotFoundException,
-          IllegalAccessException {
+                                                                                        ObjectNotFoundException,
+                                                                                        IllegalAccessException {
     if (announcement == null) {
       throw new IllegalArgumentException("announcement is mandatory");
     }
@@ -62,7 +61,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit) throws  ObjectNotFoundException {
+  public List<Announcement> findAllAnnouncementByChallenge(long challengeId,
+                                                           int offset,
+                                                           int limit) throws ObjectNotFoundException {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }

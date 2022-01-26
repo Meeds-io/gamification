@@ -29,6 +29,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.RuleService</type>
     </component>
+
+
     <!-- Rule entity Mapper -->
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.RuleMapper</type>
@@ -40,6 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <key>org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry</key>
         <type>org.exoplatform.addons.gamification.service.setting.rule.impl.RuleRegistryImpl</type>
     </component>
+
 
 
 

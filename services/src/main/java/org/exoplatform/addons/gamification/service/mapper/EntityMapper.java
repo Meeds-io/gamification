@@ -2,7 +2,6 @@ package org.exoplatform.addons.gamification.service.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -107,9 +106,9 @@ public class EntityMapper {
                             announcementEntity.getCreatedDate() == null ? null
                                                                         : Utils.toRFC3339Date(announcementEntity.getCreatedDate()),
                             announcementEntity.getActivityId(),
-            announcementEntity.getCreatedBy(),
-            announcementEntity.getLastModifiedBy(),
-            Utils.toRFC3339Date(announcementEntity.getLastModifiedDate()));
+                            announcementEntity.getCreatedBy(),
+                            announcementEntity.getLastModifiedBy(),
+                            Utils.toRFC3339Date(announcementEntity.getLastModifiedDate()));
   }
 
   public static GamificationActionsHistory toEntity(Announcement announcement) {
@@ -131,18 +130,22 @@ public class EntityMapper {
     announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
     announcementEntity.setRuleId(announcement.getChallengeId());
     announcementEntity.setCreator(announcement.getCreator());
-    announcementEntity.setDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate()) : new Date(System.currentTimeMillis()));
-    announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate()) : new Date(System.currentTimeMillis()));
+    announcementEntity.setDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
+                                                                     : new Date(System.currentTimeMillis()));
+    announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
+                                                                            : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
 
-    if(announcement.getCreatedDate() != null) {
+    if (announcement.getCreatedDate() != null) {
       announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
     }
-    if(announcement.getLastModifiedDate() != null) {
+    if (announcement.getLastModifiedDate() != null) {
       announcementEntity.setLastModifiedDate(Utils.parseRFC3339Date(announcement.getLastModifiedDate()));
     }
-    announcementEntity.setCreatedBy(announcement.getCreatedBy() != null ? announcement.getCreatedBy() : "Gamification Inner Process");
-    announcementEntity.setLastModifiedBy(announcement.getLastModifiedBy() != null ? announcement.getLastModifiedBy() : "Gamification Inner Process");
+    announcementEntity.setCreatedBy(announcement.getCreatedBy() != null ? announcement.getCreatedBy()
+                                                                        : "Gamification Inner Process");
+    announcementEntity.setLastModifiedBy(announcement.getLastModifiedBy() != null ? announcement.getLastModifiedBy()
+                                                                                  : "Gamification Inner Process");
 
     return announcementEntity;
   }

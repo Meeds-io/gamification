@@ -16,58 +16,61 @@ import java.util.List;
 
 public class AnnouncementStorage {
 
-    private GamificationHistoryDAO announcementDAO;
+  private GamificationHistoryDAO announcementDAO;
 
-    private ChallengeStorage challengeStorage;
+  private ChallengeStorage       challengeStorage;
 
-    public static final long  MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;  // NOSONAR
+  public static final long       MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24; // NOSONAR
 
-    public AnnouncementStorage(GamificationHistoryDAO announcementDAO, ChallengeStorage challengeStorage) {
-        this.announcementDAO = announcementDAO;
-        this.challengeStorage = challengeStorage;
+  public AnnouncementStorage(GamificationHistoryDAO announcementDAO, ChallengeStorage challengeStorage) {
+    this.announcementDAO = announcementDAO;
+    this.challengeStorage = challengeStorage;
+  }
+
+  public Announcement saveAnnouncement(Announcement announcement) {
+    if (announcement == null) {
+      throw new IllegalArgumentException("Announcement argument is null");
     }
+    Challenge challenge = challengeStorage.getChallengeById(announcement.getChallengeId());
+    RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
+    GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement);
+    Date nextToEndDate = new Date(challengeEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
 
-    public Announcement saveAnnouncement(Announcement announcement) {
-        if (announcement == null) {
-            throw new IllegalArgumentException("Announcement argument is null");
-        }
-        Challenge challenge = challengeStorage.getChallengeById(announcement.getChallengeId());
-        RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
-        GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement);
-        Date nextToEndDate =   new Date(challengeEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
+    if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
+      throw new IllegalArgumentException("announcement is not allowed when challenge is ended ");
+    }
+    if (!announcementEntity.getCreatedDate().after(challengeEntity.getStartDate())) {
+      throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
+    }
+    // TODO to be changed after adding score and domain to challenge
+    DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"));
+    announcementEntity.setEarnerType(IdentityType.USER);
+    announcementEntity.setActionTitle(challengeEntity.getTitle());
+    announcementEntity.setActionScore(20);
+    announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
+    announcementEntity.setDomainEntity(domainEntity);
+    announcementEntity.setDomain(domainEntity.getTitle());
+    if (announcementEntity.getId() == null) {
+      announcementEntity = announcementDAO.create(announcementEntity);
+    } else {
+      announcementEntity = announcementDAO.update(announcementEntity);
+    }
+    return EntityMapper.fromEntity(announcementEntity);
+  }
 
-        if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
-            throw new IllegalArgumentException("announcement is not allowed when challenge is ended ");
-        }
-        if (!announcementEntity.getCreatedDate().after(challengeEntity.getStartDate())) {
-            throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
-        }
-        //TODO to be changed after adding score and domain to challenge
-        DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"));
-        announcementEntity.setEarnerType(IdentityType.USER);
-        announcementEntity.setActionTitle(challengeEntity.getTitle());
-        announcementEntity.setActionScore(20);
-        announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
-        announcementEntity.setDomainEntity(domainEntity);
-        announcementEntity.setDomain(domainEntity.getTitle());
-        if (announcementEntity.getId() == null) {
-            announcementEntity = announcementDAO.create(announcementEntity);
-        } else {
-            announcementEntity = announcementDAO.update(announcementEntity);
-        }
-        return EntityMapper.fromEntity(announcementEntity);
-    }
+  public Announcement getAnnouncementById(long announcementId) {
+    GamificationActionsHistory announcementEntity = this.announcementDAO.find(announcementId);
+    return EntityMapper.fromEntity(announcementEntity);
+  }
 
-    public Announcement getAnnouncementById(long announcementId) {
-        GamificationActionsHistory announcementEntity = this.announcementDAO.find(announcementId);
-        return EntityMapper.fromEntity(announcementEntity);
-    }
+  public List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit) {
+    List<GamificationActionsHistory> announcementEntities = announcementDAO.findAllAnnouncementByChallenge(challengeId,
+                                                                                                           offset,
+                                                                                                           limit);
+    return EntityMapper.fromAnnouncementEntities(announcementEntities);
+  }
 
-    public List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit) {
-        List<GamificationActionsHistory> announcementEntities= announcementDAO.findAllAnnouncementByChallenge(challengeId, offset, limit);
-        return EntityMapper.fromAnnouncementEntities(announcementEntities);
-    }
-    public Long countAnnouncementsByChallenge(Long challengeId) {
-        return announcementDAO.countAnnouncementsByChallenge(challengeId);
-    }
+  public Long countAnnouncementsByChallenge(Long challengeId) {
+    return announcementDAO.countAnnouncementsByChallenge(challengeId);
+  }
 }
