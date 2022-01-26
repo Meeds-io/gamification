@@ -1,0 +1,33 @@
+{
+  "name": "exo-challenges",
+  "version": "1.0.0",
+  "description": "eXo Challenges",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/exoplatform/challenges"
+  },
+  "scripts": {
+    "watch": "webpack --config webpack.watch.js --progress --colors --watch -d",
+    "lint": "eslint --fix \"./src/main/webapp/vue-app/**\"",
+    "eslint-check": "eslint  \"./src/main/webapp/vue-app/**\"",
+    "build": "webpack --config webpack.prod.js --mode production"
+  },
+  "author": "eXo",
+  "license": "LGPL",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "chokidar": "^3.5.3",
+    "eslint": "^5.0.0",
+    "eslint-config-meedsio": "^1.0.3",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "vue": "^2.6.10",
+    "vue-loader": "^14.2.3",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.1",
+    "webpack-merge": "^4.1.3"
+  }
+}
