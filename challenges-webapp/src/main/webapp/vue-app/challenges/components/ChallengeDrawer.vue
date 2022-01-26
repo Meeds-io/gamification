@@ -251,7 +251,7 @@ export default {
       }
     },
     addManager(id) {
-      const index = this.challenge.managers && this.challenge.managers.findIndex(manager => {
+      const index = this.challenge.managers && this.challenge.managers.findIndex((manager) => {
         if (manager && manager.id) {
           return manager.id === id;
         } else {
