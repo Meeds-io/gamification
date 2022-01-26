@@ -15,6 +15,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,7 +105,49 @@ public class EntityMapper {
                             announcementEntity.getCreator(),
                             announcementEntity.getCreatedDate() == null ? null
                                                                         : Utils.toRFC3339Date(announcementEntity.getCreatedDate()),
-                            announcementEntity.getActivityId());
+                            announcementEntity.getActivityId(),
+                            announcementEntity.getCreatedBy(),
+                            announcementEntity.getLastModifiedBy(),
+                            Utils.toRFC3339Date(announcementEntity.getLastModifiedDate()));
+  }
+
+  public static GamificationActionsHistory toEntity(Announcement announcement) {
+    if (announcement == null) {
+      return null;
+    }
+    GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
+    if (announcement.getId() != 0) {
+      announcementEntity.setId(announcement.getId());
+    }
+    if (announcement.getActivityId() != null) {
+      announcementEntity.setActivityId(announcement.getActivityId());
+    }
+
+    if (announcement.getAssignee() != null) {
+      announcementEntity.setEarnerId(String.valueOf(announcement.getAssignee()));
+    }
+    announcementEntity.setComment(announcement.getComment());
+    announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
+    announcementEntity.setRuleId(announcement.getChallengeId());
+    announcementEntity.setCreator(announcement.getCreator());
+    announcementEntity.setDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
+                                                                     : new Date(System.currentTimeMillis()));
+    announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
+                                                                            : new Date(System.currentTimeMillis()));
+    announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
+
+    if (announcement.getCreatedDate() != null) {
+      announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
+    }
+    if (announcement.getLastModifiedDate() != null) {
+      announcementEntity.setLastModifiedDate(Utils.parseRFC3339Date(announcement.getLastModifiedDate()));
+    }
+    announcementEntity.setCreatedBy(announcement.getCreatedBy() != null ? announcement.getCreatedBy()
+                                                                        : "Gamification Inner Process");
+    announcementEntity.setLastModifiedBy(announcement.getLastModifiedBy() != null ? announcement.getLastModifiedBy()
+                                                                                  : "Gamification Inner Process");
+
+    return announcementEntity;
   }
 
   public static List<Announcement> fromAnnouncementEntities(List<GamificationActionsHistory> announcementEntities) {
