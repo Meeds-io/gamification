@@ -19,6 +19,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
+import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -38,6 +39,8 @@ public class Utils {
   public static final DateTimeFormatter RFC_3339_FORMATTER          =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
+
+  private static GamificationService           gamificationService;
 
   private Utils() { // NOSONAR
   }
@@ -176,4 +179,16 @@ public class Utils {
       return 0l;
     }
   }
+
+  public static GamificationService getGamificationService() {
+    if (gamificationService == null) {
+      gamificationService = CommonsUtils.getService(GamificationService.class);
+    }
+    return gamificationService;
+  }
+
+  public static Long getUserGlobalScore(String earnerId) {
+    return StringUtils.isBlank(earnerId) ? 0L : getGamificationService().computeTotalScore(earnerId);
+  }
+
 }
