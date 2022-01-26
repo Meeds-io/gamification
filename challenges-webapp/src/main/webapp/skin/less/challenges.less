@@ -1,0 +1,478 @@
+@import "variables.less";
+@import "mixins.less";
+
+#ChallengesApplication {
+  margin: 25px;
+  background-color: @white !important;
+
+  .welcomeMessage {
+    margin: 0 20% 10%;
+    align-items: center;
+    text-align: center;
+    color: @darkGrey;
+
+    .title {
+      font-weight: bold;
+      font-size: 14px !important;
+    }
+  }
+
+  .addChallengeButton {
+    .v-btn {
+      text-transform: none !important;
+      font-weight: normal !important;
+    }
+  }
+
+  .challengeDrawer {
+    .alert{
+      text-align: center;
+    }
+    .challenge-title {
+      .v-input__slot {
+        &:before {
+          border: none !important;
+        }
+
+        &:after {
+          border: none !important;
+        }
+
+        textarea {
+          border: none !important;
+          padding: 3px 6px !important;
+          width: 100% !important;
+          font-size: 20px;
+          margin-top: -4px;
+          color: @textColor !important;
+
+          &::placeholder {
+            font-size: 19px !important;
+          }
+
+          &:focus {
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
+    .challengeAssignItem{
+      position : relative ;
+      .assigneeName{
+        max-width : 75%;
+        .identitySuggesterItem {
+          background-color: @primaryColorLight ;
+          border: 1px solid @primaryDarkerColorGradientEnd ;
+          color: @btnPrimaryColor ;
+          width: max-content;
+        }
+      }
+    .challengeAssignBtn {
+      position: absolute;
+      width: 25% ;
+      left: 0  ~'; /** orientation=rt */ ';
+      right: 0  ~'; /** orientation=lt */ ';
+      .uiAddAssignIcon {
+        margin-top: -4px !important;
+        padding-right: 6px;
+
+        &:before {
+          content: "\e6c4";
+          color: @greyColorLighten1Default;
+          font-size: 15px;
+        }
+      }
+    }
+    .assignChallengeMenu {
+      .uiAssignToMeIcon {
+        margin-top: -4px;
+
+        &:before {
+          content: "\e6cc";
+          padding-right: 6px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+    .challengeDates {
+      max-width: max-content;
+      padding-right: 10px;
+      .datePickerComponent {
+        &:after {
+          display: none !important;
+        }
+        input {
+          max-width: 90% !important;
+          padding: 12px 5px 0px 4px  ;
+          border: none;
+          box-shadow: none;
+          font-size : 16px;
+          &::placeholder {
+            font-size: 16px !important;
+          }
+        }
+      }
+      .challengePlanDateCalender {
+        max-height: 40px;
+
+        .uiIconStartDate {
+          color: @primaryColor;
+          font-size: 24px;
+          margin-left: -2px;
+
+          &:before {
+            content: "\ebf3";
+          }
+        }
+      }
+      .challengeEndDateCalender {
+        max-height: 40px;
+
+        .uiIconEndDate {
+          &:before {
+            content: "\ebf2";
+            color: @primaryColor;
+            font-size: 22px;
+          }
+        }
+        .v-picker__actions.v-card__actions {
+          border-top: 1px solid @borderColor;
+          margin-top: 4px;
+
+          .dateFooter {
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    .challengeDescription {
+      position: relative;
+      .challengeDescriptionToShow {
+        &:focus {
+          outline-width: 0 !important;
+        }
+      }
+      [contentEditable=true]:empty:not(:focus):before{
+        content:attr(data-text);
+        color: @greyColorLighten1Default;
+        font-size: 16px;
+      }
+      #cke_descriptionContent {
+        display: block;
+      }
+
+      .cke_toolbar {
+        border-right: none !important;
+      }
+
+      .cke_bottom.cke_reset_all {
+        background-color: transparent;
+        height: 30px !important;
+      }
+      .cke_bottom .cke_button_icon {
+        filter: opacity(0.2);
+      }
+      .tooManyChars {
+        position: absolute;
+        bottom: 20px;
+        right: 10px ~'; /** orientation=lt */ ';
+        left: 10px ~'; /** orientation=rt */ ';
+      }
+      .uiIconMessageLength {
+        font-size: 14px;
+        color: @primaryColor;
+        &:before {
+          content: "\e910";
+        }
+      }
+    }
+  }
+}
+.emptyChallenges {
+  min-height: ~"calc(100vh - 100px)" ;
+}
+#ChallengeCard {
+  .cardOfChallenge {
+    width: 95%;
+    .contentCard {
+      max-height: 175px;
+      height: 175px
+    }
+
+    .footer {
+      .AllUsersAvatar {
+        box-shadow: 0 0 2px 1px @greyColor;
+        border-radius: 25px;
+        z-index: 1;
+        background: white;
+
+        .uiIconArrowBack {
+          font-size: 12px;
+          padding-top: 6px;
+          padding-left: 4px ~'; /** orientation=lt */ ';
+          padding-right: 4px ~'; /** orientation=rt */ ';
+          cursor: pointer;
+
+          &:before {
+            content: "\e74f";
+          }
+        }
+      }
+
+      .winnersAvatarsList {
+          padding-left: 18px ~'; /** orientation=lt */ ';
+          padding-right: 18px ~'; /** orientation=rt */ ';
+        .seeMoreAvatars {
+          .seeMoreItem {
+            position: relative;
+
+            &:before {
+              content: "";
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              background: @baseColorMedium;
+              border-radius: 50%;
+              opacity: .5;
+              z-index: 1;
+            }
+
+            .seeMoreAvatarList {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              text-align: center;
+              width: 30px;
+              height: 30px;
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              font-size: 15px;
+              font-weight: bold;
+              z-index: 1;
+            }
+          }
+        }
+        .announcesNumber {
+          color: @baseColorLight;
+          cursor: pointer;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .projectManagersAvatar {
+          background-position: center;
+          background-size: cover;
+          border-radius: 50%;
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      .v-list-item {
+        min-height: 38px !important;
+      }
+
+      .uiIconStar {
+        position: absolute;
+        top: 85%;
+        right: 10px ~'; /** orientation=lt */ ';
+        left: 10px ~'; /** orientation=rt */ ';
+        z-index: 0;
+
+        &:before {
+          content: "\e97f";
+          font-family: "PLF-FONT-ICONS" !important;
+          color: @colorIconOrange;
+          font-style: normal;
+          font-size: 18px;
+        }
+      }
+
+      .winners {
+        width: 60%;
+        .emptyWinners {
+          color: @baseColorLight;
+          cursor: pointer;
+          font-size: 16px;
+        }
+      }
+      .addAnnounce {
+        width: 40%;
+        margin-right: 12px ~'; /** orientation=lt */ ';
+        margin-left: 12px ~'; /** orientation=rt */ ';
+        .btnAdd {
+          float: right ~'; /** orientation=lt */ ';
+          float: left ~'; /** orientation=rt */ ';
+          pointer-events: auto !important;
+        }
+      }
+    }
+  }
+
+  .contentChallenge {
+    cursor: pointer;
+    width: 30%;
+  }
+
+  .title {
+    .status {
+      font-size: 14px;
+      color: @greyColorLighten1;
+      width: 90%;
+      padding: 9px;
+      cursor: pointer;
+      .date {
+        margin-left:  0px ~'; /** orientation=lt */ ';
+        margin-right: 10px ~'; /** orientation=rt */ ';
+      }
+    }
+    .iconStatus {
+      margin-left: -8px;
+      font-size: 12px;
+    }
+    .startsColor {
+      color: @colorIconWarning;
+    }
+    .endedColor {
+      color: @errorColor;
+    }
+    .endsColor {
+      color: @darkBlue;
+    }
+    .edit {
+      width: 10%;
+      .v-list.v-sheet.theme--light{
+        padding: 0px !important;
+      }
+      .editList {
+        min-height: 40px;
+        cursor: pointer;
+        .editLabel {
+          font-size: 0.8125rem;
+          font-weight: 500;
+          line-height: 1rem;
+        }
+      }
+
+    }
+    .subtitleChallenge {
+      font-weight: bold;
+      color: @baseColor;
+      text-align: center;
+    }
+    .descriptionChallenge {
+      color: @greyColorLighten1;
+      text-align: center;
+      -webkit-line-clamp: 3;
+      height: 4.5em;
+    }
+  }
+}
+
+#announcementDrawer {
+  .titleChallenge {
+    color: @greyColorLighten1Default;
+    font-weight: bold;
+    font-size: 14px !important;
+  }
+  .separator {
+    border-color: @greyColorLighten1Default;
+    border-bottom: 0px !important;
+  }
+}
+
+#winnersDetails {
+  .accountTitleWrapper {
+    border-bottom: 1px solid @greyColorLighten1Default;
+
+    .accountTitleItem {
+      max-width: 100%;
+
+      &:before {
+        display: none !important;
+      }
+
+      &:hover {
+        &:before {
+          opacity: 0;
+        }
+      }
+
+      &:focus {
+        &:before {
+          opacity: 0;
+        }
+      }
+
+      .accountTitleLabel {
+        color: @toolbarLightLinkHoverColor;
+        font-size: 0.9rem !important;
+      }
+
+      .externalFlagClass {
+        color: @baseColorLight;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+#challengeDetails {
+  .titleChallenge {
+    color: @greyColorLighten1Default;
+    font-weight: bold;
+    font-size: 14px !important;
+  }
+
+  .separation {
+    border-color: @greyColorLighten1Default;
+    border-bottom: 0px !important;
+  }
+
+  .descriptionLabel {
+    color: @greyColorLighten1Default;
+  }
+
+  .description {
+    color: @textColorDefault;
+  }
+
+  .date {
+    color: @baseColorLight;
+    margin-left:  10px ~'; /** orientation=lt */ ';
+    margin-right: 10px ~'; /** orientation=rt */ ';
+  }
+
+  .endDate {
+    .uiIconDueDate {
+      &:before {
+        content: "\ebf2";
+        color: @baseColorLight;
+        font-size: 22px;
+      }
+    }
+  }
+
+  .startDate {
+    .uiIconStartDate {
+      color: @baseColorLight;
+      font-size: 24px;
+      margin-left: -2px;
+
+      &:before {
+        content: "\ebf3";
+      }
+    }
+  }
+
+  .listMangers {
+    padding-left:  12px ~'; /** orientation=lt */ ';
+    padding-right: 12px ~'; /** orientation=rt */ ';
+  }
+}
