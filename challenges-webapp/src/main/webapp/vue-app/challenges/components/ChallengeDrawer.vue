@@ -48,6 +48,11 @@
             include-spaces
             only-manager />
 
+          <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
+          <challenge-program
+            @addProgram="addProgram($event)"
+            @removeProgram="removeProgram($event)" />
+
           <span class="subtitle-1"> {{ $t('challenges.label.challengeOwners') }} *</span>
           <challenge-assignment
             ref="challengeAssignment"
@@ -65,6 +70,18 @@
               class="challengeDates my-2"
               @startDateChanged="updateChallengeStartDate($event)"
               @endDateChanged="updateChallengeEndDate($event)" />
+          </div>
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('challenges.label.reward') }}</span>
+            <v-text-field
+              v-model="challenge.points"
+              :label="$t('challenges.label.points')"
+              :rules="[rules.value]"
+              :placeholder="$t('challenges.label.points')"
+              class="pt-2 pointsChallenges"
+              type="number"
+              outlined
+              required />
           </div>
           <div class="challengeDescription py-4 my-2">
             <challenge-description
@@ -122,7 +139,7 @@ export default {
       };
     },
     disabledSave() {
-      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.isValid.title && this.isValid.description && !this.disabledUpdate;
+      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.challenge.program  && this.challenge.program.length > 0 && this.isValid.title && this.isValid.description && !this.disabledUpdate;
     },
     buttonName() {
       return this.challenge && this.challenge.id && this.$t('challenges.button.save') || this.$t('challenges.button.create') ;
@@ -132,6 +149,7 @@ export default {
     return {
       rules: {
         length: (v) => (v && v.length < 250) || this.$t('challenges.label.challengeTitleLengthExceed') ,
+        value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
       },
       audience: '' ,
       isValid: {
@@ -175,6 +193,11 @@ export default {
       }
     },
   },
+  mounted() {
+    if (!(this.challenge && this.challenge.points)) {
+      this.challenge.points = 20;
+    }
+  },
   methods: {
     setUp(){
       const space = this.challenge.space ;
@@ -212,6 +235,7 @@ export default {
     reset(){
       this.challenge = {};
       this.$refs.challengeDatePicker.startDate = null;
+      this.challenge.points = 20;
       this.$refs.challengeDatePicker.endDate = null;
       this.$refs.challengeDescription.inputVal = null;
       this.$refs.challengeAssignment.assigneeObj = null;
@@ -262,7 +286,12 @@ export default {
         this.$set(this.challenge.managers,this.challenge.managers.length, id);
       }
     },
-
+    addProgram(program) {
+      this.$set(this.challenge,'program', program);
+    },
+    removeProgram() {
+      this.$set(this.challenge,'program', '');
+    },
     updateChallengeStartDate(value) {
       if (value) {
         this.$set(this.challenge,'startDate', value);
