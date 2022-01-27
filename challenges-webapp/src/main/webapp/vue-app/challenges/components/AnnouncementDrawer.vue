@@ -138,21 +138,8 @@ export default {
       this.reset();
       this.$refs.announcementDrawer.close();
     },
-    removeAssignee(id) {
-      const index = this.announcement.assignee.findIndex(assignee => {
-        return assignee === id;
-      });
-      if (index >= 0) {
-        this.$delete(this.announcement.assignee,index, 1);
-      }
-    },
-    addAssignee(id) {
-      const index = this.announcement.assignee.findIndex(assignee => {
-        return assignee === id;
-      });
-      if (index < 0) {
-        this.$set(this.announcement.assignee,this.announcement.assignee.length, id);
-      }
+    removeAssignee() {
+      this.$set(this.announcement,'assignee', 0);
     },
     addDescription(value) {
       if (value) {
@@ -178,7 +165,7 @@ export default {
       this.close();
     },
     addUser(id){
-      this.$set(this.announcement.assignee,this.announcement.assignee.length, id);
+      this.$set(this.announcement,'assignee', id);
     },
     reset() {
       this.isValidDescription= {
