@@ -33,7 +33,6 @@ public class ChallengeStorage {
       throw new IllegalArgumentException("endDate must be greater than startDate");
     }
 
-    challengeEntity.setScore(20); //We will change this so that the score is dynamic
     if (challenge.getId() == 0) {
       challengeEntity.setId(null);
       challengeEntity.setCreatedBy(username);
