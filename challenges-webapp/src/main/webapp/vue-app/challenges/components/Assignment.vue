@@ -38,7 +38,7 @@
           ref="challengeSpaceSuggester"
           v-model="invitedChallengeAssignee"
           :search-options="searchOptions"
-          :only-manager="true"
+          :only-manager="multiple"
           :ignore-items="ignoredMembers"
           :type-of-relations="relationsType"
           :width="220"
@@ -73,6 +73,10 @@ export default {
     audience: {
       type: Object,
       default: () => null
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -132,6 +136,9 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
+          if (!this.multiple){
+            this.assigneeObj =[];
+          }
           this.assigneeObj.push(newUser);
           this.$emit('add-manager',newUser.id);
           this.invitedChallengeAssignee = null;
@@ -174,11 +181,14 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
+          if (!this.multiple){
+            this.assigneeObj =[];
+          }
           this.assigneeObj.push(newManager);
           this.$emit('add-item',newManager.id);
-          this.globalMenu = false;
         });
       }
+      this.globalMenu = false;
     },
     isAssigned( username) {
       return this.assigneeObj && this.assigneeObj.findIndex(manager => {
@@ -186,10 +196,14 @@ export default {
       }) >= 0 ? true : false;
     },
     removeUser(user) {
-      const index =  this.assigneeObj.findIndex(manager => {
-        return manager.remoteId === user.remoteId;
-      });
-      this.assigneeObj.splice(index, 1);
+      if (this.multiple){
+        const index =  this.assigneeObj.findIndex(manager => {
+          return manager.remoteId === user.remoteId;
+        });
+        this.assigneeObj.splice(index, 1);
+      } else {
+        this.assigneeObj = [];
+      }
       this.$emit('remove-user', user.id);
     },
   }

@@ -174,14 +174,12 @@ export default {
   methods: {
     getListWinners() {
       this.challenge.announcements.map(announce => {
-        for (const assignee of announce.assignee) {
-          const announcement = {
-            user: assignee,
-            activityId: announce.activityId,
-            createDate: announce.createdDate
-          };
-          this.listWinners.push(announcement);
-        }
+        const announcement = {
+          user: announce.assignee,
+          activityId: announce.activityId,
+          createDate: announce.createdDate
+        };
+        this.listWinners.push(announcement);
       });
     },
     announcementAdded(announcement) {
