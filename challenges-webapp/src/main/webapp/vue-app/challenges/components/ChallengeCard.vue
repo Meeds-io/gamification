@@ -183,15 +183,13 @@ export default {
       });
     },
     announcementAdded(announcement) {
-      for (const assignee of announcement.assignee) {
-        const newAnnouncement = {
-          user: assignee,
-          activityId: announcement.activityId,
-          createDate: announcement.createdDate
-        };
-        this.listWinners.unshift(newAnnouncement);
-        this.$refs.winnersDetails.listWinners.unshift(newAnnouncement);
-      }
+      const newAnnouncement = {
+        user: announcement.assignee,
+        activityId: announcement.activityId,
+        createDate: announcement.createdDate
+      };
+      this.listWinners.unshift(newAnnouncement);
+      this.$refs.winnersDetails.listWinners.unshift(newAnnouncement);
       this.challenge.announcementsCount = this.challenge.announcementsCount +1;
     },
     openDetails() {
