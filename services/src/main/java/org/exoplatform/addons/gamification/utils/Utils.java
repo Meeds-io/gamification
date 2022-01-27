@@ -32,7 +32,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class Utils {
 
-  public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "announcement.activity";
+  public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "challenge.announcement.activity";
 
   private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
 
