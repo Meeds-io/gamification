@@ -61,7 +61,7 @@ export function getAllChallengesByUser(offset, limit) {
 }
 
 export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit|| 10}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit|| 10}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -74,7 +74,7 @@ export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
 }
 
 export function saveAnnouncement(announcement) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/announcement/api/addAnnouncement`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/addAnnouncement`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -100,6 +100,21 @@ export function getAllChallengeById(id)
       return resp.json();
     } else {
       throw new Error('Error when getting challenges');
+    }
+  });
+}
+
+export function getAllDomains() {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains`, {
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+    method: 'GET'
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error ('Server indicates an error while sending request');
     }
   });
 }
