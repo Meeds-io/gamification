@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
@@ -20,6 +21,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -189,6 +191,11 @@ public class Utils {
 
   public static Long getUserGlobalScore(String earnerId) {
     return StringUtils.isBlank(earnerId) ? 0L : getGamificationService().computeTotalScore(earnerId);
+  }
+
+  public static DomainEntity getDomain(String domain){
+    DomainDAO domainService = CommonsUtils.getService(DomainDAO.class);
+    return  domainService.findDomainByTitle(domain) ;
   }
 
 }
