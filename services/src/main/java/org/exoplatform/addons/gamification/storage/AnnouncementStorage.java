@@ -46,7 +46,7 @@ public class AnnouncementStorage {
     DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle("social"));
     announcementEntity.setEarnerType(IdentityType.USER);
     announcementEntity.setActionTitle(challengeEntity.getTitle());
-    announcementEntity.setActionScore(20);
+    announcementEntity.setActionScore(challengeEntity.getScore());
     announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
     announcementEntity.setDomainEntity(domainEntity);
     announcementEntity.setDomain(domainEntity.getTitle());

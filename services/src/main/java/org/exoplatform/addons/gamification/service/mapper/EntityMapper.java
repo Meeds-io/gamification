@@ -37,7 +37,8 @@ public class EntityMapper {
                          challengeEntity.getEndDate() == null ? null : Utils.toRFC3339Date(challengeEntity.getEndDate()),
                          Utils.canEditChallenge(challengeEntity.getManagers()),
                          Utils.canAnnounce(String.valueOf(challengeEntity.getAudience())),
-                         challengeEntity.getManagers());
+                         challengeEntity.getManagers(),
+                         (long) challengeEntity.getScore());
   }
 
   public static RuleEntity toEntity(Challenge challenge) {
@@ -67,6 +68,7 @@ public class EntityMapper {
     }
     challengeEntity.setAudience(challenge.getAudience());
     challengeEntity.setManagers(challenge.getManagers());
+    challengeEntity.setScore(challenge.getPoints().intValue());
     return challengeEntity;
   }
 
@@ -189,6 +191,7 @@ public class EntityMapper {
                                                     challenge.getManagers()),
                                    Utils.getManagersByIds(challenge.getManagers(), challenge.getId()),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
-                                   announcementRestEntities);
+                                   announcementRestEntities,
+                                   challenge.getPoints());
   }
 }

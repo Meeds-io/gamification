@@ -61,7 +61,7 @@ export function getAllChallengesByUser(offset, limit) {
 }
 
 export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit|| 10}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit|| 10}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -74,7 +74,7 @@ export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
 }
 
 export function saveAnnouncement(announcement) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/announcement/api/addAnnouncement`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/addAnnouncement`, {
     method: 'POST',
     credentials: 'include',
     headers: {

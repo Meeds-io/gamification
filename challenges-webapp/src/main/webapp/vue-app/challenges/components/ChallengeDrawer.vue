@@ -66,6 +66,18 @@
               @startDateChanged="updateChallengeStartDate($event)"
               @endDateChanged="updateChallengeEndDate($event)" />
           </div>
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('challenges.label.reward') }}</span>
+            <v-text-field
+              v-model="challenge.points"
+              :label="$t('challenges.label.points')"
+              :rules="[rules.value]"
+              :placeholder="$t('challenges.label.points')"
+              class="pt-2 pointsChallenges"
+              type="number"
+              outlined
+              required />
+          </div>
           <div class="challengeDescription py-4 my-2">
             <challenge-description
               ref="challengeDescription"
@@ -132,6 +144,7 @@ export default {
     return {
       rules: {
         length: (v) => (v && v.length < 250) || this.$t('challenges.label.challengeTitleLengthExceed') ,
+        value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
       },
       audience: '' ,
       isValid: {
@@ -175,6 +188,11 @@ export default {
       }
     },
   },
+  mounted() {
+    if (!(this.challenge && this.challenge.points)) {
+      this.challenge.points = 20;
+    }
+  },
   methods: {
     setUp(){
       const space = this.challenge.space ;
@@ -212,6 +230,7 @@ export default {
     reset(){
       this.challenge = {};
       this.$refs.challengeDatePicker.startDate = null;
+      this.challenge.points = 20;
       this.$refs.challengeDatePicker.endDate = null;
       this.$refs.challengeDescription.inputVal = null;
       this.$refs.challengeAssignment.assigneeObj = null;
