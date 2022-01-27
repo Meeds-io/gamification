@@ -12,12 +12,10 @@ export function initExtensions() {
     },
     getSourceLink: () => '#',
     getTitle: activity => {
-      const announcementAssigneeUsername = activity && activity.templateParams && activity.templateParams.announcementAssigneeUsername && activity.templateParams.announcementAssigneeUsername.split('#') || '';
-      const announcementAssigneeFullName = activity && activity.templateParams && activity.templateParams.announcementAssigneeUsername && activity.templateParams.announcementAssigneeFullName.split('#') || '';
-      let title = '';
-      for (let i=0 ; i < announcementAssigneeUsername.length-1; i++){
-        title = `${ title } <a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${ announcementAssigneeUsername[i] }">${ announcementAssigneeFullName[i] }</a>`;
-      }
+      const announcementAssigneeUsername = activity && activity.templateParams && activity.templateParams.announcementAssigneeUsername  || '';
+      const announcementAssigneeFullName = activity && activity.templateParams && activity.templateParams.announcementAssigneeFullName  || '';
+      const title = `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${ announcementAssigneeUsername}">${ announcementAssigneeFullName}</a>`;
+
       return {
         key: 'challenges.succeededChallenge',
         params: { 0: `${ title }` }
