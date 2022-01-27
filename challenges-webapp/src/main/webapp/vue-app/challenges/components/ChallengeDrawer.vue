@@ -48,6 +48,11 @@
             include-spaces
             only-manager />
 
+          <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
+          <challenge-program
+            @addProgram="addProgram($event)"
+            @removeProgram="removeProgram($event)" />
+
           <span class="subtitle-1"> {{ $t('challenges.label.challengeOwners') }} *</span>
           <challenge-assignment
             ref="challengeAssignment"
@@ -134,7 +139,7 @@ export default {
       };
     },
     disabledSave() {
-      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.isValid.title && this.isValid.description && !this.disabledUpdate;
+      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.challenge.program  && this.challenge.program.length > 0 && this.isValid.title && this.isValid.description && !this.disabledUpdate;
     },
     buttonName() {
       return this.challenge && this.challenge.id && this.$t('challenges.button.save') || this.$t('challenges.button.create') ;
@@ -281,7 +286,12 @@ export default {
         this.$set(this.challenge.managers,this.challenge.managers.length, id);
       }
     },
-
+    addProgram(program) {
+      this.$set(this.challenge,'program', program);
+    },
+    removeProgram() {
+      this.$set(this.challenge,'program', '');
+    },
     updateChallengeStartDate(value) {
       if (value) {
         this.$set(this.challenge,'startDate', value);

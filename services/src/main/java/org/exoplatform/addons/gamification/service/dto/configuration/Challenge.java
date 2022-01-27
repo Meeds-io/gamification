@@ -23,6 +23,8 @@ public class Challenge implements Cloneable {
 
   private Long       points;
 
+  private String     program;
+
   public Challenge(long id,
                    String title,
                    String description,
@@ -32,7 +34,8 @@ public class Challenge implements Cloneable {
                    boolean canEdit,
                    boolean canAnnounce,
                    List<Long> managers,
-                   Long points) {
+                   Long points,
+                   String program) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -43,11 +46,12 @@ public class Challenge implements Cloneable {
     this.canAnnounce = canAnnounce;
     this.managers = managers;
     this.points = points;
+    this.program = program;
   }
 
   @Override
   public Challenge clone() { // NOSONAR
-    return new Challenge(id, title, description, audience, startDate, endDate, canEdit, canAnnounce, managers, points);
+    return new Challenge(id, title, description, audience, startDate, endDate, canEdit, canAnnounce, managers, points, program);
   }
 
   public Challenge() {
@@ -131,5 +135,13 @@ public class Challenge implements Cloneable {
 
   public void setPoints(Long points) {
     this.points = points;
+  }
+
+  public String getProgram() {
+    return program;
+  }
+
+  public void setProgram(String program) {
+    this.program = program;
   }
 }

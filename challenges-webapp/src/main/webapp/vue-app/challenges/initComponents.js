@@ -9,6 +9,7 @@ import ChallengeDescription from './components/ChallengeDescription.vue';
 import ChallengeDetailsDrawer from './components/ChallengeDetailsDrawer.vue';
 import AnnouncementDrawer from './components/AnnouncementDrawer.vue';
 import WinnersDrawer from './components/WinnersDrawer.vue';
+import challengeProgram from './components/ProgramSuggester.vue';
 const components = {
   'challenges': Challenges,
   'welcome-message': WelcomeMessage,
@@ -20,7 +21,8 @@ const components = {
   'challenge-description': ChallengeDescription,
   'challenge-details-drawer': ChallengeDetailsDrawer,
   'announce-drawer': AnnouncementDrawer,
-  'challenge-winners-details': WinnersDrawer
+  'challenge-winners-details': WinnersDrawer,
+  'challenge-program': challengeProgram
 };
 
 for (const key in components) {

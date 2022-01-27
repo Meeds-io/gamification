@@ -28,6 +28,8 @@ public class ChallengeRestEntity implements Cloneable {
 
   private Long                         points;
 
+  private String                       program;
+
   @Override
   public ChallengeRestEntity clone() { // NOSONAR
     return new ChallengeRestEntity(id,
@@ -40,7 +42,8 @@ public class ChallengeRestEntity implements Cloneable {
                                    managers,
                                    announcementsCount,
                                    announcements,
-                                   points);
+                                   points,
+                                   program);
   }
 
   public ChallengeRestEntity(long id,
@@ -53,7 +56,8 @@ public class ChallengeRestEntity implements Cloneable {
                              List<UserInfo> managers,
                              Long announcementsCount,
                              List<AnnouncementRestEntity> announcements,
-                             Long points) {
+                             Long points,
+                             String program) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -65,6 +69,7 @@ public class ChallengeRestEntity implements Cloneable {
     this.announcementsCount = announcementsCount;
     this.announcements = announcements;
     this.points = points;
+    this.program = program;
   }
 
   public ChallengeRestEntity() {
@@ -156,5 +161,13 @@ public class ChallengeRestEntity implements Cloneable {
 
   public void setPoints(Long points) {
     this.points = points;
+  }
+
+  public String getProgram() {
+    return program;
+  }
+
+  public void setProgram(String program) {
+    this.program = program;
   }
 }

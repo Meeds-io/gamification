@@ -38,7 +38,8 @@ public class EntityMapper {
                          Utils.canEditChallenge(challengeEntity.getManagers()),
                          Utils.canAnnounce(String.valueOf(challengeEntity.getAudience())),
                          challengeEntity.getManagers(),
-                         (long) challengeEntity.getScore());
+                         (long) challengeEntity.getScore(),
+                         challengeEntity.getDomainEntity() != null ? challengeEntity.getDomainEntity().getTitle() : null);
   }
 
   public static RuleEntity toEntity(Challenge challenge) {
@@ -69,6 +70,9 @@ public class EntityMapper {
     challengeEntity.setAudience(challenge.getAudience());
     challengeEntity.setManagers(challenge.getManagers());
     challengeEntity.setScore(challenge.getPoints().intValue());
+    if (Utils.getDomain(challenge.getProgram()) != null) {
+      challengeEntity.setDomainEntity(Utils.getDomain(challenge.getProgram()));
+    }
     return challengeEntity;
   }
 
@@ -192,6 +196,7 @@ public class EntityMapper {
                                    Utils.getManagersByIds(challenge.getManagers(), challenge.getId()),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    announcementRestEntities,
-                                   challenge.getPoints());
+                                   challenge.getPoints(),
+                                   challenge.getProgram());
   }
 }

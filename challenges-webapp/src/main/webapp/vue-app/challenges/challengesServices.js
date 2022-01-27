@@ -104,3 +104,18 @@ export function getAllChallengeById(id)
   });
 }
 
+export function getAllDomains() {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains`, {
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+    method: 'GET'
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error ('Server indicates an error while sending request');
+    }
+  });
+}
+
