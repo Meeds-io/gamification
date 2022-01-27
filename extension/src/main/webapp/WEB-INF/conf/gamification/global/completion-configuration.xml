@@ -66,7 +66,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
     </component>
     <!-- END -->
-    <!-- Space Leaderboard Rest Service -->
+   <!-- Space Leaderboard Rest Service -->
     <component>
         <type>org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint</type>
     </component>
@@ -88,7 +88,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
     </component>
     <!-- END -->
-    <!-- Gamification API Rest Service -->
+ <!-- Gamification API Rest Service -->
     <component>
         <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
     </component>
@@ -107,6 +107,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
     </component>
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>challenge.announcement.activity</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityGeneratorListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+        <component-plugin>
+            <name>ChallengeAnnouncementActivityProcessor</name>
+            <set-method>addProcessorPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.activity.processor.ChallengeAnnouncementActivityProcessor</type>
+            <init-params>
+                <value-param>
+                    <name>priority</name>
+                    <description>priority of this processor (lower are executed first)</description>
+                    <value>30</value>
+                </value-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.settings.ExoFeatureService</target-component>
         <component-plugin>
