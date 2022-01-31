@@ -42,7 +42,7 @@ public class Utils {
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static GamificationService           gamificationService;
+  private static GamificationService    gamificationService;
 
   private Utils() { // NOSONAR
   }
@@ -53,13 +53,19 @@ public class Utils {
   }
 
   public static final String getCurrentUser() {
-    return ConversationState.getCurrent().getIdentity().getUserId();
+    if (ConversationState.getCurrent() != null && ConversationState.getCurrent().getIdentity() != null) {
+      return ConversationState.getCurrent().getIdentity().getUserId();
+    }
+    return null;
   }
 
   public static final boolean canEditChallenge(List<Long> managersId) {
     Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, getCurrentUser());
-
-    return managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
+    if (identity != null) {
+      return managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
+    } else {
+      return true;
+    }
   }
 
   public static final boolean canAnnounce(String id) {
@@ -68,8 +74,12 @@ public class Utils {
     if (space == null) {
       throw new IllegalArgumentException("space is not exist");
     }
-    return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, getCurrentUser())
-        || spaceService.isManager(space, getCurrentUser()) : spaceService.isMember(space, getCurrentUser());
+    if (StringUtils.isNotBlank(getCurrentUser())) {
+      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, getCurrentUser())
+          || spaceService.isManager(space, getCurrentUser()) : spaceService.isMember(space, getCurrentUser());
+    } else {
+      return true;
+    }
   }
 
   public static String toRFC3339Date(Date dateTime) {
@@ -193,9 +203,9 @@ public class Utils {
     return StringUtils.isBlank(earnerId) ? 0L : getGamificationService().computeTotalScore(earnerId);
   }
 
-  public static DomainEntity getDomain(String domain){
+  public static DomainEntity getDomain(String domain) {
     DomainDAO domainService = CommonsUtils.getService(DomainDAO.class);
-    return  domainService.findDomainByTitle(domain) ;
+    return domainService.findDomainByTitle(domain);
   }
 
 }
