@@ -59,7 +59,8 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
       ExoSocialActivity activity = createActivity(announcement, challenge);
       announcement.setActivityId(Long.parseLong(activity.getId()));
       announcementService.updateAnnouncement(announcement);
-      ActivityStreamModification activityStreamModification = new ActivityStreamModification(activity.getId(), "createActivity");
+      Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
+      ActivityStreamModification activityStreamModification = new ActivityStreamModification(activity.getId(), "createActivity",space.getId());
       activityStreamWebSocketService.sendMessage(activityStreamModification);
     } finally {
       RequestLifeCycle.end();
