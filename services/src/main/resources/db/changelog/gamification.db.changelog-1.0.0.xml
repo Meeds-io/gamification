@@ -374,19 +374,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </addColumn>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-27">
-        <modifyDataType tableName="GAMIFICATION_RULE" columnName="TITLE" newDataType="NVARCHAR(1000)"/>
-    </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-28">
         <addColumn tableName="GAMIFICATION_RULE">
             <column name="NEW_TITLE" type="NVARCHAR(2000)" valueComputed="TITLE">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-29">
+    <changeSet author="exo-gamification" id="1.0.0-28">
       <dropColumn tableName="GAMIFICATION_RULE" columnName="TITLE" />
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-30">
+    <changeSet author="exo-gamification" id="1.0.0-29">
         <renameColumn tableName="GAMIFICATION_RULE" columnDataType="NVARCHAR(2000)" oldColumnName="NEW_TITLE" newColumnName="TITLE" />
     </changeSet>
 </databaseChangeLog>
