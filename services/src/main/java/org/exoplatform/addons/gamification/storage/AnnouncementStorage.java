@@ -34,6 +34,14 @@ public class AnnouncementStorage {
     Challenge challenge = challengeStorage.getChallengeById(announcement.getChallengeId());
     RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
     GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement);
+    Date nextToEndDate = new Date(challengeEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
+
+    if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
+      throw new IllegalArgumentException("announcement is not allowed when challenge is ended ");
+    }
+    if (!announcementEntity.getCreatedDate().after(challengeEntity.getStartDate())) {
+      throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
+    }
     DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle(challenge.getProgram()));
     announcementEntity.setEarnerType(IdentityType.USER);
     announcementEntity.setActionTitle(challengeEntity.getTitle());
