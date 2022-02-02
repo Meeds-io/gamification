@@ -387,4 +387,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <changeSet author="exo-gamification" id="1.0.0-29">
         <renameColumn tableName="GAMIFICATION_RULE" columnDataType="NVARCHAR(2000)" oldColumnName="NEW_TITLE" newColumnName="TITLE" />
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-30">
+        <modifyDataType tableName="GAMIFICATION_RULE" columnName="DESCRIPTION" newDataType="NVARCHAR(2000)"/>
+    </changeSet>
 </databaseChangeLog>
