@@ -121,7 +121,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/src/main/webapp/skin/less</outputDirectory>
+                            <outputDirectory>target/src/main/webapp/skin/less</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/webapp/skin/less</directory>
@@ -143,7 +143,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         </goals>
                         <configuration>
                             <includeArtifactIds>platform-ui-skin</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}/src/main/webapp</outputDirectory>
+                            <outputDirectory>target/src/main/webapp</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -163,6 +163,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                                 <include>popularSpaces.less</include>
                                 <include>usersLeaderboard.less</include>
                                 <include>badgesOverview.less</include>
+                                <include>gamification.less</include>
                             </includes>
                         </configuration>
                         <goals>
@@ -174,9 +175,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <configuration>
-                    <workingDirectory>src/main/frontend</workingDirectory>
-                </configuration>
             </plugin>
         </plugins>
     </build>
