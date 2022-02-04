@@ -37,11 +37,13 @@ public class ChallengeStorage {
       challengeEntity.setId(null);
       challengeEntity.setCreatedBy(username);
       challengeEntity.setType(TypeRule.MANUAL);
+      challengeEntity.setEvent(challengeEntity.getTitle());
       challengeEntity = ruleDAO.create(challengeEntity);
     } else {
       RuleEntity ruleEntity = ruleDAO.find(challengeEntity.getId());
       challengeEntity.setCreatedBy(ruleEntity.getCreatedBy());
       challengeEntity.setType(ruleEntity.getType());
+      challengeEntity.setEvent(ruleEntity.getEvent());
       challengeEntity = ruleDAO.update(challengeEntity);
     }
 
