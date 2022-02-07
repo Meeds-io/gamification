@@ -18,12 +18,9 @@ const path = require('path');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 
-// add the server path to your server location path
-const exoServerPath = "/home/exo/work/exoRepos/Reward2 FT/ACC/platform-6.3.x-rewards-SNAPSHOT";
 
 module.exports = merge(common, {
     output: {
-        path:  `${exoServerPath}/webapps/gamification-portlets/`,
+        path: `/exo-server/webapps/gamification-portlets/`,
     },
-    devtool: 'inline-source-map',
 });

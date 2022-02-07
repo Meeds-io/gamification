@@ -19,7 +19,9 @@
     <v-data-table
       :headers="realizationsHeaders"
       :items="realizations"
-      :loading="loadingRealizations"
+      :items-per-page=" realizations && realizations.length"
+      :loading="loading"
+      hide-default-footer
       class="mx-6 mt-6 realizationsTable">
       <template slot="item" slot-scope="props">
         <tr v-show="realizations">
@@ -27,15 +29,17 @@
             {{ getFromDate(props.item.createdDate) }}
           </td>
           <td class="text-truncate align-center wrap">
-            {{ props.item.creator && props.item.creator.remoteId || props.item.receiver && props.item.receiver.remoteId || '-' }}
+            {{ props.item.creator && props.item.creator.remoteId || '-' }}
           </td>
-          <td class="align-center actionTitle">
-            {{ props.item.action && props.item.action.event || props.item.action.title }}
+          <td class="align-center actionTitle px-1">
+            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'">
+              {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.title.${props.item.action.event}`) }} </span>
           </td>
-          <td class="align-center actionTitle">
-            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('realisation.label.auto') }} </span>
-
-            {{ props.item.actionLabel }}
+          <td class="align-center actionTitle px-0">
+            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.actionLabel }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'">
+              {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.description.${props.item.action.event}`) }}             </span>
           </td>
           <td class="text-truncate align-center">
             <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('realisation.label.auto') }} </span>
@@ -48,7 +52,7 @@
             {{ props.item.action && props.item.action.domainDTO && props.item.action.domainDTO.description }}
           </td>
           <td class="text-truncate align-center">
-            {{ props.item.action && props.item.action.score }}
+            {{ props.item && props.item.score }}
           </td>
           <td class="text-truncate align-center">
             <span v-if="props.item.status === 'REJECTED'"> {{ $t('realisation.label.rejected') }} </span>
@@ -61,7 +65,7 @@
           <td class="text-truncate align-center">
             {{ props.item.space || '-' }}
           </td>
-          <td class="text-truncate">
+          <td class="text-truncate actions">
             <v-menu
               offset-y
               :value="selectedRealizations === props.item"
@@ -81,15 +85,24 @@
               <v-list flat class="pt-0 pb-0">
                 <template>
                   <v-list-item @mousedown="$event.preventDefault()">
-                    <v-list-item-title class="options">{{ $t('realisation.label.edit') }}</v-list-item-title>
+                    <v-list-item-title class="options">
+                      <i class="fas fa-edit pr-1"></i>
+                      {{ $t('realisation.label.edit') }}
+                    </v-list-item-title>
                   </v-list-item>
                   <v-divider />
                   <v-list-item @mousedown="$event.preventDefault()" v-if="props.item.status === 'REJECTED'">
-                    <v-list-item-title class="options" @click="acceptRealizations(props.item)">{{ $t('realisation.label.accept') }}</v-list-item-title>
+                    <v-list-item-title class="options" @click="updateRealizations(props.item,'EDITED')">
+                      <i class="fas fa-check pr-1"></i>
+                      {{ $t('realisation.label.accept') }}
+                    </v-list-item-title>
                   </v-list-item>
                   <v-divider />
                   <v-list-item @mousedown="$event.preventDefault()" v-if=" props.item.status === 'NORMAL' || props.item.status === 'EDITED'">
-                    <v-list-item-title class="options" @click="rejectRealizations(props.item)">{{ $t('realisation.label.reject') }}</v-list-item-title>
+                    <v-list-item-title class="options" @click="updateRealizations(props.item,'REJECTED')">
+                      <i class="fas fa-ban pr-1"></i>
+                      {{ $t('realisation.label.reject') }}
+                    </v-list-item-title>
                   </v-list-item>
                 </template>
               </v-list>
@@ -98,6 +111,22 @@
         </tr>
       </template>
     </v-data-table>
+    <v-toolbar
+      color="transparent"
+      flat
+      class="pa-2 mb-4">
+      <v-btn
+        v-if="showLoadMoreButton"
+        class="btn"
+        :loading="loading"
+        :disabled="loading"
+        @click="getRealizations(true)"
+        block>
+        <span class="ms-2 d-none d-lg-inline">
+          {{ $t("realisation.label.loadMore") }}
+        </span>
+      </v-btn>
+    </v-toolbar>
   </v-app>
 </template>
 
@@ -107,7 +136,11 @@ export default {
   data: () => ({
     realizations: [],
     selectedRealizations: {},
-    loadingRealizations: false,
+    realizationsPerPage: 10,
+    loading: true,
+    loadMore: false,
+    limitReached: false,
+    showLoadMoreButton: false,
     showMenu: false,
     dateMenu: false,
     toDate: new Date().toISOString() ,
@@ -123,80 +156,80 @@ export default {
         {
           text: this.$t('realisation.label.date'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'date',
+          class: 'actionHeader px-2',
         },
         {
           text: this.$t('realisation.label.creator'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'creator',
+          class: 'actionHeader px-1'
 
         },
         {
           text: this.$t('realisation.label.actionId'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'actionId',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.actionLabel'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'actionLabel',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.actionType'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'actionType',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.program'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'program',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.programLabel'),
           align: 'center',
-          sortable: true,
-          value: '',
+          sortable: false,
+          value: 'programLabel',
           class: 'actionHeader px-0'
         },
         {
           text: this.$t('realisation.label.points'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'points',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.status'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'status',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.grantee'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'grantee',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.space'),
           align: 'center',
-          sortable: true,
-          value: '',
-          class: 'actionHeader px-2'
+          sortable: false,
+          value: 'space',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realisation.label.actions'),
@@ -218,9 +251,19 @@ export default {
     },
   },
   methods: {
-    getRealizations() {
-      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate).then(realizations => {
-        this.realizations = realizations;
+    getRealizations(loadMore) {
+      this.loading = true;
+      const offset = loadMore ? this.realizations.length : 0;
+      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,offset,this.realizationsPerPage).then(realizations => {
+        if (realizations.length >= this.realizationsPerPage) {
+          this.showLoadMoreButton = true;
+        } else {
+          this.showLoadMoreButton = false;
+        }
+        this.realizations = loadMore && this.realizations.concat(realizations) || realizations;
+
+      }).finally(() => {
+        this.loading = false;
       });
     },
     getFromDate(date) {
@@ -229,19 +272,14 @@ export default {
       const month = String(date.getMonth());
       const year = String(date.getFullYear());
       const lang = eXo.env.portal.language;
-      const time =   date.toLocaleString(lang, { hour: 'numeric', minute: 'numeric', hour12: true });
+      const time =   date.toLocaleString(lang, { hour: 'numeric', minute: 'numeric', hour12: true }).toLowerCase();
       return `${day}/${month}/${year} ${time} ` ;
     },
     closeActionsMenu() {
       this.selectedRealizations = {};
     },
-    acceptRealizations(realization) {
-      this.$realizationsServices.updateStatus(realization.id,'EDITED').then(() => {
-        this.getRealizations(false);
-      } );
-    },
-    rejectRealizations(realization) {
-      this.$realizationsServices.updateStatus(realization.id,'REJECTED').then(() => {
+    updateRealizations(realization,status) {
+      this.$realizationsServices.updateStatus(realization.id,status).then(() => {
         this.getRealizations(false);
       } );
     },

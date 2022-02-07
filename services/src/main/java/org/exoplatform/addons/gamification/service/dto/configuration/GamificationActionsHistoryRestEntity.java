@@ -8,9 +8,9 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private RuleDTO  action;
 
-  private String  actionLabel;
+  private String   actionLabel;
 
-  private UserInfo receiver;
+  private Long     score;
 
   private String   comment;
 
@@ -22,13 +22,21 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private String   space;
 
-
-  public GamificationActionsHistoryRestEntity(Long id, UserInfo earner, RuleDTO action, String actionLabel, UserInfo receiver, String comment, UserInfo creator, String createdDate, String status, String space) {
+  public GamificationActionsHistoryRestEntity(Long id,
+                                              UserInfo earner,
+                                              RuleDTO action,
+                                              String actionLabel,
+                                              Long score,
+                                              String comment,
+                                              UserInfo creator,
+                                              String createdDate,
+                                              String status,
+                                              String space) {
     this.id = id;
     this.earner = earner;
     this.action = action;
     this.actionLabel = actionLabel;
-    this.receiver = receiver;
+    this.score = score;
     this.comment = comment;
     this.creator = creator;
     this.createdDate = createdDate;
@@ -41,7 +49,16 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   @Override
   public GamificationActionsHistoryRestEntity clone() { // NOSONAR
-    return new GamificationActionsHistoryRestEntity(id, earner, action, actionLabel, receiver, comment, creator, createdDate, status, space);
+    return new GamificationActionsHistoryRestEntity(id,
+                                                    earner,
+                                                    action,
+                                                    actionLabel,
+                                                    score,
+                                                    comment,
+                                                    creator,
+                                                    createdDate,
+                                                    status,
+                                                    space);
   }
 
   public Long getId() {
@@ -68,12 +85,20 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.action = action;
   }
 
-  public UserInfo getReceiver() {
-    return receiver;
+  public String getActionLabel() {
+    return actionLabel;
   }
 
-  public void setReceiver(UserInfo receiver) {
-    this.receiver = receiver;
+  public void setActionLabel(String actionLabel) {
+    this.actionLabel = actionLabel;
+  }
+
+  public Long getScore() {
+    return score;
+  }
+
+  public void setScore(Long score) {
+    this.score = score;
   }
 
   public String getComment() {
@@ -114,13 +139,5 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   public void setSpace(String space) {
     this.space = space;
-  }
-
-  public String getActionLabel() {
-    return actionLabel;
-  }
-
-  public void setActionLabel(String actionLabel) {
-    this.actionLabel = actionLabel;
   }
 }

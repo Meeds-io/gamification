@@ -95,9 +95,9 @@ public class GamificationActionsHistoryMapper {
             Utils.getUserById(Long.valueOf(gHistory.getEarnerId()),gHistory.getRuleId()),
             gHistory.getRuleId() !=null ? Utils.getRuleById(gHistory.getRuleId()) : Utils.getRuleByTitle(gHistory.getActionTitle()),
             gHistory.getActionTitle(),
-            Utils.getUserById(Long.valueOf(gHistory.getReceiver()),gHistory.getRuleId()),
+            gHistory.getActionScore(),
             gHistory.getComment(),
-            Utils.getUserById(gHistory.getCreator(),gHistory.getRuleId()),
+            Utils.getUserById(gHistory.getCreator() != null ? gHistory.getCreator() : Long.valueOf(gHistory.getReceiver()),gHistory.getRuleId()),
             gHistory.getCreatedDate(),
             gHistory.getStatus(),
             gHistory.getRuleId() != null ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId()).getAudience())).getDisplayName() : null);

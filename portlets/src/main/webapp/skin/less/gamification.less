@@ -24,6 +24,12 @@
     .actionTitle {
       word-break: break-word;
     }
+    .actions {
+      .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled){
+        color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default) !important;
+        cursor: pointer;
+      }
+    }
   }
   .selected-period-menu {
      width: 18% !important;
@@ -33,7 +39,7 @@
       right: 155px !important;
       top : 55px  !important;
     }
-    .v-input textarea {
+    .theme--light.v-input input{
       color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default) !important;
     }
     .date-time-selection {
