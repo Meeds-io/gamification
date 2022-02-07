@@ -42,6 +42,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private String status;
 
+
   public GamificationActionsHistoryDTO(Long id,
                                        String date,
                                        String earnerId,

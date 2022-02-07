@@ -1,7 +1,6 @@
 package org.exoplatform.addons.gamification.service.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -50,7 +49,7 @@ public class GamificationActionsHistoryMapper {
     } else {
 
       return gamificationActionsHistoryEntities.stream()
-                                               .map(gamificationActionsHistoryEntity -> fromEntity(gamificationActionsHistoryEntity))
+                                               .map(GamificationActionsHistoryMapper ::fromEntity)
                                                .collect(Collectors.toList());
     }
   }
@@ -109,7 +108,7 @@ public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<Gam
     } else {
 
       return gamificationActionsHistories.stream()
-              .map(gamificationActionsHistory -> toRestEntity(gamificationActionsHistory))
+              .map(GamificationActionsHistoryMapper :: toRestEntity)
               .collect(Collectors.toList());
     }
   }

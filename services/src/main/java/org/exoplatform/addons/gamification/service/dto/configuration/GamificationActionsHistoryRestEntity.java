@@ -22,6 +22,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private String   space;
 
+
   public GamificationActionsHistoryRestEntity(Long id,
                                               UserInfo earner,
                                               RuleDTO action,
@@ -31,7 +32,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                               UserInfo creator,
                                               String createdDate,
                                               String status,
-                                              String space) {
+                                              String space) { // NOSONAR
     this.id = id;
     this.earner = earner;
     this.action = action;

@@ -23,7 +23,7 @@ public interface RealizationsService {
   List<GamificationActionsHistoryDTO> getAllRealizationsByDate(String fromDate,
                                                                String toDate,
                                                                int offset,
-                                                               int limit) throws IllegalArgumentException;;
+                                                               int limit) throws IllegalArgumentException;
 
   /**
    * Retrieves all Realizations by Date.
