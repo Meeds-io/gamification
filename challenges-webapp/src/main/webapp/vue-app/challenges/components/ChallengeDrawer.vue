@@ -59,6 +59,7 @@
             class="my-2"
             :audience="audience"
             v-model="challenge.managers"
+            multiple
             @remove-user="removeManager"
             @add-item="addManager" />
 
