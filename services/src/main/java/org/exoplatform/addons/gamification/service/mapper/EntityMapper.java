@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -141,7 +142,7 @@ public class EntityMapper {
     announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
                                                                             : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
-
+    announcementEntity.setStatus(HistoryStatus.NORMAL);
     if (announcement.getCreatedDate() != null) {
       announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
     }

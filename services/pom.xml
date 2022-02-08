@@ -181,6 +181,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <artifactId>powermock-api-mockito2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.exoplatform.social</groupId>
+            <artifactId>social-component-core</artifactId>
+        </dependency>
         <!-- End Test-->
     </dependencies>
     <build>

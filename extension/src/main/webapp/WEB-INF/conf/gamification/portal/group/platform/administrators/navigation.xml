@@ -39,6 +39,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <label>#{gamification.intranet.domainsManagement}</label>
                 <page-reference>group::/platform/administrators::domains</page-reference>
             </node>
+            <node>
+                <name>realizations</name>
+                <label>#{gamification.intranet.realizations}</label>
+                <page-reference>group::/platform/administrators::realizations</page-reference>
+            </node>
         </node>
     </page-nodes>
 </node-navigation>
