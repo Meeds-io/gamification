@@ -44,6 +44,8 @@ public class Utils {
 
   private static GamificationService    gamificationService;
 
+  private static RuleService    ruleService;
+
   private Utils() { // NOSONAR
   }
 
@@ -118,6 +120,9 @@ public class Utils {
     RuleService ruleService = CommonsUtils.getService(RuleService.class);
     return ruleService.findRuleById(ruleId);
   }
+  public static RuleDTO getRuleByTitle(String title) {
+    return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_"+title);
+  }
 
   public static List<UserInfo> getManagersByIds(List<Long> ids, Long challengeId) {
     try {
@@ -160,7 +165,7 @@ public class Utils {
         } else {
           return createUser(identity);
         }
-        }
+      }
     } catch (Exception e) {
       return null;
     }
@@ -194,7 +199,6 @@ public class Utils {
     return userInfo;
   }
 
-
   public static Long countAnnouncementsByChallenge(Long challengeId) {
     AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
     try {
@@ -210,6 +214,12 @@ public class Utils {
       gamificationService = CommonsUtils.getService(GamificationService.class);
     }
     return gamificationService;
+  }
+  public static RuleService getRuleService() {
+    if (ruleService == null) {
+      ruleService = CommonsUtils.getService(RuleService.class);
+    }
+    return ruleService;
   }
 
   public static Long getUserGlobalScore(String earnerId) {
