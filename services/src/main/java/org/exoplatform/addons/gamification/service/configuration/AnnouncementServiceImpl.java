@@ -36,7 +36,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Announcement createAnnouncement(Announcement announcement, String currentUser) throws IllegalArgumentException,
+  public Announcement createAnnouncement(Announcement announcement, String currentUser, boolean system) throws IllegalArgumentException,
                                                                                         ObjectNotFoundException,
                                                                                         IllegalAccessException {
     if (announcement == null) {
@@ -59,10 +59,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, currentUser);
     announcement.setCreator(Long.parseLong(identity.getId()));
     announcement = announcementStorage.saveAnnouncement(announcement);
-    try {
-      listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, announcement);
-    } catch (Exception e) {
-      LOG.error("Unexpected error", e);
+    if (!system) {
+      try {
+        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, announcement);
+      } catch (Exception e) {
+        LOG.error("Unexpected error", e);
+      }
     }
     return announcement;
   }
