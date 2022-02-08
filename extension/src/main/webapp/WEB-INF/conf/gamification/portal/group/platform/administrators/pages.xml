@@ -65,4 +65,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <show-info-bar>false</show-info-bar>
         </portlet-application>
     </page>
+    <page>
+        <name>realizations</name>
+        <title>Gamification Manage users realizations</title>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>manager:/platform/administrators</edit-permission>
+        <portlet-application>
+            <portlet>
+                <application-ref>gamification-portlets</application-ref>
+                <portlet-ref>Realizations</portlet-ref>
+            </portlet>
+            <title>Gamification Manage realizations</title>
+            <access-permissions>*:/platform/administrators</access-permissions>
+            <show-info-bar>false</show-info-bar>
+        </portlet-application>
+    </page>
 </page-set>
