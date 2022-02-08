@@ -34,6 +34,7 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.services.log.ExoLogger;
@@ -312,6 +313,7 @@ public class GamificationService {
       }
       aHistory.setReceiver(receiver);
       aHistory.setObjectId(objectId);
+      aHistory.setStatus(HistoryStatus.NORMAL);
       // Set update metadata
       aHistory.setLastModifiedDate(new Date());
       aHistory.setLastModifiedBy("Gamification Inner Process");
