@@ -29,7 +29,7 @@
             {{ getFromDate(props.item.createdDate) }}
           </td>
           <td class="text-truncate align-center wrap">
-            {{ props.item.creator && props.item.creator.remoteId || '-' }}
+            {{ props.item.creator && props.item.creator.remoteId || props.item.earner && props.item.earner.remoteId || '-' }}
           </td>
           <td class="align-center actionTitle px-1">
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event }} </span>
