@@ -44,6 +44,8 @@ public class Utils {
 
   private static GamificationService    gamificationService;
 
+  private static RuleService    ruleService;
+
   private Utils() { // NOSONAR
   }
 
@@ -118,6 +120,9 @@ public class Utils {
     RuleService ruleService = CommonsUtils.getService(RuleService.class);
     return ruleService.findRuleById(ruleId);
   }
+  public static RuleDTO getRuleByTitle(String title) {
+    return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_"+title);
+  }
 
   public static List<UserInfo> getManagersByIds(List<Long> ids, Long challengeId) {
     try {
@@ -145,24 +150,27 @@ public class Utils {
 
   public static UserInfo getUserById(Long id, Long challengeId) {
     try {
-      ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-      Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
-      Space space = getSpaceById(String.valueOf(challenge.getAudience()));
-      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       if (id == null) {
         return null;
       }
+      Space space = null ;
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       Identity identity = identityManager.getIdentity(String.valueOf(id));
       if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-        return createUser(identity, space, challenge.getManagers());
-      } else {
-        return null;
-      }
-    } catch (Exception e) {
+          if(challengeId != null){
+            ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+            Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
+            space = getSpaceById(String.valueOf(challenge.getAudience()));
+            return createUser(identity, space, challenge.getManagers());
+          } else {
+            return  createUser( identity);
+          }
+        }
+      } catch (Exception e) {
       LOG.info("challenge not exist with this id {0}", challengeId);
       return null;
     }
-
+    return null;
   }
 
   public static UserInfo createUser(Identity identity, Space space, List<Long> managersId) {
@@ -182,6 +190,16 @@ public class Utils {
     return userInfo;
   }
 
+  public static UserInfo createUser(Identity identity) {
+    UserInfo userInfo = new UserInfo();
+    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    userInfo.setFullName(identity.getProfile().getFullName());
+    userInfo.setRemoteId(identity.getRemoteId());
+    userInfo.setId(identity.getId());
+
+    return userInfo;
+  }
+
   public static Long countAnnouncementsByChallenge(Long challengeId) {
     AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
     try {
@@ -197,6 +215,12 @@ public class Utils {
       gamificationService = CommonsUtils.getService(GamificationService.class);
     }
     return gamificationService;
+  }
+  public static RuleService getRuleService() {
+    if (ruleService == null) {
+      ruleService = CommonsUtils.getService(RuleService.class);
+    }
+    return ruleService;
   }
 
   public static Long getUserGlobalScore(String earnerId) {
