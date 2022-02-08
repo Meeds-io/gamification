@@ -5,7 +5,12 @@
       right
       @closed="close">
       <template slot="title">
-        {{ $t('challenges.winners.details') }}
+        <div>
+          <i
+            v-if="back"
+            class="uiIcon uiArrowBAckIcon"
+            @click="close"></i>  <span class="pb-2"> {{ $t('challenges.winners.details') }} </span>
+        </div>
       </template>
       <template slot="content">
         <v-flex v-for="winner in listWinners" :key="winner.user.id">
@@ -56,6 +61,10 @@ export default {
     challengeId: {
       type: String,
       default: ''
+    },
+    back: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

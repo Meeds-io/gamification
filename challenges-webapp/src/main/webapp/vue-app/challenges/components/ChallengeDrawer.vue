@@ -50,6 +50,7 @@
 
           <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
           <challenge-program
+            ref="challengeProgram"
             @addProgram="addProgram($event)"
             @removeProgram="removeProgram($event)" />
 
@@ -140,7 +141,7 @@ export default {
       };
     },
     disabledSave() {
-      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.challenge.program  && this.challenge.program.length > 0 && this.isValid.title && this.isValid.description && !this.disabledUpdate;
+      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.challenge.program  && this.challenge.description && this.challenge.description.length > 0 && this.isValid.title && this.isValid.description && !this.disabledUpdate;
     },
     buttonName() {
       return this.challenge && this.challenge.id && this.$t('challenges.button.save') || this.$t('challenges.button.create') ;
@@ -225,6 +226,8 @@ export default {
         this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
         this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
       }
+      this.$refs.challengeProgram.broadcast = false;
+      this.$refs.challengeProgram.program =  this.challenge.program;
       const data = {
         managers: this.challenge.managers,
         space: space,
@@ -250,6 +253,8 @@ export default {
       this.$refs.challengeAssignment.disabledUnAssign = false;
       this.$refs.challengeDescription.disabled = false;
       this.warning= null;
+      this.$refs.challengeProgram.program = null;
+      this.$refs.challengeProgram.broadcast = true;
     },
     open(){
       this.$refs.challengeDescription.initCKEditor();
@@ -292,6 +297,7 @@ export default {
     },
     removeProgram() {
       this.$set(this.challenge,'program', '');
+      this.$refs.challengeProgram.broadcast = true;
     },
     updateChallengeStartDate(value) {
       if (value) {

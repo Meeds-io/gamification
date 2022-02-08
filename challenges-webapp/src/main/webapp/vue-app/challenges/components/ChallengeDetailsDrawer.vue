@@ -16,17 +16,16 @@
           {{ $t('challenges.label.description') }}
         </div>
         <div class="description pr-4 pl-4 pt-4" v-sanitized-html="challenge && challenge.description"></div>
-        <hr class="separation ml-4 mr-4">
-        <div class="px-4 pt-4">
-          <span class="title align-start">
+        <hr class="separation mx-4">
+        <div class="px-4 nowrap">
+          <span class="title winnersLabel">
             {{ $t('challenges.winners.details') }}
           </span>
-          <spacer />
-          <span
-            class="align-end descriptionLabel"
-            @click="openDetails">
+        </div>
+        <div class="px-4 pt-4 mt-n8 mx-3">
+          <p class="viewAll" @click="openDetails">
             {{ $t('challenges.label.viewAll') }}
-          </span>
+          </p>
         </div>
         <div class="assigneeAvatars flex-nowrap">
           <div class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
@@ -59,7 +58,7 @@
             </div>
           </div>
         </div>
-        <div class="px-4">
+        <div class="px-4 py-2">
           <span class="title">
             {{ $t('challenges.label.points') }}:
             <span class="descriptionLabel">
@@ -67,7 +66,7 @@
             </span>
           </span>
         </div>
-        <div class="startDate d-flex pl-4 pr-4">
+        <div class="startDate d-flex px-4 py-2">
           <i class="uiIconStartDate "></i>
           <div class="mt-1 date">
             {{ challenge && getFromDate(new Date(challenge.startDate)) }}
@@ -84,11 +83,11 @@
         </div>
         <div class="pl-4 pr-4">
           <v-chip
-            :title="challenge && challenge.program"
+            :title="challenge && challenge.program && challenge.program.title"
             color="primary"
             class="identitySuggesterItem mt-2">
             <span class="text-truncate">
-              {{ challenge && challenge.program }}
+              {{ challenge && challenge.program && challenge.program.title }}
             </span>
           </v-chip>
         </div>
@@ -130,6 +129,7 @@
     </exo-drawer>
     <challenge-winners-details
       :challenge-id="challenge && challenge.id"
+      back
       ref="winnersDetails" />
   </v-app>
 </template>
@@ -181,7 +181,10 @@ export default {
     },
     getFromDate(date) {
       return this.$challengeUtils.getFromDate(date);
-    }
+    },
+    openDetails() {
+      this.$refs.winnersDetails.open();
+    },
   }
 };
 </script>

@@ -241,7 +241,7 @@
         }
       }
       .announcesNumber {
-        color: @baseColorLight;
+        color: @darkBlue;
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -270,8 +270,6 @@
 #ChallengeCard {
   .cardOfChallenge {
     width: 95%;
-    max-height: 255px !important;
-    height: 255px !important;
     .contentCard {
       max-height: 175px;
       height: 175px
@@ -345,18 +343,20 @@
       font-weight: bold;
       color: @baseColor;
       text-align: center;
-    }
-    .descriptionChallenge {
-      color: @greyColorLighten1;
-      text-align: center;
-      -webkit-line-clamp: 3;
-      height: 4.5em;
+      -webkit-line-clamp: 4;
+      height: 4.9em;
     }
   }
-
+  .viewAll{
+    text-align: end;
+    position: relative;
+    top: -7px;
+    color: @darkBlue ;
+  }
   .points {
     color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default);
     text-align: center;
+    font-weight: bold;
   }
 }
 

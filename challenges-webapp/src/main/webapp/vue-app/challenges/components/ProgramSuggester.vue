@@ -66,6 +66,7 @@ export default {
       searchTerm: null,
       program: null,
       loadingSuggestions: false,
+      broadcast: true,
     };
   },
   computed: {
@@ -89,7 +90,7 @@ export default {
       return domains;
     },
     program() {
-      if (this.program){
+      if (this.program && this.broadcast){
         this.$emit('addProgram',this.program.title);
       }
     },
