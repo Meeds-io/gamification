@@ -52,6 +52,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <css-priority>1</css-priority>
   </portlet-skin>
 
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>Realizations</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/gamification.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+
   <portlet>
     <name>GamificationInformationsboard</name>
     <module>
@@ -181,7 +189,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <module>
       <script>
         <minify>false</minify>
-        <path>/javascript/popularSpaces/popularSpaces.bundle.js</path>
+        <path>/js/popularSpaces.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -210,7 +218,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <module>
       <script>
         <minify>false</minify>
-        <path>/javascript/usersLeaderboard/usersLeaderboard.bundle.js</path>
+        <path>/js/usersLeaderboard.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -239,7 +247,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <module>
       <script>
         <minify>false</minify>
-        <path>/javascript/badgesOverview/badgesOverview.bundle.js</path>
+        <path>/js/badgesOverview.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -276,7 +284,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>profileStatsBundle</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/profileStats/profileStats.bundle.js</path>
+      <path>/js/profileStats.bundle.js</path>
     </script>
     <depends>
       <module>vue</module>
@@ -305,7 +313,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>manageRules</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/rule/rule.bundle.js</path>
+      <path>/js/rule.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -326,7 +334,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>manageDomains</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/domain/domain.bundle.js</path>
+      <path>/js/domain.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -344,7 +352,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>manageBadges</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/badge/badge.bundle.js</path>
+      <path>/js/badge.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -365,7 +373,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>userReputation</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/reputation/reputation.bundle.js</path>
+      <path>/js/reputation.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -386,7 +394,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>userLeaderboard</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/leaderboard/leaderboard.bundle.js</path>
+      <path>/js/leaderboard.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -410,7 +418,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>spaceLeaderboard</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/spaceleaderboard/spaceleaderboard.bundle.js</path>
+      <path>/js/spaceleaderboard.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -434,7 +442,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>GamificationInformations</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/GamificationInformations/GamificationInformations.bundle.js</path>
+      <path>/js/GamificationInformations.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -456,7 +464,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <name>gamificationearnpoints</name>
     <script>
       <minify>false</minify>
-      <path>/javascript/earnpoints/earnpoints.bundle.js</path>
+      <path>/js/earnpoints.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -473,5 +481,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>eXoVueI18n</module>
     </depends>
   </module>
+  <portlet>
+    <name>Realizations</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/Realizations.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+    </module>
+  </portlet>
+
 
 </gatein-resources>
