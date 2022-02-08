@@ -17,8 +17,16 @@
         </div>
         <div class="description pr-4 pl-4 pt-4" v-sanitized-html="challenge && challenge.description"></div>
         <hr class="separation ml-4 mr-4">
-        <div class="title px-4 pt-4">
-          {{ $t('challenges.winners.details') }}
+        <div class="px-4 pt-4">
+          <span class="title align-start">
+            {{ $t('challenges.winners.details') }}
+          </span>
+          <spacer />
+          <span
+            class="align-end descriptionLabel"
+            @click="openDetails">
+            {{ $t('challenges.label.viewAll') }}
+          </span>
         </div>
         <div class="assigneeAvatars flex-nowrap">
           <div class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
@@ -51,9 +59,12 @@
             </div>
           </div>
         </div>
-        <div class="mx-2 px-4">
+        <div class="px-4">
           <span class="title">
-            {{ $t('challenges.label.points') }}: {{ challenge && challenge.points }}
+            {{ $t('challenges.label.points') }}:
+            <span class="descriptionLabel">
+              {{ challenge && challenge.points }}
+            </span>
           </span>
         </div>
         <div class="startDate d-flex pl-4 pr-4">
@@ -69,7 +80,7 @@
           </div>
         </div>
         <div class="pl-4 pr-4 pt-4">
-          {{ $t('challenges.label.audience') }}
+          {{ $t('challenges.label.program') }}
         </div>
         <div class="pl-4 pr-4">
           <v-chip
@@ -82,7 +93,7 @@
           </v-chip>
         </div>
         <div class="pl-4 pr-4 pt-4">
-          {{ $t('challenges.label.program') }}
+          {{ $t('challenges.label.audience') }}
         </div>
         <div v-if="space" class="pl-4 pr-4">
           <v-chip
