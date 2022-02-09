@@ -100,7 +100,7 @@ export default {
   },
   data() {
     return {
-      announcement: { assignee: []},
+      announcement: {},
       isValidDescription: {
         description: true },
     };
@@ -121,10 +121,9 @@ export default {
   },
   methods: {
     initAnnounce() {
-      this.announcement= { assignee: []};
       this.invalidDescription();
       if (this.disableSuggester) {
-        this.$set(this.announcement.assignee,this.announcement.assignee.length, this.challenge.userInfo.id);
+        this.$set(this.announcement,'assignee', this.challenge.userInfo.id);
       } else {
         this.$refs.challengeAssignment.assigneeObj = [];
       }
