@@ -180,8 +180,8 @@ public class ChallengeRest implements ResourceContainer {
       List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
       for (Challenge challenge : challenges) {
         List<Announcement> challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
-                                                                                                       offset,
-                                                                                                       limit);
+                                                                                                       0,
+                                                                                                       10);
         challengeRestEntities.add(EntityMapper.fromChallenge(challenge, challengeAnnouncements));
       }
       return Response.ok(challengeRestEntities).build();
