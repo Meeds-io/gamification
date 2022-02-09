@@ -197,7 +197,7 @@ export default {
   },
   mounted() {
     if (!(this.challenge && this.challenge.points)) {
-      this.challenge.points = 20;
+      this.$set(this.challenge,'points', 20);
     }
   },
   methods: {
@@ -239,7 +239,7 @@ export default {
     reset(){
       this.challenge = {};
       this.$refs.challengeDatePicker.startDate = null;
-      this.challenge.points = 20;
+      this.$set(this.challenge,'points', 20);
       this.$refs.challengeDatePicker.endDate = null;
       this.$refs.challengeDescription.inputVal = null;
       this.$refs.challengeAssignment.assigneeObj = null;
