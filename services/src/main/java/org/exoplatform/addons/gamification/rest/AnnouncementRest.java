@@ -51,7 +51,7 @@ public class AnnouncementRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser);
+      Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser, false);
       return Response.ok(EntityMapper.fromAnnouncement(newAnnouncement)).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create an announcement", e);
