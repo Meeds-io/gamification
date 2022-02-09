@@ -69,15 +69,15 @@
             class="me-1 projectManagersAvatar" />
           <div class="seeMoreAvatars">
             <div
-              v-if="listWinners.length > maxAvatarToShow"
+              v-if="challenge && challenge.announcementsCount > maxAvatarToShow"
               class="seeMoreItem"
               @click="openDetails">
               <v-avatar
                 :size="iconSize">
                 <img
-                  :src="listWinners[maxAvatarToShow].user.avatarUrl"
-                  :title="listWinners[maxAvatarToShow].user.displayName"
-                  :alt="$t('challenges.label.avatarUser', {0: listWinners[maxAvatarToShow].user.displayName})"
+                  :src="listWinners[maxAvatarToShow-1].user.avatarUrl"
+                  :title="listWinners[maxAvatarToShow-1].user.displayName"
+                  :alt="$t('challenges.label.avatarUser', {0: listWinners[maxAvatarToShow-1].user.displayName})"
                   class="object-fit-cover"
                   loading="lazy"
                   role="presentation">
@@ -128,11 +128,11 @@ export default {
     status: '',
     listWinners: [],
     iconSize: 28,
-    maxAvatarToShow: 3
+    maxAvatarToShow: 2
   }),
   computed: {
     avatarToDisplay () {
-      if (this.listWinners.length > this.maxAvatarToShow) {
+      if ( this.challenge && this.challenge.announcementsCount > this.maxAvatarToShow) {
         return this.listWinners.slice(0, this.maxAvatarToShow-1);
       } else {
         return this.listWinners;
@@ -175,7 +175,7 @@ export default {
     getListWinners() {
       this.challenge.announcements.map(announce => {
         const announcement = {
-          user: announce.assignee,
+          user: announce.assignee ||  announce.creator,
           activityId: announce.activityId,
           createDate: announce.createdDate
         };
