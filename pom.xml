@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <groupId>org.exoplatform.addons.gamification</groupId>
     <artifactId>gamification</artifactId>
-    <version>2.5.x-meed-SNAPSHOT</version>
+    <version>2.5.x-meedsv2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>eXo Gamification</name>
     <description>eXo Gamification extension</description>
@@ -50,9 +50,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <!-- **************************************** -->
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
-        <org.exoplatform.social.version>6.5.x-meed-SNAPSHOT</org.exoplatform.social.version>
-        <org.exoplatform.platform-ui.version>6.5.x-meed-SNAPSHOT</org.exoplatform.platform-ui.version>
-        <addon.exo.analytics.version>1.4.x-meed-SNAPSHOT</addon.exo.analytics.version>
+
+        <org.exoplatform.social.version>6.5.x-meedsv2-SNAPSHOT</org.exoplatform.social.version>
+        <org.exoplatform.platform-ui.version>6.5.x-meedsv2-SNAPSHOT</org.exoplatform.platform-ui.version>
+        <addon.exo.analytics.version>1.4.x-meedsv2-SNAPSHOT</addon.exo.analytics.version>
 
         <!-- Sonar properties -->
         <sonar.organization>meeds-io</sonar.organization>
