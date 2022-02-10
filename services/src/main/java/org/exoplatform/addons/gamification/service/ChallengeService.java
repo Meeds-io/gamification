@@ -46,9 +46,8 @@ public interface ChallengeService {
   /**
    * Return a boolean that indicates if the current user can add a challenge or not
    *
-   * @param currentUser
    * @return if the user can add a challenge or not    */
-  boolean canAddChallenge(String currentUser);
+  boolean canAddChallenge();
 
   /**
    * Retrieves all challenges by user.

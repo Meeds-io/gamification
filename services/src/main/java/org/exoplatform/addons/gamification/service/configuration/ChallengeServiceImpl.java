@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -23,9 +24,16 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private SpaceService     spaceService;
 
-  public ChallengeServiceImpl(ChallengeStorage challengeStorage, SpaceService spaceService) {
+  private String     CREATORS_GROUP;
+
+  private static final String     CREATORS_GROUP_KEY             = "challenge.creator.group";
+
+
+  public ChallengeServiceImpl(ChallengeStorage challengeStorage, SpaceService spaceService, InitParams params) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
+    this.CREATORS_GROUP = params.getValueParam(CREATORS_GROUP_KEY).getValue();
+
   }
 
   @Override
@@ -96,8 +104,8 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public boolean canAddChallenge(String currentUser)  {
-    return ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
+  public boolean canAddChallenge()  {
+    return ConversationState.getCurrent().getIdentity().isMemberOf(CREATORS_GROUP);
   }
 
   @Override
