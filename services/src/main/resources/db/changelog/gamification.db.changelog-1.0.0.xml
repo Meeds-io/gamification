@@ -54,7 +54,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="VALIDITY_DATE_END" type="TIMESTAMP">
                 <constraints nullable="true"/>
             </column>
-            <column name="ENABLED" type="BIT" defaultValue="0">
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_BY" type="varchar(200)">
@@ -93,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="AREA" type="NVARCHAR(32)">
                 <constraints nullable="true"/>
             </column>
-            <column name="ENABLED" type="BIT" defaultValue="0">
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_BY" type="varchar(200)">
