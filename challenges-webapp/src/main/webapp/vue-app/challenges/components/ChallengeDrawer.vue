@@ -228,6 +228,7 @@ export default {
       }
       this.$refs.challengeProgram.broadcast = false;
       this.$refs.challengeProgram.program =  this.challenge.program;
+      this.$refs.challengeProgram.broadcast = true;
       const data = {
         managers: this.challenge.managers,
         space: space,
