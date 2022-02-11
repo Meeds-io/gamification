@@ -142,7 +142,7 @@ public class EntityMapper {
     announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
                                                                             : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
-    announcementEntity.setStatus(HistoryStatus.NORMAL);
+    announcementEntity.setStatus(HistoryStatus.ACCEPTED);
     if (announcement.getCreatedDate() != null) {
       announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
     }
