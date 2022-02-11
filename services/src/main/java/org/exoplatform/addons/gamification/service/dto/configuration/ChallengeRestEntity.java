@@ -28,7 +28,7 @@ public class ChallengeRestEntity implements Cloneable {
 
   private Long                         points;
 
-  private String                       program;
+  private DomainDTO                       program;
 
   @Override
   public ChallengeRestEntity clone() { // NOSONAR
@@ -57,7 +57,7 @@ public class ChallengeRestEntity implements Cloneable {
                              Long announcementsCount,
                              List<AnnouncementRestEntity> announcements,
                              Long points,
-                             String program) {
+                             DomainDTO program) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -163,11 +163,11 @@ public class ChallengeRestEntity implements Cloneable {
     this.points = points;
   }
 
-  public String getProgram() {
+  public DomainDTO getProgram() {
     return program;
   }
 
-  public void setProgram(String program) {
+  public void setProgram(DomainDTO program) {
     this.program = program;
   }
 }
