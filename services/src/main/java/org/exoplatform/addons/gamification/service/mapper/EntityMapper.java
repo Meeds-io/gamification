@@ -198,6 +198,6 @@ public class EntityMapper {
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    announcementRestEntities,
                                    challenge.getPoints(),
-                                   challenge.getProgram());
+                                   Utils.getDomainByTitle(challenge.getProgram()));
   }
 }
