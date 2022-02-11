@@ -38,16 +38,21 @@
               </div>
             </div>
             <div class="contentChallenge" @click="showDetails">
-              <v-list-item-subtitle class="pl-5 pr-5 mb-4 mt-1 subtitleChallenge">
+              <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
-              <v-list-item-subtitle class="pl-9 pr-9 descriptionChallenge" v-sanitized-html="challenge && challenge.description" />
+            </div>
+            <div class="points title mb-1">
+              <span>
+                <i class="fas fa-trophy"></i>
+                {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
+              </span>
             </div>
           </v-list-item-content>
         </v-list-item>
       </div>
 
-      <div class="footer d-flex">
+      <div class="footer assigneeAvatars d-flex">
         <div class="winners pa-2" v-if="!(listWinners && listWinners.length)">
           <p
             class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
@@ -102,7 +107,10 @@
         </div>
       </div>
     </v-card>
-    <challenge-details-drawer :challenge="challenge" ref="challenge" />
+    <challenge-details-drawer
+      ref="challenge"
+      :challenge="challenge"
+      :winners="listWinners" />
     <announce-drawer
       :challenge="challenge"
       @announcementAdded="announcementAdded($event)"
@@ -128,7 +136,7 @@ export default {
     status: '',
     listWinners: [],
     iconSize: 28,
-    maxAvatarToShow: 3
+    maxAvatarToShow: 2
   }),
   computed: {
     avatarToDisplay () {

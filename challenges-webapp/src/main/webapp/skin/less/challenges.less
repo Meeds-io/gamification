@@ -193,6 +193,76 @@
       }
     }
   }
+
+  .assigneeAvatars {
+
+    .AllUsersAvatar {
+    box-shadow: 0 0 2px 1px @greyColor;
+    border-radius: 25px;
+    z-index: 1;
+    background: white;
+    }
+
+    .winnersAvatarsList {
+      padding-left: 18px ~'; /** orientation=lt */ ';
+      padding-right: 18px ~'; /** orientation=rt */ ';
+      .seeMoreAvatars {
+        .seeMoreItem {
+          position: relative;
+
+          &:before {
+            content: "";
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: @baseColorMedium;
+            border-radius: 50%;
+            opacity: .5;
+            z-index: 1;
+          }
+
+          .seeMoreAvatarList {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            width: 30px;
+            height: 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            z-index: 1;
+          }
+        }
+      }
+      .announcesNumber {
+        color: @darkBlue;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .projectManagersAvatar {
+        background-position: center;
+        background-size: cover;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+      }
+    }
+    .winners {
+      width: 60%;
+      .emptyWinners {
+        color: @baseColorLight;
+        cursor: pointer;
+        font-size: 16px;
+      }
+    }
+  }
 }
 .emptyChallenges {
   min-height: ~"calc(100vh - 100px)" ;
@@ -206,105 +276,10 @@
     }
 
     .footer {
-      .AllUsersAvatar {
-        box-shadow: 0 0 2px 1px @greyColor;
-        border-radius: 25px;
-        z-index: 1;
-        background: white;
-
-        .uiIconArrowBack {
-          font-size: 12px;
-          padding-top: 6px;
-          padding-left: 4px ~'; /** orientation=lt */ ';
-          padding-right: 4px ~'; /** orientation=rt */ ';
-          cursor: pointer;
-
-          &:before {
-            content: "\e74f";
-          }
-        }
-      }
-
-      .winnersAvatarsList {
-          padding-left: 18px ~'; /** orientation=lt */ ';
-          padding-right: 18px ~'; /** orientation=rt */ ';
-        .seeMoreAvatars {
-          .seeMoreItem {
-            position: relative;
-
-            &:before {
-              content: "";
-              width: 100%;
-              height: 100%;
-              position: absolute;
-              background: @baseColorMedium;
-              border-radius: 50%;
-              opacity: .5;
-              z-index: 1;
-            }
-
-            .seeMoreAvatarList {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              text-align: center;
-              width: 30px;
-              height: 30px;
-              color: white;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              font-size: 15px;
-              font-weight: bold;
-              z-index: 1;
-            }
-          }
-        }
-        .announcesNumber {
-          color: @baseColorLight;
-          cursor: pointer;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .projectManagersAvatar {
-          background-position: center;
-          background-size: cover;
-          border-radius: 50%;
-          width: 28px;
-          height: 28px;
-        }
-      }
-
       .v-list-item {
         min-height: 38px !important;
       }
 
-      .uiIconStar {
-        position: absolute;
-        top: 85%;
-        right: 10px ~'; /** orientation=lt */ ';
-        left: 10px ~'; /** orientation=rt */ ';
-        z-index: 0;
-
-        &:before {
-          content: "\e97f";
-          font-family: "PLF-FONT-ICONS" !important;
-          color: @colorIconOrange;
-          font-style: normal;
-          font-size: 18px;
-        }
-      }
-
-      .winners {
-        width: 60%;
-        .emptyWinners {
-          color: @baseColorLight;
-          cursor: pointer;
-          font-size: 16px;
-        }
-      }
       .addAnnounce {
         width: 40%;
         margin-right: 12px ~'; /** orientation=lt */ ';
@@ -368,13 +343,20 @@
       font-weight: bold;
       color: @baseColor;
       text-align: center;
+      -webkit-line-clamp: 4;
+      height: 4.9em;
     }
-    .descriptionChallenge {
-      color: @greyColorLighten1;
-      text-align: center;
-      -webkit-line-clamp: 3;
-      height: 4.5em;
-    }
+  }
+  .viewAll{
+    text-align: end;
+    position: relative;
+    top: -7px;
+    color: @darkBlue ;
+  }
+  .points {
+    color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default);
+    text-align: center;
+    font-weight: bold;
   }
 }
 
