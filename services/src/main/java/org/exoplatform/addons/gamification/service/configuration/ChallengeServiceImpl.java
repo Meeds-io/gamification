@@ -24,7 +24,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private SpaceService     spaceService;
 
-  private String     CREATORS_GROUP;
+  private String     groupOfCreators;
 
   private static final String     CREATORS_GROUP_KEY             = "challenge.creator.group";
 
@@ -32,8 +32,9 @@ public class ChallengeServiceImpl implements ChallengeService {
   public ChallengeServiceImpl(ChallengeStorage challengeStorage, SpaceService spaceService, InitParams params) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
-    this.CREATORS_GROUP = params.getValueParam(CREATORS_GROUP_KEY).getValue();
-
+    if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {
+      this.groupOfCreators = params.getValueParam(CREATORS_GROUP_KEY).getValue();
+    }
   }
 
   @Override
@@ -105,7 +106,10 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   @Override
   public boolean canAddChallenge()  {
-    return ConversationState.getCurrent().getIdentity().isMemberOf(CREATORS_GROUP);
+    if (groupOfCreators != null){
+      return ConversationState.getCurrent().getIdentity().isMemberOf(groupOfCreators);
+    }
+    return false;
   }
 
   @Override
