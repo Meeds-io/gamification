@@ -47,8 +47,8 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?offset=${offset || 0}&limit=${limit|| 10}`, {
+export function getAllChallengesByUser(offset, limit, announcements) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?offset=${offset || 0}&limit=${limit|| 10}&announcements=${announcements|| 2}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
