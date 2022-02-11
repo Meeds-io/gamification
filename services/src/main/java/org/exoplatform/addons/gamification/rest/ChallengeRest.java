@@ -163,11 +163,14 @@ public class ChallengeRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response getAllChallengesByUser(@ApiParam(value = "Offset of result", required = false, defaultValue = "0")
-  @QueryParam("offset")
-  int offset,
+                                         @QueryParam("offset")
+                                         int offset,
                                          @ApiParam(value = "Limit of result", required = false, defaultValue = "10")
                                          @QueryParam("limit")
-                                         int limit) {
+                                         int limit,
+                                         @ApiParam(value = "number of announcement per challenge", required = false, defaultValue = "2")
+                                         @QueryParam("announcements")
+                                         int announcements) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -180,8 +183,8 @@ public class ChallengeRest implements ResourceContainer {
       List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
       for (Challenge challenge : challenges) {
         List<Announcement> challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
-                                                                                                       offset,
-                                                                                                       limit);
+                                                                                                       0,
+                                                                                                       announcements);
         challengeRestEntities.add(EntityMapper.fromChallenge(challenge, challengeAnnouncements));
       }
       return Response.ok(challengeRestEntities).build();

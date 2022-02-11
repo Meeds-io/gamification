@@ -38,16 +38,21 @@
               </div>
             </div>
             <div class="contentChallenge" @click="showDetails">
-              <v-list-item-subtitle class="pl-5 pr-5 mb-4 mt-1 subtitleChallenge">
+              <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
-              <v-list-item-subtitle class="pl-9 pr-9 descriptionChallenge" v-sanitized-html="challenge && challenge.description" />
+            </div>
+            <div class="points title mb-1">
+              <span>
+                <i class="fas fa-trophy"></i>
+                {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
+              </span>
             </div>
           </v-list-item-content>
         </v-list-item>
       </div>
 
-      <div class="footer d-flex">
+      <div class="footer assigneeAvatars d-flex">
         <div class="winners pa-2" v-if="!(listWinners && listWinners.length)">
           <p
             class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
@@ -69,15 +74,15 @@
             class="me-1 projectManagersAvatar" />
           <div class="seeMoreAvatars">
             <div
-              v-if="listWinners.length > maxAvatarToShow"
+              v-if="challenge && challenge.announcementsCount > maxAvatarToShow"
               class="seeMoreItem"
               @click="openDetails">
               <v-avatar
                 :size="iconSize">
                 <img
-                  :src="listWinners[maxAvatarToShow].user.avatarUrl"
-                  :title="listWinners[maxAvatarToShow].user.displayName"
-                  :alt="$t('challenges.label.avatarUser', {0: listWinners[maxAvatarToShow].user.displayName})"
+                  :src="listWinners[maxAvatarToShow-1].user.avatarUrl"
+                  :title="listWinners[maxAvatarToShow-1].user.displayName"
+                  :alt="$t('challenges.label.avatarUser', {0: listWinners[maxAvatarToShow-1].user.displayName})"
                   class="object-fit-cover"
                   loading="lazy"
                   role="presentation">
@@ -102,7 +107,10 @@
         </div>
       </div>
     </v-card>
-    <challenge-details-drawer :challenge="challenge" ref="challenge" />
+    <challenge-details-drawer
+      ref="challenge"
+      :challenge="challenge"
+      :winners="listWinners" />
     <announce-drawer
       :challenge="challenge"
       @announcementAdded="announcementAdded($event)"
@@ -128,11 +136,11 @@ export default {
     status: '',
     listWinners: [],
     iconSize: 28,
-    maxAvatarToShow: 3
+    maxAvatarToShow: 2
   }),
   computed: {
     avatarToDisplay () {
-      if (this.listWinners.length > this.maxAvatarToShow) {
+      if ( this.challenge && this.challenge.announcementsCount > this.maxAvatarToShow) {
         return this.listWinners.slice(0, this.maxAvatarToShow-1);
       } else {
         return this.listWinners;
@@ -175,7 +183,7 @@ export default {
     getListWinners() {
       this.challenge.announcements.map(announce => {
         const announcement = {
-          user: announce.assignee,
+          user: announce.assignee ||  announce.creator,
           activityId: announce.activityId,
           createDate: announce.createdDate
         };

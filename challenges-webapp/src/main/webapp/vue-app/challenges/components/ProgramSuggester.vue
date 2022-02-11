@@ -66,14 +66,15 @@ export default {
       searchTerm: null,
       program: null,
       loadingSuggestions: false,
+      broadcast: true,
     };
   },
   computed: {
     labels() {
       return {
-        searchPlaceholder: 'search domains',
-        placeholder: 'search domains placeholders',
-        noDataLabel: 'no dataLAbel',
+        searchPlaceholder: this.$t('challenges.programSuggester.searchPlaceholder'),
+        placeholder: this.$t('challenges.programSuggester.placeholder'),
+        noDataLabel: this.$t('challenges.programSuggester.noDataLabel'),
       };
     },
   },
@@ -89,7 +90,7 @@ export default {
       return domains;
     },
     program() {
-      if (this.program){
+      if (this.program && this.broadcast){
         this.$emit('addProgram',this.program.title);
       }
     },
@@ -103,7 +104,7 @@ export default {
   methods: {
     getAllDomains(){
       this.$challengesServices.getAllDomains() .then(domains => {
-        this.domains = domains;
+        this.domains =  domains.slice().filter(domain => domain.enabled);
       }).catch(e => {
         this.$root.$emit('show-alert', {type: 'error',message: String(e)});
       });

@@ -56,6 +56,7 @@ export default {
     challenges: [],
     showLoadMoreButton: false,
     challengePerPage: 20,
+    announcementsPerChallenge: 2,
     displayChallenges: true,
     alert: false,
     type: '',
@@ -100,7 +101,7 @@ export default {
     getChallenges(append = true) {
       this.loading = true;
       const offset = append ? this.challenges.length : 0;
-      this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage,).then(challenges => {
+      this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage, this.announcementsPerChallenge).then(challenges => {
         if (challenges.length >= this.challengePerPage) {
           this.showLoadMoreButton = true;
         } else {
