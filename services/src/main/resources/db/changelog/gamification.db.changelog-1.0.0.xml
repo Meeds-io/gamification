@@ -54,7 +54,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="VALIDITY_DATE_END" type="TIMESTAMP">
                 <constraints nullable="true"/>
             </column>
-            <column name="ENABLED" type="BIT" defaultValue="0">
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_BY" type="varchar(200)">
@@ -77,6 +77,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <createSequence sequenceName="SEQ_GAMIFICATION_BADGE_ID" startValue="1"/>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-2">
+        <validCheckSum>ANY</validCheckSum>
         <createTable tableName="GAMIFICATION_RULE">
             <column name="ID" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
@@ -93,7 +94,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="AREA" type="NVARCHAR(32)">
                 <constraints nullable="true"/>
             </column>
-            <column name="ENABLED" type="BIT" defaultValue="0">
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED_BY" type="varchar(200)">
