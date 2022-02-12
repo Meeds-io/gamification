@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "bootstrap-vue": "^2.0.0-rc.8",
+    "bootstrap-vue": "^2.21.2",
     "jquery": "^3.6.0",
     "vue": "^2.5.16",
     "vue-avatar": "^2.1.4",
