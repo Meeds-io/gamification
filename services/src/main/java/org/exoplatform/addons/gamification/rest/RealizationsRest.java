@@ -165,13 +165,13 @@ public class RealizationsRest implements ResourceContainer {
       String filename = "report_Actions";
       filename += formater.format(new Date());
       File temp = null;
-      temp = File.createTempFile(filename, ".csv");
+      temp = File.createTempFile(filename, ".xlsx");
       temp.deleteOnExit();
       BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
       bw.write(csvString);
       bw.close();
       Response.ResponseBuilder response = Response.ok((Object) temp);
-      response.header("Content-Disposition", "attachment; filename=" + filename + ".csv");
+      response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
     } catch (Exception e) {
       LOG.error("Error when creating temp file");
