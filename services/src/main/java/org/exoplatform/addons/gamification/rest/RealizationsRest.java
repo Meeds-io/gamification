@@ -76,7 +76,7 @@ public class RealizationsRest implements ResourceContainer {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("users")
+  @RolesAllowed("administrators")
   @Path("updateRealizations")
   @ApiOperation(value = "Updates an existing realization", httpMethod = "PUT", response = Response.class, consumes = "application/json")
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
