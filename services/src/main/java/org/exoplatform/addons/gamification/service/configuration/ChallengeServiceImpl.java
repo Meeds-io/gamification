@@ -11,6 +11,8 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -22,9 +24,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private SpaceService     spaceService;
 
-  public ChallengeServiceImpl(ChallengeStorage challengeStorage, SpaceService spaceService) {
+  private String     groupOfCreators;
+
+  private static final String     CREATORS_GROUP_KEY             = "challenge.creator.group";
+
+
+  public ChallengeServiceImpl(ChallengeStorage challengeStorage, SpaceService spaceService, InitParams params) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
+    if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {
+      this.groupOfCreators = params.getValueParam(CREATORS_GROUP_KEY).getValue();
+    }
   }
 
   @Override
@@ -110,8 +120,11 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public boolean canAddChallenge(String currentUser) throws Exception {
-    return spaceService.getManagerSpaces(currentUser).getSize() > 0;
+  public boolean canAddChallenge()  {
+    if (groupOfCreators != null){
+      return ConversationState.getCurrent().getIdentity().isMemberOf(groupOfCreators);
+    }
+    return false;
   }
 
   @Override
