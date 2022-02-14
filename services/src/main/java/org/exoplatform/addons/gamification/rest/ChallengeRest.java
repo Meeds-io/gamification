@@ -205,9 +205,8 @@ public class ChallengeRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(code = 200, message = "User ability to add a challenge is returned"),
       @ApiResponse(code = 401, message = "User not authorized to add a challenge") })
   public Response canAddChallenge() {
-    String currentUser = Utils.getCurrentUser();
     try {
-      return Response.ok(String.valueOf(challengeService.canAddChallenge(currentUser))).build();
+      return Response.ok(String.valueOf(challengeService.canAddChallenge())).build();
     } catch (Exception e) {
       LOG.error("Error when checking if the authenticated user can add a challenge", e);
       return Response.serverError().build();
