@@ -313,7 +313,7 @@ public class GamificationService {
       }
       aHistory.setReceiver(receiver);
       aHistory.setObjectId(objectId);
-      aHistory.setStatus(HistoryStatus.NORMAL);
+      aHistory.setStatus(HistoryStatus.ACCEPTED);
       // Set update metadata
       aHistory.setLastModifiedDate(new Date());
       aHistory.setLastModifiedBy("Gamification Inner Process");
