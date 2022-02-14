@@ -231,4 +231,14 @@ public class Utils {
     return domainService.findDomainByTitle(domain);
   }
 
+  public static String getSpaceFromObjectID(String objectID) {
+    if( StringUtils.isBlank(objectID) || !objectID.contains("/portal/g/:spaces:")){
+      return null;
+    }
+    String groupID = objectID.substring(objectID.indexOf(":"),objectID.length()).replace(":","/");
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    Space space =  spaceService.getSpaceByGroupId(groupID);
+    return space != null ? space.getDisplayName() : null  ;
+  }
+
 }
