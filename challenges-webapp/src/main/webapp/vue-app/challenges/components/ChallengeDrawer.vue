@@ -255,7 +255,6 @@ export default {
       this.$refs.challengeDescription.disabled = false;
       this.warning= null;
       this.$refs.challengeProgram.program = null;
-      this.$refs.challengeProgram.broadcast = true;
     },
     open(){
       this.$refs.challengeDescription.initCKEditor();
@@ -298,7 +297,6 @@ export default {
     },
     removeProgram() {
       this.$set(this.challenge,'program', '');
-      this.$refs.challengeProgram.broadcast = true;
     },
     updateChallengeStartDate(value) {
       if (value) {
