@@ -36,8 +36,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <module>services</module>
         <module>portlets</module>
         <module>extension</module>
-        <module>packaging</module>
         <module>challenges-webapp</module>
+        <module>packaging</module>
     </modules>
 
     <scm>
