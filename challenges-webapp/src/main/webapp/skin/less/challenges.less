@@ -241,7 +241,7 @@
         }
       }
       .announcesNumber {
-        color: @darkBlue;
+        color: @primaryColor;
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -321,7 +321,7 @@
       color: @errorColor;
     }
     .endsColor {
-      color: @darkBlue;
+      color: @primaryColor;
     }
     .edit {
       width: 10%;
@@ -354,9 +354,13 @@
     color: @darkBlue ;
   }
   .points {
+    .trophy{
+      font-size: 16px;
+    }
     color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default);
     text-align: center;
     font-weight: bold;
+    font-size: 14px !important;
   }
 }
 
@@ -459,5 +463,10 @@
   .listMangers {
     padding-left:  12px ~'; /** orientation=lt */ ';
     padding-right: 12px ~'; /** orientation=rt */ ';
+  }
+
+  .points {
+    color: @darkGrey;
+    font-size: 14px !important;
   }
 }
