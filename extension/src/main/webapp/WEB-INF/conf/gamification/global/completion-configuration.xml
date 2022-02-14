@@ -100,6 +100,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
         <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
+        <init-params>
+            <value-param>
+                <name>challenge.creator.group</name>
+                <description>challenge creator group</description>
+                <value>${exo.challenges.creators.group:/platform/administrators}</value>
+            </value-param>
+        </init-params>
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.storage.AnnouncementStorage</type>
