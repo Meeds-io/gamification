@@ -8,6 +8,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private RuleDTO  action;
 
+  private DomainDTO domain;
+
   private String   actionLabel;
 
   private Long     score;
@@ -22,10 +24,10 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private String   space;
 
-
   public GamificationActionsHistoryRestEntity(Long id,
                                               UserInfo earner,
                                               RuleDTO action,
+                                              DomainDTO domain,
                                               String actionLabel,
                                               Long score,
                                               String comment,
@@ -36,6 +38,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.id = id;
     this.earner = earner;
     this.action = action;
+    this.domain = domain;
     this.actionLabel = actionLabel;
     this.score = score;
     this.comment = comment;
@@ -53,6 +56,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     return new GamificationActionsHistoryRestEntity(id,
                                                     earner,
                                                     action,
+                                                    domain,
                                                     actionLabel,
                                                     score,
                                                     comment,
@@ -140,5 +144,13 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   public void setSpace(String space) {
     this.space = space;
+  }
+
+  public DomainDTO getDomain() {
+    return domain;
+  }
+
+  public void setDomain(DomainDTO domain) {
+    this.domain = domain;
   }
 }

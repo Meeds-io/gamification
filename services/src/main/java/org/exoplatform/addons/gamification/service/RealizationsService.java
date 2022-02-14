@@ -15,10 +15,7 @@ public interface RealizationsService {
    * @param offset Offset
    * @param limit Limit
    * @return A {@link List <GamificationActionsHistoryDTO>} object
-   * @throws IllegalAccessException when user is not authorized to access
-   *           announcement
-   * @throws ObjectNotFoundException when the challenge identified by its
-   *           technical identifier is not found
+   * @throws IllegalAccessException when Dates parameters are not set correctly
    */
   List<GamificationActionsHistoryDTO> getAllRealizationsByDate(String fromDate,
                                                                String toDate,
@@ -30,9 +27,9 @@ public interface RealizationsService {
    *
    * @param gHistoryId gHistoryId
    * @param status status
-   * @throws IllegalAccessException when user is not authorized to access
+   * @throws IllegalAccessException when GamificationActionsHistory id is not set correctly
    *           announcement
-   * @throws ObjectNotFoundException when the challenge identified by its
+   * @throws ObjectNotFoundException GamificationActionsHistory identified by its
    *           technical identifier is not found
    */
   GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status) throws IllegalArgumentException, ObjectNotFoundException;
