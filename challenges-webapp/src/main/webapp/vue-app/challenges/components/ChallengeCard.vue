@@ -44,7 +44,7 @@
             </div>
             <div class="points title mb-1">
               <span>
-                <i class="fas fa-trophy"></i>
+                <i class="fas fa-trophy trophy"></i>
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </span>
             </div>
