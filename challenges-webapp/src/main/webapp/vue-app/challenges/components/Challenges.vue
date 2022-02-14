@@ -17,10 +17,19 @@
         </v-btn>
       </div>
       <v-spacer />
+      <div class="challengeFilter">
+        <v-text-field
+          v-model="search"
+          :placeholder="$t('challenges.filter.search')"
+          prepend-inner-icon="fa-filter"
+          single-line
+          hide-details
+          class="pa-0 mx-3" />
+      </div>
     </v-toolbar>
     <template v-if="displayChallenges">
       <div class="pl-2 pt-5">
-        <challenges-list :challenges="challenges" @edit-challenge="editChallenge($event)" />
+        <challenges-list :challenges="challengesToDisplay" @edit-challenge="editChallenge($event)" />
       </div>
     </template>
     <template v-else>
@@ -61,10 +70,19 @@ export default {
     alert: false,
     type: '',
     message: '',
+    search: '',
   }),
   computed: {
     classWelcomeMessage() {
       return !this.displayChallenges ? 'emptyChallenges': '';
+    },
+    challengesToDisplay() {
+      let challenges = this.challenges.slice();
+      if (this.search && this.search.trim().length) {
+        const searchTerm = this.search.trim().toLowerCase();
+        challenges = challenges.slice().filter(challenge => (challenge.title && challenge.title.toLowerCase().indexOf(searchTerm)) >= 0 || (challenge.description && challenge.description.toLowerCase().indexOf(searchTerm) >= 0));
+      }
+      return challenges;
     }
   },
   created() {
