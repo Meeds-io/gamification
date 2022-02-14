@@ -59,11 +59,11 @@
           </div>
         </div>
         <div class="px-4 py-2">
-          <span class="title">
-            {{ $t('challenges.label.points') }}:
-            <span class="descriptionLabel">
-              {{ challenge && challenge.points }}
-            </span>
+          <span class="points">
+            {{ $t('challenges.label.reward') }}:
+          </span>
+          <span class="descriptionLabel mx-1">
+            {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
           </span>
         </div>
         <div class="startDate d-flex px-4 py-2">
@@ -79,19 +79,6 @@
           </div>
         </div>
         <div class="pl-4 pr-4 pt-4">
-          {{ $t('challenges.label.program') }}
-        </div>
-        <div class="pl-4 pr-4">
-          <v-chip
-            :title="challenge && challenge.program && challenge.program.title"
-            color="primary"
-            class="identitySuggesterItem mt-2">
-            <span class="text-truncate">
-              {{ challenge && challenge.program && challenge.program.title }}
-            </span>
-          </v-chip>
-        </div>
-        <div class="pl-4 pr-4 pt-4">
           {{ $t('challenges.label.audience') }}
         </div>
         <div v-if="space" class="pl-4 pr-4">
@@ -104,6 +91,19 @@
             </v-avatar>
             <span class="text-truncate">
               {{ space && space.displayName }}
+            </span>
+          </v-chip>
+        </div>
+        <div class="pl-4 pr-4 pt-4">
+          {{ $t('challenges.label.program') }}
+        </div>
+        <div class="pl-4 pr-4">
+          <v-chip
+            :title="challenge && challenge.program && challenge.program.title"
+            color="primary"
+            class="identitySuggesterItem mt-2">
+            <span class="text-truncate">
+              {{ challenge && challenge.program && challenge.program.title }}
             </span>
           </v-chip>
         </div>
