@@ -167,10 +167,10 @@ public class RealizationsRest implements ResourceContainer {
       File temp = null;
       temp = File.createTempFile(filename, ".xlsx");
       temp.deleteOnExit();
-      BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+      BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
       bw.write(csvString);
       bw.close();
-      Response.ResponseBuilder response = Response.ok((Object) temp);
+      Response.ResponseBuilder response = Response.ok((Object) temp); //NOSONAR
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
     } catch (Exception e) {
@@ -191,15 +191,15 @@ public class RealizationsRest implements ResourceContainer {
       sbResult.append(DELIMITER);
       sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
       sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction() != null ? ga.getAction().getEvent() : "-");
+      sbResult.append(ga.getAction().getEvent());
       sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction() != null ? ga.getAction().getTitle() :"-");
+      sbResult.append(ga.getAction().getTitle());
       sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction() != null ? ga.getAction().getType().name() : "-");
+      sbResult.append(ga.getAction().getType().name());
       sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction() != null ? ga.getAction().getDomainDTO().getTitle() : "-");
+      sbResult.append(ga.getAction().getDomainDTO().getTitle());
       sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction() != null ? ga.getAction().getDomainDTO().getDescription(): "-");
+      sbResult.append(ga.getAction().getDomainDTO().getDescription());
       sbResult.append(DELIMITER);
       sbResult.append(ga.getScore());
       sbResult.append(DELIMITER);
