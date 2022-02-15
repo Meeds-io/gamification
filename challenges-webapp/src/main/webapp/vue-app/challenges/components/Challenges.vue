@@ -80,7 +80,7 @@ export default {
       let challenges = this.challenges.slice();
       if (this.search && this.search.trim().length) {
         const searchTerm = this.search.trim().toLowerCase();
-        challenges = challenges.slice().filter(challenge => (challenge.title && challenge.title.toLowerCase().indexOf(searchTerm)) >= 0 || (challenge.description && challenge.description.toLowerCase().indexOf(searchTerm) >= 0));
+        challenges = challenges.slice().filter(challenge => (challenge.title && challenge.title.toLowerCase().indexOf(searchTerm)) >= 0 || (challenge.description && challenge.description.toLowerCase().indexOf(searchTerm) >= 0) || (challenge.program && challenge.program.title && challenge.program.title.toLowerCase().indexOf(searchTerm) >= 0));
       }
       return challenges;
     }
