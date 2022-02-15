@@ -165,7 +165,7 @@ public class RealizationsRest implements ResourceContainer {
       String filename = "report_Actions";
       filename += formater.format(new Date());
       File temp = null;
-      temp = File.createTempFile(filename, ".xlsx");
+      temp = File.createTempFile(filename, ".xlsx"); //NOSONAR
       temp.deleteOnExit();
       BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
       bw.write(csvString);

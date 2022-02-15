@@ -284,7 +284,8 @@ export default {
       } );
     },
     getReport() {
-      return this.$realizationsServices.getReport(this.fromDate, this.toDate,0, 100);
+      const offset = this.loadMore ? this.realizations.length : 0;
+      return this.$realizationsServices.getReport(this.fromDate, this.toDate,offset, this.realizationsPerPage);
     }
   }
 };
