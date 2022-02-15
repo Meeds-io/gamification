@@ -32,24 +32,24 @@
             {{ props.item.creator && props.item.creator.remoteId || props.item.earner && props.item.earner.remoteId || '-' }}
           </td>
           <td class="align-center actionTitle px-1">
-            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event || props.item.action.title }} </span>
             <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'">
               {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.title.${props.item.action.event}`) }} </span>
           </td>
           <td class="align-center actionTitle px-0">
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.actionLabel }} </span>
             <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'">
-              {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.description.${props.item.action.event}`) }}             </span>
+              {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.description.${props.item.action.title}`) }}             </span>
           </td>
           <td class="text-truncate align-center">
             <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('realisation.label.auto') }} </span>
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ $t('realisation.label.manual') }} </span>
           </td>
           <td class="text-truncate align-center">
-            {{ props.item.action && props.item.action.domainDTO && props.item.action.domainDTO.title }}
+            {{ props.item.action && props.item.domain && props.item.domain.title }}
           </td>
           <td class="text-truncate align-center">
-            {{ props.item.action && props.item.action.domainDTO && props.item.action.domainDTO.description }}
+            {{ props.item.action && props.item.domain && props.item.domain.description }}
           </td>
           <td class="text-truncate align-center">
             {{ props.item && props.item.score }}
@@ -57,7 +57,7 @@
           <td class="text-truncate align-center">
             <span v-if="props.item.status === 'REJECTED'"> {{ $t('realisation.label.rejected') }} </span>
             <span v-else-if="props.item.status === 'EDITED'"> {{ $t('realisation.label.edited') }} </span>
-            <span v-else-if="props.item.status === 'NORMAL'"> {{ $t('realisation.label.normal') }} </span>
+            <span v-else-if="props.item.status === 'ACCEPTED'"> {{ $t('realisation.label.accepted') }} </span>
           </td>
           <td class="text-truncate align-center">
             {{ props.item.earner && props.item.earner.remoteId || '-' }}
@@ -86,22 +86,21 @@
                 <template>
                   <v-list-item @mousedown="$event.preventDefault()">
                     <v-list-item-title class="options">
-                      <i class="fas fa-edit pr-1"></i>
-                      {{ $t('realisation.label.edit') }}
+                      <i class="fas fa-edit px-1"></i>
+                      <span class="px-1"> {{ $t('realisation.label.edit') }} </span>
                     </v-list-item-title>
                   </v-list-item>
                   <v-divider />
                   <v-list-item @mousedown="$event.preventDefault()" v-if="props.item.status === 'REJECTED'">
-                    <v-list-item-title class="options" @click="updateRealizations(props.item,'EDITED')">
-                      <i class="fas fa-check pr-1"></i>
-                      {{ $t('realisation.label.accept') }}
+                    <v-list-item-title class="options" @click="updateRealizations(props.item,'ACCEPTED')">
+                      <i class="fas fa-check px-1"></i>
+                      <span class="px-1"> {{ $t('realisation.label.accept') }}</span>
                     </v-list-item-title>
                   </v-list-item>
-                  <v-divider />
-                  <v-list-item @mousedown="$event.preventDefault()" v-if=" props.item.status === 'NORMAL' || props.item.status === 'EDITED'">
+                  <v-list-item @mousedown="$event.preventDefault()" v-if=" props.item.status === 'ACCEPTED' || props.item.status === 'EDITED'">
                     <v-list-item-title class="options" @click="updateRealizations(props.item,'REJECTED')">
-                      <i class="fas fa-ban pr-1"></i>
-                      {{ $t('realisation.label.reject') }}
+                      <i class="fas fa-ban px-1"></i>
+                      <span class="px-1"> {{ $t('realisation.label.reject') }}</span>
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -269,7 +268,7 @@ export default {
     getFromDate(date) {
       date = new Date(date);
       const day = String(date.getDate());
-      const month = String(date.getMonth());
+      const month = String(date.getMonth()+1);
       const year = String(date.getFullYear());
       const lang = eXo.env.portal.language;
       const time =   date.toLocaleString(lang, { hour: 'numeric', minute: 'numeric', hour12: true }).toLowerCase();

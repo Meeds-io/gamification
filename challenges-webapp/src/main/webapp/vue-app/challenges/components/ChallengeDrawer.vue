@@ -228,6 +228,7 @@ export default {
       }
       this.$refs.challengeProgram.broadcast = false;
       this.$refs.challengeProgram.program =  this.challenge.program;
+      this.$refs.challengeProgram.broadcast = true;
       const data = {
         managers: this.challenge.managers,
         space: space,
@@ -254,7 +255,6 @@ export default {
       this.$refs.challengeDescription.disabled = false;
       this.warning= null;
       this.$refs.challengeProgram.program = null;
-      this.$refs.challengeProgram.broadcast = true;
     },
     open(){
       this.$refs.challengeDescription.initCKEditor();
@@ -297,7 +297,6 @@ export default {
     },
     removeProgram() {
       this.$set(this.challenge,'program', '');
-      this.$refs.challengeProgram.broadcast = true;
     },
     updateChallengeStartDate(value) {
       if (value) {

@@ -17,16 +17,17 @@
         </div>
         <div class="description pr-4 pl-4 pt-4" v-sanitized-html="challenge && challenge.description"></div>
         <hr class="separation mx-4">
-        <div class="px-4 nowrap">
-          <span class="title winnersLabel">
+        <v-flex class="px-4 nowrap winners">
+          <span class="winnersLabel">
             {{ $t('challenges.winners.details') }}
           </span>
-        </div>
-        <div class="px-4 pt-4 mt-n8 mx-3">
-          <p class="viewAll" @click="openDetails">
-            {{ $t('challenges.label.viewAll') }}
-          </p>
-        </div>
+          <span
+            v-if="winners && winners.length"
+            class="viewAll"
+            @click="openDetails">
+            fullView
+          </span>
+        </v-flex>
         <div class="assigneeAvatars flex-nowrap">
           <div class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
             <exo-user-avatar
@@ -40,15 +41,15 @@
               class="me-1 projectManagersAvatar" />
             <div class="seeMoreAvatars">
               <div
-                v-if="winners.length > maxAvatarToShow"
+                v-if="challenge && challenge.announcementsCount > maxAvatarToShow"
                 class="seeMoreItem"
                 @click="openDetails">
                 <v-avatar
                   :size="iconSize">
                   <img
-                    :src="winners[maxAvatarToShow].user.avatarUrl"
-                    :title="winners[maxAvatarToShow].user.displayName"
-                    :alt="$t('challenges.label.avatarUser', {0: winners[maxAvatarToShow].user.displayName})"
+                    :src="winners[maxAvatarToShow-1] && winners[maxAvatarToShow-1].user.avatarUrl"
+                    :title="winners[maxAvatarToShow-1] && winners[maxAvatarToShow-1].user.displayName"
+                    :alt="$t('challenges.label.avatarUser', {0: winners[maxAvatarToShow-1] && winners[maxAvatarToShow-1].user.displayName})"
                     class="object-fit-cover"
                     loading="lazy"
                     role="presentation">
@@ -59,7 +60,7 @@
           </div>
         </div>
         <div class="px-4 py-2">
-          <span class="title">
+          <span class="descriptionLabel">
             {{ $t('challenges.label.points') }}:
             <span class="descriptionLabel">
               {{ challenge && challenge.points }}
@@ -79,19 +80,6 @@
           </div>
         </div>
         <div class="pl-4 pr-4 pt-4">
-          {{ $t('challenges.label.program') }}
-        </div>
-        <div class="pl-4 pr-4">
-          <v-chip
-            :title="challenge && challenge.program && challenge.program.title"
-            color="primary"
-            class="identitySuggesterItem mt-2">
-            <span class="text-truncate">
-              {{ challenge && challenge.program && challenge.program.title }}
-            </span>
-          </v-chip>
-        </div>
-        <div class="pl-4 pr-4 pt-4">
           {{ $t('challenges.label.audience') }}
         </div>
         <div v-if="space" class="pl-4 pr-4">
@@ -104,6 +92,19 @@
             </v-avatar>
             <span class="text-truncate">
               {{ space && space.displayName }}
+            </span>
+          </v-chip>
+        </div>
+        <div class="pl-4 pr-4 pt-4">
+          {{ $t('challenges.label.program') }}
+        </div>
+        <div class="pl-4 pr-4">
+          <v-chip
+            :title="challenge && challenge.program && challenge.program.title"
+            color="primary"
+            class="identitySuggesterItem mt-2">
+            <span class="text-truncate">
+              {{ challenge && challenge.program && challenge.program.title }}
             </span>
           </v-chip>
         </div>
@@ -140,19 +141,16 @@ export default {
     challenge: {
       type: Object,
       default: null
-    },
-    winners: {
-      type: Object,
-      default: null
     }
   },
   data: () => ({
-    maxAvatarToShow: 7,
+    maxAvatarToShow: 5,
     iconSize: 28,
+    winners: [],
   }),
   computed: {
     avatarToDisplay () {
-      if (this.winners.length > this.maxAvatarToShow) {
+      if (this.challenge && this.challenge.announcementsCount > this.maxAvatarToShow) {
         return this.winners.slice(0, this.maxAvatarToShow-1);
       } else {
         return this.winners;
@@ -172,6 +170,7 @@ export default {
     open() {
       if (this.$refs.challengeDetails) {
         this.$refs.challengeDetails.open();
+        this.getAnnouncement();
       }
     },
     close() {
@@ -184,6 +183,20 @@ export default {
     },
     openDetails() {
       this.$refs.winnersDetails.open();
+    },
+    getAnnouncement() {
+      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, 0,this.maxAvatarToShow).then(announcements => {
+        if (announcements.length > 0) {
+          announcements.map(announce => {
+            const announcement = {
+              user: announce.assignee || announce.creator ,
+              activityId: announce.activityId,
+              createDate: announce.createdDate
+            };
+            this.winners.push(announcement);
+          });
+        }
+      });
     },
   }
 };

@@ -241,7 +241,7 @@
         }
       }
       .announcesNumber {
-        color: @darkBlue;
+        color: @primaryColor;
         cursor: pointer;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -321,7 +321,7 @@
       color: @errorColor;
     }
     .endsColor {
-      color: @darkBlue;
+      color: @primaryColor;
     }
     .edit {
       width: 10%;
@@ -347,16 +347,14 @@
       height: 4.9em;
     }
   }
-  .viewAll{
-    text-align: end;
-    position: relative;
-    top: -7px;
-    color: @darkBlue ;
-  }
   .points {
+    .trophy{
+      font-size: 16px;
+    }
     color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default);
     text-align: center;
     font-weight: bold;
+    font-size: 14px !important;
   }
 }
 
@@ -423,6 +421,18 @@
   .descriptionLabel {
     color: @greyColorLighten1Default;
   }
+  .winners{
+    display: flex;
+    .winnersLabel {
+      color: @greyColorLighten1Default;
+      flex: auto;
+      flex-basis: fit-content;
+    }
+    .viewAll{
+      color: @primaryColor ;
+      cursor: pointer;
+    }
+  }
 
   .description {
     color: @textColorDefault;
@@ -459,5 +469,10 @@
   .listMangers {
     padding-left:  12px ~'; /** orientation=lt */ ';
     padding-right: 12px ~'; /** orientation=rt */ ';
+  }
+
+  .points {
+    color: @darkGrey;
+    font-size: 14px !important;
   }
 }
