@@ -108,7 +108,7 @@ export default {
         if (announcements.length > 0) {
           announcements.map(announce => {
             const announcement = {
-              user: announce.assignee,
+              user: announce.assignee || announce.creator,
               activityId: announce.activityId,
               createDate: announce.createdDate
             };

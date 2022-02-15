@@ -109,8 +109,7 @@
     </v-card>
     <challenge-details-drawer
       ref="challenge"
-      :challenge="challenge"
-      :winners="listWinners" />
+      :challenge="challenge" />
     <announce-drawer
       :challenge="challenge"
       @announcementAdded="announcementAdded($event)"

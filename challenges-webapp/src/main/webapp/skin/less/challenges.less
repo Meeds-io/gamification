@@ -347,12 +347,6 @@
       height: 4.9em;
     }
   }
-  .viewAll{
-    text-align: end;
-    position: relative;
-    top: -7px;
-    color: @darkBlue ;
-  }
   .points {
     .trophy{
       font-size: 16px;
@@ -426,6 +420,18 @@
 
   .descriptionLabel {
     color: @greyColorLighten1Default;
+  }
+  .winners{
+    display: flex;
+    .winnersLabel {
+      color: @greyColorLighten1Default;
+      flex: auto;
+      flex-basis: fit-content;
+    }
+    .viewAll{
+      color: @primaryColor ;
+      cursor: pointer;
+    }
   }
 
   .description {
