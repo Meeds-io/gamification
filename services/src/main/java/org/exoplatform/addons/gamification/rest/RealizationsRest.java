@@ -161,7 +161,7 @@ public class RealizationsRest implements ResourceContainer {
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                         GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
 
-      String csvString = computeCSV(gamificationActionsHistoryRestEntities);
+      String csvString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());
       File temp = null;
@@ -179,7 +179,7 @@ public class RealizationsRest implements ResourceContainer {
     }
   }
 
-  private String computeCSV(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
+  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
     StringBuilder sbResult = new StringBuilder();
     // Add header
     sbResult.append(HEADER);
