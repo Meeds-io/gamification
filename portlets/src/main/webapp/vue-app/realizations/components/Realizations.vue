@@ -6,7 +6,7 @@
       flat
       class="pa-4 mb-4">
       <div class="border-box-sizing clickable">
-        <v-btn class="btn btn-primary ">
+        <v-btn class="btn btn-primary" @click="getReport()">
           <span class="ms-2 d-none d-lg-inline">
             {{ $t("realisation.label.export") }}
           </span>
@@ -282,6 +282,10 @@ export default {
         this.getRealizations(false);
       } );
     },
+    getReport() {
+      const offset = this.loadMore ? this.realizations.length : 0;
+      return this.$realizationsServices.getReport(this.fromDate, this.toDate,offset, this.realizationsPerPage);
+    }
   }
 };
 </script>
