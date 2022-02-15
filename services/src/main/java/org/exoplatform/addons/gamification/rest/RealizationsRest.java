@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.rest;
 import io.swagger.annotations.*;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -16,6 +17,11 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Path("/gamification/realizations/api")
@@ -26,6 +32,17 @@ public class RealizationsRest implements ResourceContainer {
   private static final Log    LOG = ExoLogger.getLogger(RealizationsRest.class);
 
   private RealizationsService realizationsService;
+
+  // Delimiters that must be in the CSV file
+  private static final String DELIMITER = ",";
+
+  private static final String SEPARATOR = "\n";
+
+  private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
+
+  // File header
+  private static final String HEADER    =
+                                     "Date,Creator,Action ID,Action label,Action type,Program,Program label,Points,Status,Grantee,Spaces";
 
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
@@ -106,4 +123,93 @@ public class RealizationsRest implements ResourceContainer {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @GET
+  @RolesAllowed("administrators")
+  @Produces("application/vnd.ms-excel")
+  @Path("getExport")
+  @ApiOperation(value = "Gets CSV report", httpMethod = "GET", response = Response.class, notes = "Given a a csv file of actions")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
+  public Response getReport(@ApiParam(value = "Offset of result", required = true)
+  @QueryParam("fromDate")
+  String fromDate,
+                            @ApiParam(value = "Offset of result", required = true)
+                            @QueryParam("toDate")
+                            String toDate,
+                            @ApiParam(value = "Offset of result", required = false)
+                            @DefaultValue("0")
+                            @QueryParam("offset")
+                            int offset,
+                            @ApiParam(value = "Limit of result", required = false)
+                            @DefaultValue("10")
+                            @QueryParam("limit")
+                            int limit) {
+    if (offset < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
+    }
+    if (limit <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    }
+    try {
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
+                                                                                                             toDate,
+                                                                                                             offset,
+                                                                                                             limit);
+      List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
+                                                                                        GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+
+      String csvString = computeXLSX(gamificationActionsHistoryRestEntities);
+      String filename = "report_Actions";
+      filename += formater.format(new Date());
+      File temp = null;
+      temp = File.createTempFile(filename, ".xlsx"); //NOSONAR
+      temp.deleteOnExit();
+      BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
+      bw.write(csvString);
+      bw.close();
+      Response.ResponseBuilder response = Response.ok((Object) temp); //NOSONAR
+      response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
+      return response.build();
+    } catch (Exception e) {
+      LOG.error("Error when creating temp file");
+      return Response.serverError().entity(e.getMessage()).build();
+    }
+  }
+
+  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
+    StringBuilder sbResult = new StringBuilder();
+    // Add header
+    sbResult.append(HEADER);
+    // Add a new line after the header
+    sbResult.append(SEPARATOR);
+
+    gamificationActionsHistoryRestEntities.forEach(ga -> {
+      sbResult.append(ga.getCreatedDate());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getAction().getEvent());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getAction().getTitle());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getAction().getType().name());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getAction().getDomainDTO().getTitle());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getAction().getDomainDTO().getDescription());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getScore());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getStatus());
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getEarner() != null ? ga.getEarner().getRemoteId() : "-");
+      sbResult.append(DELIMITER);
+      sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
+      sbResult.append(SEPARATOR);
+    });
+    return sbResult.toString();
+  }
 }
