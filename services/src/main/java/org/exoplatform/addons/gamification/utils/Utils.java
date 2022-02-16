@@ -116,12 +116,22 @@ public class Utils {
     return domainService.findDomainByTitle(domainTitle);
   }
 
-  public static RuleDTO getRuleById(long ruleId) {
-    RuleService ruleService = CommonsUtils.getService(RuleService.class);
-    return ruleService.findRuleById(ruleId);
+  public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
+    try {
+      RuleService ruleService = CommonsUtils.getService(RuleService.class);
+      return ruleService.findRuleById(ruleId);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
   }
+
   public static RuleDTO getRuleByTitle(String title) {
-    return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_"+title);
+    try {
+      return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+
   }
 
   public static List<UserInfo> getManagersByIds(List<Long> ids, Long challengeId) {

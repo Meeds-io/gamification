@@ -159,7 +159,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       RuleEntity ruleEntity = newRule();
       String restPath = "/gamification/rules/delete/" + ruleEntity.getId();
       EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "DELETE", null);
+      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
       envctx.put(HttpServletRequest.class, httpRequest);
       envctx.put(SecurityContext.class, new MockSecurityContext("root"));
       StringWriter writer = new StringWriter();
@@ -178,7 +178,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
       MultivaluedMap<String, String> h = new MultivaluedMapImpl();
       h.putSingle("content-type", "application/json");
       h.putSingle("content-length", "" + data.length);
-      ContainerResponse response = launcher.service("DELETE", restPath, "", h, data, envctx);
+      ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
       assertNotNull(response);
       assertEquals(200, response.getStatus());
       LOG.info("Delete of rule is OK ", RuleEntity.class, response.getStatus());

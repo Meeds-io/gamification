@@ -42,8 +42,8 @@
               {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.description.${props.item.action.title}`) }}             </span>
           </td>
           <td class="text-truncate align-center">
-            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('realisation.label.auto') }} </span>
-            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ $t('realisation.label.manual') }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('gamification.label.auto') }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ $t('gamification.label.manual') }} </span>
           </td>
           <td class="text-truncate align-center">
             {{ props.item.action && props.item.domain && props.item.domain.title }}
