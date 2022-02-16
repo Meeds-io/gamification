@@ -19,19 +19,8 @@ public class ChallengeStorage {
     this.ruleDAO = ruleDAO;
   }
 
-  public Challenge saveChallenge(Challenge challenge, String username) throws IllegalArgumentException {
-    if (challenge == null) {
-      throw new IllegalArgumentException("challenge argument is null");
-    }
-    Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
-    if (identity == null) {
-      throw new IllegalArgumentException("identity is not exist");
-    }
+  public Challenge saveChallenge(Challenge challenge, String username) {
     RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
-    if (challengeEntity.getEndDate().compareTo(challengeEntity.getStartDate()) < 0
-        || challengeEntity.getEndDate().equals(challengeEntity.getStartDate())) {
-      throw new IllegalArgumentException("endDate must be greater than startDate");
-    }
 
     if (challenge.getId() == 0) {
       challengeEntity.setId(null);
