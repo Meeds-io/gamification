@@ -6,17 +6,17 @@ import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
@@ -45,15 +45,30 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge.getId() != 0) {
       throw new IllegalArgumentException("challenge id must be equal to 0");
     }
+    Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
+    if (identity == null) {
+      throw new IllegalArgumentException("identity is not exist");
+    }
     String idSpace = String.valueOf(challenge.getAudience());
     if (StringUtils.isBlank(idSpace)) {
       throw new IllegalArgumentException("space id must not be null or empty");
+    }
+    Date startDate = Utils.parseRFC3339Date(challenge.getStartDate());
+    Date endDate = Utils.parseRFC3339Date(challenge.getEndDate());
+    if (startDate != null && endDate != null && endDate.compareTo(startDate) <= 0) {
+      throw new IllegalArgumentException("endDate must be greater than startDate");
     }
     Space space = spaceService.getSpaceById(idSpace);
     if (!spaceService.isManager(space, username)) {
       throw new IllegalAccessException("user is not allowed to create challenge");
     }
     return challengeStorage.saveChallenge(challenge, username);
+  }
+
+
+  @Override
+  public Challenge createChallenge(Challenge challenge) {
+    return challengeStorage.saveChallenge(challenge, "SYSTEM");
   }
 
   @Override

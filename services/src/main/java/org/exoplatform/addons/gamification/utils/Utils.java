@@ -142,7 +142,7 @@ public class Utils {
       }
       return users;
     } catch (Exception e) {
-      LOG.info("challenge not exist with this id {0}", challengeId);
+      LOG.error("challenge not exist with this id {}", challengeId, e);
       return Collections.emptyList();
     }
 
@@ -163,11 +163,10 @@ public class Utils {
             space = getSpaceById(String.valueOf(challenge.getAudience()));
             return createUser(identity, space, challenge.getManagers());
           } else {
-            return  createUser( identity);
+            return createUser(identity);
           }
         }
-      } catch (Exception e) {
-      LOG.info("challenge not exist with this id {0}", challengeId);
+    } catch (Exception e) {
       return null;
     }
     return null;
