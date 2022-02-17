@@ -228,7 +228,6 @@ export default {
       }
       this.$refs.challengeProgram.broadcast = false;
       this.$refs.challengeProgram.program =  this.challenge.program;
-      this.$refs.challengeProgram.broadcast = true;
       const data = {
         managers: this.challenge.managers,
         space: space,
@@ -239,6 +238,7 @@ export default {
     },
     reset(){
       this.challenge = {};
+      this.$refs.challengeProgram.broadcast = true;
       this.$refs.challengeDatePicker.startDate = null;
       this.$set(this.challenge,'points', 20);
       this.$refs.challengeDatePicker.endDate = null;
@@ -347,6 +347,9 @@ export default {
       if (this.challenge && this.challenge.id){
         if ( this.challenge.managers && this.challenge.managers[0].id){
           this.challenge.managers = this.challenge.managers.map(manager => manager.id);
+        }
+        if ( this.challenge.program && this.challenge.program.id){
+          this.challenge.program = this.challenge.program.title;
         }
         this.$challengesServices.updateChallenge(this.challenge).then(() =>{
           this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeUpdateSuccess')});
