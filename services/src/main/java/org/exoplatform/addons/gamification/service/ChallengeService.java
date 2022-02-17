@@ -19,6 +19,16 @@ public interface ChallengeService {
   Challenge createChallenge(Challenge challenge, String username) throws IllegalAccessException;
 
   /**
+   * Creates a new challenge
+   *
+   * @param challenge {@link Challenge} object to create
+   * @return created {@link Challenge} with generated technical identifier
+   * @throws IllegalAccessException when user is not authorized to create a
+   *           challenge for the designated owner defined in object
+   */
+  Challenge createChallenge(Challenge challenge);
+
+  /**
    * Retrieves a challenge identified by its technical identifier.
    *
    * @param challengeId technical identifier of a challenge
