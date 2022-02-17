@@ -137,7 +137,7 @@ public class Utils {
       }
       return users;
     } catch (Exception e) {
-      LOG.info("challenge not exist with this id {0}", challengeId);
+      LOG.error("challenge not exist with this id {}", challengeId, e);
       return Collections.emptyList();
     }
 
@@ -145,24 +145,26 @@ public class Utils {
 
   public static UserInfo getUserById(Long id, Long challengeId) {
     try {
-      ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-      Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
-      Space space = getSpaceById(String.valueOf(challenge.getAudience()));
-      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       if (id == null) {
         return null;
       }
+      Space space;
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       Identity identity = identityManager.getIdentity(String.valueOf(id));
       if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-        return createUser(identity, space, challenge.getManagers());
-      } else {
-        return null;
-      }
+        if(challengeId != null){
+          ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+          Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
+          space = getSpaceById(String.valueOf(challenge.getAudience()));
+          return createUser(identity, space, challenge.getManagers());
+        } else {
+          return createUser(identity);
+        }
+        }
     } catch (Exception e) {
-      LOG.info("challenge not exist with this id {0}", challengeId);
       return null;
     }
-
+    return null;
   }
 
   public static UserInfo createUser(Identity identity, Space space, List<Long> managersId) {
@@ -181,6 +183,17 @@ public class Utils {
     userInfo.setCanEdit(canEditChallenge(managersId));
     return userInfo;
   }
+
+  public static UserInfo createUser(Identity identity) {
+    UserInfo userInfo = new UserInfo();
+    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    userInfo.setFullName(identity.getProfile().getFullName());
+    userInfo.setRemoteId(identity.getRemoteId());
+    userInfo.setId(identity.getId());
+
+    return userInfo;
+  }
+
 
   public static Long countAnnouncementsByChallenge(Long challengeId) {
     AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
