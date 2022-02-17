@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.Date;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.junit.Test;
 
@@ -173,5 +174,23 @@ public class RuleServiceTest extends AbstractServiceTest {
       fail("Error to add rule", e);
     }
 
+  }
+
+  @Test
+  public void getFindAllRules() {
+    try {
+      assertEquals(ruleService.getAllAutomaticRules().size(), 0);
+      RuleDTO rule1 = newRuleDTO();
+      RuleDTO rule2 = newRuleDTO();
+      RuleDTO rule3 = newRuleDTO();
+      assertEquals(ruleService.getAllAutomaticRules().size(), 3);
+      assertEquals(ruleService.findAllRules().size(), 3);
+      rule1.setType(TypeRule.MANUAL);
+      ruleService.updateRule(rule1);
+      assertEquals(ruleService.getAllAutomaticRules().size(), 2);
+      assertEquals(ruleService.findAllRules().size(), 3);
+      } catch (Exception e) {
+      fail("Error to add rule", e);
+    }
   }
 }
