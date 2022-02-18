@@ -29,7 +29,12 @@
           </span>
         </v-flex>
         <div class="assigneeAvatars flex-nowrap">
-          <div class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
+          <div class="winners pa-2" v-if="this.challenge && this.challenge.announcementsCount === 0">
+            <p class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
+              {{ challenge && challenge.announcementsCount }} {{ $t('challenges.winners.details') }}
+            </p>
+          </div>
+          <div v-else class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
             <exo-user-avatar
               v-for="winner in avatarToDisplay"
               :key="winner.user.id"
@@ -39,24 +44,6 @@
               :size="iconSize"
               :style="'background-image: url('+winner.user.avatarUrl+')'"
               class="me-1 projectManagersAvatar" />
-            <div class="seeMoreAvatars">
-              <div
-                v-if="challenge && challenge.announcementsCount > maxAvatarToShow"
-                class="seeMoreItem"
-                @click="openDetails">
-                <v-avatar
-                  :size="iconSize">
-                  <img
-                    :src="winners[maxAvatarToShow-1] && winners[maxAvatarToShow-1].user.avatarUrl"
-                    :title="winners[maxAvatarToShow-1] && winners[maxAvatarToShow-1].user.displayName"
-                    :alt="$t('challenges.label.avatarUser', {0: winners[maxAvatarToShow-1] && winners[maxAvatarToShow-1].user.displayName})"
-                    class="object-fit-cover"
-                    loading="lazy"
-                    role="presentation">
-                  <span class="seeMoreAvatarList">+{{ showMoreAvatarsNumber }}</span>
-                </v-avatar>
-              </div>
-            </div>
           </div>
         </div>
         <div class="px-4 py-2">
@@ -151,7 +138,7 @@ export default {
   computed: {
     avatarToDisplay () {
       if (this.challenge && this.challenge.announcementsCount > this.maxAvatarToShow) {
-        return this.winners.slice(0, this.maxAvatarToShow-1);
+        return this.winners.slice(0, this.maxAvatarToShow);
       } else {
         return this.winners;
       }
@@ -187,6 +174,7 @@ export default {
     getAnnouncement() {
       this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, 0,this.maxAvatarToShow).then(announcements => {
         if (announcements.length > 0) {
+          this.winners = [];
           announcements.map(announce => {
             const announcement = {
               user: announce.assignee || announce.creator ,
