@@ -92,6 +92,8 @@ export default {
     program() {
       if (this.program && this.broadcast){
         this.$emit('addProgram',this.program.title);
+      } else if (!this.broadcast ) {
+        this.broadcast = true;
       }
     },
   },
