@@ -125,6 +125,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <key>org.exoplatform.addons.gamification.service.RealizationsService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl</type>
+    </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
+    </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
+    </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper</type>
+    </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO</type>
+    </component>
+    <component>
+        <type>org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
+    </component>
+
+    <component>
         <key>org.exoplatform.commons.api.persistence.DataInitializer</key>
         <type>org.exoplatform.commons.persistence.impl.LiquibaseDataInitializer
         </type>
