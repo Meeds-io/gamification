@@ -104,7 +104,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final long                MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
-  protected static final Date fromDate      = new Date();
+  protected static final Date fromDate      = new Date(System.currentTimeMillis());
 
   protected static final Date toDate        = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
 
@@ -335,7 +335,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected GamificationActionsHistory newGamificationActionsHistory(){
     RuleEntity rule = newRule();
-    GamificationActionsHistory gHistory = newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomain(rule.getArea());
     gHistory.setDomainEntity(rule.getDomainEntity());
@@ -345,9 +345,13 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(rule.getId());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
     gHistory.setDate(fromDate);
-    return  gamificationHistoryDAO.create(gHistory);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
   }
   protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO(){
     return GamificationActionsHistoryMapper.fromEntity(newGamificationActionsHistory());

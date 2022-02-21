@@ -309,11 +309,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return count == null ? 0 : count.longValue();
   }
 
-  public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
+  public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnerType, Date fromDate, Date toDate) {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("GamificationActionsHistory.findAllLeaderboardBetweenDate",
                                                                               StandardLeaderboard.class);
-    query.setParameter("fromDate", fromDate).setParameter("toDate", toDate).setParameter("earnedType", earnedType);
+    query.setParameter("fromDate", fromDate).setParameter("toDate", toDate).setParameter("earnerType", earnerType);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
