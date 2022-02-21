@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ this.$t(`exoplatform.gamification.${errorType}`) }}
     </div>
 
-    <save-rule-form
+    <gamification-save-rule
       :rule="ruleInForm"
       :domains="domains"
       :events="events"
@@ -42,7 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @sucessAdd="onRuleCreated"
       @failAdd="onRuleFail"
       @cancel="resetRuleInForm" />
-    <rule-list
+    <gamification-rule-list
       :domain="domain"
       :domains="domains"
       :events="events"
@@ -53,18 +53,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </section>
 </template>
 <script>
-/* eslint-disable */
-import Vue from 'vue';
-import RuleList from './RuleList';
-import SaveRuleForm from './SaveRuleForm';
-import BootstrapVue from 'bootstrap-vue';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-Vue.use(BootstrapVue);
-const initialData = () => {
-  return {
+
+export default {
+  data: () => ({
     ruleInForm: {
       id: null,
       title: '',
@@ -85,14 +77,7 @@ const initialData = () => {
     isadded: false,
     isShown: false,
     errorType: 'errorrule'
-  };
-};
-export default {
-  components: {
-    RuleList,
-    SaveRuleForm
-  },
-  data: initialData,
+  }),
   created() {
     this.getRules(); 
     this.getDomains(); 
@@ -100,38 +85,41 @@ export default {
   },
   methods: {
     getRules() {
-      axios.get('/portal/rest/gamification/rules/all')
-        .then(response => {
-          this.rules = response.data;
+      this.$RuleServices.getRules()
+        .then(rules => {
+          this.rules = rules;
         })
-        .catch(e => {
+        .catch(() => {
           this.addError = true;
           this.errorType='getRulesError';
         });
     },
     getDomains() {
-      axios.get('/portal/rest/gamification/domains')
-        .then(response => {
-          this.domains = response.data;
-        })
-        .catch(e => {
-          console.log(e);
+      this.$RuleServices.getDomains()
+        .then(domains => {
+          this.domains = domains;
         });
     },
     getEvents() {
-      axios.get('/portal/rest/gamification/api/v1/events')
-        .then(response => {
-          this.events = response.data;
-        })
-        .catch(e => {
-          console.log(e);
+      this.$RuleServices.getEvents()
+        .then(events => {
+          this.events = events;
         });
     },
     countDownChanged(dismissCountDown) {
       this.dismissCountDown = dismissCountDown;
     },
     resetRuleInForm() {
-      this.ruleInForm = initialData().ruleInForm;
+      this.ruleInForm =  {
+        id: null,
+        title: '',
+        description: '',
+        score: null,
+        enabled: true,
+        area: '',
+        lastModifiedBy: '',
+        lastModifiedDate: null
+      };
     },
     onSaveClicked (rule) {
       this.updateRule(rule);
@@ -153,13 +141,13 @@ export default {
       this.dismissCountDown = 15;
     },
 
-    onRemoveClicked(ruleId, ruleTitle) {
+    onRemoveClicked(ruleId) {
       const index = this.rules.findIndex((p) => p.id === ruleId);
-      axios.delete(`/portal/rest/gamification/rules/delete/${ruleId}`)
-        .then(response => {
+      this.$RuleServices.deleteRule(ruleId)
+        .then(() => {
           this.rules.splice(index, 1);
         })
-        .catch(e => {
+        .catch(() => {
           this.getRules();
           this.errorType='deleteRuleError';
         });
@@ -168,8 +156,8 @@ export default {
       }
     },
     updateRule(ruleDTO) {
-      axios.put('/portal/rest/gamification/rules/update', ruleDTO)
-        .then(response => {
+      this.$RuleServices.updateRule(ruleDTO)
+        .then(rule => {
           this.addSuccess = true;
           this.updateMessage = 'updated';
           this.rules.push(rule);
@@ -188,29 +176,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-    .alert {
-        left: 50%;
-        transform: translateX(-50%);
-        max-width: 40%;
-        top: 35%;
-        display: inline-block;
-    }
-    .alert-success {
-        background: #6ccbae;
-        border-color: #2eb58c;
-        color: #333333;
-    }
-
-    section {
-        background: white;
-        margin: 14px;
-        border: 1px solid #cccccc;
-        border-radius: 0 0 3px 3px;
-        box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
-        -webkit-border-radius: 0 0 3px 3px;
-        -moz-border-radius: 0 0 3px 3px;
-        -webkit-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
-        -moz-box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.17);
-    }
-</style>

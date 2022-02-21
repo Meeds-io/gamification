@@ -60,6 +60,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <css-priority>1</css-priority>
   </portlet-skin>
 
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>GamificationManageRules</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/gamification.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+
   <portlet>
     <name>GamificationInformationsboard</name>
     <module>
@@ -80,18 +88,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>GamificationManageRules</name>
     <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/rule.bundle.js</path>
+      </script>
       <depends>
-        <module>manageRules</module>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
       </depends>
       <depends>
         <module>vue</module>
       </depends>
       <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
         <module>eXoVueI18n</module>
       </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
     </module>
-
   </portlet>
+
   <portlet>
     <name>GamificationManageBadges</name>
     <module>
@@ -307,27 +329,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
     <depends>
       <module>userPopupPlugin</module>
-    </depends>
-  </module>
-  <module>
-    <name>manageRules</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/rule.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
     </depends>
   </module>
   <module>

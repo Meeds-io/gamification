@@ -26,9 +26,10 @@ public class RealizationsStorage {
         GamificationActionsHistory gamificationActionsHistory = gamificationHistoryDAO.find(id);
         return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
     }
-    public GamificationActionsHistoryDTO updateRealizationStatus (GamificationActionsHistory gamificationActionsHistory){
-               gamificationActionsHistory =  gamificationHistoryDAO.update(gamificationActionsHistory);
-        return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
+    public GamificationActionsHistoryDTO updateRealizationStatus (GamificationActionsHistoryDTO gamificationActionsHistory){
+        GamificationActionsHistory gamificationActionsHistoryEntity = GamificationActionsHistoryMapper.toEntity(gamificationActionsHistory);
+        gamificationActionsHistoryEntity =  gamificationHistoryDAO.update(gamificationActionsHistoryEntity);
+        return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistoryEntity);
     }
 
 }

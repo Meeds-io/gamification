@@ -16,9 +16,10 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -31,245 +32,183 @@ import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 @Path("/gamification/rules")
+@Api(value = "/gamification/rules", description = "Manages rules") // NOSONAR
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
 
-    private static final Log LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
+  private static final Log   LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
 
-    private final CacheControl cacheControl;
+  private final CacheControl cacheControl;
 
-    protected RuleService ruleService = null;
+  protected RuleService      ruleService;
 
-    protected IdentityManager  identityManager  = null;
+  protected IdentityManager  identityManager;
 
-    public ManageRulesEndpoint() {
+  public ManageRulesEndpoint(RuleService ruleService, IdentityManager identityManager) {
+    this.cacheControl = new CacheControl();
+    cacheControl.setNoCache(true);
+    cacheControl.setNoStore(true);
+    this.ruleService = ruleService;
+    this.identityManager = identityManager;
+  }
 
-        this.cacheControl = new CacheControl();
+  @GET
+  @Path("/all")
+  @RolesAllowed("users")
+  public Response getAllRules() {
 
-        cacheControl.setNoCache(true);
-
-        cacheControl.setNoStore(true);
-
-        ruleService = CommonsUtils.getService(RuleService.class);
-
-        identityManager = CommonsUtils.getService(IdentityManager.class);
-
+    ConversationState conversationState = ConversationState.getCurrent();
+    if (conversationState != null) {
+      try {
+        List<RuleDTO> allRules = ruleService.findAllRules();
+        return Response.ok().cacheControl(cacheControl).entity(allRules).build();
+      } catch (Exception e) {
+        LOG.error("Error listing all rules ", e);
+        return Response.serverError().cacheControl(cacheControl).entity("Error listing all rules").build();
+      }
+    } else {
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-    @GET
-    @Path("/all")
-    @RolesAllowed("users")
-    public Response getAllRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+  }
 
-        ConversationState conversationState = ConversationState.getCurrent();
+  @GET
+  @Path("/active")
+  @RolesAllowed("users")
+  public Response getActiveRules( ) {
+    ConversationState conversationState = ConversationState.getCurrent();
+    if (conversationState != null) {
+      try {
+        List<RuleDTO> activesRules = ruleService.getActiveRules();
+        return Response.ok().cacheControl(cacheControl).entity(activesRules).build();
+      } catch (Exception e) {
+        LOG.error("Error listing active rules ", e);
+        return Response.serverError().cacheControl(cacheControl).entity("Error listing active rules").build();
+      }
+    } else {
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+    }
+  }
 
-        if (conversationState != null) {
-            try {
-                List<RuleDTO> allRules = ruleService.getAllRules();
+  @POST
+  @Consumes({ MediaType.APPLICATION_JSON })
+  @RolesAllowed("administrators")
+  @Path("/add")
+  public Response addRule(@ApiParam(value = "rule object to save", required = true)
+                                     RuleDTO ruleDTO) {
 
-                return Response.ok().cacheControl(cacheControl).entity(allRules).build();
+    ConversationState conversationState = ConversationState.getCurrent();
 
-            } catch (Exception e) {
+    if (conversationState != null) {
+      String currentUserName = conversationState.getIdentity().getUserId();
+      try {
+        // Compute rule's data
+        ruleDTO.setId(null);
+        ruleDTO.setTitle(ruleDTO.getEvent() + "_" + ruleDTO.getArea());
+        ruleDTO.setCreatedBy(currentUserName);
+        ruleDTO.setLastModifiedBy(currentUserName);
 
-                LOG.error("Error listing all rules ", e);
+        // --- Add rule
+        ruleDTO = ruleService.addRule(ruleDTO);
 
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error listing all rules")
-                        .build();
-            }
+        return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
 
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
+      } catch (EntityExistsException e) {
 
+        LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
 
+        return Response.notModified().cacheControl(cacheControl).entity("Rule already exists").build();
+      } catch (Exception e) {
+
+        LOG.error("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
+
+        return Response.serverError().cacheControl(cacheControl).entity("Error adding new rule").build();
+
+      }
+
+    } else {
+
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-    @GET
-    @Path("/active")
-    @RolesAllowed("users")
-    public Response getActiveRules(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
+  }
 
-        ConversationState conversationState = ConversationState.getCurrent();
+  @PUT
+  @RolesAllowed("administrators")
+  @Path("/update")
+  public Response updateRule(@Context HttpServletRequest request,@ApiParam(value = "rule object to update", required = true)
+                                        RuleDTO ruleDTO) {
 
-        if (conversationState != null) {
-            try {
-                List<RuleDTO> activesRules = ruleService.getActiveRules();
+    ConversationState conversationState = ConversationState.getCurrent();
 
-                return Response.ok().cacheControl(cacheControl).entity(activesRules).build();
+    if (conversationState != null) {
 
-            } catch (Exception e) {
-                LOG.error("Error listing active rules ", e);
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error listing active rules")
-                        .build();
-            }
+      String currentUserName = conversationState.getIdentity().getUserId();
+      try {
 
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
+        // TODO : Load locale
+        Locale lc = request.getLocale();
+
+        // Compute rule's data
+        ruleDTO.setCreatedBy(currentUserName);
+        ruleDTO.setLastModifiedBy(currentUserName);
+
+        // --- Add rule
+        ruleDTO = ruleService.updateRule(ruleDTO);
+
+        // Compute user id
+        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
+        LOG.info("service=gamification operation=edit-rule parameters=\"user_social_id:{},rule_id:{},rule_title:{},rule_description:{}\"",
+                 actorId,
+                 ruleDTO.getId(),
+                 ruleDTO.getTitle(),
+                 ruleDTO.getDescription());
+
+        return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+
+      } catch (EntityExistsException e) {
+
+        LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
+
+        return Response.notModified().cacheControl(cacheControl).entity("Rule already exists").build();
+      } catch (Exception e) {
+
+        LOG.error("Error updating rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
+
+        return Response.serverError().cacheControl(cacheControl).entity("Error updating a rule").build();
+      }
+
+    } else {
+
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-    @POST
-    @Consumes({MediaType.APPLICATION_JSON})
-    @RolesAllowed("administrators")
-    @Path("/add")
-    public Response addRule(@Context SecurityContext securityContext, @Context UriInfo uriInfo, RuleDTO ruleDTO) {
+  }
 
-        ConversationState conversationState = ConversationState.getCurrent();
+  @PUT
+  @RolesAllowed("administrators")
+  @Path("/delete/{id}")
+  public Response deleteRule(@ApiParam(value = "id of the rule", required = true)
+  @PathParam("id")
+          Long id) {
+    ConversationState conversationState = ConversationState.getCurrent();
+    if (conversationState != null) {
+      String currentUserName = conversationState.getIdentity().getUserId();
+      try {
+        ruleService.deleteRule(id);
+        return Response.ok().cacheControl(cacheControl).entity("Rule " + id + " has been removed successfully ").build();
+      } catch (Exception e) {
+        LOG.error("Error deleting rule {} by {} ", id, currentUserName, e);
+        return Response.serverError().cacheControl(cacheControl).entity("Error deleting a rule").build();
+      }
 
-        if (conversationState != null) {
-
-            String currentUserName = conversationState.getIdentity().getUserId();
-
-            try {
-                // Compute rule's data
-                ruleDTO.setId(null);
-                ruleDTO.setTitle(ruleDTO.getEvent()+"_"+ruleDTO.getArea());
-                ruleDTO.setCreatedBy(currentUserName);
-                ruleDTO.setLastModifiedBy(currentUserName);
-
-                //--- Add rule
-                ruleDTO = ruleService.addRule(ruleDTO);
-
-                return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
-
-            }catch (EntityExistsException e) {
-
-                LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
-
-                return Response.notModified()
-                        .cacheControl(cacheControl)
-                        .entity("Rule already exists")
-                        .build();
-            } catch (Exception e) {
-
-                LOG.error("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error adding new rule")
-                        .build();
-
-            }
-
-
-        } else {
-
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
+    } else {
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
 
-    @PUT
-    @RolesAllowed("administrators")
-    @Path("/update")
-    public Response updateRule(@Context UriInfo uriInfo, @Context HttpServletRequest request, RuleDTO ruleDTO) {
-
-        ConversationState conversationState = ConversationState.getCurrent();
-
-        if (conversationState != null) {
-
-            String currentUserName = conversationState.getIdentity().getUserId();
-            try {
-
-                //TODO : Load locale
-                Locale lc = request.getLocale();
-
-                // Compute rule's data
-                ruleDTO.setCreatedBy(currentUserName);
-                ruleDTO.setLastModifiedBy(currentUserName);
-
-                //--- Add rule
-                ruleDTO = ruleService.updateRule(ruleDTO);
-
-                // Compute user id
-                String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
-                LOG.info("service=gamification operation=edit-rule parameters=\"user_social_id:{},rule_id:{},rule_title:{},rule_description:{}\"", actorId, ruleDTO.getId(), ruleDTO.getTitle(), ruleDTO.getDescription());
-
-                return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
-
-            } catch (EntityExistsException e) {
-
-                LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
-
-                return Response.notModified()
-                        .cacheControl(cacheControl)
-                        .entity("Rule already exists")
-                        .build();
-            }catch (Exception e) {
-
-                LOG.error("Error updating rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error updating a rule")
-                        .build();
-            }
-
-        } else {
-
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
-
-    }
-
-
-    @DELETE
-    @RolesAllowed("administrators")
-    @Path("/delete/{id}")
-    public Response deleteRule(@Context UriInfo uriInfo, @PathParam("id") Long id) {
-
-        ConversationState conversationState = ConversationState.getCurrent();
-
-        if (conversationState != null) {
-
-            String currentUserName = conversationState.getIdentity().getUserId();
-
-            try {
-                //--- Remove the rule
-                ruleService.deleteRule(id);
-                return Response.ok().cacheControl(cacheControl).entity("Rule " + id + " has been removed successfully ").build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error deleting rule {} by {} ", id, currentUserName, e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error deleting a rule")
-                        .build();
-
-            }
-
-        } else {
-
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
-        }
-
-
-    }
+  }
 }
