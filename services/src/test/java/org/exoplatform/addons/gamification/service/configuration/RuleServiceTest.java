@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.Date;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.junit.Test;
 
@@ -28,49 +29,49 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testFindEnableRuleByTitle() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     assertNull(ruleService.findEnableRuleByTitle(RULE_NAME));
     RuleEntity ruleEntity = newRule();
     assertNotNull(ruleService.findEnableRuleByTitle(RULE_NAME));
     ruleEntity.setEnabled(false);
-    ruleStorage.update(ruleEntity);
+    ruleDAO.update(ruleEntity);
     assertNull(ruleService.findEnableRuleByTitle(RULE_NAME));
   }
 
   @Test
   public void testFindRuleById() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
     assertNotNull(ruleService.findRuleById(ruleEntity.getId()));
   }
 
   @Test
   public void testFindEnabledRulesByEvent() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     assertEquals(ruleService.findEnabledRulesByEvent("rule1").size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
     RuleEntity r2 = newRule("rule1", "domain2");
     RuleEntity r3 = newRule("rule1", "domain3");
     assertEquals(ruleService.findEnabledRulesByEvent("rule1").size(), 3);
     r1.setEnabled(false);
-    ruleStorage.update(r1);
+    ruleDAO.update(r1);
     assertEquals(ruleService.findEnabledRulesByEvent("rule1").size(), 2);
   }
 
   @Test
   public void testFindRuleByTitle() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule();
     assertNotNull(ruleService.findRuleByTitle(RULE_NAME));
   }
 
   @Test
-  public void testGetAllRules() {
-    assertEquals(ruleService.getAllRules().size(), 0);
+  public void getAllAutomaticRules() {
+    assertEquals(ruleService.getAllAutomaticRules().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule1", "domain2");
     newRule("rule1", "domain3");
-    assertEquals(ruleService.getAllRules().size(), 3);
+    assertEquals(ruleService.getAllAutomaticRules().size(), 3);
   }
 
   @Test
@@ -84,7 +85,7 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRulesByDomain() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule2", "domain1");
     newRule("rule3", "domain2");
@@ -94,19 +95,19 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRulesWithNullDomain() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
     RuleEntity r2 = newRule("rule1", "domain2");
     RuleEntity r3 = newRule("rule1", "domain3");
     assertEquals(ruleService.getAllRulesWithNullDomain().size(), 0);
     r1.setDomainEntity(null);
-    ruleStorage.update(r1);
+    ruleDAO.update(r1);
     assertEquals(ruleService.getAllRulesWithNullDomain().size(), 1);
   }
 
   @Test
   public void testGetAllEvents() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule1", "domain2");
     newRule("rule2", "domain3");
@@ -115,7 +116,7 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testGetDomainListFromRules() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule2", "domain2");
     newRule("rule3", "domain2");
@@ -138,7 +139,7 @@ public class RuleServiceTest extends AbstractServiceTest {
   @Test
   public void testAddRule() {
     try {
-      assertEquals(ruleStorage.findAll().size(), 0);
+      assertEquals(ruleDAO.findAll().size(), 0);
       RuleEntity rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));
       rule.setTitle(RULE_NAME);
@@ -154,7 +155,7 @@ public class RuleServiceTest extends AbstractServiceTest {
       rule.setDomainEntity(newDomain());
       rule.setType(TypeRule.AUTOMATIC);
       ruleService.addRule(ruleMapper.ruleToRuleDTO(rule));
-      assertEquals(ruleStorage.findAll().size(), 1);
+      assertEquals(ruleDAO.findAll().size(), 1);
     } catch (Exception e) {
       fail("Error to add rule", e);
     }
@@ -163,15 +164,33 @@ public class RuleServiceTest extends AbstractServiceTest {
   @Test
   public void testUpdateRule() {
     try {
-      assertEquals(ruleStorage.findAll().size(), 0);
+      assertEquals(ruleDAO.findAll().size(), 0);
       RuleEntity ruleEntity = newRule();
       ruleEntity.setDescription("new_description");
       ruleService.updateRule(ruleMapper.ruleToRuleDTO(ruleEntity));
-      ruleEntity = ruleStorage.find(ruleEntity.getId());
+      ruleEntity = ruleDAO.find(ruleEntity.getId());
       assertEquals(ruleEntity.getDescription(), "new_description");
     } catch (Exception e) {
       fail("Error to add rule", e);
     }
 
+  }
+
+  @Test
+  public void getFindAllRules() {
+    try {
+      assertEquals(ruleService.getAllAutomaticRules().size(), 0);
+      RuleDTO rule1 = newRuleDTO();
+      RuleDTO rule2 = newRuleDTO();
+      RuleDTO rule3 = newRuleDTO();
+      assertEquals(ruleService.getAllAutomaticRules().size(), 3);
+      assertEquals(ruleService.findAllRules().size(), 3);
+      rule1.setType(TypeRule.MANUAL);
+      ruleService.updateRule(rule1);
+      assertEquals(ruleService.getAllAutomaticRules().size(), 2);
+      assertEquals(ruleService.findAllRules().size(), 3);
+      } catch (Exception e) {
+      fail("Error to add rule", e);
+    }
   }
 }

@@ -31,7 +31,7 @@ public class RuleMapper {
   public RuleMapper() {
   }
 
-  public List<RuleDTO> rulesToRuleDTOs(List<RuleEntity> rules) {
+  public static List<RuleDTO> rulesToRuleDTOs(List<RuleEntity> rules) {
     return rules.stream().filter(Objects::nonNull).map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
   }
 
@@ -122,11 +122,11 @@ public class RuleMapper {
     }
   }
 
-  public List<RuleEntity> ruleDTOsToRules(List<RuleDTO> ruleDTOs) {
+  public static List<RuleEntity> ruleDTOsToRules(List<RuleDTO> ruleDTOs) {
     return ruleDTOs.stream().filter(Objects::nonNull).map(RuleMapper::ruleDTOToRule).collect(Collectors.toList());
   }
 
-  public RuleEntity ruleFromId(Long id) {
+  public static RuleEntity ruleFromId(Long id) {
     if (id == null) {
       return null;
     }

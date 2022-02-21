@@ -233,7 +233,7 @@ public class DomainMigrationService implements Startable {
             try {
                 LOG.info("=== Start migration of Rules");
                 boolean rulesmigrationDone=false;
-                List<RuleDTO> rules = ruleService.getAllRules();
+                List<RuleDTO> rules = ruleService.getAllAutomaticRules();
                 if (rules != null && rules.size() > 0) {
                     List<RuleDTO> noEvents = rules.stream().filter(rule -> rule.getEvent()==null).collect(Collectors.toList());
                     if(noEvents.size() == 0) {
@@ -243,7 +243,7 @@ public class DomainMigrationService implements Startable {
                             rule.setEvent(rule.getTitle());
                             ruleService.updateRule(rule);
                         }
-                        rules = ruleService.getAllRules();
+                        rules = ruleService.getAllAutomaticRules();
                         noEvents = rules.stream().filter(rule -> rule.getEvent()==null).collect(Collectors.toList());
                         if(noEvents.size() == 0) {
                             rulesmigrationDone = true;
