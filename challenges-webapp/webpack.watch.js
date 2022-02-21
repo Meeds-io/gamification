@@ -6,6 +6,8 @@ const webpackProductionConfig = require('./webpack.prod.js');
 module.exports = merge(webpackProductionConfig, {
   output: {
     path: '/exo-server/webapps/challenges/',
-    filename: 'js/[name].bundle.js'
-  }
+    filename: 'js/[name].bundle.js',
+    libraryTarget: 'amd'
+  },
+  cache: false,
 });
