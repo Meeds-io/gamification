@@ -1,0 +1,105 @@
+package org.exoplatform.addons.gamification.service;
+
+import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.storage.RealizationsStorage;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public class RealizationsServiceTest {
+
+  private RealizationsStorage realizationsStorage;
+
+  private RealizationsService realizationsService;
+
+  protected static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+
+  protected static final Date fromDate        = new Date();
+
+  protected static final Date toDate          = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+
+  protected static final int  offset          = 0;
+
+  protected static final int  limit           = 3;
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    realizationsStorage = mock(RealizationsStorage.class);
+    realizationsService = new RealizationsServiceImpl(realizationsStorage);
+  }
+
+  protected GamificationActionsHistoryDTO newGamificationActionsHistory() {
+    GamificationActionsHistoryDTO gHistory = new GamificationActionsHistoryDTO();
+    gHistory.setId(1L);
+    gHistory.setStatus(HistoryStatus.ACCEPTED.name());
+    gHistory.setDomain("gamification");
+    gHistory.setReceiver("1");
+    gHistory.setEarnerId("1");
+    gHistory.setEarnerType(IdentityType.USER.name());
+    gHistory.setActionTitle("gamification title");
+    gHistory.setActionScore(10);
+    gHistory.setGlobalScore(10);
+    gHistory.setRuleId(1L);
+    gHistory.setDate(Utils.toRFC3339Date(fromDate));
+    return gHistory;
+  }
+
+  @Test
+  public void testGetAllRealizationsByDate() {
+    // Given
+    GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
+    GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
+    GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
+    List<GamificationActionsHistoryDTO> gamificationActionsHistoryDTOList = new ArrayList<>();
+    gamificationActionsHistoryDTOList.add(gHistory1);
+    gamificationActionsHistoryDTOList.add(gHistory2);
+    gamificationActionsHistoryDTOList.add(gHistory3);
+    when(realizationsStorage.getAllRealizationsByDate(fromDate,
+                                                      toDate,
+                                                      offset,
+                                                      limit)).thenReturn(gamificationActionsHistoryDTOList);
+    // When
+    List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
+                                                                                 realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate),
+                                                                                                                              Utils.toRFC3339Date(toDate),
+                                                                                                                              offset,
+                                                                                                                              limit);
+    // Then
+    assertNotNull(createdGamificationActionsHistoryDTOList);
+    assertEquals(createdGamificationActionsHistoryDTOList.size(), 3);
+  }
+
+  @Test
+  public void updateRealizationStatus() {
+    // Given
+    GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
+    GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
+    gHistory2.setStatus(HistoryStatus.REJECTED.name());
+    when(realizationsStorage.getRealizationById(1L)).thenReturn(gHistory1);
+    when(realizationsStorage.updateRealizationStatus(gHistory1)).thenReturn(gHistory2);
+    GamificationActionsHistoryDTO rejectedHistory = null;
+    // When
+    try {
+      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED);
+
+    } catch (ObjectNotFoundException e) {
+      fail(e.getMessage());
+    }
+    // Then
+    assertNotNull(rejectedHistory);
+    assertEquals(rejectedHistory.getStatus(), HistoryStatus.REJECTED.name());
+  }
+
+}

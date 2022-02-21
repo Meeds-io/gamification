@@ -54,7 +54,6 @@ public class RealizationsServiceImpl implements RealizationsService {
       throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
     }
     gHistory.setStatus(status.name());
-    GamificationActionsHistory gHistoryEntity = GamificationActionsHistoryMapper.toEntity(gHistory);
-    return realizationsStorage.updateRealizationStatus(gHistoryEntity);
+    return realizationsStorage.updateRealizationStatus(gHistory);
   }
 }

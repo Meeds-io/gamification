@@ -14,24 +14,34 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import RuleApp from './RuleApp.vue';
+import './initComponents.js';
+Vue.use(Vuetify);
 
-$(document).ready(() => {
-  const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language;
-  const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`;
+const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 
+// getting language of user
+const lang = eXo  && eXo.env.portal.language || 'en';
+
+const resourceBundleName = 'locale.addon.Gamification';
+const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+const appId = 'manage-rules-portlet';
+
+document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+
+export function init() {
+  //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url).then(i18n => {
-    const vueApp = new Vue({
-      render: (h) => h(RuleApp),
-      i18n
-    }).$mount('#manage-rules-portlet > .container');
-    Vue.prototype.$vueT = Vue.prototype.$t;
-    Vue.prototype.$t = (key, defaultValue) => {
-      const translation = vueApp.$vueT(key);
-      return translation !== key && translation || defaultValue;
-    };
+    // init Vue app when locale ressources are ready
+    Vue.createApp({
+      mounted() {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      },
+      template: `<gamification-manage-rule id="${appId}" />`,
+      i18n,
+      vuetify,
+    }, `#${appId}`, 'manage-rules-portlet');
   });
-});
+}
 
 
 
