@@ -56,10 +56,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- Admin portlet : manage rules -->
     <portlet>
         <portlet-name>GamificationManageRules</portlet-name>
-        <portlet-class>org.exoplatform.addons.gamification.portlets.admin.rule.ManageRulesPortlet</portlet-class>
+        <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+        <init-param>
+            <name>portlet-view-dispatched-file-path</name>
+            <value>/jsp/rule/index.jsp</value>
+        </init-param>
         <supports>
             <mime-type>text/html</mime-type>
         </supports>
+        <supported-locale>en</supported-locale>
+        <resource-bundle>locale.addon.Gamification</resource-bundle>
         <portlet-info>
             <title>Gamification Manage rules</title>
         </portlet-info>

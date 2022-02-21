@@ -64,8 +64,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
 
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class)
-                                                     .setParameter("ruleTitle", ruleTitle);
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class) ;
+
+    query.setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       return query.getSingleResult();
@@ -88,11 +89,19 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
 
   }
+  public List<RuleEntity> getAllAutomaticRules() throws PersistenceException {
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllAutomaticRules", RuleEntity.class);
+    query.setParameter("type", TypeRule.AUTOMATIC);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return null;
+    }
+
+  }
 
   public List<RuleEntity> getAllRules() throws PersistenceException {
-
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRules", RuleEntity.class);
-    query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {

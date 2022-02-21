@@ -25,90 +25,90 @@ public class RuleDAOTest extends AbstractServiceTest {
 
   @Test
   public void testFindEnableRuleByTitle() {
-    assertEquals(ruleStorage.findAll().size(), 0);
-    assertNull(ruleStorage.findEnableRuleByTitle(RULE_NAME));
+    assertEquals(ruleDAO.findAll().size(), 0);
+    assertNull(ruleDAO.findEnableRuleByTitle(RULE_NAME));
     RuleEntity ruleEntity = newRule();
-    assertNotNull(ruleStorage.findEnableRuleByTitle(RULE_NAME));
+    assertNotNull(ruleDAO.findEnableRuleByTitle(RULE_NAME));
     ruleEntity.setEnabled(false);
-    ruleStorage.update(ruleEntity);
-    assertNull(ruleStorage.findEnableRuleByTitle(RULE_NAME));
+    ruleDAO.update(ruleEntity);
+    assertNull(ruleDAO.findEnableRuleByTitle(RULE_NAME));
   }
 
   @Test
   public void testFindEnabledRulesByEvent() {
-    assertEquals(ruleStorage.findAll().size(), 0);
-    assertEquals(ruleStorage.findEnabledRulesByEvent("rule1").size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
+    assertEquals(ruleDAO.findEnabledRulesByEvent("rule1").size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
     RuleEntity r2 = newRule("rule1", "domain2");
     RuleEntity r3 = newRule("rule1", "domain3");
-    assertEquals(ruleStorage.findEnabledRulesByEvent("rule1").size(), 3);
+    assertEquals(ruleDAO.findEnabledRulesByEvent("rule1").size(), 3);
     r1.setEnabled(false);
-    ruleStorage.update(r1);
-    assertEquals(ruleStorage.findEnabledRulesByEvent("rule1").size(), 2);
+    ruleDAO.update(r1);
+    assertEquals(ruleDAO.findEnabledRulesByEvent("rule1").size(), 2);
   }
 
   @Test
   public void testFindRuleByTitle() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule();
-    assertNotNull(ruleStorage.findRuleByTitle(RULE_NAME));
+    assertNotNull(ruleDAO.findRuleByTitle(RULE_NAME));
   }
 
   @Test
-  public void testGetAllRules() {
-    assertEquals(ruleStorage.getAllRules().size(), 0);
+  public void getAllAutomaticRules() {
+    assertEquals(ruleDAO.getAllAutomaticRules().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule1", "domain2");
     newRule("rule1", "domain3");
-    assertEquals(ruleStorage.getAllRules().size(), 3);
+    assertEquals(ruleDAO.getAllAutomaticRules().size(), 3);
   }
 
   @Test
   public void testGetActiveRules() {
-    assertEquals(ruleStorage.getActiveRules().size(), 0);
+    assertEquals(ruleDAO.getActiveRules().size(), 0);
     newRule("rule1", "domain1", false);
     newRule("rule2", "domain2", true);
     newRule("rule3", "domain3", true);
-    assertEquals(ruleStorage.getActiveRules().size(), 2);
+    assertEquals(ruleDAO.getActiveRules().size(), 2);
   }
 
   @Test
   public void testGetAllRulesByDomain() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule2", "domain1");
     newRule("rule3", "domain2");
-    assertEquals(ruleStorage.getAllRulesByDomain("domain1").size(), 2);
-    assertEquals(ruleStorage.getAllRulesByDomain("domain2").size(), 1);
+    assertEquals(ruleDAO.getAllRulesByDomain("domain1").size(), 2);
+    assertEquals(ruleDAO.getAllRulesByDomain("domain2").size(), 1);
   }
 
   @Test
   public void testGetAllRulesWithNullDomain() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
     RuleEntity r2 = newRule("rule1", "domain2");
     RuleEntity r3 = newRule("rule1", "domain3");
-    assertEquals(ruleStorage.getAllRulesWithNullDomain().size(), 0);
+    assertEquals(ruleDAO.getAllRulesWithNullDomain().size(), 0);
     r1.setDomainEntity(null);
-    ruleStorage.update(r1);
-    assertEquals(ruleStorage.getAllRulesWithNullDomain().size(), 1);
+    ruleDAO.update(r1);
+    assertEquals(ruleDAO.getAllRulesWithNullDomain().size(), 1);
   }
 
   @Test
   public void testGetDomainList() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule2", "domain2");
     newRule("rule3", "domain2");
-    assertEquals(ruleStorage.getDomainList().size(), 2);
+    assertEquals(ruleDAO.getDomainList().size(), 2);
   }
 
   @Test
   public void testGetAllEvents() {
-    assertEquals(ruleStorage.findAll().size(), 0);
+    assertEquals(ruleDAO.findAll().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule1", "domain2");
     newRule("rule2", "domain3");
-    assertEquals(ruleStorage.getAllEvents().size(), 2);
+    assertEquals(ruleDAO.getAllEvents().size(), 2);
   }
 }

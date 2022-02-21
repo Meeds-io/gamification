@@ -26,6 +26,8 @@ import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
@@ -71,7 +73,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
     public void start() {
 
         ruleService = CommonsUtils.getService(RuleService.class);
-
+        RequestLifeCycle.begin(PortalContainer.getInstance());
         try {
             // Processing registered rules
 
@@ -85,6 +87,8 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
         } catch (Exception e) {
             LOG.error("Error when processing Rules ", e);
+        } finally {
+            RequestLifeCycle.end();
         }
     }
 
