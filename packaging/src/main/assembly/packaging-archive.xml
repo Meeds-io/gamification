@@ -45,7 +45,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>org.exoplatform.addons.gamification:challenges-webapp:war</include>
+                <include>org.exoplatform.addons.gamification:challenges-portlets:war</include>
             </includes>
             <outputFileNameMapping>challenges.war</outputFileNameMapping>
             <scope>provided</scope>
