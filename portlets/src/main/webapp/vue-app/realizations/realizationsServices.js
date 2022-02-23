@@ -28,6 +28,6 @@ export function updateStatus( id, status) {
   });
 }
 
-export function getReport(fromDate, toDate, offset, limit) {
-  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/getExport?fromDate=${fromDate}&toDate=${toDate}&offset=${offset || 0}&limit=${limit|| 10}`, '_blank');
+export function getReport(fromDate, toDate) {
+  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/getExport?fromDate=${fromDate}&toDate=${toDate}`, '_blank');
 }
