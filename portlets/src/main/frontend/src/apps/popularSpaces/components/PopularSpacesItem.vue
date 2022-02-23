@@ -16,56 +16,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-list-item class="pa-0 spaceItem">
-    <v-list-item-avatar
-      :class="spaceItemClass"
-      :href="url"
-      class="my-0"
-      tile>
-      <v-avatar :size="avatarSize" tile>
-        <v-img
-          :src="avatarUrl"
-          :height="avatarSize"
-          :width="avatarSize"
-          :max-height="avatarSize"
-          :max-width="avatarSize"
-          :class="skeleton && 'skeleton-background'"
-          transition="none"
-          class="mx-auto spaceAvatar"
-          eager />
-      </v-avatar>
-    </v-list-item-avatar>
-    <v-list-item-content
-      :class="spaceItemClass"
-      :href="url"
-      class="pa-0">
-      <v-list-item-title>
-        <v-skeleton-loader
-          v-if="skeleton"
-          type="text"
-          boilerplate
-          class="mt-3 me-3 skeleton-background"
-          height="11px" />
-        <a
-          v-else
-          :href="url"
-          class="text-color text-truncate">
-          {{ space.displayName }}
-        </a>
-      </v-list-item-title>
-      <v-list-item-subtitle>
-        <v-skeleton-loader
-          v-if="skeleton"
-          type="text"
-          boilerplate
-          class="mb-2 mt-1 skeleton-background"
-          height="8px"
-          width="70px" />
-        <template v-else>
+    <exo-space-avatar
+      :space="space"
+      subtitle-new-line
+      popover> 
+      <template slot="subTitle">
+        <span class="caption">
           {{ $t('popularSpaces.label.points', {0: space.score}) }}
-        </template>
-      </v-list-item-subtitle>
-    </v-list-item-content>
-    <v-list-item-action class="ma-0 pe-4 flex-row align-self-center" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
+        </span>
+      </template>
+    </exo-space-avatar>
+    <v-list-item-action class="ma-0 pe-4 flex-row align-self-center ml-auto" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
       <template v-if="space.isInvited || skeleton" class="invitationButtons">
         <div class="acceptToJoinSpaceButtonParent">
           <v-btn
@@ -160,10 +121,6 @@ export default {
       type: Object,
       default: () => null,
     },
-    avatarSize: {
-      type: Number,
-      default: () => 37,
-    },
     skeleton: {
       type: Boolean,
       default: false,
@@ -171,7 +128,6 @@ export default {
   },
   data() {
     return {
-      actionIconSize: 20,
       sendingAction: false,
       displaySecondButton: false,
       sendingSecondAction: false,
@@ -180,45 +136,7 @@ export default {
         .toString()}`,
     };
   },
-  computed: {
-    avatarUrl() {
-      return this.skeleton ?
-        '':
-        this.space.avatarUrl || `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/spaces/${this.space.prettyName}/avatar`;
-    },
-    url() {
-      if (this.skeleton || !this.space || !this.space.groupId) {
-        return '#';
-      }
-      const uri = this.space.groupId.replace(/\//g, ':');
-      return `${eXo.env.portal.context}/g/${uri}/`;
-    },
-  },
-  mounted() {
-    if (!this.skeleton && this.space && this.space.groupId) {
-      // TODO disable tiptip because of high CPU usage using its code
-      this.initTiptip();
-    }
-  },
   methods: {
-    initTiptip() {
-      this.$nextTick(() => {
-        $(`.${this.spaceItemClass}`).spacePopup({
-          userName: eXo.env.portal.userName,
-          spaceID: this.space.id,
-          restURL: '/portal/rest/v1/social/spaces/{0}',
-          membersRestURL: '/portal/rest/v1/social/spaces/{0}/users?returnSize=true',
-          managerRestUrl: '/portal/rest/v1/social/spaces/{0}/users?role=manager&returnSize=true',
-          membershipRestUrl: '/portal/rest/v1/social/spacesMemberships?space={0}&returnSize=true',
-          defaultAvatarUrl: `/portal/rest/v1/social/spaces/${this.space.prettyName}/avatar`,
-          deleteMembershipRestUrl: '/portal/rest/v1/social/spacesMemberships/{0}:{1}:{2}',
-          content: false,
-          keepAlive: true,
-          defaultPosition: this.tiptipPosition || 'left_bottom',
-          maxWidth: '420px',
-        });
-      });
-    },
     acceptToJoin() {
       this.sendingAction = true;
       popularSpacesService.accept(this.space.id)

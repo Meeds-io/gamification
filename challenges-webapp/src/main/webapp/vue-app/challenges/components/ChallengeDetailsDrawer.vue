@@ -17,45 +17,24 @@
         </div>
         <div class="description pr-4 pl-4 pt-4" v-sanitized-html="challenge && challenge.description"></div>
         <hr class="separation mx-4">
-        <div class="px-4 nowrap">
-          <span class="title winnersLabel">
+        <v-flex class="px-4 nowrap winners">
+          <span class="winnersLabel">
             {{ $t('challenges.winners.details') }}
           </span>
-        </div>
-        <div class="px-4 pt-4 mt-n8 mx-3">
-          <p class="viewAll" @click="openDetails">
-            {{ $t('challenges.label.viewAll') }}
-          </p>
-        </div>
+          <div class="px-4 pt-4 mt-n8 mx-3">
+            <p class="viewAll" @click="openDetails">
+              {{ $t('challenges.label.viewAll') }}
+            </p>
+          </div>
+        </v-flex>
         <div class="assigneeAvatars flex-nowrap">
           <div class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
-            <exo-user-avatar
-              v-for="winner in avatarToDisplay"
-              :key="winner.user.id"
-              :username="winner.user.remoteId"
-              :title="winner.user.fullName"
-              :avatar-url="winner.user.avatarUrl"
-              :size="iconSize"
-              :style="'background-image: url('+winner.user.avatarUrl+')'"
-              class="me-1 projectManagersAvatar" />
-            <div class="seeMoreAvatars">
-              <div
-                v-if="winners.length > maxAvatarToShow"
-                class="seeMoreItem"
-                @click="openDetails">
-                <v-avatar
-                  :size="iconSize">
-                  <img
-                    :src="winners[maxAvatarToShow].user.avatarUrl"
-                    :title="winners[maxAvatarToShow].user.displayName"
-                    :alt="$t('challenges.label.avatarUser', {0: winners[maxAvatarToShow].user.displayName})"
-                    class="object-fit-cover"
-                    loading="lazy"
-                    role="presentation">
-                  <span class="seeMoreAvatarList">+{{ showMoreAvatarsNumber }}</span>
-                </v-avatar>
-              </div>
-            </div>
+            <exo-user-avatars-list
+              :users="avatarToDisplay"
+              :max="7"
+              :icon-size="28"
+              retrieve-extra-information
+              @open-detail="openDetails()" />
           </div>
         </div>
         <div class="px-4 py-2">
@@ -146,20 +125,13 @@ export default {
       default: null
     }
   },
-  data: () => ({
-    maxAvatarToShow: 7,
-    iconSize: 28,
-  }),
   computed: {
     avatarToDisplay () {
-      if (this.winners.length > this.maxAvatarToShow) {
-        return this.winners.slice(0, this.maxAvatarToShow-1);
-      } else {
-        return this.winners;
-      }
-    },
-    showMoreAvatarsNumber() {
-      return this.challenge.announcementsCount - this.maxAvatarToShow;
+      const winnerIdentity = [];
+      this.winners.forEach(winner => {
+        winnerIdentity.push({'userName': winner.user.remoteId});
+      });
+      return winnerIdentity;
     },
     space() {
       return this.challenge && this.challenge.space;

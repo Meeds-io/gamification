@@ -137,7 +137,7 @@ export default {
             const optionSeriesName = this.option.series[0].data[i].name;
             if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
               this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
-            }else{
+            } else {
               this.option.series[0].data[i].name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
             }
           }

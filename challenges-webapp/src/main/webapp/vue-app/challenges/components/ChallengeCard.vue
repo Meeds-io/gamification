@@ -63,33 +63,12 @@
           v-else
           :class="showAllAvatarList && 'AllUsersAvatar'"
           class="winners winnersAvatarsList d-flex flex-nowrap my-2">
-          <exo-user-avatar
-            v-for="winner in avatarToDisplay"
-            :key="winner.user.id"
-            :username="winner.user.remoteId"
-            :title="winner.user.fullName"
-            :avatar-url="winner.user.avatarUrl"
-            :size="iconSize"
-            :style="'background-image: url('+winner.user.avatarUrl+')'"
-            class="me-1 projectManagersAvatar" />
-          <div class="seeMoreAvatars">
-            <div
-              v-if="listWinners.length > maxAvatarToShow"
-              class="seeMoreItem"
-              @click="openDetails">
-              <v-avatar
-                :size="iconSize">
-                <img
-                  :src="listWinners[maxAvatarToShow].user.avatarUrl"
-                  :title="listWinners[maxAvatarToShow].user.displayName"
-                  :alt="$t('challenges.label.avatarUser', {0: listWinners[maxAvatarToShow].user.displayName})"
-                  class="object-fit-cover"
-                  loading="lazy"
-                  role="presentation">
-                <span class="seeMoreAvatarList">+{{ showMoreAvatarsNumber }}</span>
-              </v-avatar>
-            </div>
-          </div>
+          <exo-user-avatars-list
+            :users="avatarToDisplay"
+            :max="3"
+            :icon-size="28"
+            retrieve-extra-information
+            @open-detail="openDetails()" />
           <p
             class="announcesNumber my-auto pl-2 align-self-end caption text-no-wrap pt-1"
             @click="openDetails">
@@ -135,19 +114,14 @@ export default {
     label: '',
     status: '',
     listWinners: [],
-    iconSize: 28,
-    maxAvatarToShow: 2
   }),
   computed: {
     avatarToDisplay () {
-      if (this.listWinners.length > this.maxAvatarToShow) {
-        return this.listWinners.slice(0, this.maxAvatarToShow-1);
-      } else {
-        return this.listWinners;
-      }
-    },
-    showMoreAvatarsNumber() {
-      return this.challenge.announcementsCount - this.maxAvatarToShow;
+      const winnerIdentity = [];
+      this.listWinners.forEach(winner => {
+        winnerIdentity.push({'userName': winner.user.remoteId});
+      });
+      return winnerIdentity;
     },
     showMessage() {
       if (this.challenge && this.challenge.userInfo && !this.challenge.userInfo.canAnnounce) {

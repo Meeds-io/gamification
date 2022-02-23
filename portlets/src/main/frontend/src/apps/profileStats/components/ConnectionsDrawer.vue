@@ -9,7 +9,7 @@
     max-height="100vh">
     <v-row v-if="connectionsDrawer" class="mx-0 title">
       <v-list-item class="pe-0">
-        <v-list-item-content  class="ma-0 pa-0">
+        <v-list-item-content class="ma-0 pa-0">
           <template v-if="!showSearch">
             <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
           </template>

@@ -18,10 +18,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-list-item
     :href="achievementUrl"
     two-line
-    class="ma-4">
-    <v-list-item-avatar :tile="isSpace" :class="isSpace && 'spaceAvatar'" :id="id">
-      <v-img :src="avatar" />
-    </v-list-item-avatar>
+    class="ma-4 px-0">
+    <exo-space-avatar
+      v-if="isSpace"
+      :space-pretty-name="remoteId"
+      extra-class="me-2"
+      avatar
+      popover /> 
+    <exo-user
+      v-else
+      :profile-id="remoteId"
+      extra-class="me-2"
+      avatar
+      popover /> 
     <v-list-item-content class="py-0">
       <v-list-item-title :title="actionTitle">
         {{ actionTitle }}
@@ -96,45 +105,11 @@ export default {
       return new window.Intl.DateTimeFormat(this.lang, this.dateFormat).format(dateTime);
     },
   },
-  mounted() {
-    if (this.identityId) {
-      // TODO disable tiptip because of high CPU usage using its code
-      this.initTiptip();
-    }
-  },
   methods: {
     getLabel(base, key) {
       const label = `${base}.${key}`;
       const translation = this.$t(label);
       return translation === label && key || translation;
-    },
-    initTiptip() {
-      if (this.isSpace) {
-        this.$nextTick(() => {
-          $(`#${this.id}`).spacePopup({
-            userName: eXo.env.portal.userName,
-            spaceID: this.identityId,
-            restURL: '/portal/rest/v1/social/spaces/{0}',
-            membersRestURL: '/portal/rest/v1/social/spaces/{0}/users?returnSize=true',
-            managerRestUrl: '/portal/rest/v1/social/spaces/{0}/users?role=manager&returnSize=true',
-            membershipRestUrl: '/portal/rest/v1/social/spacesMemberships?space={0}&returnSize=true',
-            defaultAvatarUrl: this.avatar,
-            deleteMembershipRestUrl: '/portal/rest/v1/social/spacesMemberships/{0}:{1}:{2}',
-            content: false,
-            keepAlive: true,
-            defaultPosition: 'left_bottom',
-            maxWidth: '420px',
-          });
-        });
-      } else {
-        this.$nextTick(() => {
-          $(`#${this.id}`).userPopup({
-            restURL: '/portal/rest/social/people/getPeopleInfo/{0}.json',
-            userId: this.remoteId,
-            keepAlive: true,
-          });
-        });
-      }
     },
   }
 };

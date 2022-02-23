@@ -297,9 +297,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <depends>
       <module>extensionRegistry</module>
     </depends>
-    <depends>
-      <module>userPopupPlugin</module>
-    </depends>
   </module>
   <module>
     <name>manageRules</name>

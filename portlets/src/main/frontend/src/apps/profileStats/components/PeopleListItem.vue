@@ -35,22 +35,5 @@ export default {
       cmpId: `react${parseInt(Math.random() * 10000).toString()}`,
     };
   },
-  mounted() {
-    this.initTiptip();
-  },
-  methods: {
-    initTiptip() {
-      this.$nextTick(() => {
-        $(`#${this.cmpId}`).userPopup({
-          restURL: '/portal/rest/social/people/getPeopleInfo/{0}.json',
-          userId: this.person.username,
-          content: false,
-          keepAlive: true,
-          defaultPosition: 'top_left',
-          maxWidth: '240px',
-        });
-      });
-    },      
-  },
 };
 </script>
