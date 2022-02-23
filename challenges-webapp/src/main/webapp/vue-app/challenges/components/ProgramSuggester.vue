@@ -59,6 +59,12 @@
 
 <script>
 export default {
+  props: {
+    canAddChallenge: {
+      type: Boolean,
+      default: false
+    },
+  },
   data() {
     return {
       id: `AutoComplete${parseInt(Math.random() * 10000)}`,
@@ -101,7 +107,9 @@ export default {
     $(`#${this.id} input`).on('blur', () => {
       this.$refs.selectAutoComplete.isFocused = false;
     });
-    this.getAllDomains();
+    if (this.canAddChallenge){
+      this.getAllDomains();
+    }
   },
   methods: {
     getAllDomains(){

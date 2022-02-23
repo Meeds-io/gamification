@@ -129,6 +129,10 @@ export default {
         return {};
       },
     },
+    canAddChallenge: {
+      type: Boolean,
+      default: false
+    },
   },
   computed: {
     drawerTitle(){
