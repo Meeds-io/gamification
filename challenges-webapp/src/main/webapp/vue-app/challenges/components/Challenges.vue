@@ -27,7 +27,7 @@
       <welcome-message
         :can-add-challenge="canAddChallenge" />
     </template>
-    <challenge-drawer ref="challengeDrawer" />
+    <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
     <v-alert
       v-model="alert"
       :type="type"
