@@ -76,9 +76,6 @@ export default {
       listWinners: []
     };
   },
-  mounted() {
-    this.getAnnouncement();
-  },
   methods: {
     getProfileUrl(remoteId) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${remoteId}`;
@@ -90,6 +87,7 @@ export default {
       this.$refs.winnersDetails.close();
     },
     open() {
+      this.getAnnouncement();
       this.$refs.winnersDetails.open();
     },
     loadMore() {
