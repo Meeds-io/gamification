@@ -51,6 +51,7 @@
           <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
           <challenge-program
             ref="challengeProgram"
+            :can-add-challenge="canAddChallenge"
             @addProgram="addProgram($event)"
             @removeProgram="removeProgram($event)" />
 
