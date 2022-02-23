@@ -281,9 +281,8 @@ public class Utils {
     return locale;
   }
 
-  public static final String getI18NMessage(String messageKey) {
+  public static final String getI18NMessage(Locale userLocale,String messageKey) {
     ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
-    Locale userLocale = getCurrentUserLocale();
     if (userLocale == null) {
       userLocale = Locale.ENGLISH;
     }

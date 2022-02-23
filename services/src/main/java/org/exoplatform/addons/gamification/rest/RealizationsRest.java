@@ -18,9 +18,7 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -174,7 +172,7 @@ public class RealizationsRest implements ResourceContainer {
     }
   }
 
-  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws Exception {
+  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities)  {
     Locale locale = getCurrentUserLocale();
     StringBuilder sbResult = new StringBuilder();
     // Add header
@@ -187,13 +185,13 @@ public class RealizationsRest implements ResourceContainer {
         String eventKey = "exoplatform.gamification.gamificationinformation.rule.title.";
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
-        String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(eventKey + ga.getAction().getEvent())
+        String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, eventKey + ga.getAction().getEvent())
                                                                          : StringEscapeUtils.escapeHtml(ga.getAction().getEvent())
                                                                                             .replace("\n", " ");
-        String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(actionLabelKey
+        String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, actionLabelKey
             + ga.getAction().getTitle()) : StringEscapeUtils.escapeHtml(ga.getAction().getTitle()).replace("\n", " ");
-        String domainTitle = getI18NMessage(domainTitleKey + ga.getDomain().getTitle());
-        String domainDescription = getI18NMessage(domainTitleKey + ga.getDomain().getDescription());
+        String domainTitle = getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle());
+        String domainDescription = getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription());
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
@@ -217,7 +215,7 @@ public class RealizationsRest implements ResourceContainer {
         sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
-        LOG.error("Error when computing to XLSX");
+        LOG.error("Error when computing to XLSX ",e);
       }
     });
     return sbResult.toString();
