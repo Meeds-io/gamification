@@ -217,15 +217,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <v-spacer />
                   <div class="d-flex">
                     <btn
-                        class="btn btn-primary"
-                        @click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
-                      {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
-                    </btn>
-                    <btn
                         class="ignore-vuetify-classes btn mx-4"
                         outlined
                         @click.prevent="collapseConfirm(rule), onCancel()">
                       {{ this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                    </btn>
+                    <btn
+                        class="btn btn-primary"
+                        @click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
+                      {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
                     </btn>
                   </div>
                 </v-toolbar>
@@ -242,7 +242,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <thead>
             <tr>
               <th class="rule-name-col ruleEvent">{{ $t(`exoplatform.gamification.gamificationinformation.Event`) }}</th>
-
+              <th class="rule-enable-col">{{ $t(`gamification.type`) }}</th>
               <th class="rule-desc-col ruleEvent">
                 {{ $t(`exoplatform.gamification.gamificationinformation.domain.Description`) }}
               </th>
@@ -251,7 +251,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 {{ $t(`exoplatform.gamification.gamificationinformation.Domain`) }}
               </th>
               <th class="rule-enable-col">{{ $t(`exoplatform.gamification.enabled`) }}</th>
-              <th class="rule-enable-col">{{ $t(`gamification.type`) }}</th>
               <th class="rule-action-col">{{ $t(`exoplatform.gamification.action`) }}</th>
             </tr>
           </thead>
@@ -262,6 +261,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   {{ eventTitle(rule.event) }}
                 </span>
                 <span v-if="rule && rule.type === 'MANUAL'"> {{ rule.title }} </span>
+              </td>
+              <td>
+                <span v-if="rule && rule.type === 'AUTOMATIC'"> {{ $t('gamification.label.auto') }} </span>
+                <span v-if="rule && rule.type === 'MANUAL'"> {{ $t('gamification.label.manual') }} </span>
               </td>
               <td >
                 <div class="ruleText mx-2"  v-if="rule && rule.type === 'AUTOMATIC'">
@@ -288,10 +291,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no" data-value="rule.enabled">{{ $t(`exoplatform.gamification.NO`) }}</span>
                   </label>
-              </td>
-              <td>
-                <span v-if="rule && rule.type === 'AUTOMATIC'"> {{ $t('gamification.label.auto') }} </span>
-                <span v-if="rule && rule.type === 'MANUAL'"> {{ $t('gamification.label.manual') }} </span>
               </td>
 
               <td class="center actionContainer">

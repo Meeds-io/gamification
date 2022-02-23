@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <button
           aria-controls="collapseOne"
           aria-expanded="true"
-          class="btn btn-primary"
+          class="btn btn-primary ignore-vuetify-classes"
           data-target="#collapseOne"
           data-toggle="collapse"
           type="button"
@@ -137,17 +137,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <v-spacer />
                 <div class="d-flex">
                   <btn
-                      class="ignore-vuetify-classes btn mx-4"
-                      outlined
-                      @click.prevent="collapseButton(), onCancel()">
-                    {{ this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
-                  </btn>
-                  <btn
                       class="ignore-vuetify-classes btn btn-primary mx-1"
                       type="submit"
                       :disabled="isDisabled"
                       @click.prevent="onSubmit(), collapseButton()">
                     {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+                  </btn>
+                  <btn
+                      class="ignore-vuetify-classes btn mx-4"
+                      outlined
+                      @click.prevent="collapseButton(), onCancel()">
+                    {{ this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                   </btn>
                 </div>
               </v-toolbar>
