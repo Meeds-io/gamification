@@ -102,14 +102,16 @@ export default {
         this.broadcast = true;
       }
     },
+    canAddChallenge() {
+      if (this.canAddChallenge){
+        this.getAllDomains();
+      }
+    },
   },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
       this.$refs.selectAutoComplete.isFocused = false;
     });
-    if (this.canAddChallenge){
-      this.getAllDomains();
-    }
   },
   methods: {
     getAllDomains(){
