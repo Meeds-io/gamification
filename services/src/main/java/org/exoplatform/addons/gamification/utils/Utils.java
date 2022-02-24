@@ -300,7 +300,7 @@ public class Utils {
     try {
       profile = organizationService.getUserProfileHandler().findUserProfileByName(username);
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error("Error when getting user locale ",e);
     }
     String lang = null;
     if (profile != null) {
