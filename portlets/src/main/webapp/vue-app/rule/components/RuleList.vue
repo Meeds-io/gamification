@@ -271,8 +271,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <span>
                     {{ description(rule.title) }}
                   </span>
+                  <span v-if="rule && rule.type === 'MANUAL'" v-sanitized-html="rule && rule.description" />
                 </div>
-                <div class="ruleText mx-2"  v-if="rule && rule.type === 'MANUAL'" v-html="rule && rule.description">  </div>
               </td>
               <td>
                 <div>{{ rule.score }}</div>
