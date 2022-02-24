@@ -118,7 +118,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     PowerMockito.mockStatic(Utils.class);
     when(Utils.canAnnounce(any())).thenReturn(true);
-    when(Utils.canEditChallenge(any())).thenReturn(true);
+    when(Utils.canEditChallenge(any(),any())).thenReturn(true);
     Identity identity = mock(Identity.class);
     when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     when(identity.getId()).thenReturn("1");
@@ -200,7 +200,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(announcementStorage.getAnnouncementById(1L)).thenReturn(createdAnnouncement);
     PowerMockito.mockStatic(Utils.class);
     when(Utils.canAnnounce(any())).thenReturn(true);
-    when(Utils.canEditChallenge(any())).thenReturn(true);
+    when(Utils.canEditChallenge(any(),any())).thenReturn(true);
     Identity identity = mock(Identity.class);
     when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     when(identity.getId()).thenReturn("1");

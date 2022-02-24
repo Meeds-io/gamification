@@ -61,14 +61,21 @@ public class Utils {
     return null;
   }
 
-  public static final boolean canEditChallenge(List<Long> managersId) {
+  public static final boolean canEditChallenge(List<Long> managersId, String spaceId) {
     Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, getCurrentUser());
+    Space space = getSpaceById(spaceId);
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    Boolean isChallengeOwner = false;
+    Boolean isSpaceManager = false;
     if (identity != null) {
-      return managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
-    } else {
-      return true;
+      isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
     }
+    if (space != null) {
+      isSpaceManager = spaceService.isManager(space, getCurrentUser());
+    }
+    return isChallengeOwner && isSpaceManager;
   }
+
 
   public static final boolean canAnnounce(String id) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
@@ -195,7 +202,7 @@ public class Utils {
       userInfo.setRedactor(spaceService.isRedactor(space, getCurrentUser()));
       userInfo.setCanAnnounce(canAnnounce(space.getId()));
     }
-    userInfo.setCanEdit(canEditChallenge(managersId));
+    userInfo.setCanEdit(canEditChallenge(managersId,space.getId()));
     return userInfo;
   }
 
