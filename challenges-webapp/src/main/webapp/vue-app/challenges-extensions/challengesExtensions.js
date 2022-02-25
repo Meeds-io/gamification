@@ -22,7 +22,7 @@ export function initExtensions() {
       };
     },
     getThumbnail: () => '/challenges/images/challengesAppIcon.png',
-    getSummary: activity => activity && activity.templateParams && activity.templateParams.announcementDescription  || '',
+    getSummary: activity => activity && activity.templateParams && activity.templateParams.announcementDescription  && `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${ activity.templateParams.announcementChallengeId}"> ${ activity.templateParams.announcementDescription } </a> ` || '',
     getBody: activity => {
       return Vue.prototype.$utils.trim((activity.templateParams && activity.templateParams.announcementComment)
            || '');

@@ -47,6 +47,7 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
             UserInfo userInfo = Utils.getUserById(announcement.getAssignee(),announcement.getChallengeId());
             params.put("announcementAssigneeUsername", userInfo.getRemoteId());
             params.put("announcementAssigneeFullName", userInfo.getFullName());
+            params.put("announcementChallengeId", String.valueOf(announcement.getChallengeId()));
             activity.getTemplateParams().putAll(params);
         } catch (ObjectNotFoundException e) {
             LOG.error("Unexpected error", e);
