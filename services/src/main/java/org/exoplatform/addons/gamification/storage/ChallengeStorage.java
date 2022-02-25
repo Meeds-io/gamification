@@ -41,6 +41,9 @@ public class ChallengeStorage {
 
   public Challenge getChallengeById(long challengeId) {
     RuleEntity challengeEntity = this.ruleDAO.find(challengeId);
+    if(challengeEntity.getType() == TypeRule.AUTOMATIC) {
+      return null ;
+    }
     return EntityMapper.fromEntity(challengeEntity);
   }
 

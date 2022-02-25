@@ -37,7 +37,7 @@
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="showDetails">
+            <div class="contentChallenge" @click="showDetails(challenge.id)">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
@@ -208,8 +208,9 @@ export default {
     closeMenu() {
       this.showMenu= false;
     },
-    showDetails() {
+    showDetails(challengeId) {
       if (this.$refs.challenge){
+        window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
         this.$refs.challenge.open();
       }
     },
