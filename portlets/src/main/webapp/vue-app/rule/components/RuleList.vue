@@ -480,9 +480,9 @@ export default {
       endDate = new Date(endDate);
       if (startDate.getTime() > currentDate.getTime() && endDate.getTime() > currentDate.getTime()) {
         return status.NOTSTARTED;
-      } else if ((startDate.getTime()<currentDate.getTime() && endDate.getTime() > currentDate.getTime()) || (this.getFromDate(endDate) ===  this.getFromDate(currentDate))) {
+      } else if ((startDate.getTime() < currentDate.getTime() && endDate.getTime() > currentDate.getTime()) || (this.getFromDate(endDate) ===  this.getFromDate(currentDate))) {
         return status.STARTED;
-      } else if (endDate.getTime() < currentDate.getTime() && startDate.getTime()< currentDate.getTime()) {
+      } else if (endDate.getTime() < currentDate.getTime() && startDate.getTime() < currentDate.getTime()) {
         return status.ENDED;
       }
     },
