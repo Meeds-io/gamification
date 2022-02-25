@@ -91,7 +91,7 @@ public class GamificationActionsHistoryMapper {
 
   public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
     return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                    Utils.getUserById(Long.valueOf(gHistory.getEarnerId()), gHistory.getRuleId()),
+                                                    Utils.getUserById(Long.valueOf(gHistory.getEarnerId()),null),
                                                     gHistory.getRuleId() != null ? Utils.getRuleById(gHistory.getRuleId())
                                                                                  : Utils.getRuleByTitle(gHistory.getActionTitle()),
                                                     Utils.getDomainByTitle(gHistory.getDomain()),
@@ -100,7 +100,7 @@ public class GamificationActionsHistoryMapper {
                                                     gHistory.getComment(),
                                                     Utils.getUserById(gHistory.getCreator() != null ? gHistory.getCreator()
                                                                                                     : Long.valueOf(gHistory.getReceiver()),
-                                                                      gHistory.getRuleId()),
+                                                                      null),
                                                     gHistory.getCreatedDate(),
                                                     gHistory.getStatus(),
                                                     gHistory.getRuleId() != null ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId())
