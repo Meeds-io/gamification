@@ -46,6 +46,8 @@
         {{ $t('challenges.button.ShowMore') }}
       </v-btn>
     </v-row>
+    <challenge-details-drawer
+      ref="challengeDetails" />
   </v-app>
 </template>
 <script>
@@ -77,6 +79,22 @@ export default {
     });
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
+    const urlPath = document.location.pathname;
+    const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+    if (challengeId) {
+      setTimeout(() => {
+        this.$challengesServices.getChallengeById(challengeId).then(challenge => {
+          if (challenge && challenge.id) {
+            this.$refs.challengeDetails.challenge = challenge;
+            window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
+            this.$refs.challengeDetails.open();
+          } else {
+            window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+            this.$root.$emit('show-alert', {type: 'error', message: this.$t('challenges.viewChallengeError')});
+          }
+        });
+      }, 10);
+    }
   },
   methods: {
     pushChallenge(event) {

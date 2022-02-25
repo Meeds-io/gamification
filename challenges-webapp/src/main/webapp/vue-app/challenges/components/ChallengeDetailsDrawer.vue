@@ -161,9 +161,8 @@ export default {
       }
     },
     close() {
-      if (this.$refs.challengeDetails) {
-        this.$refs.challengeDetails.close();
-      }
+      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+      this.$refs.challengeDetails.close();
     },
     getFromDate(date) {
       return this.$challengeUtils.getFromDate(date);
