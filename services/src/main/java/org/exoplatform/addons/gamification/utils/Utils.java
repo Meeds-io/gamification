@@ -4,11 +4,9 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -23,14 +21,23 @@ import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.portal.Constants;
+import org.exoplatform.portal.localization.LocaleContextInfoUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.UserProfile;
+import org.exoplatform.services.resources.LocaleContextInfo;
+import org.exoplatform.services.resources.LocalePolicy;
+import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
 
@@ -257,6 +264,60 @@ public class Utils {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space =  spaceService.getSpaceByGroupId(groupID);
     return space != null ? space.getDisplayName() : null  ;
+  }
+
+  public static final Locale getCurrentUserLocale() {
+    String username = getCurrentUser();
+
+    LocalePolicy localePolicy = CommonsUtils.getService(LocalePolicy.class);
+    LocaleContextInfo localeCtx = LocaleContextInfoUtils.buildLocaleContextInfo((HttpServletRequest) null);
+    localeCtx.setUserProfileLocale(getUserLocale(username));
+    localeCtx.setRemoteUser(username);
+    Set<Locale> supportedLocales = LocaleContextInfoUtils.getSupportedLocales();
+
+    Locale locale = localePolicy.determineLocale(localeCtx);
+    boolean supported = supportedLocales.contains(locale);
+
+    if (!supported && !"".equals(locale.getCountry())) {
+      locale = new Locale(locale.getLanguage());
+      supported = supportedLocales.contains(locale);
+    }
+    if (!supported) {
+      LOG.warn("Unsupported locale returned by LocalePolicy: " + localePolicy + ". Falling back to 'en'.");
+      locale = Locale.ENGLISH;
+    }
+    return locale;
+  }
+
+  public static final String getI18NMessage(Locale userLocale,String messageKey) {
+    ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
+    if (userLocale == null) {
+      userLocale = Locale.ENGLISH;
+    }
+    String message = resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(), userLocale).getString(messageKey);
+
+    if (StringUtils.isBlank(message)) {
+      throw new IllegalStateException("Resource bundle key " + messageKey + "not found");
+    }
+    return message;
+  }
+
+  public static final Locale getUserLocale(String username) {
+    OrganizationService organizationService = CommonsUtils.getService(OrganizationService.class);
+    UserProfile profile = null;
+    try {
+      profile = organizationService.getUserProfileHandler().findUserProfileByName(username);
+    } catch (Exception e) {
+      LOG.error("Error when getting user locale ",e);
+    }
+    String lang = null;
+    if (profile != null) {
+      lang = profile.getAttribute(Constants.USER_LANGUAGE);
+    }
+    if (StringUtils.isNotBlank(lang)) {
+      return LocaleUtils.toLocale(lang);
+    }
+    return null;
   }
 
 }

@@ -1,10 +1,13 @@
 package org.exoplatform.addons.gamification.rest;
 
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
@@ -23,6 +26,10 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
+import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
 
 @Path("/gamification/realizations/api")
 @Api(value = "/gamification/realizations/api", description = "Manages users realizations") // NOSONAR
@@ -57,10 +64,10 @@ public class RealizationsRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response getAllRealizations(@ApiParam(value = "Offset of result", required = true)
+  public Response getAllRealizations(@ApiParam(value = "result fromDate", required = true)
                                                 @QueryParam("fromDate")
                                                 String fromDate,
-                                                @ApiParam(value = "Offset of result", required = true)
+                                                @ApiParam(value = "result toDate", required = true)
                                                 @QueryParam("toDate")
                                                 String toDate,
                                                 @ApiParam(value = "Offset of result", required = false)
@@ -133,31 +140,17 @@ public class RealizationsRest implements ResourceContainer {
   @ApiOperation(value = "Gets CSV report", httpMethod = "GET", response = Response.class, notes = "Given a a csv file of actions")
   @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
       @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
-  public Response getReport(@ApiParam(value = "Offset of result", required = true)
-  @QueryParam("fromDate")
-  String fromDate,
-                            @ApiParam(value = "Offset of result", required = true)
+  public Response getReport(@ApiParam(value = "result fromDate", required = true)
+                            @QueryParam("fromDate")
+                            String fromDate,
+                            @ApiParam(value = "result toDate", required = true)
                             @QueryParam("toDate")
-                            String toDate,
-                            @ApiParam(value = "Offset of result", required = false)
-                            @DefaultValue("0")
-                            @QueryParam("offset")
-                            int offset,
-                            @ApiParam(value = "Limit of result", required = false)
-                            @DefaultValue("10")
-                            @QueryParam("limit")
-                            int limit) {
-    if (offset < 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
-    }
-    if (limit <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-    }
+                            String toDate) {
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
                                                                                                              toDate,
-                                                                                                             offset,
-                                                                                                             limit);
+                                                                                                             0,
+                                                                                                             0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                         GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
 
@@ -179,7 +172,8 @@ public class RealizationsRest implements ResourceContainer {
     }
   }
 
-  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
+  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities)  {
+    Locale locale = getCurrentUserLocale();
     StringBuilder sbResult = new StringBuilder();
     // Add header
     sbResult.append(HEADER);
@@ -187,28 +181,42 @@ public class RealizationsRest implements ResourceContainer {
     sbResult.append(SEPARATOR);
 
     gamificationActionsHistoryRestEntities.forEach(ga -> {
-      sbResult.append(ga.getCreatedDate());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction().getEvent());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction().getTitle());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction().getType().name());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction().getDomainDTO().getTitle());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getAction().getDomainDTO().getDescription());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getScore());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getStatus());
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getEarner() != null ? ga.getEarner().getRemoteId() : "-");
-      sbResult.append(DELIMITER);
-      sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
-      sbResult.append(SEPARATOR);
+      try {
+        String eventKey = "exoplatform.gamification.gamificationinformation.rule.title.";
+        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
+        String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
+        String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, eventKey + ga.getAction().getEvent())
+                                                                         : StringEscapeUtils.escapeHtml(ga.getAction().getEvent())
+                                                                                            .replace("\n", " ");
+        String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, actionLabelKey
+            + ga.getAction().getTitle()) : StringEscapeUtils.escapeHtml(ga.getAction().getTitle()).replace("\n", " ");
+        String domainTitle = getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle());
+        String domainDescription = getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription());
+        sbResult.append(ga.getCreatedDate());
+        sbResult.append(DELIMITER);
+        sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
+        sbResult.append(DELIMITER);
+        sbResult.append(StringUtils.isBlank(actionId) ? ga.getAction().getEvent() : actionId);
+        sbResult.append(DELIMITER);
+        sbResult.append(StringUtils.isBlank(actionLabel) ? ga.getAction().getTitle() : actionLabel);
+        sbResult.append(DELIMITER);
+        sbResult.append(ga.getAction().getType().name());
+        sbResult.append(DELIMITER);
+        sbResult.append(StringUtils.isBlank(domainTitle) ? ga.getDomain().getTitle() : domainTitle);
+        sbResult.append(DELIMITER);
+        sbResult.append(StringUtils.isBlank(domainDescription) ? ga.getDomain().getDescription() : domainDescription);
+        sbResult.append(DELIMITER);
+        sbResult.append(ga.getScore());
+        sbResult.append(DELIMITER);
+        sbResult.append(ga.getStatus());
+        sbResult.append(DELIMITER);
+        sbResult.append(ga.getEarner() != null ? ga.getEarner().getRemoteId() : "-");
+        sbResult.append(DELIMITER);
+        sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
+        sbResult.append(SEPARATOR);
+      } catch (Exception e) {
+        LOG.error("Error when computing to XLSX ",e);
+      }
     });
     return sbResult.toString();
   }

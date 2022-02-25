@@ -410,8 +410,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
     query.setParameter("type", IdentityType.USER);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
+    if (limit != 0) {
+      query.setFirstResult(offset);
+      query.setMaxResults(limit);
+    }
     List<GamificationActionsHistory> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList ;
   }
