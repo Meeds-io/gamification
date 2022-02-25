@@ -22,7 +22,11 @@ export function initExtensions() {
       };
     },
     getThumbnail: () => '/challenges/images/challengesAppIcon.png',
-    getSummary: activity => activity && activity.templateParams && activity.templateParams.announcementDescription  && `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${ activity.templateParams.announcementChallengeId}"> ${ activity.templateParams.announcementDescription } </a> ` || '',
+    getSummary: activity => {
+      const announcementDescription = activity && activity.templateParams && activity.templateParams.announcementDescription  || '';
+      const announcementChallengeId = activity && activity.templateParams && activity.templateParams.announcementChallengeId  || '';
+      return `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${ announcementChallengeId }"> ${ announcementDescription } </a> `;
+    },
     getBody: activity => {
       return Vue.prototype.$utils.trim((activity.templateParams && activity.templateParams.announcementComment)
            || '');
