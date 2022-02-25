@@ -28,16 +28,11 @@ public class AnnouncementRest implements ResourceContainer {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementRest.class);
 
-  private final CacheControl cacheControl;
-
 
   private AnnouncementService announcementService;
 
   public AnnouncementRest(AnnouncementService announcementService) {
     this.announcementService = announcementService;
-    this.cacheControl = new CacheControl();
-    cacheControl.setNoCache(true);
-    cacheControl.setNoStore(true);
   }
 
   @POST
@@ -102,11 +97,11 @@ public class AnnouncementRest implements ResourceContainer {
     }
     EntityTag eTag = null ;
     List<AnnouncementRestEntity> announcementsRestEntities = new ArrayList<>();
-    eTag = new EntityTag(String.valueOf(announcementsRestEntities.hashCode()));
     try {
      List<Announcement> announcements = announcementService.findAllAnnouncementByChallenge(Long.parseLong(challengeId),
                                                                                             offset,
                                                                                             limit);
+      eTag = new EntityTag(String.valueOf(announcementsRestEntities.hashCode()));
       announcementsRestEntities = EntityMapper.fromAnnouncementList(announcements);
       Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
 
