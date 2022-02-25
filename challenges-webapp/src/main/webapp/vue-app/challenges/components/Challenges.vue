@@ -80,9 +80,9 @@ export default {
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
     const urlPath = document.location.pathname;
-    if (urlPath.includes('challenges/')) {
+    const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+    if (challengeId) {
       setTimeout(() => {
-        const challengeId = urlPath.split('challenges/')[1].split(/[^0-9]/)[0];
         this.$challengesServices.getChallengeById(challengeId).then(challenge => {
           if (challenge && challenge.id) {
             this.$refs.challengeDetails.challenge = challenge;

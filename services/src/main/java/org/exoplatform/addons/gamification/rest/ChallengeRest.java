@@ -100,11 +100,11 @@ public class ChallengeRest implements ResourceContainer {
     String currentUserId = Utils.getCurrentUser();
     try {
       Challenge challenge = challengeService.getChallengeById(challengeId, currentUserId);
-      if (challenge != null) {
-        List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
-        return Response.ok(EntityMapper.fromChallenge(challenge, announcementList)).build();
+      if (challenge == null) {
+        return  Response.status(Response.Status.NOT_FOUND).build();
       }
-      return Response.ok().entity("{\"challenge\":\"" + null + "\"}").build();
+      List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
+      return Response.ok(EntityMapper.fromChallenge(challenge, announcementList)).build();
     } catch (Exception e) {
       LOG.error("Error getting challenge", e);
       return Response.status(500).build();
