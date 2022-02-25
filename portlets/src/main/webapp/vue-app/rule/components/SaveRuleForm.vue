@@ -123,9 +123,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     {{ $t(`exoplatform.gamification.selectdM`) }}
                   </option>
                   <option v-for="option in domains" :value="option">
-                    {{
-                      $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
-                    }}
+                    {{ domainTitle(option.title) }}
                   </option>
                 </select>
               </form>
@@ -269,7 +267,14 @@ export default {
           }
           this.$emit('failAdd', this.rule, this.errorType);
         });
-    }
+    },
+    domainTitle(title){
+      if (!this.$t(`exoplatform.gamification.gamificationinformation.domain.${title}`).includes('exoplatform.gamification.gamificationinformation.domain')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.domain.${title}`) ;
+      } else {
+        return title;
+      }
+    },
   }
 };
 </script>
