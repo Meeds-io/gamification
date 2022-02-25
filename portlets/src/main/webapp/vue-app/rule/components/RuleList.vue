@@ -217,15 +217,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <v-spacer />
                   <div class="d-flex">
                     <btn
-                        class="btn btn-primary"
-                        @click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
-                      {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
-                    </btn>
-                    <btn
                         class="ignore-vuetify-classes btn mx-4"
                         outlined
                         @click.prevent="collapseConfirm(rule), onCancel()">
                       {{ this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                    </btn>
+                    <btn
+                        class="btn btn-primary"
+                        @click.prevent="onRemove(rule.id,rule.title),collapseConfirm(rule)">
+                      {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
                     </btn>
                   </div>
                 </v-toolbar>
@@ -242,7 +242,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <thead>
             <tr>
               <th class="rule-name-col ruleEvent">{{ $t(`exoplatform.gamification.gamificationinformation.Event`) }}</th>
-
+              <th class="rule-enable-col">{{ $t(`gamification.type`) }}</th>
               <th class="rule-desc-col ruleEvent">
                 {{ $t(`exoplatform.gamification.gamificationinformation.domain.Description`) }}
               </th>
@@ -251,7 +251,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 {{ $t(`exoplatform.gamification.gamificationinformation.Domain`) }}
               </th>
               <th class="rule-enable-col">{{ $t(`exoplatform.gamification.enabled`) }}</th>
-              <th class="rule-enable-col">{{ $t(`gamification.type`) }}</th>
               <th class="rule-action-col">{{ $t(`exoplatform.gamification.action`) }}</th>
             </tr>
           </thead>
@@ -259,14 +258,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <tr v-for="rule in filteredRules">
               <td class="ruleText">
                 <span v-if="rule && rule.type === 'AUTOMATIC'">
-                  {{ $t(`exoplatform.gamification.gamificationinformation.rule.title.${rule.event}`) }}
+                  {{ eventTitle(rule.event) }}
                 </span>
                 <span v-if="rule && rule.type === 'MANUAL'"> {{ rule.title }} </span>
               </td>
+              <td>
+                <span v-if="rule && rule.type === 'AUTOMATIC'"> {{ $t('gamification.label.auto') }} </span>
+                <span v-if="rule && rule.type === 'MANUAL'"> {{ $t('gamification.label.manual') }} </span>
+              </td>
               <td >
-                <div class="ruleText mx-2">
+                <div class="ruleText mx-2" >
                   <span v-if="rule && rule.type === 'AUTOMATIC'">
-                    {{ $t(`exoplatform.gamification.gamificationinformation.rule.description.${rule.title}`) }}
+                    {{ description(rule.title) }}
                   </span>
                   <span v-if="rule && rule.type === 'MANUAL'" v-sanitized-html="rule && rule.description" />
                 </div>
@@ -276,22 +279,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </td>
               <td style="max-width: 115px;">
                 <div v-if="rule.domainDTO != null">
-                  {{ $t(`exoplatform.gamification.gamificationinformation.domain.${rule.domainDTO.title}`,rule.domainDTO.title) }}
+                  {{ domainTitle(rule.domainDTO.title)}}
                 </div>
               </td>
               <td>
                   <label class="switch">
                     <input
-                      v-model="rule.enabled"
+                      :checked= "rule.enabled || (!rule.enabled && getRuleStatus(rule.startDate ,rule.endDate) !== 'ENDED')"
                       disabled
                       type="checkbox">
                     <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no" data-value="rule.enabled">{{ $t(`exoplatform.gamification.NO`) }}</span>
                   </label>
-              </td>
-              <td>
-                <span v-if="rule && rule.type === 'AUTOMATIC'"> {{ $t('gamification.label.auto') }} </span>
-                <span v-if="rule && rule.type === 'MANUAL'"> {{ $t('gamification.label.manual') }} </span>
               </td>
 
               <td class="center actionContainer">
@@ -381,6 +380,7 @@ export default {
       editedEnabled: null,
       enabledMessage: '',
       filerlabel: 'all',
+      showMenu: false,
     };
   },
 
@@ -392,14 +392,15 @@ export default {
                     this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${item.event}`,item.event).toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
                     this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.domainDTO.title}`,item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1||
                     item.score.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1)
-                    && (this.enabledFilter === null || item.enabled === this.enabledFilter)
+                    && (this.enabledFilter === null || ( item.enabled === this.enabledFilter && item.type === 'AUTOMATIC' ) ||
+                    ( this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) !== 'ENDED') ||
+                    ( !this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) === 'ENDED'))
         );
       });
     },
-    isBottonDisabled: function(){
+    isBottonDisabled(){
       return !(this.isNotEmpty(this.editedrule.event)&&this.isNotEmpty(this.editedrule.score)&&this.editedrule.domainDTO!=null);
     },
-
   },
 
 
@@ -446,6 +447,51 @@ export default {
       setTimeout(function () {
         $(item).fadeOut('fast');
       }, 4000);
+    },
+    domainTitle(title){
+      if (!this.$t(`exoplatform.gamification.gamificationinformation.domain.${title}`).includes('exoplatform.gamification.gamificationinformation.domain')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.domain.${title}`) ;
+      } else {
+        return title;
+      }
+    },
+    eventTitle(event){
+      if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${event}`).includes('exoplatform.gamification.gamificationinformation.rule.title')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${event}`) ;
+      } else {
+        return event;
+      }
+    },
+    description(description){
+      if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${description}`).includes('exoplatform.gamification.gamificationinformation.rule.description')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${description}`) ;
+      } else {
+        return description;
+      }
+    },
+    getRuleStatus(startDate, endDate){
+      const status = {
+        NOTSTARTED: 'NOTSTARTED',
+        STARTED: 'STARTED',
+        ENDED: 'ENDED'
+      };
+      const currentDate = new Date();
+      startDate = new Date(startDate);
+      endDate = new Date(endDate);
+      if (startDate.getTime() > currentDate.getTime() && endDate.getTime() > currentDate.getTime()) {
+        return status.NOTSTARTED;
+      } else if ((startDate.getTime() < currentDate.getTime() && endDate.getTime() > currentDate.getTime()) || (this.getFromDate(endDate) ===  this.getFromDate(currentDate))) {
+        return status.STARTED;
+      } else if (endDate.getTime() < currentDate.getTime() && startDate.getTime() < currentDate.getTime()) {
+        return status.ENDED;
+      }
+    },
+    getFromDate(date) {
+      const lang = eXo.env.portal.language;
+      const options = { month: 'long' };
+      const day = String(date.getDate());
+      const year = String(date.getFullYear());
+      return `${date.toLocaleDateString(lang || 'en', options)} ${day}, ${year}` ;
     }
   }
 };

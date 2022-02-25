@@ -115,21 +115,24 @@
     margin: 0 25%;
     height: 100%;
     .btn {
-      text-transform: lowercase !important;
+      text-transform: capitalize !important;
     }
   }
   .addRule{
-    margin: 30px;
+    margin: 30px 45px 24px 8px;
   }
   .ruleText{
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
-    max-height: 10em;
+    max-height: 50%;
     word-break: break-word;
     padding: 0;
     height: auto;
+    display: -webkit-box;
+    max-width: 100%;
+    margin: 1% 5%;
   }
   .ruleEvent{
     width: 35%;
@@ -506,6 +509,7 @@
     box-shadow: none;
     max-height: 40px;
     text-overflow: ellipsis;
+    width: 97%;
   }
 
   form#areaSelectboxGroup {
@@ -581,7 +585,8 @@
     -webkit-transform: translateX(-190px);
     -ms-transform: translateX(-190px);
     transform: translateX(-190px);
-    left: -6px;
+    left: -6px ~'; /** orientation=lt */ ';
+    right: -6px ~'; /** orientation=rt */ ';
     color: white;
     text-align: right;
     font-size: 16px;
@@ -597,7 +602,8 @@
     transform: translateX(0px);
     z-index: 15;
     position: absolute;
-    left: 2px;
+    left: -6px;
+    right: -6px;
     color: white;
     text-align: right;
     font-size: 16px;
@@ -663,21 +669,23 @@
     float: right;
     margin-top: 17px;
     margin-right: 12px;
+    min-width : 11%;
   }
 
   .filter-bar select.mb-4 {
     word-wrap: normal;
     border: 2px Solid #e1e8ee;
     border-radius: 5px;
-    margin: auto;
     outline: none;
     height: 36px;
     width: auto;
     padding: 0 10px;
+    -webkit-appearance: checkbox !important;
   }
 
   .PopupContent.popupContent select {
     height: 40px;
+    -webkit-appearance: checkbox !important;
   }
 
   form.switchEnabled label.switch {
