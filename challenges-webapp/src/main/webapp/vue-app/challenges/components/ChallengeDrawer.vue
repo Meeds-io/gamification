@@ -231,8 +231,10 @@ export default {
         this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
         this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
       }
-      this.$refs.challengeProgram.broadcast = false;
-      this.$refs.challengeProgram.program =  this.challenge.program;
+      if (this.challenge.program){
+        this.$refs.challengeProgram.broadcast = false;
+        this.$refs.challengeProgram.program =  this.challenge.program;
+      }
       const data = {
         managers: this.challenge.managers,
         space: space,
