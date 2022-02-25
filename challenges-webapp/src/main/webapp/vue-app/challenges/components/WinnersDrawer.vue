@@ -87,7 +87,8 @@ export default {
       this.$refs.winnersDetails.close();
     },
     open() {
-      this.getAnnouncement();
+      this.listWinners = [];
+      this.getAnnouncement(false);
       this.$refs.winnersDetails.open();
     },
     loadMore() {

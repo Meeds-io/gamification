@@ -4,17 +4,21 @@ import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.social.rest.api.EntityBuilder;
+import org.exoplatform.social.rest.api.RestUtils;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Path("/gamification/announcement/api")
@@ -24,10 +28,16 @@ public class AnnouncementRest implements ResourceContainer {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementRest.class);
 
+  private final CacheControl cacheControl;
+
+
   private AnnouncementService announcementService;
 
   public AnnouncementRest(AnnouncementService announcementService) {
     this.announcementService = announcementService;
+    this.cacheControl = new CacheControl();
+    cacheControl.setNoCache(true);
+    cacheControl.setNoStore(true);
   }
 
   @POST
@@ -71,9 +81,11 @@ public class AnnouncementRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response getAllAnnouncementByChallenge(@ApiParam(value = "id of the challenge", required = true)
-  @PathParam("challengeId")
-  String challengeId,
+  public Response getAllAnnouncementByChallenge(@Context Request request,
+                                                @Context UriInfo uriInfo,
+                                                @ApiParam(value = "id of the challenge", required = true)
+                                                @PathParam("challengeId")
+                                                String challengeId,
                                                 @ApiParam(value = "Offset of result", required = false)
                                                 @DefaultValue("0")
                                                 @QueryParam("offset")
@@ -88,11 +100,24 @@ public class AnnouncementRest implements ResourceContainer {
     if (limit <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
+    EntityTag eTag = null ;
+    List<AnnouncementRestEntity> announcementsRestEntities = new ArrayList<>();
+    eTag = new EntityTag(String.valueOf(announcementsRestEntities.hashCode()));
     try {
-      List<Announcement> announcements = announcementService.findAllAnnouncementByChallenge(Long.parseLong(challengeId),
+     List<Announcement> announcements = announcementService.findAllAnnouncementByChallenge(Long.parseLong(challengeId),
                                                                                             offset,
                                                                                             limit);
-      return Response.ok(EntityMapper.fromAnnouncementList(announcements)).build();
+      announcementsRestEntities = EntityMapper.fromAnnouncementList(announcements);
+      Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
+
+      if (builder == null) {
+        builder = EntityBuilder.getResponseBuilder(announcementsRestEntities, uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
+        builder.tag(eTag);
+        Date date = new Date(System.currentTimeMillis());
+        builder.lastModified(date);
+        builder.expires(date);
+      }
+      return builder.build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of announcements", e);
       return Response.serverError().entity(e.getMessage()).build();
