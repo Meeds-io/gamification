@@ -90,8 +90,7 @@ export function saveAnnouncement(announcement) {
   });
 }
 
-export function getAllChallengeById(id)
-{
+export function getChallengeById(id) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/${id}`, {
     method: 'GET',
     credentials: 'include',
@@ -99,7 +98,7 @@ export function getAllChallengeById(id)
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when getting challenges');
+      return null;
     }
   });
 }

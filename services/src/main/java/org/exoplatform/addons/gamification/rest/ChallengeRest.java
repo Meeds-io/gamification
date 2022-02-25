@@ -100,6 +100,9 @@ public class ChallengeRest implements ResourceContainer {
     String currentUserId = Utils.getCurrentUser();
     try {
       Challenge challenge = challengeService.getChallengeById(challengeId, currentUserId);
+      if (challenge == null) {
+        return  Response.status(Response.Status.NOT_FOUND).build();
+      }
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
       return Response.ok(EntityMapper.fromChallenge(challenge, announcementList)).build();
     } catch (Exception e) {
