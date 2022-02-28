@@ -150,7 +150,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       {{ $t(`exoplatform.gamification.selectdM`) }}
                     </option>
                     <option v-for="option in domains" :value="option">
-                      {{ $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title) }}
+                      {{ domainTitle(option.title) }}
                     </option>
                   </select>
                 </form>
@@ -258,7 +258,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <tr v-for="rule in filteredRules">
               <td class="ruleText">
                 <span v-if="rule && rule.type === 'AUTOMATIC'">
-                  {{ eventTitle(rule.event) }}
+                  {{ eventTitle(rule.event,rule.title) }}
                 </span>
                 <span v-if="rule && rule.type === 'MANUAL'"> {{ rule.title }} </span>
               </td>
@@ -269,7 +269,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <td >
                 <div class="ruleText mx-2" >
                   <span v-if="rule && rule.type === 'AUTOMATIC'">
-                    {{ description(rule.title) }}
+                    {{ description(rule.description,rule.event,rule.title) }}
                   </span>
                   <span v-if="rule && rule.type === 'MANUAL'" v-sanitized-html="rule && rule.description" />
                 </div>
@@ -285,7 +285,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <td>
                   <label class="switch">
                     <input
-                      :checked= "rule.enabled || (!rule.enabled && getRuleStatus(rule.startDate ,rule.endDate) !== 'ENDED')"
+                      :checked= "rule.enabled || (!rule.enabled && getRuleStatus(rule.startDate ,rule.endDate) === 'STARTED')"
                       disabled
                       type="checkbox">
                     <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
@@ -387,10 +387,10 @@ export default {
   computed: {
     filteredRules() {
       return this.rules.filter(item => {
-        return ((
-          this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
-                    this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${item.event}`,item.event).toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
-                    this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.domainDTO.title}`,item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1||
+        return (( item.title && item.description && item.event &&
+          this.description(item.description,item.event ,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1 || item.event && item.title &&
+          this.eventTitle(item.event ,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1 || item.domainDTO && item.domainDTO.title &&
+                    this.domainTitle(item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1||
                     item.score.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1)
                     && (this.enabledFilter === null || ( item.enabled === this.enabledFilter && item.type === 'AUTOMATIC' ) ||
                     ( this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) !== 'ENDED') ||
@@ -455,16 +455,20 @@ export default {
         return title;
       }
     },
-    eventTitle(event){
+    eventTitle(event,title){
       if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${event}`).includes('exoplatform.gamification.gamificationinformation.rule.title')){
         return this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${event}`) ;
+      } else if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${title}`).includes('exoplatform.gamification.gamificationinformation.rule.title')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${title}`) ;
       } else {
         return event;
       }
     },
-    description(description){
-      if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${description}`).includes('exoplatform.gamification.gamificationinformation.rule.description')){
-        return this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${description}`) ;
+    description(description,event,title){
+      if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${event}`).includes('exoplatform.gamification.gamificationinformation.rule.description')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${event}`) ;
+      } else if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${title}`).includes('exoplatform.gamification.gamificationinformation.rule.description')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${title}`) ;
       } else {
         return description;
       }
