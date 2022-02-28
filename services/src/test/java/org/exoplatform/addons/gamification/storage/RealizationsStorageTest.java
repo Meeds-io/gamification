@@ -31,10 +31,10 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   public void testUpdateRealizationStatus() {
     assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
-    assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED);
+    assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
     gHistory.setStatus(HistoryStatus.REJECTED.name());
     GamificationActionsHistoryDTO rejectedGHistory = realizationsStorage.updateRealizationStatus(gHistory);
-    assertEquals(rejectedGHistory.getStatus(), HistoryStatus.REJECTED);
+    assertEquals(rejectedGHistory.getStatus(), HistoryStatus.REJECTED.name());
 
   }
 }

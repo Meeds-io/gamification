@@ -9,7 +9,6 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
@@ -126,29 +125,31 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testgetAllPointsWithNullDomain() {
-    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain(), 0);
+  public void testGetAllPointsWithNullDomain() {
+    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain().size(), 0);
+
     GamificationActionsHistory ghistory1 = newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain(), 0);
+    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain().size(), 0);
     ghistory1.setDomainEntity(null);
     gamificationHistoryDAO.update(ghistory1);
-    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain(), Integer.parseInt(TEST__SCORE));
+    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain().size(), 1);
+    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain().get(0).getGlobalScore(), Integer.parseInt(TEST__SCORE));
+
     GamificationActionsHistory gHistory2 = newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain(), Integer.parseInt(TEST__SCORE));
+    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain().size(), 1);
     gHistory2.setDomainEntity(null);
     gamificationHistoryDAO.update(gHistory2);
-    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain(), Integer.parseInt(TEST__SCORE)*2);
-    GamificationActionsHistory gHistory3 = newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain(), Integer.parseInt(TEST__SCORE)*2);
+    assertEquals(gamificationHistoryDAO.getAllPointsWithNullDomain().size(), 2);
   }
 
   @Test
   public void testFindDomainScoreByIdentityId() {
-    assertEquals(gamificationHistoryDAO.findDomainScoreByIdentityId(TEST_USER_SENDER), 0);
+    assertEquals(gamificationHistoryDAO.findDomainScoreByIdentityId(TEST_USER_SENDER).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.findDomainScoreByIdentityId(TEST_USER_SENDER), Integer.parseInt(TEST__SCORE)*3);
+    assertEquals(gamificationHistoryDAO.findDomainScoreByIdentityId(TEST_USER_SENDER).size(), 1);
+    assertEquals(gamificationHistoryDAO.findDomainScoreByIdentityId(TEST_USER_SENDER).get(0).getScore(), Integer.parseInt(TEST__SCORE)*3);
   }
 
   @Test
@@ -180,11 +181,11 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
   @Test
   public void testFindActionsHistoryByEarnerIdSortedByDate() {
-    assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit), 0);
+    assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit), limit);
+    assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit).size(), limit);
   }
 
   @Test
@@ -210,11 +211,11 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
   @Test
   public void testCountAnnouncementsByChallenge() {
-    assertEquals(Optional.ofNullable(gamificationHistoryDAO.countAnnouncementsByChallenge(1L)),0l);
+    assertEquals((long)gamificationHistoryDAO.countAnnouncementsByChallenge(1L),0l);
     GamificationActionsHistoryDTO ghistory = newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
-    assertEquals(Optional.ofNullable(gamificationHistoryDAO.countAnnouncementsByChallenge(ghistory.getRuleId())), limit);
+    assertEquals((long)gamificationHistoryDAO.countAnnouncementsByChallenge(ghistory.getRuleId()),limit);
   }
   @Test
   public void testFindAllAnnouncementByChallenge() {
