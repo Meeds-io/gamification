@@ -22,6 +22,8 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.upgrade.UpgradeProductPlugin;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -43,18 +45,21 @@ public class RuleNameUpgradePlugin extends UpgradeProductPlugin {
     public void processUpgrade(String oldVersion, String newVersion) {
 
         List<RuleDTO> rules = ruleService.getAllAutomaticRules();
-        
+        RequestLifeCycle.begin(PortalContainer.getInstance());
         rules.stream()
              .filter(ruleDTO -> ruleDTO.getTitle().startsWith("GAMIFICATION_DEFAULT_DATA_PREFIX"))
              .forEach(ruleDTO -> {
+                 try {
                  String ruleTitle= ruleDTO.getTitle();
                  ruleTitle=ruleTitle.replace("GAMIFICATION_DEFAULT_DATA_PREFIX",
                                              GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX);
                  ruleDTO.setTitle(ruleTitle);
-                 try {
+
                      ruleService.updateRule(ruleDTO);
                  } catch (Exception e) {
                      LOG.error("Unable to update Rule "+ruleDTO.getTitle());
+                 } finally {
+                     RequestLifeCycle.end();
                  }
              });
         

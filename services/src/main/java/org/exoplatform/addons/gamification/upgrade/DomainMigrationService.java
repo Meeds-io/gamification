@@ -229,6 +229,7 @@ public class DomainMigrationService implements Startable {
 
         if(getDataversion() < RULES_EVENT_MIGRATION_DATA_VERSION) {
             long startTime = System.currentTimeMillis();
+            RequestLifeCycle.begin(this.portalContainer);
 
             try {
                 LOG.info("=== Start migration of Rules");
@@ -261,6 +262,8 @@ public class DomainMigrationService implements Startable {
 
             } catch (Exception e) {
                 LOG.error("Error when migration Rules ", e);
+            } finally {
+                RequestLifeCycle.end();
             }
         }
     }
