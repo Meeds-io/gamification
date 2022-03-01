@@ -211,7 +211,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
     newAnnouncement.setActivityId(1L);
     Announcement updatedAnnouncement = announcementService.updateAnnouncement(newAnnouncement);
-    assertEquals(updatedAnnouncement, newAnnouncement);
+    assertEquals(updatedAnnouncement.getId(), newAnnouncement.getId());
+    assertEquals(updatedAnnouncement.getActivityId(), newAnnouncement.getActivityId());
   }
 
   @Test
