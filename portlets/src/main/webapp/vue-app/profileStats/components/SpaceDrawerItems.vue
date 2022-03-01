@@ -72,8 +72,6 @@ export default {
   },
   mounted() {
     if (this.space.id && this.space.groupId) {
-      // TODO disable tiptip because of high CPU usage using its code
-      this.initTiptip();
       document.addEventListener('space_membership_updated', (event) => {
         this.$emit('removeLeavedSpace', event.detail);
       });
@@ -82,26 +80,6 @@ export default {
       });
     }
   },
-  methods: {
-    initTiptip() {
-      this.$nextTick(() => {
-        $(`.${this.spaceItemClass}`).spacePopup({
-          userName: eXo.env.portal.userName,
-          spaceID: this.space.id,
-          restURL: '/portal/rest/v1/social/spaces/{0}',
-          membersRestURL: '/portal/rest/v1/social/spaces/{0}/users?returnSize=true',
-          managerRestUrl: '/portal/rest/v1/social/spaces/{0}/users?role=manager&returnSize=true',
-          membershipRestUrl: '/portal/rest/v1/social/spacesMemberships?space={0}&returnSize=true',
-          defaultAvatarUrl: this.space.avatarUrl,
-          deleteMembershipRestUrl: '/portal/rest/v1/social/spacesMemberships/{0}:{1}:{2}',
-          content: false,
-          keepAlive: true,
-          defaultPosition: 'left_bottom',
-          maxWidth: '420px',
-        });
-      });
-    },
-  }
 };
 
 </script>
