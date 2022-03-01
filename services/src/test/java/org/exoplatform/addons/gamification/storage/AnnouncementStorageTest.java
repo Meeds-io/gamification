@@ -2,10 +2,13 @@ package org.exoplatform.addons.gamification.storage;
 
 
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -47,7 +50,7 @@ public class AnnouncementStorageTest {
         announcementStorage = new AnnouncementStorage(announcementDAO,challengeStorage);
     }
 
-    @PrepareForTest({ Utils.class, EntityMapper.class })
+    @PrepareForTest({ Utils.class, EntityMapper.class , DomainMapper.class})
     @Test
     public void testSaveAnnouncement() {
         Date startDate = new Date(System.currentTimeMillis());
@@ -92,9 +95,9 @@ public class AnnouncementStorageTest {
         announcementEntity.setCreatedDate(createDate);
 
         GamificationActionsHistory newAnnouncementEntity = new GamificationActionsHistory();
-        announcementEntity.setEarnerId(announcement.getAssignee().toString());
+        newAnnouncementEntity.setEarnerId(announcement.getAssignee().toString());
         newAnnouncementEntity.setCreator(announcementEntity.getCreator());
-        announcementEntity.setRuleId(challenge.getId());
+        newAnnouncementEntity.setRuleId(challenge.getId());
         newAnnouncementEntity.setComment(announcementEntity.getComment());
         newAnnouncementEntity.setCreatedDate(createDate);
         newAnnouncementEntity.setId(1l);
@@ -117,9 +120,15 @@ public class AnnouncementStorageTest {
         when(EntityMapper.toEntity(challenge)).thenReturn(challengeEntity);
         when(EntityMapper.toEntity(announcement)).thenReturn(announcementEntity);
         when(EntityMapper.fromEntity(newAnnouncementEntity)).thenReturn(announcementFromEntity);
+        DomainDTO domainDTO = new DomainDTO();
+        domainDTO.setTitle("gamification");
+        DomainEntity domainEntity = new DomainEntity();
+        domainEntity.setTitle("gamification");
+        PowerMockito.mockStatic(DomainMapper.class);
+        when(Utils.getDomainByTitle(any())).thenReturn(domainDTO);
+        when(DomainMapper.domainDTOToDomain(domainDTO)).thenReturn(domainEntity);
 
         Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
-
 
         // Then
         assertNotNull(createdAnnouncement);
@@ -206,6 +215,7 @@ public class AnnouncementStorageTest {
         announcementEntity2.setId(1l);
         announcementEntity1.setId(1l);
         announcementEntity2.setCreator(1L);
+        announcementEntity2.setEarnerId(String.valueOf(1L));
         announcementEntity1.setRuleId(challengeEntity.getId());
         announcementEntity2.setComment("announcement comment 2");
         announcementEntity2.setCreatedDate(createDate);

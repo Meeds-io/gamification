@@ -93,7 +93,8 @@ public class ChallengeStorageTest {
         assertNotNull(createdChallenge);
         assertEquals(createdChallenge.getId(), 1l);
         challenge.setId(createdChallenge.getId());
-        assertEquals(challenge, createdChallenge);
+        assertEquals(challenge.getId(), createdChallenge.getId());
+        assertEquals(challenge.getTitle(), createdChallenge.getTitle());
     }
 
     @PrepareForTest({ EntityMapper.class })
@@ -123,6 +124,7 @@ public class ChallengeStorageTest {
 
         when(EntityMapper.fromEntity(challengeEntity)).thenReturn(challenge);
         when(challengeDAO.find(eq(1l))).thenReturn(challengeEntity);
+        when(challengeDAO.find(eq(2l))).thenReturn(null);
 
         Challenge notExistingChallenge = challengeStorage.getChallengeById(2l);
         assertNull(notExistingChallenge);
