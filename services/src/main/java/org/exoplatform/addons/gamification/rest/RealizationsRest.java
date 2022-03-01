@@ -186,10 +186,10 @@ public class RealizationsRest implements ResourceContainer {
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, eventKey + ga.getAction().getEvent())
-                                                                         : StringEscapeUtils.escapeHtml(ga.getAction().getEvent())
+                                                                         : StringEscapeUtils.unescapeHtml(ga.getAction().getEvent())
                                                                                             .replace("\n", " ");
         String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, actionLabelKey
-            + ga.getAction().getTitle()) : StringEscapeUtils.escapeHtml(ga.getAction().getTitle()).replace("\n", " ");
+            + ga.getAction().getTitle()) : StringEscapeUtils.unescapeHtml(ga.getAction().getTitle()).replace("\n", " ");
         String domainTitle = getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle());
         String domainDescription = getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription());
         sbResult.append(ga.getCreatedDate());
