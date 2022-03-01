@@ -160,7 +160,6 @@ export default {
         .then(() => {
           this.addSuccess = true;
           this.updateMessage = 'updated';
-          this.rules =  this.getRules();
           this.dismissCountDown = 15;
         })
         .catch(e => {
