@@ -32,9 +32,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.service.mapper.DomainMapper</type>
     </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.upgrade.DomainMigrationService</type>
-    </component>
 
 
     <!-- Gamification Settings : Zone -->
