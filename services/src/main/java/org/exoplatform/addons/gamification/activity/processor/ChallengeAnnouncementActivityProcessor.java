@@ -11,12 +11,16 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.service.LinkProvider;
+
 import java.util.*;
 
 public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcessorPlugin {
     private static final Log LOG = ExoLogger.getLogger(ChallengeAnnouncementActivityProcessor.class);
 
     private static final String ACTIVITY_TYPE = "challenges-announcement";
+
+    private static final String APP_URL = "/challenges/";
 
     AnnouncementService announcementService;
 
@@ -47,11 +51,24 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
             UserInfo userInfo = Utils.getUserById(announcement.getAssignee(),announcement.getChallengeId());
             params.put("announcementAssigneeUsername", userInfo.getRemoteId());
             params.put("announcementAssigneeFullName", userInfo.getFullName());
-            params.put("announcementChallengeId", String.valueOf(announcement.getChallengeId()));
+            params.put("announcementChallenge", getAnnouncementChallenge(String.valueOf(announcement.getChallengeId()), activity.getTemplateParams().get("announcementDescription")));
             activity.getTemplateParams().putAll(params);
         } catch (ObjectNotFoundException e) {
             LOG.error("Unexpected error", e);
         }
+    }
+
+    private String getAnnouncementChallenge(String challengeId, String challengeDescription){
+        StringBuilder challenge = new StringBuilder();
+        challenge.append( "<a href=\"");
+        String portalName  = LinkProvider.getPortalName("");
+        String portalOwner  = LinkProvider.getPortalOwner("");
+        String url =  "/" + portalName + "/" + portalOwner + APP_URL + challengeId;
+        challenge.append(url);
+        challenge.append( "\" target=\"_self\"  rel=\"nofollow\"> ");
+        challenge.append(challengeDescription);
+        challenge.append(" </a>");
+        return String.valueOf(challenge);
     }
 
 }
