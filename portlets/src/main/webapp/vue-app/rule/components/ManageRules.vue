@@ -157,10 +157,10 @@ export default {
     },
     updateRule(ruleDTO) {
       this.$RuleServices.updateRule(ruleDTO)
-        .then(rule => {
+        .then(() => {
           this.addSuccess = true;
           this.updateMessage = 'updated';
-          this.rules.push(rule);
+          this.rules =  this.getRules();
           this.dismissCountDown = 15;
         })
         .catch(e => {
