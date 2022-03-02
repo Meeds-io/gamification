@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,6 +49,8 @@ public class Utils {
   public static final DateTimeFormatter RFC_3339_FORMATTER          =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
+
+  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS     =  {',',';','\n'};
 
   private static GamificationService    gamificationService;
 
@@ -294,12 +297,13 @@ public class Utils {
     if (userLocale == null) {
       userLocale = Locale.ENGLISH;
     }
-    String message = resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(), userLocale).getString(messageKey);
-
-    if (StringUtils.isBlank(message)) {
-      throw new IllegalStateException("Resource bundle key " + messageKey + "not found");
+    try {
+      return resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(), userLocale)
+                                  .getString(messageKey);
+    } catch (Exception e) {
+      LOG.warn("Resource bundle key " + messageKey + "not found");
+      return null;
     }
-    return message;
   }
 
   public static final Locale getUserLocale(String username) {
@@ -318,6 +322,15 @@ public class Utils {
       return LocaleUtils.toLocale(lang);
     }
     return null;
+  }
+
+  public static String escapeIllegalCharacterInMessage(String message) {
+    if (message == null) return null;
+    message = StringEscapeUtils.unescapeHtml(message);
+    for (char c : ILLEGAL_MESSAGE_CHARACTERS) {
+      message = message.replace(c, ' ');
+    }
+    return message;
   }
 
 }
