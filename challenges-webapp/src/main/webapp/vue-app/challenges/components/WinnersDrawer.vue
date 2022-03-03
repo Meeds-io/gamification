@@ -13,29 +13,22 @@
         </div>
       </template>
       <template slot="content">
-        <v-flex v-for="winner in listWinners" :key="winner.user.id">
-          <v-row class="accountTitleWrapper mx-0">
-            <v-list-item
-              :href="getProfileUrl(winner.user.remoteId)"
-              class="accountTitleItem py-3">
-              <v-list-item-avatar size="44" class="me-3 mt-0 mb-0 elevation-1">
-                <v-img :src="winner.user.avatarUrl" eager />
-              </v-list-item-avatar>
-              <v-list-item-content class="py-0 accountTitleLabel">
-                <v-list-item-title class="font-weight-bold body-2 mb-0">
-                  {{ winner.user.fullName }}
-                </v-list-item-title>
-                <v-list-item-subtitle class="caption">
-                  <a :href="getLinkActivity(winner.activityId)">
-                    <relative-date-format
-                      class="text-capitalize-first-letter text-light-color text-truncate"
-                      :value="winner.createDate" />
-                  </a>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-row>
-        </v-flex>
+        <exo-user-avatar
+          v-for="winner in listWinners" 
+          :key="winner.user.id"
+          :profile-id="winner.user.remoteId"
+          :size="44"
+          extra-class="px-4 py-3 border-bottom-color"
+          bold-title
+          popover>
+          <template slot="subTitle">
+            <a :href="getLinkActivity(winner.activityId)">
+              <relative-date-format
+                class="text-capitalize-first-letter text-light-color text-truncate"
+                :value="winner.createDate" />
+            </a>
+          </template>
+        </exo-user-avatar> 
       </template>
       <template v-if="showLoadMoreButton" slot="footer">
         <v-row class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
