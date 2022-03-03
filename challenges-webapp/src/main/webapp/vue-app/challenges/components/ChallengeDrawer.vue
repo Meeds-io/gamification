@@ -247,6 +247,7 @@ export default {
       this.challenge = {};
       this.$refs.challengeProgram.broadcast = true;
       this.$refs.challengeDatePicker.startDate = null;
+      this.$refs.challengeDatePicker.$refs.challengeStartDate.dateShortIso = null;
       this.$set(this.challenge,'points', 20);
       this.$refs.challengeDatePicker.endDate = null;
       this.$refs.challengeDescription.inputVal = null;
@@ -268,7 +269,7 @@ export default {
       if (this.challenge && this.challenge.id){
         this.setUp();
       }
-      this.$refs.challengeDrawer.open();
+      this.$nextTick().then(() => this.$refs.challengeDrawer.open() );
     },
     close(){
       this.reset();
