@@ -1,7 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
 import io.swagger.annotations.*;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -28,8 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
-import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
+import static org.exoplatform.addons.gamification.utils.Utils.*;
 
 @Path("/gamification/realizations/api")
 @Api(value = "/gamification/realizations/api", description = "Manages users realizations") // NOSONAR
@@ -185,13 +183,12 @@ public class RealizationsRest implements ResourceContainer {
         String eventKey = "exoplatform.gamification.gamificationinformation.rule.title.";
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
-        String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, eventKey + ga.getAction().getEvent())
-                                                                         : StringEscapeUtils.unescapeHtml(ga.getAction().getEvent())
-                                                                                            .replace("\n", " ");
+        String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, eventKey + ga.getAction().getEvent().replace(" ", ""))
+                                                                         : escapeIllegalCharacterInMessage(ga.getAction().getEvent().replace(" ", ""));
         String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, actionLabelKey
-            + ga.getAction().getTitle()) : StringEscapeUtils.unescapeHtml(ga.getAction().getTitle()).replace("\n", " ");
-        String domainTitle = getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle());
-        String domainDescription = getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription());
+            + ga.getAction().getTitle()) : escapeIllegalCharacterInMessage(ga.getAction().getTitle());
+        String domainTitle = ga.getDomain() != null ? getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle().replace(" ", "")) : "-";
+        String domainDescription = ga.getDomain() != null? getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription().replace(" ", "")) : "-";
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
