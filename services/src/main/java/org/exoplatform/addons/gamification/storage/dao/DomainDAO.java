@@ -25,6 +25,7 @@ import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements GenericDAO<DomainEntity, Long> {
 
@@ -37,7 +38,9 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
                 .setParameter("domainTitle", domainTitle);
 
         try {
-            return query.getSingleResult();
+            List<DomainEntity> domainEntities =  query.getResultList();
+            List<DomainEntity> enabledDomainEntities = domainEntities.stream().filter(DomainEntity::isEnabled).collect(Collectors.toList());
+            return !enabledDomainEntities.isEmpty()  ? enabledDomainEntities.get(0) : null;
         } catch (NoResultException e) {
             return null;
         }

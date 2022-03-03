@@ -1,7 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
 import io.swagger.annotations.*;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -188,8 +187,8 @@ public class RealizationsRest implements ResourceContainer {
                                                                          : escapeIllegalCharacterInMessage(ga.getAction().getEvent().replace(" ", ""));
         String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, actionLabelKey
             + ga.getAction().getTitle()) : escapeIllegalCharacterInMessage(ga.getAction().getTitle());
-        String domainTitle = getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle().replace(" ", ""));
-        String domainDescription = getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription().replace(" ", ""));
+        String domainTitle = ga.getDomain() != null ? getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle().replace(" ", "")) : "-";
+        String domainDescription = ga.getDomain() != null? getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription().replace(" ", "")) : "-";
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());

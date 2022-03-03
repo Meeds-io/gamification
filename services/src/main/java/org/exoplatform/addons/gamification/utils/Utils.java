@@ -301,7 +301,7 @@ public class Utils {
       return resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(), userLocale)
                                   .getString(messageKey);
     } catch (Exception e) {
-      LOG.warn("Resource bundle key " + messageKey + "not found");
+      LOG.warn("Resource bundle key " + messageKey + " not found");
       return null;
     }
   }
