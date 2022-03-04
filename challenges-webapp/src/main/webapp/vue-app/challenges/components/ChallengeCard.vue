@@ -172,7 +172,7 @@ export default {
       };
       this.listWinners.push({'userName': newAnnouncement.user.remoteId});
       this.challenge.announcementsCount = this.challenge.announcementsCount +1;
-      this.$refs.announcementsUsersAvatar.refresh(newAnnouncement.user.remoteId);
+      this.$root.$emit('refresh-avatars-list', newAnnouncement.user.remoteId);
     },
     openDetails() {
       this.$refs.winnersDetails.open();
