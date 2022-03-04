@@ -37,7 +37,7 @@
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="showDetails">
+            <div class="contentChallenge" @click="showDetails(challenge.id)">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
@@ -64,8 +64,10 @@
           :class="showAllAvatarList && 'AllUsersAvatar'"
           class="winners winnersAvatarsList d-flex flex-nowrap my-2">
           <exo-user-avatars-list
+            ref="announcementsUsersAvatar"
             :users="avatarToDisplay"
-            :max="3"
+            :max="2"
+            :default-length="announcementCount"
             :icon-size="28"
             retrieve-extra-information
             @open-detail="openDetails()" />
@@ -112,15 +114,11 @@ export default {
     showMenu: false,
     label: '',
     status: '',
-    listWinners: [],
+    listWinners: []
   }),
   computed: {
     avatarToDisplay () {
-      const winnerIdentity = [];
-      this.listWinners.forEach(winner => {
-        winnerIdentity.push({'userName': winner.user.remoteId});
-      });
-      return winnerIdentity;
+      return this.listWinners;
     },
     showMessage() {
       if (this.challenge && this.challenge.userInfo && !this.challenge.userInfo.canAnnounce) {
@@ -148,8 +146,11 @@ export default {
     enableEdit(){
       return this.challenge && this.challenge.userInfo.canEdit;
     },
+    announcementCount() {
+      return this.challenge && this.challenge.announcementsCount;
+    }
   },
-  mounted() {
+  created() {
     this.getListWinners();
   },
   methods: {
@@ -160,7 +161,7 @@ export default {
           activityId: announce.activityId,
           createDate: announce.createdDate
         };
-        this.listWinners.push(announcement);
+        this.listWinners.push({'userName': announcement.user.remoteId});
       });
     },
     announcementAdded(announcement) {
@@ -169,8 +170,9 @@ export default {
         activityId: announcement.activityId,
         createDate: announcement.createdDate
       };
-      this.listWinners.unshift(newAnnouncement);
+      this.listWinners.push({'userName': newAnnouncement.user.remoteId});
       this.challenge.announcementsCount = this.challenge.announcementsCount +1;
+      this.$root.$emit('refresh-avatars-list', newAnnouncement.user.remoteId);
     },
     openDetails() {
       this.$refs.winnersDetails.open();

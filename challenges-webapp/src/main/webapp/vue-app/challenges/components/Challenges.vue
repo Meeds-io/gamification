@@ -58,7 +58,7 @@ export default {
     challenges: [],
     showLoadMoreButton: false,
     challengePerPage: 20,
-    announcementsPerChallenge: 2,
+    announcementsPerChallenge: 3,
     displayChallenges: true,
     alert: false,
     type: '',

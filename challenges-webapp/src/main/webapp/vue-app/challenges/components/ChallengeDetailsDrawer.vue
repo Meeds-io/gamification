@@ -21,17 +21,23 @@
           <span class="winnersLabel">
             {{ $t('challenges.winners.details') }}
           </span>
-          <div class="px-4 pt-4 mt-n8 mx-3">
-            <p class="viewAll" @click="openDetails">
-              {{ $t('challenges.label.viewAll') }}
-            </p>
-          </div>
+          <span
+            v-if="winners && winners.length"
+            class="viewAll"
+            @click="openDetails">
+            {{ $t('challenges.label.fullView') }}
+          </span>
         </v-flex>
         <div class="assigneeAvatars flex-nowrap">
-          <div class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
+          <div class="winners pa-2" v-if="this.challenge && this.challenge.announcementsCount === 0">
+            <p class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
+              {{ challenge && challenge.announcementsCount }} {{ $t('challenges.winners.details') }}
+            </p>
+          </div>
+          <div v-else class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
             <exo-user-avatars-list
               :users="avatarToDisplay"
-              :max="7"
+              :max="5"
               :icon-size="28"
               retrieve-extra-information
               @open-detail="openDetails()" />
@@ -119,7 +125,8 @@ export default {
     challenge: {
       type: Object,
       default: null
-    }
+    },
+
   },
   data: () => ({
     winners: [],
@@ -127,37 +134,20 @@ export default {
   computed: {
     avatarToDisplay () {
       const winnerIdentity = [];
-      this.winners.forEach(winner => {
-        winnerIdentity.push({'userName': winner.user.remoteId});
-      });
+      if ( this.winners ) {
+        this.winners.forEach(winner => {
+          winnerIdentity.push({'userName': winner.user.remoteId});
+        });
+      }
       return winnerIdentity;
     },
     space() {
       return this.challenge && this.challenge.space;
     },
-    users() {
-      return this.challenge && this.challenge.managers || [];
-    }
   },
   methods: {
     open() {
-      if (this.$refs.challengeDetails) {
-        this.$refs.challengeDetails.open();
-        this.getAnnouncement();
-      }
-    },
-    close() {
-      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
-      this.$refs.challengeDetails.close();
-    },
-    getFromDate(date) {
-      return this.$challengeUtils.getFromDate(date);
-    },
-    openDetails() {
-      this.$refs.winnersDetails.open();
-    },
-    getAnnouncement() {
-      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, 0,this.maxAvatarToShow).then(announcements => {
+      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, 0).then(announcements => {
         if (announcements.length > 0) {
           this.winners = [];
           announcements.map(announce => {
@@ -169,7 +159,19 @@ export default {
             this.winners.push(announcement);
           });
         }
-      });
+      }).then(() => {
+        return this.$nextTick();
+      }).finally(() => this.$refs.challengeDetails.open());
+    },
+    close() {
+      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+      this.$refs.challengeDetails.close();
+    },
+    getFromDate(date) {
+      return this.$challengeUtils.getFromDate(date);
+    },
+    openDetails() {
+      this.$refs.winnersDetails.open();
     },
   }
 };
