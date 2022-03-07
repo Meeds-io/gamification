@@ -39,6 +39,7 @@
               :users="avatarToDisplay"
               :max="5"
               :icon-size="28"
+              :default-length="announcementCount"
               retrieve-extra-information
               @open-detail="openDetails()" />
           </div>
@@ -144,6 +145,12 @@ export default {
     space() {
       return this.challenge && this.challenge.space;
     },
+    users() {
+      return this.challenge && this.challenge.managers || [];
+    },
+    announcementCount() {
+      return this.challenge && this.challenge.announcementsCount || this.winners.length;
+    }
   },
   methods: {
     open() {
