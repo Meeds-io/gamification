@@ -213,19 +213,19 @@ public class Utils {
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
-    String userId = getCurrentUser();
+    String userId = identity.getRemoteId();
     if (space != null) {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
       Boolean isSuperManager =  spaceService.isSuperManager(userId);
       boolean isManager = isSuperManager || spaceService.isManager(space, userId);
-      boolean isMember = spaceService.isMember(space, userId);
-      boolean isRedactor = spaceService.isRedactor(space, userId) ;
-      boolean hasRedactor = spaceService.isRedactor(space,userId) ;
+      boolean isMember = isManager || spaceService.isMember(space, userId);
+      boolean isRedactor = isManager || spaceService.isRedactor(space, userId) ;
+      boolean hasRedactor = spaceService.hasRedactor(space) ;
       Boolean isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
       userInfo.setManager(isManager);
       userInfo.setMember(isMember);
       userInfo.setRedactor(isRedactor);
-      userInfo.setCanAnnounce(hasRedactor ? isRedactor || isManager : isMember);
+      userInfo.setCanAnnounce(hasRedactor ? isRedactor : isMember);
       userInfo.setCanEdit(isChallengeOwner && isManager);
     }
     return userInfo;
