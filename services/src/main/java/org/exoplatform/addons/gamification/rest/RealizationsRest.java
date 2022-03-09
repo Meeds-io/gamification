@@ -151,17 +151,16 @@ public class RealizationsRest implements ResourceContainer {
                                                                                                              0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                         GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
-
       String csvString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());
-      File temp = null;
+      File temp;
       temp = File.createTempFile(filename, ".xlsx"); //NOSONAR
       temp.deleteOnExit();
       BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
       bw.write(csvString);
       bw.close();
-      Response.ResponseBuilder response = Response.ok((Object) temp); //NOSONAR
+      Response.ResponseBuilder response = Response.ok(temp); //NOSONAR
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
     } catch (Exception e) {
@@ -170,7 +169,7 @@ public class RealizationsRest implements ResourceContainer {
     }
   }
 
-  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities)  {
+private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities)  {
     Locale locale = getCurrentUserLocale();
     StringBuilder sbResult = new StringBuilder();
     // Add header
@@ -184,14 +183,14 @@ public class RealizationsRest implements ResourceContainer {
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionId = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, eventKey + ga.getAction().getEvent().replace(" ", ""))
-                                                                         : escapeIllegalCharacterInMessage(ga.getAction().getEvent().replace(" ", ""));
+                                                                         : escapeIllegalCharacterInMessage(ga.getAction().getEvent());
         String actionLabel = ga.getAction().getType() == TypeRule.AUTOMATIC ? getI18NMessage(locale, actionLabelKey
             + ga.getAction().getTitle()) : escapeIllegalCharacterInMessage(ga.getAction().getTitle());
         String domainTitle = ga.getDomain() != null ? getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle().replace(" ", "")) : "-";
         String domainDescription = ga.getDomain() != null? getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription().replace(" ", "")) : "-";
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getCreator() != null ? ga.getCreator().getRemoteId() : ga.getEarner().getRemoteId());
+        sbResult.append(ga.getCreator() != null ? ga.getCreator() : ga.getEarner());
         sbResult.append(DELIMITER);
         sbResult.append(StringUtils.isBlank(actionId) ? ga.getAction().getEvent() : actionId);
         sbResult.append(DELIMITER);
@@ -207,7 +206,7 @@ public class RealizationsRest implements ResourceContainer {
         sbResult.append(DELIMITER);
         sbResult.append(ga.getStatus());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getEarner() != null ? ga.getEarner().getRemoteId() : "-");
+        sbResult.append(ga.getEarner() != null ? ga.getEarner() : "-");
         sbResult.append(DELIMITER);
         sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
         sbResult.append(SEPARATOR);

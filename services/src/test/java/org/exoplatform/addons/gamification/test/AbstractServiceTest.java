@@ -40,6 +40,7 @@ import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.storage.DomainStorage;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
@@ -128,7 +129,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected DomainService                 domainService;
   protected RuleService                   ruleService;
   protected BadgeDAO                      badgeStorage;
-  protected DomainDAO                     domainStorage;
+  protected DomainDAO                     domainDAO;
+  protected DomainStorage domainStorage;
   protected RuleDAO                       ruleDAO;
   protected RuleStorage                   ruleStorage;
   protected BadgeMapper                   badgeMapper;
@@ -156,7 +158,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
     badgeStorage = CommonsUtils.getService(BadgeDAO.class);
     badgeMapper = CommonsUtils.getService(BadgeMapper.class);
-    domainStorage = CommonsUtils.getService(DomainDAO.class);
+    domainDAO = CommonsUtils.getService(DomainDAO.class);
+    domainStorage = CommonsUtils.getService(DomainStorage.class);
     ruleDAO = CommonsUtils.getService(RuleDAO.class);
     ruleStorage = CommonsUtils.getService(RuleStorage.class);
     ruleMapper = CommonsUtils.getService(RuleMapper.class);
@@ -182,7 +185,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gamificationHistoryDAO.deleteAll();
     ruleDAO.deleteAll();
     badgeStorage.deleteAll();
-    domainStorage.deleteAll();
+    domainDAO.deleteAll();
     end();
   }
 
@@ -264,7 +267,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainEntity newDomain() {
-    DomainEntity domain = domainStorage.findDomainByTitle(GAMIFICATION_DOMAIN);
+    DomainEntity domain = domainDAO.findDomainByTitle(GAMIFICATION_DOMAIN);
     if (domain == null) {
       domain = new DomainEntity();
       domain.setTitle(GAMIFICATION_DOMAIN);
@@ -274,13 +277,13 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       domain.setDeleted(false);
       domain.setEnabled(true);
       domain.setLastModifiedDate(new Date());
-      domain = domainStorage.create(domain);
+      domain = domainDAO.create(domain);
     }
     return domain;
   }
 
   protected DomainEntity newDomain(String name) {
-    DomainEntity domain = domainStorage.findDomainByTitle(name);
+    DomainEntity domain = domainDAO.findDomainByTitle(name);
     if (domain == null) {
       domain = new DomainEntity();
       domain.setTitle(name);
@@ -290,7 +293,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       domain.setDeleted(false);
       domain.setEnabled(true);
       domain.setLastModifiedDate(new Date());
-      domain = domainStorage.create(domain);
+      domain = domainDAO.create(domain);
     }
     return domain;
   }
@@ -363,6 +366,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected DomainDTO newDomainDTO() {
     return domainMapper.domainToDomainDTO(newDomain());
+  }
+  protected DomainDTO newDomainDTO(String name ) {
+    return domainMapper.domainToDomainDTO(newDomain(name));
   }
 
   protected BadgeDTO newBadgeDTO() {

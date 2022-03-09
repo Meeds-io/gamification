@@ -29,7 +29,7 @@
             {{ getFromDate(props.item.createdDate) }}
           </td>
           <td class="text-truncate align-center wrap">
-            {{ props.item.creator && props.item.creator.remoteId || props.item.earner && props.item.earner.remoteId || '-' }}
+            {{ props.item.creator  || props.item.earner || '-' }}
           </td>
           <td class="align-center actionTitle px-1">
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event || props.item.action.title }} </span>
@@ -60,7 +60,7 @@
             <span v-else-if="props.item.status === 'ACCEPTED'"> {{ $t('realisation.label.accepted') }} </span>
           </td>
           <td class="text-truncate align-center">
-            {{ props.item.earner && props.item.earner.remoteId || '-' }}
+            {{ props.item.earner || '-' }}
           </td>
           <td class="text-truncate align-center">
             {{ props.item.space || '-' }}

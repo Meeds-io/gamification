@@ -20,28 +20,27 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
-        return new GamificationActionsHistoryDTO(
-                gamificationActionsHistoryEntity.getId(),
-                Utils.toRFC3339Date(new Date(gamificationActionsHistoryEntity.getDate().getTime())),
-                gamificationActionsHistoryEntity.getEarnerId(),
-                gamificationActionsHistoryEntity.getEarnerType().toString(),
-                gamificationActionsHistoryEntity.getGlobalScore(),
-                gamificationActionsHistoryEntity.getActionTitle(),
-                gamificationActionsHistoryEntity.getDomain(),
-                gamificationActionsHistoryEntity.getContext(),
-                gamificationActionsHistoryEntity.getActionScore(),
-                gamificationActionsHistoryEntity.getReceiver(),
-                gamificationActionsHistoryEntity.getObjectId(),
-                gamificationActionsHistoryEntity.getRuleId(),
-                gamificationActionsHistoryEntity.getActivityId(),
-                gamificationActionsHistoryEntity.getComment(),
-                gamificationActionsHistoryEntity.getCreator(),
-                gamificationActionsHistoryEntity.getCreatedBy(),
-                Utils.toRFC3339Date(gamificationActionsHistoryEntity.getCreatedDate()),
-                gamificationActionsHistoryEntity.getLastModifiedBy(),
-                Utils.toRFC3339Date(gamificationActionsHistoryEntity.getLastModifiedDate()),
-                gamificationActionsHistoryEntity.getStatus().name());
-      }
+    return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
+                                             Utils.toRFC3339Date(new Date(gamificationActionsHistoryEntity.getDate().getTime())),
+                                             gamificationActionsHistoryEntity.getEarnerId(),
+                                             gamificationActionsHistoryEntity.getEarnerType().toString(),
+                                             gamificationActionsHistoryEntity.getGlobalScore(),
+                                             gamificationActionsHistoryEntity.getActionTitle(),
+                                             gamificationActionsHistoryEntity.getDomainEntity().getTitle(),
+                                             gamificationActionsHistoryEntity.getContext(),
+                                             gamificationActionsHistoryEntity.getActionScore(),
+                                             gamificationActionsHistoryEntity.getReceiver(),
+                                             gamificationActionsHistoryEntity.getObjectId(),
+                                             gamificationActionsHistoryEntity.getRuleId(),
+                                             gamificationActionsHistoryEntity.getActivityId(),
+                                             gamificationActionsHistoryEntity.getComment(),
+                                             gamificationActionsHistoryEntity.getCreator(),
+                                             gamificationActionsHistoryEntity.getCreatedBy(),
+                                             Utils.toRFC3339Date(gamificationActionsHistoryEntity.getCreatedDate()),
+                                             gamificationActionsHistoryEntity.getLastModifiedBy(),
+                                             Utils.toRFC3339Date(gamificationActionsHistoryEntity.getLastModifiedDate()),
+                                             gamificationActionsHistoryEntity.getStatus().name());
+  }
 
   public static List<GamificationActionsHistoryDTO> fromEntities(List<GamificationActionsHistory> gamificationActionsHistoryEntities) {
     if (CollectionUtils.isEmpty(gamificationActionsHistoryEntities)) {
@@ -49,7 +48,7 @@ public class GamificationActionsHistoryMapper {
     } else {
 
       return gamificationActionsHistoryEntities.stream()
-                                               .map(GamificationActionsHistoryMapper ::fromEntity)
+                                               .map(GamificationActionsHistoryMapper::fromEntity)
                                                .collect(Collectors.toList());
     }
   }
@@ -91,16 +90,14 @@ public class GamificationActionsHistoryMapper {
 
   public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
     return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                    Utils.getUserById(Long.valueOf(gHistory.getEarnerId()),null),
+                                                    Utils.getUserRemoteId(gHistory.getEarnerId()),
                                                     gHistory.getRuleId() != null ? Utils.getRuleById(gHistory.getRuleId())
                                                                                  : Utils.getRuleByTitle(gHistory.getActionTitle()),
                                                     Utils.getDomainByTitle(gHistory.getDomain()),
                                                     gHistory.getActionTitle(),
                                                     gHistory.getActionScore(),
-                                                    gHistory.getComment(),
-                                                    Utils.getUserById(gHistory.getCreator() != null ? gHistory.getCreator()
-                                                                                                    : Long.valueOf(gHistory.getReceiver()),
-                                                                      null),
+                                                    Utils.getUserRemoteId(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
+                                                                                                        : gHistory.getReceiver()),
                                                     gHistory.getCreatedDate(),
                                                     gHistory.getStatus(),
                                                     gHistory.getRuleId() != null ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId())
@@ -109,14 +106,14 @@ public class GamificationActionsHistoryMapper {
                                                                                  : Utils.getSpaceFromObjectID(gHistory.getObjectId()));
   }
 
-public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories) {
+  public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories) {
     if (CollectionUtils.isEmpty(gamificationActionsHistories)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
 
       return gamificationActionsHistories.stream()
-              .map(GamificationActionsHistoryMapper :: toRestEntity)
-              .collect(Collectors.toList());
+                                         .map(GamificationActionsHistoryMapper::toRestEntity)
+                                         .collect(Collectors.toList());
     }
   }
 
