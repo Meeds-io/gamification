@@ -30,12 +30,39 @@ public class DomainServiceTest extends AbstractServiceTest {
   @Test
   public void testGetAllDomains() {
     assertEquals(domainService.getAllDomains().size(), 0);
-    newDomain("domain1");
-    newDomain("domain2");
-    newDomain("domain3");
-    newDomain("domain4");
-    newDomain("domain5");
-    assertEquals(domainService.getAllDomains().size(), 5);
+    Date createDate = new Date(System.currentTimeMillis());
+    Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
+    DomainDTO domain1 = new DomainDTO();
+    domain1.setTitle("domain1");
+    domain1.setDescription("Description");
+    domain1.setCreatedBy(TEST_USER_SENDER);
+    domain1.setCreatedDate(Utils.toRFC3339Date(createDate));
+    domain1.setLastModifiedBy(TEST_USER_SENDER);
+    domain1.setDeleted(false);
+    domain1.setEnabled(true);
+    domain1.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
+    domainService.addDomain(domain1);
+    DomainDTO domain2 = new DomainDTO();
+    domain2.setTitle("domain2");
+    domain2.setDescription("Description");
+    domain2.setCreatedBy(TEST_USER_SENDER);
+    domain2.setCreatedDate(Utils.toRFC3339Date(createDate));
+    domain2.setLastModifiedBy(TEST_USER_SENDER);
+    domain2.setDeleted(false);
+    domain2.setEnabled(true);
+    domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
+    domainService.addDomain(domain2);
+    DomainDTO domain3 = new DomainDTO();
+    domain3.setTitle("domain3");
+    domain3.setDescription("Description");
+    domain3.setCreatedBy(TEST_USER_SENDER);
+    domain3.setCreatedDate(Utils.toRFC3339Date(createDate));
+    domain3.setLastModifiedBy(TEST_USER_SENDER);
+    domain3.setDeleted(false);
+    domain3.setEnabled(true);
+    domain3.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
+    domainService.addDomain(domain3);
+    assertEquals(domainService.getAllDomains().size(), 3);
   }
 
   @Test
@@ -47,7 +74,7 @@ public class DomainServiceTest extends AbstractServiceTest {
 
   @Test
   public void testAddDomain() {
-    assertEquals(domainStorage.findAll().size(), 0);
+    assertEquals(domainDAO.findAll().size(), 0);
     Date createDate = new Date(System.currentTimeMillis());
     Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
     DomainDTO domain = new DomainDTO();
@@ -60,7 +87,7 @@ public class DomainServiceTest extends AbstractServiceTest {
     domain.setEnabled(true);
     domain.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
     domain = domainService.addDomain(domain);
-    assertNotNull(domainStorage.find(domain.getId()));
+    assertNotNull(domainDAO.find(domain.getId()));
   }
 
   @Test
@@ -69,7 +96,7 @@ public class DomainServiceTest extends AbstractServiceTest {
       DomainEntity domainEntity = newDomain();
       domainEntity.setDescription("desc_2");
       domainService.updateDomain(domainMapper.domainToDomainDTO(domainEntity));
-      domainEntity = domainStorage.find(domainEntity.getId());
+      domainEntity = domainDAO.find(domainEntity.getId());
       assertEquals(domainEntity.getDescription(), "desc_2");
     } catch (Exception e) {
       fail("Error when updating domain", e);

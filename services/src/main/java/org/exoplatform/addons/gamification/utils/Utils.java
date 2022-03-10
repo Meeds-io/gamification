@@ -64,6 +64,12 @@ public class Utils {
     return identityManager.getOrCreateIdentity(type, name);
   }
 
+  public static String getUserRemoteId(String  id){
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    Identity identity = identityManager.getIdentity(id);
+    return identity != null ? identity.getRemoteId() : null;
+  }
+
   public static final String getCurrentUser() {
     if (ConversationState.getCurrent() != null && ConversationState.getCurrent().getIdentity() != null) {
       return ConversationState.getCurrent().getIdentity().getUserId();
@@ -124,7 +130,8 @@ public class Utils {
     }
     Space space = CommonsUtils.getService(SpaceService.class).getSpaceById(spaceId);
     if (space == null) {
-      throw new IllegalArgumentException("space is not exist");
+      LOG.warn("space with id {} do not exist",spaceId);
+      return null ;
     }
     return space;
   }
@@ -135,6 +142,9 @@ public class Utils {
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
+    if(ruleId == 0 ) {
+      return null ;
+    }
     try {
       RuleService ruleService = CommonsUtils.getService(RuleService.class);
       return ruleService.findRuleById(ruleId);
@@ -152,11 +162,8 @@ public class Utils {
 
   }
 
-  public static List<UserInfo> getManagersByIds(List<Long> ids, Long challengeId) {
+  public static List<UserInfo> getManagersByIds(List<Long> ids) {
     try {
-      ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-      Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
-      Space space = getSpaceById(String.valueOf(challenge.getAudience()));
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       if (ids.isEmpty()) {
         return Collections.emptyList();
@@ -165,12 +172,12 @@ public class Utils {
       for (Long id : ids) {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-          users.add(createUser(identity, space, challenge.getManagers()));
+          users.add(createUser(identity));
         }
       }
       return users;
     } catch (Exception e) {
-      LOG.error("challenge not exist with this id {}", challengeId, e);
+      LOG.error("Error when getting challenge managers {}",  e);
       return Collections.emptyList();
     }
 
@@ -181,11 +188,11 @@ public class Utils {
       if (id == null) {
         return null;
       }
-      Space space;
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       Identity identity = identityManager.getIdentity(String.valueOf(id));
       if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
         if(challengeId != null){
+          Space space;
           ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
           Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
           space = getSpaceById(String.valueOf(challenge.getAudience()));
@@ -201,18 +208,25 @@ public class Utils {
   }
 
   public static UserInfo createUser(Identity identity, Space space, List<Long> managersId) {
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     UserInfo userInfo = new UserInfo();
     userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
+    String userId = identity.getRemoteId();
     if (space != null) {
-      userInfo.setManager(spaceService.isManager(space, getCurrentUser()));
-      userInfo.setMember(spaceService.isMember(space, getCurrentUser()));
-      userInfo.setRedactor(spaceService.isRedactor(space, getCurrentUser()));
-      userInfo.setCanAnnounce(canAnnounce(space.getId()));
-      userInfo.setCanEdit(canEditChallenge(managersId, space.getId()));
+      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+      Boolean isSuperManager =  spaceService.isSuperManager(userId);
+      boolean isManager = isSuperManager || spaceService.isManager(space, userId);
+      boolean isMember = isManager || spaceService.isMember(space, userId);
+      boolean isRedactor = isManager || spaceService.isRedactor(space, userId) ;
+      boolean hasRedactor = spaceService.hasRedactor(space) ;
+      Boolean isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
+      userInfo.setManager(isManager);
+      userInfo.setMember(isMember);
+      userInfo.setRedactor(isRedactor);
+      userInfo.setCanAnnounce(hasRedactor ? isRedactor : isMember);
+      userInfo.setCanEdit(isChallengeOwner && isManager);
     }
     return userInfo;
   }
@@ -223,7 +237,6 @@ public class Utils {
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
-
     return userInfo;
   }
 
@@ -263,7 +276,7 @@ public class Utils {
     if( StringUtils.isBlank(objectID) || !objectID.contains("/portal/g/:spaces:")){
       return null;
     }
-    String groupID = objectID.substring(objectID.indexOf(":"),objectID.length()).replace(":","/");
+    String groupID = objectID.substring(objectID.indexOf(":")).replace(":","/");
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space =  spaceService.getSpaceByGroupId(groupID);
     return space != null ? space.getDisplayName() : null  ;

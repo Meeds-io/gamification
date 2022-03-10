@@ -26,7 +26,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
     <!-- Domains Service Layer-->
     <component>
-        <type>org.exoplatform.addons.gamification.service.configuration.DomainService</type>
+        <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.DomainServiceImpl</type>
+    </component>
+    <!-- Domains storage Layer-->
+    <component>
+        <key>org.exoplatform.addons.gamification.storage.DomainStorage</key>
+        <type>org.exoplatform.addons.gamification.storage.cached.DomainCachedStorage</type>
     </component>
     <!-- Domains entity Mapper -->
     <component>
@@ -39,6 +45,46 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <key>org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry</key>
         <type>org.exoplatform.addons.gamification.service.setting.zone.impl.ZoneRegistryImpl</type>
     </component>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.cache.CacheService</target-component>
+        <component-plugin>
+            <name>addExoCacheConfig</name>
+            <set-method>addExoCacheConfig</set-method>
+            <type>org.exoplatform.services.cache.ExoCacheConfigPlugin</type>
+            <description>Configures the cache for gamifications domains and rules</description>
+            <init-params>
+                <object-param>
+                    <name>gamification.domain</name>
+                    <object type="org.exoplatform.services.cache.impl.infinispan.generic.GenericExoCacheConfig">
+                        <field name="name">
+                            <string>gamification.domain</string>
+                        </field>
+                        <field name="maxSize">
+                            <int>${exo.cache.gamification.domain.MaxNodes:1000}</int>
+                        </field>
+                        <field name="liveTime">
+                            <long>${exo.cache.gamification.domain.TimeToLive:-1}</long>
+                        </field>
+                    </object>
+                </object-param>
+                <object-param>
+                    <name>gamification.rule</name>
+                    <object type="org.exoplatform.services.cache.impl.infinispan.generic.GenericExoCacheConfig">
+                        <field name="name">
+                            <string>gamification.rule</string>
+                        </field>
+                        <field name="maxSize">
+                            <int>${exo.cache.gamification.rule.MaxNodes:2000}</int>
+                        </field>
+                        <field name="liveTime">
+                            <long>${exo.cache.gamification.rule.TimeToLive:-1}</long>
+                        </field>
+                    </object>
+                </object-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 
     <!-- Gamification zones : Social  zone -->
     <external-component-plugins>

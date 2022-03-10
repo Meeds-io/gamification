@@ -48,7 +48,7 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
                 throw new ObjectNotFoundException("announcement does not exist");
             }
             Map<String, String> params = new HashMap<>();
-            UserInfo userInfo = Utils.getUserById(announcement.getAssignee(),announcement.getChallengeId());
+            UserInfo userInfo = Utils.getUserById(announcement.getAssignee(),null);
             params.put("announcementAssigneeUsername", userInfo.getRemoteId());
             params.put("announcementAssigneeFullName", userInfo.getFullName());
             params.put("announcementChallenge", getAnnouncementChallenge(String.valueOf(announcement.getChallengeId()), activity.getTemplateParams().get("announcementDescription")));
