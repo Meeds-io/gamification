@@ -137,6 +137,9 @@ public class Utils {
   }
 
   public static DomainDTO getDomainByTitle(String domainTitle) {
+    if (domainTitle == null || domainTitle.isEmpty()) {
+      return null;
+    }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
     return domainService.findDomainByTitle(domainTitle);
   }
@@ -265,11 +268,6 @@ public class Utils {
 
   public static Long getUserGlobalScore(String earnerId) {
     return StringUtils.isBlank(earnerId) ? 0L : getGamificationService().computeTotalScore(earnerId);
-  }
-
-  public static DomainEntity getDomain(String domain) {
-    DomainDAO domainService = CommonsUtils.getService(DomainDAO.class);
-    return domainService.findDomainByTitle(domain);
   }
 
   public static String getSpaceFromObjectID(String objectID) {

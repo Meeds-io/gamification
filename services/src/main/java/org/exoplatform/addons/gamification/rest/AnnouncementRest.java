@@ -101,8 +101,8 @@ public class AnnouncementRest implements ResourceContainer {
      List<Announcement> announcements = announcementService.findAllAnnouncementByChallenge(Long.parseLong(challengeId),
                                                                                             offset,
                                                                                             limit);
-      eTag = new EntityTag(String.valueOf(announcementsRestEntities.hashCode()));
       announcementsRestEntities = EntityMapper.fromAnnouncementList(announcements);
+      eTag = new EntityTag(String.valueOf(announcementsRestEntities.hashCode()));
       Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
 
       if (builder == null) {
@@ -111,6 +111,10 @@ public class AnnouncementRest implements ResourceContainer {
         Date date = new Date(System.currentTimeMillis());
         builder.lastModified(date);
         builder.expires(date);
+        CacheControl cacheControl = new CacheControl();
+        cacheControl.setNoCache(true);
+        cacheControl.setNoStore(true);
+        builder.cacheControl(cacheControl);
       }
       return builder.build();
     } catch (Exception e) {

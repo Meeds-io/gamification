@@ -4,13 +4,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.space.model.Space;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +31,6 @@ public class EntityMapper {
                          challengeEntity.getAudience(),
                          challengeEntity.getStartDate() == null ? null : Utils.toRFC3339Date(challengeEntity.getStartDate()),
                          challengeEntity.getEndDate() == null ? null : Utils.toRFC3339Date(challengeEntity.getEndDate()),
-                         Utils.canEditChallenge(challengeEntity.getManagers(),String.valueOf(challengeEntity.getAudience())),
-                         Utils.canAnnounce(String.valueOf(challengeEntity.getAudience())),
                          challengeEntity.getManagers(),
                          (long) challengeEntity.getScore(),
                          challengeEntity.getDomainEntity() != null ? challengeEntity.getDomainEntity().getTitle() : null);
@@ -68,8 +64,10 @@ public class EntityMapper {
     challengeEntity.setAudience(challenge.getAudience());
     challengeEntity.setManagers(challenge.getManagers());
     challengeEntity.setScore(challenge.getPoints().intValue());
-    if (Utils.getDomain(challenge.getProgram()) != null) {
-      challengeEntity.setDomainEntity(Utils.getDomain(challenge.getProgram()));
+
+    DomainDTO domain = Utils.getDomainByTitle(challenge.getProgram());
+    if (domain != null ) {
+      challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(domain));
     }
     return challengeEntity;
   }
@@ -87,10 +85,8 @@ public class EntityMapper {
       return null;
     }
     return new AnnouncementRestEntity(announcement.getId(),
-                                      announcement.getChallengeId(),
-                                      Utils.getUserById(announcement.getAssignee(), announcement.getChallengeId()),
-                                      announcement.getComment(),
-                                      Utils.getUserById(announcement.getCreator(), announcement.getChallengeId()),
+                                      Utils.getUserRemoteId(String.valueOf(announcement.getAssignee() != null ? announcement.getAssignee()
+                                                                                           : announcement.getCreator())),
                                       announcement.getCreatedDate(),
                                       announcement.getActivityId());
   }
@@ -105,10 +101,7 @@ public class EntityMapper {
                             announcementEntity.getComment(),
                             announcementEntity.getCreator(),
                             Utils.toRFC3339Date(announcementEntity.getCreatedDate()),
-                            announcementEntity.getActivityId(),
-                            announcementEntity.getCreatedBy(),
-                            announcementEntity.getLastModifiedBy(),
-                            Utils.toRFC3339Date(announcementEntity.getLastModifiedDate()));
+                            announcementEntity.getActivityId());
   }
 
   public static GamificationActionsHistory toEntity(Announcement announcement) {
@@ -122,30 +115,27 @@ public class EntityMapper {
     if (announcement.getActivityId() != null) {
       announcementEntity.setActivityId(announcement.getActivityId());
     }
-
     if (announcement.getAssignee() != null) {
       announcementEntity.setEarnerId(String.valueOf(announcement.getAssignee()));
     }
+
+    Date createDate = Utils.parseRFC3339Date(announcement.getCreatedDate());
     announcementEntity.setComment(announcement.getComment());
-    announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
+    announcementEntity.setCreatedDate(createDate);
     announcementEntity.setRuleId(announcement.getChallengeId());
     announcementEntity.setCreator(announcement.getCreator());
-    announcementEntity.setDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
-                                                                     : new Date(System.currentTimeMillis()));
-    announcementEntity.setCreatedDate(announcement.getCreatedDate() != null ? Utils.parseRFC3339Date(announcement.getCreatedDate())
-                                                                            : new Date(System.currentTimeMillis()));
+    announcementEntity.setDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
+    announcementEntity.setCreatedDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
     announcementEntity.setStatus(HistoryStatus.ACCEPTED);
-    if (announcement.getCreatedDate() != null) {
-      announcementEntity.setCreatedDate(Utils.parseRFC3339Date(announcement.getCreatedDate()));
+    if (createDate != null) {
+      announcementEntity.setCreatedDate(createDate);
     }
-    if (announcement.getLastModifiedDate() != null) {
-      announcementEntity.setLastModifiedDate(Utils.parseRFC3339Date(announcement.getLastModifiedDate()));
-    }
-    announcementEntity.setCreatedBy(announcement.getCreatedBy() != null ? announcement.getCreatedBy()
-                                                                        : "Gamification Inner Process");
-    announcementEntity.setLastModifiedBy(announcement.getLastModifiedBy() != null ? announcement.getLastModifiedBy()
-                                                                                  : "Gamification Inner Process");
+    announcementEntity.setLastModifiedDate(new Date(System.currentTimeMillis()));
+
+    String creator = Utils.getUserRemoteId(String.valueOf(announcement.getCreator()));
+    announcementEntity.setCreatedBy(creator != null ? creator : "Gamification Inner Process");
+    announcementEntity.setLastModifiedBy(creator != null ? creator : "Gamification Inner Process");
 
     return announcementEntity;
   }
@@ -171,15 +161,16 @@ public class EntityMapper {
       return null;
     }
     List<AnnouncementRestEntity> announcementRestEntities = fromAnnouncementList(challengeAnnouncements);
+    Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     return new ChallengeRestEntity(challenge.getId(),
                                    challenge.getTitle(),
                                    challenge.getDescription(),
-                                   Utils.getSpaceById(String.valueOf(challenge.getAudience())),
+                                   space,
                                    challenge.getStartDate(),
                                    challenge.getEndDate(),
                                    Utils.createUser(Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
                                                                                  Utils.getCurrentUser()),
-                                                    Utils.getSpaceById(String.valueOf(challenge.getAudience())),
+                                                    space,
                                                     challenge.getManagers()),
                                    Utils.getManagersByIds(challenge.getManagers()),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),

@@ -2,12 +2,11 @@ package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.junit.Before;
@@ -30,7 +29,7 @@ import static org.mockito.Mockito.when;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
 public class ChallengeServiceTest {
-  private ChallengeStorage challengeStorage;
+  private RuleStorage challengeStorage;
 
   private SpaceService     spaceService;
 
@@ -40,7 +39,7 @@ public class ChallengeServiceTest {
 
   @Before
   public void setUp() throws Exception { // NOSONAR
-    challengeStorage = mock(ChallengeStorage.class);
+    challengeStorage = mock(RuleStorage.class);
     spaceService = mock(SpaceService.class);
     params = mock(InitParams.class);
 
@@ -57,8 +56,6 @@ public class ChallengeServiceTest {
                                         1l,
                                         new Date(System.currentTimeMillis()).toString(),
                                         new Date(System.currentTimeMillis() + 1).toString(),
-                                        true,
-                                        false,
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
@@ -68,8 +65,6 @@ public class ChallengeServiceTest {
                                                1l,
                                                new Date(System.currentTimeMillis()).toString(),
                                                new Date(System.currentTimeMillis() + 1).toString(),
-                                               true,
-                                               false,
                                                Collections.emptyList(),
                                                10L,
                                                "gamification");
@@ -101,8 +96,6 @@ public class ChallengeServiceTest {
                                         1l,
                                         new Date(System.currentTimeMillis()).toString(),
                                         new Date(System.currentTimeMillis() + 1).toString(),
-                                        true,
-                                        false,
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
@@ -112,8 +105,6 @@ public class ChallengeServiceTest {
                                          1l,
                                          new Date(System.currentTimeMillis()).toString(),
                                          new Date(System.currentTimeMillis() + 1).toString(),
-                                         true,
-                                         false,
                                          Collections.emptyList(),
                                          10L,
                                          "gamification");
@@ -124,8 +115,6 @@ public class ChallengeServiceTest {
                                          1l,
                                          new Date(System.currentTimeMillis()).toString(),
                                          new Date(System.currentTimeMillis() + 1).toString(),
-                                         true,
-                                         false,
                                          Collections.emptyList(),
                                          10L,
                                          "gamification");
