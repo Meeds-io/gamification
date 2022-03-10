@@ -110,7 +110,7 @@ public class GamificationActionsHistoryMapper {
                                                           && gHistory.getRuleId() != 0 ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId()).getAudience())).getDisplayName() : Utils.getSpaceFromObjectID(gHistory.getObjectId()));
 
     } catch (Exception e) {
-      LOG.warn("Error while mapping history with id {} : {}", gHistory.getId(), e.getMessage());
+      LOG.error("Error while mapping history with id {}", gHistory.getId(), e);
       return null;
     }
  }
