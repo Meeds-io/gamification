@@ -110,8 +110,7 @@ public class EntityMapper {
                             Long.parseLong(announcementEntity.getEarnerId()),
                             announcementEntity.getComment(),
                             announcementEntity.getCreator(),
-                            announcementEntity.getCreatedDate() == null ? null
-                                                                        : Utils.toRFC3339Date(announcementEntity.getCreatedDate()),
+                            Utils.toRFC3339Date(announcementEntity.getCreatedDate()),
                             announcementEntity.getActivityId(),
                             announcementEntity.getCreatedBy(),
                             announcementEntity.getLastModifiedBy(),
@@ -194,7 +193,7 @@ public class EntityMapper {
                                                                                  Utils.getCurrentUser()),
                                                     Utils.getSpaceById(String.valueOf(challenge.getAudience())),
                                                     challenge.getManagers()),
-                                   Utils.getManagersByIds(challenge.getManagers(), challenge.getId()),
+                                   Utils.getManagersByIds(challenge.getManagers()),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    announcementRestEntities,
                                    challenge.getPoints(),

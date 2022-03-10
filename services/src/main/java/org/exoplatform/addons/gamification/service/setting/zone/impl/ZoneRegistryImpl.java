@@ -26,6 +26,8 @@ import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
@@ -62,10 +64,9 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
 
     @Override
     public void start() {
-
+        RequestLifeCycle.begin(PortalContainer.getInstance());
         try {
             // Processing registered domains
-
             if(domainService.getAllDomains().isEmpty()){
                 for (ZoneConfig domain : zoneMap.values()) {
                     DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
@@ -76,9 +77,9 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
             }
         } catch (Exception e) {
             LOG.error("Error when processing Domains ", e);
+        } finally {
+            RequestLifeCycle.end();
         }
-
-
     }
 
     @Override

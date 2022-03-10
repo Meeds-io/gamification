@@ -55,7 +55,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <component>
         <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.DomainService</type>
+        <type>org.exoplatform.addons.gamification.service.configuration.DomainServiceImpl</type>
+    </component>
+    <!-- Domains storage Layer-->
+    <component>
+        <key>org.exoplatform.addons.gamification.storage.DomainStorage</key>
+        <type>org.exoplatform.addons.gamification.storage.cached.DomainCachedStorage</type>
     </component>
 
     <component>
@@ -80,7 +85,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.RuleStorage</type>
+        <key>org.exoplatform.addons.gamification.storage.RuleStorage</key>
+        <type>org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage </type>
     </component>
 
     <component>

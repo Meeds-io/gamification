@@ -90,7 +90,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   @Column(name = "TYPE", nullable = false)
   protected TypeRule        type;
 
-  @ElementCollection(fetch = FetchType.LAZY)
+  @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "CHALLENGE_MANAGER_RULE", joinColumns = @JoinColumn(name = "ID"))
   @Column(name = "MANAGER_ID")
   private List<Long> managers;
