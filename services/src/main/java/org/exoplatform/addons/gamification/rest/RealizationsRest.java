@@ -218,7 +218,7 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
-        LOG.error("Error when computing to XLSX ",e.getMessage());
+        LOG.error("Error when computing to XLSX ",e);
       }
     });
     return sbResult.toString();
