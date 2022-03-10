@@ -76,10 +76,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    Challenge challenge = challengeStorage.getChallengeById(challengeId);
-    if (challenge == null) {
-      throw new ObjectNotFoundException("challenge does not exist");
-    }
     return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit);
   }
 

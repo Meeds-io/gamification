@@ -17,6 +17,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
@@ -128,27 +129,16 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws Exception {
-    if (StringUtils.isBlank(username)) {
+  public List<Challenge> getAllChallengesByUser(int offset, int limit, String userName) throws Exception {
+    if (StringUtils.isBlank(userName)) {
       throw new IllegalAccessException("user name must not be null");
     }
-    List<Long> listIdSpace = new ArrayList<>();
-    ListAccess<Space> userSpaces = spaceService.getMemberSpaces(username);
-    int spacesSize = userSpaces.getSize();
-    int offsetToFetch = 0;
-    int limitToFetch = spacesSize > 20 ? 20 : spacesSize;
-    while (limitToFetch > 0) {
-      Space[] spaces = userSpaces.load(offsetToFetch, limitToFetch);
-      Arrays.stream(spaces).forEach(space -> {
-        listIdSpace.add(Long.valueOf(space.getId()));
-      });
-      offsetToFetch += limitToFetch;
-      limitToFetch = (spacesSize - offsetToFetch) > 20 ? 20 : (spacesSize - offsetToFetch);
-    }
-    if (listIdSpace.isEmpty()) {
+    List<String> spaceIdsOfUser = spaceService.getMemberSpacesIds(userName);
+    if (spaceIdsOfUser.isEmpty()) {
       return Collections.emptyList();
     }
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listIdSpace);
+    List<Long> listOdSpaceIds = spaceIdsOfUser.stream().map(Long :: parseLong).collect(Collectors.toList());
+    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listOdSpaceIds);
     return EntityMapper.fromChallengeEntities(challengeEntities);
   }
 }
