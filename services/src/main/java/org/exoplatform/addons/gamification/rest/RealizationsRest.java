@@ -164,7 +164,7 @@ public class RealizationsRest implements ResourceContainer {
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
     } catch (Exception e) {
-      LOG.error("Error when creating temp file : {}",e.getMessage());
+      LOG.error("Error when creating temp file",e);
       return Response.serverError().entity(e.getMessage()).build();
     }
   }
