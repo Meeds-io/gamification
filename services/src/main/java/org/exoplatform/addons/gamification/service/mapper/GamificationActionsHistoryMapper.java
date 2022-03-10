@@ -7,6 +7,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Gamificatio
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GamificationActionsHistoryMapper {
+
+  private static final Log LOG = ExoLogger.getLogger(GamificationActionsHistoryMapper.class);
 
   private GamificationActionsHistoryMapper() {
   }
@@ -89,22 +93,27 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
-    return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                    Utils.getUserRemoteId(gHistory.getEarnerId()),
-                                                    gHistory.getRuleId() != null ? Utils.getRuleById(gHistory.getRuleId())
-                                                                                 : Utils.getRuleByTitle(gHistory.getActionTitle()),
-                                                    Utils.getDomainByTitle(gHistory.getDomain()),
-                                                    gHistory.getActionTitle(),
-                                                    gHistory.getActionScore(),
-                                                    Utils.getUserRemoteId(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
-                                                                                                        : gHistory.getReceiver()),
-                                                    gHistory.getCreatedDate(),
-                                                    gHistory.getStatus(),
-                                                    gHistory.getRuleId() != null ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId())
-                                                                                                                          .getAudience()))
-                                                                                        .getDisplayName()
-                                                                                 : Utils.getSpaceFromObjectID(gHistory.getObjectId()));
-  }
+    try {
+      return new GamificationActionsHistoryRestEntity(gHistory.getId(),
+                                                      Utils.getUserRemoteId(gHistory.getEarnerId()),
+                                                      gHistory.getRuleId() != null
+                                                          && gHistory.getRuleId() != 0 ? Utils.getRuleById(gHistory.getRuleId())
+                                                                                       : Utils.getRuleByTitle(gHistory.getActionTitle()),
+                                                      Utils.getDomainByTitle(gHistory.getDomain()),
+                                                      gHistory.getActionTitle(),
+                                                      gHistory.getActionScore(),
+                                                      Utils.getUserRemoteId(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
+                                                                                                          : gHistory.getReceiver()),
+                                                      gHistory.getCreatedDate(),
+                                                      gHistory.getStatus(),
+                                                      gHistory.getRuleId() != null
+                                                          && gHistory.getRuleId() != 0 ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId()).getAudience())).getDisplayName() : Utils.getSpaceFromObjectID(gHistory.getObjectId()));
+
+    } catch (Exception e) {
+      LOG.warn("Error while mapping history with id {} : {}", gHistory.getId(), e.getMessage());
+      return null;
+    }
+ }
 
   public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories) {
     if (CollectionUtils.isEmpty(gamificationActionsHistories)) {
