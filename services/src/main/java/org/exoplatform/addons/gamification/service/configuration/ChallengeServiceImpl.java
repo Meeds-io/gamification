@@ -133,12 +133,23 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (StringUtils.isBlank(userName)) {
       throw new IllegalAccessException("user name must not be null");
     }
-    List<String> spaceIdsOfUser = spaceService.getMemberSpacesIds(userName);
-    if (spaceIdsOfUser.isEmpty()) {
+    List<Long> listIdSpace = new ArrayList<>();
+    ListAccess<Space> userSpaces = spaceService.getMemberSpaces(userName);
+    int spacesSize = userSpaces.getSize();
+    int offsetToFetch = 0;
+    int limitToFetch = spacesSize > 20 ? 20 : spacesSize;
+    while (limitToFetch > 0) {
+      Space[] spaces = userSpaces.load(offsetToFetch, limitToFetch);
+      Arrays.stream(spaces).forEach(space -> {
+        listIdSpace.add(Long.valueOf(space.getId()));
+      });
+      offsetToFetch += limitToFetch;
+      limitToFetch = (spacesSize - offsetToFetch) > 20 ? 20 : (spacesSize - offsetToFetch);
+    }
+    if (listIdSpace.isEmpty()) {
       return Collections.emptyList();
     }
-    List<Long> listOdSpaceIds = spaceIdsOfUser.stream().map(Long :: parseLong).collect(Collectors.toList());
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listOdSpaceIds);
+    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listIdSpace);
     return EntityMapper.fromChallengeEntities(challengeEntities);
   }
 }
