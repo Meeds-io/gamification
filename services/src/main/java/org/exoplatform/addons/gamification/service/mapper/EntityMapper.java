@@ -10,8 +10,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EntityMapper {
-  private static final Log LOG = ExoLogger.getLogger(EntityMapper.class);
 
   private EntityMapper() {
   }
@@ -81,10 +78,7 @@ public class EntityMapper {
     if (CollectionUtils.isEmpty(challengeEntities)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
-      List<Challenge> challenges = challengeEntities.stream()
-                                                    .map(challengeEntity -> fromEntity(challengeEntity))
-                                                    .collect(Collectors.toList());
-      return challenges;
+      return challengeEntities.stream().map(EntityMapper::fromEntity).collect(Collectors.toList());
     }
   }
 
@@ -160,10 +154,7 @@ public class EntityMapper {
     if (CollectionUtils.isEmpty(announcementEntities)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
-      List<Announcement> announcements = announcementEntities.stream()
-                                                             .map(announcementEntity -> fromEntity(announcementEntity))
-                                                             .collect(Collectors.toList());
-      return announcements;
+      return announcementEntities.stream().map(EntityMapper::fromEntity).collect(Collectors.toList());
     }
   }
 
@@ -171,10 +162,7 @@ public class EntityMapper {
     if (CollectionUtils.isEmpty(announcements)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
-      List<AnnouncementRestEntity> restEntities = announcements.stream()
-                                                               .map(announcement -> fromAnnouncement(announcement))
-                                                               .collect(Collectors.toList());
-      return restEntities;
+      return announcements.stream().map(EntityMapper::fromAnnouncement).collect(Collectors.toList());
     }
   }
 

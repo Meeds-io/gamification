@@ -17,6 +17,7 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
@@ -128,12 +129,12 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws Exception {
-    if (StringUtils.isBlank(username)) {
+  public List<Challenge> getAllChallengesByUser(int offset, int limit, String userName) throws Exception {
+    if (StringUtils.isBlank(userName)) {
       throw new IllegalAccessException("user name must not be null");
     }
     List<Long> listIdSpace = new ArrayList<>();
-    ListAccess<Space> userSpaces = spaceService.getMemberSpaces(username);
+    ListAccess<Space> userSpaces = spaceService.getMemberSpaces(userName);
     int spacesSize = userSpaces.getSize();
     int offsetToFetch = 0;
     int limitToFetch = spacesSize > 20 ? 20 : spacesSize;
