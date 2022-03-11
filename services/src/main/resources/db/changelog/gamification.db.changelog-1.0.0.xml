@@ -404,4 +404,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <changeSet author="exo-gamification" id="1.0.0-33">
         <modifyDataType tableName="GAMIFICATION_RULE" columnName="EVENT" newDataType="NVARCHAR(2000)"/>
     </changeSet>
+    <changeSet id="1.0.0-34" author="exo-gamification">
+        <createIndex tableName="GAMIFICATION_ACTIONS_HISTORY" indexName="IDX_GAMIFICATION_ACTIONS_HISTORY_RULE_ID">
+            <column name="RULE_ID"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>
