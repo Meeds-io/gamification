@@ -53,7 +53,7 @@
       </div>
 
       <div class="footer assigneeAvatars d-flex">
-        <div class="winners pa-2" v-if="!(listWinners && listWinners.length)">
+        <div class="winners pa-2" v-if="challenge && challenge.announcementsCount === 0 ">
           <p
             class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
             {{ challenge && challenge.announcementsCount }} {{ $t('challenges.winners.details') }}
@@ -156,22 +156,12 @@ export default {
   methods: {
     getListWinners() {
       this.challenge.announcements.map(announce => {
-        const announcement = {
-          user: announce.assignee ||  announce.creator,
-          activityId: announce.activityId,
-          createDate: announce.createdDate
-        };
-        this.listWinners.push({'userName': announcement.user.remoteId});
+        this.listWinners.push({'userName': announce.assignee});
       });
     },
     announcementAdded(announcement) {
-      const newAnnouncement = {
-        user: announcement.assignee,
-        activityId: announcement.activityId,
-        createDate: announcement.createdDate
-      };
-      this.listWinners.unshift({'userName': newAnnouncement.user.remoteId});
-      this.challenge.announcementsCount = this.challenge.announcementsCount +1;
+      this.listWinners.unshift({'userName': announcement.assignee});
+      this.challenge.announcementsCount = this.challenge.announcementsCount + 1;
     },
     openDetails() {
       this.$refs.winnersDetails.open();

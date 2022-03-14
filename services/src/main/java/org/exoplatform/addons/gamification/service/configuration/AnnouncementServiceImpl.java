@@ -4,7 +4,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
@@ -23,12 +23,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   private AnnouncementStorage announcementStorage;
 
-  private ChallengeStorage    challengeStorage;
+  private RuleStorage challengeStorage;
 
   private ListenerService     listenerService;
 
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
-                                 ChallengeStorage challengeStorage,
+                                 RuleStorage challengeStorage,
                                  ListenerService listenerService) {
     this.announcementStorage = announcementStorage;
     this.challengeStorage = challengeStorage;

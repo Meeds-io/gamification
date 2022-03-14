@@ -15,10 +15,6 @@ public class Challenge implements Cloneable {
 
   private String     endDate;
 
-  private boolean    canEdit;
-
-  private boolean    canAnnounce;
-
   private List<Long> managers;
 
   private Long       points;
@@ -31,8 +27,6 @@ public class Challenge implements Cloneable {
                    long audience,
                    String startDate,
                    String endDate,
-                   boolean canEdit,
-                   boolean canAnnounce,
                    List<Long> managers,
                    Long points,
                    String program) {
@@ -42,8 +36,6 @@ public class Challenge implements Cloneable {
     this.audience = audience;
     this.startDate = startDate;
     this.endDate = endDate;
-    this.canEdit = canEdit;
-    this.canAnnounce = canAnnounce;
     this.managers = managers;
     this.points = points;
     this.program = program;
@@ -51,7 +43,7 @@ public class Challenge implements Cloneable {
 
   @Override
   public Challenge clone() { // NOSONAR
-    return new Challenge(id, title, description, audience, startDate, endDate, canEdit, canAnnounce, managers, points, program);
+    return new Challenge(id, title, description, audience, startDate, endDate, managers, points, program);
   }
 
   public Challenge() {
@@ -103,22 +95,6 @@ public class Challenge implements Cloneable {
 
   public void setEndDate(String endDate) {
     this.endDate = endDate;
-  }
-
-  public boolean isCanEdit() {
-    return canEdit;
-  }
-
-  public void setCanEdit(boolean canEdit) {
-    this.canEdit = canEdit;
-  }
-
-  public boolean isCanAnnounce() {
-    return canAnnounce;
-  }
-
-  public void setCanAnnounce(boolean canAnnounce) {
-    this.canAnnounce = canAnnounce;
   }
 
   public List<Long> getManagers() {

@@ -15,8 +15,8 @@
       <template slot="content">
         <exo-user-avatar
           v-for="winner in listWinners" 
-          :key="winner.user.id"
-          :profile-id="winner.user.remoteId"
+          :key="winner.user"
+          :profile-id="winner.user"
           :size="44"
           extra-class="px-4 py-3 border-bottom-color"
           bold-title
@@ -70,9 +70,6 @@ export default {
     };
   },
   methods: {
-    getProfileUrl(remoteId) {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${remoteId}`;
-    },
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
     },
@@ -82,7 +79,7 @@ export default {
     open() {
       this.listWinners = [];
       this.getAnnouncement(false);
-      this.$refs.winnersDetails.open();
+      this.$nextTick().then(()=> this.$refs.winnersDetails.open());
     },
     loadMore() {
       this.getAnnouncement();
@@ -100,7 +97,7 @@ export default {
         if (announcements.length > 0) {
           announcements.map(announce => {
             const announcement = {
-              user: announce.assignee || announce.creator,
+              user: announce.assignee,
               activityId: announce.activityId,
               createDate: announce.createdDate
             };

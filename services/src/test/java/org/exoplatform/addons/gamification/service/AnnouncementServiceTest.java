@@ -5,7 +5,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.testing.BaseExoTestCase;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 public class AnnouncementServiceTest extends BaseExoTestCase {
   private AnnouncementStorage announcementStorage;
 
-  private ChallengeStorage    challengeStorage;
+  private RuleStorage challengeStorage;
 
   private AnnouncementService announcementService;
 
@@ -49,7 +49,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   @Before
   public void setUp() { // NOSONAR
     announcementStorage = mock(AnnouncementStorage.class);
-    challengeStorage = mock(ChallengeStorage.class);
+    challengeStorage = mock(RuleStorage.class);
     spaceService = mock(SpaceService.class);
     identityManager = mock(IdentityManager.class);
     listenerService = mock(ListenerService.class);
@@ -65,8 +65,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         1l,
                                         new Date(System.currentTimeMillis()).toString(),
                                         new Date(System.currentTimeMillis() + 1).toString(),
-                                        true,
-                                        false,
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
@@ -77,10 +75,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  "announcement comment",
                                                  1L,
                                                  new Date(System.currentTimeMillis()).toString(),
-                                                 null,
-                                                 "gamification",
-                                                 "gamification",
-                                                 new Date(System.currentTimeMillis()).toString());
+                                                 null);
 
     Announcement createdAnnouncement = new Announcement(1,
                                                         challenge.getId(),
@@ -88,10 +83,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                         "announcement comment",
                                                         1L,
                                                         new Date(System.currentTimeMillis()).toString(),
-                                                        null,
-                                                        "gamification",
-                                                        "gamification",
-                                                        new Date(System.currentTimeMillis()).toString());
+                                                        null);
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
     spaceIdentity.setProviderId("space");
@@ -137,8 +129,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         1l,
                                         new Date(System.currentTimeMillis()).toString(),
                                         new Date(System.currentTimeMillis() + 1).toString(),
-                                        true,
-                                        false,
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
@@ -148,30 +138,21 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  "announcement comment",
                                                  1L,
                                                  new Date(System.currentTimeMillis()).toString(),
-                                                 null,
-                                                 "gamification",
-                                                 "gamification",
-                                                 new Date(System.currentTimeMillis()).toString());
+                                                 null);
     Announcement createdAnnouncement = new Announcement(1,
                                                         challenge.getId(),
                                                         1L,
                                                         "announcement comment",
                                                         1L,
                                                         new Date(System.currentTimeMillis()).toString(),
-                                                        null,
-                                                        "gamification",
-                                                        "gamification",
-                                                        new Date(System.currentTimeMillis()).toString());
+                                                        null);
     Announcement editedAnnouncement = new Announcement(1,
                                                        challenge.getId(),
                                                        1L,
                                                        "announcement comment",
                                                        1L,
                                                        new Date(System.currentTimeMillis()).toString(),
-                                                       1L,
-                                                       "gamification",
-                                                       "gamification",
-                                                       new Date(System.currentTimeMillis()).toString());
+                                                       1L);
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
     spaceIdentity.setProviderId("space");
@@ -223,8 +204,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         1l,
                                         new Date(System.currentTimeMillis()).toString(),
                                         new Date(System.currentTimeMillis() + 1).toString(),
-                                        true,
-                                        false,
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
@@ -234,30 +213,21 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                   "announcement comment",
                                                   1L,
                                                   new Date(System.currentTimeMillis()).toString(),
-                                                  null,
-                                                  "gamification",
-                                                  "gamification",
-                                                  new Date(System.currentTimeMillis()).toString());
+                                                  null);
     Announcement announcement2 = new Announcement(1,
                                                   challenge.getId(),
                                                   1L,
                                                   "announcement comment",
                                                   1L,
                                                   new Date(System.currentTimeMillis()).toString(),
-                                                  null,
-                                                  "gamification",
-                                                  "gamification",
-                                                  new Date(System.currentTimeMillis()).toString());
+                                                  null);
     Announcement announcement3 = new Announcement(1,
                                                   challenge.getId(),
                                                   1L,
                                                   "announcement comment",
                                                   1L,
                                                   new Date(System.currentTimeMillis()).toString(),
-                                                  1L,
-                                                  "gamification",
-                                                  "gamification",
-                                                  new Date(System.currentTimeMillis()).toString());
+                                                  1L);
     List<Announcement> announcementList = new ArrayList<>();
     announcementList.add(announcement1);
     announcementList.add(announcement2);

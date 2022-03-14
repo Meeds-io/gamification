@@ -15,22 +15,13 @@ public class Announcement implements Cloneable {
 
   private Long   activityId;
 
-  private String createdBy;
-
-  private String lastModifiedBy;
-
-  private String lastModifiedDate;
-
   public Announcement(long id,
                       Long challengeId,
                       Long assignee,
                       String comment,
                       Long creator,
                       String createdDate,
-                      Long activityId,
-                      String createdBy,
-                      String lastModifiedBy,
-                      String lastModifiedDate) {
+                      Long activityId) {
     this.id = id;
     this.challengeId = challengeId;
     this.assignee = assignee;
@@ -38,9 +29,6 @@ public class Announcement implements Cloneable {
     this.creator = creator;
     this.createdDate = createdDate;
     this.activityId = activityId;
-    this.createdBy = createdBy;
-    this.lastModifiedBy = lastModifiedBy;
-    this.lastModifiedDate = lastModifiedDate;
   }
 
   public Announcement() {
@@ -48,7 +36,7 @@ public class Announcement implements Cloneable {
 
   @Override
   public Announcement clone() { // NOSONAR
-    return new Announcement(id, challengeId, assignee, comment, creator, createdDate, activityId, createdBy, lastModifiedBy, lastModifiedDate);
+    return new Announcement(id, challengeId, assignee, comment, creator, createdDate, activityId);
   }
   public long getId() {
     return id;
@@ -106,27 +94,4 @@ public class Announcement implements Cloneable {
     this.activityId = activityId;
   }
 
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public String getLastModifiedBy() {
-    return lastModifiedBy;
-  }
-
-  public void setLastModifiedBy(String lastModifiedBy) {
-    this.lastModifiedBy = lastModifiedBy;
-  }
-
-  public String getLastModifiedDate() {
-    return lastModifiedDate;
-  }
-
-  public void setLastModifiedDate(String lastModifiedDate) {
-    this.lastModifiedDate = lastModifiedDate;
-  }
 }
