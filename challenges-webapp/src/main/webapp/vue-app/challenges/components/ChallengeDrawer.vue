@@ -268,7 +268,7 @@ export default {
       if (this.challenge && this.challenge.id){
         this.setUp();
       }
-      this.$refs.challengeDrawer.open();
+      this.$nextTick().then(() => this.$refs.challengeDrawer.open() );
     },
     close(){
       this.reset();
