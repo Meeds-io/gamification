@@ -42,7 +42,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
                                                      .setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
-      return query.getSingleResult();
+      List<RuleEntity> ruleEntities = query.getResultList();
+      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null ;
     } catch (NoResultException e) {
       return null;
     }
@@ -69,7 +70,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     query.setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
-      return query.getSingleResult();
+      List<RuleEntity> ruleEntities = query.getResultList();
+      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null ;
     } catch (NoResultException e) {
       return null;
     }
@@ -83,7 +85,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
                                                      .setParameter("domain", domain);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
-      return query.getSingleResult();
+      List<RuleEntity> ruleEntities = query.getResultList();
+      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null ;
     } catch (NoResultException e) {
       return null;
     }
