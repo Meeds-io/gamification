@@ -247,9 +247,6 @@ export default {
       this.challenge = {};
       this.$refs.challengeProgram.broadcast = true;
       this.$refs.challengeDatePicker.startDate = null;
-      if (this.$refs.challengeDatePicker && this.$refs.challengeDatePicker.$refs.challengeStartDate){
-        this.$refs.challengeDatePicker.$refs.challengeStartDate.dateShortIso = null ;
-      }
       this.$set(this.challenge,'points', 20);
       this.$refs.challengeDatePicker.endDate = null;
       this.$refs.challengeDescription.inputVal = null;
