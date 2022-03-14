@@ -28,12 +28,12 @@ import static org.mockito.Mockito.*;
 public class ChallengeStorageTest {
     private RuleDAO challengeDAO;
 
-    private ChallengeStorage challengeStorage;
+    private RuleStorage challengeStorage;
 
     @Before
     public void setUp() throws Exception { // NOSONAR
         challengeDAO = mock(RuleDAO.class);
-        challengeStorage = new ChallengeStorage(challengeDAO);
+        challengeStorage = new RuleStorage(challengeDAO);
     }
 
     @PrepareForTest({ Utils.class, EntityMapper.class })
@@ -48,8 +48,6 @@ public class ChallengeStorageTest {
                 1l,
                 startDate,
                 endDate,
-                true,
-                false,
                 Collections.emptyList(),
                 10L,
                 "gamification");
@@ -80,8 +78,6 @@ public class ChallengeStorageTest {
                 1l,
                 startDate,
                 endDate,
-                true,
-                false,
                 Collections.emptyList(),
                 10L,
                 "gamification");
@@ -116,8 +112,6 @@ public class ChallengeStorageTest {
                 1l,
                 new Date(System.currentTimeMillis()).toString(),
                 new Date(System.currentTimeMillis() + 1).toString(),
-                true,
-                false,
                 Collections.emptyList(),
                 10L,
                 "gamification");

@@ -5,7 +5,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.ListAccess;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
-  private ChallengeStorage challengeStorage;
+  private RuleStorage challengeStorage;
 
   private SpaceService     spaceService;
 
@@ -30,7 +30,7 @@ public class ChallengeServiceImpl implements ChallengeService {
   private static final String     CREATORS_GROUP_KEY             = "challenge.creator.group";
 
 
-  public ChallengeServiceImpl(ChallengeStorage challengeStorage, SpaceService spaceService, InitParams params) {
+  public ChallengeServiceImpl(RuleStorage challengeStorage, SpaceService spaceService, InitParams params) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
     if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {

@@ -182,14 +182,17 @@ public class ChallengeRest implements ResourceContainer {
     }
     String currentUser = Utils.getCurrentUser();
     try {
+    LOG.info("start getting challenges");
       List<Challenge> challenges = challengeService.getAllChallengesByUser(offset, limit, currentUser);
       List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
+      LOG.info("start mapping challenges");
       for (Challenge challenge : challenges) {
         List<Announcement> challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
                                                                                                        0,
                                                                                                        announcements);
         challengeRestEntities.add(EntityMapper.fromChallenge(challenge, challengeAnnouncements));
       }
+      LOG.info("ended mapping challenges");
       return Response.ok(challengeRestEntities).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to access not authorized challenges with owner Ids", currentUser, e);

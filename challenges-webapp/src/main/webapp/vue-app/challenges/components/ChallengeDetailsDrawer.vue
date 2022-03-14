@@ -29,7 +29,7 @@
           </span>
         </v-flex>
         <div class="assigneeAvatars flex-nowrap">
-          <div class="winners pa-2" v-if="this.challenge && this.challenge.announcementsCount === 0">
+          <div class="winners pa-2" v-if="this.challenge && !this.challenge.announcementsCount">
             <p class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
               {{ challenge && challenge.announcementsCount }} {{ $t('challenges.winners.details') }}
             </p>
@@ -131,16 +131,11 @@ export default {
   },
   data: () => ({
     winners: [],
+    maxAvatarToShow: 5,
   }),
   computed: {
     avatarToDisplay () {
-      const winnerIdentity = [];
-      if ( this.winners ) {
-        this.winners.forEach(winner => {
-          winnerIdentity.push({'userName': winner.user.remoteId});
-        });
-      }
-      return winnerIdentity;
+      return this.winners ;
     },
     space() {
       return this.challenge && this.challenge.space;
@@ -154,16 +149,11 @@ export default {
   },
   methods: {
     open() {
-      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, 0).then(announcements => {
+      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, this.maxAvatarToShow).then(announcements => {
         if (announcements.length > 0) {
           this.winners = [];
           announcements.map(announce => {
-            const announcement = {
-              user: announce.assignee || announce.creator ,
-              activityId: announce.activityId,
-              createDate: announce.createdDate
-            };
-            this.winners.push(announcement);
+            this.winners.push({'userName': announce.assignee });
           });
         }
       }).then(() => {

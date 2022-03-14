@@ -40,13 +40,13 @@ public class AnnouncementStorageTest {
 
     private GamificationHistoryDAO announcementDAO;
 
-    private ChallengeStorage challengeStorage;
+    private RuleStorage challengeStorage;
     private AnnouncementStorage announcementStorage;
 
     @Before
     public void setUp() throws Exception { // NOSONAR
         announcementDAO = mock(GamificationHistoryDAO.class);
-        challengeStorage = mock(ChallengeStorage.class);
+        challengeStorage = mock(RuleStorage.class);
         announcementStorage = new AnnouncementStorage(announcementDAO,challengeStorage);
     }
 
@@ -61,8 +61,6 @@ public class AnnouncementStorageTest {
                 1l,
                 startDate.toString(),
                 endDate.toString(),
-                true,
-                false,
                 Collections.emptyList(),
                 10L,
                 "gamification");
@@ -81,10 +79,7 @@ public class AnnouncementStorageTest {
                 "announcement comment",
                 1L,
                 createDate.toString(),
-                null,
-                "gamification",
-                "gamification",
-                new Date(System.currentTimeMillis()).toString());
+                null);
 
         GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
         announcementEntity.setEarnerId(announcement.getAssignee().toString());

@@ -58,7 +58,7 @@ export default {
     challenges: [],
     showLoadMoreButton: false,
     challengePerPage: 20,
-    announcementsPerChallenge: 3,
+    announcementsPerChallenge: 2,
     displayChallenges: true,
     alert: false,
     type: '',
@@ -129,6 +129,7 @@ export default {
         this.displayChallenges = this.challenges && this.challenges.length;
       }).finally(() => {
         this.loading = false;
+        this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
       });
     },
     displayMessage(message) {
