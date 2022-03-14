@@ -92,10 +92,14 @@ export default {
   },
   methods: {
     emitStartDate(date) {
-      this.$emit('startDateChanged',new Date(date));
+      if (date){
+        this.$emit('startDateChanged',new Date(date));
+      }
     },
     emitEndDate(date) {
-      this.$emit('endDateChanged',new Date(date));
+      if (date){
+        this.$emit('endDateChanged',new Date(date));
+      }
     },
     getFormatDate(date) {
       return this.$challengeUtils.getFromDate(date);
