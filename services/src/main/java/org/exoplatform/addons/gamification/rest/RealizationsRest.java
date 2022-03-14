@@ -183,18 +183,34 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionId = "-";
-        String actionLabel ="-" ;
+        String actionLabel = "-";
+        String domainTitle = "-";
+        String domainDescription = "-";
         if (ga.getAction() != null) {
-          if (ga.getAction().getType() == TypeRule.AUTOMATIC){
+          if (ga.getAction().getType() == TypeRule.AUTOMATIC) {
             actionId = getI18NMessage(locale, eventKey + ga.getAction().getEvent().replace(" ", ""));
+            if (actionId == null) {
+              actionId = ga.getAction().getEvent();
+            }
             actionLabel = getI18NMessage(locale, actionLabelKey + ga.getAction().getTitle());
+            if (actionLabel == null) {
+              actionLabel = ga.getAction().getDescription();
+            }
           } else {
             actionId = escapeIllegalCharacterInMessage(ga.getAction().getEvent());
             actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
           }
         }
-        String domainTitle = ga.getDomain() != null ? getI18NMessage(locale,domainTitleKey + ga.getDomain().getTitle().replace(" ", "")) : ga.getDomain().getTitle();
-        String domainDescription = ga.getDomain() != null ? getI18NMessage(locale,domainTitleKey + ga.getDomain().getDescription().replace(" ", "")) : ga.getDomain().getTitle() ;
+        if (ga.getDomain() != null) {
+          domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomain().getTitle().replace(" ", ""));
+          domainDescription = getI18NMessage(locale, domainTitleKey + ga.getDomain().getDescription().replace(" ", ""));
+          if (domainTitle == null) {
+            domainTitle = ga.getDomain().getTitle();
+          }
+          if (domainDescription == null) {
+            domainDescription = ga.getDomain().getDescription();
+          }
+        }
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getCreator() != null ? ga.getCreator() : ga.getEarner());
