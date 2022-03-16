@@ -54,9 +54,9 @@
       </v-btn-toggle>
       <v-divider />
       <div class="date-time-selection caption mx-auto pa-2 text-center muted ">
-        <span class="text-capitalize">{{ $t('realisation.label.from') }}</span>
+        <span class="text-capitalize">{{ $t('realization.label.from') }}</span>
         <span class="primary--text">{{ fromDateTitle }}</span>
-        <span class="text-capitalize">{{ $t('realisation.label.to') }}</span>
+        <span class="text-capitalize">{{ $t('realization.label.to') }}</span>
         <span class="primary--text">{{ toDateTitle }}</span>
       </div>
     </div>
@@ -107,27 +107,27 @@ export default {
       return [
         {
           value: 'thisYear',
-          text: this.$t('realisation.label.thisYear')
+          text: this.$t('realization.label.thisYear')
         },
         {
           value: 'thisSemester',
-          text: this.$t('realisation.label.thisSemester'),
+          text: this.$t('realization.label.thisSemester'),
         },
         {
           value: 'thisQuarter',
-          text: this.$t('realisation.label.thisQuarter')
+          text: this.$t('realization.label.thisQuarter')
         },
         {
           value: 'thisMonth',
-          text: this.$t('realisation.label.thisMonth')
+          text: this.$t('realization.label.thisMonth')
         },
         {
           value: 'thisWeek',
-          text: this.$t('realisation.label.thisWeek')
+          text: this.$t('realization.label.thisWeek')
         },
         {
           value: 'today',
-          text: this.$t('realisation.label.today')
+          text: this.$t('realization.label.today')
         },
       ];
     },
@@ -153,7 +153,7 @@ export default {
       return this.toDate && this.toDate.toLocaleString(this.lang, this.dateFormat);
     },
     rangeDateTimeTitle() {
-      return this.$t('realisation.label.period', {
+      return this.$t('realization.label.period', {
         0: this.fromFullDateFormat,
         1: this.toFullDateFormat
       });
