@@ -32,5 +32,5 @@ public interface RealizationsService {
    * @throws ObjectNotFoundException GamificationActionsHistory identified by its
    *           technical identifier is not found
    */
-  GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status) throws IllegalArgumentException, ObjectNotFoundException;
+  GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status, String actionLabel, Long points, String domain) throws IllegalArgumentException, ObjectNotFoundException;
 }

@@ -8,7 +8,7 @@
       <div class="border-box-sizing clickable">
         <v-btn class="btn btn-primary export" @click="getReport()">
           <span class="ms-2 d-none d-lg-inline">
-            {{ $t("realisation.label.export") }}
+            {{ $t("realization.label.export") }}
           </span>
         </v-btn>
       </div>
@@ -18,18 +18,18 @@
     </v-toolbar>
     <v-data-table
       :headers="realizationsHeaders"
-      :items="realizations"
-      :items-per-page=" realizations && realizations.length"
+      :items="realizationList"
+      :items-per-page=" realizationList && realizationList.length"
       :loading="loading"
       hide-default-footer
       class="mx-6 mt-6 realizationsTable">
       <template slot="item" slot-scope="props">
-        <tr v-show="realizations">
+        <tr v-show="realizationList">
           <td class="wrap align-center px-6">
             {{ getFromDate(props.item.createdDate) }}
           </td>
           <td class="text-truncate align-center wrap">
-            {{ props.item.creator  || props.item.earner || '-' }}
+            {{ props.item.creator || props.item.earner || '-' }}
           </td>
           <td class="align-center actionTitle px-1">
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event || props.item.action.title }} </span>
@@ -38,12 +38,11 @@
           </td>
           <td class="align-center actionTitle px-0">
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.actionLabel }} </span>
-            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'">
-              {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.description.${props.item.action.title}`) }}             </span>
+            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ getActionLabel(props.item.actionLabel) }} </span>
           </td>
           <td class="text-truncate align-center">
-            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('gamification.label.auto') }} </span>
-            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ $t('gamification.label.manual') }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('realization.label.auto') }} </span>
+            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ $t('realization.label.manual') }} </span>
           </td>
           <td class="text-truncate align-center">
             {{ props.item.action && props.item.domain && props.item.domain.title || '-' }}
@@ -55,9 +54,9 @@
             {{ props.item && props.item.score }}
           </td>
           <td class="text-truncate align-center">
-            <span v-if="props.item.status === 'REJECTED'"> {{ $t('realisation.label.rejected') }} </span>
-            <span v-else-if="props.item.status === 'EDITED'"> {{ $t('realisation.label.edited') }} </span>
-            <span v-else-if="props.item.status === 'ACCEPTED'"> {{ $t('realisation.label.accepted') }} </span>
+            <span v-if="props.item.status === 'REJECTED'"> {{ $t('realization.label.rejected') }} </span>
+            <span v-else-if="props.item.status === 'EDITED'"> {{ $t('realization.label.edited') }} </span>
+            <span v-else-if="props.item.status === 'ACCEPTED'"> {{ $t('realization.label.accepted') }} </span>
           </td>
           <td class="text-truncate align-center">
             {{ props.item.earner || '-' }}
@@ -84,23 +83,23 @@
               </template>
               <v-list flat class="pt-0 pb-0">
                 <template>
-                  <v-list-item @mousedown="$event.preventDefault()">
-                    <v-list-item-title class="options">
+                  <v-list-item @mousedown="$event.preventDefault()" v-if="props.item.action && props.item.action.type === 'MANUAL'">
+                    <v-list-item-title class="options" @click="editRealizations(props.item)">
                       <i class="fas fa-edit px-1"></i>
-                      <span class="px-1"> {{ $t('realisation.label.edit') }} </span>
+                      <span class="px-1"> {{ $t('realization.label.edit') }} </span>
                     </v-list-item-title>
                   </v-list-item>
                   <v-divider />
                   <v-list-item @mousedown="$event.preventDefault()" v-if="props.item.status === 'REJECTED'">
                     <v-list-item-title class="options" @click="updateRealizations(props.item,'ACCEPTED')">
                       <i class="fas fa-check px-1"></i>
-                      <span class="px-1"> {{ $t('realisation.label.accept') }}</span>
+                      <span class="px-1"> {{ $t('realization.label.accept') }}</span>
                     </v-list-item-title>
                   </v-list-item>
                   <v-list-item @mousedown="$event.preventDefault()" v-if=" props.item.status === 'ACCEPTED' || props.item.status === 'EDITED'">
                     <v-list-item-title class="options" @click="updateRealizations(props.item,'REJECTED')">
                       <i class="fas fa-ban px-1"></i>
-                      <span class="px-1"> {{ $t('realisation.label.reject') }}</span>
+                      <span class="px-1"> {{ $t('realization.label.reject') }}</span>
                     </v-list-item-title>
                   </v-list-item>
                 </template>
@@ -122,10 +121,13 @@
         @click="getRealizations(true)"
         block>
         <span class="ms-2 d-none d-lg-inline">
-          {{ $t("realisation.label.loadMore") }}
+          {{ $t("realization.label.loadMore") }}
         </span>
       </v-btn>
     </v-toolbar>
+    <edit-realization-drawer
+      ref="editRealizationDrawer"
+      @realization-updated="realizationUpdated($event)" />
   </v-app>
 </template>
 
@@ -153,14 +155,14 @@ export default {
     realizationsHeaders() {
       return [
         {
-          text: this.$t('realisation.label.date'),
+          text: this.$t('realization.label.date'),
           align: 'center',
           sortable: false,
           value: 'date',
           class: 'actionHeader px-2',
         },
         {
-          text: this.$t('realisation.label.creator'),
+          text: this.$t('realization.label.creator'),
           align: 'center',
           sortable: false,
           value: 'creator',
@@ -168,76 +170,79 @@ export default {
 
         },
         {
-          text: this.$t('realisation.label.actionId'),
+          text: this.$t('realization.label.actionId'),
           align: 'center',
           sortable: false,
           value: 'actionId',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.actionLabel'),
+          text: this.$t('realization.label.actionLabel'),
           align: 'center',
           sortable: false,
           value: 'actionLabel',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.actionType'),
+          text: this.$t('realization.label.actionType'),
           align: 'center',
           sortable: false,
           value: 'actionType',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.program'),
+          text: this.$t('realization.label.program'),
           align: 'center',
           sortable: false,
           value: 'program',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.programLabel'),
+          text: this.$t('realization.label.programLabel'),
           align: 'center',
           sortable: false,
           value: 'programLabel',
           class: 'actionHeader px-0'
         },
         {
-          text: this.$t('realisation.label.points'),
+          text: this.$t('realization.label.points'),
           align: 'center',
           sortable: false,
           value: 'points',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.status'),
+          text: this.$t('realization.label.status'),
           align: 'center',
           sortable: false,
           value: 'status',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.grantee'),
+          text: this.$t('realization.label.grantee'),
           align: 'center',
           sortable: false,
           value: 'grantee',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.space'),
+          text: this.$t('realization.label.space'),
           align: 'center',
           sortable: false,
           value: 'space',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realisation.label.actions'),
+          text: this.$t('realization.label.actions'),
           align: 'center',
           sortable: false,
           value: '',
           class: 'actionHeader px-2'
         },
       ];
+    },
+    realizationList(){
+      return this.realizations;
     }
   },
   watch: {
@@ -278,12 +283,31 @@ export default {
       this.selectedRealizations = {};
     },
     updateRealizations(realization,status) {
-      this.$realizationsServices.updateStatus(realization.id,status).then(() => {
-        this.getRealizations(false);
-      } );
+      this.$realizationsServices.updateRealization(realization.id,status).then((updatedRealization) => {
+        this.realizationUpdated(updatedRealization);
+      });
     },
     getReport() {
       return this.$realizationsServices.getReport(this.fromDate, this.toDate);
+    },
+    getActionLabel(actionLabel){
+      if (!this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${actionLabel}`).includes('exoplatform.gamification.gamificationinformation.rule.description')){
+        return this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${actionLabel}`) ;
+      } else {
+        return actionLabel;
+      }
+    },
+    editRealizations(realization){
+      this.$refs.editRealizationDrawer.points = realization.score;
+      this.$refs.editRealizationDrawer.actionLabel = this.getActionLabel(realization.actionLabel);
+      this.$refs.editRealizationDrawer.program = realization.domain;
+      this.$refs.editRealizationDrawer.realizationId = realization.id;
+      this.$nextTick().then(() => this.$refs.editRealizationDrawer.open());
+    },
+    realizationUpdated(updatedRealization){
+      const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
+      this.realizations[index] = updatedRealization;
+      this.$set(this.realizations,index,updatedRealization);
     }
   }
 };

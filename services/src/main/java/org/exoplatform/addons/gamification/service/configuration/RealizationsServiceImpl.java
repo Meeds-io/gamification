@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.RealizationsService;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
@@ -42,7 +43,7 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status) throws IllegalArgumentException,
+  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status,String actionLabel, Long points, String domain) throws IllegalArgumentException,
                                                                              ObjectNotFoundException {
 
     if (gHistoryId == null) {
@@ -52,6 +53,16 @@ public class RealizationsServiceImpl implements RealizationsService {
 
     if (gHistory == null) {
       throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
+    }
+    if(!actionLabel.isEmpty()){
+      gHistory.setActionTitle(actionLabel);
+    }
+    if(points != 0){
+      gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
+      gHistory.setActionScore(points);
+    }
+    if(!domain.isEmpty()){
+      gHistory.setDomain(domain);
     }
     gHistory.setStatus(status.name());
     return realizationsStorage.updateRealizationStatus(gHistory);
