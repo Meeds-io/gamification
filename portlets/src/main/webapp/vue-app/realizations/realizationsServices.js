@@ -35,7 +35,7 @@ export function getReport(fromDate, toDate) {
 export function getAllDomains() {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains`, {
     headers: {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'application/json'
     },
     method: 'GET'
   }).then((resp) => {
