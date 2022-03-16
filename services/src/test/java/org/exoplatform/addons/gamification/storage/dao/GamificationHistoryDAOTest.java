@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.storage.dao;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -15,13 +16,19 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindAllActionsHistoryAgnostic() {
     assertEquals(gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER).size(), 0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory= newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER);
     assertEquals(leaderboardList.size(),1);
     assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*3);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    leaderboardList = gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER);
+    assertEquals(leaderboardList.size(),1);
+    assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
+    assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*2);
   }
 
   @Test
@@ -29,37 +36,55 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     assertEquals(gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(IdentityType.USER, fromDate, GAMIFICATION_DOMAIN)
                                        .size(),
                  0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(IdentityType.USER, fromDate, GAMIFICATION_DOMAIN);
     assertEquals(leaderboardList.size(),1);
     assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*3);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    leaderboardList = gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER);
+    assertEquals(leaderboardList.size(),1);
+    assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
+    assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*2);
   }
 
   @Test
   public void testFindAllActionsHistoryByDomain() {
     assertEquals(gamificationHistoryDAO.findAllActionsHistoryByDomain(IdentityType.USER, GAMIFICATION_DOMAIN).size(), 0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO.findAllActionsHistoryByDomain(IdentityType.USER, GAMIFICATION_DOMAIN);
     assertEquals(leaderboardList.size(),1);
     assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*3);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    leaderboardList = gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER);
+    assertEquals(leaderboardList.size(),1);
+    assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
+    assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*2);
   }
 
   @Test
   public void testFindAllActionsHistoryByDate() {
     assertEquals(gamificationHistoryDAO.findAllActionsHistoryByDate(IdentityType.USER, fromDate).size(), 0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO.findAllActionsHistoryByDate(IdentityType.USER, fromDate);
     assertEquals(leaderboardList.size(),1);
     assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*3);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    leaderboardList = gamificationHistoryDAO.findAllActionsHistoryByDate(IdentityType.USER, fromDate);
+    assertEquals(leaderboardList.size(),1);
+    assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
+    assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*2);
   }
 
   @Test
@@ -74,13 +99,19 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindAllActionsHistory() {
     assertEquals(gamificationHistoryDAO.findAllActionsHistory(IdentityType.USER, limit).size(), 0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO.findAllActionsHistory(IdentityType.USER,  limit);
     assertEquals(leaderboardList.size(),1);
     assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*3);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    leaderboardList = gamificationHistoryDAO.findAllActionsHistoryByDate(IdentityType.USER, fromDate);
+    assertEquals(leaderboardList.size(),1);
+    assertEquals(leaderboardList.get(0).getEarnerId(),TEST_USER_SENDER);
+    assertEquals(leaderboardList.get(0).getReputationScore(),Integer.parseInt(TEST__SCORE)*2);
   }
 
   @Test
@@ -155,10 +186,13 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindUserReputationScoreBetweenDate() {
     assertEquals(gamificationHistoryDAO.findUserReputationScoreBetweenDate(TEST_USER_SENDER,fromDate,toDate), 0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     assertEquals(gamificationHistoryDAO.findUserReputationScoreBetweenDate(TEST_USER_SENDER,fromDate,toDate), Integer.parseInt(TEST__SCORE)*3);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    assertEquals(gamificationHistoryDAO.findUserReputationScoreBetweenDate(TEST_USER_SENDER,fromDate,toDate), Integer.parseInt(TEST__SCORE)*2);
   }
 
   @Test
@@ -182,10 +216,14 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindActionsHistoryByEarnerIdSortedByDate() {
     assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit).size(), 0);
-    newGamificationActionsHistory();
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit).size(), limit);
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    assertEquals(gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(TEST_USER_SENDER,limit).size(), limit-1);
+
   }
 
   @Test
