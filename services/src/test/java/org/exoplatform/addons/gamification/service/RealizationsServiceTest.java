@@ -92,7 +92,7 @@ public class RealizationsServiceTest {
     GamificationActionsHistoryDTO rejectedHistory = null;
     // When
     try {
-      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED,null,null,null);
+      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED,"",0L,"");
 
     } catch (ObjectNotFoundException e) {
       fail(e.getMessage());
