@@ -84,7 +84,7 @@ public class RealizationsRest implements ResourceContainer {
     }
 
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList =realizationsService.getAllRealizationsByDate(fromDate,
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
                                                                                                                          toDate,
                                                                                                                          offset,
                                                                                                                          limit);
@@ -111,14 +111,26 @@ public class RealizationsRest implements ResourceContainer {
   String realizationId,
                                      @ApiParam(value = "new status of realization", required = true)
                                      @QueryParam("status")
-                                     String status) {
+                                     String status,
+                                     @ApiParam(value = "new action Label of realization", required = false)
+                                     @QueryParam("actionLabel")
+                                     String actionLabel,
+                                     @ApiParam(value = "new points of realization", required = false)
+                                     @QueryParam("points")
+                                     Long points,
+                                     @ApiParam(value = "new domain of realization", required = false)
+                                     @QueryParam("domain")
+                                     String domain) {
 
     String currentUser = Utils.getCurrentUser();
     try {
       GamificationActionsHistoryDTO gamificationActionsHistoryDTO =
                                                                   realizationsService.updateRealizationStatus(Long.valueOf(realizationId),
-                                                                                                              HistoryStatus.valueOf(status));
-      return Response.ok(gamificationActionsHistoryDTO).build();
+                                                                                                              HistoryStatus.valueOf(status),
+                                                                          actionLabel,
+                                                                          points,
+                                                                          domain);
+      return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO)).build();
     } catch (ObjectNotFoundException e) {
       LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
       return Response.status(Response.Status.NOT_FOUND).entity("realization not found").build();
@@ -192,14 +204,13 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
             if (actionId == null) {
               actionId = ga.getAction().getEvent();
             }
-            actionLabel = getI18NMessage(locale, actionLabelKey + ga.getAction().getTitle());
-            if (actionLabel == null) {
-              actionLabel = ga.getAction().getDescription();
-            }
           } else {
             actionId = escapeIllegalCharacterInMessage(ga.getAction().getEvent());
-            actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
           }
+        }
+        actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
+        if (actionLabel == null) {
+          actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
         }
         if (ga.getDomain() != null) {
           domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomain().getTitle().replace(" ", ""));
