@@ -37,7 +37,7 @@
               {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.title.${props.item.action.event}`) }} </span>
           </td>
           <td class="align-center actionTitle px-0">
-            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.actionLabel }} </span>
+            <span class="actionDescription" v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.actionLabel }} </span>
             <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ getActionLabel(props.item.actionLabel) }} </span>
           </td>
           <td class="text-truncate align-center">
@@ -89,7 +89,6 @@
                       <span class="px-1"> {{ $t('realization.label.edit') }} </span>
                     </v-list-item-title>
                   </v-list-item>
-                  <v-divider />
                   <v-list-item @mousedown="$event.preventDefault()" v-if="props.item.status === 'REJECTED'">
                     <v-list-item-title class="options" @click="updateRealizations(props.item,'ACCEPTED')">
                       <i class="fas fa-check px-1"></i>
