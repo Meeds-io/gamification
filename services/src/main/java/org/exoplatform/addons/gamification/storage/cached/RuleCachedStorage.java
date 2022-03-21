@@ -6,6 +6,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.services.cache.CacheService;
@@ -15,8 +16,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public class RuleCachedStorage extends RuleStorage {
-
-  private int                                            CHALLENGE_USER_OFFSET = 0;
 
   private static final int                               RULE_ID_CONTEXT        = 0;
 
@@ -92,22 +91,14 @@ public class RuleCachedStorage extends RuleStorage {
 
   @Override
   public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
-    CHALLENGE_USER_OFFSET += offset;
     return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_CONTEXT, ids, offset, limit),
-                                                       CHALLENGE_USER_CONTEXT + offset);
+                                                       CHALLENGE_USER_CONTEXT + offset + Utils.getCurrentUser());
   }
 
   @Override
   public Challenge saveChallenge(Challenge challenge, String username) {
-    try {
-      challenge = super.saveChallenge(challenge, username);
-      return challenge;
-    } finally {
-      this.ruleFutureCache.remove(ALL_RULE_CONTEXT);
-      for (int i = CHALLENGE_USER_OFFSET; i == 0; i = i-20) {
-        this.ruleFutureCache.remove(CHALLENGE_USER_CONTEXT + i);
-      }
-      CHALLENGE_USER_OFFSET = 0;
-    }
+    challenge = super.saveChallenge(challenge, username);
+    this.ruleFutureCache.clear();
+    return challenge;
   }
 }
