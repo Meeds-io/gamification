@@ -99,12 +99,10 @@ export default {
   methods: {
     pushChallenge(event) {
       if (event) {
+        this.challenges.push(event);
         if (this.challenges.length <= this.challengePerPage){
-          this.challenges.push(event);
-        } else {
-          this.showLoadMoreButton = true;
+          this.showLoadMoreButton = true ;
         }
-
       }
     },
     refreshChallenges() {
