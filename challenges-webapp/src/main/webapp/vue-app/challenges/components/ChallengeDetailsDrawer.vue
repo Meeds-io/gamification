@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     open() {
-      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, this.maxAvatarToShow).then(announcements => {
+      this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge && this.challenge.id, 0,this.maxAvatarToShow).then(announcements => {
         if (announcements.length > 0) {
           this.winners = [];
           announcements.map(announce => {

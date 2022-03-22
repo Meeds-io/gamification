@@ -100,7 +100,7 @@ export default {
     pushChallenge(event) {
       if (event) {
         this.challenges.push(event);
-        if (this.challenges.length <= this.challengePerPage){
+        if (this.challenges.length >= this.challengePerPage){
           this.showLoadMoreButton = true ;
         }
       }
