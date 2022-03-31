@@ -51,12 +51,12 @@ export default {
       return this.isChallenge ? this.$t('challenges.label.describeYourChallenge') : this.$t('challenges.label.describeYourAchievement');
     },
     challengeDescription () {
-      return this.isChallenge && this.challenge && this.challenge.id && this.challenge.description || '';
+      return this.isChallenge && this.challenge && this.challenge.id && this.challenge.description && this.challenge.description.replace( /(<a([^>]+)>)/ig, '').replace( /(<\/a>)/ig, '') || '';
     }
   },
   watch: {
     inputVal(val) {
-      return this.urlVerify(val);
+      return this.emitValue(val);
     },
     value() {
       this.inputVal = this.challengeDescription;
@@ -118,8 +118,7 @@ export default {
       });
     },
 
-    urlVerify(text) {
-      text = this.$challengeUtils.urlVerify(text);
+    emitValue(text) {
       this.$emit('addDescription',text);
       return text;
     },
