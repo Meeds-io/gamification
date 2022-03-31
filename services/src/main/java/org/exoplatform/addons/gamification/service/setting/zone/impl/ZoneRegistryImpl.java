@@ -64,22 +64,21 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
 
     @Override
     public void start() {
-        RequestLifeCycle.begin(PortalContainer.getInstance());
-        try {
-            // Processing registered domains
-            if(domainService.getAllDomains().isEmpty()){
-                for (ZoneConfig domain : zoneMap.values()) {
-                    DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
-                    if (domainDTO == null) {
-                        store(domain);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("Error when processing Domains ", e);
-        } finally {
-            RequestLifeCycle.end();
+      RequestLifeCycle.begin(PortalContainer.getInstance());
+      try {
+        // Processing registered domains
+        for (ZoneConfig domain : zoneMap.values()) {
+          DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
+          if (domainDTO == null) {
+            LOG.info("Saving new Gamification Domain '{}'", domain.getZoneName());
+            store(domain);
+          }
         }
+      } catch (Exception e) {
+        LOG.error("Error when saving Domains ", e);
+      } finally {
+        RequestLifeCycle.end();
+      }
     }
 
     @Override
