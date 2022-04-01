@@ -56,7 +56,7 @@ export default {
   },
   watch: {
     inputVal(val) {
-      return this.emitValue(val);
+      this.$emit('addDescription',val);
     },
     value() {
       this.inputVal = this.challengeDescription;
@@ -117,12 +117,6 @@ export default {
         },
       });
     },
-
-    emitValue(text) {
-      this.$emit('addDescription',text);
-      return text;
-    },
-
     deleteDescription: function() {
       if (  CKEDITOR.instances['descriptionContent']) {
         CKEDITOR.instances['descriptionContent'].destroy();

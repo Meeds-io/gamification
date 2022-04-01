@@ -351,7 +351,6 @@ export default {
         this.$root.$emit('show-alert', {type: 'error',message: this.$t('challenges.challengeDateError')});
         return;
       }
-      this.challenge.description = this.$challengeUtils.urlVerify(this.challenge.description);
       if (this.challenge && this.challenge.id){
         if ( this.challenge.managers && this.challenge.managers[0].id){
           this.challenge.managers = this.challenge.managers.map(manager => manager.id);
