@@ -8,7 +8,7 @@
     <textarea
       id="descriptionContent"
       ref="editor"
-      v-model="inputVal"
+      v-sanitized-html="inputVal"
       cols="30"
       rows="10"
       :disabled="disabled"></textarea>
@@ -56,7 +56,7 @@ export default {
   },
   watch: {
     inputVal(val) {
-      return this.urlVerify(val);
+      this.$emit('addDescription',val);
     },
     value() {
       this.inputVal = this.challengeDescription;
@@ -117,13 +117,6 @@ export default {
         },
       });
     },
-
-    urlVerify(text) {
-      text = this.$challengeUtils.urlVerify(text);
-      this.$emit('addDescription',text);
-      return text;
-    },
-
     deleteDescription: function() {
       if (  CKEDITOR.instances['descriptionContent']) {
         CKEDITOR.instances['descriptionContent'].destroy();
