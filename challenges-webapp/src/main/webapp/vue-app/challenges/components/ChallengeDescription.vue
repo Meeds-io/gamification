@@ -8,7 +8,7 @@
     <textarea
       id="descriptionContent"
       ref="editor"
-      v-model="inputVal"
+      v-sanitized-html="inputVal"
       cols="30"
       rows="10"
       :disabled="disabled"></textarea>
@@ -51,7 +51,7 @@ export default {
       return this.isChallenge ? this.$t('challenges.label.describeYourChallenge') : this.$t('challenges.label.describeYourAchievement');
     },
     challengeDescription () {
-      return this.isChallenge && this.challenge && this.challenge.id && this.challenge.description && this.challenge.description.replace( /(<a([^>]+)>)/ig, '').replace( /(<\/a>)/ig, '') || '';
+      return this.isChallenge && this.challenge && this.challenge.id && this.challenge.description || '';
     }
   },
   watch: {
