@@ -154,6 +154,7 @@ export default {
     createAnnouncement() {
       this.announcement.challengeId =  this.challenge.id;
       this.announcement.createdDate = new Date();
+      this.$refs.announcementDrawer.startLoading();
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.announcementCreateSuccess')});
         this.$emit('announcementAdded', announcement);
@@ -169,7 +170,8 @@ export default {
             msg = this.$t('challenges.announcementErrorSave');
           }
           this.$root.$emit('show-alert', {type: 'error',message: msg});
-        });
+        })
+        .finally(() => this.$refs.announcementDrawer.endLoading());
     },
     addUser(id){
       this.$set(this.announcement,'assignee', id);

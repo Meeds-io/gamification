@@ -358,6 +358,7 @@ export default {
         if ( this.challenge.program && this.challenge.program.id){
           this.challenge.program = this.challenge.program.title;
         }
+        this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.updateChallenge(this.challenge).then(() =>{
           this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeUpdateSuccess')});
           this.$root.$emit('challenge-updated');
@@ -366,8 +367,10 @@ export default {
         })
           .catch(e => {
             this.$root.$emit('show-alert', {type: 'error',message: String(e)});
-          });
+          })
+          .finally(() => this.$refs.challengeDrawer.endLoading());
       } else {
+        this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.saveChallenge(this.challenge).then((challenge) =>{
           this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeCreateSuccess')});
           this.$root.$emit('challenge-added', challenge);
@@ -376,7 +379,8 @@ export default {
         })
           .catch(e => {
             this.$root.$emit('show-alert', {type: 'error',message: String(e)});
-          });
+          })
+          .finally(() => this.$refs.challengeDrawer.endLoading());
       }
     },
   }
