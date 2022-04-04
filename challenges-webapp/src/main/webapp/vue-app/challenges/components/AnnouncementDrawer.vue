@@ -161,12 +161,10 @@ export default {
       })
         .catch(e => {
           let msg = '';
-          if (e.message === '400') { //argument exeption
-            msg = this.$t('challenges.permissionDenied');
-          } else if (e.message === '401' || e.message === '403') {
+          if (e.message === '401' || e.message === '403') {
             msg = this.$t('challenges.permissionDenied');
           } else if (e.message  === '406') {
-            msg = this.$t('challenges.challengeNotStarted');
+            msg = this.$t('challenges.challengeNotStartedOrEnded');
           } else  {
             msg = this.$t('challenges.announcementErrorSave');
           }
