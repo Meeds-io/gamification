@@ -157,11 +157,21 @@ export default {
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.announcementCreateSuccess')});
         this.$emit('announcementAdded', announcement);
+        this.close();
       })
         .catch(e => {
-          this.$root.$emit('show-alert', {type: 'error',message: String(e)});
+          let msg = '';
+          if (e.message === '400') { //argument exeption
+            msg = this.$t('challenges.permissionDenied');
+          } else if (e.message === '401' || e.message === '403') {
+            msg = this.$t('challenges.permissionDenied');
+          } else if (e.message  === '406') {
+            msg = this.$t('challenges.challengeNotStarted');
+          } else  {
+            msg = this.$t('challenges.announcementErrorSave');
+          }
+          this.$root.$emit('show-alert', {type: 'error',message: msg});
         });
-      this.close();
     },
     addUser(id){
       this.$set(this.announcement,'assignee', id);

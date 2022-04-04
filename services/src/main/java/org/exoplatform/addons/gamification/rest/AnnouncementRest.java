@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -59,8 +60,16 @@ public class AnnouncementRest implements ResourceContainer {
       Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser, false);
       return Response.ok(EntityMapper.fromAnnouncement(newAnnouncement)).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to create an announcement", e);
-      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+      LOG.warn("Unauthorized user '{}' attempts to create an announcement", e);
+      return Response.status(Response.Status.FORBIDDEN)
+                     .entity("User " + currentUser + " attempts to create an announcement")
+                     .build();
+    } catch (IllegalArgumentException e) {
+      LOG.warn(e.getMessage());
+      return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+    } catch (ObjectNotFoundException e) {
+      LOG.warn(e.getMessage());
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     } catch (Exception e) {
       LOG.warn("Error creating an announcement", e);
       return Response.serverError().entity(e.getMessage()).build();
