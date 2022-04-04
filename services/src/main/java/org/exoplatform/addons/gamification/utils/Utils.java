@@ -100,11 +100,13 @@ public class Utils {
     if (space == null) {
       throw new IllegalArgumentException("space is not exist");
     }
-    if (StringUtils.isNotBlank(getCurrentUser())) {
-      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, getCurrentUser())
-          || spaceService.isManager(space, getCurrentUser()) : spaceService.isMember(space, getCurrentUser());
+    String currentUser = getCurrentUser();
+    if (StringUtils.isNotBlank(currentUser)) {
+      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, currentUser)
+          || spaceService.isManager(space, currentUser) || spaceService.isSuperManager(currentUser)
+                                             : spaceService.isMember(space, currentUser);
     } else {
-      return true;
+      return false;
     }
   }
 

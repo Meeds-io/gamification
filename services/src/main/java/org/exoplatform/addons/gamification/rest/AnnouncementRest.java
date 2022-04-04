@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -44,7 +45,8 @@ public class AnnouncementRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
       @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"),
+      @ApiResponse(code = HTTPStatus.FORBIDDEN, message = "Forbidden operation"), })
   public Response createAnnouncement(@ApiParam(value = "Announcement object to create", required = true)
   Announcement announcement) {
     if (announcement == null) {
@@ -59,10 +61,13 @@ public class AnnouncementRest implements ResourceContainer {
       Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser, false);
       return Response.ok(EntityMapper.fromAnnouncement(newAnnouncement)).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to create an announcement", e);
-      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+      return Response.status(Response.Status.FORBIDDEN).build();
+    } catch (IllegalArgumentException e) {
+      return Response.status(Response.Status.BAD_REQUEST).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).build();
     } catch (Exception e) {
-      LOG.warn("Error creating an announcement", e);
+      LOG.warn("Error creating an announcement: { } ", announcement, e);
       return Response.serverError().entity(e.getMessage()).build();
     }
   }

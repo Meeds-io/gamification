@@ -85,7 +85,7 @@ export function saveAnnouncement(announcement) {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error saving announcement');
+      throw new Error(resp.status);
     }
   });
 }
