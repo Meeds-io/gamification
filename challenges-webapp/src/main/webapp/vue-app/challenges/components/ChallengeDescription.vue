@@ -9,6 +9,7 @@
       id="descriptionContent"
       ref="editor"
       v-sanitized-html="inputVal"
+      v-model="inputVal"
       cols="30"
       rows="10"
       :disabled="disabled"></textarea>

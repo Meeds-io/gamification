@@ -154,14 +154,24 @@ export default {
     createAnnouncement() {
       this.announcement.challengeId =  this.challenge.id;
       this.announcement.createdDate = new Date();
+      this.$refs.announcementDrawer.startLoading();
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.announcementCreateSuccess')});
         this.$emit('announcementAdded', announcement);
+        this.close();
       })
         .catch(e => {
-          this.$root.$emit('show-alert', {type: 'error',message: String(e)});
-        });
-      this.close();
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('challenges.permissionDenied');
+          } else if (e.message  === '406') {
+            msg = this.$t('challenges.challengeNotStartedOrEnded');
+          } else  {
+            msg = this.$t('challenges.announcementErrorSave');
+          }
+          this.$root.$emit('show-alert', {type: 'error',message: msg});
+        })
+        .finally(() => this.$refs.announcementDrawer.endLoading());
     },
     addUser(id){
       this.$set(this.announcement,'assignee', id);

@@ -137,7 +137,7 @@ export default {
       window.setTimeout(() => this.alert = false, 5000);
     },
     editChallenge(challenge) {
-      this.$refs.challengeDrawer.challenge = challenge;
+      this.$refs.challengeDrawer.challenge =JSON.parse(JSON.stringify(challenge));
       this.$nextTick().then(() => this.openChallengeDrawer());
     },
   }
