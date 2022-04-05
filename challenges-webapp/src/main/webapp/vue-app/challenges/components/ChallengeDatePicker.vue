@@ -3,7 +3,7 @@
     <div class="challengePlanDateCalender d-flex align-center">
       <i class="uiIconStartDate uiIconBlue"></i>
       <div v-if="disabledStartDate" class="subtitle-1 mx-4 mt-1">
-        {{ getFormatDate(startDate) }}
+        <date-format :value="startDate" />
       </div>
       <div v-else>
         <date-picker
@@ -26,7 +26,7 @@
     <div class="challengeEndDateCalender d-flex align-center mt-1">
       <i class="uiIconEndDate uiIconBlue"></i>
       <div v-if="disabledEndDate" class="subtitle-1 mx-4 mt-1">
-        {{ getFormatDate(endDate) }}
+        <date-format :value="endDate" />
       </div>
       <div v-else>
         <date-picker
