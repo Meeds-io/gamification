@@ -171,11 +171,11 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     }
   }
 
-  private void clearUserChallengeCache(){
+  private void clearUserChallengeCache() {
     ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-     if(challengeService != null) {
-       challengeService.clearUserChallengeCache();
-     }
+    if (challengeService != null) {
+      challengeService.clearUserChallengeCache();
+    }
   }
 
 }
