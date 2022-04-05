@@ -1,6 +1,8 @@
 package org.exoplatform.addons.gamification.utils;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -121,7 +123,7 @@ public class Utils {
     if (StringUtils.isBlank(dateString)) {
       return null;
     }
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, RFC_3339_FORMATTER);
+    ZonedDateTime zonedDateTime = LocalDateTime.parse(dateString, RFC_3339_FORMATTER).atZone(ZoneId.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
     return new Date(Timestamp.valueOf(zonedDateTime.toLocalDateTime()).getTime());
   }
 
