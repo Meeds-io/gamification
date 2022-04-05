@@ -113,7 +113,7 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = ZonedDateTime.from(new Timestamp(dateTime.getTime()).toLocalDateTime().atOffset(ZoneOffset.UTC));
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
 

@@ -16,7 +16,10 @@ public class UtilsTest {
     int dateMonth = date.getMonth() + 1;
     int dateDay = date.getDate();
     int dateYear = date.getYear() + 1900;
-    String dateFullTime = date.getHours()+ ":"+date.getMinutes()+ ":"+date.getSeconds();
+    String min = date.getMinutes() > 10 ? String.valueOf(date.getMinutes()) : "0" + date.getMinutes();
+    String hour = date.getHours() > 10 ? String.valueOf(date.getHours()) : "0" + date.getHours();
+    String sec = date.getSeconds() > 10 ? String.valueOf(date.getSeconds()) : "0" + date.getSeconds();
+    String dateFullTime = hour + ":" + min + ":" + sec ;
 
     String rfc3339Date = Utils.toRFC3339Date(date);
     assertNotNull(rfc3339Date);
