@@ -101,4 +101,9 @@ public class RuleCachedStorage extends RuleStorage {
     this.ruleFutureCache.clear();
     return challenge;
   }
+
+  @Override
+  public void clearCache() {
+    this.ruleFutureCache.clear();
+  }
 }

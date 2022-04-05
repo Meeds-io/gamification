@@ -22,6 +22,7 @@ import static org.exoplatform.addons.gamification.listener.generic.GamificationG
 import java.util.HashMap;
 import java.util.Map;
 
+import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
@@ -88,10 +89,12 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     Space space = event.getSpace();
 
     createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN);
+    clearUserChallengeCache();
   }
 
   @Override
   public void left(SpaceLifeCycleEvent event) {
+    clearUserChallengeCache();
   }
 
   @Override
@@ -166,6 +169,13 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     } catch (Exception e) {
       LOG.error("Cannot broadcast gamification event");
     }
+  }
+
+  private void clearUserChallengeCache(){
+    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+     if(challengeService != null) {
+       challengeService.clearUserChallengeCache();
+     }
   }
 
 }

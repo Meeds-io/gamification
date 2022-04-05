@@ -116,5 +116,6 @@ public class RuleStorage {
   public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
   }
+  public void clearCache() {  }
 
 }
