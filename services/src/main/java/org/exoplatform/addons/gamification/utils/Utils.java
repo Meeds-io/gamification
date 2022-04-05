@@ -114,7 +114,6 @@ public class Utils {
       return null;
     }
     ZonedDateTime zonedDateTime = ZonedDateTime.from(new Timestamp(dateTime.getTime()).toLocalDateTime().atOffset(ZoneOffset.UTC));
-    ;
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
 
