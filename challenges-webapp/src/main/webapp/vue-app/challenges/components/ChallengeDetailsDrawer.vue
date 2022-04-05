@@ -55,13 +55,13 @@
         <div class="startDate d-flex px-4 py-2">
           <i class="uiIconStartDate "></i>
           <div class="mt-1 date">
-            {{ challenge && getFromDate(new Date(challenge.startDate)) }}
+            <date-format :value="challenge && challenge.startDate" />
           </div>
         </div>
         <div class="endDate d-flex pl-4 pr-4 pt-4">
           <i class="uiIconDueDate "></i>
           <div class="date">
-            {{ challenge && getFromDate(new Date(challenge.endDate)) }}
+            <date-format :value="challenge && challenge.endDate" />
           </div>
         </div>
         <div class="pl-4 pr-4 pt-4">

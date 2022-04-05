@@ -275,7 +275,7 @@ export default {
       const month = String(date.getMonth()+1);
       const year = String(date.getFullYear());
       const lang = eXo.env.portal.language;
-      const time =   date.toLocaleString(lang, { hour: 'numeric', minute: 'numeric', hour12: true }).toLowerCase();
+      const time =   date.toLocaleString(lang, { hour: 'numeric', minute: 'numeric', hour12: true,  timeZone: 'UTC'}).toLowerCase();
       return `${day}/${month}/${year} ${time} ` ;
     },
     closeActionsMenu() {
