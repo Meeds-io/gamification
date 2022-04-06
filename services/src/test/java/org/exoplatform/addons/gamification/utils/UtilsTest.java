@@ -66,7 +66,7 @@ public class UtilsTest {
     String month = fullDate.split("-")[1];
     String day = fullDate.split("-")[2];
 
-    assertEquals(rfc3339Date.split("T")[1], "00:00:00");
+    assertEquals("00:00:00", rfc3339Date.split("T")[1]);
     assertEquals(Integer.parseInt(month), dateMonth);
     assertEquals(Integer.parseInt(day), dateDay);
     assertEquals(Integer.parseInt(year), dateYear);
@@ -86,7 +86,7 @@ public class UtilsTest {
     int dateDay = date.getDate();
     int dateYear = date.getYear() + 1900;
 
-    assertEquals(simpleDate.split("T")[1], "00:00:00");
+    assertEquals("00:00:00", simpleDate.split("T")[1]);
     assertEquals(Integer.parseInt(month), dateMonth);
     assertEquals(Integer.parseInt(day), dateDay);
     assertEquals(Integer.parseInt(year), dateYear);

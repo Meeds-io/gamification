@@ -1,6 +1,5 @@
 package org.exoplatform.addons.gamification.utils;
 
-import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -38,7 +37,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class Utils<main> {
+public class Utils {
 
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "challenge.announcement.activity";
 
@@ -114,7 +113,7 @@ public class Utils<main> {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
 
@@ -122,7 +121,7 @@ public class Utils<main> {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
     return zonedDateTime.format(SIMPLE_DATE_FORMATTER);
   }
 
