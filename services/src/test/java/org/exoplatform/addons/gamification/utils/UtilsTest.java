@@ -51,14 +51,14 @@ public class UtilsTest {
   }
 
   @Test
-  public void testToRFC3339ChallengeDate() {
+  public void testToSimpleDateFormat() {
     Date date = new Date(System.currentTimeMillis());
     assertNull(Utils.toRFC3339Date(null));
     int dateMonth = date.getMonth() + 1;
     int dateDay = date.getDate();
     int dateYear = date.getYear() + 1900;
 
-    String rfc3339Date = Utils.toRFC3339ChallengeDate(date);
+    String rfc3339Date = Utils.toSimpleDateFormat(date);
     assertNotNull(rfc3339Date);
     String fullDate = rfc3339Date.split("T")[0];
     String year = fullDate.split("-")[0];

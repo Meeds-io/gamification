@@ -29,8 +29,8 @@ public class EntityMapper {
                          challengeEntity.getTitle(),
                          challengeEntity.getDescription(),
                          challengeEntity.getAudience(),
-                         challengeEntity.getStartDate() == null ? null : Utils.toRFC3339ChallengeDate(challengeEntity.getStartDate()),
-                         challengeEntity.getEndDate() == null ? null : Utils.toRFC3339ChallengeDate(challengeEntity.getEndDate()),
+                         challengeEntity.getStartDate() == null ? null : Utils.toSimpleDateFormat(challengeEntity.getStartDate()),
+                         challengeEntity.getEndDate() == null ? null : Utils.toSimpleDateFormat(challengeEntity.getEndDate()),
                          challengeEntity.getManagers(),
                          (long) challengeEntity.getScore(),
                          challengeEntity.getDomainEntity() != null ? challengeEntity.getDomainEntity().getTitle() : null);

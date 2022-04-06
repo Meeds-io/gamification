@@ -119,7 +119,7 @@ public class Utils {
     ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
-  public static String toRFC3339ChallengeDate(Date dateTime) {
+  public static String toSimpleDateFormat(Date dateTime) {
     if (dateTime == null) {
       return null;
     }
