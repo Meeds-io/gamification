@@ -204,6 +204,7 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
             if (actionId == null) {
               actionId = ga.getAction().getEvent();
             }
+            actionId = escapeIllegalCharacterInMessage(actionId);
           } else {
             actionId = escapeIllegalCharacterInMessage(ga.getAction().getEvent());
           }
@@ -211,6 +212,8 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
         if (actionLabel == null) {
           actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
+        } else {
+          actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
         if (ga.getDomain() != null) {
           domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomain().getTitle().replace(" ", ""));
@@ -222,6 +225,8 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
             domainDescription = ga.getDomain().getDescription();
           }
         }
+        domainTitle = escapeIllegalCharacterInMessage(domainTitle);
+        domainDescription = escapeIllegalCharacterInMessage(domainDescription);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getCreator() != null ? ga.getCreator() : ga.getEarner());
@@ -242,7 +247,7 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         sbResult.append(DELIMITER);
         sbResult.append(ga.getEarner() != null ? ga.getEarner() : "-");
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getSpace() != null ? ga.getSpace() : "-");
+        sbResult.append(ga.getSpace() != null ? escapeIllegalCharacterInMessage(ga.getSpace()) : "-");
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
         LOG.error("Error when computing to XLSX ",e);
