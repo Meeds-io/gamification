@@ -152,4 +152,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listIdSpace);
     return EntityMapper.fromChallengeEntities(challengeEntities);
   }
+
+  @Override
+  public void clearUserChallengeCache() {
+    challengeStorage.clearCache();
+  }
 }

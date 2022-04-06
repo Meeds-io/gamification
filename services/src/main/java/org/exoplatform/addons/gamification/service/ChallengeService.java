@@ -70,4 +70,9 @@ public interface ChallengeService {
    * @throws Exception can't get list of spaces
    */
   List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws Exception;
+
+  /**
+   * clear challenges cache.
+   */
+  void clearUserChallengeCache();
 }
