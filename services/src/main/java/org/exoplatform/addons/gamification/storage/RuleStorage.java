@@ -117,7 +117,8 @@ public class RuleStorage {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
   }
 
-  public void clearCache() {
+  public void clearCache() { // NOSONAR
+    // implemented in cached storage
   }
 
 }
