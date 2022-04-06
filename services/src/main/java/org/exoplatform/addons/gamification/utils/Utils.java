@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.utils;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,7 +11,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
@@ -20,7 +20,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.portal.Constants;
 import org.exoplatform.portal.localization.LocaleContextInfoUtils;
@@ -50,11 +49,14 @@ public class Utils {
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS     =  {',',';','\n'};
+  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER       = DateTimeFormatter.ofPattern("yyyy-MM-dd'T00:00:00'")
+                                                                                       .withResolverStyle(ResolverStyle.LENIENT);
+
+  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
 
   private static GamificationService    gamificationService;
 
-  private static RuleService    ruleService;
+  private static RuleService            ruleService;
 
   private Utils() { // NOSONAR
   }
@@ -114,16 +116,23 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = ZonedDateTime.from(dateTime.toInstant().atOffset(ZoneOffset.UTC));
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
+  }
+  public static String toSimpleDateFormat(Date dateTime) {
+    if (dateTime == null) {
+      return null;
+    }
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
+    return zonedDateTime.format(SIMPLE_DATE_FORMATTER);
   }
 
   public static Date parseRFC3339Date(String dateString) {
     if (StringUtils.isBlank(dateString)) {
       return null;
     }
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, RFC_3339_FORMATTER);
-    return Date.from(zonedDateTime.toInstant());
+    LocalDateTime localDateTime = LocalDateTime.parse(dateString, RFC_3339_FORMATTER);
+    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
   }
 
   public static Space getSpaceById(String spaceId) {

@@ -32,6 +32,7 @@ import org.exoplatform.addons.gamification.storage.dao.RuleDAOTest;
 import org.exoplatform.addons.gamification.test.rest.TestManageBadgesEndpoint;
 import org.exoplatform.addons.gamification.test.rest.TestManageDomainsEndpoint;
 import org.exoplatform.addons.gamification.test.rest.TestManageRulesEndpoint;
+import org.exoplatform.addons.gamification.utils.UtilsTest;
 import org.exoplatform.commons.testing.BaseExoContainerTestSuite;
 import org.exoplatform.commons.testing.ConfigTestCase;
 import org.junit.AfterClass;
@@ -58,7 +59,8 @@ import org.junit.runners.Suite.SuiteClasses;
         GamificationHistoryDAOTest.class,
         RuleServiceTest.class,
         RealizationsServiceTest.class,
-        RealizationsStorageTest.class
+        RealizationsStorageTest.class,
+        UtilsTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
