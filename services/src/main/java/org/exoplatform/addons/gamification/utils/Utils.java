@@ -1,8 +1,6 @@
 package org.exoplatform.addons.gamification.utils;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,11 +49,14 @@ public class Utils {
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS     =  {',',';','\n'};
+  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER       = DateTimeFormatter.ofPattern("yyyy-MM-dd'T00:00:00'")
+                                                                                       .withResolverStyle(ResolverStyle.LENIENT);
+
+  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
 
   private static GamificationService    gamificationService;
 
-  private static RuleService    ruleService;
+  private static RuleService            ruleService;
 
   private Utils() { // NOSONAR
   }
@@ -115,16 +116,23 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
+  }
+  public static String toRFC3339ChallengeDate(Date dateTime) {
+    if (dateTime == null) {
+      return null;
+    }
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
+    return zonedDateTime.format(SIMPLE_DATE_FORMATTER);
   }
 
   public static Date parseRFC3339Date(String dateString) {
     if (StringUtils.isBlank(dateString)) {
       return null;
     }
-    ZonedDateTime zonedDateTime = LocalDateTime.parse(dateString, RFC_3339_FORMATTER).atZone(ZoneId.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
-    return new Date(Timestamp.valueOf(zonedDateTime.toLocalDateTime()).getTime());
+    LocalDateTime localDateTime = LocalDateTime.parse(dateString, RFC_3339_FORMATTER);
+    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
   }
 
   public static Space getSpaceById(String spaceId) {
