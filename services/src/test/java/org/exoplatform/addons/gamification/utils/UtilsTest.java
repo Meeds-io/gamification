@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.utils;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -65,7 +66,27 @@ public class UtilsTest {
     String month = fullDate.split("-")[1];
     String day = fullDate.split("-")[2];
 
-    assertEquals(rfc3339Date.split("T")[1], "00:00:00");
+    assertEquals("00:00:00", rfc3339Date.split("T")[1]);
+    assertEquals(Integer.parseInt(month), dateMonth);
+    assertEquals(Integer.parseInt(day), dateDay);
+    assertEquals(Integer.parseInt(year), dateYear);
+  }
+  @Test
+  public void testParseSimpleDate() {
+    TimeZone.setDefault(TimeZone.getTimeZone("US/Hawaii"));
+
+    String simpleDate = "2022-04-05T00:00:00";
+    String fullDate = simpleDate.split("T")[0];
+    String year = fullDate.split("-")[0];
+    String month = fullDate.split("-")[1];
+    String day = fullDate.split("-")[2];
+    Date date = Utils.parseSimpleDate(simpleDate);
+    assertNull(Utils.toRFC3339Date(null));
+    int dateMonth = date.getMonth() + 1;
+    int dateDay = date.getDate();
+    int dateYear = date.getYear() + 1900;
+
+    assertEquals("00:00:00", simpleDate.split("T")[1]);
     assertEquals(Integer.parseInt(month), dateMonth);
     assertEquals(Integer.parseInt(day), dateDay);
     assertEquals(Integer.parseInt(year), dateYear);

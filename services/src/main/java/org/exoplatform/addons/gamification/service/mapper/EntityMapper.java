@@ -51,10 +51,10 @@ public class EntityMapper {
       challengeEntity.setDescription(challenge.getDescription());
     }
     if (challenge.getEndDate() != null) {
-      challengeEntity.setEndDate(Utils.parseRFC3339Date(challenge.getEndDate()));
+      challengeEntity.setEndDate(Utils.parseSimpleDate(challenge.getEndDate()));
     }
     if (challenge.getStartDate() != null) {
-      challengeEntity.setStartDate(Utils.parseRFC3339Date(challenge.getStartDate()));
+      challengeEntity.setStartDate(Utils.parseSimpleDate(challenge.getStartDate()));
     }
     if (challenge.getManagers() == null || challenge.getManagers().isEmpty()) {
       challengeEntity.setManagers(Collections.emptyList());

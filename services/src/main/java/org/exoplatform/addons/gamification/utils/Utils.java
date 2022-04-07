@@ -1,8 +1,6 @@
 package org.exoplatform.addons.gamification.utils;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
@@ -49,7 +47,7 @@ public class Utils {
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER       = DateTimeFormatter.ofPattern("yyyy-MM-dd'T00:00:00'")
+  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER       = DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
                                                                                        .withResolverStyle(ResolverStyle.LENIENT);
 
   private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
@@ -66,7 +64,7 @@ public class Utils {
     return identityManager.getOrCreateIdentity(type, name);
   }
 
-  public static String getUserRemoteId(String  id){
+  public static String getUserRemoteId(String id) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getIdentity(id);
     return identity != null ? identity.getRemoteId() : null;
@@ -90,11 +88,10 @@ public class Utils {
       isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
     }
     if (space != null) {
-      isSpaceManager = spaceService.isManager(space,userId) || spaceService.isSuperManager(userId);
+      isSpaceManager = spaceService.isManager(space, userId) || spaceService.isSuperManager(userId);
     }
     return isChallengeOwner && isSpaceManager;
   }
-
 
   public static final boolean canAnnounce(String id) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
@@ -119,11 +116,12 @@ public class Utils {
     ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
+
   public static String toSimpleDateFormat(Date dateTime) {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault());
     return zonedDateTime.format(SIMPLE_DATE_FORMATTER);
   }
 
@@ -131,8 +129,17 @@ public class Utils {
     if (StringUtils.isBlank(dateString)) {
       return null;
     }
-    LocalDateTime localDateTime = LocalDateTime.parse(dateString, RFC_3339_FORMATTER);
-    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, RFC_3339_FORMATTER).withZoneSameInstant(ZoneId.systemDefault());
+    return Date.from(zonedDateTime.toInstant());
+  }
+
+  public static Date parseSimpleDate(String dateString) {
+    if (StringUtils.isBlank(dateString)) {
+      return null;
+    }
+    ZonedDateTime zonedDateTime = LocalDate.parse(dateString.substring(0, 10), SIMPLE_DATE_FORMATTER)
+                                           .atStartOfDay(ZoneId.systemDefault());
+    return Date.from(zonedDateTime.toInstant());
   }
 
   public static Space getSpaceById(String spaceId) {
@@ -141,8 +148,8 @@ public class Utils {
     }
     Space space = CommonsUtils.getService(SpaceService.class).getSpaceById(spaceId);
     if (space == null) {
-      LOG.warn("space with id {} do not exist",spaceId);
-      return null ;
+      LOG.warn("space with id {} do not exist", spaceId);
+      return null;
     }
     return space;
   }
@@ -156,8 +163,8 @@ public class Utils {
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
-    if(ruleId == 0 ) {
-      return null ;
+    if (ruleId == 0) {
+      return null;
     }
     try {
       RuleService ruleService = CommonsUtils.getService(RuleService.class);
@@ -191,7 +198,7 @@ public class Utils {
       }
       return users;
     } catch (Exception e) {
-      LOG.error("Error when getting challenge managers {}",  e);
+      LOG.error("Error when getting challenge managers {}", e);
       return Collections.emptyList();
     }
 
@@ -205,7 +212,7 @@ public class Utils {
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
       Identity identity = identityManager.getIdentity(String.valueOf(id));
       if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-        if(challengeId != null){
+        if (challengeId != null) {
           Space space;
           ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
           Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
@@ -230,11 +237,11 @@ public class Utils {
     String userId = identity.getRemoteId();
     if (space != null) {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      Boolean isSuperManager =  spaceService.isSuperManager(userId);
+      Boolean isSuperManager = spaceService.isSuperManager(userId);
       boolean isManager = isSuperManager || spaceService.isManager(space, userId);
       boolean isMember = isManager || spaceService.isMember(space, userId);
-      boolean isRedactor = isManager || spaceService.isRedactor(space, userId) ;
-      boolean hasRedactor = spaceService.hasRedactor(space) ;
+      boolean isRedactor = isManager || spaceService.isRedactor(space, userId);
+      boolean hasRedactor = spaceService.hasRedactor(space);
       Boolean isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
       userInfo.setManager(isManager);
       userInfo.setMember(isMember);
@@ -270,6 +277,7 @@ public class Utils {
     }
     return gamificationService;
   }
+
   public static RuleService getRuleService() {
     if (ruleService == null) {
       ruleService = CommonsUtils.getService(RuleService.class);
@@ -282,13 +290,13 @@ public class Utils {
   }
 
   public static String getSpaceFromObjectID(String objectID) {
-    if( StringUtils.isBlank(objectID) || !objectID.contains("/portal/g/:spaces:")){
+    if (StringUtils.isBlank(objectID) || !objectID.contains("/portal/g/:spaces:")) {
       return null;
     }
-    String groupID = objectID.substring(objectID.indexOf(":")).replace(":","/");
+    String groupID = objectID.substring(objectID.indexOf(":")).replace(":", "/");
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space =  spaceService.getSpaceByGroupId(groupID);
-    return space != null ? space.getDisplayName() : null  ;
+    Space space = spaceService.getSpaceByGroupId(groupID);
+    return space != null ? space.getDisplayName() : null;
   }
 
   public static final Locale getCurrentUserLocale() {
@@ -314,7 +322,7 @@ public class Utils {
     return locale;
   }
 
-  public static final String getI18NMessage(Locale userLocale,String messageKey) {
+  public static final String getI18NMessage(Locale userLocale, String messageKey) {
     ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
     if (userLocale == null) {
       userLocale = Locale.ENGLISH;
@@ -334,7 +342,7 @@ public class Utils {
     try {
       profile = organizationService.getUserProfileHandler().findUserProfileByName(username);
     } catch (Exception e) {
-      LOG.error("Error when getting user locale ",e);
+      LOG.error("Error when getting user locale ", e);
     }
     String lang = null;
     if (profile != null) {
@@ -347,7 +355,9 @@ public class Utils {
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {
-    if (message == null) return null;
+    if (message == null) {
+      return null;
+    }
     message = StringEscapeUtils.unescapeHtml(message);
     for (char c : ILLEGAL_MESSAGE_CHARACTERS) {
       message = message.replace(c, ' ');
