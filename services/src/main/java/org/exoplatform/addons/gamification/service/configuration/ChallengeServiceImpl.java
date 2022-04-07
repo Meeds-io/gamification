@@ -17,7 +17,6 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
@@ -54,8 +53,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (StringUtils.isBlank(idSpace)) {
       throw new IllegalArgumentException("space id must not be null or empty");
     }
-    Date startDate = Utils.parseRFC3339Date(challenge.getStartDate());
-    Date endDate = Utils.parseRFC3339Date(challenge.getEndDate());
+    Date startDate = Utils.parseSimpleDate(challenge.getStartDate());
+    Date endDate = Utils.parseSimpleDate(challenge.getEndDate());
     if (startDate != null && endDate != null && endDate.compareTo(startDate) <= 0) {
       throw new IllegalArgumentException("endDate must be greater than startDate");
     }

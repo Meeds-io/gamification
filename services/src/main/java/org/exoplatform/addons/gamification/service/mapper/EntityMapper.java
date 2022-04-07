@@ -29,8 +29,8 @@ public class EntityMapper {
                          challengeEntity.getTitle(),
                          challengeEntity.getDescription(),
                          challengeEntity.getAudience(),
-                         challengeEntity.getStartDate() == null ? null : Utils.toRFC3339Date(challengeEntity.getStartDate()),
-                         challengeEntity.getEndDate() == null ? null : Utils.toRFC3339Date(challengeEntity.getEndDate()),
+                         challengeEntity.getStartDate() == null ? null : Utils.toSimpleDateFormat(challengeEntity.getStartDate()),
+                         challengeEntity.getEndDate() == null ? null : Utils.toSimpleDateFormat(challengeEntity.getEndDate()),
                          challengeEntity.getManagers(),
                          (long) challengeEntity.getScore(),
                          challengeEntity.getDomainEntity() != null ? challengeEntity.getDomainEntity().getTitle() : null);
@@ -51,10 +51,10 @@ public class EntityMapper {
       challengeEntity.setDescription(challenge.getDescription());
     }
     if (challenge.getEndDate() != null) {
-      challengeEntity.setEndDate(Utils.parseRFC3339Date(challenge.getEndDate()));
+      challengeEntity.setEndDate(Utils.parseSimpleDate(challenge.getEndDate()));
     }
     if (challenge.getStartDate() != null) {
-      challengeEntity.setStartDate(Utils.parseRFC3339Date(challenge.getStartDate()));
+      challengeEntity.setStartDate(Utils.parseSimpleDate(challenge.getStartDate()));
     }
     if (challenge.getManagers() == null || challenge.getManagers().isEmpty()) {
       challengeEntity.setManagers(Collections.emptyList());
