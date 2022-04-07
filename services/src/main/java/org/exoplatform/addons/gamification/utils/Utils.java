@@ -113,7 +113,7 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
 
@@ -121,7 +121,7 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault()).withZoneSameLocal(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault());
     return zonedDateTime.format(SIMPLE_DATE_FORMATTER);
   }
 
@@ -129,10 +129,7 @@ public class Utils {
     if (StringUtils.isBlank(dateString)) {
       return null;
     }
-    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, RFC_3339_FORMATTER)
-                                               .toLocalDateTime()
-                                               .atOffset(ZoneOffset.UTC)
-                                               .atZoneSimilarLocal(ZoneId.systemDefault());
+    ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, RFC_3339_FORMATTER).withZoneSameInstant(ZoneId.systemDefault());
     return Date.from(zonedDateTime.toInstant());
   }
 
@@ -140,9 +137,9 @@ public class Utils {
     if (StringUtils.isBlank(dateString)) {
       return null;
     }
-    ZonedDateTime zonedDateTime =
-                                LocalDate.parse(dateString.substring(0, 10), SIMPLE_DATE_FORMATTER).atStartOfDay(ZoneOffset.UTC);
-    return Date.from(zonedDateTime.toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+    ZonedDateTime zonedDateTime = LocalDate.parse(dateString.substring(0, 10), SIMPLE_DATE_FORMATTER)
+                                           .atStartOfDay(ZoneId.systemDefault());
+    return Date.from(zonedDateTime.toInstant());
   }
 
   public static Space getSpaceById(String spaceId) {
@@ -358,8 +355,9 @@ public class Utils {
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {
-    if (message == null)
+    if (message == null) {
       return null;
+    }
     message = StringEscapeUtils.unescapeHtml(message);
     for (char c : ILLEGAL_MESSAGE_CHARACTERS) {
       message = message.replace(c, ' ');
