@@ -22,8 +22,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 
-import ReputationBadges from './ReputationBadges';
-import ReputationPoints from './ReputationPoints';
+import ReputationBadges from './ReputationBadges.vue';
+import ReputationPoints from './ReputationPoints.vue';
 
 export default {
   components: {

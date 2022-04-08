@@ -53,8 +53,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 /* eslint-disable */
 import Vue from 'vue';
-import BadgeList from './BadgeList';
-import SaveBadgeForm from './SaveBadgeForm';
+import BadgeList from './BadgeList.vue';
+import SaveBadgeForm from './SaveBadgeForm.vue';
 import BootstrapVue from 'bootstrap-vue';
 import axios from 'axios';
 

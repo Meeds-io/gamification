@@ -22,7 +22,7 @@
 export default {
   props: {
     challenges: {
-      type: Object,
+      type: Array,
       default: function() {
         return [];
       },

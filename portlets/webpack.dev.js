@@ -15,12 +15,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 
 
 module.exports = merge(common, {
-    output: {
-        path: `/exo-server/webapps/gamification-portlets/`,
-    },
+  output: {
+      path: `/exo-server/webapps/gamification-portlets/`,
+  },
+  mode: 'development',
 });

@@ -1,5 +1,5 @@
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 const webpackProductionConfig = require('./webpack.prod.js');
 
@@ -9,5 +9,5 @@ module.exports = merge(webpackProductionConfig, {
     filename: 'js/[name].bundle.js',
     libraryTarget: 'amd'
   },
-  cache: false,
+  mode: 'development',
 });

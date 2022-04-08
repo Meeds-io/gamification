@@ -1,4 +1,6 @@
 const path = require('path');
+const ESLintPlugin = require('eslint-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader')
 
 const config = {
   context: path.resolve(__dirname, '.'),
@@ -9,14 +11,12 @@ const config = {
         exclude: /node_modules/,
         use: [
           'babel-loader',
-          'eslint-loader',
         ]
       },
       {
         test: /\.vue$/,
         use: [
           'vue-loader',
-          'eslint-loader',
         ]
       }
     ]
@@ -25,6 +25,17 @@ const config = {
     challenges: './src/main/webapp/vue-app/challenges/main.js',
     challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
   },
+  plugins: [
+    new ESLintPlugin({
+      files: [
+        './src/main/webapp/vue-app/*.js',
+        './src/main/webapp/vue-app/*.vue',
+        './src/main/webapp/vue-app/**/*.js',
+        './src/main/webapp/vue-app/**/*.vue',
+      ],
+    }),
+    new VueLoaderPlugin()
+  ],
   output: {
     path: path.join(__dirname, 'target/challenges/'),
     filename: 'js/[name].bundle.js',
@@ -35,6 +46,7 @@ const config = {
     vuetify: 'Vuetify',
     jquery: '$',
   },
+  mode: 'production',
 };
 
 module.exports = config;

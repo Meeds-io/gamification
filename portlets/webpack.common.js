@@ -15,11 +15,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-/**
-const DashboardPlugin = require("webpack-dashboard/plugin");
-*/
+const ESLintPlugin = require('eslint-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader')
+
 module.exports = {
     context: path.resolve(__dirname, '.'),
     entry: {
@@ -37,6 +35,17 @@ module.exports = {
         badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
         Realizations: './src/main/webapp/vue-app/realizations/main.js'
     },
+    plugins: [
+      new ESLintPlugin({
+        files: [
+          './src/main/webapp/vue-app/*.js',
+          './src/main/webapp/vue-app/*.vue',
+          './src/main/webapp/vue-app/**/*.js',
+          './src/main/webapp/vue-app/**/*.vue',
+        ],
+      }),
+      new VueLoaderPlugin()
+    ],
     output: {
         filename: 'js/[name].bundle.js',
         libraryTarget: 'amd'
@@ -55,22 +64,14 @@ module.exports = {
               exclude: /node_modules/,
               use: [
                 'babel-loader',
-                'eslint-loader',
               ]
             },
             {
               test: /\.vue$/,
               use: [
                 'vue-loader',
-                'eslint-loader',
               ]
             }
         ]
-    },
-    resolve: {
-        alias: {
-            'vue$': 'vue/dist/vue.esm.js'
-        },
-        extensions: ['*', '.js', '.vue', '.json']
     },
 };

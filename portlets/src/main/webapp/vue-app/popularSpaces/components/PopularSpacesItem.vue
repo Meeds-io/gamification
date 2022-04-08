@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </template>
     </exo-space-avatar>
     <v-list-item-action class="ma-0 pe-4 flex-row align-self-center ml-auto" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
-      <template v-if="space.isInvited || skeleton" class="invitationButtons">
+      <div v-if="space.isInvited || skeleton" class="invitationButtons">
         <div class="acceptToJoinSpaceButtonParent">
           <v-btn
             :loading="sendingAction"
@@ -63,7 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ $t('popularSpaces.button.refuseToJoin') }}
           </span>
         </v-btn>
-      </template>
+      </div>
       <v-btn
         v-else-if="space.isPending"
         :loading="sendingAction"

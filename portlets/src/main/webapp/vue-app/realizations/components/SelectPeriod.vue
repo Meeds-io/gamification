@@ -10,7 +10,7 @@
     offset-y
     attach
     min-width="auto">
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <v-text-field
         :value="rangeDate"
         :title="rangeDateTimeTitle"
