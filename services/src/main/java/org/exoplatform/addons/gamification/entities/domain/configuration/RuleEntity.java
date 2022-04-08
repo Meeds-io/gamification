@@ -42,7 +42,7 @@ import java.util.Objects;
     @NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  where rule.type = :type GROUP BY rule.event"),
     @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) "),
     @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId "),
-    @NamedQuery(name = "Rule.findAllChallengesByUser", query = "SELECT DISTINCT r FROM Rule r where r.audience in (:ids) order by r.endDate desc") })
+    @NamedQuery(name = "Rule.findAllChallengesByUser", query = "SELECT DISTINCT r FROM Rule r where r.isDeleted = false AND r.audience in (:ids) order by r.endDate desc") })
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;

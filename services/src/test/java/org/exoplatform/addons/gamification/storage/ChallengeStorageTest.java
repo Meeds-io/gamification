@@ -174,4 +174,26 @@ public class ChallengeStorageTest {
         assertNotNull(challengeEntities);
 
     }
-}
+
+    @Test
+    public void testDeleteChallenge() {
+      RuleEntity challengeEntity = new RuleEntity();
+      challengeEntity.setTitle("Challenge");
+      challengeEntity.setDescription("description");
+      challengeEntity.setStartDate(new Date(System.currentTimeMillis()));
+      challengeEntity.setEndDate(new Date(System.currentTimeMillis() + 1));
+      challengeEntity.setId(1l);
+      challengeEntity.setAudience(1l);
+      challengeEntity.setManagers(Collections.emptyList());
+      challengeEntity.setDeleted(false);
+      when(challengeDAO.find(1l)).thenReturn(challengeEntity);
+
+      Challenge result = challengeStorage.getChallengeById(1l);
+      assertNotNull(result);
+      challengeStorage.deleteChallenge(1l, "root");
+      // When
+      result = challengeStorage.getChallengeById(1l);
+      assertNull(result);
+
+    }
+  }

@@ -16,6 +16,8 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 public class ChallengeServiceImpl implements ChallengeService {
@@ -155,5 +157,29 @@ public class ChallengeServiceImpl implements ChallengeService {
   @Override
   public void clearUserChallengeCache() {
     challengeStorage.clearCache();
+  }
+
+  @Override
+  public void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (challengeId <= 0) {
+      throw new IllegalArgumentException("Challenge id has to be positive integer");
+    }
+    Challenge challenge = challengeStorage.getChallengeById(challengeId);
+    if (challenge == null) {
+      throw new ObjectNotFoundException("challenge is not exist");
+    }
+    if (!Utils.canEditChallenge(challenge.getManagers(), String.valueOf(challenge.getAudience()))) {
+      throw new IllegalAccessException("your are not able to delete challenge");
+    }
+    if (Utils.countAnnouncementsByChallenge(challengeId) > 0) {
+      throw new IllegalArgumentException("challenge already have announcements");
+    }
+    Date endDate = Utils.parseSimpleDate(challenge.getEndDate());
+    Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    if (endDate.after(currentDate) || endDate.equals(currentDate)) {
+      throw new IllegalArgumentException("Challenge does not ended yet");
+    }
+    challengeStorage.deleteChallenge(challengeId, username);
   }
 }

@@ -107,7 +107,7 @@ public class RuleStorage {
 
   public Challenge getChallengeById(long challengeId) {
     RuleEntity challengeEntity = this.ruleDAO.find(challengeId);
-    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC) {
+    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC || challengeEntity.isDeleted()) {
       return null;
     }
     return EntityMapper.fromEntity(challengeEntity);
@@ -115,6 +115,17 @@ public class RuleStorage {
 
   public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
+  }
+
+  public void deleteChallenge(Long challengeId, String username) {
+    RuleEntity challengeEntity = this.ruleDAO.find(challengeId);
+    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC) {
+      return;
+    }
+    challengeEntity.setDeleted(true);
+    challengeEntity.setLastModifiedBy(username);
+    challengeEntity.setLastModifiedDate(new Date(System.currentTimeMillis()));
+    ruleDAO.update(challengeEntity);
   }
 
   public void clearCache() { // NOSONAR

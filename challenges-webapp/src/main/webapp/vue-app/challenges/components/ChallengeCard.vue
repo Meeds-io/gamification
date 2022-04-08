@@ -33,6 +33,9 @@
                     <v-list-item class="editList" @mousedown="$event.preventDefault()">
                       <v-list-item-title class="editLabel" @click="$emit('edit', challenge)">{{ $t('challenges.edit') }}</v-list-item-title>
                     </v-list-item>
+                    <v-list-item class="editList" @mousedown="$event.preventDefault()">
+                      <v-list-item-title class="editLabel" @click="deleteChallenge">{{ $t('challenges.delete') }}</v-list-item-title>
+                    </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
@@ -195,7 +198,8 @@ export default {
         this.label=this.$t('challenges.status.ended');
         return this.label;
       }
-    }, formattedDate(d) {
+    },
+    formattedDate(d) {
       let month = String(d.getMonth() + 1);
       let day = String(d.getDate());
       const year = String(d.getFullYear());
@@ -204,7 +208,24 @@ export default {
       if (day.length < 2) {day = `0${  day}`;}
 
       return `${day}/${month}/${year}`;
-    }
+    },
+    deleteChallenge() {
+      this.$challengesServices.deleteChallenge(this.challenge.id).then(() =>{
+        this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.deleteSuccess')});
+        this.$emit('challenge-deleted');
+      })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('challenges.deletePermissionDenied');
+          } else if (e.message  === '404') {
+            msg = this.$t('challenges.notFound');
+          } else  {
+            msg = this.$t('challenges.deleteErrorSave');
+          }
+          this.$root.$emit('show-alert', {type: 'error',message: msg});
+        });
+    },
   }
 };
 </script>
