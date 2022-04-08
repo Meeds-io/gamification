@@ -54,8 +54,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 /* eslint-disable */
-import DomainList from './DomainList';
-import SaveDomainForm from './SaveDomainForm';
+import DomainList from './DomainList.vue';
+import SaveDomainForm from './SaveDomainForm.vue';
 import BootstrapVue from 'bootstrap-vue';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.css';

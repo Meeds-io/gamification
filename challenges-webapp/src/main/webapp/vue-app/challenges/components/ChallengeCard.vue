@@ -20,7 +20,7 @@
                   attach
                   :left="!$vuetify.rtl"
                   :right="$vuetify.rtl">
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-btn
                       icon
                       class="ml-2"

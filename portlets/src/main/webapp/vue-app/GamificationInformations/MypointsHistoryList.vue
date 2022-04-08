@@ -76,7 +76,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import axios from 'axios';
 import Avatar from 'vue-avatar';
-import TotalPointsFilter from './TotalPointsFilter';
+import TotalPointsFilter from './TotalPointsFilter.vue';
 
 
 const initialData = () => {

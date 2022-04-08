@@ -70,7 +70,7 @@
               :value="selectedRealizations === props.item"
               attach>
               <template
-                v-slot:activator="{ on }">
+                #activator="{ on }">
                 <v-btn
                   icon
                   small

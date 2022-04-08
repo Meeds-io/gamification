@@ -167,13 +167,13 @@ export default {
       },
     },
     domains: {
-      type: Object,
+      type: Array,
       default: function() {
         return [];
       },
     },
     events: {
-      type: Object,
+      type: Array,
       default: function() {
         return [];
       },

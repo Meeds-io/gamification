@@ -14,7 +14,7 @@
       eager
       bottom
       :disabled="disabledUnAssign">
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div class="d-flex align-" v-on="on">
           <a
             :disabled="disabledUnAssign"

@@ -40,14 +40,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 /* eslint-disable */
-import MypointsHistoryList from '../GamificationInformations/MypointsHistoryList';
+import MypointsHistoryList from '../GamificationInformations/MypointsHistoryList.vue';
 import GamificationInformationStyle from '../../Style/GamificationInformationStyle.css';
 
-import MybadgesInformations from '../GamificationInformations/MybadgesInformations';
-import Gamificationhelp from '../gamificationearnpoints/Gamificationhelp';
+import MybadgesInformations from '../GamificationInformations/MybadgesInformations.vue';
+import Gamificationhelp from '../gamificationearnpoints/Gamificationhelp.vue';
 
 
-import TotalPointsFilter from '../GamificationInformations/TotalPointsFilter';
+import TotalPointsFilter from '../GamificationInformations/TotalPointsFilter.vue';
 import Tabs from 'vue-tabs-with-active-line';
 
 const TABS = [{

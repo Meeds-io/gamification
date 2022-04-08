@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 
 
-import ManageDomains from './ManageDomains';
+import ManageDomains from './ManageDomains.vue';
 
 export default {
   components: {
