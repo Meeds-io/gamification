@@ -180,6 +180,6 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (endDate.after(currentDate) || endDate.equals(currentDate)) {
       throw new IllegalArgumentException("Challenge does not ended yet");
     }
-    challengeStorage.deleteChallenge(challengeId, username);
+    challengeStorage.deleteChallenge(challenge);
   }
 }

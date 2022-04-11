@@ -117,15 +117,9 @@ public class RuleStorage {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
   }
 
-  public void deleteChallenge(Long challengeId, String username) {
-    RuleEntity challengeEntity = this.ruleDAO.find(challengeId);
-    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC) {
-      return;
-    }
-    challengeEntity.setDeleted(true);
-    challengeEntity.setLastModifiedBy(username);
-    challengeEntity.setLastModifiedDate(new Date(System.currentTimeMillis()));
-    ruleDAO.update(challengeEntity);
+  public void deleteChallenge(Challenge challenge) {
+    RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
+    this.ruleDAO.delete(challengeEntity);
   }
 
   public void clearCache() { // NOSONAR

@@ -34,7 +34,7 @@
                       <v-list-item-title class="editLabel" @click="$emit('edit', challenge)">{{ $t('challenges.edit') }}</v-list-item-title>
                     </v-list-item>
                     <v-list-item class="editList" @mousedown="$event.preventDefault()">
-                      <v-list-item-title class="editLabel" @click="deleteChallenge">{{ $t('challenges.delete') }}</v-list-item-title>
+                      <v-list-item-title class="editLabel" @click="confirmDelete">{{ $t('challenges.delete') }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -91,6 +91,13 @@
         </div>
       </div>
     </v-card>
+    <exo-confirm-dialog
+      ref="deleteChallengeConfirmDialog"
+      :title="$t('challenges.delete')"
+      :message="$t('challenges.deleteConfirmMessage')"
+      :ok-label="$t('challenges.ok')"
+      :cancel-label="$t('challenges.button.cancel')"
+      @ok="deleteChallenge" />
     <challenge-details-drawer
       ref="challenge"
       :challenge="challenge" />
@@ -225,6 +232,9 @@ export default {
           }
           this.$root.$emit('show-alert', {type: 'error',message: msg});
         });
+    },
+    confirmDelete() {
+      this.$refs.deleteChallengeConfirmDialog.open();
     },
   }
 };

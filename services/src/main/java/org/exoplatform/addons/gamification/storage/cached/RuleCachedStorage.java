@@ -102,8 +102,8 @@ public class RuleCachedStorage extends RuleStorage {
     return challenge;
   }
   @Override
-  public void deleteChallenge(Long challengeId, String username) {
-    super.deleteChallenge(challengeId, username);
+  public void deleteChallenge(Challenge challenge) {
+    super.deleteChallenge(challenge);
     this.ruleFutureCache.clear();
   }
 
