@@ -121,7 +121,7 @@ export function getAllDomains() {
 
 export function deleteChallenge(challengeId) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/delete/${challengeId}`, {
-    method: 'PUT',
+    method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
     if (!resp || !resp.ok) {

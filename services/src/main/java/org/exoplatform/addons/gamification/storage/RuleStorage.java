@@ -107,7 +107,7 @@ public class RuleStorage {
 
   public Challenge getChallengeById(long challengeId) {
     RuleEntity challengeEntity = this.ruleDAO.find(challengeId);
-    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC || challengeEntity.isDeleted()) {
+    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC) {
       return null;
     }
     return EntityMapper.fromEntity(challengeEntity);

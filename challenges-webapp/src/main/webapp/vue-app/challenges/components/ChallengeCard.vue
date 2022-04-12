@@ -33,7 +33,10 @@
                     <v-list-item class="editList" @mousedown="$event.preventDefault()">
                       <v-list-item-title class="editLabel" @click="$emit('edit', challenge)">{{ $t('challenges.edit') }}</v-list-item-title>
                     </v-list-item>
-                    <v-list-item class="editList" @mousedown="$event.preventDefault()">
+                    <v-list-item
+                      v-if="enableDelete"
+                      class="editList"
+                      @mousedown="$event.preventDefault()">
                       <v-list-item-title class="editLabel" @click="confirmDelete">{{ $t('challenges.delete') }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -153,6 +156,9 @@ export default {
     enableAnnounce(){
       return this.challenge && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
     },
+    enableDelete(){
+      return this.challenge && this.challenge.announcementsCount === 0 && this.status === 'Ended';
+    },
     enableEdit(){
       return this.challenge && this.challenge.userInfo.canEdit;
     },
@@ -219,7 +225,7 @@ export default {
     deleteChallenge() {
       this.$challengesServices.deleteChallenge(this.challenge.id).then(() =>{
         this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.deleteSuccess')});
-        this.$emit('challenge-deleted');
+        this.$root.$emit('challenge-deleted');
       })
         .catch(e => {
           let msg = '';

@@ -219,7 +219,7 @@ public class ChallengeRest implements ResourceContainer {
     }
   }
 
-  @PUT
+  @DELETE
   @Path("/delete/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
@@ -232,7 +232,7 @@ public class ChallengeRest implements ResourceContainer {
   public Response deleteChallenge(@ApiParam(value = "challenge id to be deleted", required = true)
   @PathParam("id")
   Long challengeId) {
-    if (challengeId ==null || challengeId <= 0 ) {
+    if (challengeId == null || challengeId <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("challenge technical identifier must be positive").build();
     }
 
