@@ -17,11 +17,11 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -131,5 +131,54 @@ public class ChallengeServiceTest {
     assertNotNull(challengeUpdated);
     assertEquals(1l, challenge1.getId());
     assertEquals("update challenge", challengeUpdated.getTitle());
+  }
+
+  @PrepareForTest({ Utils.class })
+  @Test
+  public void testDeleteChallenge() throws ObjectNotFoundException, IllegalAccessException {
+    // Given
+    Challenge challenge = new Challenge(1l,
+                                        "update challenge",
+                                        "challenge description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+
+    Space space = new Space();
+    when(spaceService.getSpaceById("1")).thenReturn(space);
+    when(spaceService.isManager(space, "root")).thenReturn(true);
+    when(challengeStorage.getChallengeById(1l)).thenReturn(challenge);
+    Challenge storedChallenge = challengeService.getChallengeById(1L,"root");
+    assertNotNull(storedChallenge);
+    assertEquals(1l, storedChallenge.getId());
+
+    PowerMockito.mockStatic(Utils.class);
+
+    // When
+    assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(-1l, "root"));
+
+    // When
+    when(challengeStorage.getChallengeById(2l)).thenReturn(null);
+    assertThrows(ObjectNotFoundException.class, () -> challengeService.deleteChallenge(2l, "root"));
+
+    // When
+    when(Utils.canEditChallenge(any(),any())).thenReturn(false);
+    assertThrows(IllegalAccessException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
+    when(Utils.canEditChallenge(any(),any())).thenReturn(true);
+
+    // When
+    when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
+    assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
+
+    // When
+    when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(10).toInstant()));
+    assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
+
+    when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(0l);
+    when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(-10).toInstant()));
+    challengeService.deleteChallenge(challenge.getId(), "root");
   }
 }

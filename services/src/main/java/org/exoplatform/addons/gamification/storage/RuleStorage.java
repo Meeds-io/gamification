@@ -117,6 +117,11 @@ public class RuleStorage {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
   }
 
+  public void deleteChallenge(Challenge challenge) {
+    RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
+    this.ruleDAO.delete(challengeEntity);
+  }
+
   public void clearCache() { // NOSONAR
     // implemented in cached storage
   }

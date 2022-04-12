@@ -75,4 +75,17 @@ public interface ChallengeService {
    * clear challenges cache.
    */
   void clearUserChallengeCache();
+
+  /**
+   * Retrieves all challenges by user.
+   * 
+   * @param challengeId Offset
+   * @param username Username who want to delete challenge
+   * @throws IllegalAccessException when user is not authorized to delete
+   *           challenges
+   * @throws ObjectNotFoundException challenge not found
+   * @throws IllegalArgumentException when challenge has announcements or did not
+   *           ended yet
+   */
+  void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException;
 }

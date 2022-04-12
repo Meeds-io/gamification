@@ -79,6 +79,7 @@ export default {
     });
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
+    this.$root.$on('challenge-deleted', this.refreshChallenges);
     const urlPath = document.location.pathname;
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (challengeId) {
