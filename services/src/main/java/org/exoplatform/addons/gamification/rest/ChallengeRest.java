@@ -218,4 +218,38 @@ public class ChallengeRest implements ResourceContainer {
       return Response.serverError().build();
     }
   }
+
+  @DELETE
+  @Path("/delete/{id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @ApiOperation(value = "check if the current user can add a challenge", httpMethod = "GET", response = Response.class, notes = "This checks if the current user user can add a challenge", consumes = "application/json")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "challenge deleted"),
+      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "User not authorized to delete a challenge"),
+      @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
+      @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Object not found"),
+      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  public Response deleteChallenge(@ApiParam(value = "challenge id to be deleted", required = true)
+  @PathParam("id")
+  Long challengeId) {
+    if (challengeId == null || challengeId <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("challenge technical identifier must be positive").build();
+    }
+
+    String currentUser = Utils.getCurrentUser();
+    try {
+      challengeService.deleteChallenge(challengeId, currentUser);
+      return Response.ok().build();
+    } catch (ObjectNotFoundException e) {
+      LOG.error("challenge trying to delete not found", e);
+      return Response.status(Response.Status.NOT_FOUND).entity("challenge trying to delete not found").build();
+    } catch (IllegalAccessException e) {
+      LOG.error("unauthorized user {} trying to delete a challenge", currentUser, e);
+      return Response.status(Response.Status.BAD_REQUEST).entity("unauthorized user trying to delete a challenge").build();
+    } catch (Exception e) {
+      LOG.error("Error when deleting challenge", e);
+      return Response.serverError().entity("Error when deleting challenge").build();
+    }
+  }
+
 }
