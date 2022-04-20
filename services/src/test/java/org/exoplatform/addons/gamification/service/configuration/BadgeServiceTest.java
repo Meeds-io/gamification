@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
@@ -66,7 +67,7 @@ public class BadgeServiceTest extends AbstractServiceTest {
   public void testUpdateBadge() {
     BadgeEntity badge = newBadge();
     badge.setDescription("Desc_2");
-    badgeService.updateBadge(badgeMapper.badgeToBadgeDTO(badge));
+    badgeService.updateBadge(BadgeMapper.badgeToBadgeDTO(badge));
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);
     assertNotNull(badge_);
     assertEquals(badge_.getDescription(), "Desc_2");

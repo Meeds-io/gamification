@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -154,7 +155,7 @@ public class RuleServiceTest extends AbstractServiceTest {
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain());
       rule.setType(TypeRule.AUTOMATIC);
-      ruleService.addRule(ruleMapper.ruleToRuleDTO(rule));
+      ruleService.addRule(RuleMapper.ruleToRuleDTO(rule));
       assertEquals(ruleDAO.findAll().size(), 1);
     } catch (Exception e) {
       fail("Error to add rule", e);
@@ -167,7 +168,7 @@ public class RuleServiceTest extends AbstractServiceTest {
       assertEquals(ruleDAO.findAll().size(), 0);
       RuleEntity ruleEntity = newRule();
       ruleEntity.setDescription("new_description");
-      ruleService.updateRule(ruleMapper.ruleToRuleDTO(ruleEntity));
+      ruleService.updateRule(RuleMapper.ruleToRuleDTO(ruleEntity));
       ruleEntity = ruleDAO.find(ruleEntity.getId());
       assertEquals(ruleEntity.getDescription(), "new_description");
     } catch (Exception e) {

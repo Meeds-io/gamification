@@ -170,11 +170,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
 
         return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
 
-      } catch (EntityExistsException e) {
-
-        LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
-
-        return Response.notModified().cacheControl(cacheControl).entity("Rule already exists").build();
       } catch (Exception e) {
 
         LOG.error("Error updating rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);

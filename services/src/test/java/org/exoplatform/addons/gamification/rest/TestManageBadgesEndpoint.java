@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.exoplatform.addons.gamification.test.rest;
+package org.exoplatform.addons.gamification.rest;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ import org.exoplatform.services.test.mock.MockHttpServletRequest;
 
 public class TestManageBadgesEndpoint extends AbstractServiceTest {
 
-  private static final Log LOG = ExoLogger.getLogger(ManageBadgesEndpoint.class);
+  private static final Log LOG = ExoLogger.getLogger(TestManageBadgesEndpoint.class);
 
   protected Class<?> getComponentClass() {
     return ManageBadgesEndpoint.class;

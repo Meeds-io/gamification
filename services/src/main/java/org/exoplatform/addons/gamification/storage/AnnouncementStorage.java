@@ -49,6 +49,7 @@ public class AnnouncementStorage {
     announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
     announcementEntity.setDomainEntity(domainEntity);
     announcementEntity.setDomain(domainEntity.getTitle());
+    announcementEntity.setObjectId("");
     if (announcementEntity.getId() == null) {
       announcementEntity = announcementDAO.create(announcementEntity);
     } else {
