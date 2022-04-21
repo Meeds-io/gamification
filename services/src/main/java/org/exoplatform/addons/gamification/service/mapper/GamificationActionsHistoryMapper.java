@@ -5,10 +5,12 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.space.model.Space;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +96,21 @@ public class GamificationActionsHistoryMapper {
 
   public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
     try {
+      String spaceName = "";
+      if(gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
+        RuleDTO rule = Utils.getRuleById(gHistory.getRuleId());
+        if (rule != null) {
+          long spaceId = rule.getAudience();
+          if (spaceId > 0) {
+            Space space = Utils.getSpaceById(String.valueOf(spaceId));
+            if (space != null) {
+              spaceName = space.getDescription();
+            }
+          }
+        }
+      } else {
+        spaceName = Utils.getSpaceFromObjectID(gHistory.getObjectId());
+      }
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
                                                       Utils.getUserRemoteId(gHistory.getEarnerId()),
                                                       gHistory.getRuleId() != null
@@ -105,9 +122,7 @@ public class GamificationActionsHistoryMapper {
                                                       Utils.getUserRemoteId(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
                                                                                                           : gHistory.getReceiver()),
                                                       gHistory.getCreatedDate(),
-                                                      gHistory.getStatus(),
-                                                      gHistory.getRuleId() != null
-                                                          && gHistory.getRuleId() != 0 ? Utils.getSpaceById(String.valueOf(Utils.getRuleById(gHistory.getRuleId()).getAudience())).getDisplayName() : Utils.getSpaceFromObjectID(gHistory.getObjectId()));
+                                                      gHistory.getStatus(), spaceName);
 
     } catch (Exception e) {
       LOG.error("Error while mapping history with id {}", gHistory.getId(), e);

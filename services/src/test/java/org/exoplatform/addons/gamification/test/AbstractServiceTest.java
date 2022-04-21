@@ -29,6 +29,8 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint;
 import org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint;
+import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -78,68 +80,90 @@ import org.exoplatform.social.core.manager.RelationshipManager;
 
 public abstract class AbstractServiceTest extends BaseExoTestCase {
 
-  protected static final String           GAMIFICATION_DOMAIN = "TeamWork";
+  protected static final String    GAMIFICATION_DOMAIN = "TeamWork";
 
-  protected static final String           RULE_NAME           = "createNewTask";
+  protected static final String    RULE_NAME           = "createNewTask";
 
-  protected static final String           BADGE_NAME          = "TeamLeader";
-
-  /* Space */
-  protected static final String           TEST_SPACE_ID  = "150";
+  protected static final String    BADGE_NAME          = "TeamLeader";
 
   /* Space */
-  protected static final String           TEST_SPACE2_ID  = "152";
+  protected static final String    TEST_SPACE_ID       = "150";
+
+  /* Space */
+  protected static final String    TEST_SPACE2_ID      = "152";
 
   /* Receiver */
-  protected static final String           TEST_USER_RECEIVER  = "55";
+  protected static final String    TEST_USER_RECEIVER  = "55";
 
   /* Sender */
-  protected static final String           TEST_USER_SENDER    = "1";
+  protected static final String    TEST_USER_SENDER    = "1";
 
   /* Link to the activity stream */
-  protected static final String           TEST_LINK_ACTIVITY  = "/portal/intranet//activity?id=245590";
+  protected static final String    TEST_LINK_ACTIVITY  = "/portal/intranet//activity?id=245590";
 
-  protected static final String           TEST_GLOBAL_SCORE   = "245590";
+  protected static final String    TEST_GLOBAL_SCORE   = "245590";
 
-  protected static final String           TEST__SCORE         = "50";
+  protected static final String    TEST__SCORE         = "50";
 
-  protected static final long                MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  protected static final long      MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;                           // NOSONAR
 
-  protected static final Date fromDate      = new Date(System.currentTimeMillis());
+  protected static final Date      fromDate            = new Date(System.currentTimeMillis());
 
-  protected static final Date toDate        = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+  protected static final Date      toDate              = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
 
-  protected static final int  offset        = 0;
+  protected static final int       offset              = 0;
 
-  protected static final int  limit         = 3;
+  protected static final int       limit               = 3;
 
-  protected IdentityManager               identityManager;
-  protected RelationshipManager           relationshipManager;
-  protected ActivityManager               activityManager;
-  protected EntityManagerService          entityManagerService;
-  protected GamificationService           gamificationService;
-  protected ManageBadgesEndpoint          manageBadgesEndpoint;
-  protected ManageDomainsEndpoint         manageDomainsEndpoint;
-  protected RequestHandlerImpl            requestHandler;
-  protected Identity                      rootIdentity;
-  protected ResourceLauncher              launcher;
-  protected ProviderBinder                providers;
-  protected ResourceBinder                binder;
-  protected BadgeService                  badgeService;
-  protected DomainService                 domainService;
-  protected RuleService                   ruleService;
-  protected BadgeDAO                      badgeStorage;
-  protected DomainDAO                     domainDAO;
-  protected DomainStorage domainStorage;
-  protected RuleDAO                       ruleDAO;
-  protected RuleStorage                   ruleStorage;
-  protected BadgeMapper                   badgeMapper;
-  protected DomainMapper                  domainMapper;
-  protected RuleMapper                    ruleMapper;
-  protected GamificationHistoryDAO        gamificationHistoryDAO;
-  protected RealizationsStorage           realizationsStorage;
-  Identity                                testUserReceiver    = new Identity(TEST_USER_RECEIVER);
-  Identity                                testUserSender      = new Identity(TEST_USER_SENDER);
+  protected IdentityManager        identityManager;
+
+  protected RelationshipManager    relationshipManager;
+
+  protected ActivityManager        activityManager;
+
+  protected EntityManagerService   entityManagerService;
+
+  protected GamificationService    gamificationService;
+
+  protected ManageBadgesEndpoint   manageBadgesEndpoint;
+
+  protected ManageDomainsEndpoint  manageDomainsEndpoint;
+
+  protected ChallengeService       challengeService;
+
+  protected AnnouncementService    announcementService;
+
+  protected RequestHandlerImpl     requestHandler;
+
+  protected Identity               rootIdentity;
+
+  protected ResourceLauncher       launcher;
+
+  protected ProviderBinder         providers;
+
+  protected ResourceBinder         binder;
+
+  protected BadgeService           badgeService;
+
+  protected DomainService          domainService;
+
+  protected RuleService            ruleService;
+
+  protected BadgeDAO               badgeStorage;
+
+  protected DomainDAO              domainDAO;
+
+  protected DomainStorage          domainStorage;
+
+  protected RuleDAO                ruleDAO;
+
+  protected RuleStorage            ruleStorage;
+
+  protected GamificationHistoryDAO gamificationHistoryDAO;
+
+  protected RealizationsStorage    realizationsStorage;
+
+  Identity                         userIdentity      = new Identity(TEST_USER_SENDER);
 
   @Override
   protected void setUp() throws Exception {
@@ -157,13 +181,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     requestHandler = getContainer().getComponentInstanceOfType(RequestHandlerImpl.class);
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
     badgeStorage = CommonsUtils.getService(BadgeDAO.class);
-    badgeMapper = CommonsUtils.getService(BadgeMapper.class);
     domainDAO = CommonsUtils.getService(DomainDAO.class);
     domainStorage = CommonsUtils.getService(DomainStorage.class);
     ruleDAO = CommonsUtils.getService(RuleDAO.class);
     ruleStorage = CommonsUtils.getService(RuleStorage.class);
-    ruleMapper = CommonsUtils.getService(RuleMapper.class);
-    domainMapper = CommonsUtils.getService(DomainMapper.class);
     gamificationHistoryDAO = CommonsUtils.getService(GamificationHistoryDAO.class);
     realizationsStorage = CommonsUtils.getService(RealizationsStorage.class);
     ExoContainer container = getContainer();
@@ -179,17 +200,19 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   @Override
-  protected void tearDown() throws Exception {
+  protected void tearDown() {
     end();
     RequestLifeCycle.begin(getContainer());
     gamificationHistoryDAO.deleteAll();
     ruleDAO.deleteAll();
     badgeStorage.deleteAll();
     domainDAO.deleteAll();
+    domainStorage.clearCache();
+    ruleStorage.clearCache();
     end();
   }
 
-  protected void registry(Class<?> resourceClass) throws Exception {
+  protected void registry(Class<?> resourceClass) {
     binder.addResource(resourceClass, null);
   }
 
@@ -197,6 +220,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(user);
     ConversationState state = new ConversationState(identity);
     ConversationState.setCurrent(state);
+    userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, user);
   }
 
   protected RuleEntity newRule() {
@@ -216,6 +240,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setDomainEntity(newDomain());
       rule.setType(TypeRule.AUTOMATIC);
       rule.setManagers(Collections.emptyList());
+      rule.setAudience(1L);
       rule = ruleDAO.create(rule);
     }
     return rule;
@@ -303,7 +328,26 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     BadgeEntity badge = new BadgeEntity();
     badge.setTitle(BADGE_NAME);
     badge.setDescription("Description");
-    badge.setNeededScore(Integer.parseInt(TEST_GLOBAL_SCORE));
+    badge.setNeededScore(10);
+    badge.setDomain(GAMIFICATION_DOMAIN);
+    badge.setIconFileId(10245);
+    badge.setEnabled(true);
+    badge.setDeleted(false);
+    badge.setCreatedBy(TEST_USER_SENDER);
+    badge.setCreatedDate(new Date());
+    badge.setLastModifiedBy(TEST_USER_SENDER);
+    badge.setLastModifiedDate(new Date());
+    badge.setDomainEntity(newDomain());
+    badge = badgeStorage.create(badge);
+    return badge;
+  }
+
+  protected BadgeEntity newBadgeWithScore(int score) {
+
+    BadgeEntity badge = new BadgeEntity();
+    badge.setTitle(BADGE_NAME);
+    badge.setDescription("Description");
+    badge.setNeededScore(score);
     badge.setDomain(GAMIFICATION_DOMAIN);
     badge.setIconFileId(10245);
     badge.setEnabled(true);
@@ -361,18 +405,18 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected RuleDTO newRuleDTO() {
-    return ruleMapper.ruleToRuleDTO(newRule());
+    return RuleMapper.ruleToRuleDTO(newRule());
   }
 
   protected DomainDTO newDomainDTO() {
-    return domainMapper.domainToDomainDTO(newDomain());
+    return DomainMapper.domainToDomainDTO(newDomain());
   }
   protected DomainDTO newDomainDTO(String name ) {
-    return domainMapper.domainToDomainDTO(newDomain(name));
+    return DomainMapper.domainToDomainDTO(newDomain(name));
   }
 
   protected BadgeDTO newBadgeDTO() {
-    return badgeMapper.badgeToBadgeDTO(newBadge());
+    return BadgeMapper.badgeToBadgeDTO(newBadge());
   }
 
   public void compareHistory(GamificationActionsHistory h1, GamificationActionsHistory h2) {

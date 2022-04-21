@@ -34,12 +34,8 @@ public class BadgeService {
     private static final Log LOG = ExoLogger.getLogger(BadgeService.class);
 
     protected final BadgeDAO badgeStorage;
-    protected final BadgeMapper badgeMapper;
-
     public BadgeService() {
         this.badgeStorage = CommonsUtils.getService(BadgeDAO.class);
-        this.badgeMapper = CommonsUtils.getService(BadgeMapper.class);
-
     }
 
     /**
@@ -55,7 +51,7 @@ public class BadgeService {
             BadgeEntity entity = badgeStorage.findBadgeByTitle(badgeTitle);
             //--- Convert Entity to DTO
             if (entity != null) {
-                return badgeMapper.badgeToBadgeDTO(entity);
+                return BadgeMapper.badgeToBadgeDTO(entity);
             }
 
         } catch (Exception e) {
@@ -77,7 +73,7 @@ public class BadgeService {
             BadgeEntity entity = badgeStorage.find(badgeId);
             //--- Convert Entity to DTO
             if (entity != null) {
-                return badgeMapper.badgeToBadgeDTO(entity);
+                return BadgeMapper.badgeToBadgeDTO(entity);
             }
 
         } catch (Exception e) {
@@ -100,7 +96,7 @@ public class BadgeService {
             BadgeEntity entity = badgeStorage.findBadgeByTitleAndDomain(badgeTitle,domain);
             //--- Convert Entity to DTO
             if (entity != null) {
-                return badgeMapper.badgeToBadgeDTO(entity);
+                return BadgeMapper.badgeToBadgeDTO(entity);
             }
 
         } catch (Exception e) {
@@ -120,7 +116,7 @@ public class BadgeService {
             //--- load all Rules
             List<BadgeEntity> badges = badgeStorage.getAllBadges();
             if (badges != null) {
-                return badgeMapper.badgesToBadgeDTOs(badges);
+                return BadgeMapper.badgesToBadgeDTOs(badges);
             }
 
         } catch (Exception e) {
@@ -149,10 +145,10 @@ public class BadgeService {
                 if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                     badgeDTO.setEnabled(false);
                 }
-                badgeEntity = badgeStorage.create(badgeMapper.badgeDTOToBadge(badgeDTO));
+                badgeEntity = badgeStorage.create(BadgeMapper.badgeDTOToBadge(badgeDTO));
             }else if(badgeEntity.isDeleted()){
                 Long id = badgeEntity.getId();
-                badgeEntity = badgeMapper.badgeDTOToBadge(badgeDTO);
+                badgeEntity = BadgeMapper.badgeDTOToBadge(badgeDTO);
                 badgeEntity.setId(id);
                 if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                     badgeDTO.setEnabled(false);
@@ -167,7 +163,7 @@ public class BadgeService {
             throw(e);
         }
 
-        return badgeMapper.badgeToBadgeDTO(badgeEntity);
+        return BadgeMapper.badgeToBadgeDTO(badgeEntity);
     }
 
     /**
@@ -190,14 +186,14 @@ public class BadgeService {
                 if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
                     badgeDTO.setEnabled(false);
                 }
-                badgeEntity = badgeStorage.update(badgeMapper.badgeDTOToBadge(badgeDTO));
+                badgeEntity = badgeStorage.update(BadgeMapper.badgeDTOToBadge(badgeDTO));
 
         } catch (Exception e) {
             LOG.error("Error to update with title {}", badgeDTO.getTitle() , e);
             throw(e);
         }
 
-        return badgeMapper.badgeToBadgeDTO(badgeEntity);
+        return BadgeMapper.badgeToBadgeDTO(badgeEntity);
     }
 
     /**
@@ -233,7 +229,7 @@ public class BadgeService {
             //--- load all Rules
             List<BadgeEntity> badges = badgeStorage.findBadgesByDomain(badgeDomain);
             if (badges != null) {
-                return badgeMapper.badgesToBadgeDTOs(badges);
+                return BadgeMapper.badgesToBadgeDTOs(badges);
             }
 
         } catch (Exception e) {
@@ -251,7 +247,7 @@ public class BadgeService {
             //--- load all Rules
             List<BadgeEntity> badges = badgeStorage.findEnabledBadgesByDomain(badgeDomain);
             if (badges != null) {
-                return badgeMapper.badgesToBadgeDTOs(badges);
+                return BadgeMapper.badgesToBadgeDTOs(badges);
             }
 
         } catch (Exception e) {
@@ -272,7 +268,7 @@ public class BadgeService {
         try {
             List<BadgeEntity> rules =  badgeStorage.getAllBadgesWithNullDomain();
             if (rules != null) {
-                return badgeMapper.badgesToBadgeDTOs(rules);
+                return BadgeMapper.badgesToBadgeDTOs(rules);
             }
 
         } catch (Exception e) {

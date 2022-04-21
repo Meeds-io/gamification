@@ -210,7 +210,7 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
           }
         }
         actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
-        if (actionLabel == null) {
+        if (actionLabel == null && ga.getAction() != null) {
           actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
         } else {
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);

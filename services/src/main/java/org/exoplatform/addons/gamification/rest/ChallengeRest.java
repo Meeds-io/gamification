@@ -245,7 +245,7 @@ public class ChallengeRest implements ResourceContainer {
       return Response.status(Response.Status.NOT_FOUND).entity("challenge trying to delete not found").build();
     } catch (IllegalAccessException e) {
       LOG.error("unauthorized user {} trying to delete a challenge", currentUser, e);
-      return Response.status(Response.Status.BAD_REQUEST).entity("unauthorized user trying to delete a challenge").build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to delete a challenge").build();
     } catch (Exception e) {
       LOG.error("Error when deleting challenge", e);
       return Response.serverError().entity("Error when deleting challenge").build();

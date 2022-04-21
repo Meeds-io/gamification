@@ -16,9 +16,11 @@
  */
 package org.exoplatform.addons.gamification.mock;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.commons.utils.ListAccessImpl;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.application.PortletPreferenceRequiredPlugin;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -43,7 +45,12 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public Space getSpaceById(String spaceId) {
-    throw new UnsupportedOperationException();
+    Space space = new Space();
+    space.setId("1");
+    space.setPrettyName("test_space");
+    space.setDisplayName("test space");
+    space.setGroupId("/spaces/test_space");
+    return space;
   }
 
   public Space getSpaceByUrl(String spaceUrl) {
@@ -59,7 +66,16 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public ListAccess<Space> getMemberSpaces(String userId) {
-    throw new UnsupportedOperationException();
+    if(userId.equals("root1")){
+      Space space = new Space();
+      space.setId("1");
+      space.setPrettyName("test_space");
+      space.setDisplayName("test space");
+      space.setGroupId("/spaces/test_space");
+      return new ListAccessImpl(Space.class, Collections.singletonList(space));
+    } else {
+      return new ListAccessImpl(Space.class, Collections.emptyList());
+    }
   }
 
   public ListAccess<Space> getMemberSpacesByFilter(String userId, SpaceFilter spaceFilter) {
@@ -173,8 +189,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
+    return userId.equals("root1") ? true : false;
   }
 
   public void setManager(Space space, String userId, boolean isManager) {
@@ -183,8 +198,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isManager(Space space, String userId) {
-    throw new UnsupportedOperationException();
-
+    return userId.equals("root1") ? true : false;
   }
 
   public boolean isOnlyManager(Space space, String userId) {
@@ -377,8 +391,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(String spaceId, String userId) throws SpaceException {
-    throw new UnsupportedOperationException();
-
+    return userId.equals("root1") ? true : false;
   }
 
   public boolean hasAccessPermission(String spaceId, String userId) throws SpaceException {
@@ -571,7 +584,11 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isSuperManager(String userId) {
-    throw new UnsupportedOperationException();
+    if("root".equals(userId)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public List<MembershipEntry> getSuperManagersMemberships() {

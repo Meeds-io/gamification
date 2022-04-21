@@ -28,23 +28,20 @@ import java.util.stream.Collectors;
 public class BadgeMapper {
 
     private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    private DomainMapper domainMapper;
-
-    public BadgeMapper(DomainMapper domainMapper) {
-        this.domainMapper=domainMapper;
+    private BadgeMapper() {
     }
 
-    public BadgeDTO badgeToBadgeDTO(BadgeEntity badge) {
+    public static BadgeDTO badgeToBadgeDTO(BadgeEntity badge) {
         return new BadgeDTO(badge);
     }
 
-    public List<BadgeDTO> badgesToBadgeDTOs(List<BadgeEntity> badges) {
+    public static List<BadgeDTO> badgesToBadgeDTOs(List<BadgeEntity> badges) {
         return badges.stream()
                 .filter(Objects::nonNull)
-                .map(this::badgeToBadgeDTO)
+                .map(BadgeMapper::badgeToBadgeDTO)
                 .collect(Collectors.toList());
     }
-    public BadgeEntity badgeDTOToBadge(BadgeDTO badgeDTO)  {
+    public static BadgeEntity badgeDTOToBadge(BadgeDTO badgeDTO)  {
         try {
             if (badgeDTO == null) {
                 return null;
@@ -75,22 +72,19 @@ public class BadgeMapper {
                 if (badgeDTO.getLastModifiedDate() != null) {
                     badge.setLastModifiedDate(formatter.parse(badgeDTO.getLastModifiedDate()));
                 }
-                badge.setDomainEntity(domainMapper.domainDTOToDomain(badgeDTO.getDomainDTO()));
+                badge.setDomainEntity(DomainMapper.domainDTOToDomain(badgeDTO.getDomainDTO()));
                 return badge;
             }
 
         } catch (ParseException pe) {
-
-
         }
         return null;
-
     }
 
     public List<BadgeEntity> badgeDTOsToBadges(List<BadgeDTO> BadgeDTOs) {
         return BadgeDTOs.stream()
                 .filter(Objects::nonNull)
-                .map(this::badgeDTOToBadge)
+                .map(BadgeMapper::badgeDTOToBadge)
                 .collect(Collectors.toList());
     }
 
