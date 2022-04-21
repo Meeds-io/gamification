@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.Date;
 
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
@@ -95,7 +96,7 @@ public class DomainServiceTest extends AbstractServiceTest {
     try {
       DomainEntity domainEntity = newDomain();
       domainEntity.setDescription("desc_2");
-      domainService.updateDomain(domainMapper.domainToDomainDTO(domainEntity));
+      domainService.updateDomain(DomainMapper.domainToDomainDTO(domainEntity));
       domainEntity = domainDAO.find(domainEntity.getId());
       assertEquals(domainEntity.getDescription(), "desc_2");
     } catch (Exception e) {

@@ -20,86 +20,97 @@ import static org.mockito.Mockito.when;
 
 public class RealizationsServiceTest {
 
-  private RealizationsStorage realizationsStorage;
+    private RealizationsStorage realizationsStorage;
 
-  private RealizationsService realizationsService;
+    private RealizationsService realizationsService;
 
-  protected static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+    protected static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
-  protected static final Date fromDate        = new Date();
+    protected static final Date fromDate = new Date();
 
-  protected static final Date toDate          = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+    protected static final Date toDate = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
 
-  protected static final int  offset          = 0;
+    protected static final int offset = 0;
 
-  protected static final int  limit           = 3;
+    protected static final int limit = 3;
 
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    realizationsStorage = mock(RealizationsStorage.class);
-    realizationsService = new RealizationsServiceImpl(realizationsStorage);
-  }
-
-  protected GamificationActionsHistoryDTO newGamificationActionsHistory() {
-    GamificationActionsHistoryDTO gHistory = new GamificationActionsHistoryDTO();
-    gHistory.setId(1L);
-    gHistory.setStatus(HistoryStatus.ACCEPTED.name());
-    gHistory.setDomain("gamification");
-    gHistory.setReceiver("1");
-    gHistory.setEarnerId("1");
-    gHistory.setEarnerType(IdentityType.USER.name());
-    gHistory.setActionTitle("gamification title");
-    gHistory.setActionScore(10);
-    gHistory.setGlobalScore(10);
-    gHistory.setRuleId(1L);
-    gHistory.setDate(Utils.toRFC3339Date(fromDate));
-    return gHistory;
-  }
-
-  @Test
-  public void testGetAllRealizationsByDate() {
-    // Given
-    GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
-    GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
-    GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
-    List<GamificationActionsHistoryDTO> gamificationActionsHistoryDTOList = new ArrayList<>();
-    gamificationActionsHistoryDTOList.add(gHistory1);
-    gamificationActionsHistoryDTOList.add(gHistory2);
-    gamificationActionsHistoryDTOList.add(gHistory3);
-    when(realizationsStorage.getAllRealizationsByDate(fromDate,
-                                                      toDate,
-                                                      offset,
-                                                      limit)).thenReturn(gamificationActionsHistoryDTOList);
-    // When
-    List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
-                                                                                 realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate),
-                                                                                                                              Utils.toRFC3339Date(toDate),
-                                                                                                                              offset,
-                                                                                                                              limit);
-    // Then
-    assertNotNull(createdGamificationActionsHistoryDTOList);
-    assertEquals(createdGamificationActionsHistoryDTOList.size(), 3);
-  }
-
-  @Test
-  public void updateRealizationStatus() {
-    // Given
-    GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
-    GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
-    gHistory2.setStatus(HistoryStatus.REJECTED.name());
-    when(realizationsStorage.getRealizationById(1L)).thenReturn(gHistory1);
-    when(realizationsStorage.updateRealizationStatus(gHistory1)).thenReturn(gHistory2);
-    GamificationActionsHistoryDTO rejectedHistory = null;
-    // When
-    try {
-      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED,"",0L,"");
-
-    } catch (ObjectNotFoundException e) {
-      fail(e.getMessage());
+    @Before
+    public void setUp() throws Exception { // NOSONAR
+        realizationsStorage = mock(RealizationsStorage.class);
+        realizationsService = new RealizationsServiceImpl(realizationsStorage);
     }
-    // Then
-    assertNotNull(rejectedHistory);
-    assertEquals(rejectedHistory.getStatus(), HistoryStatus.REJECTED.name());
-  }
+
+    protected GamificationActionsHistoryDTO newGamificationActionsHistory() {
+        GamificationActionsHistoryDTO gHistory = new GamificationActionsHistoryDTO();
+        gHistory.setId(1L);
+        gHistory.setStatus(HistoryStatus.ACCEPTED.name());
+        gHistory.setDomain("gamification");
+        gHistory.setReceiver("1");
+        gHistory.setEarnerId("1");
+        gHistory.setEarnerType(IdentityType.USER.name());
+        gHistory.setActionTitle("gamification title");
+        gHistory.setActionScore(10);
+        gHistory.setGlobalScore(10);
+        gHistory.setRuleId(1L);
+        gHistory.setDate(Utils.toRFC3339Date(fromDate));
+        return gHistory;
+    }
+
+    @Test
+    public void testGetAllRealizationsByDate() {
+        // Given
+        GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
+        GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
+        GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
+        List<GamificationActionsHistoryDTO> gamificationActionsHistoryDTOList = new ArrayList<>();
+        gamificationActionsHistoryDTOList.add(gHistory1);
+        gamificationActionsHistoryDTOList.add(gHistory2);
+        gamificationActionsHistoryDTOList.add(gHistory3);
+        when(realizationsStorage.getAllRealizationsByDate(fromDate,
+                toDate,
+                offset,
+                limit)).thenReturn(gamificationActionsHistoryDTOList);
+
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate("", Utils.toRFC3339Date(toDate), offset, limit));
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate), "", offset, limit));
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(toDate), Utils.toRFC3339Date(fromDate), offset, limit));
+
+        // When
+        List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
+                realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate),
+                        Utils.toRFC3339Date(toDate),
+                        offset,
+                        limit);
+        // Then
+        assertNotNull(createdGamificationActionsHistoryDTOList);
+        assertEquals(createdGamificationActionsHistoryDTOList.size(), 3);
+    }
+
+    @Test
+    public void updateRealizationStatus() {
+        // Given
+        GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
+        GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
+        gHistory2.setStatus(HistoryStatus.REJECTED.name());
+        when(realizationsStorage.getRealizationById(1L)).thenReturn(gHistory1);
+        when(realizationsStorage.getRealizationById(2L)).thenReturn(null);
+        when(realizationsStorage.updateRealizationStatus(gHistory1)).thenReturn(gHistory2);
+        GamificationActionsHistoryDTO rejectedHistory = null;
+        // When
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.updateRealizationStatus(null, HistoryStatus.REJECTED, "", 0L, ""));
+        assertThrows(ObjectNotFoundException.class, () -> realizationsService.updateRealizationStatus(2l, HistoryStatus.REJECTED, "", 0L, ""));
+
+
+        try {
+
+            rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED, "new label", 10L, "domain");
+
+        } catch (ObjectNotFoundException e) {
+            fail(e.getMessage());
+        }
+        // Then
+        assertNotNull(rejectedHistory);
+        assertEquals(rejectedHistory.getStatus(), HistoryStatus.REJECTED.name());
+    }
 
 }

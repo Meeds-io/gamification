@@ -50,7 +50,7 @@ public class AnnouncementRest implements ResourceContainer {
   public Response createAnnouncement(@ApiParam(value = "Announcement object to create", required = true)
   Announcement announcement) {
     if (announcement == null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("challenge object is mandatory").build();
+      return Response.status(Response.Status.BAD_REQUEST).entity("announcement object is mandatory").build();
     }
     String currentUser = Utils.getCurrentUser();
     if (StringUtils.isBlank(currentUser)) {

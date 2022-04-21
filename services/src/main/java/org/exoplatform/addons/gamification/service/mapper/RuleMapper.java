@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class RuleMapper {
 
-  public RuleMapper() {
+  private RuleMapper() {
   }
 
   public static List<RuleDTO> rulesToRuleDTOs(List<RuleEntity> rules) {

@@ -109,7 +109,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </init-params>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.storage.AnnouncementStorage</type>
+        <key>org.exoplatform.addons.gamification.storage.AnnouncementStorage</key>
+        <type>org.exoplatform.addons.gamification.storage.cached.AnnouncementCachedStorage</type>
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
