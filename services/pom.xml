@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <description>eXo Gamification services</description>
 
     <properties>
-        <exo.test.coverage.ratio>0.29</exo.test.coverage.ratio>
+        <exo.test.coverage.ratio>0.61</exo.test.coverage.ratio>
     </properties>
 
     <dependencies>
