@@ -237,12 +237,12 @@ public class Utils {
     String userId = identity.getRemoteId();
     if (space != null) {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      Boolean isSuperManager = spaceService.isSuperManager(userId);
+      boolean isSuperManager = spaceService.isSuperManager(userId);
       boolean isManager = isSuperManager || spaceService.isManager(space, userId);
       boolean isMember = isManager || spaceService.isMember(space, userId);
       boolean isRedactor = isManager || spaceService.isRedactor(space, userId);
       boolean hasRedactor = spaceService.hasRedactor(space);
-      Boolean isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
+      boolean isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
       userInfo.setManager(isManager);
       userInfo.setMember(isMember);
       userInfo.setRedactor(isRedactor);
@@ -267,7 +267,7 @@ public class Utils {
       return announcementService.countAllAnnouncementsByChallenge(challengeId);
     } catch (Exception e) {
       // NOSONAR
-      return 0l;
+      return 0L;
     }
   }
 
@@ -299,30 +299,35 @@ public class Utils {
     return space != null ? space.getDisplayName() : null;
   }
 
-  public static final Locale getCurrentUserLocale() {
+  public static Locale getCurrentUserLocale() {
     String username = getCurrentUser();
+    Locale locale = Locale.ENGLISH;
 
-    LocalePolicy localePolicy = CommonsUtils.getService(LocalePolicy.class);
-    LocaleContextInfo localeCtx = LocaleContextInfoUtils.buildLocaleContextInfo((HttpServletRequest) null);
-    localeCtx.setUserProfileLocale(getUserLocale(username));
-    localeCtx.setRemoteUser(username);
-    Set<Locale> supportedLocales = LocaleContextInfoUtils.getSupportedLocales();
+    try {
+      LocalePolicy localePolicy = CommonsUtils.getService(LocalePolicy.class);
+      LocaleContextInfo localeCtx = LocaleContextInfoUtils.buildLocaleContextInfo((HttpServletRequest) null);
+      localeCtx.setUserProfileLocale(getUserLocale(username));
+      localeCtx.setRemoteUser(username);
+      Set<Locale> supportedLocales = LocaleContextInfoUtils.getSupportedLocales();
 
-    Locale locale = localePolicy.determineLocale(localeCtx);
-    boolean supported = supportedLocales.contains(locale);
+      locale = localePolicy.determineLocale(localeCtx);
+      boolean supported = supportedLocales.contains(locale);
 
-    if (!supported && !"".equals(locale.getCountry())) {
-      locale = new Locale(locale.getLanguage());
-      supported = supportedLocales.contains(locale);
-    }
-    if (!supported) {
-      LOG.warn("Unsupported locale returned by LocalePolicy: " + localePolicy + ". Falling back to 'en'.");
-      locale = Locale.ENGLISH;
+      if (!supported && !"".equals(locale.getCountry())) {
+        locale = new Locale(locale.getLanguage());
+        supported = supportedLocales.contains(locale);
+      }
+      if (!supported) {
+        LOG.warn("Unsupported locale returned by LocalePolicy: " + localePolicy + ". Falling back to 'en'.");
+
+      }
+    } catch (Exception e) {
+      LOG.warn("Could not determine Locale for user {}. Falling back to 'en'.", username);
     }
     return locale;
   }
 
-  public static final String getI18NMessage(Locale userLocale, String messageKey) {
+  public static String getI18NMessage(Locale userLocale, String messageKey) {
     ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
     if (userLocale == null) {
       userLocale = Locale.ENGLISH;
@@ -336,7 +341,7 @@ public class Utils {
     }
   }
 
-  public static final Locale getUserLocale(String username) {
+  public static Locale getUserLocale(String username) {
     OrganizationService organizationService = CommonsUtils.getService(OrganizationService.class);
     UserProfile profile = null;
     try {

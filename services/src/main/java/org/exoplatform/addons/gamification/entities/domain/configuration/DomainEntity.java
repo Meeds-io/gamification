@@ -142,7 +142,7 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
 
     @Override
     public String toString() {
-        return "Badge{" +
+        return "Domain{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 "}";

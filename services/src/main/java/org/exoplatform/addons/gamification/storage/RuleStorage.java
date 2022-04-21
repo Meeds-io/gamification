@@ -99,6 +99,7 @@ public class RuleStorage {
       challengeEntity.setCreatedBy(ruleEntity.getCreatedBy());
       challengeEntity.setType(ruleEntity.getType());
       challengeEntity.setEvent(ruleEntity.getEvent());
+      challengeEntity.setLastModifiedBy(username);
       challengeEntity = ruleDAO.update(challengeEntity);
     }
 

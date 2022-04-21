@@ -20,6 +20,7 @@ public class DomainStorage {
 
     DomainEntity domainEntity = DomainMapper.domainDTOToDomain(domainDTO);
     if (domainEntity.getId() == null || domainEntity.getId() == 0) {
+      domainEntity.setId(null);
       domainEntity.setCreatedDate(new Date());
       domainEntity.setLastModifiedDate(new Date());
       domainEntity = domainDAO.create(domainEntity);
@@ -53,6 +54,9 @@ public class DomainStorage {
   public int deleteDomainByTitle(String domainTitle) {
     return domainDAO.deleteDomainByTitle(domainTitle);
 
+  }
+  public void clearCache() {// NOSONAR
+    // implemented in cached storage
   }
 
 }
