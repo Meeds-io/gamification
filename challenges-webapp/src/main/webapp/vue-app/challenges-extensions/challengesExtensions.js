@@ -3,7 +3,7 @@ export function initExtensions() {
   const announcementActivityTypeExtensionOptions = {
     canEdit: () => false,
     supportsThumbnail: true,
-    useSameViewForMobile: false,
+    useSameViewForMobile: true,
     canShare: () => true,
     thumbnailProperties: {
       height: '90px',
