@@ -368,7 +368,7 @@ export default {
 
 .desc-user a:hover,
 .desc-user a:focus {
-    color: #578dc9 !important;
+    color: #476A9C !important;
 }
 
 .current-rank .desc-user {
@@ -480,7 +480,7 @@ export default {
 
 .empty-leaderboard {
     text-align: center;
-    color: #578dc9;
+    color: #476A9C;
 }
 
 .d-flex {
@@ -584,7 +584,7 @@ select {
 }
 
 .desc-user a:hover {
-    color: #578dc9;
+    color: #476A9C;
 }
 
 .vue-avatar--wrapper {
@@ -633,8 +633,8 @@ select {
 .btn-secondary:not(:disabled):not(.disabled).active,
 .btn-secondary:not(:disabled):not(.disabled):active,
 .show>.btn-secondary.dropdown-toggle {
-    background-color: #578dc9;
-    border: solid 1px #578dc9;
+    background-color: #476A9C;
+    border: solid 1px #476A9C;
     color: #fff;
 }
 
@@ -676,12 +676,12 @@ select {
 .load-more {
     float: right;
     padding: 15px;
-    color: #578dc9;
+    color: #476A9C;
     font-weight: bold;
 }
 
 .load-more:hover {
-    color: #578dc9ba;
+    color: #476A9Cba;
     cursor: pointer;
 }
 </style>

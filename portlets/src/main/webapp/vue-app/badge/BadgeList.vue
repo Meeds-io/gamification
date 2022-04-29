@@ -575,11 +575,11 @@ export default {
         height: 26px !important;
         color: #f9f9f9;
         background-color: #477ab3;
-        background-image: -moz-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#578dc9), to(#2f5e92));
-        background-image: -webkit-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: -o-linear-gradient(top, #578dc9, #2f5e92);
-        background-image: linear-gradient(to bottom, #578dc9, #2f5e92);
+        background-image: -moz-linear-gradient(top, #476A9C, #2f5e92);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#476A9C), to(#2f5e92));
+        background-image: -webkit-linear-gradient(top, #476A9C, #2f5e92);
+        background-image: -o-linear-gradient(top, #476A9C, #2f5e92);
+        background-image: linear-gradient(to bottom, #476A9C, #2f5e92);
         background-repeat: repeat-x;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff578dc9', endColorstr='#ff2f5e92', GradientType=0);
         -webkit-box-shadow: inset 0px 3px 5px #224469;
@@ -593,7 +593,7 @@ export default {
         border-bottom-left-radius: 9px;
         height: 57px;
         border-radius: 100px;
-        background-color: #578dc9;
+        background-color: #476A9C;
         -webkit-transform: translateX(-190px);
         -ms-transform: translateX(-190px);
         transform: translateX(-190px);
