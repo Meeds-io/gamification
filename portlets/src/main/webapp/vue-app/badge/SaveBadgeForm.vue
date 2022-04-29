@@ -526,7 +526,7 @@ div#collapseOne {
     background-color: #477ab3;
 
     border-radius: 100px;
-    background-color: #578dc9;
+    background-color: #476A9C;
     -webkit-transform: translateX(-190px);
     -ms-transform: translateX(-190px);
     transform: translateX(-190px);
