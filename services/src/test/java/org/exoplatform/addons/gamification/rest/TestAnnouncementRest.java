@@ -109,7 +109,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
             startSessionAs("root1");
             response = launcher.service("POST", restPath, "", h, data, envctx);
             assertNotNull(response);
-            assertEquals(200, response.getStatus());
+            assertEquals(response.getEntity().toString(),200, response.getStatus());
 
             writer = new StringWriter();
             jsonWriter = new JSONWriter(writer);
