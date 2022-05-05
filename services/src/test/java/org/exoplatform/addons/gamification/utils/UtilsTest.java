@@ -40,7 +40,7 @@ public class UtilsTest {
     @Test
     public void testToRFC3339Date() {
         Date date = new Date(System.currentTimeMillis());
-
+        date.setHours(15);
         assertNull(Utils.toRFC3339Date(null));
         int dateMonth = date.getMonth() + 1;
         int dateDay = date.getDate();

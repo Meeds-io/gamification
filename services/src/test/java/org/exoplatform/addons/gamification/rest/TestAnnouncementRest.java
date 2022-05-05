@@ -36,9 +36,11 @@ public class TestAnnouncementRest extends AbstractServiceTest {
 
     private static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
-    private static final String startDate = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
+    private static final String startDate = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
 
-    private static final String endDate = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY));
+    private static final String endDate = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 3 * MILLIS_IN_A_DAY));
+
+    private static final String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
 
     @Override
     protected void setUp() throws Exception {
@@ -84,7 +86,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .key("creator")
                     .value("root1")
                     .key("createdDate")
-                    .value(startDate)
+                    .value(date)
                     .endObject();
             byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
             MultivaluedMap<String, String> h = new MultivaluedMapImpl();
@@ -123,7 +125,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .key("creator")
                     .value("root1")
                     .key("createdDate")
-                    .value(startDate)
+                    .value(date)
                     .endObject();
             data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
             h = new MultivaluedMapImpl();
@@ -149,7 +151,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .key("creator")
                     .value("root1")
                     .key("createdDate")
-                    .value(startDate)
+                    .value(date)
                     .endObject();
             data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
             h = new MultivaluedMapImpl();
@@ -183,7 +185,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     1L,
                     "announcement comment",
                     1L,
-                    startDate,
+                    date,
                     null);
             announcementService.createAnnouncement(announcement, "root1", false);
             String restPath = "/gamification/announcement/api/ByChallengeId/1?offset=1&limit=-10";
