@@ -25,7 +25,7 @@ const lang = eXo && eXo.env.portal.language || 'en';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
 
 //used only in mobile statistics
-eXo.env.portal.mainApplicationName = 'Challenges';
+eXo.env.portal.mainApplicationName = 'challenges';
 
 export function init() {
   exoi18n.loadLanguageAsync(lang, url).then(i18n => {
