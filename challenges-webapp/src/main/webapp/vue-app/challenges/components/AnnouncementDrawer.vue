@@ -156,7 +156,7 @@ export default {
       this.announcement.createdDate = new Date();
       this.$refs.announcementDrawer.startLoading();
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
-        this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.announcementCreateSuccess')});
+        this.$root.$emit('show-alert', {type: 'success',message: `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcement')}</a>${this.$t('challenges.announcementCreateSuccess')}`});
         this.$emit('announcementAdded', announcement);
         this.close();
       })
