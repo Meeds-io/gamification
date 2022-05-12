@@ -33,7 +33,7 @@
       :type="type"
       class="walletAlert"
       dismissible>
-      {{ message }}
+      <span v-sanitized-html="message" class="mt-8"> </span>
     </v-alert>
     <v-row class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
       <v-btn
