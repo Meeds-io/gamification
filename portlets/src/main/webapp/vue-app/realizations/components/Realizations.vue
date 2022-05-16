@@ -15,12 +15,38 @@
       <div class="selected-period-menu mt-6 mx-3">
         <select-period v-model="selectedPeriod" class="mx-2" />
       </div>
+      <v-spacer />
+      <v-spacer />
+      <v-spacer />
+      <v-spacer />
+      <v-scale-transition>
+        <v-text-field
+          v-model="search"
+          :placeholder=" $t('realization.label.filterRealization') "
+          prepend-inner-icon="fa-filter"
+          class="inputTasksFilter pa-0 ms-3 me-3 my-auto"
+          type="text"
+          single-line
+          hide-details />
+      </v-scale-transition>
+      <v-scale-transition>
+        <v-btn
+          class="btn px-2 btn-primary filterTasksSetting"
+          outlined>
+          <i class="uiIcon uiIconFilterSetting pe-3"></i>
+          <span class="d-none font-weight-regular caption d-sm-inline">
+            {{ $t('realization.label.filter') }}
+          </span>
+        </v-btn>
+      </v-scale-transition>
     </v-toolbar>
     <v-data-table
       :headers="realizationsHeaders"
       :items="realizationList"
       :items-per-page=" realizationList && realizationList.length"
       :loading="loading"
+      :search="search"
+      :custom-filter="filter"
       hide-default-footer
       class="mx-6 mt-6 realizationsTable">
       <template slot="item" slot-scope="props">
@@ -149,6 +175,9 @@ export default {
     type: '',
     message: '',
     selectedPeriod: null,
+    search: '',
+    value: '',
+    newObj: {}
   }),
   computed: {
     realizationsHeaders() {
@@ -156,14 +185,14 @@ export default {
         {
           text: this.$t('realization.label.date'),
           align: 'center',
-          sortable: false,
+          filterable: false,
           value: 'date',
           class: 'actionHeader px-2',
         },
         {
           text: this.$t('realization.label.creator'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'creator',
           class: 'actionHeader px-1'
 
@@ -171,70 +200,70 @@ export default {
         {
           text: this.$t('realization.label.actionId'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'actionId',
           class: 'actionHeader px-1'
         },
         {
           text: this.$t('realization.label.actionLabel'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'actionLabel',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realization.label.actionType'),
+          text: this.$t('realization.label.actionType'),        
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'actionType',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realization.label.program'),
+          text: this.$t('realization.label.program'),        
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'program',
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realization.label.programLabel'),
+          text: this.$t('realization.label.programLabel'),          
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'programLabel',
           class: 'actionHeader px-0'
         },
         {
           text: this.$t('realization.label.points'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'points',
           class: 'actionHeader px-1'
         },
         {
           text: this.$t('realization.label.status'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'status',
           class: 'actionHeader px-1'
         },
         {
           text: this.$t('realization.label.grantee'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'grantee',
           class: 'actionHeader px-1'
         },
         {
           text: this.$t('realization.label.space'),
           align: 'center',
-          sortable: false,
+          filterable: true,
           value: 'space',
           class: 'actionHeader px-1'
         },
         {
           text: this.$t('realization.label.actions'),
           align: 'center',
-          sortable: false,
+          filterable: false,
           value: '',
           class: 'actionHeader px-2'
         },
@@ -307,6 +336,15 @@ export default {
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
+    },
+    filter (value, search, item) {  
+      this.newObj = {
+        ...item,
+        ...item.action
+      };
+      return Object.values(this.newObj).some(prop => {
+        return String(prop).includes(search);
+      });
     }
   }
 };
