@@ -33,7 +33,7 @@
         <v-btn
           class="btn px-2 btn-primary filterTasksSetting"
           outlined>
-          <i class="uiIcon uiIconFilterSetting pe-3"></i>
+          <em class="uiIcon uiIconFilterSetting pe-3"></em>
           <span class="d-none font-weight-regular caption d-sm-inline">
             {{ $t('realization.label.filter') }}
           </span>
