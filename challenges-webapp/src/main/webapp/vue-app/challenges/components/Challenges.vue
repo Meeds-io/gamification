@@ -17,10 +17,19 @@
         </v-btn>
       </div>
       <v-spacer />
+      <div class="challengeFilter">
+        <v-text-field
+          v-model="search"
+          :placeholder="$t('challenges.filter.search')"
+          prepend-inner-icon="fa-filter"
+          single-line
+          hide-details
+          class="pa-0 mx-3" />
+      </div>
     </v-toolbar>
     <template v-if="displayChallenges">
       <div class="pl-2 pt-5">
-        <challenges-list :challenges="challenges" @edit-challenge="editChallenge($event)" />
+        <challenges-list :challenges="challengesToDisplay" @edit-challenge="editChallenge($event)" />
       </div>
     </template>
     <template v-else>
@@ -56,6 +65,7 @@ export default {
     canAddChallenge: false,
     loading: true,
     challenges: [],
+    searchedChallenges: [],
     showLoadMoreButton: false,
     challengePerPage: 20,
     announcementsPerChallenge: 2,
@@ -63,10 +73,25 @@ export default {
     alert: false,
     type: '',
     message: '',
+    search: '',
   }),
   computed: {
     classWelcomeMessage() {
       return !this.displayChallenges ? 'emptyChallenges': '';
+    },
+    challengesToDisplay() {
+      if (this.search && this.search.trim().length) {
+        return this.searchedChallenges;
+      } else {
+        return this.challenges;
+      }
+    }
+  },
+  watch: {
+    search(value)  {
+      if (value && value.trim().length) {
+        this.searchChallenges(value, false);
+      }
     }
   },
   created() {
@@ -110,7 +135,11 @@ export default {
       this.getChallenges(false);
     },
     loadMore() {
-      this.getChallenges();
+      if (this.search && this.search.trim().length) {
+        return this.searchChallenges(this.search, true);
+      } else {
+        this.getChallenges();
+      }
     },
     openChallengeDrawer(){
       this.$refs.challengeDrawer.open();
@@ -129,6 +158,20 @@ export default {
       }).finally(() => {
         this.loading = false;
         this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
+      });
+    },
+    searchChallenges(value, append) {
+      this.loading = true;
+      const limit = append ? this.searchedChallenges.length + this.challengePerPage : this.challengePerPage ;
+      this.$challengesServices.search(value, 0, limit, this.announcementsPerChallenge).then(challenges => {
+        if (challenges.length % this.challengePerPage === 0 && challenges.length >= this.challengePerPage && challenges.length !== this.searchedChallenges.length) {
+          this.showLoadMoreButton = true;
+        } else {
+          this.showLoadMoreButton = false;
+        }
+        this.searchedChallenges =  challenges;
+      }).finally(() => {
+        this.loading = false;
       });
     },
     displayMessage(message) {

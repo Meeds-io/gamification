@@ -1,0 +1,25 @@
+{
+  "hits": {
+    "total": 2,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "challenge_v1",
+        "_type": "challenges",
+        "_id": "1",
+        "_score": 1,
+        "_source": {
+          "startDate": "2022-05-10T00:00:00",
+          "endDate": "2022-05-15T00:00:00",
+          "audience": "1",
+          "managers": "1",
+          "description": "challenge description",
+          "points": "21",
+          "title": "challenge description",
+          "program": "gamification",
+          "id": "52"
+        }
+      }
+    ]
+  }
+}

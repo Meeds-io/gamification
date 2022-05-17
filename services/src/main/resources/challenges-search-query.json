@@ -1,0 +1,30 @@
+{
+  "from": "@offset@",
+  "size": "@limit@",
+  "query": {
+    "bool": {
+      "filter": {
+        "terms": {
+          "audience": [
+            @spaceList@
+          ],
+          "boost": 3
+        }
+      },
+      "should": {
+        "match_phrase": {
+          "title": {
+            "query": "*@term@*",
+            "boost": 3
+          }
+        }
+      },
+      "must": {
+        "query_string":{
+          "fields": ["title", "description", "program"],
+          "query": "*@term_query@*"
+        }
+      }
+    }
+  }
+}

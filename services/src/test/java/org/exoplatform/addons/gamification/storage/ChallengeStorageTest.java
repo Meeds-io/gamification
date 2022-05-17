@@ -208,4 +208,60 @@ public class ChallengeStorageTest {
     result = challengeStorage.getChallengeById(1l);
     assertNull(result);
   }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testFindAllChallenges() {
+    // Given
+    List<RuleEntity> challengeEntities = new ArrayList<>();
+    // challenge 1
+    RuleEntity challengeEntity = new RuleEntity();
+    challengeEntity.setTitle("Challenge");
+    challengeEntity.setDescription("description");
+    challengeEntity.setStartDate(new Date(System.currentTimeMillis()));
+    challengeEntity.setEndDate(new Date(System.currentTimeMillis() + 1));
+    challengeEntity.setId(1l);
+    challengeEntity.setAudience(1l);
+    challengeEntity.setManagers(Collections.emptyList());
+    // challenge 2
+    RuleEntity challengeEntity2 = new RuleEntity();
+    challengeEntity2.setTitle("Challenge 2");
+    challengeEntity2.setDescription("description 2");
+    challengeEntity2.setStartDate(new Date(System.currentTimeMillis()));
+    challengeEntity2.setEndDate(new Date(System.currentTimeMillis() + 1));
+    challengeEntity2.setId(2l);
+    challengeEntity2.setAudience(2l);
+    challengeEntity2.setManagers(Collections.emptyList());
+
+    Challenge challenge1 = new Challenge(1l,
+                                         "Challenge 1",
+                                         "description 1",
+                                         1l,
+                                         new Date(System.currentTimeMillis()).toString(),
+                                         new Date(System.currentTimeMillis() + 1).toString(),
+                                         Collections.emptyList(),
+                                         10L,
+                                         "gamification");
+    Challenge challenge2 = new Challenge(1l,
+                                         "Challenge 2",
+                                         "description 2",
+                                         1l,
+                                         new Date(System.currentTimeMillis()).toString(),
+                                         new Date(System.currentTimeMillis() + 1).toString(),
+                                         Collections.emptyList(),
+                                         10L,
+                                         "gamification");
+
+    List<Challenge> challenges = new ArrayList<>();
+    challenges.add(challenge1);
+    challenges.add(challenge2);
+    when(challengeDAO.findAllChllenges()).thenReturn(challengeEntities);
+    PowerMockito.mockStatic(EntityMapper.class);
+    when(EntityMapper.fromChallengeEntities(challengeEntities)).thenReturn(challenges);
+
+    // When
+    List<Challenge> challengeList = challengeStorage.getAllChallenges();
+    assertEquals(2, challengeList.size());
+    assertNotNull(challengeEntities);
+  }
 }
