@@ -70,6 +70,12 @@ public class Utils {
     return identity != null ? identity.getRemoteId() : null;
   }
 
+  public static String getUserFullName(String id) {
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    Identity identity = identityManager.getIdentity(id);
+    return identity != null ? identity.getProfile().getFullName() : null;
+  }
+
   public static final String getCurrentUser() {
     if (ConversationState.getCurrent() != null && ConversationState.getCurrent().getIdentity() != null) {
       return ConversationState.getCurrent().getIdentity().getUserId();
