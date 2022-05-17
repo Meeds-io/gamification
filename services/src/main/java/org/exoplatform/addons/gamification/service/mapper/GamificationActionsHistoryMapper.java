@@ -112,14 +112,14 @@ public class GamificationActionsHistoryMapper {
         spaceName = Utils.getSpaceFromObjectID(gHistory.getObjectId());
       }
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                      Utils.getUserRemoteId(gHistory.getEarnerId()),
+                                                      Utils.getUserFullName(gHistory.getEarnerId()),
                                                       gHistory.getRuleId() != null
                                                           && gHistory.getRuleId() != 0 ? Utils.getRuleById(gHistory.getRuleId())
                                                                                        : Utils.getRuleByTitle(gHistory.getActionTitle()),
                                                       Utils.getDomainByTitle(gHistory.getDomain()),
                                                       gHistory.getActionTitle(),
                                                       gHistory.getActionScore(),
-                                                      Utils.getUserRemoteId(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
+                                                      Utils.getUserFullName(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
                                                                                                           : gHistory.getReceiver()),
                                                       gHistory.getCreatedDate(),
                                                       gHistory.getStatus(), spaceName);
