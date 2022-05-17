@@ -73,7 +73,7 @@ public class Utils {
   public static String getUserFullName(String id) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getIdentity(id);
-    return identity != null ? identity.getProfile().getFullName() : null;
+    return identity != null && identity.getProfile() != null ? identity.getProfile().getFullName() : null;
   }
 
   public static final String getCurrentUser() {
