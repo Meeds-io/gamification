@@ -27,9 +27,7 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
-
     String objectId = "";
-
     if (gamificationActionsHistoryEntity.getActivityId() != null && gamificationActionsHistoryEntity.getActivityId() != 0) {
       objectId = "/" +  LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + "/activity?id="
           + gamificationActionsHistoryEntity.getActivityId();
