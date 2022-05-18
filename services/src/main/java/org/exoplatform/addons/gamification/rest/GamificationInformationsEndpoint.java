@@ -37,6 +37,7 @@ import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -51,7 +52,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
   protected GamificationService gamificationService = null;
 
-  protected SpaceService spaceService;
+  protected SpaceService        spaceService;
 
   public GamificationInformationsEndpoint(IdentityManager identityManager,
                                           SpaceService spaceService,
@@ -64,10 +65,11 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
   @GET
   @Path("history/all")
   @RolesAllowed("users")
-  public Response getAllLeadersByRank(@Context UriInfo uriInfo,
-                                      @QueryParam("capacity") String capacity,
-                                      @QueryParam("providerId") String providerId,
-                                      @QueryParam("remoteId") String remoteId) {
+  public Response getAllLeadersByRank(@Context
+  UriInfo uriInfo, @QueryParam("capacity")
+  String capacity, @QueryParam("providerId")
+  String providerId, @QueryParam("remoteId")
+  String remoteId) {
 
     if (StringUtils.isBlank(providerId)) {
       return Response.status(400).entity("identity 'providerId' parameter is mandatory").build();
@@ -104,7 +106,8 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       }
 
       // find actions History by userid adding a pagination load more capacity filter
-      List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
+      List<GamificationActionsHistory> ss =
+                                          gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
       if (ss == null || ss.isEmpty()) {
         return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
       }
@@ -140,9 +143,13 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
         gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
         // Set event id
         if (canShowDetails) {
-          gamificationHistoryInfo.setObjectId(element.getObjectId());
+          if (element.getActivityId() != null && element.getActivityId() != 0) {
+            gamificationHistoryInfo.setObjectId("/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("")
+                + "/activity?id=" + element.getActivityId());
+          } else {
+            gamificationHistoryInfo.setObjectId(element.getObjectId());
+          }
         }
-
         // log
         historyList.add(gamificationHistoryInfo);
       }
