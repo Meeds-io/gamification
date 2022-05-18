@@ -22,6 +22,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private String   space;
 
+  private String url;
+
   public GamificationActionsHistoryRestEntity(Long id,
                                               String earner,
                                               RuleDTO action,
@@ -31,7 +33,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                               String creator,
                                               String createdDate,
                                               String status,
-                                              String space) { // NOSONAR
+                                              String space,
+                                              String url) { // NOSONAR
     this.id = id;
     this.earner = earner;
     this.action = action;
@@ -42,6 +45,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.createdDate = createdDate;
     this.status = status;
     this.space = space;
+    this.url = url;
   }
 
   public GamificationActionsHistoryRestEntity() {
@@ -58,7 +62,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                                     creator,
                                                     createdDate,
                                                     status,
-                                                    space);
+                                                    space,
+                                                    url);
   }
 
   public Long getId() {
@@ -139,6 +144,14 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   public void setDomain(DomainDTO domain) {
     this.domain = domain;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 
 }
