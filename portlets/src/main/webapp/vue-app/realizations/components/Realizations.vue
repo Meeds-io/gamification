@@ -37,8 +37,17 @@
               {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.title.${props.item.action.event}`) }} </span>
           </td>
           <td class="align-center actionTitle px-0">
-            <span class="actionDescription" v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.actionLabel }} </span>
-            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ getActionLabel(props.item.actionLabel) }} </span>
+            <a
+              :href="props.item.url"
+              class="text-color"
+              :class="!props.item.url && 'defaultCursor'">
+              <span class="actionDescription" v-if="props.item.action && props.item.action.type === 'MANUAL'">
+                {{ props.item.actionLabel }}
+              </span>
+              <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> 
+                {{ getActionLabel(props.item.actionLabel) }}
+              </span> 
+            </a>
           </td>
           <td class="text-truncate align-center">
             <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'"> {{ $t('realization.label.auto') }} </span>
