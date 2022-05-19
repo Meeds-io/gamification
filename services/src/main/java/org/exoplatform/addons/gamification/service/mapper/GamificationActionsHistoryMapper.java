@@ -11,6 +11,7 @@ import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.service.LinkProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,13 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
+    String objectId = "";
+    if (gamificationActionsHistoryEntity.getActivityId() != null && gamificationActionsHistoryEntity.getActivityId() != 0) {
+      objectId = "/" +  LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + "/activity?id="
+          + gamificationActionsHistoryEntity.getActivityId();
+    } else {
+      objectId = gamificationActionsHistoryEntity.getObjectId();
+    }
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
                                              Utils.toRFC3339Date(new Date(gamificationActionsHistoryEntity.getDate().getTime())),
                                              gamificationActionsHistoryEntity.getEarnerId(),
@@ -36,7 +44,7 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
-                                             gamificationActionsHistoryEntity.getObjectId(),
+                                             objectId,
                                              gamificationActionsHistoryEntity.getRuleId(),
                                              gamificationActionsHistoryEntity.getActivityId(),
                                              gamificationActionsHistoryEntity.getComment(),
@@ -97,7 +105,7 @@ public class GamificationActionsHistoryMapper {
   public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
     try {
       String spaceName = "";
-      if(gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
+      if (gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
         RuleDTO rule = Utils.getRuleById(gHistory.getRuleId());
         if (rule != null) {
           long spaceId = rule.getAudience();
@@ -111,24 +119,27 @@ public class GamificationActionsHistoryMapper {
       } else {
         spaceName = Utils.getSpaceFromObjectID(gHistory.getObjectId());
       }
+
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                      Utils.getUserRemoteId(gHistory.getEarnerId()),
+                                                      Utils.getUserFullName(gHistory.getEarnerId()),
                                                       gHistory.getRuleId() != null
                                                           && gHistory.getRuleId() != 0 ? Utils.getRuleById(gHistory.getRuleId())
                                                                                        : Utils.getRuleByTitle(gHistory.getActionTitle()),
                                                       Utils.getDomainByTitle(gHistory.getDomain()),
                                                       gHistory.getActionTitle(),
                                                       gHistory.getActionScore(),
-                                                      Utils.getUserRemoteId(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
+                                                      Utils.getUserFullName(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
                                                                                                           : gHistory.getReceiver()),
                                                       gHistory.getCreatedDate(),
-                                                      gHistory.getStatus(), spaceName);
+                                                      gHistory.getStatus(),
+                                                      spaceName,
+                                                      gHistory.getObjectId());
 
     } catch (Exception e) {
       LOG.error("Error while mapping history with id {}", gHistory.getId(), e);
       return null;
     }
- }
+  }
 
   public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories) {
     if (CollectionUtils.isEmpty(gamificationActionsHistories)) {

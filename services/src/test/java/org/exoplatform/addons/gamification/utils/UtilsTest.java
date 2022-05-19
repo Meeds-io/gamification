@@ -39,6 +39,7 @@ public class UtilsTest {
 
     @Test
     public void testToRFC3339Date() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Date date = new Date(System.currentTimeMillis());
         date.setHours(15);
         assertNull(Utils.toRFC3339Date(null));
