@@ -32,20 +32,31 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     public DomainDAO() {
     }
 
-    public DomainEntity findDomainByTitle(String domainTitle) throws PersistenceException {
+    public DomainEntity findEnabledDomainByTitle(String domainTitle) throws PersistenceException {
 
-        TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle", DomainEntity.class)
+        TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findEnabledDomainByTitle", DomainEntity.class)
                 .setParameter("domainTitle", domainTitle);
 
         try {
             List<DomainEntity> domainEntities =  query.getResultList();
-            List<DomainEntity> enabledDomainEntities = domainEntities.stream().filter(DomainEntity::isEnabled).collect(Collectors.toList());
-            return !enabledDomainEntities.isEmpty()  ? enabledDomainEntities.get(0) : null;
+            return !domainEntities.isEmpty()  ? domainEntities.get(0) : null;
         } catch (NoResultException e) {
             return null;
         }
 
     }
+
+    public DomainEntity getDomainByTitle(String domainTitle) throws PersistenceException {
+        TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle", DomainEntity.class)
+                .setParameter("domainTitle", domainTitle);
+        try {
+            List<DomainEntity> domainEntities =  query.getResultList();
+            return !domainEntities.isEmpty()  ? domainEntities.get(0) : null;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     public List<DomainEntity> getAllDomains() throws PersistenceException {
 
         TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.getAllDomains", DomainEntity.class);

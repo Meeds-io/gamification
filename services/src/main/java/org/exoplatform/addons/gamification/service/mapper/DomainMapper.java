@@ -66,7 +66,9 @@ public class DomainMapper {
       domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
       domain.setDeleted(domainDTO.isDeleted());
       domain.setEnabled(domainDTO.isEnabled());
-      domain.setCreatedDate(Utils.parseRFC3339Date(domainDTO.getCreatedDate()));
+      if(domainDTO.getCreatedDate() != null) {
+        domain.setCreatedDate(Utils.parseRFC3339Date(domainDTO.getCreatedDate()));
+      }
       domain.setLastModifiedDate(Utils.parseRFC3339Date(domainDTO.getLastModifiedDate()));
       domain.setPriority(domainDTO.getPriority());
       return domain;
