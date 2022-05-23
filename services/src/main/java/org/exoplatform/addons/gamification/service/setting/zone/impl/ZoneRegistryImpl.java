@@ -61,7 +61,7 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         // Processing registered domains
         for (ZoneConfig domain : zoneMap.values()) {
           DomainDTO domainDTO = domainService.getDomainByTitle(domain.getZoneName());
-          if (domainDTO == null || ( domainDTO != null && domainDTO.isDeleted())) {
+          if (domainDTO == null || domainDTO.isDeleted()) {
             LOG.info("Saving new Gamification Domain '{}'", domain.getZoneName());
             store(domain);
           }

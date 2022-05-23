@@ -29,13 +29,15 @@ import java.util.stream.Collectors;
 
 public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements GenericDAO<DomainEntity, Long> {
 
+    public static final String            DOMAIN_TITLE = "domainTitle";
+
     public DomainDAO() {
     }
 
     public DomainEntity findEnabledDomainByTitle(String domainTitle) throws PersistenceException {
 
         TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findEnabledDomainByTitle", DomainEntity.class)
-                .setParameter("domainTitle", domainTitle);
+                .setParameter(DOMAIN_TITLE, domainTitle);
 
         try {
             List<DomainEntity> domainEntities =  query.getResultList();
@@ -48,7 +50,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
 
     public DomainEntity getDomainByTitle(String domainTitle) throws PersistenceException {
         TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle", DomainEntity.class)
-                .setParameter("domainTitle", domainTitle);
+                .setParameter(DOMAIN_TITLE, domainTitle);
         try {
             List<DomainEntity> domainEntities =  query.getResultList();
             return !domainEntities.isEmpty()  ? domainEntities.get(0) : null;
@@ -82,7 +84,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     }
     public int deleteDomainByTitle(String domainTitle) throws PersistenceException {
         return getEntityManager().createNamedQuery("GamificationDomain.deleteDomainByTitle")
-                .setParameter("domainTitle", domainTitle)
+                .setParameter(DOMAIN_TITLE, domainTitle)
                 .executeUpdate();
 
     }
