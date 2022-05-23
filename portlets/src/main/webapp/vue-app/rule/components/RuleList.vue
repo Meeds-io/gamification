@@ -441,7 +441,7 @@ export default {
     collapseButtonn(rule) {
       this.editedrule = rule;
       this.isShown = !this.isShown;
-      this.description(this.editedrule.description,this.editedrule.description,this.editedrule.title);
+      this.editedrule.description = this.description(this.editedrule.description,this.editedrule.event,this.editedrule.title);
     },
     closeAlert(item) {
       setTimeout(function () {
