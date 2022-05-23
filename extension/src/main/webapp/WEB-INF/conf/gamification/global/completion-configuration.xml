@@ -209,24 +209,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <type>org.exoplatform.addons.gamification.listener.challenges.ChallengesESListener</type>
         </component-plugin>
     </external-component-plugins>
-    <external-component-plugins>
-        <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
-        <component-plugin>
-            <name>AddCronJob</name>
-            <set-method>addCronJob</set-method>
-            <type>org.exoplatform.services.scheduler.CronJob</type>
-            <description>Add a job to index already created challenges</description>
-            <init-params>
-                <properties-param>
-                    <name>cronjob.info</name>
-                    <description>Add a job to index already created challenges</description>
-                    <property name="jobName" value="ChallengeIndexingESJob"/>
-                    <property name="groupName" value="Gamification"/>
-                    <property name="job" value="org.exoplatform.addons.gamification.job.ChallengeIndexingESJob"/>
-                    <property name="expression" value="${exo.gamification.job.ChallengeIndexingESJob:0 0 0 ? * * *}"/>
-                </properties-param>
-            </init-params>
-        </component-plugin>
-    </external-component-plugins>
 
 </configuration>

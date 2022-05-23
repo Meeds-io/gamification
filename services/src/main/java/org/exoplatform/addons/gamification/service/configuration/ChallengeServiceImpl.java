@@ -84,7 +84,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
-      listenerService.broadcast(POST_CREATE_CHALLENGE_EVENT, challenge.getId(), null);
+      listenerService.broadcast(POST_CREATE_CHALLENGE_EVENT,this, challenge.getId());
     } catch (Exception e) {
       LOG.error("Unexpected error", e);
     }
@@ -148,7 +148,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
-      listenerService.broadcast(POST_UPDATE_CHALLENGE_EVENT, challenge.getId(), null);
+      listenerService.broadcast(POST_UPDATE_CHALLENGE_EVENT,this, challenge.getId());
     } catch (Exception e) {
       LOG.error("Unexpected error", e);
     }
@@ -216,7 +216,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challengeStorage.deleteChallenge(challenge);
     try {
-      listenerService.broadcast(POST_DELETE_CHALLENGE_EVENT, challenge.getId(), null);
+      listenerService.broadcast(POST_DELETE_CHALLENGE_EVENT, this, challenge.getId());
     } catch (Exception e) {
       LOG.error("Unexpected error", e);
     }
@@ -250,7 +250,7 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public List<Challenge> getAllChallenges() {
-    return challengeStorage.getAllChallenges();
+  public List<Challenge> getAllChallenges(int offset, int limit) {
+    return challengeStorage.getAllChallenges(offset, limit);
   }
 }

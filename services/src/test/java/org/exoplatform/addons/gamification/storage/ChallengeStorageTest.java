@@ -255,12 +255,12 @@ public class ChallengeStorageTest {
     List<Challenge> challenges = new ArrayList<>();
     challenges.add(challenge1);
     challenges.add(challenge2);
-    when(challengeDAO.findAllChllenges()).thenReturn(challengeEntities);
+    when(challengeDAO.findAllChallenges(0, 10)).thenReturn(challengeEntities);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.fromChallengeEntities(challengeEntities)).thenReturn(challenges);
 
     // When
-    List<Challenge> challengeList = challengeStorage.getAllChallenges();
+    List<Challenge> challengeList = challengeStorage.getAllChallenges(0, 10);
     assertEquals(2, challengeList.size());
     assertNotNull(challengeEntities);
   }

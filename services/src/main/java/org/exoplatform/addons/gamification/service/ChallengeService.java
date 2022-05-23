@@ -119,5 +119,5 @@ public interface ChallengeService {
   /**
    * Retrieves all challenges .
    **/
-  List<Challenge> getAllChallenges();
+  List<Challenge> getAllChallenges(int offset, int limit);
 }

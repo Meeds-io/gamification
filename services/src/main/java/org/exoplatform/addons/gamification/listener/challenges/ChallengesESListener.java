@@ -13,14 +13,13 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-public class ChallengesESListener extends Listener<Long, Object> {
+public class ChallengesESListener extends Listener<ChallengeService, Long> {
   private static final Log      LOG = ExoLogger.getLogger(ChallengesESListener.class);
 
   private final PortalContainer container;
 
   private final IndexingService indexingService;
 
-  private ChallengeService      challengeService;
 
   public ChallengesESListener(PortalContainer container, IndexingService indexingService) {
     this.container = container;
@@ -28,15 +27,16 @@ public class ChallengesESListener extends Listener<Long, Object> {
   }
 
   @Override
-  public void onEvent(Event<Long, Object> event) throws Exception {
+  public void onEvent(Event<ChallengeService, Long> event) throws Exception {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
 
-    Long challengeId = event.getSource();
+    ChallengeService challengeService = event.getSource();
+    Long challengeId = event.getData();
     try {
       if (indexingService != null) {
         if (!Utils.POST_DELETE_CHALLENGE_EVENT.equals(event.getEventName())) {
-          Challenge challenge = getChallengeService().getChallengeById(challengeId, Utils.getCurrentUser());
+          Challenge challenge = challengeService.getChallengeById(challengeId, Utils.getCurrentUser());
           if (challenge == null) {
             return;
           }
@@ -65,10 +65,4 @@ public class ChallengesESListener extends Listener<Long, Object> {
     indexingService.unindex(ChallengesIndexingServiceConnector.INDEX, String.valueOf(challengeId));
   }
 
-  private ChallengeService getChallengeService() {
-    if (challengeService == null) {
-      challengeService = container.getComponentInstanceOfType(ChallengeService.class);
-    }
-    return challengeService;
-  }
 }

@@ -384,8 +384,8 @@ public class ChallengeServiceTest {
       List<Challenge> challenges = new ArrayList<>();
       challenges.add(challenge);
 
-      when(challengeStorage.getAllChallenges()).thenReturn(challenges);
-      List<Challenge> userChallenges = challengeService.getAllChallenges();
+      when(challengeStorage.getAllChallenges(0, 10)).thenReturn(challenges);
+      List<Challenge> userChallenges = challengeService.getAllChallenges(0, 10);
       assertEquals(1, userChallenges.size());
     }
 
