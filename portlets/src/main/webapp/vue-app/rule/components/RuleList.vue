@@ -442,7 +442,6 @@ export default {
       this.editedrule = rule;
       this.isShown = !this.isShown;
       this.description(this.editedrule.description,this.editedrule.description,this.editedrule.title);
-      console.log('yalaa');
     },
     closeAlert(item) {
       setTimeout(function () {
