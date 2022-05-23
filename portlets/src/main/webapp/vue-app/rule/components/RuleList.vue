@@ -441,7 +441,8 @@ export default {
     collapseButtonn(rule) {
       this.editedrule = rule;
       this.isShown = !this.isShown;
-      this.editedrule.description =  (this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${this.editedrule.title}`),this.editedrule.description );
+      this.description(this.editedrule.description,this.editedrule.description,this.editedrule.title);
+      console.log('yalaa');
     },
     closeAlert(item) {
       setTimeout(function () {
