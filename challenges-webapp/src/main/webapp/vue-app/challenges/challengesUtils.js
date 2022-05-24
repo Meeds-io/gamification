@@ -51,3 +51,7 @@ export function getFromDate(date) {
   const year = String(date.getFullYear());
   return `${date.toLocaleDateString(lang || 'en', options)} ${day}, ${year}` ;
 }
+
+export const getIsoDate = (date) => {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T00:00:00`;
+};
