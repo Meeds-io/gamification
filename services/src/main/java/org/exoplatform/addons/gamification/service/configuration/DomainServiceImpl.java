@@ -136,4 +136,13 @@ public class DomainServiceImpl implements DomainService {
       throw (new EntityNotFoundException());
     }
   }
+
+  @Override
+  public DomainDTO getDomainByID(Long domainId) {
+    if (domainId <= 0) {
+      throw new IllegalArgumentException("domain id has to be positive integer");
+    }
+    return domainStorage.getDomainByID(domainId);
+
+  }
 }

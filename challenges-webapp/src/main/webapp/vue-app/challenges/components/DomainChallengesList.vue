@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2">
             {{ title }}
           </v-list-item-content>
-          <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2">
+          <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2" v-if="size">
             ( {{ size }} )
           </v-list-item-content>
           <v-list-item-content class="mr-7">
@@ -79,6 +79,10 @@ export default {
         return {};
       },
     },
+    challengePerPage: {
+      type: Number,
+      default: 12,
+    },
   },
   computed: {
     title() {
@@ -89,7 +93,7 @@ export default {
       return this.domain.challengesSize;
     },
     hasMore() {
-      return this.domain.challengesSize > this.domain.challenges.length;
+      return  this.domain.challengesSize === 0 && this.domain.challenges.length && this.domain.challenges.length  % this.challengePerPage === 0 ||  this.domain.challengesSize > this.domain.challenges.length ;
     },
   },
 };

@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import java.util.List;
@@ -107,5 +108,34 @@ public interface ChallengeService {
    *           ended yet
    */
   void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException;
+
+  /**
+   * Search news by term
+   *
+   * @param term term
+   * @param domain
+   * @param offset Offset
+   * @param limit Limit
+   * @param username Username accessing challenge
+   * @throws IllegalAccessException when user is not authorized to delete
+   *           challenges
+   * @throws ObjectNotFoundException challenge not found
+   * @throws IllegalArgumentException when challenge has announcements or did not
+   *           ended yet
+   */
+  List<ChallengeSearchEntity> search(String term, Long domain, int offset, int limit, String username);
+
+  /**
+   * Retrieves all challenges .
+   **/
+  List<Challenge> getAllChallenges(int offset, int limit);
+
+  /**
+   * Retrieves a challenge identified by its technical identifier.
+   *
+   * @param challengeId technical identifier of a challenge
+   * @return A {@link Challenge} object
+   */
+  Challenge getChallengeById(long challengeId);
 
 }

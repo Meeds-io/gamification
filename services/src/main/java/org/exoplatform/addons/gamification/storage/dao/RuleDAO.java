@@ -36,11 +36,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
-                                                     .setParameter("ruleTitle", ruleTitle);
+            .setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
-      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null ;
+      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
     } catch (NoResultException e) {
       return null;
     }
@@ -50,7 +50,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
-                                                     .setParameter("event", event);
+            .setParameter("event", event);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       return query.getResultList();
@@ -62,13 +62,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
 
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class) ;
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class);
 
     query.setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
-      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null ;
+      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
     } catch (NoResultException e) {
       return null;
     }
@@ -78,17 +78,18 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public RuleEntity findRuleByEventAndDomain(String event, String domain) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
-                                                     .setParameter("event", event)
-                                                     .setParameter("domain", domain);
+            .setParameter("event", event)
+            .setParameter("domain", domain);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
-      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null ;
+      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
     } catch (NoResultException e) {
       return null;
     }
 
   }
+
   public List<RuleEntity> getAllAutomaticRules() throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllAutomaticRules", RuleEntity.class);
     query.setParameter("type", TypeRule.AUTOMATIC);
@@ -114,7 +115,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     try {
       TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
-                                                       .setParameter("isEnabled", true);
+              .setParameter("isEnabled", true);
       query.setParameter("type", TypeRule.AUTOMATIC);
       return query.getResultList();
     } catch (PersistenceException e) {
@@ -127,7 +128,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<RuleEntity> getAllRulesByDomain(String domain) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
-                                                     .setParameter("domain", domain);
+            .setParameter("domain", domain);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       return query.getResultList();
@@ -196,4 +197,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return query.getSingleResult().intValue();
   }
 
+  public List<RuleEntity> findAllChallenges(int offset, int limit) {
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllChallenges", RuleEntity.class);
+    query.setParameter("type", TypeRule.MANUAL);
+    query.setFirstResult(offset);
+    query.setMaxResults(limit);
+    List<RuleEntity> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
 }

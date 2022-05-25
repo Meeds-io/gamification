@@ -54,6 +54,12 @@ public class Utils {
 
   private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
 
+  public static final String            POST_CREATE_CHALLENGE_EVENT = "challenge.created";
+
+  public static final String            POST_UPDATE_CHALLENGE_EVENT = "challenge.updated";
+
+  public static final String            POST_DELETE_CHALLENGE_EVENT = "challenge.deleted";
+
   private static GamificationService    gamificationService;
 
   private static RuleService            ruleService;
@@ -177,6 +183,14 @@ public class Utils {
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
     return domainService.getDomainByTitle(domainTitle);
+  }
+
+  public static DomainDTO getDomainById(long domainId) {
+    if (domainId <= 0) {
+      return null;
+    }
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    return domainService.getDomainByID(domainId);
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {

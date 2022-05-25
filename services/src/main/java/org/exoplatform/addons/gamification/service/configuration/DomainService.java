@@ -75,4 +75,11 @@ public interface DomainService {
      */
     void deleteDomain (Long id) throws EntityNotFoundException;
 
+  /**
+     * Delete a DomainEntity using the id
+   * @param id : domain id
+   * @return
+   */
+    DomainDTO getDomainByID (Long id);
+
 }

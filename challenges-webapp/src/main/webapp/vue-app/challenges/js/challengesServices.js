@@ -164,3 +164,39 @@ export function deleteChallenge(challengeId) {
     }
   });
 }
+
+
+export function search (term, offset, limit, announcements, domainId, groupByDomain) {
+  const formData = new FormData();
+  if (term) {
+    formData.append('term', term);
+  } else {
+    throw new Error('search term is mandatory');
+  }
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+  if (announcements) {
+    formData.append('announcements', announcements);
+  }
+  if (domainId) {
+    formData.append('domainId', domainId);
+  }
+  if (groupByDomain) {
+    formData.append('groupByDomain', groupByDomain);
+  }
+  const params = new URLSearchParams(formData).toString();
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/search?${params}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error when getting challenges');
+    }
+  });
+}

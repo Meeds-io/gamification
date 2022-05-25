@@ -45,6 +45,7 @@ import java.util.Objects;
 @NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
 @NamedQuery(name = "Rule.findAllChallengesByUserByDomain", query = "SELECT r FROM Rule r WHERE r.audience in (:ids) AND r.domainEntity.id = :domainId ORDER BY r.endDate DESC")
 @NamedQuery(name = "Rule.countAllChallengesByUserByDomain", query = "SELECT count(r) FROM Rule r WHERE r.audience in (:ids) AND r.domainEntity.id = :domainId")
+@NamedQuery(name = "Rule.findAllChallenges", query = "SELECT DISTINCT r FROM Rule r where r.type = :type order by r.endDate desc")
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;

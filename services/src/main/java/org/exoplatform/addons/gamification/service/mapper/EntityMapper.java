@@ -85,7 +85,7 @@ public class EntityMapper {
     challengeEntity.setScore(challenge.getPoints().intValue());
 
     DomainDTO domain = Utils.getEnabledDomainByTitle(challenge.getProgram());
-    if (domain != null ) {
+    if (domain != null) {
       challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(domain));
     }
     return challengeEntity;
@@ -105,7 +105,7 @@ public class EntityMapper {
     }
     return new AnnouncementRestEntity(announcement.getId(),
                                       Utils.getUserRemoteId(String.valueOf(announcement.getAssignee() != null ? announcement.getAssignee()
-                                                                                           : announcement.getCreator())),
+                                                                                                              : announcement.getCreator())),
                                       announcement.getCreatedDate(),
                                       announcement.getActivityId());
   }
@@ -143,8 +143,8 @@ public class EntityMapper {
     announcementEntity.setCreatedDate(createDate);
     announcementEntity.setRuleId(announcement.getChallengeId());
     announcementEntity.setCreator(announcement.getCreator());
-    announcementEntity.setDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
-    announcementEntity.setCreatedDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
+    announcementEntity.setDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
+    announcementEntity.setCreatedDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
     announcementEntity.setStatus(HistoryStatus.ACCEPTED);
     if (createDate != null) {
@@ -178,16 +178,14 @@ public class EntityMapper {
   public static ChallengeRestEntity fromChallenge(AnnouncementService announcementService,
                                                   Challenge challenge,
                                                   int announcementsPerChallenge,
-                                                  boolean noDomain) throws IllegalAccessException,
-                                                                    ObjectNotFoundException {
+                                                  boolean noDomain) throws IllegalAccessException, ObjectNotFoundException {
     if (challenge == null) {
       return null;
     }
     List<Announcement> challengeAnnouncements = null;
     if (announcementsPerChallenge > 0) {
-      challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
-                                                                                  0,
-                                                                                  announcementsPerChallenge);
+      challengeAnnouncements =
+                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge);
     } else {
       challengeAnnouncements = Collections.emptyList();
     }
@@ -198,7 +196,9 @@ public class EntityMapper {
     return fromChallenge(challenge, challengeAnnouncements, false);
   }
 
-  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements, boolean noDomain) {
+  public static ChallengeRestEntity fromChallenge(Challenge challenge,
+                                                  List<Announcement> challengeAnnouncements,
+                                                  boolean noDomain) {
     Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     return new ChallengeRestEntity(challenge.getId(),
                                    challenge.getTitle(),
@@ -216,4 +216,61 @@ public class EntityMapper {
                                    challenge.getPoints(),
                                    noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
   }
+
+  public static ChallengeRestEntity fromChallengeSearchEntity(AnnouncementService announcementService,
+                                                              ChallengeSearchEntity challengeSearchEntity,
+                                                              int announcementsPerChallenge,
+                                                              boolean noDomain) throws IllegalAccessException,
+                                                                                ObjectNotFoundException {
+    if (challengeSearchEntity == null) {
+      return null;
+    }
+    List<Announcement> challengeAnnouncements = null;
+    if (announcementsPerChallenge > 0) {
+      challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challengeSearchEntity.getId(),
+                                                                                  0,
+                                                                                  announcementsPerChallenge);
+    } else {
+      challengeAnnouncements = Collections.emptyList();
+    }
+    return fromChallengeSearchEntity(challengeSearchEntity, challengeAnnouncements, noDomain);
+  }
+
+  public static ChallengeRestEntity fromChallengeSearchEntity(ChallengeSearchEntity challengeSearchEntity,
+                                                              List<Announcement> challengeAnnouncements,
+                                                              boolean noDomain) {
+    Space space = Utils.getSpaceById(String.valueOf(challengeSearchEntity.getAudience()));
+    return new ChallengeRestEntity(challengeSearchEntity.getId(),
+                                   challengeSearchEntity.getTitle(),
+                                   challengeSearchEntity.getDescription(),
+                                   space,
+                                   challengeSearchEntity.getStartDate(),
+                                   challengeSearchEntity.getEndDate(),
+                                   Utils.createUser(Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
+                                                                                 Utils.getCurrentUser()),
+                                                    space,
+                                                    challengeSearchEntity.getManagers()),
+                                   Utils.getManagersByIds(challengeSearchEntity.getManagers()),
+                                   Utils.countAnnouncementsByChallenge(challengeSearchEntity.getId()),
+                                   fromAnnouncementList(challengeAnnouncements),
+                                   challengeSearchEntity.getPoints(),
+                                   noDomain ? null : Utils.getDomainById(challengeSearchEntity.getId()));
+  }
+
+  public static ChallengeSearchEntity fromChallenge (Challenge challenge) {
+    if (challenge == null) {
+      return null;
+    }
+    DomainDTO challengeProgram = Utils.getDomainByTitle(challenge.getProgram());
+    return new ChallengeSearchEntity(challenge.getId(),
+            challenge.getTitle(),
+            challenge.getDescription(),
+            challenge.getAudience(),
+            challenge.getStartDate(),
+            challenge.getEndDate(),
+            challenge.getManagers(),
+            challenge.getPoints(),
+            challengeProgram != null ? challengeProgram.getId() : 0);
+  }
+
 }

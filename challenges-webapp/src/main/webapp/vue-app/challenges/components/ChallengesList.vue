@@ -8,7 +8,8 @@
       :key="domain.id"
       :domain="domain"
       :challenges="challengesByDomainId[domain.id]"
-      :loading="loading" />
+      :loading="loading"
+      :challenge-per-page="challengePerPage" />
   </v-expansion-panels>
 </template>
 <script>
@@ -29,6 +30,10 @@ export default {
     loading: {
       type: Boolean,
       default: false,
+    },
+    challengePerPage: {
+      type: Number,
+      default: 12,
     },
   },
   computed: {

@@ -2,12 +2,18 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.search.ChallengeSearchConnector;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.container.xml.InitParams;
@@ -19,20 +25,33 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import static org.exoplatform.addons.gamification.utils.Utils.*;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
-  private static final String CREATORS_GROUP_KEY = "challenge.creator.group";
+  private static final Log         LOG                = ExoLogger.getExoLogger(ChallengeServiceImpl.class);
 
-  private RuleStorage         challengeStorage;
+  private RuleStorage              challengeStorage;
 
-  private SpaceService        spaceService;
+  private SpaceService             spaceService;
 
-  private String              groupOfCreators;
+  private String                   groupOfCreators;
 
-  public ChallengeServiceImpl(RuleStorage challengeStorage, SpaceService spaceService, InitParams params) {
+  private static final String      CREATORS_GROUP_KEY = "challenge.creator.group";
+
+  private ListenerService          listenerService;
+
+  private ChallengeSearchConnector challengeSearchConnector;
+
+  public ChallengeServiceImpl(RuleStorage challengeStorage,
+                              SpaceService spaceService,
+                              InitParams params,
+                              ListenerService listenerService,
+                              ChallengeSearchConnector challengeSearchConnector) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
+    this.listenerService = listenerService;
+    this.challengeSearchConnector = challengeSearchConnector;
     if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {
       this.groupOfCreators = params.getValueParam(CREATORS_GROUP_KEY).getValue();
     }
@@ -63,7 +82,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (!spaceService.isManager(space, username)) {
       throw new IllegalAccessException("user is not allowed to create challenge");
     }
-    return challengeStorage.saveChallenge(challenge, username);
+    challenge = challengeStorage.saveChallenge(challenge, username);
+    try {
+      listenerService.broadcast(POST_CREATE_CHALLENGE_EVENT, this, challenge.getId());
+    } catch (Exception e) {
+      LOG.error("Unexpected error", e);
+    }
+    return challenge;
   }
 
   @Override
@@ -92,6 +117,11 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
+  public Challenge getChallengeById(long challengeId) {
+    return challengeStorage.getChallengeById(challengeId);
+  }
+
+  @Override
   public Challenge updateChallenge(Challenge challenge, String username) throws IllegalArgumentException,
                                                                          ObjectNotFoundException,
                                                                          IllegalAccessException {
@@ -116,7 +146,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (oldChallenge.equals(challenge)) {
       throw new IllegalArgumentException("there are no changes to save");
     }
-    return challengeStorage.saveChallenge(challenge, username);
+    challenge = challengeStorage.saveChallenge(challenge, username);
+    try {
+      listenerService.broadcast(POST_UPDATE_CHALLENGE_EVENT, this, challenge.getId());
+    } catch (Exception e) {
+      LOG.error("Unexpected error", e);
+    }
+    return challenge;
   }
 
   @Override
@@ -204,5 +240,28 @@ public class ChallengeServiceImpl implements ChallengeService {
       throw new IllegalArgumentException("Challenge does not ended yet");
     }
     challengeStorage.deleteChallenge(challenge);
+    try {
+      listenerService.broadcast(POST_DELETE_CHALLENGE_EVENT, this, challenge.getId());
+    } catch (Exception e) {
+      LOG.error("Unexpected error", e);
+    }
+  }
+
+  @Override
+  public List<ChallengeSearchEntity> search(String term, Long domainId, int offset, int limit, String username) {
+    List<String> listIdSpace = spaceService.getMemberSpacesIds(username, 0, -1);
+    if (listIdSpace.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return challengeSearchConnector.search(listIdSpace.stream().map(String::valueOf).collect(Collectors.toSet()),
+                                           term,
+                                           domainId,
+                                           offset,
+                                           limit);
+  }
+
+  @Override
+  public List<Challenge> getAllChallenges(int offset, int limit) {
+    return challengeStorage.getAllChallenges(offset, limit);
   }
 }

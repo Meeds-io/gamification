@@ -224,9 +224,9 @@ export default {
         this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
         this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
       }
-      if (this.challenge.program){
+      if (this.challenge.program) {
         this.$refs.challengeProgram.broadcast = false;
-        this.$refs.challengeProgram.program =  this.challenge.program;
+        this.$refs.challengeProgram.program = this.challenge.program;
       }
       const data = {
         managers: this.challenge.managers,
@@ -261,12 +261,8 @@ export default {
         points: 20,
       };
       this.$refs.challengeDrawer.open();
-      this.$nextTick().then(() => {
-        this.$refs.challengeDescription.initCKEditor();
-        if (this.challenge && this.challenge.id){
-          this.setUp();
-        }
-      });
+      this.$refs.challengeDescription.initCKEditor();
+      this.setUp();
     },
     close() {
       this.reset();
