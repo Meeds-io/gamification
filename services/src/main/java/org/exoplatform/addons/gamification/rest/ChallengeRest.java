@@ -252,4 +252,46 @@ public class ChallengeRest implements ResourceContainer {
     }
   }
 
+  @GET
+  @Path("/search")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @ApiOperation(value = "check if the current user can add a challenge", httpMethod = "GET", response = Response.class, notes = "This checks if the current user user can add a challenge", consumes = "application/json")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "challenge deleted"),
+      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "User not authorized to delete a challenge"),
+      @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
+      @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Object not found"),
+      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  public Response search(@ApiParam(value = "Offset of result", required = false, defaultValue = "0")
+                           @QueryParam("offset")
+                                   int offset,
+                         @ApiParam(value = "Limit of result", required = false, defaultValue = "10")
+                           @QueryParam("limit")
+                                   int limit,
+                         @ApiParam(value = "number of announcement per challenge", required = false, defaultValue = "2")
+                           @QueryParam("announcements")
+                                   int announcements,
+                         @ApiParam(value = "term to search challenges by", required = true, defaultValue = "2")
+                           @QueryParam("term")
+                                   String term) {
+    if (term == null || StringUtils.isBlank(term)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("term should not be blank").build();
+    }
+    String currentUser = Utils.getCurrentUser();
+    try {
+      List<Challenge> challenges = challengeService.search(term, offset, limit, currentUser);
+      List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
+      for (Challenge challenge : challenges) {
+        List<Announcement> challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
+                0,
+                announcements);
+        challengeRestEntities.add(EntityMapper.fromChallenge(challenge, challengeAnnouncements));
+      }
+      return Response.ok(challengeRestEntities).build();
+    } catch (Exception e) {
+      LOG.error("Error when searching for challenges", e);
+      return Response.serverError().entity("EError when searching for challenges").build();
+    }
+  }
+
 }

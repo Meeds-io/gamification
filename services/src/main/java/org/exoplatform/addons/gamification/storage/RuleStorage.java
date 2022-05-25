@@ -127,4 +127,9 @@ public class RuleStorage {
     // implemented in cached storage
   }
 
+  public List<Challenge> getAllChallenges(int offset, int limit) {
+     List<RuleEntity> challenges = this.ruleDAO.findAllChallenges(offset, limit);
+     return EntityMapper.fromChallengeEntities(challenges);
+  }
+
 }
