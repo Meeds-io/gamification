@@ -40,9 +40,17 @@ public interface ChallengeService {
   Challenge getChallengeById(long challengeId, String username) throws IllegalAccessException;
 
   /**
+   * Retrieves a challenge identified by its technical identifier.
+   *
+   * @param challengeId technical identifier of a challenge
+   * @return A {@link Challenge} object
+   */
+  Challenge getChallengeById(long challengeId);
+
+  /**
    * Updates an existing challenge
    *
-   * @param  challenge {@link Challenge} object to update
+   * @param challenge {@link Challenge} object to update
    * @param username Username updating challenge
    * @throws IllegalArgumentException when user is not authorized to update the
    *           challenge
@@ -51,16 +59,20 @@ public interface ChallengeService {
    * @throws IllegalAccessException when user is not authorized to create a
    *           challenge for the designated owner defined in object
    */
-  Challenge updateChallenge(Challenge challenge, String username) throws  IllegalArgumentException, ObjectNotFoundException, IllegalAccessException;
+  Challenge updateChallenge(Challenge challenge,
+                            String username) throws IllegalArgumentException, ObjectNotFoundException, IllegalAccessException;
 
   /**
-   * Return a boolean that indicates if the current user can add a challenge or not
+   * Return a boolean that indicates if the current user can add a challenge or
+   * not
    *
-   * @return if the user can add a challenge or not    */
+   * @return if the user can add a challenge or not
+   */
   boolean canAddChallenge();
 
   /**
    * Retrieves all challenges by user.
+   * 
    * @param offset Offset
    * @param limit Limit
    * @param username Username accessing challenge
@@ -88,4 +100,24 @@ public interface ChallengeService {
    *           ended yet
    */
   void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException;
+
+  /**
+   * Search news by term
+   *
+   * @param term term
+   * @param offset Offset
+   * @param limit Limit
+   * @param username Username accessing challenge
+   * @throws IllegalAccessException when user is not authorized to delete
+   *           challenges
+   * @throws ObjectNotFoundException challenge not found
+   * @throws IllegalArgumentException when challenge has announcements or did not
+   *           ended yet
+   */
+  List<Challenge> search(String term, int offset, int limit, String username);
+
+  /**
+   * Retrieves all challenges .
+   **/
+  List<Challenge> getAllChallenges(int offset, int limit);
 }

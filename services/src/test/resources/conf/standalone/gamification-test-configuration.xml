@@ -145,6 +145,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <type>org.exoplatform.addons.gamification.search.ChallengeSearchConnector</type>
+    </component>
+
+    <component>
         <key>org.exoplatform.commons.api.persistence.DataInitializer</key>
         <type>org.exoplatform.commons.persistence.impl.LiquibaseDataInitializer
         </type>

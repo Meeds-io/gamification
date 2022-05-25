@@ -123,6 +123,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.rest.RealizationsRest</type>
     </component>
 
+    <component>
+        <type>org.exoplatform.addons.gamification.search.ChallengeSearchConnector</type>
+        <init-params>
+            <value-param>
+                <name>query.file.path</name>
+                <value>${exo.challenges.es.query.path:jar:/challenges-search-query.json}</value>
+            </value-param>
+            <properties-param>
+                <name>constructor.params</name>
+                <property name="searchType" value="challenges" />
+                <property name="index" value="challenges_alias" />
+            </properties-param>
+        </init-params>
+    </component>
+
     <external-component-plugins>
         <target-component>org.exoplatform.services.listener.ListenerService</target-component>
         <component-plugin>
@@ -152,6 +167,46 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <name>gamification</name>
             <set-method>addFeaturePlugin</set-method>
             <type>org.exoplatform.addons.gamification.plugin.GamificationFeaturePlugin</type>
+        </component-plugin>
+    </external-component-plugins>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.search.index.IndexingOperationProcessor</target-component>
+        <component-plugin>
+            <name>ChallengesIndexingServiceConnector</name>
+            <set-method>addConnector</set-method>
+            <type>org.exoplatform.addons.gamification.connector.ChallengesIndexingServiceConnector</type>
+            <description>Challenges ElasticSearch Indexing Connector</description>
+            <init-params>
+                <value-param>
+                    <name>mapping.file.path</name>
+                    <value>${exo.challenges.es.mapping.path:jar:/challenges-es-mapping.json}</value>
+                </value-param>
+                <properties-param>
+                    <name>constructor.params</name>
+                    <property name="index_alias" value="challenges_alias"/>
+                    <property name="index_current" value="challenge_v1"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>challenge.created</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.challenges.ChallengesESListener</type>
+        </component-plugin>
+        <component-plugin>
+            <name>challenge.updated</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.challenges.ChallengesESListener</type>
+        </component-plugin>
+        <component-plugin>
+            <name>challenge.deleted</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.challenges.ChallengesESListener</type>
         </component-plugin>
     </external-component-plugins>
 

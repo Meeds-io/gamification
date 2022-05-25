@@ -129,3 +129,17 @@ export function deleteChallenge(challengeId) {
     }
   });
 }
+
+
+export function search(term, offset, limit, announcements) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/search?term=${term || ' '}&offset=${offset || 0}&limit=${limit|| 10}&announcements=${announcements|| 2}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error when getting challenges');
+    }
+  });
+}

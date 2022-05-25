@@ -182,4 +182,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
+  public List<RuleEntity> findAllChallenges(int offset, int limit) {
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllChallenges", RuleEntity.class);
+    query.setParameter("type", TypeRule.MANUAL);
+    query.setFirstResult(offset);
+    query.setMaxResults(limit);
+    List<RuleEntity> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
+
 }
