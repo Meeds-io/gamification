@@ -33,8 +33,12 @@ public class DomainStorage {
 
   }
 
-  public DomainDTO findDomainByTitle(String domainTitle) {
-    return DomainMapper.domainEntityToDomainDTO(domainDAO.findDomainByTitle(domainTitle));
+  public DomainDTO findEnabledDomainByTitle(String domainTitle) {
+    return DomainMapper.domainEntityToDomainDTO(domainDAO.findEnabledDomainByTitle(domainTitle));
+  }
+
+  public DomainDTO getDomainByTitle(String domainTitle) {
+    return DomainMapper.domainEntityToDomainDTO(domainDAO.getDomainByTitle(domainTitle));
   }
 
   public List<DomainDTO> getAllDomains() {

@@ -42,7 +42,10 @@ public class AnnouncementStorage {
     if (!announcementEntity.getCreatedDate().after(challengeEntity.getStartDate())) {
       throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
     }
-    DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getDomainByTitle(challenge.getProgram()));
+    DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getEnabledDomainByTitle(challenge.getProgram()));
+    if (domainEntity == null) {
+      throw new IllegalArgumentException("announcement program is disabled or not not found");
+    }
     announcementEntity.setEarnerType(IdentityType.USER);
     announcementEntity.setActionTitle(challengeEntity.getTitle());
     announcementEntity.setActionScore(challengeEntity.getScore());
