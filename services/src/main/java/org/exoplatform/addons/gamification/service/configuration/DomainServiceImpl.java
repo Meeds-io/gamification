@@ -52,9 +52,20 @@ public class DomainServiceImpl implements DomainService {
     }
   }
 
-  public DomainDTO findDomainByTitle(String domainTitle) {
+  public DomainDTO findEnabledDomainByTitle(String domainTitle) {
     try {
-      return domainStorage.findDomainByTitle(domainTitle);
+      return domainStorage.findEnabledDomainByTitle(domainTitle);
+
+    } catch (Exception e) {
+      LOG.error("Error to find Domain entity with title : {}", domainTitle, e);
+      throw (e);
+    }
+
+  }
+
+  public DomainDTO getDomainByTitle(String domainTitle) {
+    try {
+      return domainStorage.getDomainByTitle(domainTitle);
 
     } catch (Exception e) {
       LOG.error("Error to find Domain entity with title : {}", domainTitle, e);
@@ -67,7 +78,7 @@ public class DomainServiceImpl implements DomainService {
     DomainDTO oldDomainDTO = null;
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
     try {
-      oldDomainDTO = domainStorage.findDomainByTitle(domainDTO.getTitle());
+      oldDomainDTO = domainStorage.findEnabledDomainByTitle(domainDTO.getTitle());
       if (oldDomainDTO == null) {
         domainDTO.setCreatedDate(date);
         domainDTO.setLastModifiedDate(date);

@@ -292,7 +292,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainEntity newDomain() {
-    DomainEntity domain = domainDAO.findDomainByTitle(GAMIFICATION_DOMAIN);
+    DomainEntity domain = domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN);
     if (domain == null) {
       domain = new DomainEntity();
       domain.setTitle(GAMIFICATION_DOMAIN);
@@ -308,7 +308,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainEntity newDomain(String name) {
-    DomainEntity domain = domainDAO.findDomainByTitle(name);
+    DomainEntity domain = domainDAO.findEnabledDomainByTitle(name);
     if (domain == null) {
       domain = new DomainEntity();
       domain.setTitle(name);

@@ -16,24 +16,16 @@
  */
 package org.exoplatform.addons.gamification.service.setting.zone.impl;
 
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.setting.zone.ZoneRegistry;
 import org.exoplatform.addons.gamification.service.setting.zone.model.ZoneConfig;
-import org.exoplatform.commons.api.settings.SettingService;
-import org.exoplatform.commons.api.settings.SettingValue;
-import org.exoplatform.commons.api.settings.data.Context;
-import org.exoplatform.commons.api.settings.data.Scope;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,8 +60,8 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
       try {
         // Processing registered domains
         for (ZoneConfig domain : zoneMap.values()) {
-          DomainDTO domainDTO = domainService.findDomainByTitle(domain.getZoneName());
-          if (domainDTO == null) {
+          DomainDTO domainDTO = domainService.getDomainByTitle(domain.getZoneName());
+          if (domainDTO == null || domainDTO.isDeleted()) {
             LOG.info("Saving new Gamification Domain '{}'", domain.getZoneName());
             store(domain);
           }
