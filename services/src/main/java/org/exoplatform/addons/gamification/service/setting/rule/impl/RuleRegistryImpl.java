@@ -33,7 +33,6 @@ import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,7 +123,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                 ruleDto.setArea(ruleConfig.getZone());
                 ruleDto.setEnabled(true);
                 ruleDto.setDeleted(false);
-                ruleDto.setDomainDTO(domainService.findDomainByTitle(ruleConfig.getZone()));
+                ruleDto.setDomainDTO(domainService.getDomainByTitle(ruleConfig.getZone()));
                 if(ruleDto.getDomainDTO().isEnabled()==false){
                     ruleDto.setEnabled(false);
                 }

@@ -160,12 +160,20 @@ public class Utils {
     return space;
   }
 
+  public static DomainDTO getEnabledDomainByTitle(String domainTitle) {
+    if (domainTitle == null || domainTitle.isEmpty()) {
+      return null;
+    }
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    return domainService.findEnabledDomainByTitle(domainTitle);
+  }
+
   public static DomainDTO getDomainByTitle(String domainTitle) {
     if (domainTitle == null || domainTitle.isEmpty()) {
       return null;
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return domainService.findDomainByTitle(domainTitle);
+    return domainService.getDomainByTitle(domainTitle);
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {

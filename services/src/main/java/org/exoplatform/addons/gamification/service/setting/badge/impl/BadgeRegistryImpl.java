@@ -19,7 +19,6 @@ package org.exoplatform.addons.gamification.service.setting.badge.impl;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
 import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
 import org.exoplatform.commons.file.model.FileItem;
@@ -95,7 +94,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
         badgeDTO.setTitle(badgeConfig.getTitle());
         badgeDTO.setDescription(badgeConfig.getDescription());
         badgeDTO.setDomain(badgeConfig.getDomain());
-        badgeDTO.setDomainDTO(domainService.findDomainByTitle(badgeConfig.getDomain()));
+        badgeDTO.setDomainDTO(domainService.getDomainByTitle(badgeConfig.getDomain()));
         badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
         badgeDTO.setNeededScore(badgeConfig.getNeededScore());
         badgeDTO.setEnabled(badgeConfig.isEnable());

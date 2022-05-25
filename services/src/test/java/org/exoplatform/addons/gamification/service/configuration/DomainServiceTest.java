@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -67,10 +68,17 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindDomainByTitle() {
-    assertNull(domainService.findDomainByTitle(GAMIFICATION_DOMAIN));
-    newDomain();
-    assertNotNull(domainService.findDomainByTitle(GAMIFICATION_DOMAIN));
+  public void testFindEnabledDomainByTitle() {
+    assertNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
+    DomainDTO domainDTO = newDomainDTO();
+    assertNotNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
+    domainDTO.setEnabled(false);
+    try {
+      domainService.updateDomain(domainDTO);
+    } catch (ObjectNotFoundException e) {
+    //
+    }
+    assertNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
   }
 
   @Test
@@ -115,5 +123,17 @@ public class DomainServiceTest extends AbstractServiceTest {
     } catch (Exception e) {
       fail("Error when deleteing domain", e);
     }
+  }
+
+  @Test
+  public void testGetDomainByTitle() {
+    assertNull(domainService.getDomainByTitle(GAMIFICATION_DOMAIN));
+    DomainDTO domainDTO = newDomainDTO();
+    assertNotNull(domainService.getDomainByTitle(GAMIFICATION_DOMAIN));
+    domainDTO.setDeleted(true);
+    domainService.addDomain(domainDTO);
+    domainDTO = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
+    assertNotNull(domainDTO);
+    assertEquals(domainDTO.getTitle(), GAMIFICATION_DOMAIN);
   }
 }

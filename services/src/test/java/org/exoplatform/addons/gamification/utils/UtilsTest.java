@@ -273,12 +273,12 @@ public class UtilsTest {
         when(CommonsUtils.getService(DomainService.class)).thenReturn(domainService);
         DomainDTO domain = new DomainDTO();
         domain.setTitle("gamification");
-        when(domainService.findDomainByTitle("gamification")).thenReturn(domain);
-        DomainDTO savedDomain = Utils.getDomainByTitle("");
+        when(domainService.findEnabledDomainByTitle("gamification")).thenReturn(domain);
+        DomainDTO savedDomain = Utils.getEnabledDomainByTitle("");
         assertNull(savedDomain);
-        savedDomain = Utils.getDomainByTitle(null);
+        savedDomain = Utils.getEnabledDomainByTitle(null);
         assertNull(savedDomain);
-        savedDomain = Utils.getDomainByTitle("gamification");
+        savedDomain = Utils.getEnabledDomainByTitle("gamification");
         assertNotNull(savedDomain);
         assertEquals("gamification", savedDomain.getTitle());
     }
