@@ -34,7 +34,7 @@ public class DomainCachedStorage extends DomainStorage {
         if (context == DOMAIN_ID_CONTEXT) {
           return DomainCachedStorage.super.getDomainByID((Long) key);
         } else if (context == DOMAIN_TITLE_CONTEXT) {
-          return DomainCachedStorage.super.findDomainByTitle((String) key);
+          return DomainCachedStorage.super.findEnabledDomainByTitle((String) key);
         } else if (context == ALL_DOMAIN_CONTEXT) {
           return DomainCachedStorage.super.getAllDomains();
         } else if (context == DOMAIN_ENABLED_CONTEXT) {
@@ -67,7 +67,7 @@ public class DomainCachedStorage extends DomainStorage {
   }
 
   @Override
-  public DomainDTO findDomainByTitle(String title) {
+  public DomainDTO findEnabledDomainByTitle(String title) {
     return (DomainDTO) this.domainFutureCache.get(DOMAIN_TITLE_CONTEXT, title);
   }
 

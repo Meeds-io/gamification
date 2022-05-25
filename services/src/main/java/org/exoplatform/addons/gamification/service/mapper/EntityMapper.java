@@ -65,7 +65,7 @@ public class EntityMapper {
     challengeEntity.setManagers(challenge.getManagers());
     challengeEntity.setScore(challenge.getPoints().intValue());
 
-    DomainDTO domain = Utils.getDomainByTitle(challenge.getProgram());
+    DomainDTO domain = Utils.getEnabledDomainByTitle(challenge.getProgram());
     if (domain != null ) {
       challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(domain));
     }
@@ -176,6 +176,6 @@ public class EntityMapper {
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    announcementRestEntities,
                                    challenge.getPoints(),
-                                   Utils.getDomainByTitle(challenge.getProgram()));
+                                   Utils.getEnabledDomainByTitle(challenge.getProgram()));
   }
 }
