@@ -419,7 +419,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <addAutoIncrement columnDataType="BIGINT" columnName="CHALLENGE_MANAGER_ID" incrementBy="1" startWith="1"
                           tableName="CHALLENGE_MANAGER_RULE"/>
     </changeSet>
-    <changeSet id="1.0.0-37" author="exo-gamification" dbms="postgresql">
+    <changeSet id="1.0.0-37" author="exo-gamification" dbms="mysql">
         <modifyDataType   columnName="COMMENT"
                           newDataType="NVARCHAR(2000) SET utf8mb4 COLLATE utf8mb4_unicode_ci"
                           tableName="GAMIFICATION_ACTIONS_HISTORY"/>
