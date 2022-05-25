@@ -39,12 +39,20 @@ public interface DomainService {
    List<DomainDTO> getEnabledDomains() ;
 
   /**
-   * Find a DomainEntity by title
+   * Find an enabled DomainEntity by title
    * 
    * @param domainTitle : domain title
    * @return an instance DomainDTO
    */
-   DomainDTO findDomainByTitle(String domainTitle);
+   DomainDTO findEnabledDomainByTitle(String domainTitle);
+
+   /**
+    * Find a DomainEntity by title
+    * 
+    * @param domainTitle : domain title
+    * @return an instance DomainDTO
+    */
+   DomainDTO getDomainByTitle(String domainTitle);
 
   /**
      * Add Domain to DB

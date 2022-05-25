@@ -154,7 +154,7 @@ export default {
       }
     },
     enableAnnounce(){
-      return this.challenge && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
+      return this.challenge && this.challenge.program  && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
     },
     enableDelete(){
       return this.challenge && this.challenge.announcementsCount === 0 && this.status === 'Ended';
