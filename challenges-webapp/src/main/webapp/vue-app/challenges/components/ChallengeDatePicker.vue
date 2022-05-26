@@ -91,19 +91,18 @@ export default {
     });
   },
   methods: {
-    emitStartDate(date) {
-      if (date){
-        this.$emit('startDateChanged',new Date(date));
+    emitStartDate(value) {
+      if (value) {
+        const date = new Date(value);
+        this.$emit('startDateChanged', this.$challengeUtils.getIsoDate(date));
       }
     },
-    emitEndDate(date) {
-      if (date){
-        this.$emit('endDateChanged',new Date(date));
+    emitEndDate(value) {
+      if (value) {
+        const date = new Date(value);
+        this.$emit('endDateChanged', this.$challengeUtils.getIsoDate(date));
       }
     },
-    getFormatDate(date) {
-      return this.$challengeUtils.getFromDate(date);
-    }
-  }
+  },
 };
 </script>
