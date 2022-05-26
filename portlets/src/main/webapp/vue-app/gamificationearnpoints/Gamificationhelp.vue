@@ -379,7 +379,7 @@ export default {
 
 <style scoped>
     #uiHowEarnPoint .how-title {
-        background: #578dc9;
+        background: #476A9C;
         color: #fff;
         text-align: center;
         font-size: 26px;
@@ -396,7 +396,7 @@ export default {
     #uiHowEarnPoint header {
         display: block;
         text-align: center;
-        background: #578dc9;
+        background: #476A9C;
         padding: 12px;
         margin: -1px;
         border: none;
@@ -408,7 +408,7 @@ export default {
 
     #uiHowEarnPoint .nav-tabs>.active>a,
     .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus {
-        color: #578dc9;
+        color: #476A9C;
         background-color: #fff;
         border: none;
         border-radius: 20px;
@@ -452,7 +452,7 @@ export default {
     }
     #uiHowEarnPoint .tab {
         text-align: center;
-        background: #578dc9;
+        background: #476A9C;
         padding: 10px;
     }
 
@@ -481,7 +481,7 @@ export default {
 
     }
     #uiHowEarnPoint h5 button.btn.btn-link.collapsed {
-        color: #578dc9;
+        color: #476A9C;
         text-align: center;
         font-weight: bold;
         overflow: hidden;
@@ -524,7 +524,7 @@ export default {
 
 
     #uiHowEarnPoint .uiBox .title{
-        background: #578dc9;
+        background: #476A9C;
         text-align: center;
         color: #fff !important;
         font-size: 16px;
