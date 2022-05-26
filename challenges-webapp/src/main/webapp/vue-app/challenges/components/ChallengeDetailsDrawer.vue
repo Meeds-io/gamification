@@ -86,10 +86,13 @@
         <div class="pl-4 pr-4">
           <v-chip
             :title="challenge && challenge.program && challenge.program.title"
-            color="primary"
+            :color="domainShipColor"
             class="identitySuggesterItem mt-2">
             <span class="text-truncate">
               {{ challenge && challenge.program && challenge.program.title }}
+            </span>
+            <span v-if="isDomainDisabledOrDeleted" class="mx-1">
+              ({{ $t('challenges.label.disabled') }} )
             </span>
           </v-chip>
         </div>
@@ -145,6 +148,12 @@ export default {
     },
     announcementCount() {
       return this.challenge && this.challenge.announcementsCount || this.winners.length;
+    },
+    isDomainDisabledOrDeleted() {
+      return this.challenge &&  this.challenge.program && this.challenge.program.deleted || !this.challenge.program.enabled;
+    },
+    domainShipColor() {
+      return !this.isDomainDisabledOrDeleted && 'primary' || '#e0e0e0';
     }
   },
   methods: {
