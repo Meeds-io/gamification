@@ -178,18 +178,18 @@ export default {
         content: "\ebdb"!important;
     }
     .uiProfileMenu .userNavigation > .active > a > span, .uiSpaceMenu .spaceMenuTab > .active > a > span {
-        color: #578dc9;
+        color: #476A9C;
     }
     .uiProfileMenu .userNavigation > .active > a, .uiProfileMenu .userNavigation > .active > a:hover, .uiSpaceMenu .spaceMenuTab > .active > a, .uiSpaceMenu .spaceMenuTab > .active > a:hover {
         background: #ffffff;
         background-image: none;
-        color: #578dc9;
-        border-bottom: 4px solid #578dc9;
+        color: #476A9C;
+        border-bottom: 4px solid #476A9C;
         border-radius: 0;
         box-shadow: none;
     }
     .uiProfileMenu .userNavigation > .active > a > div, .uiSpaceMenu .spaceMenuTab > .active > a > i {
-        color: #578dc9;
+        color: #476A9C;
     }
     .card .uiBox {
         border: 1px solid #dedede;
@@ -243,7 +243,7 @@ export default {
         outline: none;
     }
     button.tabs__item.tabs__item_active {
-        border-bottom: 3px solid #578dc9;
+        border-bottom: 3px solid #476A9C;
         color: #4e5467;
     }
 
