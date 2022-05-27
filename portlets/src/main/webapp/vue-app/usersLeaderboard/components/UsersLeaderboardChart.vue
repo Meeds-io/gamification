@@ -107,8 +107,10 @@ export default {
         .then(chartData => {
           chartData.forEach(statData => {
             const domain = this.domains.find(tmpDomain => tmpDomain.title === statData.label);
-            statData.name = domain.label;
-            statData.color = domain.color;
+            if (domain) {
+              statData.name = domain.label;
+              statData.color = domain.color;
+            }
           });
           this.chartData = chartData;
         });

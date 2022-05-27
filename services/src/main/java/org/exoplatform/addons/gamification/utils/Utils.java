@@ -32,6 +32,7 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.profile.ProfileFilter;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -80,6 +81,28 @@ public class Utils {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getIdentity(id);
     return identity != null && identity.getProfile() != null ? identity.getProfile().getFullName() : null;
+  }
+
+  public static List<String> getDisabledIdentities(String identityType) {
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    ProfileFilter profileFilter = new ProfileFilter();
+    profileFilter.setEnabled(false);
+    List<Identity> disabledIdentities;
+    List<String> excludedIdentities = new ArrayList<>();
+
+    try {
+      disabledIdentities = List.of(identityManager.getIdentitiesByProfileFilter(identityType, profileFilter, false).load(0, 0));
+      if (!disabledIdentities.isEmpty()) {
+        List<String> finalExcludedIdentities = excludedIdentities;
+        disabledIdentities.stream().forEach(identity -> finalExcludedIdentities.add(String.valueOf(identity.getId())));
+      } else {
+        excludedIdentities = Collections.singletonList("");
+      }
+      return excludedIdentities;
+    } catch (Exception e) {
+      LOG.error("Error when getting disabled identities {}", e);
+      return Collections.singletonList("");
+    }
   }
 
   public static final String getCurrentUser() {
