@@ -150,7 +150,7 @@ export default {
       return this.challenge && this.challenge.announcementsCount || this.winners.length;
     },
     isDomainDisabledOrDeleted() {
-      return this.challenge &&  this.challenge.program && this.challenge.program.deleted || !this.challenge.program.enabled;
+      return this.challenge &&  this.challenge.program &&  (this.challenge.program.deleted || !this.challenge.program.enabled );
     },
     domainShipColor() {
       return !this.isDomainDisabledOrDeleted && 'primary' || '#e0e0e0';

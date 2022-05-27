@@ -140,7 +140,7 @@ export default {
         return  this.$t('challenges.challengeNotStarted');
       } else if (this.status === 'Ended') {
         return  this.$t('challenges.challengeEnded');
-      } else if ( this.challenge && this.challenge.program && !this.challenge.program.enabled || this.challenge.program.deleted) {
+      } else if ( this.ChallengeProgramEnabled ) {
         return  this.$t('challenges.domainDeleteOrDisabled');
       } else {
         return '';
@@ -156,7 +156,7 @@ export default {
       }
     },
     enableAnnounce(){
-      return this.challenge && this.challenge.program && this.challenge.program.enabled && !this.challenge.program.deleted  && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
+      return this.challenge && !this.ChallengeProgramEnabled  && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
     },
     enableDelete(){
       return this.challenge && this.challenge.announcementsCount === 0 && this.status === 'Ended';
@@ -166,6 +166,9 @@ export default {
     },
     announcementCount() {
       return this.challenge && this.challenge.announcementsCount;
+    },
+    ChallengeProgramEnabled() {
+      return this.challenge?.program && (!this.challenge.program.enabled || this.challenge.program.deleted);
     }
   },
   created() {
