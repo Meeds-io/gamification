@@ -29,7 +29,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQueries({
     @NamedQuery(name = "GamificationDomain.getAllDomains", query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false"),
     @NamedQuery(name = "GamificationDomain.getEnabledDomains", query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false AND domain.isEnabled = true "),
-    @NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain where domain.title = :domainTitle AND domain.isDeleted = false"),
+    @NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain where domain.title = :domainTitle"),
     @NamedQuery(name = "GamificationDomain.findEnabledDomainByTitle", query = "SELECT domain FROM GamificationDomain domain where domain.title = :domainTitle AND domain.isEnabled = true AND domain.isDeleted = false"),
     @NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle") })
 public class DomainEntity extends AbstractAuditingEntity implements Serializable {
