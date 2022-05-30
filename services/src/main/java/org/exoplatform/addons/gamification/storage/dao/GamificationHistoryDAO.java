@@ -25,14 +25,11 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.*;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
   public static final String STATUS = "status";
-
-  public static final String IDS    = "ids";
 
   public static final String DOMAIN = "domain";
 
@@ -49,7 +46,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                               StandardLeaderboard.class);
     query.setParameter("earnerType", earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -72,7 +68,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("date", date);
     query.setParameter(DOMAIN, domain);
     query.setParameter("earnerType", earnerType);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     query.setParameter(STATUS, HistoryStatus.REJECTED);
     try {
       return query.getResultList();
@@ -95,7 +90,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(DOMAIN, domain);
     query.setParameter("earnerType", earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -118,7 +112,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(DOMAIN, domain);
     query.setParameter("earnerType", earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     query.setMaxResults(limit);
     try {
       return query.getResultList();
@@ -141,7 +134,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("date", date);
     query.setParameter("earnerType", earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
 
     try {
       return query.getResultList();
@@ -165,7 +157,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("date", date);
     query.setParameter("earnerType", earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     query.setMaxResults(limit);
     try {
       return query.getResultList();
@@ -208,7 +199,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                               StandardLeaderboard.class);
     query.setParameter("earnerType", earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     query.setMaxResults(limit);
     try {
       return query.getResultList();
@@ -258,7 +248,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("date", date);
     query.setParameter("earnerType", earnerType);
     query.setParameter(DOMAIN, domain);
-    query.setParameter(IDS, Utils.getDisabledIdentities(earnerType.getProviderId()));
     query.setParameter(STATUS, HistoryStatus.REJECTED);
     query.setMaxResults(limit);
     try {

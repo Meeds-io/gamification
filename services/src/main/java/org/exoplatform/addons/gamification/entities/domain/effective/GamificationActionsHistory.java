@@ -33,25 +33,25 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQueries({
      @NamedQuery(name = "GamificationActionsHistory.findAllActionsHistory", query = "SELECT"
     + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-    + " FROM GamificationActionsHistory g WHERE g.earnerId not in :ids AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"),
+    + " FROM GamificationActionsHistory g WHERE g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByEarnerIdSortedByDate", query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status <> :status ORDER BY g.date DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain", query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.earnerId not in :ids AND g.date >= :date  AND g.domain = :domain AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId" + "     ORDER BY total DESC"),
+        + " FROM GamificationActionsHistory g WHERE g.date >= :date  AND g.domain = :domain AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId" + "     ORDER BY total DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByEarnerId", query = "SELECT a"
         + " FROM GamificationActionsHistory a WHERE a.earnerId = :earnerId AND a.status <> :status ORDER BY a.globalScore DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findAllActionsHistoryByDomain", query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE  g.earnerId not in :ids AND g.domain = :domain AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"),
+        + " FROM GamificationActionsHistory g WHERE  g.domain = :domain AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findActionHistoryByDateByEarnerId", query = "SELECT a"
         + " FROM GamificationActionsHistory a" + " WHERE a.date = :date" + "     AND a.earnerId = :earnerId"
         + "     ORDER BY a.globalScore DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByDate", query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g  WHERE g.earnerId not in :ids AND g.date >= :date  AND g.earnerType = :earnerType AND g.status <> :status AND g.earnerId not in :ids GROUP BY  g.earnerId ORDER BY total DESC"),
+        + " FROM GamificationActionsHistory g  WHERE g.date >= :date  AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findActionsHistoryByDateByDomain", query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.earnerId not in :ids AND g.date >= :date AND g.domain = :domain AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId  ORDER BY total DESC"),
+        + " FROM GamificationActionsHistory g WHERE g.date >= :date AND g.domain = :domain AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId  ORDER BY total DESC"),
     @NamedQuery(name = "GamificationActionsHistory.findStatsByUser", query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard(g.domainEntity.title,SUM(g.actionScore))"
         + " FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status <> :status GROUP BY  g.domainEntity.title"),
