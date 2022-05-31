@@ -421,7 +421,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
     <changeSet id="1.0.0-37" author="exo-gamification" dbms="mysql">
         <modifyDataType   columnName="COMMENT"
-                          newDataType="VARCHAR(2000) SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+                          newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+                          tableName="GAMIFICATION_ACTIONS_HISTORY"/>
+        <modifyDataType   columnName="EVENT"
+                          newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+                          tableName="GAMIFICATION_RULE"/>
+        <modifyDataType   columnName="DESCRIPTION"
+                          newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+                          tableName="GAMIFICATION_RULE"/>
+        <modifyDataType   columnName="TITLE"
+                          newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+                          tableName="GAMIFICATION_RULE"/>
+        <modifyDataType   columnName="ACTION_TITLE"
+                          newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
                           tableName="GAMIFICATION_ACTIONS_HISTORY"/>
     </changeSet>
 
