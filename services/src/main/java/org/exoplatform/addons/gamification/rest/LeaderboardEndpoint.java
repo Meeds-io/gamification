@@ -85,7 +85,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
     leaderboardFilter.setIdentityType(identityType);
     if (limit <= 0) {
       if (loadCapacity) {
-        limit = DEFAULT_LOAD_CAPACITY;
+        limit = DEFAULT_LOAD_CAPACITY * 2;
       } else {
         limit = MAX_LOAD_CAPACITY;
       }
@@ -163,7 +163,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
   public Response filter(@Context UriInfo uriInfo,
                          @QueryParam("domain") String domain,
                          @QueryParam("period") String period,
-                         @QueryParam("capacity") String capacity) {
+                         @QueryParam("capacity") int capacity) {
     // Init search criteria
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
 
@@ -173,33 +173,44 @@ public class LeaderboardEndpoint implements ResourceContainer {
     if (StringUtils.isNotBlank(period))
       leaderboardFilter.setPeriod(period);
 
-    if (StringUtils.isNotBlank(capacity))
-      leaderboardFilter.setLoadCapacity(capacity);
+    if (capacity != 0) {
+      leaderboardFilter.setLoadCapacity(capacity * 2);
+    }
 
     // hold leaderboard flow
     LeaderboardInfo leaderboardInfo = null;
 
     try {
-
-      List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
       List<LeaderboardInfo> leaderboardInfoList = new ArrayList<>();
-      if (standardLeaderboards == null || standardLeaderboards.isEmpty()) {
-        return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).build();
+      while (leaderboardInfoList.size() < capacity) {
+        List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+        if (standardLeaderboards == null || standardLeaderboards.isEmpty()) {
+          return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).build();
+        }
+        for (StandardLeaderboard leader : standardLeaderboards) {
+          Identity identity = identityManager.getIdentity(leader.getEarnerId());
+          if(identity.isEnable() && !isEarnerInTopTen(identity.getRemoteId(), leaderboardInfoList)) {
+            leaderboardInfo = new LeaderboardInfo();
+            String technicalId = computeTechnicalId(identity);
+            leaderboardInfo.setTechnicalId(technicalId);
+            leaderboardInfo.setSocialId(identity.getId());
+            leaderboardInfo.setScore(leader.getReputationScore());
+            leaderboardInfo.setRemoteId(identity.getRemoteId());
+            leaderboardInfo.setFullname(identity.getProfile().getFullName());
+            leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+            leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
+            leaderboardInfoList.add(leaderboardInfo);
+          }
+          if(leaderboardInfoList.size() == capacity) {
+            break;
+          }
+        }
+        if(standardLeaderboards.size() < capacity) {
+          break;
+        }
+        leaderboardFilter.setLoadCapacity(leaderboardFilter.getLoadCapacity() + capacity * 2);
       }
 
-      for (StandardLeaderboard leader : standardLeaderboards) {
-        Identity identity = identityManager.getIdentity(leader.getEarnerId());
-        leaderboardInfo = new LeaderboardInfo();
-        String technicalId = computeTechnicalId(identity);
-        leaderboardInfo.setTechnicalId(technicalId);
-        leaderboardInfo.setSocialId(identity.getId());
-        leaderboardInfo.setScore(leader.getReputationScore());
-        leaderboardInfo.setRemoteId(identity.getRemoteId());
-        leaderboardInfo.setFullname(identity.getProfile().getFullName());
-        leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-        leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-        leaderboardInfoList.add(leaderboardInfo);
-      }
       // Check if the current user is already in top10
       Date date = null;
       switch (leaderboardFilter.getPeriod()) {

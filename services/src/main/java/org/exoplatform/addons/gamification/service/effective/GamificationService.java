@@ -20,6 +20,7 @@ import static java.util.Date.from;
 
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -93,17 +94,26 @@ public class GamificationService {
         leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(identityType, domain);
       }
     }
+    //remove the disabled users
+    List<StandardLeaderboard> filteredLeaderboard = new ArrayList<>();
+
+    for (StandardLeaderboard leader : leaderboard) {
+      Identity leaderIdentity = identityManager.getIdentity(leader.getEarnerId());
+      if(leaderIdentity.isEnable()) {
+        filteredLeaderboard.add(leader);
+      }
+    }
     // Get username
-    StandardLeaderboard item = leaderboard.stream()
+    StandardLeaderboard item = filteredLeaderboard.stream()
                                           .filter(g -> earnerId.equals(g.getEarnerId()))
                                           .findAny()
                                           .orElse(null);
-    return (leaderboard.indexOf(item) + 1);
+    return (filteredLeaderboard.indexOf(item) + 1);
   }
 
   /**
    * Compute reputation's score
-   * 
+   *
    * @param earnerId : the current user earner id
    * @return long score of user
    */
@@ -114,7 +124,7 @@ public class GamificationService {
 
   /**
    * Compute User reputation score by Domain
-   * 
+   *
    * @param earnerId earner identity id
    * @return list of objects of type ProfileReputation
    */
@@ -124,7 +134,7 @@ public class GamificationService {
 
   /**
    * Save a GamificationActionsHistory in DB
-   * 
+   *
    * @param history history entru to save
    */
   public void saveActionHistory(GamificationActionsHistory history) {
@@ -165,7 +175,7 @@ public class GamificationService {
 
   /**
    * Filter Leaderboard logic (filter by Domain or/and by period)
-   * 
+   *
    * @param filter of type {@link LeaderboardFilter}, used to filter query
    * @return list of objects of type StandardLeaderboard
    */
@@ -229,7 +239,7 @@ public class GamificationService {
 
   /**
    * Build stats dashboard of a given user (based on domain)
-   * 
+   *
    * @param earnerId earner identity id
    * @param startDate
    * @param endDate
@@ -258,7 +268,7 @@ public class GamificationService {
   /**
    * Provided as an API from points n list to find gamification history from the
    * GamificationInformationsPortlet's earner earned points by date
-   * 
+   *
    * @param earnerId earner identity Id
    * @param limit limit entries to return
    * @return {@link List} of {@link GamificationActionsHistory}
