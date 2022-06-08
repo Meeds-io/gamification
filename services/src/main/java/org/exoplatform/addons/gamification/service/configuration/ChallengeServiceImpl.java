@@ -19,17 +19,17 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
-  private RuleStorage challengeStorage;
+  private static final String CREATORS_GROUP_KEY = "challenge.creator.group";
 
-  private SpaceService     spaceService;
+  private RuleStorage         challengeStorage;
 
-  private String     groupOfCreators;
+  private SpaceService        spaceService;
 
-  private static final String     CREATORS_GROUP_KEY             = "challenge.creator.group";
-
+  private String              groupOfCreators;
 
   public ChallengeServiceImpl(RuleStorage challengeStorage, SpaceService spaceService, InitParams params) {
     this.challengeStorage = challengeStorage;
@@ -134,23 +134,15 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (StringUtils.isBlank(userName)) {
       throw new IllegalAccessException("user name must not be null");
     }
-    List<Long> listIdSpace = new ArrayList<>();
-    ListAccess<Space> userSpaces = spaceService.getMemberSpaces(userName);
-    int spacesSize = userSpaces.getSize();
-    int offsetToFetch = 0;
-    int limitToFetch = spacesSize > 20 ? 20 : spacesSize;
-    while (limitToFetch > 0) {
-      Space[] spaces = userSpaces.load(offsetToFetch, limitToFetch);
-      Arrays.stream(spaces).forEach(space -> {
-        listIdSpace.add(Long.valueOf(space.getId()));
-      });
-      offsetToFetch += limitToFetch;
-      limitToFetch = (spacesSize - offsetToFetch) > 20 ? 20 : (spacesSize - offsetToFetch);
-    }
+    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
     if (listIdSpace.isEmpty()) {
       return Collections.emptyList();
     }
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listIdSpace);
+    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset,
+                                                                                  limit,
+                                                                                  listIdSpace.stream()
+                                                                                             .map(Long::parseLong)
+                                                                                             .collect(Collectors.toList()));
     return EntityMapper.fromChallengeEntities(challengeEntities);
   }
 
