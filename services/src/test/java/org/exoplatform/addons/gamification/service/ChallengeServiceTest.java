@@ -244,43 +244,39 @@ public class ChallengeServiceTest {
     }
 
     @Test
-    public void testGetAllChallengesByUser() {
+    public void testGetAllChallengesByUser() throws Exception {
+      String username = "root";
 
-        assertThrows(IllegalAccessException.class, () -> challengeService.getAllChallengesByUser(0, 10, ""));
+      assertThrows(IllegalAccessException.class, () -> challengeService.getAllChallengesByUser(0, 10, ""));
 
-        Space space = new Space();
-        space.setId("1");
-        space.setPrettyName("test_space");
-        space.setDisplayName("test space");
-        space.setGroupId("/spaces/test_space");
+      Space space = new Space();
+      space.setId("1");
+      space.setPrettyName("test_space");
+      space.setDisplayName("test space");
+      space.setGroupId("/spaces/test_space");
 
-        RuleEntity challengeEntity = new RuleEntity();
-        challengeEntity.setTitle("Challenge 1");
-        challengeEntity.setDescription("description 1");
-        challengeEntity.setStartDate(new Date(System.currentTimeMillis()));
-        challengeEntity.setEndDate(new Date(System.currentTimeMillis() + 1));
-        challengeEntity.setId(1l);
-        challengeEntity.setAudience(1l);
-        challengeEntity.setManagers(Collections.emptyList());
-        List<RuleEntity> challenges = new ArrayList<>();
-        challenges.add(challengeEntity);
+      RuleEntity challengeEntity = new RuleEntity();
+      challengeEntity.setTitle("Challenge 1");
+      challengeEntity.setDescription("description 1");
+      challengeEntity.setStartDate(new Date(System.currentTimeMillis()));
+      challengeEntity.setEndDate(new Date(System.currentTimeMillis() + 1));
+      challengeEntity.setId(1l);
+      challengeEntity.setAudience(1l);
+      challengeEntity.setManagers(Collections.emptyList());
+      List<RuleEntity> challenges = new ArrayList<>();
+      challenges.add(challengeEntity);
 
-        try {
-            when(spaceService.getMemberSpaces("root")).thenReturn(new ListAccessImpl(Space.class, Collections.emptyList()));
-
-            List<Challenge> userChallenges = challengeService.getAllChallengesByUser(0, 10, "root");
-            assertEquals(0, userChallenges.size());
-            when(spaceService.getMemberSpaces("root")).thenReturn(new ListAccessImpl(Space.class, Collections.singletonList(space)));
-            when(challengeStorage.findAllChallengesByUser(0, 10, Collections.singletonList(1l))).thenReturn(Collections.emptyList());
-            userChallenges = challengeService.getAllChallengesByUser(0, 10, "root");
-            assertEquals(0, userChallenges.size());
-            when(challengeStorage.findAllChallengesByUser(0, 10, Collections.singletonList(1l))).thenReturn(challenges);
-            userChallenges = challengeService.getAllChallengesByUser(0, 10, "root");
-            assertEquals(1, userChallenges.size());
-
-        } catch (Exception e) {
-        }
-
+      List<Challenge> userChallenges = challengeService.getAllChallengesByUser(0, 10, username);
+      assertEquals(0, userChallenges.size());
+      List<String> userSpaceIds = Collections.singletonList(space.getId());
+      List<Long> userSpaceIdsAsLong = Collections.singletonList(Long.parseLong(space.getId()));
+      when(spaceService.getMemberSpacesIds(username, 0, -1)).thenReturn(userSpaceIds);
+      when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(Collections.emptyList());
+      userChallenges = challengeService.getAllChallengesByUser(0, 10, username);
+      assertEquals(0, userChallenges.size());
+      when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(challenges);
+      userChallenges = challengeService.getAllChallengesByUser(0, 10, username);
+      assertEquals(1, userChallenges.size());
     }
 
     @Test
