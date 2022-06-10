@@ -1,7 +1,7 @@
 
 export function initExtensions() {
   const announcementActivityTypeExtensionOptions = {
-    canEdit: () => false,
+    canEdit: () => true,
     supportsThumbnail: true,
     useSameViewForMobile: true,
     canShare: () => true,
@@ -24,7 +24,12 @@ export function initExtensions() {
     getThumbnail: () => '/challenges/images/challengesAppIcon.png',
     getSummary: activity => activity && activity.templateParams && activity.templateParams.announcementChallenge  || activity && activity.templateParams && activity.templateParams.announcementDescription  || '',
     getBody: activity => {
-      return Vue.prototype.$utils.trim((activity.templateParams && activity.templateParams.announcementComment)
+      const body = activity.title || Vue.prototype.$utils.trim((activity.templateParams && activity.templateParams.announcementComment)
+           || '');
+      return body.includes('<oembed>') && body.split('<oembed>')[0] || body;
+    },
+    getBodyToEdit: activity => {
+      return activity.title || Vue.prototype.$utils.trim((activity.templateParams && activity.templateParams.announcementComment)
            || '');
     },
   };
