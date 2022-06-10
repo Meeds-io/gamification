@@ -54,7 +54,7 @@ public interface AnnouncementService {
    *           technical identifier is not found
    */
 
-  Announcement getAnnouncementById(Long announcementId) throws ObjectNotFoundException;
+  Announcement getAnnouncementById(Long announcementId) ;
 
   /**
    * Retrieves number of all Announcements by challengeId.

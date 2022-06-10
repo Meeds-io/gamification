@@ -92,7 +92,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Announcement updateAnnouncement(Announcement announcement) throws IllegalArgumentException, ObjectNotFoundException {
+  public Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException {
     if (announcement == null) {
       throw new IllegalArgumentException("announcement is mandatory");
     }
@@ -108,7 +108,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Announcement getAnnouncementById(Long announcementId) throws IllegalArgumentException {
+  public Announcement getAnnouncementById(Long announcementId) {
     if (announcementId == null || announcementId <= 0) {
       throw new IllegalArgumentException("announcement id is mandatory");
     }
