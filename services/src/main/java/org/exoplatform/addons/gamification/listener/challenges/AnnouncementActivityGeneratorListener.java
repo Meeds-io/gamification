@@ -75,8 +75,8 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
     activity.setUserId(String.valueOf(announcement.getCreator()));
     Map<String, String> params = new HashMap<>();
     params.put("announcementId", String.valueOf(announcement.getId()));
-    params.put("announcementComment", announcement.getComment());
     params.put("announcementDescription", challenge.getTitle());
+    activity.setTitle(announcement.getComment());
     activity.setTemplateParams(params);
     Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     if (space == null) {

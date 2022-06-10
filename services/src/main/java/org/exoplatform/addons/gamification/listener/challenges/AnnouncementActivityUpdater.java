@@ -50,17 +50,14 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     }
     long announcementId = Long.parseLong(activity.getTemplateParams().get("announcementId"));
     Announcement announcement = announcementService.getAnnouncementById(announcementId);
-
-    try {
-      if (announcement != null) {
-        announcement.setComment(activity.getTitle());
-        announcementService.updateAnnouncement(announcement);
+    if (announcement != null) {
+      try {
+          announcement.setComment(activity.getTitle());
+          announcementService.updateAnnouncement(announcement);
+      } catch (ObjectNotFoundException e) {
+        LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
       }
-    } catch (ObjectNotFoundException e) {
-      LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
     }
-    activity.getTemplateParams().replace("announcementComment", activity.getTitle());
-    activityManager.updateActivity(activity, false);
   }
 
 }
