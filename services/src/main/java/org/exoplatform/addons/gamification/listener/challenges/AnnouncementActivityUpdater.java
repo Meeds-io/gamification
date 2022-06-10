@@ -47,7 +47,7 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     if (!activity.getType().equals(ANNOUNCEMENT_ACTIVITY_TYPE)) {
       return;
     }
-    long announcementId = Long.valueOf(activity.getTemplateParams().get("announcementId"));
+    long announcementId = Long.parseLong(activity.getTemplateParams().get("announcementId"));
     try {
       Announcement announcement = announcementService.getAnnouncementById(announcementId);
       if (announcement != null) {

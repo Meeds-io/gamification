@@ -58,7 +58,6 @@ public class Utils {
 
   public static final String             ANNOUNCEMENT_ACTIVITY_TYPE = "challenges-announcement";
 
-
   private Utils() { // NOSONAR
   }
 

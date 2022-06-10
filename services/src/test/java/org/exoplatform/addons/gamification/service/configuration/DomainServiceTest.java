@@ -28,7 +28,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 import javax.persistence.EntityNotFoundException;
-
 import static org.junit.Assert.assertThrows;
 
 public class DomainServiceTest extends AbstractServiceTest {
