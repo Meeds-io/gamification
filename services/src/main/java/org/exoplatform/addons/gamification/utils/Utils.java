@@ -56,6 +56,9 @@ public class Utils {
 
   private static RuleService            ruleService;
 
+  public static final String             ANNOUNCEMENT_ACTIVITY_TYPE = "challenges-announcement";
+
+
   private Utils() { // NOSONAR
   }
 

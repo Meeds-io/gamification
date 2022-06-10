@@ -145,6 +145,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </value-param>
             </init-params>
         </component-plugin>
+        <component-plugin>
+            <name>AnnouncementActivityUpdaterListener</name>
+            <set-method>addActivityEventListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityUpdater</type>
+            <description>update announcement activity listener</description>
+        </component-plugin>
     </external-component-plugins>
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.settings.ExoFeatureService</target-component>

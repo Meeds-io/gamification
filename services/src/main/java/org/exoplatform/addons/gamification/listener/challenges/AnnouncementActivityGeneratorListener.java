@@ -24,11 +24,12 @@ import org.exoplatform.social.websocket.entity.ActivityStreamModification;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, Announcement> {
   private static final Log               LOG                        =
                                              ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
 
-  public static final String             ANNOUNCEMENT_ACTIVITY_TYPE = "challenges-announcement";
 
   private ExoContainer                   container;
 
