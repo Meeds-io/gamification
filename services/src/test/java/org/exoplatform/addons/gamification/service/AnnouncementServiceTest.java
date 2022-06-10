@@ -330,12 +330,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
         assertThrows(IllegalArgumentException.class, () -> announcementService.getAnnouncementById(0l));
         assertThrows(IllegalArgumentException.class, () -> announcementService.getAnnouncementById(-1l));
-        try {
-            Announcement savedAnnouncement = announcementService.getAnnouncementById(1l);
-            assertNotNull(savedAnnouncement);
-            assertEquals(announcement.getId(), savedAnnouncement.getId());
-        } catch (ObjectNotFoundException e) {
-        }
+        Announcement savedAnnouncement = announcementService.getAnnouncementById(1l);
+        assertNotNull(savedAnnouncement);
+        assertEquals(announcement.getId(), savedAnnouncement.getId());
     }
 }
 

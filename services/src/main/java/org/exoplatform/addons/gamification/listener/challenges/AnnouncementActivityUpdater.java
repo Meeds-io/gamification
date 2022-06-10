@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.listener.challenges;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -44,22 +45,22 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
   @Override
   public void updateActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
     ExoSocialActivity activity = activityLifeCycleEvent.getSource();
-    if (!activity.getType().equals(ANNOUNCEMENT_ACTIVITY_TYPE)) {
+    if (!StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)) {
       return;
     }
     long announcementId = Long.parseLong(activity.getTemplateParams().get("announcementId"));
+    Announcement announcement = announcementService.getAnnouncementById(announcementId);
+
     try {
-      Announcement announcement = announcementService.getAnnouncementById(announcementId);
       if (announcement != null) {
         announcement.setComment(activity.getTitle());
         announcementService.updateAnnouncement(announcement);
-        activity.getTemplateParams().replace("announcementComment", activity.getTitle());
-        activityManager.updateActivity(activity, false);
       }
     } catch (ObjectNotFoundException e) {
-      LOG.warn("Announcement trying to edit not found with id {}", announcementId, e);
+      LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
     }
-
+    activity.getTemplateParams().replace("announcementComment", activity.getTitle());
+    activityManager.updateActivity(activity, false);
   }
 
 }

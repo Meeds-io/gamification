@@ -76,5 +76,11 @@ public class AnnouncementActivityUpdaterTest {
     verify(announcementService, times(1)).getAnnouncementById(anyLong());
     verify(announcementService, times(1)).updateAnnouncement(any(Announcement.class));
     verify(activityManager, times(1)).updateActivity(any(ExoSocialActivity.class), anyBoolean());
+
+    doThrow(ObjectNotFoundException.class).when(announcementService).updateAnnouncement(any(Announcement.class));
+    announcementActivityUpdater.updateActivity(announcementActivityLifeCycleEvent);
+    verify(announcementService, times(2)).getAnnouncementById(anyLong());
+    verify(announcementService, times(2)).updateAnnouncement(any(Announcement.class));
+    verify(activityManager, times(2)).updateActivity(any(ExoSocialActivity.class), anyBoolean());
   }
 }
