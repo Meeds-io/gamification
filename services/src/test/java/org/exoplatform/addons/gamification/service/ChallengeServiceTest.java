@@ -246,8 +246,9 @@ public class ChallengeServiceTest {
     @Test
     public void testGetAllChallengesByUser() throws Exception {
       String username = "root";
+      String domain = "Social";
 
-      assertThrows(IllegalAccessException.class, () -> challengeService.getAllChallengesByUser(0, 10, ""));
+      assertThrows(IllegalAccessException.class, () -> challengeService.getAllChallengesByUser("", 0, 10, ""));
 
       Space space = new Space();
       space.setId("1");
@@ -266,16 +267,16 @@ public class ChallengeServiceTest {
       List<RuleEntity> challenges = new ArrayList<>();
       challenges.add(challengeEntity);
 
-      List<Challenge> userChallenges = challengeService.getAllChallengesByUser(0, 10, username);
+      List<Challenge> userChallenges = challengeService.getAllChallengesByUser(domain, 0, 10, username);
       assertEquals(0, userChallenges.size());
       List<String> userSpaceIds = Collections.singletonList(space.getId());
       List<Long> userSpaceIdsAsLong = Collections.singletonList(Long.parseLong(space.getId()));
       when(spaceService.getMemberSpacesIds(username, 0, -1)).thenReturn(userSpaceIds);
       when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(Collections.emptyList());
-      userChallenges = challengeService.getAllChallengesByUser(0, 10, username);
+      userChallenges = challengeService.getAllChallengesByUser(domain, 0, 10, username);
       assertEquals(0, userChallenges.size());
       when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(challenges);
-      userChallenges = challengeService.getAllChallengesByUser(0, 10, username);
+      userChallenges = challengeService.getAllChallengesByUser(domain, 0, 10, username);
       assertEquals(1, userChallenges.size());
     }
 

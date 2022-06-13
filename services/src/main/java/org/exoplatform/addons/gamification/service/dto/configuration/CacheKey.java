@@ -19,6 +19,14 @@ public class CacheKey implements Serializable {
         this.context = context;
     }
 
+    public CacheKey(Integer context, List<Long> ids, String title, int offset, int limit) {
+        this.ids = ids;
+        this.title = title;
+        this.offset = offset;
+        this.limit = limit;
+        this.context = context;
+    }
+
     public CacheKey(Integer context,Long id) {
         this.id = id;
         this.context = context;

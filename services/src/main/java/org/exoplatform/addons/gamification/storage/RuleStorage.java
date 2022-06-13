@@ -118,6 +118,10 @@ public class RuleStorage {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
   }
 
+  public List<RuleEntity> findAllChallengesByUserByDomain(String domain, int offset, int limit, List<Long> ids) {
+    return ruleDAO.findAllChallengesByUserByDomain(domain, offset, limit, ids);
+  }
+
   public void deleteChallenge(Challenge challenge) {
     RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
     this.ruleDAO.delete(challengeEntity);

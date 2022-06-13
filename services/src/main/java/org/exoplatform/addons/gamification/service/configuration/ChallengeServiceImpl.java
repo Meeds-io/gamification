@@ -130,7 +130,7 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public List<Challenge> getAllChallengesByUser(int offset, int limit, String userName) throws Exception {
+  public List<Challenge> getAllChallengesByUser(String domain, int offset, int limit, String userName) throws Exception {
     if (StringUtils.isBlank(userName)) {
       throw new IllegalAccessException("user name must not be null");
     }
@@ -138,11 +138,12 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (listIdSpace.isEmpty()) {
       return Collections.emptyList();
     }
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset,
-                                                                                  limit,
-                                                                                  listIdSpace.stream()
-                                                                                             .map(Long::parseLong)
-                                                                                             .collect(Collectors.toList()));
+    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUserByDomain(domain,
+                                                                                           offset,
+                                                                                           limit,
+                                                                                           listIdSpace.stream()
+                                                                                                      .map(Long::parseLong)
+                                                                                                      .collect(Collectors.toList()));
     return EntityMapper.fromChallengeEntities(challengeEntities);
   }
 

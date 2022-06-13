@@ -25,6 +25,8 @@ public class RuleCachedStorage extends RuleStorage {
 
   private static final int                               CHALLENGE_USER_CONTEXT = 3;
 
+  private static final int                               CHALLENGE_USER_DOMAIN_CONTEXT = 4;
+
   private static final String                            RULE_CACHE_NAME        = "gamification.rule";
 
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
@@ -43,6 +45,8 @@ public class RuleCachedStorage extends RuleStorage {
           return RuleCachedStorage.super.findAllRules();
         } else if (context.getContext() == CHALLENGE_USER_CONTEXT) {
           return RuleCachedStorage.super.findAllChallengesByUser(context.getOffset(), context.getLimit(), context.getIds());
+        } else if (context.getContext() == CHALLENGE_USER_DOMAIN_CONTEXT) {
+          return RuleCachedStorage.super.findAllChallengesByUserByDomain(context.getTitle(), context.getOffset(), context.getLimit(), context.getIds());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
@@ -93,6 +97,12 @@ public class RuleCachedStorage extends RuleStorage {
   public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
     return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_CONTEXT, ids, offset, limit),
                                                        CHALLENGE_USER_CONTEXT + offset + Utils.getCurrentUser());
+  }
+
+  @Override
+  public List<RuleEntity> findAllChallengesByUserByDomain(String domain, int offset, int limit, List<Long> ids) {
+    return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domain, offset, limit),
+                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domain + offset + Utils.getCurrentUser());
   }
 
   @Override

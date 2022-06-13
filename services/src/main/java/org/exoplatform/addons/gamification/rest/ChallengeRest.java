@@ -161,7 +161,7 @@ public class ChallengeRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Path("allChallenge")
-  @ApiOperation(value = "Retrieves the list of challenges available for an owner", httpMethod = "GET", response = Response.class, produces = "application/json")
+  @ApiOperation(value = "Retrieves the list of challenges available for an owner by domain", httpMethod = "GET", response = Response.class, produces = "application/json")
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
@@ -171,6 +171,12 @@ public class ChallengeRest implements ResourceContainer {
                                          @ApiParam(value = "Limit of result", required = false, defaultValue = "10")
                                          @QueryParam("limit")
                                          int limit,
+                                        //  @ApiParam(value = "Domain of challeneges", required = false, defaultValue = "")
+                                        //  @QueryParam("domain")
+                                        //  String domain,
+                                         @ApiParam(value = "Limit of result", required = false, defaultValue = "10")
+                                         @QueryParam("byDomain")
+                                         boolean byDomain,
                                          @ApiParam(value = "number of announcement per challenge", required = false, defaultValue = "2")
                                          @QueryParam("announcements")
                                          int announcements) {
@@ -183,7 +189,7 @@ public class ChallengeRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
     LOG.info("start getting challenges");
-      List<Challenge> challenges = challengeService.getAllChallengesByUser(offset, limit, currentUser);
+      List<Challenge> challenges = challengeService.getAllChallengesByUser("Social", offset, limit, currentUser);
       List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
       LOG.info("start mapping challenges");
       for (Challenge challenge : challenges) {

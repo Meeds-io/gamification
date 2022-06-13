@@ -60,7 +60,8 @@ public interface ChallengeService {
   boolean canAddChallenge();
 
   /**
-   * Retrieves all challenges by user.
+   * Retrieves all challenges by user by domain.
+   * @param domain Domain
    * @param offset Offset
    * @param limit Limit
    * @param username Username accessing challenge
@@ -69,7 +70,7 @@ public interface ChallengeService {
    *           challenges
    * @throws Exception can't get list of spaces
    */
-  List<Challenge> getAllChallengesByUser(int offset, int limit, String username) throws Exception;
+  List<Challenge> getAllChallengesByUser(String domain, int offset, int limit, String username) throws Exception;
 
   /**
    * clear challenges cache.
