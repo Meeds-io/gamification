@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementInfo;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -40,7 +41,6 @@ public class AnnouncementRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @Path("addAnnouncement")
   @ApiOperation(value = "Creates a new Announcement", httpMethod = "POST", response = Response.class, consumes = "application/json")
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
       @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
@@ -48,8 +48,8 @@ public class AnnouncementRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"),
       @ApiResponse(code = HTTPStatus.FORBIDDEN, message = "Forbidden operation"), })
   public Response createAnnouncement(@ApiParam(value = "Announcement object to create", required = true)
-  Announcement announcement) {
-    if (announcement == null) {
+                                             AnnouncementInfo announcementInfo) {
+    if (announcementInfo == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("announcement object is mandatory").build();
     }
     String currentUser = Utils.getCurrentUser();
@@ -58,7 +58,7 @@ public class AnnouncementRest implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
     try {
-      Announcement newAnnouncement = announcementService.createAnnouncement(announcement, currentUser, false);
+      Announcement newAnnouncement = announcementService.createAnnouncement(announcementInfo.getAnnouncement(), announcementInfo.getTemplateParams(), currentUser, false);
       return Response.ok(EntityMapper.fromAnnouncement(newAnnouncement)).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.FORBIDDEN).build();
@@ -67,7 +67,7 @@ public class AnnouncementRest implements ResourceContainer {
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).build();
     } catch (Exception e) {
-      LOG.warn("Error creating an announcement: { } ", announcement, e);
+      LOG.warn("Error creating an announcement: { } ", announcementInfo, e);
       return Response.serverError().entity(e.getMessage()).build();
     }
   }

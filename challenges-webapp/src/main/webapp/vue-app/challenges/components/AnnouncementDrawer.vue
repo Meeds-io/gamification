@@ -42,13 +42,21 @@
         </v-chip>
       </div>
       <div class="pl-4 pr-4 pt-9 py-4 my-2">
-        <challenge-description
-          ref="challengeDescription"
-          v-model="announcement.comment"
-          :value="announcement.comment"
-          @invalidDescription="invalidDescription($event)"
-          @validDescription="validDescription($event)"
-          @addDescription="addDescription($event)" />
+        <div
+          id="descriptionId"
+          class="challengeDescription">
+          <div class="py-1 px-2 subtitle-1">
+            {{ $t('challenges.label.describeYourAchievement') }}
+          </div>
+          <exo-activity-rich-editor
+            v-model="announcement.comment"
+            :ref="ckEditorId"
+            :max-length="MAX_LENGTH"
+            :template-params="templateParams"
+            :ck-editor-type="ckEditorId"
+            class="flex"
+            @validity-updated=" validInput = $event" />
+        </div>
       </div>
       <div
         class="
@@ -101,8 +109,9 @@ export default {
   data() {
     return {
       announcement: {},
-      isValidDescription: {
-        description: true },
+      templateParams: {},
+      validInput: true,
+      MAX_LENGTH: 1300,
     };
   },
   computed: {
@@ -110,7 +119,7 @@ export default {
       return this.challenge && this.challenge.space;
     },
     disabledSave() {
-      return this.announcement.assignee && this.announcement.assignee.length > 0 && this.isValidDescription.description ;
+      return this.announcement.assignee && this.announcement.assignee.length > 0 && this.validInput && this.announcement.comment && this.announcement.comment.length > 0;
     },
     enableSuggester() {
       return this.challenge && (this.challenge.userInfo && this.challenge.userInfo.manager || this.challenge.userInfo && this.challenge.userInfo.redactor);
@@ -118,10 +127,14 @@ export default {
     disableSuggester(){
       return this.challenge && this.challenge.userInfo && !this.challenge.userInfo.manager && !this.challenge.userInfo.redactor && this.challenge.userInfo.member;
     },
+    ckEditorId() {
+      return `announcement_${this.challengeId || ''}`;
+    },
   },
   methods: {
     initAnnounce() {
-      this.invalidDescription();
+      this.announcement = {};
+      this.templateParams = {};
       if (this.disableSuggester) {
         this.$set(this.announcement,'assignee', this.challenge.userInfo.id);
       } else {
@@ -130,11 +143,9 @@ export default {
     },
     open() {
       this.initAnnounce();
-      this.$refs.challengeDescription.initCKEditor();
       this.$refs.announcementDrawer.open();
     },
     close() {
-      this.reset();
       this.$refs.announcementDrawer.close();
     },
     removeAssignee() {
@@ -145,17 +156,17 @@ export default {
         this.$set(this.announcement,'comment', value);
       }
     },
-    invalidDescription() {
-      this.$set(this.isValidDescription,'description', false);
-    },
-    validDescription() {
-      this.$set(this.isValidDescription,'description', true);
-    },
     createAnnouncement() {
       this.announcement.challengeId =  this.challenge.id;
       this.announcement.createdDate = new Date();
       this.$refs.announcementDrawer.startLoading();
-      this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
+
+      const announcementToSave = {
+        announcement: this.announcement,
+        templateParams: this.templateParams
+      };
+
+      this.$challengesServices.saveAnnouncement(announcementToSave).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcementCreateSuccess')}</a>`});
         this.$emit('announcementAdded', announcement);
         this.close();
@@ -175,11 +186,6 @@ export default {
     },
     addUser(id){
       this.$set(this.announcement,'assignee', id);
-    },
-    reset() {
-      this.isValidDescription= {
-        description: true };
-      this.$refs.challengeDescription.deleteDescription();
     }
   }
 };

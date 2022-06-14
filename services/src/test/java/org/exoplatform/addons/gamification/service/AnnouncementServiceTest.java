@@ -24,10 +24,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -126,23 +123,25 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
         when(identity.getId()).thenReturn("1");
 
-        assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(null, "root", false));
-        assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(createdAnnouncement, "root", false));
+        Map<String, String > templateParams = new HashMap<>();
+
+        assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(null,  templateParams, "root", false));
+        assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(createdAnnouncement,  templateParams, "root", false));
 
 
         when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(null);
-        assertThrows(ObjectNotFoundException.class, () -> announcementService.createAnnouncement(announcement, "root", false));
+        assertThrows(ObjectNotFoundException.class, () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
         when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
 
-        assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(announcementWithoutAssignee, "root", false));
+        assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", false));
 
         when(Utils.canAnnounce(any())).thenReturn(false);
-        assertThrows(IllegalAccessException.class, () -> announcementService.createAnnouncement(announcement, "root", false));
+        assertThrows(IllegalAccessException.class, () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
         when(Utils.canAnnounce(any())).thenReturn(true);
 
         Announcement newAnnouncement = null;
         try {
-            newAnnouncement = announcementService.createAnnouncement(announcement, "root", false);
+            newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root", false);
         } catch (IllegalAccessException | ObjectNotFoundException e) {
         }
         assertNotNull(newAnnouncement);
@@ -216,7 +215,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
         Announcement newAnnouncement = null;
         try {
-            newAnnouncement = announcementService.createAnnouncement(announcement, "root", false);
+            newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", false);
         } catch (IllegalAccessException | ObjectNotFoundException e) {
         }
         assertNotNull(newAnnouncement);
