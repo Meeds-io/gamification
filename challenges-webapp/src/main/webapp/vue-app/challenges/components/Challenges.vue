@@ -44,7 +44,7 @@ export default {
     canAddChallenge: false,
     loading: true,
     domainsWithChallenges: [],
-    challengePerPage: 6,
+    challengePerPage: 12,
     announcementsPerChallenge: 2,
   }),
   computed: {

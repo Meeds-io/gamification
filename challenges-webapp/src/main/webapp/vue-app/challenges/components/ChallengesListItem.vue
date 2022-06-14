@@ -38,7 +38,7 @@
             :disabled="loading"
             class="loadMoreButton ma-auto mt-4 btn"
             block
-            @click="$emit('load-more', domain.id)">
+            @click="$emit('load-more')">
             {{ $t('challenges.button.ShowMore') }}
           </v-btn>
         </v-row>

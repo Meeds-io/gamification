@@ -8,7 +8,8 @@
       :key="domain.id"
       :domain="domain"
       :challenges="challengesByDomainId[domain.id]"
-      :loading="loading" />
+      :loading="loading"
+      @load-more="$emit('load-more', domain.id)" />
   </v-expansion-panels>
 </template>
 <script>
