@@ -43,7 +43,7 @@ public interface ChallengeService {
    * Updates an existing challenge
    *
    * @param  challenge {@link Challenge} object to update
-   * @param username Username updating challenge
+   * @param username User name updating challenge
    * @throws IllegalArgumentException when user is not authorized to update the
    *           challenge
    * @throws ObjectNotFoundException when the challenge identified by its
@@ -60,17 +60,35 @@ public interface ChallengeService {
   boolean canAddChallenge();
 
   /**
-   * Retrieves all challenges by user by domain.
-   * @param domain Domain
+   * Retrieves all challenges by user.
    * @param offset Offset
    * @param limit Limit
-   * @param username Username accessing challenge
+   * @param username User name accessing challenges
    * @return A {@link List <Challenge>} object
-   * @throws IllegalAccessException when user is not authorized to access
-   *           challenges
-   * @throws Exception can't get list of spaces
    */
-  List<Challenge> getAllChallengesByUser(String domain, int offset, int limit, String username) throws Exception;
+  List<Challenge> getChallengesByUser(int offset, int limit, String username);
+
+  /**
+   * Retrieves all challenges by user and a selected domain identified by its
+   * technical id
+   * 
+   * @param domainId technical identifier
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @param username User name accessing challenges
+   * @return {@link List} of {@link Challenge}
+   */
+  List<Challenge> getChallengesByUserAndDomain(long domainId, int offset, int limit, String username);
+
+  /**
+   * Count all challenges by user and a selected domain identified by its
+   * technical id
+   * 
+   * @param domainId technical identifier
+   * @param username Username accessing challenges
+   * @return challenges count
+   */
+  int countChallengesByUserAndDomain(long domainId, String username);
 
   /**
    * clear challenges cache.
@@ -89,4 +107,5 @@ public interface ChallengeService {
    *           ended yet
    */
   void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException;
+
 }

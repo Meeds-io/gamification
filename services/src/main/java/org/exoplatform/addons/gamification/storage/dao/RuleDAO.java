@@ -33,9 +33,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private static final Log LOG = ExoLogger.getLogger(RuleDAO.class);
 
-  public RuleDAO() {
-  }
-
   public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
@@ -58,7 +55,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
 
   }
@@ -98,7 +95,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
 
   }
@@ -108,7 +105,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
 
   }
@@ -135,7 +132,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
 
   }
@@ -147,7 +144,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
 
   }
@@ -158,7 +155,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
 
   }
@@ -169,7 +166,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       return query.getResultList();
     } catch (NoResultException e) {
-      return null;
+      return Collections.emptyList();
     }
   }
 
@@ -182,14 +179,21 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<RuleEntity> findAllChallengesByUserByDomain(String domain, int offset, int limit, List<Long> ids) {
+  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllChallengesByUserByDomain", RuleEntity.class);
     query.setParameter("ids", ids);
-    query.setParameter("domain", domain);
+    query.setParameter("domainId", domainId);
     query.setFirstResult(offset);
     query.setMaxResults(limit);
     List<RuleEntity> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  public int countAllChallengesByUserByDomain(long domainId, List<Long> ids) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.countAllChallengesByUserByDomain", Long.class);
+    query.setParameter("ids", ids);
+    query.setParameter("domainId", domainId);
+    return query.getSingleResult().intValue();
   }
 
 }

@@ -118,8 +118,12 @@ public class RuleStorage {
     return ruleDAO.findAllChallengesByUser(offset, limit, ids);
   }
 
-  public List<RuleEntity> findAllChallengesByUserByDomain(String domain, int offset, int limit, List<Long> ids) {
-    return ruleDAO.findAllChallengesByUserByDomain(domain, offset, limit, ids);
+  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
+    return ruleDAO.findAllChallengesByUserByDomain(domainId, offset, limit, ids);
+  }
+
+  public int countAllChallengesByUserByDomain(long domainId, List<Long> ids) {
+    return ruleDAO.countAllChallengesByUserByDomain(domainId, ids);
   }
 
   public void deleteChallenge(Challenge challenge) {

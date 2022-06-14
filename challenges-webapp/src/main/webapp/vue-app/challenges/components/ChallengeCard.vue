@@ -1,5 +1,5 @@
 <template>
-  <v-app id="ChallengeCard">
+  <div class="ChallengeCard">
     <v-card
       class="mx-auto card cardOfChallenge"
       height="230"
@@ -94,6 +94,7 @@
         </div>
       </div>
     </v-card>
+    <!-- TODO: MOVE TO parent APP component instead of defining those non-visible components per challenge -->
     <exo-confirm-dialog
       ref="deleteChallengeConfirmDialog"
       :title="$t('challenges.delete')"
@@ -107,7 +108,7 @@
     <challenge-winners-details
       :challenge-id="challenge && challenge.id"
       ref="winnersDetails" />
-  </v-app>
+  </div>
 </template>
 
 <script>

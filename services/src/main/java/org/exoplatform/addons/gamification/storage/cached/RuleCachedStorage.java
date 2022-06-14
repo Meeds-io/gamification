@@ -15,6 +15,7 @@ import org.exoplatform.services.cache.ExoCache;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class RuleCachedStorage extends RuleStorage {
 
   private static final int                               RULE_ID_CONTEXT        = 0;
@@ -46,7 +47,7 @@ public class RuleCachedStorage extends RuleStorage {
         } else if (context.getContext() == CHALLENGE_USER_CONTEXT) {
           return RuleCachedStorage.super.findAllChallengesByUser(context.getOffset(), context.getLimit(), context.getIds());
         } else if (context.getContext() == CHALLENGE_USER_DOMAIN_CONTEXT) {
-          return RuleCachedStorage.super.findAllChallengesByUserByDomain(context.getTitle(), context.getOffset(), context.getLimit(), context.getIds());
+          return RuleCachedStorage.super.findAllChallengesByUserByDomain(context.getDomainId(), context.getOffset(), context.getLimit(), context.getIds());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
@@ -100,9 +101,10 @@ public class RuleCachedStorage extends RuleStorage {
   }
 
   @Override
-  public List<RuleEntity> findAllChallengesByUserByDomain(String domain, int offset, int limit, List<Long> ids) {
-    return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domain, offset, limit),
-                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domain + offset + Utils.getCurrentUser());
+  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
+    return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domainId, offset, limit),
+                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domainId + offset
+                                                           + Utils.getCurrentUser());
   }
 
   @Override
