@@ -54,7 +54,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (announcement.getAssignee() == null) {
       throw new IllegalArgumentException("announcement assignee must have at least one winner");
     }
-    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()))) {
+    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()), currentUser)) {
       throw new IllegalAccessException("user is not allowed to announce challenge");
     }
 

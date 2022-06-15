@@ -28,6 +28,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -136,9 +137,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
         assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", false));
 
-        when(Utils.canAnnounce(any())).thenReturn(false);
+        when(Utils.canAnnounce(any(), anyString())).thenReturn(false);
         assertThrows(IllegalAccessException.class, () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
-        when(Utils.canAnnounce(any())).thenReturn(true);
+        when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
 
         Announcement newAnnouncement = null;
         try {
@@ -208,7 +209,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
         when(announcementStorage.saveAnnouncement(createdAnnouncement)).thenReturn(editedAnnouncement);
         PowerMockito.mockStatic(Utils.class);
-        when(Utils.canAnnounce(any())).thenReturn(true);
+        when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
         when(Utils.canEditChallenge(any(), any())).thenReturn(true);
         Identity identity = mock(Identity.class);
         when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
