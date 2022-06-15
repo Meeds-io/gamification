@@ -18,7 +18,7 @@
       </div>
       <hr class="ml-4 mr-4 separator">
       <div class="pl-4 pr-4 mt-7 descriptionLabel">
-        {{ $t('challenges.label.assignedAchievement') }}
+        * {{ $t('challenges.label.assignedAchievement') }}
       </div>
       <div class="pl-4" v-if="enableSuggester">
         <challenge-assignment
@@ -42,21 +42,17 @@
         </v-chip>
       </div>
       <div class="pl-4 pr-4 pt-9 py-4 my-2">
-        <div
-          id="descriptionId"
-          class="challengeDescription">
-          <div class="py-1 px-2 subtitle-1">
-            {{ $t('challenges.label.describeYourAchievement') }}
-          </div>
-          <exo-activity-rich-editor
-            v-model="announcement.comment"
-            :ref="ckEditorId"
-            :max-length="MAX_LENGTH"
-            :template-params="templateParams"
-            :ck-editor-type="ckEditorId"
-            class="flex"
-            @validity-updated=" validInput = $event" />
+        <div class="py-1 px-2 subtitle-1">
+          * {{ $t('challenges.label.describeYourAchievement') }}
         </div>
+        <exo-activity-rich-editor
+          v-model="announcement.comment"
+          ref="ckEditorId"
+          :max-length="MAX_LENGTH"
+          :template-params="templateParams"
+          :ck-editor-type="ckEditorId"
+          class="flex"
+          @validity-updated=" validInput = $event" />
       </div>
       <div
         class="
@@ -112,6 +108,7 @@ export default {
       templateParams: {},
       validInput: true,
       MAX_LENGTH: 1300,
+      ckEditorId: 'announcementContent'
     };
   },
   computed: {
@@ -126,10 +123,7 @@ export default {
     },
     disableSuggester(){
       return this.challenge && this.challenge.userInfo && !this.challenge.userInfo.manager && !this.challenge.userInfo.redactor && this.challenge.userInfo.member;
-    },
-    ckEditorId() {
-      return `announcement_${this.challengeId || ''}`;
-    },
+    }
   },
   methods: {
     initAnnounce() {
@@ -143,9 +137,11 @@ export default {
     },
     open() {
       this.initAnnounce();
+      this.$refs.ckEditorId.initCKEditor();
       this.$refs.announcementDrawer.open();
     },
     close() {
+      this.$refs.ckEditorId.destroyCKEditor();
       this.$refs.announcementDrawer.close();
     },
     removeAssignee() {
@@ -159,16 +155,12 @@ export default {
     createAnnouncement() {
       this.announcement.challengeId =  this.challenge.id;
       this.announcement.createdDate = new Date();
+      this.announcement.templateParams = this.templateParams;
       this.$refs.announcementDrawer.startLoading();
 
-      const announcementToSave = {
-        announcement: this.announcement,
-        templateParams: this.templateParams
-      };
-
-      this.$challengesServices.saveAnnouncement(announcementToSave).then((announcement) =>{
+      this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcementCreateSuccess')}</a>`});
-        this.$emit('announcementAdded', announcement);
+        document.dispatchEvent(new CustomEvent('announcement-added', {detail: announcement}));
         this.close();
       })
         .catch(e => {

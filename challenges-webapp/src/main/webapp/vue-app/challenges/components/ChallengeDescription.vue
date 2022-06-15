@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     challengeDescription () {
-      return this.challenge && this.challenge.id && this.challenge.description || '';
+      return this.challenge?.description || '';
     }
   },
   watch: {

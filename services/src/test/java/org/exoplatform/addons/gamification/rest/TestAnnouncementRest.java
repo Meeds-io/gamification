@@ -70,7 +70,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     10L,
                     domain.getTitle());
             challenge = challengeService.createChallenge(challenge);
-            String restPath = "/gamification/announcement/api/";
+            String restPath = "/gamification/announcement/api/addAnnouncement";
             EnvironmentContext envctx = new EnvironmentContext();
             HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
             envctx.put(HttpServletRequest.class, httpRequest);
@@ -78,8 +78,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
             StringWriter writer = new StringWriter();
             JSONWriter jsonWriter = new JSONWriter(writer);
             jsonWriter.object()
-                    .key("announcement")
-                    .object()
                     .key("id")
                     .value("0")
                     .key("challengeId")
@@ -92,7 +90,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .value("root1")
                     .key("createdDate")
                     .value(date)
-                    .endObject()
                     .key("templateParams")
                     .value(new HashMap<>())
                     .endObject();
@@ -122,8 +119,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
             writer = new StringWriter();
             jsonWriter = new JSONWriter(writer);
             jsonWriter.object()
-                    .key("announcement")
-                    .object()
                     .key("id")
                     .value("100")
                     .key("challengeId")
@@ -136,7 +131,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .value("root1")
                     .key("createdDate")
                     .value(date)
-                    .endObject()
                     .key("templateParams")
                     .value(new HashMap<>())
                     .endObject();
@@ -153,8 +147,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
             writer = new StringWriter();
             jsonWriter = new JSONWriter(writer);
             jsonWriter.object()
-                    .key("announcement")
-                    .object()
                     .key("id")
                     .value("0")
                     .key("challengeId")
@@ -167,7 +159,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .value("root1")
                     .key("createdDate")
                     .value(date)
-                    .endObject()
                     .key("templateParams")
                     .value(new HashMap<>())
                     .endObject();

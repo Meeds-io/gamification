@@ -2,7 +2,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementInfo;
+import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
@@ -17,6 +17,7 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import java.util.List;
 import java.util.Map;
 
+import static org.exoplatform.addons.gamification.service.EntityBuilder.toAnnouncementActivity;
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_EVENT;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
@@ -63,12 +64,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     announcement = announcementStorage.saveAnnouncement(announcement);
     if (!system) {
       try {
-        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, new AnnouncementInfo(announcement, templateParams));
+        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, toAnnouncementActivity(announcement, templateParams));
       } catch (Exception e) {
         LOG.error("Unexpected error", e);
       }
     }
-    return announcement;
+    return getAnnouncementById(announcement.getId());
   }
 
   @Override

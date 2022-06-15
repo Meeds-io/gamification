@@ -74,7 +74,7 @@ export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
 }
 
 export function saveAnnouncement(announcement) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/addAnnouncement`, {
     method: 'POST',
     credentials: 'include',
     headers: {
