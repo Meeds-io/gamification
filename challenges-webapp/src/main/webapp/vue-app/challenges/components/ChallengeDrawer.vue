@@ -90,7 +90,6 @@
             <challenge-description
               ref="challengeDescription"
               :challenge="challenge"
-              :is-challenge="true"
               v-model="challenge.description"
               :value="challenge.description"
               @invalidDescription="invalidDescription($event)"

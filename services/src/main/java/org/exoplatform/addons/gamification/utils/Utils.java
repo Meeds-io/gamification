@@ -101,17 +101,16 @@ public class Utils {
     return isChallengeOwner && isSpaceManager;
   }
 
-  public static final boolean canAnnounce(String id) {
+  public static final boolean canAnnounce(String spaceId, String username) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(id);
+    Space space = spaceService.getSpaceById(spaceId);
     if (space == null) {
       throw new IllegalArgumentException("space is not exist");
     }
-    String currentUser = getCurrentUser();
-    if (StringUtils.isNotBlank(currentUser)) {
-      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, currentUser)
-          || spaceService.isManager(space, currentUser) || spaceService.isSuperManager(currentUser)
-                                             : spaceService.isMember(space, currentUser);
+    if (StringUtils.isNotBlank(username)) {
+      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username)
+          || spaceService.isManager(space, username) || spaceService.isSuperManager(username)
+                                             : spaceService.isMember(space, username);
     } else {
       return false;
     }

@@ -14,7 +14,9 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 
 import java.util.List;
+import java.util.Map;
 
+import static org.exoplatform.addons.gamification.service.EntityBuilder.toAnnouncementActivity;
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_EVENT;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
@@ -36,7 +38,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Announcement createAnnouncement(Announcement announcement, String currentUser, boolean system) throws IllegalArgumentException,
+  public Announcement createAnnouncement(Announcement announcement, Map<String, String> templateParams, String currentUser, boolean system) throws IllegalArgumentException,
                                                                                         ObjectNotFoundException,
                                                                                         IllegalAccessException {
     if (announcement == null) {
@@ -52,7 +54,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (announcement.getAssignee() == null) {
       throw new IllegalArgumentException("announcement assignee must have at least one winner");
     }
-    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()))) {
+    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()), currentUser)) {
       throw new IllegalAccessException("user is not allowed to announce challenge");
     }
 
@@ -61,12 +63,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     announcement = announcementStorage.saveAnnouncement(announcement);
     if (!system) {
       try {
-        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, announcement);
+        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, toAnnouncementActivity(announcement, templateParams));
       } catch (Exception e) {
         LOG.error("Unexpected error", e);
       }
     }
-    return announcement;
+    return getAnnouncementById(announcement.getId());
   }
 
   @Override

@@ -1,5 +1,7 @@
 package org.exoplatform.addons.gamification.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
@@ -22,6 +24,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class TestAnnouncementRest extends AbstractServiceTest {
@@ -87,6 +90,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .value("root1")
                     .key("createdDate")
                     .value(date)
+                    .key("templateParams")
+                    .value(new HashMap<>())
                     .endObject();
             byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
             MultivaluedMap<String, String> h = new MultivaluedMapImpl();
@@ -126,6 +131,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .value("root1")
                     .key("createdDate")
                     .value(date)
+                    .key("templateParams")
+                    .value(new HashMap<>())
                     .endObject();
             data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
             h = new MultivaluedMapImpl();
@@ -152,6 +159,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     .value("root1")
                     .key("createdDate")
                     .value(date)
+                    .key("templateParams")
+                    .value(new HashMap<>())
                     .endObject();
             data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
             h = new MultivaluedMapImpl();
@@ -187,7 +196,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                     1L,
                     date,
                     null);
-            announcementService.createAnnouncement(announcement, "root1", false);
+            announcementService.createAnnouncement(announcement, new HashMap<>(), "root1", false);
             String restPath = "/gamification/announcement/api/ByChallengeId/1?offset=1&limit=-10";
             EnvironmentContext envctx = new EnvironmentContext();
             HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
