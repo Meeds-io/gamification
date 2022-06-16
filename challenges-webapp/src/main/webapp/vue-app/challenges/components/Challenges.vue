@@ -25,14 +25,21 @@
       :domains="domainsHavingChallenges"
       :challenges-by-domain-id="challengesByDomainId"
       :loading="loading"
-      class="pl-2 pt-5"
-      @load-more="loadMore"
-      @edit-challenge="editChallenge($event)" />
-    <challenge-drawer 
-      ref="challengeDrawer" 
-      :can-add-challenge="canAddChallenge" />
-    <challenge-details-drawer 
-      ref="challengeDetails" />
+      class="pl-2 pt-5" />
+    <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
+    <challenge-details-drawer ref="challengeDetails" />
+    <announce-drawer
+      :challenge="selectedChallenge"
+      @announcement-added="announcementAdded($event)"
+      ref="announceRef" />
+    <challenge-winners-details ref="winnersDetails" />
+    <exo-confirm-dialog
+      ref="deleteChallengeConfirmDialog"
+      :title="$t('challenges.delete')"
+      :message="$t('challenges.deleteConfirmMessage')"
+      :ok-label="$t('challenges.ok')"
+      :cancel-label="$t('challenges.button.cancel')"
+      @ok="deleteChallenge" />
     <challenge-alert />
     <announce-drawer
       ref="announceDrawer"
@@ -42,6 +49,7 @@
 <script>
 export default {
   data: () => ({
+    selectedChallenge: null,
     canAddChallenge: false,
     loading: true,
     domainsWithChallenges: [],
@@ -80,15 +88,16 @@ export default {
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
     this.$root.$on('challenge-deleted', this.refreshChallenges);
+    this.$root.$on('challenge-load-more', this.loadMore);
+    this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     const urlPath = document.location.pathname;
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (challengeId) {
       setTimeout(() => {
         this.$challengesServices.getChallengeById(challengeId).then(challenge => {
           if (challenge && challenge.id) {
-            this.$refs.challengeDetails.challenge = challenge;
+            this.$root.$emit('open-challenge-details', challenge);
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
-            this.$refs.challengeDetails.open();
           } else {
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
             this.$root.$emit('show-alert', {type: 'error', message: this.$t('challenges.viewChallengeError')});
@@ -131,10 +140,27 @@ export default {
           this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
         });
     },
-    editChallenge(challenge) {
-      this.$refs.challengeDrawer.challenge =JSON.parse(JSON.stringify(challenge));
-      this.$nextTick().then(() => this.openChallengeDrawer());
-    }
+    deleteChallenge() {
+      this.$challengesServices.deleteChallenge(this.selectedChallenge.id).then(() =>{
+        this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.deleteSuccess')});
+        this.$root.$emit('challenge-deleted');
+      })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('challenges.deletePermissionDenied');
+          } else if (e.message  === '404') {
+            msg = this.$t('challenges.notFound');
+          } else  {
+            msg = this.$t('challenges.deleteErrorSave');
+          }
+          this.$root.$emit('show-alert', {type: 'error',message: msg});
+        });
+    },
+    confirmDelete(challenge) {
+      this.selectedChallenge = challenge;
+      this.$refs.deleteChallengeConfirmDialog.open();
+    },
   }
 };
 </script>

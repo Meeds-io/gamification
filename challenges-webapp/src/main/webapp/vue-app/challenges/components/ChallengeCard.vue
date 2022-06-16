@@ -31,19 +31,19 @@
                   </template>
                   <v-list>
                     <v-list-item class="editList" @mousedown="$event.preventDefault()">
-                      <v-list-item-title class="editLabel" @click="$emit('edit', challenge)">{{ $t('challenges.edit') }}</v-list-item-title>
+                      <v-list-item-title class="editLabel" @click="editChallenge">{{ $t('challenges.edit') }}</v-list-item-title>
                     </v-list-item>
                     <v-list-item
                       v-if="enableDelete"
                       class="editList"
                       @mousedown="$event.preventDefault()">
-                      <v-list-item-title class="editLabel" @click="$emit('confirm-delete')">{{ $t('challenges.delete') }}</v-list-item-title>
+                      <v-list-item-title class="editLabel" @click="$root.$emit('challenge-delete-confirm', challenge)">{{ $t('challenges.delete') }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="$emit('open-challenge-details', challenge)">
+            <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
@@ -59,7 +59,7 @@
       </div>
 
       <div class="footer assigneeAvatars d-flex">
-        <div class="winners pa-2" v-if="challenge && challenge.announcementsCount === 0 ">
+        <div v-if="challenge && challenge.announcementsCount === 0" class="winners pa-2">
           <p
             class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
             {{ challenge && challenge.announcementsCount }} {{ $t('challenges.winners.details') }}
@@ -71,12 +71,12 @@
           class="winners winnersAvatarsList d-flex flex-nowrap my-2">
           <exo-user-avatars-list
             ref="announcementsUsersAvatar"
-            :users="avatarToDisplay"
+            :users="winnerAvatars"
             :max="2"
             :default-length="announcementCount"
             :icon-size="28"
             retrieve-extra-information
-            @open-detail="$emit('open-details')"/>
+            @open-detail="$root.$emit('open-winners-drawer', challenge.id)" />
           <p
             class="announcesNumber my-auto pl-2 align-self-end caption text-no-wrap pt-1"
             @click="$emit('open-announcements-details', challenge)">
@@ -88,38 +88,15 @@
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
             :title="showMessage"
-<<<<<<< HEAD
             @click="$root.$emit('open-announcement-drawer', challenge)">
-=======
-            @click="$emit('create-announce', challenge)">
->>>>>>> 8b854932... add UT
             {{ $t('challenges.button.announce') }}
           </v-btn>
         </div>
       </div>
     </v-card>
-<<<<<<< HEAD
-    <!-- TODO: MOVE TO parent APP component instead of defining those non-visible components per challenge -->
-    <exo-confirm-dialog
-      ref="deleteChallengeConfirmDialog"
-      :title="$t('challenges.delete')"
-      :message="$t('challenges.deleteConfirmMessage')"
-      :ok-label="$t('challenges.ok')"
-      :cancel-label="$t('challenges.button.cancel')"
-      @ok="deleteChallenge" />
-    <challenge-details-drawer
-      ref="challenge"
-      :challenge="challenge" />
-    <challenge-winners-details
-      :challenge-id="challenge && challenge.id"
-      ref="winnersDetails" />
-=======
->>>>>>> 8b854932... add UT
   </div>
 </template>
-
 <script>
-
 export default {
   props: {
     challenge: {
@@ -131,11 +108,12 @@ export default {
     showMenu: false,
     label: '',
     status: '',
-    listWinners: []
   }),
   computed: {
-    avatarToDisplay () {
-      return this.listWinners;
+    winnerAvatars() {
+      return (this.challenge?.announcements || []).map(announce => ({
+        userName: announce.assignee
+      }));
     },
     showMessage() {
       if (this.challenge && this.challenge.userInfo && !this.challenge.userInfo.canAnnounce) {
@@ -144,7 +122,7 @@ export default {
         return  this.$t('challenges.challengeNotStarted');
       } else if (this.status === 'Ended') {
         return  this.$t('challenges.challengeEnded');
-      } else if ( this.ChallengeProgramEnabled ) {
+      } else if ( this.challengeProgramEnabled ) {
         return  this.$t('challenges.domainDeleteOrDisabled');
       } else {
         return '';
@@ -160,7 +138,7 @@ export default {
       }
     },
     enableAnnounce(){
-      return this.challenge && !this.ChallengeProgramEnabled  && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
+      return this.challenge && !this.challengeProgramEnabled  && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
     },
     enableDelete(){
       return this.challenge && this.challenge.announcementsCount === 0 && this.status === 'Ended';
@@ -171,7 +149,7 @@ export default {
     announcementCount() {
       return this.challenge && this.challenge.announcementsCount;
     },
-    ChallengeProgramEnabled() {
+    challengeProgramEnabled() {
       return this.challenge?.program && (!this.challenge.program.enabled || this.challenge.program.deleted);
     }
   },
@@ -180,10 +158,8 @@ export default {
     this.$root.$on('announcement-added', this.announcementAdded);
   },
   methods: {
-    getListWinners() {
-      this.challenge.announcements.map(announce => {
-        this.listWinners.push({'userName': announce.assignee});
-      });
+    editChallenge() {
+      this.$root.$emit('edit-challenge-details', JSON.parse(JSON.stringify(this.challenge)));
     },
     announcementAdded(event) {
       const announcement = event?.detail?.announcement;

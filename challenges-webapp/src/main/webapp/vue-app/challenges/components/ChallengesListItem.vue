@@ -29,11 +29,9 @@
             md="6"
             lg="4"
             xl="3">
-            <challenge-card :challenge="challenge" 
-              @edit="$emit('edit-challenge',challenge)"
+            <challenge-card
+              :challenge="challenge" 
               @create-announce="$emit('create-announce', $event)"
-              @open-challenge-details="showChallengeDetails($event)"
-              @confirm-delete="$emit('confirm-delete')"
               @open-announcements-details="$emit('open-announcements-details', $event)" />
           </v-col>
         </v-row>
@@ -43,7 +41,7 @@
             :disabled="loading"
             class="loadMoreButton ma-auto mt-4 btn"
             block
-            @click="$emit('load-more')">
+            @click="$root.$emit('challenge-load-more', domain.id)">
             {{ $t('challenges.button.ShowMore') }}
           </v-btn>
         </v-row>
@@ -79,13 +77,5 @@ export default {
       return this.domain.challengesSize > this.domain.challenges.length;
     },
   },
-  methods: {
-    showChallengeDetails(challenge) {
-      if(challenge){
-        challenge.program = this.domain;
-        this.$emit('open-challenge-details', challenge);
-      }
-    }
-  }
 };
 </script>
