@@ -44,6 +44,7 @@
     <name>ChallengesExtensions</name>
     <module>
       <script>
+        <minify>false</minify>
         <path>/js/challengesExtensions.bundle.js</path>
       </script>
       <depends>
