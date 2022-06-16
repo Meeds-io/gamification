@@ -58,7 +58,7 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
         LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
       }
     }
-    if ( activity.getTemplateParams().containsKey("announcementComment")) {
+    if (activity.getTemplateParams().containsKey("announcementComment")) {
       activity.getTemplateParams().put("announcementComment", activity.getTitle());
       activityManager.updateActivity(activity, false);
     }

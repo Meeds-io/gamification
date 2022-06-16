@@ -24,12 +24,11 @@ export function initExtensions() {
     getThumbnail: () => '/challenges/images/challengesAppIcon.png',
     getSummary: activity => activity && activity.templateParams && activity.templateParams.announcementChallenge  || activity && activity.templateParams && activity.templateParams.announcementDescription  || '',
     getBody: activity => {
-      const body = activity.templateParams?.announcementComment && Vue.prototype.$utils.trim(activity.templateParams?.announcementComment) || activity.title || '';
+      const body = Vue.prototype.$utils.trim( activity.templateParams?.announcementComment || activity.title ) || '';
       return body.includes('<oembed>') && body.split('<oembed>')[0] || body;
     },
     getBodyToEdit: activity => {
-      const bodyToEdit = activity.templateParams?.announcementComment && Vue.prototype.$utils.trim(activity.templateParams?.announcementComment) || activity.title;
-      return Vue.prototype.$utils.trim(window.decodeURIComponent(bodyToEdit));
+      return Vue.prototype.$utils.trim(window.decodeURIComponent(activity.templateParams?.announcementComment || activity.title));
     },
   };
 
