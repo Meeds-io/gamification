@@ -125,6 +125,9 @@ export default {
       return this.challenge && this.challenge.userInfo && !this.challenge.userInfo.manager && !this.challenge.userInfo.redactor && this.challenge.userInfo.member;
     }
   },
+  created() {
+    this.$root.$on('open-announcement-drawer', this.openDrawer);
+  },
   methods: {
     initAnnounce() {
       this.announcement = {};
@@ -160,7 +163,7 @@ export default {
 
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcementCreateSuccess')}</a>`});
-        document.dispatchEvent(new CustomEvent('announcement-added', {detail: announcement}));
+        document.dispatchEvent(new CustomEvent('announcement-added', {detail: {announcement: announcement , challengeId: this.challenge.id}}));
         this.close();
       })
         .catch(e => {
@@ -178,6 +181,12 @@ export default {
     },
     addUser(id){
       this.$set(this.announcement,'assignee', id);
+    },
+    openDrawer(event) {
+      if (event) {
+        this.challenge = event;
+        this.$nextTick().then(() => this.open());
+      }
     }
   }
 };

@@ -88,7 +88,7 @@
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
             :title="showMessage"
-            @click="$emit('create-announce', challenge )">
+            @click="$root.$emit('open-announcement-drawer', challenge )">
             {{ $t('challenges.button.announce') }}
           </v-btn>
         </div>
@@ -178,9 +178,13 @@ export default {
       });
     },
     announcementAdded(event) {
-      if (event && event.detail) {
-        this.listWinners.unshift({'userName': event.detail.assignee});
-        this.challenge.announcementsCount = this.challenge.announcementsCount + 1;
+      const announcement = event?.detail?.announcement;
+      const challengeId = event?.detail?.challengeId;
+      if (announcement && this.challenge.id === challengeId) {
+        this.listWinners.unshift({
+          userName: announcement.assignee
+        });
+        this.challenge.announcementsCount++;
       }
     },
     openDetails() {

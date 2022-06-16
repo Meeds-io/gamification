@@ -22,8 +22,7 @@
       <div class="pl-2 pt-5">
         <challenges-list
           :challenges="challenges"
-          @edit-challenge="editChallenge($event)"
-          @create-announce="createAnnounce($event)" />
+          @edit-challenge="editChallenge($event)" />
       </div>
     </template>
     <template v-else>
@@ -53,8 +52,7 @@
       ref="challengeDetails" />
     <announce-drawer
       ref="announceDrawer"
-      :challenge="selectedChallenge"
-      @announcementAdded="announcementAdded($event)" />
+      :challenge="selectedChallenge" />
   </v-app>
 </template>
 <script>
@@ -148,12 +146,6 @@ export default {
     editChallenge(challenge) {
       this.$refs.challengeDrawer.challenge =JSON.parse(JSON.stringify(challenge));
       this.$nextTick().then(() => this.openChallengeDrawer());
-    },
-    createAnnounce(event) {
-      if (event) {
-        this.selectedChallenge = event;
-        this.$nextTick().then(() =>  this.$refs.announceDrawer.open());
-      }
     }
   }
 };
