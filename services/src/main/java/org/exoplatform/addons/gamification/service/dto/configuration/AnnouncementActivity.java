@@ -17,11 +17,13 @@
 
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AnnouncementActivity implements Cloneable {
 
   private long                id;
@@ -40,93 +42,9 @@ public class AnnouncementActivity implements Cloneable {
 
   private Map<String, String> templateParams;
 
-  public AnnouncementActivity(long id,
-                              Long challengeId,
-                              Long assignee,
-                              String comment,
-                              Long creator,
-                              String createdDate,
-                              Long activityId,
-                              Map<String, String> templateParams) {
-    this.id = id;
-    this.challengeId = challengeId;
-    this.assignee = assignee;
-    this.comment = comment;
-    this.creator = creator;
-    this.createdDate = createdDate;
-    this.activityId = activityId;
-    this.templateParams = templateParams;
-  }
-
-  public AnnouncementActivity() {
-  }
-
   @Override
   public AnnouncementActivity clone() { // NOSONAR
     return new AnnouncementActivity(id, challengeId, assignee, comment, creator, createdDate, activityId, templateParams);
   }
 
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public Long getChallengeId() {
-    return challengeId;
-  }
-
-  public void setChallengeId(Long challengeId) {
-    this.challengeId = challengeId;
-  }
-
-  public Long getAssignee() {
-    return assignee;
-  }
-
-  public void setAssignee(Long assignee) {
-    this.assignee = assignee;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public Long getCreator() {
-    return creator;
-  }
-
-  public void setCreator(Long creator) {
-    this.creator = creator;
-  }
-
-  public String getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(String createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public Long getActivityId() {
-    return activityId;
-  }
-
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
-  }
-
-  public Map<String, String> getTemplateParams() {
-    return templateParams;
-  }
-
-  public void setTemplateParams(Map<String, String> templateParams) {
-    this.templateParams = templateParams;
-  }
 }
