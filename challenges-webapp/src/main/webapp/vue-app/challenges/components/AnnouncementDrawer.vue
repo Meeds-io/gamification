@@ -18,7 +18,7 @@
       </div>
       <hr class="ml-4 mr-4 separator">
       <div class="pl-4 pr-4 mt-7 descriptionLabel">
-        * {{ $t('challenges.label.assignedAchievement') }}
+        {{ $t('challenges.label.assignedAchievement') }} *
       </div>
       <div class="pl-4" v-if="enableSuggester">
         <challenge-assignment
@@ -43,15 +43,16 @@
       </div>
       <div class="pl-4 pr-4 pt-9 py-4 my-2">
         <div class="py-1 px-2 subtitle-1">
-          * {{ $t('challenges.label.describeYourAchievement') }}
+          {{ $t('challenges.label.describeYourAchievement') }} *
         </div>
         <exo-activity-rich-editor
           v-model="announcement.comment"
-          ref="ckEditorId"
+          ref="announcementRichEditor"
           :max-length="MAX_LENGTH"
           :template-params="templateParams"
-          :ck-editor-type="ckEditorId"
+          ck-editor-type="announcementContent"
           class="flex"
+          use-extra-plugins
           @validity-updated=" validInput = $event" />
       </div>
       <div
@@ -107,8 +108,7 @@ export default {
       announcement: {},
       templateParams: {},
       validInput: true,
-      MAX_LENGTH: 1300,
-      ckEditorId: 'announcementContent'
+      MAX_LENGTH: 1300
     };
   },
   computed: {
@@ -137,11 +137,11 @@ export default {
     },
     open() {
       this.initAnnounce();
-      this.$refs.ckEditorId.initCKEditor();
+      this.$refs.announcementRichEditor.initCKEditor();
       this.$refs.announcementDrawer.open();
     },
     close() {
-      this.$refs.ckEditorId.destroyCKEditor();
+      this.$refs.announcementRichEditor.destroyCKEditor();
       this.$refs.announcementDrawer.close();
     },
     removeAssignee() {
