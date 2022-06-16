@@ -1,7 +1,9 @@
 package org.exoplatform.addons.gamification.rest;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -383,6 +385,11 @@ public class TestChallengeRest extends AbstractServiceTest {
             assertEquals(200, response.getStatus());
             ChallengeRestEntity challengeRestEntity = (ChallengeRestEntity) response.getEntity();
             assertNotNull(challengeRestEntity);
+            response = launcher.service("POST", restPath, "", h, data, envctx);
+            assertNotNull(response);
+            assertEquals(200, response.getStatus());
+            challengeRestEntity = (ChallengeRestEntity) response.getEntity();
+            assertNotNull(challengeRestEntity);
             startSessionAs("root2");
             restPath = "/gamification/challenge/api/allChallenge?offset=-1&limit=10";
             httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -409,11 +416,37 @@ public class TestChallengeRest extends AbstractServiceTest {
             assertEquals(0, savedChallenges.size());
 
             startSessionAs("root1");
+
+            restPath = "/gamification/challenge/api/allChallenge?offset=0&limit=10&domainId="+domain.getId()+"&announcements=4";
+            httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+            envctx.put(HttpServletRequest.class, httpRequest);
+            response = launcher.service("GET", restPath, "", h, null, envctx);
+            assertNotNull(response);
+            assertEquals(200, response.getStatus());
+            savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
+            assertEquals(2, savedChallenges.size());
+
+            restPath = "/gamification/challenge/api/allChallenge?offset=0&limit=10&domainId=0&announcements=4&groupByDomain=true";
+            httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+            envctx.put(HttpServletRequest.class, httpRequest);
             response = launcher.service("GET", restPath, "", h, null, envctx);
             assertNotNull(response);
             assertEquals(200, response.getStatus());
             savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
             assertEquals(1, savedChallenges.size());
+
+            restPath = "/gamification/challenge/api/allChallenge?offset=0&limit=10";
+            httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+            envctx.put(HttpServletRequest.class, httpRequest);
+            response = launcher.service("GET", restPath, "", h, null, envctx);
+            assertNotNull(response);
+            assertEquals(200, response.getStatus());
+            savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
+            assertEquals(2, savedChallenges.size());
+
+
+
+
         } catch (Exception e) {
         }
     }

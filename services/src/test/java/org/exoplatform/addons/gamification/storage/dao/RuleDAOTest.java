@@ -16,10 +16,15 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+
+import java.util.Collections;
+import java.util.Date;
 
 public class RuleDAOTest extends AbstractServiceTest {
 
@@ -111,4 +116,27 @@ public class RuleDAOTest extends AbstractServiceTest {
     newRule("rule2", "domain3");
     assertEquals(ruleDAO.getAllEvents().size(), 2);
   }
+  
+  @Test
+  public void testFindAllChallengesByUserByDomain() {
+    assertEquals(0, ruleDAO.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size());
+    DomainEntity domain1 = newDomain("domain1");
+    DomainEntity domain2 = newDomain("domain2");
+    newChallenge("rule1", domain1.getTitle());
+    newChallenge("rule2", domain1.getTitle());
+    newChallenge("rule3", domain2.getTitle());
+    assertEquals(2, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3,Collections.singletonList(1l)).size());
+  }
+
+   @Test
+  public void testCountAllChallengesByUserByDomain() {
+    assertEquals(0, ruleDAO.countAllChallengesByUserByDomain(0, Collections.singletonList(0l)));
+    DomainEntity domain1 = newDomain("domain1");
+    DomainEntity domain2 = newDomain("domain2");
+    newChallenge("rule1", domain1.getTitle());
+    newChallenge("rule2", domain1.getTitle());
+    newChallenge("rule3", domain2.getTitle());
+    assertEquals(2, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(),Collections.singletonList(1l)));
+  }
+
 }

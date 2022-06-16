@@ -37,13 +37,13 @@
                       v-if="enableDelete"
                       class="editList"
                       @mousedown="$event.preventDefault()">
-                      <v-list-item-title class="editLabel" @click="confirmDelete">{{ $t('challenges.delete') }}</v-list-item-title>
+                      <v-list-item-title class="editLabel" @click="$emit('confirm-delete')">{{ $t('challenges.delete') }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="showDetails(challenge.id)">
+            <div class="contentChallenge" @click="$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
@@ -76,10 +76,10 @@
             :default-length="announcementCount"
             :icon-size="28"
             retrieve-extra-information
-            @open-detail="openDetails()" />
+            @open-detail="$emit('open-details')"/>
           <p
             class="announcesNumber my-auto pl-2 align-self-end caption text-no-wrap pt-1"
-            @click="openDetails">
+            @click="$emit('open-announcements-details', challenge)">
             {{ challenge && challenge.announcementsCount }} {{ $t('challenges.label.announces') }}
           </p>
         </div>
@@ -88,12 +88,17 @@
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
             :title="showMessage"
+<<<<<<< HEAD
             @click="$root.$emit('open-announcement-drawer', challenge)">
+=======
+            @click="$emit('create-announce', challenge)">
+>>>>>>> 8b854932... add UT
             {{ $t('challenges.button.announce') }}
           </v-btn>
         </div>
       </div>
     </v-card>
+<<<<<<< HEAD
     <!-- TODO: MOVE TO parent APP component instead of defining those non-visible components per challenge -->
     <exo-confirm-dialog
       ref="deleteChallengeConfirmDialog"
@@ -108,6 +113,8 @@
     <challenge-winners-details
       :challenge-id="challenge && challenge.id"
       ref="winnersDetails" />
+=======
+>>>>>>> 8b854932... add UT
   </div>
 </template>
 
@@ -188,17 +195,8 @@ export default {
         this.challenge.announcementsCount++;
       }
     },
-    openDetails() {
-      this.$refs.winnersDetails.open();
-    },
     closeMenu() {
       this.showMenu= false;
-    },
-    showDetails(challengeId) {
-      if (this.$refs.challenge){
-        window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
-        this.$refs.challenge.open();
-      }
     },
     getStatus() {
       const currentDate = new Date();
@@ -227,26 +225,6 @@ export default {
       if (day.length < 2) {day = `0${  day}`;}
 
       return `${day}/${month}/${year}`;
-    },
-    deleteChallenge() {
-      this.$challengesServices.deleteChallenge(this.challenge.id).then(() =>{
-        this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.deleteSuccess')});
-        this.$root.$emit('challenge-deleted');
-      })
-        .catch(e => {
-          let msg = '';
-          if (e.message === '401' || e.message === '403') {
-            msg = this.$t('challenges.deletePermissionDenied');
-          } else if (e.message  === '404') {
-            msg = this.$t('challenges.notFound');
-          } else  {
-            msg = this.$t('challenges.deleteErrorSave');
-          }
-          this.$root.$emit('show-alert', {type: 'error',message: msg});
-        });
-    },
-    confirmDelete() {
-      this.$refs.deleteChallengeConfirmDialog.open();
     },
   }
 };

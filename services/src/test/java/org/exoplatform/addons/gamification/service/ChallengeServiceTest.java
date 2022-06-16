@@ -247,7 +247,7 @@ public class ChallengeServiceTest {
     public void testGetAllChallengesByUser() throws Exception {
       String username = "root";
 
-      assertThrows(IllegalAccessException.class, () -> challengeService.getChallengesByUser(0, 10, ""));
+      assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengesByUser(0, 10, ""));
 
       Space space = new Space();
       space.setId("1");

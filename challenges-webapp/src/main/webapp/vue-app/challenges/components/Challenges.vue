@@ -17,7 +17,6 @@
         </v-btn>
       </div>
     </v-toolbar>
-
     <welcome-message
       v-if="displayWelcomeMessage"
       :can-add-challenge="canAddChallenge" />
@@ -29,9 +28,11 @@
       class="pl-2 pt-5"
       @load-more="loadMore"
       @edit-challenge="editChallenge($event)" />
-
-    <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
-    <challenge-details-drawer ref="challengeDetails" />
+    <challenge-drawer 
+      ref="challengeDrawer" 
+      :can-add-challenge="canAddChallenge" />
+    <challenge-details-drawer 
+      ref="challengeDetails" />
     <challenge-alert />
     <announce-drawer
       ref="announceDrawer"

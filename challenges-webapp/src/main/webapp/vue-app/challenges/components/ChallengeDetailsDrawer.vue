@@ -92,10 +92,10 @@
               {{ challenge && challenge.program && challenge.program.title }}
             </span>
             <span v-if="isDomainDisabled" class="mx-1">
-              ({{ $t('challenges.label.disabled') }} )
+              ( {{ $t('challenges.label.disabled') }} )
             </span>
             <span v-else-if="isDomainDeleted" class="mx-1">
-              ({{ $t('challenges.label.deleted') }} )
+              ( {{ $t('challenges.label.deleted') }} )
             </span>
           </v-chip>
         </div>

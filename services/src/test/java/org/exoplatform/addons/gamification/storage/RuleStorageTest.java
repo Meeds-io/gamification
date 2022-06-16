@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.storage;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -7,6 +8,7 @@ import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.Collections;
 
 public class RuleStorageTest extends AbstractServiceTest {
 
@@ -223,6 +225,36 @@ public class RuleStorageTest extends AbstractServiceTest {
       assertTrue(rule.isDeleted());
     } catch (Exception e) {
       fail("Error to add rule", e);
+    }
+  }
+
+  @Test
+  public void testFindAllChallengesByUserByDomain() {
+    try {
+      assertEquals(ruleStorage.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size(), 0);
+      DomainEntity domain1 = newDomain("domain1");
+      DomainEntity domain2 = newDomain("domain2");
+      newChallenge("rule1", domain1.getTitle());
+      newChallenge("rule2", domain1.getTitle());
+      newChallenge("rule3", domain2.getTitle());
+      assertEquals(ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4, Collections.singletonList(1l)).size(), 2);
+    } catch (Exception e) {
+      fail("Error to find user challenges by domain", e);
+    }
+  }
+
+  @Test
+  public void testCountAllChallengesByUserByDomain() {
+    try {
+      assertEquals(ruleStorage.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)), 0);
+      DomainEntity domain1 = newDomain("domain1");
+      DomainEntity domain2 = newDomain("domain2");
+      newChallenge("rule1", domain1.getTitle());
+      newChallenge("rule2", domain1.getTitle());
+      newChallenge("rule3", domain2.getTitle());
+      assertEquals(ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4, Collections.singletonList(1l)), 2);
+    } catch (Exception e) {
+      fail("Error to find user challenges by domain", e);
     }
   }
 }
