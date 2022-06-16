@@ -32,10 +32,12 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementActivityUpdater.class);
 
+  private ActivityManager activityManager;
 
   private AnnouncementService announcementService;
 
-  public AnnouncementActivityUpdater(AnnouncementService announcementService) {
+  public AnnouncementActivityUpdater(ActivityManager activityManager, AnnouncementService announcementService) {
+    this.activityManager = activityManager;
     this.announcementService = announcementService;
   }
 
@@ -54,6 +56,10 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
       } catch (ObjectNotFoundException e) {
         LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
       }
+    }
+    if (activity.getTemplateParams().containsKey("announcementComment")) {
+      activity.getTemplateParams().put("announcementComment", activity.getTitle());
+      activityManager.updateActivity(activity, false);
     }
   }
 }

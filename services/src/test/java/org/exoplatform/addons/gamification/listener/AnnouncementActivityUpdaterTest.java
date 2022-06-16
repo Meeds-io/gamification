@@ -41,12 +41,15 @@ import static org.mockito.Mockito.*;
 public class AnnouncementActivityUpdaterTest {
 
   @Mock
+  private ActivityManager     activityManager;
+
+  @Mock
   private AnnouncementService announcementService;
 
   @Test
   public void testUpdateActivity() throws ObjectNotFoundException {
     AnnouncementActivityUpdater announcementActivityUpdater =
-                                                            new AnnouncementActivityUpdater(announcementService);
+                                                            new AnnouncementActivityUpdater(activityManager, announcementService);
 
     Announcement announcement = new Announcement(1l, 1l, 1L, "announcement comment", 1L, new Date().toString(), null);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
@@ -72,10 +75,12 @@ public class AnnouncementActivityUpdaterTest {
     announcementActivityUpdater.updateActivity(announcementActivityLifeCycleEvent);
     verify(announcementService, times(1)).getAnnouncementById(anyLong());
     verify(announcementService, times(1)).updateAnnouncement(any(Announcement.class));
+    verify(activityManager, times(1)).updateActivity(any(ExoSocialActivity.class), anyBoolean());
 
     doThrow(ObjectNotFoundException.class).when(announcementService).updateAnnouncement(any(Announcement.class));
     announcementActivityUpdater.updateActivity(announcementActivityLifeCycleEvent);
     verify(announcementService, times(2)).getAnnouncementById(anyLong());
     verify(announcementService, times(2)).updateAnnouncement(any(Announcement.class));
+    verify(activityManager, times(2)).updateActivity(any(ExoSocialActivity.class), anyBoolean());
   }
 }
