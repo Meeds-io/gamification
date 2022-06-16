@@ -372,26 +372,26 @@ public class UtilsTest {
         when(spaceService.hasRedactor(space)).thenReturn(false);
         when(spaceService.isMember(space, "root")).thenReturn(true);
 
-        assertThrows(IllegalArgumentException.class, () -> Utils.canAnnounce("1"));
+        String username = "root";
+        assertThrows(IllegalArgumentException.class, () -> Utils.canAnnounce("1", username));
         when(spaceService.getSpaceById("1")).thenReturn(space);
-        boolean canAnnounce = Utils.canAnnounce("1");
+        boolean canAnnounce = Utils.canAnnounce("1", "");
         assertFalse(canAnnounce);
-        ConversationState.setCurrent(new ConversationState(new org.exoplatform.services.security.Identity("root")));
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
         when(spaceService.hasRedactor(space)).thenReturn(false);
         when(spaceService.isManager(space, "root")).thenReturn(true);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
         when(spaceService.isManager(space, "root")).thenReturn(false);
         when(spaceService.isSuperManager("root")).thenReturn(true);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
         when(spaceService.isSuperManager("root")).thenReturn(false);
         when(spaceService.isRedactor(space, "root")).thenReturn(false);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
     }
 

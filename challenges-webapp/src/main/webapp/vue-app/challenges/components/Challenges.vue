@@ -20,7 +20,9 @@
     </v-toolbar>
     <template v-if="displayChallenges">
       <div class="pl-2 pt-5">
-        <challenges-list :challenges="challenges" @edit-challenge="editChallenge($event)" />
+        <challenges-list
+          :challenges="challenges"
+          @edit-challenge="editChallenge($event)" />
       </div>
     </template>
     <template v-else>
@@ -48,6 +50,9 @@
     </v-row>
     <challenge-details-drawer
       ref="challengeDetails" />
+    <announce-drawer
+      ref="announceDrawer"
+      :challenge="selectedChallenge" />
   </v-app>
 </template>
 <script>
@@ -63,6 +68,7 @@ export default {
     alert: false,
     type: '',
     message: '',
+    selectedChallenge: {}
   }),
   computed: {
     classWelcomeMessage() {
@@ -140,7 +146,7 @@ export default {
     editChallenge(challenge) {
       this.$refs.challengeDrawer.challenge =JSON.parse(JSON.stringify(challenge));
       this.$nextTick().then(() => this.openChallengeDrawer());
-    },
+    }
   }
 };
 </script>
