@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class EntityBuilder {
 
-  public EntityBuilder() { //NOSONAR
+  private EntityBuilder() { //NOSONAR
   }
 
   public static Announcement fromAnnouncementActivity(AnnouncementActivity announcementActivity) {

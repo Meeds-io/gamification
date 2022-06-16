@@ -12,8 +12,7 @@
           xl="3">
           <challenge-card
             :challenge="challenge"
-            @edit="$emit('edit-challenge',challenge)"
-            @create-announce="$emit('create-announce',challenge)" />
+            @edit="$emit('edit-challenge',challenge)" />
         </v-col>
       </v-row>
     </v-container>

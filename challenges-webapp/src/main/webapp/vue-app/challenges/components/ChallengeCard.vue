@@ -88,7 +88,7 @@
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
             :title="showMessage"
-            @click="$root.$emit('open-announcement-drawer', challenge )">
+            @click="$root.$emit('open-announcement-drawer', challenge)">
             {{ $t('challenges.button.announce') }}
           </v-btn>
         </div>
@@ -169,7 +169,7 @@ export default {
   },
   created() {
     this.getListWinners();
-    document.addEventListener('announcement-added', this.announcementAdded);
+    this.$root.$on('announcement-added', this.announcementAdded);
   },
   methods: {
     getListWinners() {

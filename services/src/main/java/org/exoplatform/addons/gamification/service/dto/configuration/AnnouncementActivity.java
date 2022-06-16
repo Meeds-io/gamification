@@ -17,8 +17,11 @@
 
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
+import lombok.Data;
+
 import java.util.Map;
 
+@Data
 public class AnnouncementActivity implements Cloneable {
 
   private long                id;

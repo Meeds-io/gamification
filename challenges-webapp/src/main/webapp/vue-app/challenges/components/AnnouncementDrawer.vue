@@ -163,7 +163,7 @@ export default {
 
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
         this.$root.$emit('show-alert', {type: 'success',message: `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcementCreateSuccess')}</a>`});
-        document.dispatchEvent(new CustomEvent('announcement-added', {detail: {announcement: announcement , challengeId: this.challenge.id}}));
+        this.$root.$emit('announcement-added', {detail: {announcement: announcement , challengeId: this.challenge.id}});
         this.close();
       })
         .catch(e => {
