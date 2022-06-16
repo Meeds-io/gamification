@@ -4,6 +4,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
@@ -29,6 +30,7 @@ import org.exoplatform.services.resources.LocaleContextInfo;
 import org.exoplatform.services.resources.LocalePolicy;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -101,17 +103,16 @@ public class Utils {
     return isChallengeOwner && isSpaceManager;
   }
 
-  public static final boolean canAnnounce(String id) {
+  public static final boolean canAnnounce(String spaceId, String username) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(id);
+    Space space = spaceService.getSpaceById(spaceId);
     if (space == null) {
       throw new IllegalArgumentException("space is not exist");
     }
-    String currentUser = getCurrentUser();
-    if (StringUtils.isNotBlank(currentUser)) {
-      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, currentUser)
-          || spaceService.isManager(space, currentUser) || spaceService.isSuperManager(currentUser)
-                                             : spaceService.isMember(space, currentUser);
+    if (StringUtils.isNotBlank(username)) {
+      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username)
+          || spaceService.isManager(space, username) || spaceService.isSuperManager(username)
+                                             : spaceService.isMember(space, username);
     } else {
       return false;
     }
@@ -384,6 +385,22 @@ public class Utils {
       message = message.replace(c, ' ');
     }
     return message;
+  }
+
+  public static void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
+    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
+                                                                                     : new HashMap<>(activity.getTemplateParams());
+    if (templateParams != null) {
+      templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
+    }
+    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
+    while (entries.hasNext()) {
+      Map.Entry<String, String> entry = entries.next();
+      if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
+        entries.remove();
+      }
+    }
+    activity.setTemplateParams(currentTemplateParams);
   }
 
 }
