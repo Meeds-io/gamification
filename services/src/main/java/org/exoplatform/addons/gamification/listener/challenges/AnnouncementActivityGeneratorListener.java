@@ -1,8 +1,25 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package org.exoplatform.addons.gamification.listener.challenges;
 
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -11,8 +28,6 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -24,11 +39,10 @@ import org.exoplatform.social.websocket.entity.ActivityStreamModification;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.exoplatform.addons.gamification.service.EntityBuilder.fromAnnouncementActivity;
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
-public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, Announcement> {
-  private static final Log               LOG                        =
-                                             ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
+public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
 
 
   private ExoContainer                   container;
@@ -50,14 +64,15 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
   }
 
   @Override
-  public void onEvent(Event<AnnouncementService, Announcement> event) throws ObjectNotFoundException, IllegalAccessException {
+  public void onEvent(Event<AnnouncementService, AnnouncementActivity> event) throws ObjectNotFoundException, IllegalAccessException {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
     try {
-      Announcement announcement = event.getData();
+      AnnouncementActivity announcementActivity = event.getData();
+      Announcement announcement = fromAnnouncementActivity(announcementActivity);
       AnnouncementService announcementService = event.getSource();
       Challenge challenge = challengeService.getChallengeById(announcement.getChallengeId(), Utils.getCurrentUser());
-      ExoSocialActivity activity = createActivity(announcement, challenge);
+      ExoSocialActivity activity = createActivity(announcement, announcementActivity.getTemplateParams(), challenge);
       announcement.setActivityId(Long.parseLong(activity.getId()));
       announcementService.updateAnnouncement(announcement);
       Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
@@ -68,16 +83,18 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
     }
   }
 
-  private ExoSocialActivity createActivity(Announcement announcement, Challenge challenge) throws ObjectNotFoundException {
+  private ExoSocialActivity createActivity(Announcement announcement, Map<String, String> params, Challenge challenge) throws ObjectNotFoundException {
+    if (params == null) {
+      params = new HashMap<>();
+    }
     ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
     activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
     activity.setTitle(challenge.getTitle());
     activity.setUserId(String.valueOf(announcement.getCreator()));
-    Map<String, String> params = new HashMap<>();
     params.put("announcementId", String.valueOf(announcement.getId()));
     params.put("announcementDescription", challenge.getTitle());
     activity.setTitle(announcement.getComment());
-    activity.setTemplateParams(params);
+    Utils.buildActivityParams(activity, params);
     Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     if (space == null) {
       throw new ObjectNotFoundException("space does not exist");

@@ -10,6 +10,7 @@ import org.exoplatform.addons.gamification.service.effective.GamificationService
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.model.Profile;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -23,10 +24,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
 import static org.junit.Assert.*;
@@ -372,26 +370,26 @@ public class UtilsTest {
         when(spaceService.hasRedactor(space)).thenReturn(false);
         when(spaceService.isMember(space, "root")).thenReturn(true);
 
-        assertThrows(IllegalArgumentException.class, () -> Utils.canAnnounce("1"));
+        String username = "root";
+        assertThrows(IllegalArgumentException.class, () -> Utils.canAnnounce("1", username));
         when(spaceService.getSpaceById("1")).thenReturn(space);
-        boolean canAnnounce = Utils.canAnnounce("1");
+        boolean canAnnounce = Utils.canAnnounce("1", "");
         assertFalse(canAnnounce);
-        ConversationState.setCurrent(new ConversationState(new org.exoplatform.services.security.Identity("root")));
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
         when(spaceService.hasRedactor(space)).thenReturn(false);
         when(spaceService.isManager(space, "root")).thenReturn(true);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
         when(spaceService.isManager(space, "root")).thenReturn(false);
         when(spaceService.isSuperManager("root")).thenReturn(true);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
         when(spaceService.isSuperManager("root")).thenReturn(false);
         when(spaceService.isRedactor(space, "root")).thenReturn(false);
-        canAnnounce = Utils.canAnnounce("1");
+        canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
     }
 
@@ -508,4 +506,22 @@ public class UtilsTest {
         assertEquals(rootIdentity.getRemoteId(), usersInfo.get(0).getRemoteId());
     }
 
-}
+
+    @Test
+    public void testBuildActivityParams() {
+      ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
+      Map<String, String> activityParams = new HashMap<>();
+      activityParams.put("id", "1");
+      activityParams.put("titre", "titre");
+      activityParams.put("description", null);
+      activity.setTemplateParams(activityParams);
+      Map<String, String> extraParams = new HashMap<>();
+      extraParams.put("toAdd", "true");
+
+      Utils.buildActivityParams(activity, extraParams);
+      Map<String, String> buildedParams = activity.getTemplateParams();
+      assertNotNull(buildedParams);
+      assertEquals(3, buildedParams.size());
+      assertFalse(buildedParams.containsKey("description"));
+    }
+  }

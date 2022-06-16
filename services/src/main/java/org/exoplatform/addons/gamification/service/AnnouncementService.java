@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AnnouncementService {
 
@@ -31,7 +32,7 @@ public interface AnnouncementService {
    * @throws IllegalAccessException when user is not authorized to create a
    *           announcement for the designated owner defined in object
    */
-  Announcement createAnnouncement(Announcement announcement, String username, boolean system) throws IllegalAccessException,
+  Announcement createAnnouncement(Announcement announcement, Map<String, String> templateParams , String username, boolean system) throws IllegalAccessException,
                                                                               ObjectNotFoundException;
 
   /**

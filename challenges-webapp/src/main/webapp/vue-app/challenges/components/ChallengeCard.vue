@@ -88,7 +88,7 @@
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
             :title="showMessage"
-            @click="createAnnounce">
+            @click="$root.$emit('open-announcement-drawer', challenge)">
             {{ $t('challenges.button.announce') }}
           </v-btn>
         </div>
@@ -104,10 +104,6 @@
     <challenge-details-drawer
       ref="challenge"
       :challenge="challenge" />
-    <announce-drawer
-      :challenge="challenge"
-      @announcementAdded="announcementAdded($event)"
-      ref="announceRef" />
     <challenge-winners-details
       :challenge-id="challenge && challenge.id"
       ref="winnersDetails" />
@@ -173,6 +169,7 @@ export default {
   },
   created() {
     this.getListWinners();
+    this.$root.$on('announcement-added', this.announcementAdded);
   },
   methods: {
     getListWinners() {
@@ -180,15 +177,18 @@ export default {
         this.listWinners.push({'userName': announce.assignee});
       });
     },
-    announcementAdded(announcement) {
-      this.listWinners.unshift({'userName': announcement.assignee});
-      this.challenge.announcementsCount = this.challenge.announcementsCount + 1;
+    announcementAdded(event) {
+      const announcement = event?.detail?.announcement;
+      const challengeId = event?.detail?.challengeId;
+      if (announcement && this.challenge.id === challengeId) {
+        this.listWinners.unshift({
+          userName: announcement.assignee
+        });
+        this.challenge.announcementsCount++;
+      }
     },
     openDetails() {
       this.$refs.winnersDetails.open();
-    },
-    createAnnounce() {
-      this.$refs.announceRef.open();
     },
     closeMenu() {
       this.showMenu= false;

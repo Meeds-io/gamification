@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.test;
 
+import org.exoplatform.addons.gamification.listener.AnnouncementActivityGeneratorListenerTest;
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdaterTest;
 import org.exoplatform.addons.gamification.rest.*;
 import org.exoplatform.addons.gamification.service.AnnouncementServiceTest;
@@ -67,7 +68,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRealizationsRest.class,
         TestChallengeRest.class,
         TestAnnouncementRest.class,
-        AnnouncementActivityUpdaterTest.class
+        AnnouncementActivityUpdaterTest.class,
+        AnnouncementActivityGeneratorListenerTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

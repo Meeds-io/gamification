@@ -10,7 +10,9 @@
           md="6"
           lg="4"
           xl="3">
-          <challenge-card :challenge="challenge" @edit="$emit('edit-challenge',challenge)" />
+          <challenge-card
+            :challenge="challenge"
+            @edit="$emit('edit-challenge',challenge)" />
         </v-col>
       </v-row>
     </v-container>
