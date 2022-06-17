@@ -22,10 +22,8 @@ export default {
   },
   data: () => ({
     announcementActivityTypeExtensionOptions: {
-      canEdit: () => true,
       supportsThumbnail: true,
       useSameViewForMobile: true,
-      canShare: () => true,
       thumbnailProperties: {
         height: '90px',
         width: '90px',
