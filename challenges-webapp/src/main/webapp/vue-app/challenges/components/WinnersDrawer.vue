@@ -50,24 +50,28 @@
 <script>
 
 export default {
-  props: {
-    challengeId: {
-      type: String,
-      default: ''
-    },
-    back: {
-      type: Boolean,
-      default: false
-    }
-  },
   data() {
     return {
+      challengeId: false,
+      displayBackIcon: false,
       showLoadMoreButton: false,
       announcementPerPage: 20,
       loading: true,
       announcement: [],
       listWinners: []
     };
+  },
+  watch: {
+    loading() {
+      if (this.loading) {
+        this.$refs.winnersDetails.startLoading();
+      } else {
+        this.$refs.winnersDetails.endLoading();
+      }
+    },
+  },
+  created() {
+    this.$root.$on('open-winners-drawer', this.open);
   },
   methods: {
     getLinkActivity(id) {
@@ -76,15 +80,17 @@ export default {
     close() {
       this.$refs.winnersDetails.close();
     },
-    open() {
+    open(challengeId, displayBackIcon) {
       this.listWinners = [];
-      this.getAnnouncement(false);
-      this.$nextTick().then(()=> this.$refs.winnersDetails.open());
+      this.challengeId = challengeId;
+      this.displayBackIcon = displayBackIcon;
+      this.$refs.winnersDetails.open();
+      this.retrieveAnnouncements();
     },
     loadMore() {
-      this.getAnnouncement();
+      this.retrieveAnnouncements(true);
     },
-    getAnnouncement(append = true) {
+    retrieveAnnouncements(append) {
       this.loading = true;
       const offset = append ? this.announcement.length : 0;
       this.$challengesServices.getAllAnnouncementsByChallenge(this.challengeId, offset, this.announcementPerPage,).then(announcements => {
@@ -105,9 +111,7 @@ export default {
 
           });
         }
-      }).finally(() => {
-        this.loading = false;
-      });
+      }).finally(() => this.loading = false);
     },
   }
 };

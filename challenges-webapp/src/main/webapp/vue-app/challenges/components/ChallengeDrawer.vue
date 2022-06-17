@@ -9,7 +9,7 @@
       <span class="pb-2"> {{ drawerTitle }} </span>
     </template>
     <template slot="content">
-      <v-card-text>
+      <v-card-text v-if="challenge">
         <div
           v-if="warning"
           class="alert alert-error v-content mb-4">
@@ -123,12 +123,6 @@
 export default {
   name: 'ChallengeDrawer',
   props: {
-    challenge: {
-      type: Object,
-      default: function() {
-        return {};
-      },
-    },
     canAddChallenge: {
       type: Boolean,
       default: false
@@ -157,7 +151,8 @@ export default {
         length: (v) => (v && v.length < 250) || this.$t('challenges.label.challengeTitleLengthExceed') ,
         value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
       },
-      audience: '' ,
+      challenge: null,
+      audience: '',
       isValid: {
         title: true,
         description: true },
@@ -199,10 +194,8 @@ export default {
       }
     },
   },
-  mounted() {
-    if (!(this.challenge && this.challenge.points)) {
-      this.$set(this.challenge,'points', 20);
-    }
+  created() {
+    this.$root.$on('edit-challenge-details', this.open);
   },
   methods: {
     setUp(){
@@ -262,14 +255,19 @@ export default {
       this.warning= null;
       this.$refs.challengeProgram.program = null;
     },
-    open(){
-      this.$refs.challengeDescription.initCKEditor();
-      if (this.challenge && this.challenge.id){
-        this.setUp();
-      }
-      this.$nextTick().then(() => this.$refs.challengeDrawer.open() );
+    open(challenge) {
+      this.challenge = challenge || {
+        points: 20,
+      };
+      this.$refs.challengeDrawer.open();
+      this.$nextTick().then(() => {
+        this.$refs.challengeDescription.initCKEditor();
+        if (this.challenge && this.challenge.id){
+          this.setUp();
+        }
+      });
     },
-    close(){
+    close() {
       this.reset();
       this.$refs.challengeDescription.deleteDescription();
       this.$refs.challengeDrawer.close();

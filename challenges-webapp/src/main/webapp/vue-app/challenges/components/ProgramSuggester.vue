@@ -103,19 +103,19 @@ export default {
         this.broadcast = true;
       }
     },
-    canAddChallenge() {
-      if (this.canAddChallenge){
-        this.getAllDomains();
-      }
-    },
   },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
       this.$refs.selectAutoComplete.isFocused = false;
     });
   },
+  created() {
+    if (this.canAddChallenge) {
+      this.getAllDomains();
+    }
+  },
   methods: {
-    getAllDomains(){
+    getAllDomains() {
       this.$challengesServices.getAllDomains() .then(domains => {
         this.domains =  domains.slice().filter(domain => domain.enabled);
       }).catch(e => {

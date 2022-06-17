@@ -4,9 +4,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 
@@ -156,11 +158,30 @@ public class EntityMapper {
     }
   }
 
-  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements) {
+  public static ChallengeRestEntity fromChallenge(AnnouncementService announcementService,
+                                                  Challenge challenge,
+                                                  int announcementsPerChallenge,
+                                                  boolean noDomain) throws IllegalAccessException,
+                                                                    ObjectNotFoundException {
     if (challenge == null) {
       return null;
     }
-    List<AnnouncementRestEntity> announcementRestEntities = fromAnnouncementList(challengeAnnouncements);
+    List<Announcement> challengeAnnouncements = null;
+    if (announcementsPerChallenge > 0) {
+      challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
+                                                                                  0,
+                                                                                  announcementsPerChallenge);
+    } else {
+      challengeAnnouncements = Collections.emptyList();
+    }
+    return fromChallenge(challenge, challengeAnnouncements, noDomain);
+  }
+
+  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements) {
+    return fromChallenge(challenge, challengeAnnouncements, false);
+  }
+
+  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements, boolean noDomain) {
     Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     return new ChallengeRestEntity(challenge.getId(),
                                    challenge.getTitle(),
@@ -174,8 +195,8 @@ public class EntityMapper {
                                                     challenge.getManagers()),
                                    Utils.getManagersByIds(challenge.getManagers()),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
-                                   announcementRestEntities,
+                                   fromAnnouncementList(challengeAnnouncements),
                                    challenge.getPoints(),
-                                   Utils.getDomainByTitle(challenge.getProgram()));
+                                   noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
   }
 }
