@@ -48,8 +48,6 @@ import static org.exoplatform.addons.gamification.service.EntityBuilder.fromAnno
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
-  private static final Log               LOG                        =
-                                             ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
 
 
   private ExoContainer                   container;
@@ -101,29 +99,13 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
     params.put("announcementId", String.valueOf(announcement.getId()));
     params.put("announcementDescription", challenge.getTitle());
     activity.setTitle(announcement.getComment());
-    buildActivityParams(activity, params);
+    Utils.buildActivityParams(activity, params);
     Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     if (space == null) {
       throw new ObjectNotFoundException("space does not exist");
     }
     Identity owner = Utils.getIdentityByTypeAndId("space", space.getPrettyName());
     return activityStorage.saveActivity(owner, activity);
-  }
-
-  private void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
-    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
-                                                                                     : new HashMap<>(activity.getTemplateParams());
-    if (templateParams != null) {
-      templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
-    }
-    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
-    while (entries.hasNext()) {
-      Map.Entry<String, String> entry = entries.next();
-      if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
-        entries.remove();
-      }
-    }
-    activity.setTemplateParams(currentTemplateParams);
   }
 
 }
