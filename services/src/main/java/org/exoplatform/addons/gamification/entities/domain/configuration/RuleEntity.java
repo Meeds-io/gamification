@@ -21,7 +21,6 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -29,20 +28,23 @@ import java.util.Objects;
 @Entity(name = "Rule")
 @ExoEntity
 @Table(name = "GAMIFICATION_RULE")
-@NamedQueries({ @NamedQuery(name = "Rule.getAllAutomaticRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false and rule.type = :type"),
-    @NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false ORDER BY rule.createdDate desc"),
-    @NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type"),
-    @NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type"),
-    @NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type "),
-    @NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type"),
-    @NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain)  and rule.type = :type"),
-    @NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type"),
-    @NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type"),
-    @NamedQuery(name = "Rule.getDomainList", query = "SELECT rule.area  FROM Rule rule where rule.type = :type GROUP BY rule.area "),
-    @NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  where rule.type = :type GROUP BY rule.event"),
-    @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) "),
-    @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId "),
-    @NamedQuery(name = "Rule.findAllChallengesByUser", query = "SELECT DISTINCT r FROM Rule r where r.audience in (:ids) order by r.endDate desc") })
+@NamedQuery(name = "Rule.getAllAutomaticRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false and rule.type = :type")
+@NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false ORDER BY rule.createdDate desc")
+@NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type")
+@NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type")
+@NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type ")
+@NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type")
+@NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain)  and rule.type = :type")
+@NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type")
+@NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type")
+@NamedQuery(name = "Rule.getDomainList", query = "SELECT rule.area  FROM Rule rule where rule.type = :type GROUP BY rule.area ")
+@NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  where rule.type = :type GROUP BY rule.event")
+@NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) ")
+@NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ")
+@NamedQuery(name = "Rule.findAllChallengesByUser", query = "SELECT DISTINCT r FROM Rule r where r.audience in (:ids) order by r.endDate desc")
+@NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
+@NamedQuery(name = "Rule.findAllChallengesByUserByDomain", query = "SELECT r FROM Rule r WHERE r.audience in (:ids) AND r.domainEntity.id = :domainId ORDER BY r.endDate DESC")
+@NamedQuery(name = "Rule.countAllChallengesByUserByDomain", query = "SELECT count(r) FROM Rule r WHERE r.audience in (:ids) AND r.domainEntity.id = :domainId")
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -94,9 +96,6 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
   @CollectionTable(name = "CHALLENGE_MANAGER_RULE", joinColumns = @JoinColumn(name = "ID"))
   @Column(name = "MANAGER_ID")
   private List<Long> managers;
-
-  public RuleEntity() {
-  }
 
   public List<Long> getManagers() {
     return managers;

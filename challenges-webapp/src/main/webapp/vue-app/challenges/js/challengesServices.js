@@ -8,7 +8,7 @@ export function canAddChallenge() {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error ('Server indicates an error while sending request');
+      throw new Error('Server indicates an error while sending request');
     }
   });
 }
@@ -47,8 +47,26 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(offset, limit, announcements) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?offset=${offset || 0}&limit=${limit|| 10}&announcements=${announcements|| 2}`, {
+export function getAllChallengesByUser(offset, limit, announcements, domainId, groupByDomain) {
+  const formData = new FormData();
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+  if (announcements) {
+    formData.append('announcements', announcements);
+  }
+  if (domainId) {
+    formData.append('announcements', domainId);
+  }
+  if (groupByDomain) {
+    formData.append('groupByDomain', groupByDomain);
+  }
+  const params = new URLSearchParams(formData).toString();
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -61,7 +79,7 @@ export function getAllChallengesByUser(offset, limit, announcements) {
 }
 
 export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit|| 10}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit || 10}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -113,7 +131,7 @@ export function getAllDomains() {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error ('Server indicates an error while sending request');
+      throw new Error('Server indicates an error while sending request');
     }
   });
 }
