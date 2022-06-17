@@ -8,7 +8,6 @@ import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.container.xml.InitParams;
@@ -19,17 +18,17 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
-  private RuleStorage challengeStorage;
+  private static final String CREATORS_GROUP_KEY = "challenge.creator.group";
 
-  private SpaceService     spaceService;
+  private RuleStorage         challengeStorage;
 
-  private String     groupOfCreators;
+  private SpaceService        spaceService;
 
-  private static final String     CREATORS_GROUP_KEY             = "challenge.creator.group";
-
+  private String              groupOfCreators;
 
   public ChallengeServiceImpl(RuleStorage challengeStorage, SpaceService spaceService, InitParams params) {
     this.challengeStorage = challengeStorage;
@@ -66,7 +65,6 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     return challengeStorage.saveChallenge(challenge, username);
   }
-
 
   @Override
   public Challenge createChallenge(Challenge challenge) {
@@ -130,28 +128,53 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public List<Challenge> getAllChallengesByUser(int offset, int limit, String userName) throws Exception {
+  public List<Challenge> getChallengesByUser(int offset, int limit, String userName) {
     if (StringUtils.isBlank(userName)) {
-      throw new IllegalAccessException("user name must not be null");
+      throw new IllegalArgumentException("user name must not be null");
     }
-    List<Long> listIdSpace = new ArrayList<>();
-    ListAccess<Space> userSpaces = spaceService.getMemberSpaces(userName);
-    int spacesSize = userSpaces.getSize();
-    int offsetToFetch = 0;
-    int limitToFetch = spacesSize > 20 ? 20 : spacesSize;
-    while (limitToFetch > 0) {
-      Space[] spaces = userSpaces.load(offsetToFetch, limitToFetch);
-      Arrays.stream(spaces).forEach(space -> {
-        listIdSpace.add(Long.valueOf(space.getId()));
-      });
-      offsetToFetch += limitToFetch;
-      limitToFetch = (spacesSize - offsetToFetch) > 20 ? 20 : (spacesSize - offsetToFetch);
-    }
+    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
     if (listIdSpace.isEmpty()) {
       return Collections.emptyList();
     }
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset, limit, listIdSpace);
+    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset,
+                                                                                  limit,
+                                                                                  listIdSpace.stream()
+                                                                                             .map(Long::parseLong)
+                                                                                             .collect(Collectors.toList()));
     return EntityMapper.fromChallengeEntities(challengeEntities);
+  }
+
+  @Override
+  public List<Challenge> getChallengesByUserAndDomain(long domainId, int offset, int limit, String userName) {
+    if (StringUtils.isBlank(userName)) {
+      throw new IllegalArgumentException("user name must not be null");
+    }
+    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
+    if (listIdSpace.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUserByDomain(domainId,
+                                                                                          offset,
+                                                                                          limit,
+                                                                                          listIdSpace.stream()
+                                                                                                     .map(Long::parseLong)
+                                                                                                     .collect(Collectors.toList()));
+    return EntityMapper.fromChallengeEntities(challengeEntities);
+  }
+
+  @Override
+  public int countChallengesByUserAndDomain(long domainId, String userName) {
+    if (StringUtils.isBlank(userName)) {
+      throw new IllegalArgumentException("user name must not be null");
+    }
+    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
+    if (listIdSpace.isEmpty()) {
+      return 0;
+    }
+    return challengeStorage.countAllChallengesByUserByDomain(domainId,
+                                                            listIdSpace.stream()
+                                                                       .map(Long::parseLong)
+                                                                       .collect(Collectors.toList()));
   }
 
   @Override

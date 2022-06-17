@@ -268,6 +268,29 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return rule;
   }
 
+  protected RuleEntity newChallenge(String name, String domain, Long audience) {
+    RuleEntity challenge = ruleDAO.findRuleByTitle(name+"_"+domain);
+    if (challenge == null) {
+      challenge = new RuleEntity();
+      challenge.setScore(Integer.parseInt(TEST__SCORE));
+      challenge.setTitle(name+"_"+domain);
+      challenge.setDescription("Description");
+      challenge.setArea(domain);
+      challenge.setEnabled(true);
+      challenge.setDeleted(false);
+      challenge.setEvent(name);
+      challenge.setCreatedBy(TEST_USER_SENDER);
+      challenge.setLastModifiedBy(TEST_USER_SENDER);
+      challenge.setLastModifiedDate(new Date());
+      challenge.setDomainEntity(newDomain(domain));
+      challenge.setType(TypeRule.MANUAL);
+      challenge.setAudience(audience);
+      challenge.setManagers(Collections.emptyList());
+      challenge = ruleDAO.create(challenge);
+    }
+    return challenge;
+  }
+
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled) {
 
     RuleEntity rule = ruleDAO.findRuleByTitle(name+"_"+domain);
