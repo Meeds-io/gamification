@@ -68,8 +68,4 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
       activityManager.updateActivity(activity, false);
     }
   }
-<<<<<<< HEAD
-=======
-
->>>>>>> 1d806371... MEED-265 Fix Displaying Link preview inside announcement activity
 }
