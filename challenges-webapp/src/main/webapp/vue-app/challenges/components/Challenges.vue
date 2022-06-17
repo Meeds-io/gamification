@@ -28,10 +28,6 @@
       class="pl-2 pt-5" />
     <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
     <challenge-details-drawer ref="challengeDetails" />
-    <announce-drawer
-      :challenge="selectedChallenge"
-      @announcement-added="announcementAdded($event)"
-      ref="announceRef" />
     <challenge-winners-details ref="winnersDetails" />
     <exo-confirm-dialog
       ref="deleteChallengeConfirmDialog"
@@ -40,7 +36,6 @@
       :ok-label="$t('challenges.ok')"
       :cancel-label="$t('challenges.button.cancel')"
       @ok="deleteChallenge" />
-    <challenge-alert />
     <announce-drawer
       ref="announceDrawer"
       :challenge="selectedChallenge" />
@@ -96,11 +91,12 @@ export default {
       setTimeout(() => {
         this.$challengesServices.getChallengeById(challengeId).then(challenge => {
           if (challenge && challenge.id) {
+            console.warn('challenge from challenges', challenge);
             this.$root.$emit('open-challenge-details', challenge);
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
           } else {
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
-            this.$root.$emit('show-alert', {type: 'error', message: this.$t('challenges.viewChallengeError')});
+            this.showAlert('error', this.$t('challenges.viewChallengeError'));
           }
         });
       }, 10);
@@ -142,7 +138,7 @@ export default {
     },
     deleteChallenge() {
       this.$challengesServices.deleteChallenge(this.selectedChallenge.id).then(() =>{
-        this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.deleteSuccess')});
+        this.showAlert('success', this.$t('challenges.deleteSuccess'));
         this.$root.$emit('challenge-deleted');
       })
         .catch(e => {
@@ -154,13 +150,19 @@ export default {
           } else  {
             msg = this.$t('challenges.deleteErrorSave');
           }
-          this.$root.$emit('show-alert', {type: 'error',message: msg});
+          this.showAlert('error', msg);
         });
     },
     confirmDelete(challenge) {
       this.selectedChallenge = challenge;
       this.$refs.deleteChallengeConfirmDialog.open();
     },
+    showAlert(alertType, alertMessage){
+      this.$root.$emit('challenge-notification-alert', {
+        type: alertType,
+        message: alertMessage,
+      });
+    }
   }
 };
 </script>

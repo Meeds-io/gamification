@@ -7,6 +7,7 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Collections;
 
@@ -230,31 +231,29 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testFindAllChallengesByUserByDomain() {
-    try {
-      assertEquals(ruleStorage.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size(), 0);
-      DomainEntity domain1 = newDomain("domain1");
-      DomainEntity domain2 = newDomain("domain2");
-      newChallenge("rule1", domain1.getTitle());
-      newChallenge("rule2", domain1.getTitle());
-      newChallenge("rule3", domain2.getTitle());
-      assertEquals(ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4, Collections.singletonList(1l)).size(), 2);
-    } catch (Exception e) {
-      fail("Error to find user challenges by domain", e);
-    }
+    assertEquals(ruleStorage.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size(), 0);
+    DomainEntity domain1 = newDomain("domain1");
+    DomainEntity domain2 = newDomain("domain2");
+    newChallenge("rule1", domain1.getTitle(), 1l);
+    newChallenge("rule2", domain1.getTitle(), 2l);
+    newChallenge("rule3", domain2.getTitle(), 3l);
+    assertEquals(1, ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4, Collections.singletonList(1l)).size());
+    assertEquals(2, ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4 , Arrays.asList(1l, 2l)).size());
+    assertEquals(1, ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4 , Arrays.asList(1l, 3l)).size());
+    assertEquals(1, ruleStorage.findAllChallengesByUserByDomain(domain2.getId(), 0, 4 , Arrays.asList(2l, 3l)).size());
   }
 
   @Test
   public void testCountAllChallengesByUserByDomain() {
-    try {
-      assertEquals(ruleStorage.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)), 0);
-      DomainEntity domain1 = newDomain("domain1");
-      DomainEntity domain2 = newDomain("domain2");
-      newChallenge("rule1", domain1.getTitle());
-      newChallenge("rule2", domain1.getTitle());
-      newChallenge("rule3", domain2.getTitle());
-      assertEquals(ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4, Collections.singletonList(1l)), 2);
-    } catch (Exception e) {
-      fail("Error to find user challenges by domain", e);
-    }
+    assertEquals(ruleStorage.countAllChallengesByUserByDomain(0, Collections.singletonList(0l)), 0);
+    DomainEntity domain1 = newDomain("domain1");
+    DomainEntity domain2 = newDomain("domain2");
+    newChallenge("rule1", domain1.getTitle(), 1l);
+    newChallenge("rule2", domain1.getTitle(), 2l);
+    newChallenge("rule3", domain2.getTitle(), 3l);
+    assertEquals(1, ruleStorage.countAllChallengesByUserByDomain(domain1.getId(), Collections.singletonList(1l)));
+    assertEquals(2, ruleStorage.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 2l)));
+    assertEquals(1, ruleStorage.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 3l)));
+    assertEquals(1, ruleStorage.countAllChallengesByUserByDomain(domain2.getId(), Arrays.asList(2l, 3l)));
   }
 }

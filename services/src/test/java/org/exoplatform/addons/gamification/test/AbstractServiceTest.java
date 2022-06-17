@@ -268,8 +268,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return rule;
   }
 
-  protected RuleEntity newChallenge(String name, String domain) {
-
+  protected RuleEntity newChallenge(String name, String domain, Long audience) {
     RuleEntity challenge = ruleDAO.findRuleByTitle(name+"_"+domain);
     if (challenge == null) {
       challenge = new RuleEntity();
@@ -285,7 +284,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       challenge.setLastModifiedDate(new Date());
       challenge.setDomainEntity(newDomain(domain));
       challenge.setType(TypeRule.MANUAL);
-      challenge.setAudience(1L);
+      challenge.setAudience(audience);
       challenge.setManagers(Collections.emptyList());
       challenge = ruleDAO.create(challenge);
     }

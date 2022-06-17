@@ -85,11 +85,11 @@
       </div>
       <div class="pl-4 pr-4">
         <v-chip
-          :title="challenge && challenge.program && challenge.program.title"
+          :title="domain && domain.title"
           :color="domainShipColor"
           class="identitySuggesterItem mt-2">
           <span class="text-truncate">
-            {{ challenge && challenge.program && challenge.program.title }}
+            {{ domain && domain.title }}
           </span>
           <span v-if="isDomainDisabled" class="mx-1">
             ( {{ $t('challenges.label.disabled') }} )
@@ -127,6 +127,7 @@ export default {
     challenge: null,
     winners: [],
     maxAvatarToShow: 5,
+    domain: null
   }),
   computed: {
     avatarToDisplay () {
@@ -142,13 +143,13 @@ export default {
       return this.challenge && this.challenge.announcementsCount || this.winners.length;
     },
     isDomainDeleted() {
-      return this.challenge &&  this.challenge.program &&  this.challenge.program.deleted ;
+      return this.domain &&  this.domain.deleted ;
     },
     isDomainDisabled() {
-      return this.challenge &&  this.challenge.program && !this.challenge.program.enabled;
+      return this.domain && !this.domain.enabled;
     },
     isDomainDisabledOrDeleted() {
-      return this.challenge && this.challenge.program && (this.challenge.program.deleted || !this.challenge.program.enabled);
+      return this.domain && (this.domain.deleted || !this.domain.enabled);
     },
     domainShipColor() {
       return !this.isDomainDisabledOrDeleted && 'primary' || '#e0e0e0';
@@ -158,11 +159,13 @@ export default {
     this.$root.$on('open-challenge-details', this.open);
   },
   methods: {
-    open(challenge) {
+    open(event) {
+      const challenge = event.challenge;
       if (!challenge) {
         return;
       }
-      this.challenge = challenge;
+      this.domain  = event.domain;
+      this.challenge = event.challenge;
       window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${this.challenge.id}`);
 
       this.$refs.challengeDetails.open();

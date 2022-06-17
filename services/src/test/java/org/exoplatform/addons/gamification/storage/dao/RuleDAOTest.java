@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 
@@ -122,10 +123,13 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(0, ruleDAO.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size());
     DomainEntity domain1 = newDomain("domain1");
     DomainEntity domain2 = newDomain("domain2");
-    newChallenge("rule1", domain1.getTitle());
-    newChallenge("rule2", domain1.getTitle());
-    newChallenge("rule3", domain2.getTitle());
-    assertEquals(2, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3,Collections.singletonList(1l)).size());
+    newChallenge("rule1", domain1.getTitle(), 1l);
+    newChallenge("rule2", domain1.getTitle(), 2l);
+    newChallenge("rule3", domain2.getTitle(), 3l);
+    assertEquals(1, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3, Collections.singletonList(1l)).size());
+    assertEquals(2, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3 , Arrays.asList(1l, 2l)).size());
+    assertEquals(1, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3 , Arrays.asList(1l, 3l)).size());
+    assertEquals(1, ruleDAO.findAllChallengesByUserByDomain(domain2.getId(), 0, 3 , Arrays.asList(2l, 3l)).size());
   }
 
    @Test
@@ -133,10 +137,13 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(0, ruleDAO.countAllChallengesByUserByDomain(0, Collections.singletonList(0l)));
     DomainEntity domain1 = newDomain("domain1");
     DomainEntity domain2 = newDomain("domain2");
-    newChallenge("rule1", domain1.getTitle());
-    newChallenge("rule2", domain1.getTitle());
-    newChallenge("rule3", domain2.getTitle());
-    assertEquals(2, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(),Collections.singletonList(1l)));
+    newChallenge("rule1", domain1.getTitle(), 1l);
+    newChallenge("rule2", domain1.getTitle(), 2l);
+    newChallenge("rule3", domain2.getTitle(), 3l);
+    assertEquals(1, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(), Collections.singletonList(1l)));
+    assertEquals(2, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 2l)));
+    assertEquals(1, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 3l)));
+    assertEquals(1, ruleDAO.countAllChallengesByUserByDomain(domain2.getId(), Arrays.asList(2l, 3l)));
   }
 
 }

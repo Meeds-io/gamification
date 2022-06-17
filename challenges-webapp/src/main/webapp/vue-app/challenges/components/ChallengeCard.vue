@@ -1,5 +1,5 @@
 <template>
-  <div class="ChallengeCard">
+  <div class="challenge-card">
     <v-card
       class="mx-auto card cardOfChallenge"
       height="230"
@@ -43,7 +43,7 @@
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
+            <div class="contentChallenge" @click="$root.$emit('open-challenge-details',{ challenge: challenge, domain: domain } )">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
@@ -79,7 +79,7 @@
             @open-detail="$root.$emit('open-winners-drawer', challenge.id)" />
           <p
             class="announcesNumber my-auto pl-2 align-self-end caption text-no-wrap pt-1"
-            @click="$emit('open-announcements-details', challenge)">
+            @click="$root.$emit('open-winners-drawer', challenge.id)">
             {{ challenge && challenge.announcementsCount }} {{ $t('challenges.label.announces') }}
           </p>
         </div>
@@ -102,7 +102,13 @@ export default {
     challenge: {
       type: Object,
       default: null
-    }
+    },
+    domain: {
+      type: Array,
+      default: function() {
+        return [];
+      },
+    },
   },
   data: () => ({
     showMenu: false,
@@ -154,7 +160,6 @@ export default {
     }
   },
   created() {
-    this.getListWinners();
     this.$root.$on('announcement-added', this.announcementAdded);
   },
   methods: {
@@ -165,7 +170,7 @@ export default {
       const announcement = event?.detail?.announcement;
       const challengeId = event?.detail?.challengeId;
       if (announcement && this.challenge.id === challengeId) {
-        this.listWinners.unshift({
+        this.winnerAvatars.unshift({
           userName: announcement.assignee
         });
         this.challenge.announcementsCount++;
