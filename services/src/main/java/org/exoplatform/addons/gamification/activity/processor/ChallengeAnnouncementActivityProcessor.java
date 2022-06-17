@@ -22,7 +22,7 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
 
     private static final String APP_URL = "/challenges/";
 
-    AnnouncementService announcementService;
+    private AnnouncementService announcementService;
 
     public ChallengeAnnouncementActivityProcessor(InitParams params, AnnouncementService announcementService) {
         super(params);
@@ -52,6 +52,13 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
             params.put("announcementAssigneeUsername", userInfo.getRemoteId());
             params.put("announcementAssigneeFullName", userInfo.getFullName());
             params.put("announcementChallenge", getAnnouncementChallenge(String.valueOf(announcement.getChallengeId()), activity.getTemplateParams().get("announcementDescription")));
+            if (activity.getTemplateParams().containsKey("announcementComment")) {
+              String title = activity.getTemplateParams().get("announcementComment");
+              if (StringUtils.isNotBlank(title)) {
+                activity.setTitle(title);
+                activity.getTemplateParams().put("announcementComment", null);
+              }
+            }
             activity.getTemplateParams().putAll(params);
         } catch (ObjectNotFoundException e) {
             LOG.error("Unexpected error", e);
