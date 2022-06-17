@@ -8,10 +8,7 @@
       :key="domain.id"
       :domain="domain"
       :challenges="challengesByDomainId[domain.id]"
-      :loading="loading"
-      @create-announce="createAnnouncement($event)"
-      @confirm-delete="confirmDelete"
-      @open-announcements-details="openAnnouncementsDetails($event)" />
+      :loading="loading" />
   </v-expansion-panels>
 </template>
 <script>
@@ -36,24 +33,13 @@ export default {
   },
   computed: {
     domainIndexes() {
-      return this.domains.map((value, index) => index);
+      return this.domains.map((_value, index) => index);
     },
   },
   methods: {
     announcementAdded(announcement) {
       this.listWinners.unshift({'userName': announcement.assignee});
       this.challenge.announcementsCount = this.challenge.announcementsCount + 1;
-    },
-    createAnnouncement(challenge) {
-      if (challenge){
-        this.selectedChallenge = challenge;
-        this.$nextTick().then(() =>  this.$refs.announceRef.open());       
-      }
-    },
-    openAnnouncementsDetails(challenge) {
-      if (challenge) {
-        this.$root.$emit('open-winners-details', challenge?.id);
-      }
     },
   }
 };

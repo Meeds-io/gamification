@@ -31,8 +31,7 @@
             xl="3">
             <challenge-card
               :domain="domain"
-              :challenge="challenge" 
-              @create-announce="$emit('create-announce', $event)" />
+              :challenge="challenge" />
           </v-col>
         </v-row>
         <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
