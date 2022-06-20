@@ -91,7 +91,6 @@ export default {
       setTimeout(() => {
         this.$challengesServices.getChallengeById(challengeId).then(challenge => {
           if (challenge && challenge.id) {
-            console.warn('challenge from challenges', challenge);
             this.$root.$emit('open-challenge-details', challenge);
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
           } else {

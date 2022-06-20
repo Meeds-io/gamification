@@ -12,7 +12,7 @@
           <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2">
             ( {{ size }} )
           </v-list-item-content>
-          <v-list-item-content>
+          <v-list-item-content class="mr-7">
             <v-divider />
           </v-list-item-content>
         </v-list-item>
