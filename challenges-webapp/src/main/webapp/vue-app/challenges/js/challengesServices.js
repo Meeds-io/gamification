@@ -59,7 +59,7 @@ export function getAllChallengesByUser(offset, limit, announcements, domainId, g
     formData.append('announcements', announcements);
   }
   if (domainId) {
-    formData.append('announcements', domainId);
+    formData.append('domainId', domainId);
   }
   if (groupByDomain) {
     formData.append('groupByDomain', groupByDomain);
