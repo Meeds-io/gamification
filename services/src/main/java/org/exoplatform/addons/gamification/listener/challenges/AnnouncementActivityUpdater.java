@@ -8,13 +8,15 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.listener.challenges;
+
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
@@ -27,13 +29,16 @@ import org.exoplatform.social.core.activity.ActivityListenerPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.manager.ActivityManager;
 
-import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
 public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
 
-  private static final Log    LOG = ExoLogger.getLogger(AnnouncementActivityUpdater.class);
+  public static final String  ANNOUNCEMENT_ID_PARAM      = "announcementId";
 
-  private ActivityManager activityManager;
+  public static final String  ANNOUNCEMENT_COMMENT_PARAM = "announcementComment";
+
+  private static final Log    LOG                        = ExoLogger.getLogger(AnnouncementActivityUpdater.class);
+
+  private ActivityManager     activityManager;
 
   private AnnouncementService announcementService;
 
@@ -48,7 +53,7 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     if (!StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)) {
       return;
     }
-    long announcementId = Long.parseLong(activity.getTemplateParams().get("announcementId"));
+    long announcementId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
     Announcement announcement = announcementService.getAnnouncementById(announcementId);
     if (announcement != null) {
       try {
@@ -58,8 +63,8 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
         LOG.warn("Announcement with id {} wasn't found, only the activity message will be updated", announcementId, e);
       }
     }
-    if (activity.getTemplateParams().containsKey("announcementComment")) {
-      activity.getTemplateParams().put("announcementComment", activity.getTitle());
+    if (activity.getTemplateParams().containsKey(ANNOUNCEMENT_COMMENT_PARAM)) {
+      activity.getTemplateParams().put(ANNOUNCEMENT_COMMENT_PARAM, null);
       activityManager.updateActivity(activity, false);
     }
   }

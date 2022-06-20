@@ -28,8 +28,6 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -45,8 +43,6 @@ import static org.exoplatform.addons.gamification.service.EntityBuilder.fromAnno
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
-  private static final Log               LOG                        =
-                                             ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
 
 
   private ExoContainer                   container;
@@ -98,7 +94,7 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
     params.put("announcementId", String.valueOf(announcement.getId()));
     params.put("announcementDescription", challenge.getTitle());
     activity.setTitle(announcement.getComment());
-    activity.setTemplateParams(params);
+    Utils.buildActivityParams(activity, params);
     Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
     if (space == null) {
       throw new ObjectNotFoundException("space does not exist");
