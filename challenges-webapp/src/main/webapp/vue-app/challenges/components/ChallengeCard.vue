@@ -156,7 +156,7 @@ export default {
       return this.challenge && this.challenge.announcementsCount;
     },
     challengeProgramEnabled() {
-      return this.challenge?.program && (!this.challenge.program.enabled || this.challenge.program.deleted);
+      return this.domain && (!this.domain.enabled || this.domain.deleted);
     }
   },
   created() {
