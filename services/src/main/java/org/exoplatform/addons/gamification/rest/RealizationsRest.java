@@ -47,7 +47,7 @@ public class RealizationsRest implements ResourceContainer {
 
   // File header
   private static final String HEADER    =
-                                     "Date,Creator,Action ID,Action label,Action type,Program,Program label,Points,Status,Grantee,Spaces";
+                                     "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
 
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
@@ -163,14 +163,14 @@ public class RealizationsRest implements ResourceContainer {
                                                                                                              0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                         GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
-      String csvString = computeXLSX(gamificationActionsHistoryRestEntities);
+      String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());
       File temp;
       temp = File.createTempFile(filename, ".xlsx"); //NOSONAR
       temp.deleteOnExit();
       BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
-      bw.write(csvString);
+      bw.write(xlsxString);
       bw.close();
       Response.ResponseBuilder response = Response.ok(temp); //NOSONAR
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
@@ -194,21 +194,8 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         String eventKey = "exoplatform.gamification.gamificationinformation.rule.title.";
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
-        String actionId = "-";
         String actionLabel = "-";
-        String domainTitle = "-";
         String domainDescription = "-";
-        if (ga.getAction() != null) {
-          if (ga.getAction().getType() == TypeRule.AUTOMATIC) {
-            actionId = getI18NMessage(locale, eventKey + ga.getAction().getEvent().replace(" ", ""));
-            if (actionId == null) {
-              actionId = ga.getAction().getEvent();
-            }
-            actionId = escapeIllegalCharacterInMessage(actionId);
-          } else {
-            actionId = escapeIllegalCharacterInMessage(ga.getAction().getEvent());
-          }
-        }
         actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
         if (actionLabel == null && ga.getAction() != null) {
           actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
@@ -216,28 +203,19 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
         if (ga.getDomain() != null) {
-          domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomain().getTitle().replace(" ", ""));
           domainDescription = getI18NMessage(locale, domainTitleKey + ga.getDomain().getDescription().replace(" ", ""));
-          if (domainTitle == null) {
-            domainTitle = ga.getDomain().getTitle();
-          }
           if (domainDescription == null) {
             domainDescription = ga.getDomain().getDescription();
           }
         }
-        domainTitle = escapeIllegalCharacterInMessage(domainTitle);
         domainDescription = escapeIllegalCharacterInMessage(domainDescription);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getCreator() != null ? ga.getCreator() : ga.getEarner());
         sbResult.append(DELIMITER);
-        sbResult.append(actionId);
-        sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
         sbResult.append(ga.getAction() != null ? ga.getAction().getType().name() : "-");
-        sbResult.append(DELIMITER);
-        sbResult.append(domainTitle);
         sbResult.append(DELIMITER);
         sbResult.append(domainDescription);
         sbResult.append(DELIMITER);
@@ -245,9 +223,6 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         sbResult.append(DELIMITER);
         sbResult.append(ga.getStatus());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getEarner() != null ? ga.getEarner() : "-");
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getSpace() != null ? escapeIllegalCharacterInMessage(ga.getSpace()) : "-");
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
         LOG.error("Error when computing to XLSX ",e);

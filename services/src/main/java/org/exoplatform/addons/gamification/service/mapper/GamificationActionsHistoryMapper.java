@@ -103,23 +103,6 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
-    try {
-      String spaceName = "";
-      if (gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
-        RuleDTO rule = Utils.getRuleById(gHistory.getRuleId());
-        if (rule != null) {
-          long spaceId = rule.getAudience();
-          if (spaceId > 0) {
-            Space space = Utils.getSpaceById(String.valueOf(spaceId));
-            if (space != null) {
-              spaceName = space.getDescription();
-            }
-          }
-        }
-      } else {
-        spaceName = Utils.getSpaceFromObjectID(gHistory.getObjectId());
-      }
-
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
                                                       Utils.getUserFullName(gHistory.getEarnerId()),
                                                       gHistory.getRuleId() != null
@@ -132,7 +115,6 @@ public class GamificationActionsHistoryMapper {
                                                                                                           : gHistory.getReceiver()),
                                                       gHistory.getCreatedDate(),
                                                       gHistory.getStatus(),
-                                                      spaceName,
                                                       gHistory.getObjectId());
 
     } catch (Exception e) {

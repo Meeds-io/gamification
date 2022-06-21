@@ -28,13 +28,8 @@
           <td class="wrap align-center px-6">
             {{ getFromDate(props.item.createdDate) }}
           </td>
-          <td class="text-truncate align-center wrap">
-            {{ props.item.creator || props.item.earner || '-' }}
-          </td>
-          <td class="align-center actionTitle px-1">
-            <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ props.item.action && props.item.action.event || props.item.action.title }} </span>
-            <span v-if="props.item.action && props.item.action.type === 'AUTOMATIC'">
-              {{ props.item.action && props.item.action.title && $t(`exoplatform.gamification.gamificationinformation.rule.title.${props.item.action.event}`) }} </span>
+          <td class="text-truncate align-center">
+            {{ props.item.earner || '-' }}
           </td>
           <td class="align-center actionTitle px-0">
             <a
@@ -54,9 +49,6 @@
             <span v-if="props.item.action && props.item.action.type === 'MANUAL'"> {{ $t('realization.label.manual') }} </span>
           </td>
           <td class="text-truncate align-center">
-            {{ props.item.action && props.item.domain && props.item.domain.title || '-' }}
-          </td>
-          <td class="text-truncate align-center">
             {{ props.item.action && props.item.domain && props.item.domain.description || '-' }}
           </td>
           <td class="text-truncate align-center">
@@ -66,12 +58,6 @@
             <span v-if="props.item.status === 'REJECTED'"> {{ $t('realization.label.rejected') }} </span>
             <span v-else-if="props.item.status === 'EDITED'"> {{ $t('realization.label.edited') }} </span>
             <span v-else-if="props.item.status === 'ACCEPTED'"> {{ $t('realization.label.accepted') }} </span>
-          </td>
-          <td class="text-truncate align-center">
-            {{ props.item.earner || '-' }}
-          </td>
-          <td class="text-truncate align-center">
-            {{ props.item.space || '-' }}
           </td>
           <td class="text-truncate actions">
             <v-menu
@@ -170,18 +156,10 @@ export default {
           class: 'actionHeader px-2',
         },
         {
-          text: this.$t('realization.label.creator'),
+          text: this.$t('realization.label.grantee'),
           align: 'center',
           sortable: false,
-          value: 'creator',
-          class: 'actionHeader px-1'
-
-        },
-        {
-          text: this.$t('realization.label.actionId'),
-          align: 'center',
-          sortable: false,
-          value: 'actionId',
+          value: 'grantee',
           class: 'actionHeader px-1'
         },
         {
@@ -196,13 +174,6 @@ export default {
           align: 'center',
           sortable: false,
           value: 'actionType',
-          class: 'actionHeader px-1'
-        },
-        {
-          text: this.$t('realization.label.program'),
-          align: 'center',
-          sortable: false,
-          value: 'program',
           class: 'actionHeader px-1'
         },
         {
@@ -224,20 +195,6 @@ export default {
           align: 'center',
           sortable: false,
           value: 'status',
-          class: 'actionHeader px-1'
-        },
-        {
-          text: this.$t('realization.label.grantee'),
-          align: 'center',
-          sortable: false,
-          value: 'grantee',
-          class: 'actionHeader px-1'
-        },
-        {
-          text: this.$t('realization.label.space'),
-          align: 'center',
-          sortable: false,
-          value: 'space',
           class: 'actionHeader px-1'
         },
         {
