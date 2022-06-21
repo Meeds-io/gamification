@@ -59,7 +59,7 @@
             <span v-else-if="props.item.status === 'EDITED'"> {{ $t('realization.label.edited') }} </span>
             <span v-else-if="props.item.status === 'ACCEPTED'"> {{ $t('realization.label.accepted') }} </span>
           </td>
-          <td class="text-truncate actions">
+          <td class="text-truncate actions align-center">
             <v-menu
               offset-y
               :value="selectedRealizations === props.item"
