@@ -120,7 +120,6 @@ public class GamificationActionsHistoryMapper {
     } catch (Exception e) {
       LOG.error("Error while mapping history with id {}", gHistory.getId(), e);
       return null;
-    }
   }
 
   public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories) {
