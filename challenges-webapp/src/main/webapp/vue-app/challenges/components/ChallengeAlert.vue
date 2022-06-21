@@ -24,8 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     app>
     <exo-notification-alert
       :alert="alert"
-      @dismissed="clear">
-    </exo-notification-alert>
+      @dismissed="clear" />
   </v-snackbar>
 </template>
 <script>
