@@ -15,6 +15,7 @@ import org.exoplatform.services.cache.ExoCache;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class RuleCachedStorage extends RuleStorage {
 
   private static final int                               RULE_ID_CONTEXT        = 0;
@@ -24,6 +25,8 @@ public class RuleCachedStorage extends RuleStorage {
   private static final int                               ALL_RULE_CONTEXT       = 2;
 
   private static final int                               CHALLENGE_USER_CONTEXT = 3;
+
+  private static final int                               CHALLENGE_USER_DOMAIN_CONTEXT = 4;
 
   private static final String                            RULE_CACHE_NAME        = "gamification.rule";
 
@@ -43,6 +46,8 @@ public class RuleCachedStorage extends RuleStorage {
           return RuleCachedStorage.super.findAllRules();
         } else if (context.getContext() == CHALLENGE_USER_CONTEXT) {
           return RuleCachedStorage.super.findAllChallengesByUser(context.getOffset(), context.getLimit(), context.getIds());
+        } else if (context.getContext() == CHALLENGE_USER_DOMAIN_CONTEXT) {
+          return RuleCachedStorage.super.findAllChallengesByUserByDomain(context.getDomainId(), context.getOffset(), context.getLimit(), context.getIds());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
@@ -93,6 +98,13 @@ public class RuleCachedStorage extends RuleStorage {
   public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
     return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_CONTEXT, ids, offset, limit),
                                                        CHALLENGE_USER_CONTEXT + offset + Utils.getCurrentUser());
+  }
+
+  @Override
+  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
+    return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domainId, offset, limit),
+                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domainId + offset
+                                                           + Utils.getCurrentUser());
   }
 
   @Override

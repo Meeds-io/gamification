@@ -16,40 +16,26 @@
           </span>
         </v-btn>
       </div>
-      <v-spacer />
     </v-toolbar>
-    <template v-if="displayChallenges">
-      <div class="pl-2 pt-5">
-        <challenges-list
-          :challenges="challenges"
-          @edit-challenge="editChallenge($event)" />
-      </div>
-    </template>
-    <template v-else>
-      <welcome-message
-        :can-add-challenge="canAddChallenge" />
-    </template>
+    <welcome-message
+      v-if="displayWelcomeMessage"
+      :can-add-challenge="canAddChallenge" />
+    <challenges-list
+      v-else
+      :domains="domainsHavingChallenges"
+      :challenges-by-domain-id="challengesByDomainId"
+      :loading="loading"
+      class="pl-2 pt-5" />
     <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
-    <v-alert
-      v-model="alert"
-      :type="type"
-      class="walletAlert"
-      dismissible>
-      <span v-sanitized-html="message" class="mt-8"> </span>
-    </v-alert>
-    <v-row class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
-      <v-btn
-        v-if="showLoadMoreButton"
-        :loading="loading"
-        :disabled="loading"
-        class="loadMoreButton ma-auto mt-4 btn"
-        block
-        @click="loadMore">
-        {{ $t('challenges.button.ShowMore') }}
-      </v-btn>
-    </v-row>
-    <challenge-details-drawer
-      ref="challengeDetails" />
+    <challenge-details-drawer ref="challengeDetails" />
+    <challenge-winners-details ref="winnersDetails" />
+    <exo-confirm-dialog
+      ref="deleteChallengeConfirmDialog"
+      :title="$t('challenges.delete')"
+      :message="$t('challenges.deleteConfirmMessage')"
+      :ok-label="$t('challenges.ok')"
+      :cancel-label="$t('challenges.button.cancel')"
+      @ok="deleteChallenge" />
     <announce-drawer
       ref="announceDrawer"
       :challenge="selectedChallenge" />
@@ -58,94 +44,123 @@
 <script>
 export default {
   data: () => ({
+    selectedChallenge: null,
     canAddChallenge: false,
     loading: true,
-    challenges: [],
-    showLoadMoreButton: false,
-    challengePerPage: 20,
+    domainsWithChallenges: [],
+    challengePerPage: 12,
     announcementsPerChallenge: 2,
-    displayChallenges: true,
-    alert: false,
-    type: '',
-    message: '',
-    selectedChallenge: {}
   }),
   computed: {
     classWelcomeMessage() {
-      return !this.displayChallenges ? 'emptyChallenges': '';
-    }
+      return this.displayWelcomeMessage && 'emptyChallenges' || '';
+    },
+    domainsHavingChallenges() {
+      return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
+    },
+    displayWelcomeMessage() {
+      return !this.loading && !this.domainsHavingChallenges.length;
+    },
+    challengesByDomainId() {
+      const challengesByDomainId = {};
+      this.domainsHavingChallenges.forEach(domain => {
+        challengesByDomainId[domain.id] = domain.challenges;
+      });
+      return challengesByDomainId;
+    },
+    domainsById() {
+      const domainsById = {};
+      this.domainsHavingChallenges.forEach(domain => {
+        domainsById[domain.id] = domain;
+      });
+      return domainsById;
+    },
   },
   created() {
-    this.$challengesServices.canAddChallenge().then(canAddChallenge => {
-      this.canAddChallenge = canAddChallenge;
-    });
+    this.$challengesServices.canAddChallenge()
+      .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
     this.getChallenges(false);
-    this.$root.$on('show-alert', message => {
-      this.displayMessage(message);
-    });
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
     this.$root.$on('challenge-deleted', this.refreshChallenges);
+    this.$root.$on('challenge-load-more', this.loadMore);
+    this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     const urlPath = document.location.pathname;
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (challengeId) {
       setTimeout(() => {
         this.$challengesServices.getChallengeById(challengeId).then(challenge => {
           if (challenge && challenge.id) {
-            this.$refs.challengeDetails.challenge = challenge;
+            this.$root.$emit('open-challenge-details', challenge);
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
-            this.$refs.challengeDetails.open();
           } else {
             window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
-            this.$root.$emit('show-alert', {type: 'error', message: this.$t('challenges.viewChallengeError')});
+            this.showAlert('error', this.$t('challenges.viewChallengeError'));
           }
         });
       }, 10);
     }
   },
   methods: {
-    pushChallenge(event) {
-      if (event) {
-        this.challenges.push(event);
-        if (this.challenges.length >= this.challengePerPage){
-          this.showLoadMoreButton = true ;
-        }
+    pushChallenge(challenge) {
+      if (challenge?.program?.id && this.challengesByDomainId[challenge.program.id]) {
+        this.challengesByDomainId[challenge.program.id].push(challenge);
       }
     },
     refreshChallenges() {
       this.getChallenges(false);
     },
-    loadMore() {
-      this.getChallenges();
+    loadMore(domainId) {
+      this.getChallenges(true, domainId);
     },
     openChallengeDrawer(){
       this.$refs.challengeDrawer.open();
     },
-    getChallenges(append = true) {
+    getChallenges(append, domainId) {
       this.loading = true;
-      const offset = append ? this.challenges.length : 0;
-      this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage, this.announcementsPerChallenge).then(challenges => {
-        if (challenges.length >= this.challengePerPage) {
-          this.showLoadMoreButton = true;
-        } else {
-          this.showLoadMoreButton = false;
-        }
-        this.challenges = append && this.challenges.concat(challenges) || challenges;
-        this.displayChallenges = this.challenges && this.challenges.length;
-      }).finally(() => {
-        this.loading = false;
-        this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
+      const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
+      this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
+        .then(result => {
+          if (domainId) {
+            if (append) {
+              this.domainsById[domainId].challenges = this.challengesByDomainId[domainId].concat(result);
+            } else {
+              this.domainsById[domainId].challenges = result;
+            }
+          } else {
+            this.domainsWithChallenges = result;
+          }
+        }).finally(() => {
+          this.loading = false;
+          this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
+        });
+    },
+    deleteChallenge() {
+      this.$challengesServices.deleteChallenge(this.selectedChallenge.id).then(() =>{
+        this.showAlert('success', this.$t('challenges.deleteSuccess'));
+        this.$root.$emit('challenge-deleted');
+      })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('challenges.deletePermissionDenied');
+          } else if (e.message  === '404') {
+            msg = this.$t('challenges.notFound');
+          } else  {
+            msg = this.$t('challenges.deleteErrorSave');
+          }
+          this.showAlert('error', msg);
+        });
+    },
+    confirmDelete(challenge) {
+      this.selectedChallenge = challenge;
+      this.$refs.deleteChallengeConfirmDialog.open();
+    },
+    showAlert(alertType, alertMessage){
+      this.$root.$emit('challenge-notification-alert', {
+        type: alertType,
+        message: alertMessage,
       });
-    },
-    displayMessage(message) {
-      this.message=message.message;
-      this.type=message.type;
-      this.alert = true;
-      window.setTimeout(() => this.alert = false, 5000);
-    },
-    editChallenge(challenge) {
-      this.$refs.challengeDrawer.challenge =JSON.parse(JSON.stringify(challenge));
-      this.$nextTick().then(() => this.openChallengeDrawer());
     }
   }
 };

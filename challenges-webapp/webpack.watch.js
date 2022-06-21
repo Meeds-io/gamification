@@ -10,4 +10,5 @@ module.exports = merge(webpackProductionConfig, {
     libraryTarget: 'amd'
   },
   mode: 'development',
+  devtool: 'eval-source-map'
 });

@@ -1,3 +1,20 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 export function canAddChallenge() {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/canAddChallenge`, {
     headers: {
@@ -8,7 +25,7 @@ export function canAddChallenge() {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error ('Server indicates an error while sending request');
+      throw new Error('Server indicates an error while sending request');
     }
   });
 }
@@ -47,8 +64,26 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(offset, limit, announcements) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?offset=${offset || 0}&limit=${limit|| 10}&announcements=${announcements|| 2}`, {
+export function getAllChallengesByUser(offset, limit, announcements, domainId, groupByDomain) {
+  const formData = new FormData();
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+  if (announcements) {
+    formData.append('announcements', announcements);
+  }
+  if (domainId) {
+    formData.append('domainId', domainId);
+  }
+  if (groupByDomain) {
+    formData.append('groupByDomain', groupByDomain);
+  }
+  const params = new URLSearchParams(formData).toString();
+
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -61,7 +96,7 @@ export function getAllChallengesByUser(offset, limit, announcements) {
 }
 
 export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit|| 10}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit || 10}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -113,7 +148,7 @@ export function getAllDomains() {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error ('Server indicates an error while sending request');
+      throw new Error('Server indicates an error while sending request');
     }
   });
 }
