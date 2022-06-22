@@ -25,3 +25,12 @@ extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensi
   rank: 5,
 });
 
+extensionRegistry.registerExtension('ActivityFavoriteIcon', 'activity-favorite-icon-extensions', {
+  id: 'favorite-challenge',
+  type: 'challenges-announcement',
+  img: '/challenges/images/challengesAppIcon.png',
+  title: activity => {  
+    return activity.title;
+  }
+});
+
