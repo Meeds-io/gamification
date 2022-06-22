@@ -235,7 +235,7 @@ public class UtilsTest {
         rootProfile.setProperty("firstName", "root");
         rootProfile.setProperty("lastName", "root");
         rootIdentity.setProfile(rootProfile);
-        UserInfo simpleUserInfo = Utils.createUser(rootIdentity);
+        UserInfo simpleUserInfo = Utils.toUserInfo(rootIdentity);
         assertNotNull(simpleUserInfo);
         assertEquals("root", simpleUserInfo.getRemoteId());
         String[] spaceMembers = {"root"};
@@ -255,7 +255,7 @@ public class UtilsTest {
         when(spaceService.isSuperManager("root")).thenReturn(true);
         when(spaceService.hasRedactor(space)).thenReturn(false);
 
-        UserInfo userInfo = Utils.createUser(rootIdentity, space, Collections.singletonList(1l));
+        UserInfo userInfo = Utils.toUserInfo(rootIdentity, space, Collections.singletonList(1l));
         assertNotNull(userInfo);
         assertEquals("root", userInfo.getRemoteId());
         assertTrue(userInfo.isCanAnnounce());

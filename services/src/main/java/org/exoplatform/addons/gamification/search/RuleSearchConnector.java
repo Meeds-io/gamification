@@ -1,9 +1,31 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package org.exoplatform.addons.gamification.search;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import java.io.InputStream;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -18,14 +40,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.InputStream;
-import java.text.Normalizer;
-import java.util.*;
-import java.util.stream.Collectors;
+public class RuleSearchConnector {
 
-public class ChallengeSearchConnector {
-
-  private static final Log             LOG                          = ExoLogger.getLogger(ChallengeSearchConnector.class);
+  private static final Log             LOG                          = ExoLogger.getLogger(RuleSearchConnector.class);
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
 
@@ -39,9 +56,9 @@ public class ChallengeSearchConnector {
 
   private String                       searchQuery;
 
-  public ChallengeSearchConnector(ConfigurationManager configurationManager,
-                                  ElasticSearchingClient client,
-                                  InitParams initParams) {
+  public RuleSearchConnector(ConfigurationManager configurationManager,
+                             ElasticSearchingClient client,
+                             InitParams initParams) {
     this.configurationManager = configurationManager;
     this.client = client;
 
@@ -57,7 +74,7 @@ public class ChallengeSearchConnector {
     }
   }
 
-  public List<ChallengeSearchEntity> search(Set<String> spaceList, String term, long domainId, long offset, long limit) {
+  public List<RuleDTO> search(Set<String> spaceList, String term, long domainId, long offset, long limit) {
     if (offset < 0) {
       throw new IllegalArgumentException("Offset must be positive");
     }
@@ -93,10 +110,10 @@ public class ChallengeSearchConnector {
   }
 
   @SuppressWarnings("rawtypes")
-  private List<ChallengeSearchEntity> buildResult(String jsonResponse) {
+  private List<RuleDTO> buildResult(String jsonResponse) {
     LOG.debug("Search Query response from ES : {} ", jsonResponse);
 
-    List<ChallengeSearchEntity> results = new ArrayList<>();
+    List<RuleDTO> results = new ArrayList<>();
     JSONParser parser = new JSONParser();
 
     Map json = null;
@@ -115,7 +132,7 @@ public class ChallengeSearchConnector {
     JSONArray jsonHits = (JSONArray) jsonResult.get("hits");
     for (Object jsonHit : jsonHits) {
       try {
-        ChallengeSearchEntity challenge = new ChallengeSearchEntity();
+        RuleDTO ruleDTO = new RuleDTO();
 
         JSONObject jsonHitObject = (JSONObject) jsonHit;
         JSONObject hitSource = (JSONObject) jsonHitObject.get("_source");
@@ -126,20 +143,21 @@ public class ChallengeSearchConnector {
         long audience = parseLong(hitSource, "audience");
         String startDate = (String) hitSource.get("startDate");
         String endDate = (String) hitSource.get("endDate");
-        Long program = parseLong(hitSource, "program");
-        long points = parseLong(hitSource, "points");
+        Long program = parseLong(hitSource, "domainId");
+        int score = parseLong(hitSource, "score").intValue();
 
-        challenge.setId(id);
-        challenge.setTitle(title);
-        challenge.setDescription(description);
-        challenge.setAudience(audience);
-        challenge.setEndDate(endDate);
-        challenge.setStartDate(startDate);
-        challenge.setProgramId(program);
-        challenge.setPoints(points);
-        challenge.setManagers(getManagersList(managers));
+        // TODO
+        // ruleDTO.setId(id);
+        // ruleDTO.setTitle(title);
+        // ruleDTO.setDescription(description);
+        // ruleDTO.setAudience(audience);
+        // ruleDTO.setEndDate(endDate);
+        // ruleDTO.setStartDate(startDate);
+        // ruleDTO.setDomainDTO(program);
+        // ruleDTO.setScore(score);
+        // ruleDTO.setManagers(getManagersList(managers));
 
-        results.add(challenge);
+        results.add(ruleDTO);
       } catch (Exception e) {
         LOG.warn("Error processing challenge search result item, ignore it from results", e);
       }

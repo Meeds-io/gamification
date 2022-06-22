@@ -8,11 +8,11 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.service.mapper;
 
@@ -38,46 +38,45 @@ public class RuleMapper {
   public static RuleEntity ruleDTOToRule(RuleDTO ruleDTO) {
     if (ruleDTO == null) {
       return null;
-    } else {
-      RuleEntity rule = new RuleEntity();
-      rule.setId(ruleDTO.getId());
-      rule.setScore(ruleDTO.getScore());
-      rule.setTitle(ruleDTO.getTitle());
-      rule.setDescription(ruleDTO.getDescription());
-      rule.setArea(ruleDTO.getArea());
-      rule.setEnabled(ruleDTO.isEnabled());
-      rule.setDeleted(ruleDTO.isDeleted());
-      rule.setEvent(ruleDTO.getEvent());
-      rule.setCreatedBy(ruleDTO.getCreatedBy());
-      if (ruleDTO.getAudience() > 0) {
-        rule.setAudience(ruleDTO.getAudience());
-      }
-      if (ruleDTO.getEndDate() != null) {
-        rule.setStartDate(Utils.parseRFC3339Date(ruleDTO.getStartDate()));
-      }
-      if (ruleDTO.getStartDate() != null) {
-        rule.setEndDate(Utils.parseRFC3339Date(ruleDTO.getEndDate()));
-      }
-      if (ruleDTO.getType() != null) {
-        rule.setType(ruleDTO.getType());
-      } else {
-        rule.setType(TypeRule.AUTOMATIC);
-      }
-      if (ruleDTO.getManagers() != null) {
-        rule.setManagers(ruleDTO.getManagers());
-      } else {
-        rule.setManagers(Collections.emptyList());
-      }
-      if (ruleDTO.getCreatedDate() != null) {
-        rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
-      }
-      if (ruleDTO.getLastModifiedDate() != null) {
-        rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
-      }
-      rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
-      rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
-      return rule;
     }
+    RuleEntity rule = new RuleEntity();
+    rule.setId(ruleDTO.getId());
+    rule.setScore(ruleDTO.getScore());
+    rule.setTitle(ruleDTO.getTitle());
+    rule.setDescription(ruleDTO.getDescription());
+    rule.setArea(ruleDTO.getArea());
+    rule.setEnabled(ruleDTO.isEnabled());
+    rule.setDeleted(ruleDTO.isDeleted());
+    rule.setEvent(ruleDTO.getEvent());
+    rule.setCreatedBy(ruleDTO.getCreatedBy());
+    if (ruleDTO.getAudience() > 0) {
+      rule.setAudience(ruleDTO.getAudience());
+    }
+    if (ruleDTO.getStartDate() != null) {
+      rule.setStartDate(Utils.parseRFC3339Date(ruleDTO.getStartDate()));
+    }
+    if (ruleDTO.getEndDate() != null) {
+      rule.setEndDate(Utils.parseRFC3339Date(ruleDTO.getEndDate()));
+    }
+    if (ruleDTO.getType() != null) {
+      rule.setType(ruleDTO.getType());
+    } else {
+      rule.setType(TypeRule.AUTOMATIC);
+    }
+    if (ruleDTO.getManagers() != null) {
+      rule.setManagers(ruleDTO.getManagers());
+    } else {
+      rule.setManagers(Collections.emptyList());
+    }
+    if (ruleDTO.getCreatedDate() != null) {
+      rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
+    }
+    if (ruleDTO.getLastModifiedDate() != null) {
+      rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
+    }
+    rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
+    rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
+    return rule;
   }
 
   public static RuleDTO ruleToRuleDTO(RuleEntity ruleEntity) {
@@ -97,10 +96,10 @@ public class RuleMapper {
       if (ruleEntity.getAudience() != null) {
         rule.setAudience(ruleEntity.getAudience());
       }
-      if (ruleEntity.getEndDate() != null) {
+      if (ruleEntity.getStartDate() != null) {
         rule.setStartDate(Utils.toRFC3339Date(ruleEntity.getStartDate()));
       }
-      if (ruleEntity.getStartDate() != null) {
+      if (ruleEntity.getEndDate() != null) {
         rule.setEndDate(Utils.toRFC3339Date(ruleEntity.getEndDate()));
       }
       if (ruleEntity.getType() != null) {

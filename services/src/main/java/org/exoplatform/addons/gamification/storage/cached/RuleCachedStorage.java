@@ -1,38 +1,37 @@
 package org.exoplatform.addons.gamification.storage.cached;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import java.io.Serializable;
+import java.util.List;
+
+import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
-
-import java.io.Serializable;
-import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class RuleCachedStorage extends RuleStorage {
 
-  private static final int                               RULE_ID_CONTEXT        = 0;
+  private static final int                               RULE_ID_CONTEXT         = 0;
 
-  private static final int                               RULE_TITLE_CONTEXT     = 1;
+  private static final int                               RULE_TITLE_CONTEXT      = 1;
 
-  private static final int                               ALL_RULE_CONTEXT       = 2;
+  private static final int                               ALL_RULE_CONTEXT        = 2;
 
-  private static final int                               CHALLENGE_USER_CONTEXT = 3;
+  private static final int                               RULES_BY_FILTER_CONTEXT = 3;
 
-  private static final int                               CHALLENGE_USER_DOMAIN_CONTEXT = 4;
-
-  private static final String                            RULE_CACHE_NAME        = "gamification.rule";
+  private static final String                            RULE_CACHE_NAME         = "gamification.rule";
 
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
 
-  public RuleCachedStorage(RuleDAO ruleDAO, CacheService cacheService) {
-    super(ruleDAO);
+  public RuleCachedStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, CacheService cacheService) {
+    super(ruleDAO, ruleSearchConnector);
     ExoCache<Serializable, Object> ruleCache = cacheService.getCacheInstance(RULE_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> ruleLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override
@@ -43,10 +42,8 @@ public class RuleCachedStorage extends RuleStorage {
           return RuleCachedStorage.super.findRuleByTitle(context.getTitle());
         } else if (context.getContext() == ALL_RULE_CONTEXT) {
           return RuleCachedStorage.super.findAllRules();
-        } else if (context.getContext() == CHALLENGE_USER_CONTEXT) {
-          return RuleCachedStorage.super.findAllChallengesByUser(context.getOffset(), context.getLimit(), context.getIds());
-        } else if (context.getContext() == CHALLENGE_USER_DOMAIN_CONTEXT) {
-          return RuleCachedStorage.super.findAllChallengesByUserByDomain(context.getDomainId(), context.getOffset(), context.getLimit(), context.getIds());
+        } else if (context.getContext() == RULES_BY_FILTER_CONTEXT) {
+          return RuleCachedStorage.super.findRulesByFilter(context.getFilter(), context.getOffset(), context.getLimit());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
@@ -64,6 +61,7 @@ public class RuleCachedStorage extends RuleStorage {
       this.ruleFutureCache.remove(ruleDTO.getId());
       this.ruleFutureCache.remove(ruleDTO.getTitle());
       this.ruleFutureCache.remove(ALL_RULE_CONTEXT);
+      this.ruleFutureCache.remove(RULES_BY_FILTER_CONTEXT);
     }
   }
 
@@ -86,38 +84,18 @@ public class RuleCachedStorage extends RuleStorage {
   }
 
   @Override
-  public void deleteRule(RuleDTO rule) {
-    try {
-      super.deleteRule(rule);
-    } finally {
-      this.ruleFutureCache.remove(rule.getId());
-      this.ruleFutureCache.remove(rule.getTitle());
-      this.ruleFutureCache.remove(ALL_RULE_CONTEXT);
-    }
+  public List<RuleDTO> findRulesByFilter(RuleFilter challengeFilter, int offset, int limit) {
+    return (List<RuleDTO>) this.ruleFutureCache.get(new CacheKey(RULES_BY_FILTER_CONTEXT, challengeFilter, offset, limit),
+                                                    RULES_BY_FILTER_CONTEXT);
   }
 
   @Override
-  public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
-    CacheKey key = new CacheKey(CHALLENGE_USER_CONTEXT, ids, offset, limit);
-    return (List<RuleEntity>) this.ruleFutureCache.get(key, key.hashCode());
-  }
-
-  @Override
-  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
-    CacheKey key = new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domainId, offset, limit);
-    return (List<RuleEntity>) this.ruleFutureCache.get(key, key.hashCode());
-  }
-
-  @Override
-  public Challenge saveChallenge(Challenge challenge, String username) {
-    challenge = super.saveChallenge(challenge, username);
-    this.ruleFutureCache.clear();
-    return challenge;
-  }
-  @Override
-  public void deleteChallenge(Challenge challenge) {
-    super.deleteChallenge(challenge);
-    this.ruleFutureCache.clear();
+  public RuleDTO deleteRule(long ruleId, boolean force) throws ObjectNotFoundException {
+    RuleDTO rule = super.deleteRule(ruleId, force);
+    this.ruleFutureCache.remove(rule.getId());
+    this.ruleFutureCache.remove(rule.getTitle());
+    this.ruleFutureCache.remove(ALL_RULE_CONTEXT);
+    return rule;
   }
 
   @Override

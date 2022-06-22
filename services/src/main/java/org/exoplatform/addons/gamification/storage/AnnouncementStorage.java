@@ -16,13 +16,13 @@ import java.util.List;
 
 public class AnnouncementStorage {
 
-  private GamificationHistoryDAO announcementDAO;
-
-  private RuleStorage       challengeStorage;
-
   public static final long       MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24; // NOSONAR
 
-  public AnnouncementStorage(GamificationHistoryDAO announcementDAO, RuleStorage challengeStorage) {
+  private GamificationHistoryDAO announcementDAO;
+
+  private ChallengeStorage       challengeStorage;
+
+  public AnnouncementStorage(GamificationHistoryDAO announcementDAO, ChallengeStorage challengeStorage) {
     this.announcementDAO = announcementDAO;
     this.challengeStorage = challengeStorage;
   }

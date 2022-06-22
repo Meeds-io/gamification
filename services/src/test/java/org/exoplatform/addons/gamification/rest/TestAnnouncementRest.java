@@ -1,6 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
-import org.exoplatform.addons.gamification.search.ChallengeSearchConnector;
+import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
@@ -60,7 +60,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
 
     private ListenerService listenerService;
 
-    private ChallengeSearchConnector challengeSearchConnector ;
+    private RuleSearchConnector challengeSearchConnector ;
 
 
     @Override
@@ -71,7 +71,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
         spaceService = mock(SpaceService.class);
         params = new InitParams();
         listenerService = mock(ListenerService.class);
-        challengeSearchConnector = mock(ChallengeSearchConnector.class);
+        challengeSearchConnector = mock(RuleSearchConnector.class);
         challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, params, listenerService, challengeSearchConnector);
         registry(getComponentClass());
         announcementService = CommonsUtils.getService(AnnouncementService.class);

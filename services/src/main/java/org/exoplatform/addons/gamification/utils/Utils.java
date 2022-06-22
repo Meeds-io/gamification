@@ -66,6 +66,8 @@ public class Utils {
 
   public static final String             ANNOUNCEMENT_ACTIVITY_TYPE = "challenges-announcement";
 
+  public static final String            SYSTEM_USERNAME             = "SYSTEM";
+
   private Utils() { // NOSONAR
   }
 
@@ -224,7 +226,7 @@ public class Utils {
       for (Long id : ids) {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-          users.add(createUser(identity));
+          users.add(toUserInfo(identity));
         }
       }
       return users;
@@ -248,9 +250,9 @@ public class Utils {
           ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
           Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
           space = getSpaceById(String.valueOf(challenge.getAudience()));
-          return createUser(identity, space, challenge.getManagers());
+          return toUserInfo(identity, space, challenge.getManagers());
         } else {
-          return createUser(identity);
+          return toUserInfo(identity);
         }
       }
     } catch (Exception e) {
@@ -259,7 +261,7 @@ public class Utils {
     return null;
   }
 
-  public static UserInfo createUser(Identity identity, Space space, List<Long> managersId) {
+  public static UserInfo toUserInfo(Identity identity, Space space, List<Long> managersId) {
     UserInfo userInfo = new UserInfo();
     userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
     userInfo.setFullName(identity.getProfile().getFullName());
@@ -283,7 +285,7 @@ public class Utils {
     return userInfo;
   }
 
-  public static UserInfo createUser(Identity identity) {
+  public static UserInfo toUserInfo(Identity identity) {
     UserInfo userInfo = new UserInfo();
     userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
     userInfo.setFullName(identity.getProfile().getFullName());

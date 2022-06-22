@@ -1,49 +1,43 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityExistsException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import javax.persistence.EntityExistsException;
-import java.util.Date;
-import java.util.List;
-
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
 
 public class RuleServiceImpl implements RuleService {
 
-  private static final Log LOG = ExoLogger.getLogger(RuleServiceImpl.class);
-
-  private RuleStorage      ruleStorage;
+  private RuleStorage ruleStorage;
 
   public RuleServiceImpl(RuleStorage ruleStorage) {
     this.ruleStorage = ruleStorage;
   }
 
   public RuleDTO findEnableRuleByTitle(String ruleTitle) throws IllegalArgumentException {
-    if (StringUtils.isBlank(ruleTitle)) {
-      throw new IllegalArgumentException("rule title is mandatory");
-    }
-    RuleDTO rule = ruleStorage.findEnableRuleByTitle(ruleTitle);
-    return rule;
+    RuleDTO rule = findRuleByTitle(ruleTitle);
+    return rule.isEnabled() ? rule : null;
   }
 
   public RuleDTO findRuleById(Long id) throws IllegalArgumentException {
     if (id == null) {
-      throw new IllegalArgumentException("rule id is mandatory");
+      throw new IllegalArgumentException("Rule id is mandatory");
     }
     return ruleStorage.findRuleById(id);
   }
 
   public List<RuleDTO> findEnabledRulesByEvent(String event) throws IllegalArgumentException {
     if (StringUtils.isBlank(event)) {
-      throw new IllegalArgumentException("rule event is mandatory");
+      throw new IllegalArgumentException("Rule event is mandatory");
     }
     return ruleStorage.findEnabledRulesByEvent(event);
-
   }
 
   public RuleDTO findRuleByTitle(String ruleTitle) throws IllegalArgumentException {
@@ -54,16 +48,13 @@ public class RuleServiceImpl implements RuleService {
   }
 
   public RuleDTO findRuleByEventAndDomain(String ruleTitle, String domain) throws IllegalArgumentException {
-
     if (StringUtils.isBlank(ruleTitle)) {
-      throw new IllegalArgumentException("rule title is mandatory");
+      throw new IllegalArgumentException("Rule title is mandatory");
     }
     if (StringUtils.isBlank(domain)) {
-      throw new IllegalArgumentException("rule domain is mandatory");
+      throw new IllegalArgumentException("Rule domain is mandatory");
     }
-
     return ruleStorage.findRuleByEventAndDomain(ruleTitle, domain);
-
   }
 
   public List<RuleDTO> getAllAutomaticRules() {
@@ -102,17 +93,10 @@ public class RuleServiceImpl implements RuleService {
     if (id == null) {
       throw new IllegalArgumentException("rule id is mandatory");
     }
-    RuleDTO rule = ruleStorage.findRuleById(id);
-
-    if (rule == null) {
-      throw new ObjectNotFoundException("Rule does not exist");
-    }
-    rule.setDeleted(true);
-    ruleStorage.deleteRule(rule);
+    ruleStorage.deleteRule(id);
   }
 
   public RuleDTO addRule(RuleDTO ruleDTO) throws IllegalArgumentException, EntityExistsException {
-
     if (ruleDTO == null) {
       throw new IllegalArgumentException("rule is mandatory");
     }
@@ -124,7 +108,6 @@ public class RuleServiceImpl implements RuleService {
   }
 
   public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
-
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule does not exist");

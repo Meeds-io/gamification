@@ -1,7 +1,7 @@
 package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.search.ChallengeSearchConnector;
+import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
@@ -48,7 +48,7 @@ public class ChallengeServiceTest {
 
     private ListenerService listenerService;
 
-    private ChallengeSearchConnector challengeSearchConnector ;
+    private RuleSearchConnector challengeSearchConnector ;
 
     @Before
     public void setUp() throws Exception { // NOSONAR
@@ -61,7 +61,7 @@ public class ChallengeServiceTest {
         p.setValue("/platform/administrators");
         params.addParam(p);
         listenerService = mock(ListenerService.class);
-        challengeSearchConnector = mock(ChallengeSearchConnector.class);
+        challengeSearchConnector = mock(RuleSearchConnector.class);
 
         challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, params, listenerService, challengeSearchConnector);
     }

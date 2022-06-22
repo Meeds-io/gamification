@@ -1,57 +1,55 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.search.ChallengeSearchConnector;
-import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
-import org.exoplatform.addons.gamification.storage.RuleStorage;
-import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.utils.ListAccess;
-import org.exoplatform.services.listener.ListenerService;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.container.xml.InitParams;
-import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_CHALLENGE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_DELETE_CHALLENGE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_CHALLENGE_EVENT;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
-import static org.exoplatform.addons.gamification.utils.Utils.*;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.service.ChallengeService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
-  private static final Log         LOG                = ExoLogger.getExoLogger(ChallengeServiceImpl.class);
+  private static final Log    LOG                = ExoLogger.getExoLogger(ChallengeServiceImpl.class);
 
-  private RuleStorage              challengeStorage;
+  private ChallengeStorage    challengeStorage;
 
-  private SpaceService             spaceService;
+  private SpaceService        spaceService;
 
-  private String                   groupOfCreators;
+  private String              groupOfCreators;
 
-  private static final String      CREATORS_GROUP_KEY = "challenge.creator.group";
+  private static final String CREATORS_GROUP_KEY = "challenge.creator.group";
 
-  private ListenerService          listenerService;
+  private ListenerService     listenerService;
 
-  private ChallengeSearchConnector challengeSearchConnector;
-
-  public ChallengeServiceImpl(RuleStorage challengeStorage,
+  public ChallengeServiceImpl(ChallengeStorage challengeStorage,
                               SpaceService spaceService,
-                              InitParams params,
                               ListenerService listenerService,
-                              ChallengeSearchConnector challengeSearchConnector) {
+                              InitParams params) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
     this.listenerService = listenerService;
-    this.challengeSearchConnector = challengeSearchConnector;
     if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {
       this.groupOfCreators = params.getValueParam(CREATORS_GROUP_KEY).getValue();
     }
@@ -86,14 +84,14 @@ public class ChallengeServiceImpl implements ChallengeService {
     try {
       listenerService.broadcast(POST_CREATE_CHALLENGE_EVENT, this, challenge.getId());
     } catch (Exception e) {
-      LOG.error("Unexpected error", e);
+      LOG.error("Error broadcasting chanllenge with id {} creation event", challenge.getId(), e);
     }
     return challenge;
   }
 
   @Override
   public Challenge createChallenge(Challenge challenge) {
-    return challengeStorage.saveChallenge(challenge, "SYSTEM");
+    return challengeStorage.saveChallenge(challenge, Utils.SYSTEM_USERNAME);
   }
 
   @Override
@@ -150,72 +148,17 @@ public class ChallengeServiceImpl implements ChallengeService {
     try {
       listenerService.broadcast(POST_UPDATE_CHALLENGE_EVENT, this, challenge.getId());
     } catch (Exception e) {
-      LOG.error("Unexpected error", e);
+      LOG.error("Error broadcasting chanllenge with id {} update event", challenge.getId(), e);
     }
     return challenge;
   }
 
   @Override
-  public boolean canAddChallenge()  {
-    if (groupOfCreators != null){
+  public boolean canAddChallenge() {
+    if (groupOfCreators != null) {
       return ConversationState.getCurrent().getIdentity().isMemberOf(groupOfCreators);
     }
     return false;
-  }
-
-  @Override
-  public List<Challenge> getChallengesByUser(int offset, int limit, String userName) {
-    if (StringUtils.isBlank(userName)) {
-      throw new IllegalArgumentException("user name must not be null");
-    }
-    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
-    if (listIdSpace.isEmpty()) {
-      return Collections.emptyList();
-    }
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUser(offset,
-                                                                                  limit,
-                                                                                  listIdSpace.stream()
-                                                                                             .map(Long::parseLong)
-                                                                                             .collect(Collectors.toList()));
-    return EntityMapper.fromChallengeEntities(challengeEntities);
-  }
-
-  @Override
-  public List<Challenge> getChallengesByUserAndDomain(long domainId, int offset, int limit, String userName) {
-    if (StringUtils.isBlank(userName)) {
-      throw new IllegalArgumentException("user name must not be null");
-    }
-    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
-    if (listIdSpace.isEmpty()) {
-      return Collections.emptyList();
-    }
-    List<RuleEntity> challengeEntities = challengeStorage.findAllChallengesByUserByDomain(domainId,
-                                                                                          offset,
-                                                                                          limit,
-                                                                                          listIdSpace.stream()
-                                                                                                     .map(Long::parseLong)
-                                                                                                     .collect(Collectors.toList()));
-    return EntityMapper.fromChallengeEntities(challengeEntities);
-  }
-
-  @Override
-  public int countChallengesByUserAndDomain(long domainId, String userName) {
-    if (StringUtils.isBlank(userName)) {
-      throw new IllegalArgumentException("user name must not be null");
-    }
-    List<String> listIdSpace = spaceService.getMemberSpacesIds(userName, 0, -1);
-    if (listIdSpace.isEmpty()) {
-      return 0;
-    }
-    return challengeStorage.countAllChallengesByUserByDomain(domainId,
-                                                            listIdSpace.stream()
-                                                                       .map(Long::parseLong)
-                                                                       .collect(Collectors.toList()));
-  }
-
-  @Override
-  public void clearUserChallengeCache() {
-    challengeStorage.clearCache();
   }
 
   @Override
@@ -239,29 +182,45 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (endDate.after(currentDate) || endDate.equals(currentDate)) {
       throw new IllegalArgumentException("Challenge does not ended yet");
     }
-    challengeStorage.deleteChallenge(challenge);
+    challengeStorage.deleteChallenge(challengeId);
     try {
-      listenerService.broadcast(POST_DELETE_CHALLENGE_EVENT, this, challenge.getId());
+      listenerService.broadcast(POST_DELETE_CHALLENGE_EVENT, this, challengeId);
     } catch (Exception e) {
-      LOG.error("Unexpected error", e);
+      LOG.error("Error broadcasting chanllenge with id {} deletion event", challenge.getId(), e);
     }
   }
 
   @Override
-  public List<ChallengeSearchEntity> search(String term, Long domainId, int offset, int limit, String username) {
-    List<String> listIdSpace = spaceService.getMemberSpacesIds(username, 0, -1);
-    if (listIdSpace.isEmpty()) {
+  public List<Challenge> getChallengesByFilterAndUser(RuleFilter challengeFilter, int offset, int limit, String username) {
+    List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
+    if (spaceIds.isEmpty()) {
       return Collections.emptyList();
     }
-    return challengeSearchConnector.search(listIdSpace.stream().map(String::valueOf).collect(Collectors.toSet()),
-                                           term,
-                                           domainId,
-                                           offset,
-                                           limit);
+    setFilterAudience(challengeFilter, spaceIds);
+    return challengeStorage.findChallengesByFilter(challengeFilter, offset, limit);
   }
 
   @Override
-  public List<Challenge> getAllChallenges(int offset, int limit) {
-    return challengeStorage.getAllChallenges(offset, limit);
+  public int countChallengesByFilterAndUser(RuleFilter challengeFilter, String username) {
+    List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
+    if (spaceIds.isEmpty()) {
+      return 0;
+    }
+    setFilterAudience(challengeFilter, spaceIds);
+    return challengeStorage.countChallengesByFilter(challengeFilter);
+  }
+
+  @Override
+  public void clearUserChallengeCache() {
+    challengeStorage.clearCache();
+  }
+
+  @SuppressWarnings("unchecked")
+  private void setFilterAudience(RuleFilter challengeFilter, List<String> spaceIds) {
+    List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
+    if (CollectionUtils.isNotEmpty(challengeFilter.getSpaceIds())) {
+      userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, challengeFilter.getSpaceIds());
+    }
+    challengeFilter.setSpaceIds(userSpaceIds);
   }
 }

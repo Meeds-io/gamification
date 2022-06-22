@@ -37,7 +37,7 @@ public class ChallengeSearchConnectorTest extends AbstractServiceTest {
 
   String                           searchResult  = null;
 
-  private ChallengeSearchConnector challengeSearchConnector;
+  private RuleSearchConnector challengeSearchConnector;
 
   @Override
   @Before
@@ -53,7 +53,7 @@ public class ChallengeSearchConnectorTest extends AbstractServiceTest {
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving ES Query content", e);
     }
-    challengeSearchConnector = new ChallengeSearchConnector(configurationManager, client, getParams());
+    challengeSearchConnector = new RuleSearchConnector(configurationManager, client, getParams());
   }
 
   @Test

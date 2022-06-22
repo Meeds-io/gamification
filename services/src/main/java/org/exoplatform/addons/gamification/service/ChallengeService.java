@@ -1,10 +1,10 @@
 package org.exoplatform.addons.gamification.service;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-
 import java.util.List;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface ChallengeService {
 
@@ -24,8 +24,6 @@ public interface ChallengeService {
    *
    * @param challenge {@link Challenge} object to create
    * @return created {@link Challenge} with generated technical identifier
-   * @throws IllegalAccessException when user is not authorized to create a
-   *           challenge for the designated owner defined in object
    */
   Challenge createChallenge(Challenge challenge);
 
@@ -41,10 +39,19 @@ public interface ChallengeService {
   Challenge getChallengeById(long challengeId, String username) throws IllegalAccessException;
 
   /**
+   * Retrieves a challenge identified by its technical identifier.
+   *
+   * @param challengeId technical identifier of a challenge
+   * @return A {@link Challenge} object
+   */
+  Challenge getChallengeById(long challengeId);
+
+  /**
    * Updates an existing challenge
    *
-   * @param  challenge {@link Challenge} object to update
+   * @param challenge {@link Challenge} object to update
    * @param username User name updating challenge
+   * @return updated {@link Challenge}
    * @throws IllegalArgumentException when user is not authorized to update the
    *           challenge
    * @throws ObjectNotFoundException when the challenge identified by its
@@ -52,49 +59,8 @@ public interface ChallengeService {
    * @throws IllegalAccessException when user is not authorized to create a
    *           challenge for the designated owner defined in object
    */
-  Challenge updateChallenge(Challenge challenge, String username) throws  IllegalArgumentException, ObjectNotFoundException, IllegalAccessException;
-
-  /**
-   * Return a boolean that indicates if the current user can add a challenge or not
-   *
-   * @return if the user can add a challenge or not    */
-  boolean canAddChallenge();
-
-  /**
-   * Retrieves all challenges by user.
-   * @param offset Offset
-   * @param limit Limit
-   * @param username User name accessing challenges
-   * @return A {@link List <Challenge>} object
-   */
-  List<Challenge> getChallengesByUser(int offset, int limit, String username);
-
-  /**
-   * Retrieves all challenges by user and a selected domain identified by its
-   * technical id
-   * 
-   * @param domainId technical identifier
-   * @param offset index of the search
-   * @param limit limit of results to return
-   * @param username User name accessing challenges
-   * @return {@link List} of {@link Challenge}
-   */
-  List<Challenge> getChallengesByUserAndDomain(long domainId, int offset, int limit, String username);
-
-  /**
-   * Count all challenges by user and a selected domain identified by its
-   * technical id
-   * 
-   * @param domainId technical identifier
-   * @param username Username accessing challenges
-   * @return challenges count
-   */
-  int countChallengesByUserAndDomain(long domainId, String username);
-
-  /**
-   * clear challenges cache.
-   */
-  void clearUserChallengeCache();
+  Challenge updateChallenge(Challenge challenge,
+                            String username) throws IllegalArgumentException, ObjectNotFoundException, IllegalAccessException;
 
   /**
    * Retrieves all challenges by user.
@@ -104,38 +70,44 @@ public interface ChallengeService {
    * @throws IllegalAccessException when user is not authorized to delete
    *           challenges
    * @throws ObjectNotFoundException challenge not found
-   * @throws IllegalArgumentException when challenge has announcements or did not
+   * @throws IllegalArgumentException when challenge has announcements or did
+   *           not
    *           ended yet
    */
   void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
-   * Search news by term
+   * Return a boolean that indicates if the current user can add a challenge or
+   * not
    *
-   * @param term term
-   * @param domain
-   * @param offset Offset
-   * @param limit Limit
-   * @param username Username accessing challenge
-   * @throws IllegalAccessException when user is not authorized to delete
-   *           challenges
-   * @throws ObjectNotFoundException challenge not found
-   * @throws IllegalArgumentException when challenge has announcements or did not
-   *           ended yet
+   * @return if the user can add a challenge or not
    */
-  List<ChallengeSearchEntity> search(String term, Long domain, int offset, int limit, String username);
+  boolean canAddChallenge();
 
   /**
-   * Retrieves all challenges .
-   **/
-  List<Challenge> getAllChallenges(int offset, int limit);
+   * Retrieves all challenges by user.
+   * 
+   * @param challengeFilter {@link RuleFilter} used to filter challenges
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @param username User name accessing challenges
+   * @return A {@link List <Challenge>} object
+   */
+  List<Challenge> getChallengesByFilterAndUser(RuleFilter challengeFilter, int offset, int limit, String username);
 
   /**
-   * Retrieves a challenge identified by its technical identifier.
-   *
-   * @param challengeId technical identifier of a challenge
-   * @return A {@link Challenge} object
+   * Count all challenges by user and a selected domain identified by its
+   * technical id
+   * 
+   * @param challengeFilter {@link RuleFilter} used to filter challenges
+   * @param username Username accessing challenges
+   * @return challenges count
    */
-  Challenge getChallengeById(long challengeId);
+  int countChallengesByFilterAndUser(RuleFilter challengeFilter, String username);
+
+  /**
+   * clear challenges cache.
+   */
+  void clearUserChallengeCache();
 
 }

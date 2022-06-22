@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
@@ -204,5 +205,15 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     query.setMaxResults(limit);
     List<RuleEntity> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  public List<RuleEntity> findRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public int countRulesByFilter(RuleFilter ruleFilter) {
+    // TODO Auto-generated method stub
+    return 0;
   }
 }
