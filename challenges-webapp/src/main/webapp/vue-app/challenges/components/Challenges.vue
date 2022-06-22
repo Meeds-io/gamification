@@ -48,7 +48,6 @@ export default {
     canAddChallenge: false,
     loading: true,
     domainsWithChallenges: [],
-    challengePerPage: 12,
     announcementsPerChallenge: 2,
   }),
   computed: {
@@ -75,6 +74,14 @@ export default {
       });
       return domainsById;
     },
+    challengePerPage() {
+      return this.$vuetify.breakpoint.smAndDown ? 2 : this.$vuetify.breakpoint.lgAndUp ? 8 : 4;
+    }
+  },
+  watch: {
+    challengePerPage(newValue, oldValue){
+      console.warn('changed from ', oldValue, 'to', newValue);
+    }
   },
   created() {
     this.$challengesServices.canAddChallenge()

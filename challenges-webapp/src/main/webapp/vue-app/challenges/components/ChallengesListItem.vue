@@ -50,7 +50,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :challenge="challenge" />
           </v-col>
         </v-row>
-        <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
+        <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
           <v-btn
             :loading="loading"
             :disabled="loading"

@@ -103,7 +103,7 @@ public class RuleCachedStorage extends RuleStorage {
   @Override
   public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
     return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domainId, offset, limit),
-                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domainId + offset
+                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domainId + offset + limit
                                                            + Utils.getCurrentUser());
   }
 
