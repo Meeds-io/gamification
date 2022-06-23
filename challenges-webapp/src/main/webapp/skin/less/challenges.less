@@ -267,6 +267,30 @@
 .emptyChallenges {
   min-height: ~"calc(100vh - 100px)" ;
 }
+@media (max-width : @maxMobileWidth) {
+  .challenge-column {
+    width: 100%;
+    
+    }
+}
+@media (min-width : @minTabletWidth) and (max-width: @maxLargeTabletWidth) {
+  .challenge-column {
+    width: 50%;
+    
+    }
+}
+@media (min-width : @minDesktop) and (max-width: 1365px) {
+  .challenge-column {
+    width: 25%;
+    
+    }
+}
+@media (min-width : 1366px) {
+  .challenge-column {
+    width: 17%;
+    
+    }
+}
 .challenge-card {
   .cardOfChallenge {
     width: 95%;

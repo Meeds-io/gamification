@@ -75,12 +75,15 @@ export default {
       return domainsById;
     },
     challengePerPage() {
-      return this.$vuetify.breakpoint.smAndDown ? 2 : this.$vuetify.breakpoint.lgAndUp ? 8 : 4;
-    }
-  },
-  watch: {
-    challengePerPage(newValue, oldValue){
-      console.warn('changed from ', oldValue, 'to', newValue);
+      if (this.$vuetify.breakpoint.xs) {
+        return 2;
+      } else if (this.$vuetify.breakpoint.smAndDown) {
+        return 4;
+      } else if (this.$vuetify.breakpoint.lgAndDown) {
+        return 8;
+      } else {
+        return 12;
+      }
     }
   },
   created() {

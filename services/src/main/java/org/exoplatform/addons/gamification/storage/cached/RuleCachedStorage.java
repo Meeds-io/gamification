@@ -70,17 +70,20 @@ public class RuleCachedStorage extends RuleStorage {
 
   @Override
   public RuleDTO findRuleById(Long id) {
-    return (RuleDTO) this.ruleFutureCache.get(new CacheKey(RULE_ID_CONTEXT, id), id);
+    CacheKey key = new CacheKey(RULE_ID_CONTEXT, id);
+    return (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
   }
 
   @Override
   public RuleDTO findRuleByTitle(String title) {
-    return (RuleDTO) this.ruleFutureCache.get(new CacheKey(RULE_TITLE_CONTEXT, title), title);
+    CacheKey key = new CacheKey(RULE_TITLE_CONTEXT, title);
+    return (RuleDTO) this.ruleFutureCache.get(key, key.hashCode());
   }
 
   @Override
   public List<RuleDTO> findAllRules() {
-    return (List<RuleDTO>) this.ruleFutureCache.get(new CacheKey(ALL_RULE_CONTEXT, 0L), ALL_RULE_CONTEXT);
+    CacheKey key = new CacheKey(ALL_RULE_CONTEXT, 0L)
+    return (List<RuleDTO>) this.ruleFutureCache.get(key, key.hashCode());
   }
 
   @Override
@@ -96,15 +99,14 @@ public class RuleCachedStorage extends RuleStorage {
 
   @Override
   public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
-    return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_CONTEXT, ids, offset, limit),
-                                                       CHALLENGE_USER_CONTEXT + offset + Utils.getCurrentUser());
+    CacheKey key = new CacheKey(CHALLENGE_USER_CONTEXT, ids, offset, limit);
+    return (List<RuleEntity>) this.ruleFutureCache.get(key, key.hashCode());
   }
 
   @Override
   public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
-    return (List<RuleEntity>) this.ruleFutureCache.get(new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domainId, offset, limit),
-                                                       CHALLENGE_USER_DOMAIN_CONTEXT + domainId + offset + limit
-                                                           + Utils.getCurrentUser());
+    CacheKey key = new CacheKey(CHALLENGE_USER_DOMAIN_CONTEXT, ids, domainId, offset, limit);
+    return (List<RuleEntity>) this.ruleFutureCache.get(key, key.hashCode());
   }
 
   @Override
