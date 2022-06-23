@@ -29,8 +29,5 @@ extensionRegistry.registerExtension('ActivityFavoriteIcon', 'activity-favorite-i
   id: 'favorite-challenge',
   type: 'challenges-announcement',
   img: '/challenges/images/challengesAppIcon.png',
-  title: activity => {  
-    return activity.title;
-  }
 });
 
