@@ -3,12 +3,14 @@ package org.exoplatform.addons.gamification.storage.cached;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -84,9 +86,13 @@ public class RuleCachedStorage extends RuleStorage {
   }
 
   @Override
-  public List<RuleDTO> findRulesByFilter(RuleFilter challengeFilter, int offset, int limit) {
-    return (List<RuleDTO>) this.ruleFutureCache.get(new CacheKey(RULES_BY_FILTER_CONTEXT, challengeFilter, offset, limit),
-                                                    RULES_BY_FILTER_CONTEXT);
+  public List<RuleDTO> findRulesByFilter(RuleFilter filter, int offset, int limit) {
+    if(StringUtils.isBlank(filter.getTerm())) {
+      return (List<RuleDTO>) this.ruleFutureCache.get(new CacheKey(RULES_BY_FILTER_CONTEXT, filter, offset, limit),
+              RULES_BY_FILTER_CONTEXT + String.valueOf(filter.getDomainId()) + String.valueOf(offset) + Utils.getCurrentUser());
+    } else {
+      return super.findRulesByFilter(filter, offset, limit);
+    }
   }
 
   @Override

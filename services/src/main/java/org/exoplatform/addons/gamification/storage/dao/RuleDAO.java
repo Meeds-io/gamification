@@ -172,34 +172,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllChallengesByUser", RuleEntity.class);
-    query.setParameter("ids", ids);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
-    List<RuleEntity> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
-  }
-
-  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllChallengesByUserByDomain", RuleEntity.class);
-    query.setParameter("ids", ids);
-    query.setParameter("domainId", domainId);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
-    List<RuleEntity> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
-  }
-
-  public int countAllChallengesByUserByDomain(long domainId, List<Long> ids) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.countAllChallengesByUserByDomain", Long.class);
-    query.setParameter("ids", ids);
-    query.setParameter("domainId", domainId);
-    return query.getSingleResult().intValue();
-  }
-
-  public List<RuleEntity> findAllChallenges(int offset, int limit) {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllChallenges", RuleEntity.class);
+  public List<RuleEntity> findAllManuelRules(int offset, int limit) {
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllManuelRules", RuleEntity.class);
     query.setParameter("type", TypeRule.MANUAL);
     query.setFirstResult(offset);
     query.setMaxResults(limit);
@@ -207,13 +181,25 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<RuleEntity> findRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    // TODO Auto-generated method stub
-    return null;
+  public List<RuleEntity> findRulesByFilter(RuleFilter filter, int offset, int limit) {
+    TypedQuery<RuleEntity> query ;
+    if(filter.getDomainId() == 0) {
+      query = getEntityManager().createNamedQuery("Rule.findAllRulesByUser", RuleEntity.class);
+    } else {
+      query = getEntityManager().createNamedQuery("Rule.findAllRulesByUserByDomain", RuleEntity.class);
+      query.setParameter("domainId", filter.getDomainId());
+    }
+    query.setParameter("ids", filter.getSpaceIds());
+    query.setFirstResult(offset);
+    query.setMaxResults(limit);
+    List<RuleEntity> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public int countRulesByFilter(RuleFilter ruleFilter) {
-    // TODO Auto-generated method stub
-    return 0;
+  public int countRulesByFilter(RuleFilter filter) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.countAllRulesByUserByDomain", Long.class);
+    query.setParameter("ids", filter.getSpaceIds());
+    query.setParameter("domainId", filter.getDomainId());
+    return query.getSingleResult().intValue();
   }
 }

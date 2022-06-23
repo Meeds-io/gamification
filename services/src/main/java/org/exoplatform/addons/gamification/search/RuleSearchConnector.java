@@ -17,15 +17,14 @@ package org.exoplatform.addons.gamification.search;
 
 import java.io.InputStream;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -56,9 +55,7 @@ public class RuleSearchConnector {
 
   private String                       searchQuery;
 
-  public RuleSearchConnector(ConfigurationManager configurationManager,
-                             ElasticSearchingClient client,
-                             InitParams initParams) {
+  public RuleSearchConnector(ConfigurationManager configurationManager, ElasticSearchingClient client, InitParams initParams) {
     this.configurationManager = configurationManager;
     this.client = client;
 
@@ -74,26 +71,50 @@ public class RuleSearchConnector {
     }
   }
 
-  public List<RuleDTO> search(Set<String> spaceList, String term, long domainId, long offset, long limit) {
+  public List<RuleDTO> search(RuleFilter filter, long offset, long limit) {
     if (offset < 0) {
       throw new IllegalArgumentException("Offset must be positive");
     }
     if (limit < 0) {
       throw new IllegalArgumentException("Limit must be positive");
     }
-    if (StringUtils.isBlank(term)) {
+    if (StringUtils.isBlank(filter.getTerm())) {
       throw new IllegalArgumentException("Filter term is mandatory");
     }
-    if (spaceList.isEmpty()) {
-      throw new IllegalArgumentException("User identity id must be positive");
+    if (filter.getSpaceIds().isEmpty()) {
+      throw new IllegalArgumentException("Filter spaceIds is mandatory");
     }
-    String esQuery = buildQueryStatement(spaceList, term, domainId, offset, limit);
+    if (filter.getDomainId() == 0 ) {
+      throw new IllegalArgumentException("filter domain id must be positive");
+    }
+    String esQuery = buildQueryStatement(filter, offset, limit);
     String jsonResponse = this.client.sendRequest(esQuery, this.index);
-    return buildResult(jsonResponse);
+    return buildSearchResult(jsonResponse);
   }
 
-  private String buildQueryStatement(Set<String> spaceList, String term, long domainId, long offset, long limit) {
-    term = removeSpecialCharacters(term);
+  public int count(RuleFilter filter, long offset, long limit) {
+    if (offset < 0) {
+      throw new IllegalArgumentException("Offset must be positive");
+    }
+    if (limit < 0) {
+      throw new IllegalArgumentException("Limit must be positive");
+    }
+    if (StringUtils.isBlank(filter.getTerm())) {
+      throw new IllegalArgumentException("Filter term is mandatory");
+    }
+    if (filter.getSpaceIds().isEmpty()) {
+      throw new IllegalArgumentException("Filter spaceIds is mandatory");
+    }
+    if (filter.getDomainId() == 0 ) {
+      throw new IllegalArgumentException("filter domain id must be positive");
+    }
+    String esQuery = buildQueryStatement(filter, offset, limit);
+    String jsonResponse = this.client.sendRequest(esQuery, this.index);
+    return buildCountResult(jsonResponse);
+  }
+
+  private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
+    String term = removeSpecialCharacters(filter.getTerm());
     List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
       word = word.trim();
       if (word.length() > 5) {
@@ -102,15 +123,15 @@ public class RuleSearchConnector {
       return word;
     }).collect(Collectors.toList());
     String termQuery = StringUtils.join(termsQuery, " AND ");
-    return retrieveSearchQuery().replace("@domainId@", String.valueOf(domainId))
+    return retrieveSearchQuery().replace("@domainId@", String.valueOf(filter.getDomainId()))
                                 .replace("@term_query@", termQuery)
-                                .replace("@spaceList@", StringUtils.join(spaceList, ","))
+                                .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
                                 .replace("@offset@", String.valueOf(offset))
                                 .replace("@limit@", String.valueOf(limit));
   }
 
   @SuppressWarnings("rawtypes")
-  private List<RuleDTO> buildResult(String jsonResponse) {
+  private List<RuleDTO> buildSearchResult(String jsonResponse) {
     LOG.debug("Search Query response from ES : {} ", jsonResponse);
 
     List<RuleDTO> results = new ArrayList<>();
@@ -132,37 +153,71 @@ public class RuleSearchConnector {
     JSONArray jsonHits = (JSONArray) jsonResult.get("hits");
     for (Object jsonHit : jsonHits) {
       try {
-        RuleDTO ruleDTO = new RuleDTO();
+        RuleDTO rule = new RuleDTO();
 
         JSONObject jsonHitObject = (JSONObject) jsonHit;
         JSONObject hitSource = (JSONObject) jsonHitObject.get("_source");
         long id = parseLong(hitSource, "id");
         String title = (String) hitSource.get("title");
         String description = (String) hitSource.get("description");
-        String managers = (String) hitSource.get("managers");
+        int score = parseLong(hitSource, "score").intValue();
+        String area = (String) hitSource.get("area");
+        Long domainId = parseLong(hitSource, "domainId");
+        boolean enabled = Boolean.valueOf(String.valueOf(hitSource.get("enabled")));
+        boolean deleted = Boolean.valueOf(String.valueOf(hitSource.get("deleted")));
+        String createdBy = (String) hitSource.get("createdBy");
+        String createdDate = (String) hitSource.get("createdDate");
+        String lastModifiedDate = (String) hitSource.get("lastModifiedDate");
+        String lastModifiedBy = (String) hitSource.get("lastModifiedBy");
+        String event = (String) hitSource.get("event");
         long audience = parseLong(hitSource, "audience");
         String startDate = (String) hitSource.get("startDate");
         String endDate = (String) hitSource.get("endDate");
-        Long program = parseLong(hitSource, "domainId");
-        int score = parseLong(hitSource, "score").intValue();
+        String type = (String) hitSource.get("type");
+        String managers = (String) hitSource.get("managers");
 
-        // TODO
-        // ruleDTO.setId(id);
-        // ruleDTO.setTitle(title);
-        // ruleDTO.setDescription(description);
-        // ruleDTO.setAudience(audience);
-        // ruleDTO.setEndDate(endDate);
-        // ruleDTO.setStartDate(startDate);
-        // ruleDTO.setDomainDTO(program);
-        // ruleDTO.setScore(score);
-        // ruleDTO.setManagers(getManagersList(managers));
+        rule.setId(id);
+        rule.setTitle(title);
+        rule.setDescription(description);
+        rule.setEvent(event);
+        rule.setDomainDTO(Utils.getDomainById(domainId));
+        rule.setScore(score);
+        rule.setArea(area);
+        rule.setEnabled(enabled);
+        rule.setDeleted(deleted);
+        rule.setAudience(audience);
+        rule.setEndDate(endDate);
+        rule.setStartDate(startDate);
+        rule.setType(TypeRule.valueOf(type));
+        rule.setManagers(getManagersList(managers));
+        rule.setCreatedBy(createdBy);
+        rule.setCreatedDate(createdDate);
+        rule.setLastModifiedBy(lastModifiedBy);
+        rule.setLastModifiedDate(lastModifiedDate);
 
-        results.add(ruleDTO);
+        results.add(rule);
       } catch (Exception e) {
         LOG.warn("Error processing challenge search result item, ignore it from results", e);
       }
     }
     return results;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private int buildCountResult(String jsonResponse) {
+    Map json = null;
+    JSONParser parser = new JSONParser();
+    try {
+      json = (Map) parser.parse(jsonResponse);
+    } catch (ParseException e) {
+      throw new ElasticSearchException("Unable to parse JSON response", e);
+    }
+    JSONObject jsonResult = (JSONObject) json.get("hits");
+    if (jsonResult == null) {
+      return 0;
+    }
+    JSONObject total = (JSONObject) jsonResult.get("total");
+    return (int) total.get("value");
   }
 
   private Long parseLong(JSONObject hitSource, String key) {

@@ -1,0 +1,78 @@
+{
+  "properties": {
+    "id": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "index_options": "offsets",
+      "fields": {
+        "raw": {
+          "type": "keyword"
+        },
+        "whitespace": {
+          "type": "text",
+          "analyzer": "whitespace_lowercase_asciifolding"
+        }
+      }
+    },
+    "description": {
+      "type": "text",
+      "index_options": "offsets",
+      "fields": {
+        "raw": {
+          "type": "keyword"
+        },
+        "whitespace": {
+          "type": "text",
+          "analyzer": "whitespace_lowercase_asciifolding"
+        }
+      }
+    },
+    "audience": {
+      "type": "long"
+    },
+    "score": {
+      "type": "long"
+    },
+    "startDate": {
+      "type": "text"
+    },
+    "endDate": {
+      "type": "text"
+    },
+    "managers": {
+      "type": "text"
+    },
+    "domainId": {
+      "type": "long"
+    },
+    "area": {
+      "type": "long"
+    },
+    "event": {
+      "type": "long"
+    },
+    "enabled": {
+      "type": "text"
+    },
+    "deleted": {
+      "type": "text"
+    },
+    "createdBy": {
+      "type": "text"
+    },
+    "createdDate": {
+      "type": "text"
+    },
+    "lastModifiedDate": {
+      "type": "text"
+    },
+    "lastModifiedBy": {
+      "type": "text"
+    },
+    "type": {
+      "type": "text"
+    }
+  }
+}

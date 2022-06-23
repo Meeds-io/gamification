@@ -54,11 +54,11 @@ public class Utils {
 
   private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
 
-  public static final String            POST_CREATE_CHALLENGE_EVENT = "challenge.created";
+  public static final String            POST_CREATE_RULE_EVENT      = "rule.created";
 
-  public static final String            POST_UPDATE_CHALLENGE_EVENT = "challenge.updated";
+  public static final String            POST_UPDATE_RULE_EVENT      = "rule.updated";
 
-  public static final String            POST_DELETE_CHALLENGE_EVENT = "challenge.deleted";
+  public static final String            POST_DELETE_RULE_EVENT      = "rule.deleted";
 
   private static GamificationService    gamificationService;
 

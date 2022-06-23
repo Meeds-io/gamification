@@ -24,12 +24,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.EntityBuilder;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainWithChallengesRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -43,7 +38,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@Path("/gamification/challenge/api")
+@Path("/gamification/challenges")
 @Api(value = "/challenge/api", description = "Manages challenge associated to users") // NOSONAR
 @RolesAllowed("users")
 public class ChallengeRest implements ResourceContainer {
@@ -225,18 +220,29 @@ public class ChallengeRest implements ResourceContainer {
                                              defaultValue = "0"
                                          )
                                          @QueryParam("announcements")
-                                         int announcementsPerChallenge) {
+                                         int announcementsPerChallenge,
+                                         @ApiParam(
+                                             value = "Number of announcements per challenge",
+                                             required = false,
+                                             defaultValue = "0"
+                                         )
+                                         @QueryParam("term")
+                                         String term) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
     if (limit <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
+    RuleFilter filter = new RuleFilter();
+    filter.setTerm(term);
+    filter.setDomainId(domainId);
     String currentUser = Utils.getCurrentUser();
+
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {
-        List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(domainId,
+        List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
                                                                                     currentUser,
                                                                                     offset,
                                                                                     limit,
@@ -249,7 +255,7 @@ public class ChallengeRest implements ResourceContainer {
         List<DomainWithChallengesRestEntity> domainsWithChallenges = domains.stream().map(domain -> {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
           try {
-            List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(domain.getId(),
+            List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
                                                                                         currentUser,
                                                                                         offset,
                                                                                         limit,
@@ -258,7 +264,7 @@ public class ChallengeRest implements ResourceContainer {
             domainWithChallenge.setChallenges(challengeRestEntities);
             domainWithChallenge.setChallengesOffset(offset);
             domainWithChallenge.setChallengesLimit(limit);
-            int size = challengeService.countChallengesByUserAndDomain(domain.getId(), currentUser);
+            int size = challengeService.countChallengesByFilterAndUser(filter, currentUser);
             domainWithChallenge.setChallengesSize(size);
           } catch (IllegalAccessException | ObjectNotFoundException e) {
             LOG.debug("Error retrieving challenges of domain {} for user {}", domain.getTitle(), currentUser, e);
@@ -267,7 +273,7 @@ public class ChallengeRest implements ResourceContainer {
         }).collect(Collectors.toList());
         return Response.ok(domainsWithChallenges).build();
       } else {
-        List<Challenge> challenges = challengeService.getChallengesByUser(offset, limit, currentUser);
+        List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
         List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
         LOG.info("start mapping challenges");
         for (Challenge challenge : challenges) {
@@ -354,14 +360,14 @@ public class ChallengeRest implements ResourceContainer {
     }
   }
 
-  private List<ChallengeRestEntity> getUserChallengesByDomain(long domainId,
+  private List<ChallengeRestEntity> getUserChallengesByDomain(RuleFilter filter,
                                                               String currentUser,
                                                               int offset,
                                                               int limit,
                                                               int announcementsPerChallenge,
                                                               boolean noDomain) throws IllegalAccessException,
                                                                                 ObjectNotFoundException {
-    List<Challenge> challenges = challengeService.getChallengesByUserAndDomain(domainId, offset, limit, currentUser);
+    List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
     List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
     LOG.info("start mapping challenges");
     for (Challenge challenge : challenges) {

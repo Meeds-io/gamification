@@ -1,4 +1,4 @@
-package org.exoplatform.addons.gamification.listener.challenges;
+package org.exoplatform.addons.gamification.listener.es;
 
 import org.exoplatform.addons.gamification.connector.ChallengesIndexingServiceConnector;
 import org.exoplatform.addons.gamification.service.ChallengeService;
@@ -13,15 +13,15 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-public class ChallengesESListener extends Listener<ChallengeService, Long> {
-  private static final Log      LOG = ExoLogger.getLogger(ChallengesESListener.class);
+public class RulesESListener extends Listener<ChallengeService, Long> {
+  private static final Log      LOG = ExoLogger.getLogger(RulesESListener.class);
 
   private final PortalContainer container;
 
   private final IndexingService indexingService;
 
 
-  public ChallengesESListener(PortalContainer container, IndexingService indexingService) {
+  public RulesESListener(PortalContainer container, IndexingService indexingService) {
     this.container = container;
     this.indexingService = indexingService;
   }
@@ -35,18 +35,18 @@ public class ChallengesESListener extends Listener<ChallengeService, Long> {
     Long challengeId = event.getData();
     try {
       if (indexingService != null) {
-        if (!Utils.POST_DELETE_CHALLENGE_EVENT.equals(event.getEventName())) {
+        if (!Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName())) {
           Challenge challenge = challengeService.getChallengeById(challengeId, Utils.getCurrentUser());
           if (challenge == null) {
             return;
           }
         }
-        if (Utils.POST_CREATE_CHALLENGE_EVENT.equals(event.getEventName())) {
-          reindexChallenge(challengeId, "create challenge");
-        } else if (Utils.POST_UPDATE_CHALLENGE_EVENT.equals(event.getEventName())) {
-          reindexChallenge(challengeId, "update challenge");
-        } else if (Utils.POST_DELETE_CHALLENGE_EVENT.equals(event.getEventName())) {
-          unindexChallenge(challengeId, "delete challenge");
+        if (Utils.POST_CREATE_RULE_EVENT.equals(event.getEventName())) {
+          reindexChallenge(challengeId, "create rule");
+        } else if (Utils.POST_UPDATE_RULE_EVENT.equals(event.getEventName())) {
+          reindexChallenge(challengeId, "update rule");
+        } else if (Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName())) {
+          unindexChallenge(challengeId, "delete rule");
         }
       }
     } finally {

@@ -27,7 +27,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -89,23 +88,6 @@ public class EntityBuilder {
                                    noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
   }
 
-  public static ChallengeRestEntity fromChallengeSearchEntity(AnnouncementService announcementService,
-                                                              ChallengeSearchEntity challengeSearchEntity,
-                                                              int announcementsPerChallenge,
-                                                              boolean noDomain) throws IllegalAccessException,
-                                                                                ObjectNotFoundException {
-    if (challengeSearchEntity == null) {
-      return null;
-    }
-    List<Announcement> challengeAnnouncements = null;
-    if (announcementsPerChallenge > 0) {
-      challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challengeSearchEntity.getId(),
-                                                                                  0,
-                                                                                  announcementsPerChallenge);
-    } else {
-      challengeAnnouncements = Collections.emptyList();
-    }
-    return fromChallengeSearchEntity(challengeSearchEntity, challengeAnnouncements, noDomain);
-  }
+
 
 }

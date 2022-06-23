@@ -1,6 +1,5 @@
 package org.exoplatform.addons.gamification.storage;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,8 +61,7 @@ public class RuleStorage {
       List<RuleEntity> ruleEntities = ruleDAO.findRulesByFilter(ruleFilter, offset, limit);
       return ruleEntities.stream().map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
     } else {
-      // TODO use ruleSearchConnector
-      return Collections.emptyList();
+     return  ruleSearchConnector.search(ruleFilter, offset, limit);
     }
   }
 
@@ -71,8 +69,7 @@ public class RuleStorage {
     if (StringUtils.isBlank(ruleFilter.getTerm())) {
       return ruleDAO.countRulesByFilter(ruleFilter);
     } else {
-      // TODO use ruleSearchConnector
-      return 0;
+      return  ruleSearchConnector.count(ruleFilter, 0, 10);
     }
   }
 

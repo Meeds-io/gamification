@@ -1,8 +1,8 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_CHALLENGE_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.POST_DELETE_CHALLENGE_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_CHALLENGE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -82,7 +82,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
-      listenerService.broadcast(POST_CREATE_CHALLENGE_EVENT, this, challenge.getId());
+      listenerService.broadcast(POST_CREATE_RULE_EVENT, this, challenge.getId());
     } catch (Exception e) {
       LOG.error("Error broadcasting chanllenge with id {} creation event", challenge.getId(), e);
     }
@@ -146,7 +146,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
-      listenerService.broadcast(POST_UPDATE_CHALLENGE_EVENT, this, challenge.getId());
+      listenerService.broadcast(POST_UPDATE_RULE_EVENT, this, challenge.getId());
     } catch (Exception e) {
       LOG.error("Error broadcasting chanllenge with id {} update event", challenge.getId(), e);
     }
@@ -184,7 +184,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challengeStorage.deleteChallenge(challengeId);
     try {
-      listenerService.broadcast(POST_DELETE_CHALLENGE_EVENT, this, challengeId);
+      listenerService.broadcast(POST_DELETE_RULE_EVENT, this, challengeId);
     } catch (Exception e) {
       LOG.error("Error broadcasting chanllenge with id {} deletion event", challenge.getId(), e);
     }
