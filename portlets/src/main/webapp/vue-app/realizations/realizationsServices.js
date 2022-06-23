@@ -28,7 +28,7 @@ export function updateRealization( id, status, actionLabel, domain ,points) {
   });
 }
 
-export function getReport(fromDate, toDate) {
+export function exportFile(fromDate, toDate) {
   window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/getExport?fromDate=${fromDate}&toDate=${toDate}`, '_blank');
 }
 
