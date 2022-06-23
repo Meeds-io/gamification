@@ -1,9 +1,17 @@
 package org.exoplatform.addons.gamification.search;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
 import org.exoplatform.container.configuration.ConfigurationManager;
@@ -14,30 +22,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.io.ByteArrayInputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+public class RuleSearchConnectorTest extends AbstractServiceTest {
 
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+  private static final String    ES_INDEX      = "challenges_alias";
 
-public class ChallengeSearchConnectorTest extends AbstractServiceTest {
+  public static final String     FAKE_ES_QUERY = "{offset: @offset@, limit: @limit@, term1: @term@, term2: @term@}";
 
-  private static final String      ES_INDEX      = "challenges_alias";
+  private ConfigurationManager   configurationManager;
 
-  public static final String       FAKE_ES_QUERY = "{offset: @offset@, limit: @limit@, term1: @term@, term2: @term@}";
+  private ElasticSearchingClient client;
 
-  private ConfigurationManager     configurationManager;
+  private String                 searchResult  = null;
 
-  private ElasticSearchingClient   client;
-
-  String                           searchResult  = null;
-
-  private RuleSearchConnector challengeSearchConnector;
+  private RuleSearchConnector    challengeSearchConnector;
 
   @Override
   @Before
@@ -65,7 +62,7 @@ public class ChallengeSearchConnectorTest extends AbstractServiceTest {
     assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, term, 1l, -1, 10));
     assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, term, 1l, 1, -10));
     assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpaceEmpty, term, 1l, 1, 10));
-    assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, "", 1l,  -1, 10));
+    assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, "", 1l, -1, 10));
 
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
     String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "10");
@@ -73,7 +70,7 @@ public class ChallengeSearchConnectorTest extends AbstractServiceTest {
     when(client.sendRequest(expectedESQuery, ES_INDEX)).thenReturn(searchResult);
     when(client.sendRequest(unexpectedESQuery, ES_INDEX)).thenReturn("{}");
 
-    List<ChallengeSearchEntity> challenges = challengeSearchConnector.search(listIdSpace,"test", 1l, 0, 10);
+    List<ChallengeSearchEntity> challenges = challengeSearchConnector.search(listIdSpace, "test", 1l, 0, 10);
     assertNotNull(challenges);
     assertEquals(0, challenges.size());
 

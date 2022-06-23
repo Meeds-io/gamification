@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.EntityBuilder;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -31,6 +30,7 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -311,7 +311,8 @@ public class ChallengeRest implements ResourceContainer {
   )
   public Response canAddChallenge() {
     try {
-      return Response.ok(String.valueOf(challengeService.canAddChallenge())).build();
+      boolean canAddChallenge = challengeService.canAddChallenge(ConversationState.getCurrent().getIdentity());
+      return Response.ok(String.valueOf(canAddChallenge)).build();
     } catch (Exception e) {
       LOG.error("Error when checking if the authenticated user can add a challenge", e);
       return Response.serverError().build();

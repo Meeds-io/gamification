@@ -59,15 +59,12 @@ public interface RuleService {
     RuleDTO findRuleByEventAndDomain (String ruleTitle, String domain) throws IllegalArgumentException;
 
     /**
-     * Get all Automatic Rules from DB
-     * @return RuleDTO list
-     */
-    List<RuleDTO> getAllAutomaticRules() ;
-
-    /**
      * Get all Rules from DB
      * @return RuleDTO list
+     * @deprecated use methods with pagination instead to avoid performance and memory issues
+     * @since Meeds 1.4.0
      */
+    @Deprecated(since = "Meeds 1.4.0", forRemoval = true)
     List<RuleDTO> findAllRules() ;
 
     /**

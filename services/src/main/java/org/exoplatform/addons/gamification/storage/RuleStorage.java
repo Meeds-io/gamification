@@ -73,10 +73,6 @@ public class RuleStorage {
     }
   }
 
-  public List<RuleDTO> getAllAutomaticRules() {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllAutomaticRules());
-  }
-
   public List<RuleDTO> findAllRules() {
     return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRules());
   }

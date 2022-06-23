@@ -108,7 +108,7 @@ public class RuleSearchConnector {
     if (filter.getDomainId() == 0 ) {
       throw new IllegalArgumentException("filter domain id must be positive");
     }
-    String esQuery = buildQueryStatement(filter, offset, limit);
+    String esQuery = buildQueryStatement(filter, 0, 0);
     String jsonResponse = this.client.sendRequest(esQuery, this.index);
     return buildCountResult(jsonResponse);
   }

@@ -1,16 +1,15 @@
 package org.exoplatform.addons.gamification.storage.cached;
 
+import java.io.Serializable;
+
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
-import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
-
-import java.io.Serializable;
 
 public class AnnouncementCachedStorage extends AnnouncementStorage {
 
@@ -21,9 +20,9 @@ public class AnnouncementCachedStorage extends AnnouncementStorage {
   private FutureExoCache<Serializable, Object, Integer> announcementFutureCache;
 
   public AnnouncementCachedStorage(GamificationHistoryDAO gamificationHistoryDAO,
-                                   ChallengeStorage challengeStorage,
+                                   RuleDAO ruleDAO,
                                    CacheService cacheService) {
-    super(gamificationHistoryDAO, challengeStorage);
+    super(gamificationHistoryDAO, ruleDAO);
 
     ExoCache<Serializable, Object> domainCache = cacheService.getCacheInstance(ANNOUNCEMENT_CACHE_NAME);
     Loader<Serializable, Object, Integer> domainLoader = new Loader<Serializable, Object, Integer>() {

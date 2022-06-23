@@ -1,18 +1,14 @@
 package org.exoplatform.addons.gamification.storage;
 
-import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.utils.Utils;
-
 import java.util.Date;
 import java.util.List;
+
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 
 public class AnnouncementStorage {
 
@@ -20,39 +16,26 @@ public class AnnouncementStorage {
 
   private GamificationHistoryDAO announcementDAO;
 
-  private ChallengeStorage       challengeStorage;
+  private RuleDAO                ruleDAO;
 
-  public AnnouncementStorage(GamificationHistoryDAO announcementDAO, ChallengeStorage challengeStorage) {
+  public AnnouncementStorage(GamificationHistoryDAO announcementDAO, RuleDAO ruleDAO) {
     this.announcementDAO = announcementDAO;
-    this.challengeStorage = challengeStorage;
+    this.ruleDAO = ruleDAO;
   }
 
   public Announcement saveAnnouncement(Announcement announcement) {
     if (announcement == null) {
       throw new IllegalArgumentException("Announcement argument is null");
     }
-    Challenge challenge = challengeStorage.getChallengeById(announcement.getChallengeId());
-    RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
-    GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement);
-    Date nextToEndDate = new Date(challengeEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
-
+    RuleEntity ruleEntity = ruleDAO.find(announcement.getChallengeId());
+    GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement, ruleEntity);
+    Date nextToEndDate = new Date(ruleEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
     if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
       throw new IllegalArgumentException("announcement is not allowed when challenge is ended ");
     }
-    if (!announcementEntity.getCreatedDate().after(challengeEntity.getStartDate())) {
+    if (!announcementEntity.getCreatedDate().after(ruleEntity.getStartDate())) {
       throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
     }
-    DomainEntity domainEntity = DomainMapper.domainDTOToDomain(Utils.getEnabledDomainByTitle(challenge.getProgram()));
-    if (domainEntity == null) {
-      throw new IllegalArgumentException("announcement program is disabled or not not found");
-    }
-    announcementEntity.setEarnerType(IdentityType.USER);
-    announcementEntity.setActionTitle(challengeEntity.getTitle());
-    announcementEntity.setActionScore(challengeEntity.getScore());
-    announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
-    announcementEntity.setDomainEntity(domainEntity);
-    announcementEntity.setDomain(domainEntity.getTitle());
-    announcementEntity.setObjectId("");
     if (announcementEntity.getId() == null) {
       announcementEntity = announcementDAO.create(announcementEntity);
     } else {

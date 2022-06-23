@@ -57,10 +57,6 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.findRuleByEventAndDomain(ruleTitle, domain);
   }
 
-  public List<RuleDTO> getAllAutomaticRules() {
-    return ruleStorage.getAllAutomaticRules();
-  }
-
   public List<RuleDTO> findAllRules() {
     return ruleStorage.findAllRules();
   }
@@ -74,7 +70,6 @@ public class RuleServiceImpl implements RuleService {
       throw new IllegalArgumentException("rule domain is mandatory");
     }
     return ruleStorage.getAllRulesByDomain(domain);
-
   }
 
   public List<RuleDTO> getAllRulesWithNullDomain() {

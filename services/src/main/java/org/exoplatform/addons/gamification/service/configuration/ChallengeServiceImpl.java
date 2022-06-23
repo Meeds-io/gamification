@@ -63,23 +63,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge.getId() != 0) {
       throw new IllegalArgumentException("challenge id must be equal to 0");
     }
-    Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
-    if (identity == null) {
-      throw new IllegalArgumentException("identity is not exist");
-    }
-    String idSpace = String.valueOf(challenge.getAudience());
-    if (StringUtils.isBlank(idSpace)) {
-      throw new IllegalArgumentException("space id must not be null or empty");
-    }
-    Date startDate = Utils.parseSimpleDate(challenge.getStartDate());
-    Date endDate = Utils.parseSimpleDate(challenge.getEndDate());
-    if (startDate != null && endDate != null && endDate.compareTo(startDate) <= 0) {
-      throw new IllegalArgumentException("endDate must be greater than startDate");
-    }
-    Space space = spaceService.getSpaceById(idSpace);
-    if (!spaceService.isManager(space, username)) {
-      throw new IllegalAccessException("user is not allowed to create challenge");
-    }
+    checkChallengePermissionAndDates(challenge, username);
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
       listenerService.broadcast(POST_CREATE_RULE_EVENT, this, challenge.getId());
@@ -129,14 +113,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge.getId() == 0) {
       throw new IllegalArgumentException("challenge id must not be equal to 0");
     }
-    String idSpace = String.valueOf(challenge.getAudience());
-    if (StringUtils.isBlank(idSpace)) {
-      throw new IllegalArgumentException("space id must not be null or empty");
-    }
-    Space space = spaceService.getSpaceById(idSpace);
-    if (!spaceService.isManager(space, username)) {
-      throw new IllegalAccessException("user is not allowed to modify challenge");
-    }
+    checkChallengePermissionAndDates(challenge, username);
     Challenge oldChallenge = challengeStorage.getChallengeById(challenge.getId());
     if (oldChallenge == null) {
       throw new ObjectNotFoundException("challenge is not exist");
@@ -154,9 +131,9 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public boolean canAddChallenge() {
+  public boolean canAddChallenge(org.exoplatform.services.security.Identity identity) {
     if (groupOfCreators != null) {
-      return ConversationState.getCurrent().getIdentity().isMemberOf(groupOfCreators);
+      return identity.isMemberOf(groupOfCreators);
     }
     return false;
   }
@@ -170,8 +147,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge == null) {
       throw new ObjectNotFoundException("challenge is not exist");
     }
-    if (!Utils.canEditChallenge(challenge.getManagers(), String.valueOf(challenge.getAudience()))) {
-      throw new IllegalAccessException("your are not able to delete challenge");
+    if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
+      throw new IllegalAccessException("User is not allowed to delete challenge with id " + challenge.getId());
     }
     if (Utils.countAnnouncementsByChallenge(challengeId) > 0) {
       throw new IllegalArgumentException("challenge already have announcements");
@@ -222,5 +199,16 @@ public class ChallengeServiceImpl implements ChallengeService {
       userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, challengeFilter.getSpaceIds());
     }
     challengeFilter.setSpaceIds(userSpaceIds);
+  }
+
+  private void checkChallengePermissionAndDates(Challenge challenge, String username) throws IllegalAccessException {
+    if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
+      throw new IllegalAccessException("User is not allowed to create challenge with id " + challenge.getId());
+    }
+    Date startDate = Utils.parseSimpleDate(challenge.getStartDate());
+    Date endDate = Utils.parseSimpleDate(challenge.getEndDate());
+    if (startDate != null && endDate != null && endDate.compareTo(startDate) <= 0) {
+      throw new IllegalStateException("endDate must be greater than startDate");
+    }
   }
 }

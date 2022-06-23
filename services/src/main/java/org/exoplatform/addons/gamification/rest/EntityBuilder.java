@@ -15,14 +15,14 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package org.exoplatform.addons.gamification.service;
+package org.exoplatform.addons.gamification.rest;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -87,7 +87,5 @@ public class EntityBuilder {
                                    challenge.getPoints(),
                                    noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
   }
-
-
 
 }

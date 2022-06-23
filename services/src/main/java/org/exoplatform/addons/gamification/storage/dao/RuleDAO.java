@@ -8,14 +8,26 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
@@ -24,20 +36,19 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
-import javax.persistence.TypedQuery;
-import java.util.Collections;
-import java.util.List;
-
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
-  private static final Log LOG = ExoLogger.getLogger(RuleDAO.class);
+  private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAll";
+
+  private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAll";
+
+  private static final Log     LOG                       = ExoLogger.getLogger(RuleDAO.class);
+
+  private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
   public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
-
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
-            .setParameter("ruleTitle", ruleTitle);
+                                                     .setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
@@ -49,22 +60,18 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
-
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
-            .setParameter("event", event);
+                                                     .setParameter("event", event);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
       return Collections.emptyList();
     }
-
   }
 
   public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
-
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class);
-
     query.setParameter("ruleTitle", ruleTitle);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
@@ -77,27 +84,15 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   public RuleEntity findRuleByEventAndDomain(String event, String domain) throws PersistenceException {
-
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
-            .setParameter("event", event)
-            .setParameter("domain", domain);
+                                                     .setParameter("event", event)
+                                                     .setParameter("domain", domain);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
       return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
     } catch (NoResultException e) {
       return null;
-    }
-
-  }
-
-  public List<RuleEntity> getAllAutomaticRules() throws PersistenceException {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllAutomaticRules", RuleEntity.class);
-    query.setParameter("type", TypeRule.AUTOMATIC);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
     }
 
   }
@@ -109,27 +104,24 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     } catch (NoResultException e) {
       return Collections.emptyList();
     }
-
   }
 
   public List<RuleEntity> getActiveRules() {
-
     try {
       TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
-              .setParameter("isEnabled", true);
+                                                       .setParameter("isEnabled", true);
       query.setParameter("type", TypeRule.AUTOMATIC);
       return query.getResultList();
     } catch (PersistenceException e) {
       LOG.error("Error : Unable to fetch active rules", e);
       return Collections.emptyList();
     }
-
   }
 
   public List<RuleEntity> getAllRulesByDomain(String domain) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
-            .setParameter("domain", domain);
+                                                     .setParameter("domain", domain);
     query.setParameter("type", TypeRule.AUTOMATIC);
     try {
       return query.getResultList();
@@ -172,34 +164,78 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<RuleEntity> findAllManuelRules(int offset, int limit) {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findAllManuelRules", RuleEntity.class);
-    query.setParameter("type", TypeRule.MANUAL);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
-    List<RuleEntity> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
-  }
-
   public List<RuleEntity> findRulesByFilter(RuleFilter filter, int offset, int limit) {
-    TypedQuery<RuleEntity> query ;
-    if(filter.getDomainId() == 0) {
-      query = getEntityManager().createNamedQuery("Rule.findAllRulesByUser", RuleEntity.class);
-    } else {
-      query = getEntityManager().createNamedQuery("Rule.findAllRulesByUserByDomain", RuleEntity.class);
-      query.setParameter("domainId", filter.getDomainId());
-    }
-    query.setParameter("ids", filter.getSpaceIds());
+    TypedQuery<RuleEntity> query = buildQueryFromFilter(filter, RuleEntity.class, false);
     query.setFirstResult(offset);
     query.setMaxResults(limit);
-    List<RuleEntity> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
+    return query.getResultList();
   }
 
   public int countRulesByFilter(RuleFilter filter) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.countAllRulesByUserByDomain", Long.class);
-    query.setParameter("ids", filter.getSpaceIds());
-    query.setParameter("domainId", filter.getDomainId());
+    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
     return query.getSingleResult().intValue();
+  }
+
+  private <T> TypedQuery<T> buildQueryFromFilter(RuleFilter filter, Class<T> clazz, boolean count) {
+    List<String> suffixes = new ArrayList<>();
+    List<String> predicates = new ArrayList<>();
+    buildPredicates(filter, suffixes, predicates);
+
+    TypedQuery<T> query;
+    String queryName = getQueryFilterName(suffixes, count);
+    if (filterNamedQueries.containsKey(queryName)) {
+      query = getEntityManager().createNamedQuery(queryName, clazz);
+    } else {
+      String queryContent = getQueryfilterContent(predicates, count);
+      query = getEntityManager().createQuery(queryContent, clazz);
+      getEntityManager().getEntityManagerFactory().addNamedQuery(queryName, query);
+      filterNamedQueries.put(queryName, true);
+    }
+
+    addQueryFilterParameters(filter, query);
+    return query;
+  }
+
+  private <T> void addQueryFilterParameters(RuleFilter filter, TypedQuery<T> query) {
+    if (filter.getDomainId() > 0) {
+      query.setParameter("domainId", filter.getDomainId());
+    }
+    if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
+      query.setParameter("ids", filter.getSpaceIds());
+    }
+  }
+
+  private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) {
+    if (filter.getDomainId() > 0) {
+      suffixes.add("Domain");
+      predicates.add("r.domainEntity.id = :domainId");
+    }
+    if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
+      suffixes.add("Audience");
+      predicates.add("r.audience in (:ids)");
+    }
+  }
+
+  private String getQueryFilterName(List<String> suffixes, boolean count) {
+    String queryName;
+    if (suffixes.isEmpty()) {
+      queryName = count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX;
+    } else {
+      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + StringUtils.join(suffixes, "By");
+    }
+    return queryName;
+  }
+
+  private String getQueryfilterContent(List<String> predicates, boolean count) {
+    String querySelect = count ? "SELECT COUNT(r) FROM Rule" : "SELECT r FROM Rule";
+    String orderBy = " ORDER BY r.endDate DESC";
+
+    String queryContent;
+    if (predicates.isEmpty()) {
+      queryContent = querySelect + orderBy;
+    } else {
+      queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ") + orderBy;
+    }
+    return queryContent;
   }
 }

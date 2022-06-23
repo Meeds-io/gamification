@@ -32,19 +32,28 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.RequestLifeCycle;
+import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.storage.api.ActivityStorage;
 import org.exoplatform.social.websocket.ActivityStreamWebSocketService;
 import org.exoplatform.social.websocket.entity.ActivityStreamModification;
 
+@Asynchronous
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
 
+  private static final Log               LOG = ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
+
   private ExoContainer                   container;
+
+  private IdentityManager                identityManager;
 
   private ActivityStorage                activityStorage;
 
@@ -53,25 +62,27 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
   private ActivityStreamWebSocketService activityStreamWebSocketService;
 
   public AnnouncementActivityGeneratorListener(ExoContainer container,
+                                               IdentityManager identityManager,
                                                ActivityStorage activityStorage,
                                                ChallengeService challengeService,
                                                ActivityStreamWebSocketService activityStreamWebSocketService) {
     this.container = container;
+    this.identityManager = identityManager;
     this.activityStorage = activityStorage;
     this.challengeService = challengeService;
     this.activityStreamWebSocketService = activityStreamWebSocketService;
   }
 
   @Override
-  public void onEvent(Event<AnnouncementService, AnnouncementActivity> event) throws ObjectNotFoundException,
-                                                                              IllegalAccessException {
+  public void onEvent(Event<AnnouncementService, AnnouncementActivity> event) {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
+    AnnouncementActivity announcementActivity = event.getData();
     try {
-      AnnouncementActivity announcementActivity = event.getData();
       Announcement announcement = EntityMapper.fromAnnouncementActivity(announcementActivity);
       AnnouncementService announcementService = event.getSource();
-      Challenge challenge = challengeService.getChallengeById(announcement.getChallengeId(), Utils.getCurrentUser());
+      Identity creatorIdentity = identityManager.getIdentity(String.valueOf(announcement.getCreator()));
+      Challenge challenge = challengeService.getChallengeById(announcement.getChallengeId(), creatorIdentity.getRemoteId());
       ExoSocialActivity activity = createActivity(announcement, announcementActivity.getTemplateParams(), challenge);
       announcement.setActivityId(Long.parseLong(activity.getId()));
       announcementService.updateAnnouncement(announcement);
@@ -80,6 +91,11 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
                                                                                              "createActivity",
                                                                                              space.getId());
       activityStreamWebSocketService.sendMessage(activityStreamModification);
+    } catch (Exception e) {
+      LOG.warn("Error while creating activity for announcement with id {} made by user {}",
+               announcementActivity.getId(),
+               announcementActivity.getCreator(),
+               e);
     } finally {
       RequestLifeCycle.end();
     }

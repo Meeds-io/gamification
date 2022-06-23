@@ -36,13 +36,15 @@
       "type": "long"
     },
     "startDate": {
-      "type": "text"
+      "type": "date",
+      "format": "epoch_millis"
     },
     "endDate": {
-      "type": "text"
+      "type": "date",
+      "format": "epoch_millis"
     },
     "managers": {
-      "type": "text"
+      "type": "long"
     },
     "domainId": {
       "type": "long"
@@ -54,25 +56,27 @@
       "type": "long"
     },
     "enabled": {
-      "type": "text"
+      "type": "boolean"
     },
     "deleted": {
-      "type": "text"
+      "type": "boolean"
     },
     "createdBy": {
-      "type": "text"
+      "type": "long"
     },
     "createdDate": {
-      "type": "text"
+      "type": "date",
+      "format": "epoch_millis"
     },
     "lastModifiedDate": {
-      "type": "text"
+      "type": "date",
+      "format": "epoch_millis"
     },
     "lastModifiedBy": {
-      "type": "text"
+      "type": "long"
     },
     "type": {
-      "type": "text"
+      "type": "keyword"
     }
   }
 }

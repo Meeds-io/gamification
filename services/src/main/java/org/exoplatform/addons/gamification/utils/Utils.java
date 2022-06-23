@@ -1,20 +1,30 @@
 package org.exoplatform.addons.gamification.utils;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
@@ -36,8 +46,6 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
 
@@ -95,20 +103,22 @@ public class Utils {
     return null;
   }
 
-  public static final boolean canEditChallenge(List<Long> managersId, String spaceId) {
-    String userId = getCurrentUser();
-    Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, userId);
-    Space space = getSpaceById(spaceId);
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Boolean isChallengeOwner = false;
-    Boolean isSpaceManager = false;
+  public static final boolean isChallengeManager(List<Long> managersId, long spaceId, String username) {
+    Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
     if (identity != null) {
-      isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
+      if (managersId.stream().noneMatch(id -> id == Long.parseLong(identity.getId()))) {
+        return false;
+      }
+    } else {
+      return false;
     }
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
     if (space != null) {
-      isSpaceManager = spaceService.isManager(space, userId) || spaceService.isSuperManager(userId);
+      return spaceService.isManager(space, username) || spaceService.isSuperManager(username);
+    } else {
+      return spaceService.isSuperManager(username);
     }
-    return isChallengeOwner && isSpaceManager;
   }
 
   public static final boolean canAnnounce(String spaceId, String username) {
@@ -234,53 +244,27 @@ public class Utils {
       LOG.error("Error when getting challenge managers {}", e);
       return Collections.emptyList();
     }
-
   }
 
-  public static UserInfo getUserById(Long id, Long challengeId) {
-    try {
-      if (id == null) {
-        return null;
-      }
-      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      Identity identity = identityManager.getIdentity(String.valueOf(id));
-      if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-        if (challengeId != null) {
-          Space space;
-          ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-          Challenge challenge = challengeService.getChallengeById(challengeId, getCurrentUser());
-          space = getSpaceById(String.valueOf(challenge.getAudience()));
-          return toUserInfo(identity, space, challenge.getManagers());
-        } else {
-          return toUserInfo(identity);
-        }
-      }
-    } catch (Exception e) {
-      return null;
-    }
-    return null;
-  }
-
-  public static UserInfo toUserInfo(Identity identity, Space space, List<Long> managersId) {
+  public static UserInfo toUserInfo(Identity identity, Space space, List<Long> managerIds) {
     UserInfo userInfo = new UserInfo();
     userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
-    String userId = identity.getRemoteId();
+    String username = identity.getRemoteId();
     if (space != null) {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      boolean isSuperManager = spaceService.isSuperManager(userId);
-      boolean isManager = isSuperManager || spaceService.isManager(space, userId);
-      boolean isMember = isManager || spaceService.isMember(space, userId);
-      boolean isRedactor = isManager || spaceService.isRedactor(space, userId);
+      boolean isSuperManager = spaceService.isSuperManager(username);
+      boolean isManager = isSuperManager || spaceService.isManager(space, username);
+      boolean isMember = isManager || spaceService.isMember(space, username);
+      boolean isRedactor = isManager || spaceService.isRedactor(space, username);
       boolean hasRedactor = spaceService.hasRedactor(space);
-      boolean isChallengeOwner = managersId.stream().anyMatch(i -> i == Long.parseLong(identity.getId()));
       userInfo.setManager(isManager);
       userInfo.setMember(isMember);
       userInfo.setRedactor(isRedactor);
       userInfo.setCanAnnounce(hasRedactor ? isRedactor : isMember);
-      userInfo.setCanEdit(isChallengeOwner && isManager);
+      userInfo.setCanEdit(Utils.isChallengeManager(managerIds, Long.parseLong(space.getId()), username));
     }
     return userInfo;
   }

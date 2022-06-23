@@ -17,9 +17,9 @@
 package org.exoplatform.addons.gamification.listener;
 
 import org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityGeneratorListener;
+import org.exoplatform.addons.gamification.rest.EntityBuilder;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.EntityBuilder;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -44,7 +44,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.Collections;
 import java.util.Date;
 
-import static org.exoplatform.addons.gamification.service.EntityBuilder.fromAnnouncementActivity;
+import static org.exoplatform.addons.gamification.rest.EntityBuilder.fromAnnouncementActivity;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 

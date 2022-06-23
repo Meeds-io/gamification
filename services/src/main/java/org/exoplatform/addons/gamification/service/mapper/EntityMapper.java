@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -96,6 +98,7 @@ public class EntityMapper {
     }
     return new Announcement(announcementEntity.getId(),
                             announcementEntity.getRuleId(),
+                            announcementEntity.getActionTitle(),
                             Long.parseLong(announcementEntity.getEarnerId()),
                             announcementEntity.getComment(),
                             announcementEntity.getCreator(),
@@ -103,7 +106,7 @@ public class EntityMapper {
                             announcementEntity.getActivityId());
   }
 
-  public static GamificationActionsHistory toEntity(Announcement announcement) {
+  public static GamificationActionsHistory toEntity(Announcement announcement, RuleEntity ruleEntity) {
     if (announcement == null) {
       return null;
     }
@@ -122,6 +125,7 @@ public class EntityMapper {
     announcementEntity.setComment(announcement.getComment());
     announcementEntity.setCreatedDate(createDate);
     announcementEntity.setRuleId(announcement.getChallengeId());
+    announcementEntity.setActionTitle(announcement.getChallengeTitle());
     announcementEntity.setCreator(announcement.getCreator());
     announcementEntity.setDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
     announcementEntity.setCreatedDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
@@ -136,6 +140,13 @@ public class EntityMapper {
     announcementEntity.setCreatedBy(creator != null ? creator : "Gamification Inner Process");
     announcementEntity.setLastModifiedBy(creator != null ? creator : "Gamification Inner Process");
 
+    DomainEntity domainEntity = ruleEntity.getDomainEntity();
+    announcementEntity.setEarnerType(IdentityType.USER);
+    announcementEntity.setActionScore(ruleEntity.getScore());
+    announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
+    announcementEntity.setDomainEntity(domainEntity);
+    announcementEntity.setDomain(domainEntity.getTitle());
+    announcementEntity.setObjectId("");
     return announcementEntity;
   }
 
@@ -150,6 +161,7 @@ public class EntityMapper {
   public static Announcement fromAnnouncementActivity(AnnouncementActivity announcementActivity) {
     return new Announcement(announcementActivity.getId(),
                             announcementActivity.getChallengeId(),
+                            announcementActivity.getChallengeTitle(),
                             announcementActivity.getAssignee(),
                             announcementActivity.getComment(),
                             announcementActivity.getCreator(),
@@ -161,6 +173,7 @@ public class EntityMapper {
   public static AnnouncementActivity toAnnouncementActivity(Announcement announcement, Map<String, String> templateParams) {
     return new AnnouncementActivity(announcement.getId(),
                                     announcement.getChallengeId(),
+                                    announcement.getChallengeTitle(),
                                     announcement.getAssignee(),
                                     announcement.getComment(),
                                     announcement.getCreator(),

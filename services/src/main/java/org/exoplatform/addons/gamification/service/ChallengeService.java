@@ -79,10 +79,11 @@ public interface ChallengeService {
   /**
    * Return a boolean that indicates if the current user can add a challenge or
    * not
+   * @param identity {@link org.exoplatform.services.security.Identity} of user
    *
    * @return if the user can add a challenge or not
    */
-  boolean canAddChallenge();
+  boolean canAddChallenge(org.exoplatform.services.security.Identity identity);
 
   /**
    * Retrieves all challenges by user.

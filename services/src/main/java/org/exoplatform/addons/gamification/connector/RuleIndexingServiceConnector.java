@@ -15,6 +15,12 @@
  */
 package org.exoplatform.addons.gamification.connector;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
@@ -24,17 +30,15 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-import java.util.*;
-
-public class ChallengesIndexingServiceConnector extends ElasticIndexingServiceConnector {
+public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
   public static final String INDEX = "rules";
 
-  private static final Log   LOG   = ExoLogger.getLogger(ChallengesIndexingServiceConnector.class);
+  private static final Log   LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
 
-  private RuleStorage ruleStorage;
+  private RuleStorage        ruleStorage;
 
-  public ChallengesIndexingServiceConnector(RuleStorage ruleStorage, InitParams initParams) {
+  public RuleIndexingServiceConnector(RuleStorage ruleStorage, InitParams initParams) {
     super(initParams);
     this.ruleStorage = ruleStorage;
   }

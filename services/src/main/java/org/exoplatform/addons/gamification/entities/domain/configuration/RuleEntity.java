@@ -28,7 +28,6 @@ import java.util.Objects;
 @Entity(name = "Rule")
 @ExoEntity
 @Table(name = "GAMIFICATION_RULE")
-@NamedQuery(name = "Rule.getAllAutomaticRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false and rule.type = :type")
 @NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false ORDER BY rule.createdDate desc")
 @NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type")
 @NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type")
@@ -41,11 +40,7 @@ import java.util.Objects;
 @NamedQuery(name = "Rule.getEventList", query = "SELECT rule.event  FROM Rule rule  where rule.type = :type GROUP BY rule.event")
 @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) ")
 @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ")
-@NamedQuery(name = "Rule.findAllRulesByUser", query = "SELECT DISTINCT r FROM Rule r where r.audience in (:ids) order by r.endDate desc")
 @NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
-@NamedQuery(name = "Rule.findAllRulesByUserByDomain", query = "SELECT r FROM Rule r WHERE r.audience in (:ids) AND r.domainEntity.id = :domainId ORDER BY r.endDate DESC")
-@NamedQuery(name = "Rule.countAllRulesByUserByDomain", query = "SELECT count(r) FROM Rule r WHERE r.audience in (:ids) AND r.domainEntity.id = :domainId")
-@NamedQuery(name = "Rule.findAllManuelRules", query = "SELECT DISTINCT r FROM Rule r where r.type = :type order by r.endDate desc")
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;

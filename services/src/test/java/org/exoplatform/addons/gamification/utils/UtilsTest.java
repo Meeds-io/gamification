@@ -427,7 +427,6 @@ public class UtilsTest {
         when(spaceService.isManager(space, "root")).thenReturn(false);
         canEdit = Utils.canEditChallenge(challengeManagers, "1");
         assertTrue(canEdit);
-
     }
 
     @PrepareForTest({CommonsUtils.class})

@@ -1,9 +1,18 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Announcement implements Cloneable {
   private long   id;
 
   private Long   challengeId;
+
+  private String challengeTitle;
 
   private Long   assignee;
 
@@ -31,67 +40,9 @@ public class Announcement implements Cloneable {
     this.activityId = activityId;
   }
 
-  public Announcement() {
-  }
-
   @Override
   public Announcement clone() { // NOSONAR
-    return new Announcement(id, challengeId, assignee, comment, creator, createdDate, activityId);
-  }
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public Long getChallengeId() {
-    return challengeId;
-  }
-
-  public void setChallengeId(Long challengeId) {
-    this.challengeId = challengeId;
-  }
-
-  public Long getAssignee() {
-    return assignee;
-  }
-
-  public void setAssignee(Long assignee) {
-    this.assignee = assignee;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public Long getCreator() {
-    return creator;
-  }
-
-  public void setCreator(Long creator) {
-    this.creator = creator;
-  }
-
-  public String getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(String createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public Long getActivityId() {
-    return activityId;
-  }
-
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
+    return new Announcement(id, challengeId, challengeTitle, assignee, comment, creator, createdDate, activityId);
   }
 
 }
