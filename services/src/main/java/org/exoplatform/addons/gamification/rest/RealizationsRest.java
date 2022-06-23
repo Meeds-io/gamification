@@ -1,12 +1,10 @@
 package org.exoplatform.addons.gamification.rest;
 
 import io.swagger.annotations.*;
-import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
@@ -191,17 +189,16 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
 
     gamificationActionsHistoryRestEntities.forEach(ga -> {
       try {
-        String eventKey = "exoplatform.gamification.gamificationinformation.rule.title.";
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionLabel = "-";
-        String domainDescription = "-";
         actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
         if (actionLabel == null && ga.getAction() != null) {
           actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
         } else {
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
+        String domainDescription = "-";
         if (ga.getDomain() != null) {
           domainDescription = getI18NMessage(locale, domainTitleKey + ga.getDomain().getDescription().replace(" ", ""));
           if (domainDescription == null) {
@@ -211,7 +208,7 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         domainDescription = escapeIllegalCharacterInMessage(domainDescription);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getCreator() != null ? ga.getCreator() : ga.getEarner());
+        sbResult.append(ga.getEarner());
         sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
