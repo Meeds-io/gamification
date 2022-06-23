@@ -14,9 +14,13 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private Long     score;
 
+  private String creator;
+
   private String   createdDate;
 
   private String   status;
+
+  private String   space;
 
   private String url;
 
@@ -26,8 +30,10 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                               DomainDTO domain,
                                               String actionLabel,
                                               Long score,
+                                              String creator,
                                               String createdDate,
                                               String status,
+                                              String space,
                                               String url) { // NOSONAR
     this.id = id;
     this.earner = earner;
@@ -35,8 +41,10 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.domain = domain;
     this.actionLabel = actionLabel;
     this.score = score;
+    this.creator = creator;
     this.createdDate = createdDate;
     this.status = status;
+    this.space = space;
     this.url = url;
   }
 
@@ -51,8 +59,10 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                                     domain,
                                                     actionLabel,
                                                     score,
+                                                    creator,
                                                     createdDate,
                                                     status,
+                                                    space,
                                                     url);
   }
 
@@ -96,6 +106,13 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.score = score;
   }
 
+  public String getCreator() {
+    return creator;
+  }
+
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
 
   public String getCreatedDate() {
     return createdDate;
@@ -111,6 +128,14 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public String getSpace() {
+    return space;
+  }
+
+  public void setSpace(String space) {
+    this.space = space;
   }
 
   public DomainDTO getDomain() {

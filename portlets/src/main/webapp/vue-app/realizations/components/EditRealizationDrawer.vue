@@ -117,8 +117,6 @@
     </template>
   </exo-drawer>
 </template>
-
-
 <script>
 export default {
   data() {
@@ -148,10 +146,16 @@ export default {
     }
   },
   created() {
+    this.$root.$on('realization-open-edit-drawer', this.open);
+
     this.getAllDomains();
   },
   methods: {
-    open() {
+    open(realization, actionLabel) {
+      this.points = realization.score;
+      this.actionLabel = actionLabel || this.realization.actionLabel;
+      this.program = realization.domain;
+      this.realizationId = realization.id;
       this.$refs.editRealizationDrawer.open();
     },
     close() {
@@ -163,12 +167,11 @@ export default {
       });
     },
     updateRealization() {
-      if (this.realizationId) {
-        this.$realizationsServices.updateRealization(this.realizationId, 'EDITED', this.actionLabel, this.program.title, this.points).then((realization) => {
-          this.$emit('realization-updated',realization);
+      this.$realizationsServices.updateRealization(this.realizationId, 'EDITED', this.actionLabel, this.program.title, this.points)
+        .then((realization) => {
+          this.$emit('updated',realization);
           this.close();
         });
-      }
     },
   },
 };
