@@ -409,16 +409,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <column name="RULE_ID"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1.0.0-35" author="exo-gamification">
-        <addAutoIncrement columnDataType="BIGINT" columnName="ID" incrementBy="1" startWith="1"
-                          tableName="GAMIFICATION_RULE"/>
-        <addAutoIncrement columnDataType="BIGINT" columnName="ID" incrementBy="1" startWith="1"
-                          tableName="GAMIFICATION_DOMAIN"/>
-    </changeSet>
-    <changeSet id="1.0.0-36" author="exo-gamification" dbms="postgresql">
-        <addAutoIncrement columnDataType="BIGINT" columnName="CHALLENGE_MANAGER_ID" incrementBy="1" startWith="1"
-                          tableName="CHALLENGE_MANAGER_RULE"/>
-    </changeSet>
     <changeSet id="1.0.0-37" author="exo-gamification" dbms="mysql">
         <modifyDataType   columnName="COMMENT"
                           newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
