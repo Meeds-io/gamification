@@ -1,6 +1,30 @@
-
-export function getAllRealizations(fromDate, toDate, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&offset=${offset || 0}&limit=${limit|| 10}`, {
+export function getAllRealizations(fromDate, toDate, itemsFilter, offset, limit, expand) {
+  const formData = new FormData();
+  if (itemsFilter) {
+    Object.keys(itemsFilter).forEach(key => {
+      const value = itemsFilter[key];
+      if (value) {
+        formData.append(key, value);
+      }
+    });
+  }
+  if (fromDate) {
+    formData.append('fromDate', fromDate);
+  }
+  if (toDate) {
+    formData.append('toDate', toDate);
+  }
+  if (expand) {
+    formData.append('expand', expand);
+  }
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+  const params = new URLSearchParams(formData).toString();
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

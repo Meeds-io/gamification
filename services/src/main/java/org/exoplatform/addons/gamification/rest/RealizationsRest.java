@@ -38,7 +38,7 @@ public class RealizationsRest implements ResourceContainer {
 
   private RealizationsService realizationsService;
 
-  // Delimiters that must be in the CSV file
+  // Delimiters that must be in the XSLX file
   private static final String DELIMITER = ",";
 
   private static final String SEPARATOR = "\n";
@@ -147,7 +147,7 @@ public class RealizationsRest implements ResourceContainer {
   @RolesAllowed("administrators")
   @Produces("application/vnd.ms-excel")
   @Path("getExport")
-  @ApiOperation(value = "Gets CSV report", httpMethod = "GET", response = Response.class, notes = "Given a a csv file of actions")
+  @ApiOperation(value = "Gets XSLX report", httpMethod = "GET", response = Response.class, notes = "Given a a xslx file of actions")
   @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
       @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getReport(@ApiParam(value = "result fromDate", required = true)
@@ -163,14 +163,14 @@ public class RealizationsRest implements ResourceContainer {
                                                                                                              0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                         GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
-      String csvString = computeXLSX(gamificationActionsHistoryRestEntities);
+      String xslxString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());
       File temp;
       temp = File.createTempFile(filename, ".xlsx"); //NOSONAR
       temp.deleteOnExit();
       BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
-      bw.write(csvString);
+      bw.write(xslxString);
       bw.close();
       Response.ResponseBuilder response = Response.ok(temp); //NOSONAR
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
@@ -229,25 +229,17 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         domainDescription = escapeIllegalCharacterInMessage(domainDescription);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getCreator() != null ? ga.getCreator() : ga.getEarner());
-        sbResult.append(DELIMITER);
-        sbResult.append(actionId);
+        sbResult.append(ga.getEarner() != null ? ga.getEarner() : "-");
         sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
         sbResult.append(ga.getAction() != null ? ga.getAction().getType().name() : "-");
-        sbResult.append(DELIMITER);
-        sbResult.append(domainTitle);
         sbResult.append(DELIMITER);
         sbResult.append(domainDescription);
         sbResult.append(DELIMITER);
         sbResult.append(ga.getScore());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getStatus());
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getEarner() != null ? ga.getEarner() : "-");
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getSpace() != null ? escapeIllegalCharacterInMessage(ga.getSpace()) : "-");
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
         LOG.error("Error when computing to XLSX ",e);
