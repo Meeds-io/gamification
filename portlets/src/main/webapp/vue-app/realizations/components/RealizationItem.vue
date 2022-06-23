@@ -19,7 +19,10 @@
       </a>
     </td>
     <td class="text-truncate align-center">
-      <v-chip :color="actionTypeColor" :dark="actionTypeDark" :outlined="!actionTypeDark">
+      <v-chip
+        :color="actionTypeColor"
+        :dark="actionTypeDark"
+        :outlined="!actionTypeDark">
         {{ actionTypeLabel }}
       </v-chip>
     </td>
@@ -37,36 +40,49 @@
     <td class="text-truncate actions align-center">
       <v-menu
         v-if="hasActions"
+        v-model="menu"
+        :left="!$vuetify.rtl"
+        :right="$vuetify.rtl"
+        bottom
         offset-y
         attach>
         <template #activator="{ on, attrs }">
           <v-btn
             icon
             small
-            class="mx-5"
+            class="me-2"
             v-bind="attrs"
             v-on="on">
-            <v-icon size="20px">fa-ellipsis-v</v-icon>
+            <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
           </v-btn>
         </template>
-        <v-list flat class="pt-0 pb-0">
+        <v-list dense class="pa-0">
           <template>
-            <v-list-item @mousedown="$event.preventDefault()" v-if="canEdit">
-              <v-list-item-title class="options" @click="editRealization">
-                <i class="fas fa-edit px-1"></i>
-                <span class="px-1"> {{ $t('realization.label.edit') }} </span>
+            <v-list-item
+              v-if="canEdit"
+              dense
+              @mousedown="$event.preventDefault()">
+              <v-icon size="13" class="dark-grey-color">fas fa-edit</v-icon>
+              <v-list-item-title class="text-justify ps-3" @click="editRealization">
+                {{ $t('realization.label.edit') }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item @mousedown="$event.preventDefault()" v-if="canAccept">
-              <v-list-item-title class="options" @click="updateRealizations('ACCEPTED')">
-                <i class="fas fa-check px-1"></i>
-                <span class="px-1"> {{ $t('realization.label.accept') }}</span>
+            <v-list-item
+              v-if="canAccept"
+              dense
+              @mousedown="$event.preventDefault()">
+              <v-icon size="13" class="dark-grey-color">fas fa-check</v-icon>
+              <v-list-item-title class="text-justify ps-3" @click="updateRealizations('ACCEPTED')">
+                {{ $t('realization.label.accept') }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item @mousedown="$event.preventDefault()" v-if="canReject">
-              <v-list-item-title class="options" @click="updateRealizations('REJECTED')">
-                <i class="fas fa-ban px-1"></i>
-                <span class="px-1"> {{ $t('realization.label.reject') }}</span>
+            <v-list-item
+              v-if="canReject"
+              dense
+              @mousedown="$event.preventDefault()">
+              <v-icon size="13" class="dark-grey-color">fas fa-ban</v-icon>
+              <v-list-item-title class="text-justify ps-3" @click="updateRealizations('REJECTED')">
+                {{ $t('realization.label.reject') }}
               </v-list-item-title>
             </v-list-item>
           </template>
@@ -75,9 +91,7 @@
     </td>
   </tr>
 </template>
-
 <script>
-
 export default {
   props: {
     realization: {
@@ -170,6 +184,16 @@ export default {
     hasActions() {
       return this.canReject || this.canAccept || this.canEdit;
     },
+  },
+  created() {
+    // Workaround to fix closing menu when clicking outside
+    $(document).mousedown(() => {
+      if (this.menu) {
+        window.setTimeout(() => {
+          this.menu = false;
+        }, 200);
+      }
+    });
   },
   methods: {
     updateRealizations(status) {
