@@ -39,6 +39,7 @@
     <announce-drawer
       ref="announceDrawer"
       :challenge="selectedChallenge" />
+      <challenge-alert />
   </v-app>
 </template>
 <script>

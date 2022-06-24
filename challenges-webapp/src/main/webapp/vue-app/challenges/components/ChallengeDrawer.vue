@@ -198,7 +198,7 @@ export default {
     this.$root.$on('edit-challenge-details', this.open);
   },
   methods: {
-    setUp(){
+    setUp(domain){
       const space = this.challenge.space ;
       const NewAudience = {
         id: `space:${ space.displayName }` ,
@@ -223,9 +223,9 @@ export default {
         this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
         this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
       }
-      if (this.challenge.program){
+      if (domain){
         this.$refs.challengeProgram.broadcast = false;
-        this.$refs.challengeProgram.program =  this.challenge.program;
+        this.$refs.challengeProgram.program =  domain;
       }
       const data = {
         managers: this.challenge.managers,
@@ -255,15 +255,15 @@ export default {
       this.warning= null;
       this.$refs.challengeProgram.program = null;
     },
-    open(challenge) {
-      this.challenge = challenge || {
+    open(event) {
+      this.challenge = event?.challenge || {
         points: 20,
       };
       this.$refs.challengeDrawer.open();
       this.$nextTick().then(() => {
         this.$refs.challengeDescription.initCKEditor();
         if (this.challenge && this.challenge.id){
-          this.setUp();
+          this.setUp(event?.domain);
         }
       });
     },
@@ -345,7 +345,7 @@ export default {
     },
     SaveChallenge() {
       if (this.challenge.startDate > this.challenge.endDate){
-        this.$root.$emit('show-alert', {type: 'error',message: this.$t('challenges.challengeDateError')});
+        this.displayAlert(this.$t('challenges.challengeDateError'), 'error');
         return;
       }
       if (this.challenge && this.challenge.id){
@@ -357,29 +357,35 @@ export default {
         }
         this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.updateChallenge(this.challenge).then(() =>{
-          this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeUpdateSuccess')});
+          this.displayAlert(this.$t('challenges.challengeUpdateSuccess'), 'success');
           this.$root.$emit('challenge-updated');
           this.close();
           this.challenge = {};
         })
           .catch(e => {
-            this.$root.$emit('show-alert', {type: 'error',message: String(e)});
+            this.displayAlert(String(e), 'error');
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       } else {
         this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.saveChallenge(this.challenge).then((challenge) =>{
-          this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeCreateSuccess')});
+          this.displayAlert(this.$t('challenges.challengeCreateSuccess'), 'success');
           this.$root.$emit('challenge-added', challenge);
           this.close();
           this.challenge = {};
         })
           .catch(e => {
-            this.$root.$emit('show-alert', {type: 'error',message: String(e)});
+            this.displayAlert(String(e), 'error');
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       }
     },
+    displayAlert(message, type) {
+      this.$root.$emit('challenge-notification-alert', {
+        type,
+        message,
+      });
+    }
   }
 };
 </script>

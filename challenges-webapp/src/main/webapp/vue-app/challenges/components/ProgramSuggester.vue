@@ -119,7 +119,7 @@ export default {
       this.$challengesServices.getAllDomains() .then(domains => {
         this.domains =  domains.slice().filter(domain => domain.enabled);
       }).catch(e => {
-        this.$root.$emit('show-alert', {type: 'error',message: String(e)});
+        this.$root.$emit('challenge-notification-alert', {type: 'error',message: String(e)});
       });
     },
     remove(item) {
