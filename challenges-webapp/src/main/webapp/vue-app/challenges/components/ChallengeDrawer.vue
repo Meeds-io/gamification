@@ -198,7 +198,7 @@ export default {
     this.$root.$on('edit-challenge-details', this.open);
   },
   methods: {
-    setUp(domain){
+    setUp(){
       const space = this.challenge.space ;
       const NewAudience = {
         id: `space:${ space.displayName }` ,
@@ -223,9 +223,9 @@ export default {
         this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
         this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
       }
-      if (domain){
+      if (this.challenge.program){
         this.$refs.challengeProgram.broadcast = false;
-        this.$refs.challengeProgram.program =  domain;
+        this.$refs.challengeProgram.program =  this.challenge.program;
       }
       const data = {
         managers: this.challenge.managers,
@@ -255,15 +255,15 @@ export default {
       this.warning= null;
       this.$refs.challengeProgram.program = null;
     },
-    open(event) {
-      this.challenge = event?.challenge || {
+    open(challenge) {
+      this.challenge = challenge || {
         points: 20,
       };
       this.$refs.challengeDrawer.open();
       this.$nextTick().then(() => {
         this.$refs.challengeDescription.initCKEditor();
         if (this.challenge && this.challenge.id){
-          this.setUp(event?.domain);
+          this.setUp();
         }
       });
     },
@@ -356,12 +356,16 @@ export default {
           this.challenge.program = this.challenge.program.title;
         }
         this.$refs.challengeDrawer.startLoading();
-        this.$challengesServices.updateChallenge(this.challenge).then(() =>{
-          this.displayAlert(this.$t('challenges.challengeUpdateSuccess'), 'success');
-          this.$root.$emit('challenge-updated');
-          this.close();
-          this.challenge = {};
-        })
+        this.$challengesServices.updateChallenge(this.challenge)
+          .then(challenge =>{
+            this.$challengeUtils.displayAlert({
+              type: 'success',
+              message: this.$t('challenges.challengeUpdateSuccess'),
+            });
+            this.$root.$emit('challenge-updated', challenge);
+            this.close();
+            this.challenge = {};
+          })
           .catch(e => {
             this.displayAlert(String(e), 'error');
           })

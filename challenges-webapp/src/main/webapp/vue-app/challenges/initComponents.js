@@ -11,7 +11,6 @@ import ChallengeDetailsDrawer from './components/ChallengeDetailsDrawer.vue';
 import AnnouncementDrawer from './components/AnnouncementDrawer.vue';
 import WinnersDrawer from './components/WinnersDrawer.vue';
 import challengeProgram from './components/ProgramSuggester.vue';
-import ChallengeAlert from './components/ChallengeAlert.vue';
 
 const components = {
   'challenges': Challenges,
@@ -24,7 +23,6 @@ const components = {
   'challenge-date-picker': ChallengeDatePicker,
   'challenge-description': ChallengeDescription,
   'challenge-details-drawer': ChallengeDetailsDrawer,
-  'challenge-alert': ChallengeAlert,
   'announce-drawer': AnnouncementDrawer,
   'challenge-winners-details': WinnersDrawer,
   'challenge-program': challengeProgram

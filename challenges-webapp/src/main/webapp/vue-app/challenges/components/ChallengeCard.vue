@@ -164,7 +164,7 @@ export default {
   },
   methods: {
     editChallenge() {
-      this.$root.$emit('edit-challenge-details', { challenge: JSON.parse(JSON.stringify(this.challenge)), domain: this.domain });
+      this.$root.$emit('edit-challenge-details', JSON.parse(JSON.stringify(this.challenge)));
     },
     announcementAdded(event) {
       const announcement = event?.detail?.announcement;

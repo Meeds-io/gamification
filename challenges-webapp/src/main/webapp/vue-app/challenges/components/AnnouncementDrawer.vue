@@ -175,7 +175,10 @@ export default {
           } else  {
             msg = this.$t('challenges.announcementErrorSave');
           }
-          this.displayAlert(msg, 'error');
+          this.$challengeUtils.displayAlert({
+            message: msg,
+            type: 'error',
+          });
         })
         .finally(() => this.$refs.announcementDrawer.endLoading());
     },
