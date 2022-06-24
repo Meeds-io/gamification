@@ -82,7 +82,7 @@ public class RuleCachedStorage extends RuleStorage {
 
   @Override
   public List<RuleDTO> findAllRules() {
-    CacheKey key = new CacheKey(ALL_RULE_CONTEXT, 0L)
+    CacheKey key = new CacheKey(ALL_RULE_CONTEXT, 0L);
     return (List<RuleDTO>) this.ruleFutureCache.get(key, key.hashCode());
   }
 
