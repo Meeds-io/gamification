@@ -68,7 +68,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     try {
       listenerService.broadcast(POST_CREATE_RULE_EVENT, this, challenge.getId());
     } catch (Exception e) {
-      LOG.error("Error broadcasting chanllenge with id {} creation event", challenge.getId(), e);
+      LOG.error("Error broadcasting challenge with id {} creation event", challenge.getId(), e);
     }
     return challenge;
   }
@@ -125,7 +125,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     try {
       listenerService.broadcast(POST_UPDATE_RULE_EVENT, this, challenge.getId());
     } catch (Exception e) {
-      LOG.error("Error broadcasting chanllenge with id {} update event", challenge.getId(), e);
+      LOG.error("Error broadcasting challenge with id {} update event", challenge.getId(), e);
     }
     return challenge;
   }

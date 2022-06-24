@@ -16,16 +16,13 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 
 public class RuleDAOTest extends AbstractServiceTest {
 
@@ -61,12 +58,10 @@ public class RuleDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void getAllAutomaticRules() {
-    assertEquals(ruleDAO.getAllAutomaticRules().size(), 0);
-    newRule("rule1", "domain1");
-    newRule("rule1", "domain2");
-    newRule("rule1", "domain3");
-    assertEquals(ruleDAO.getAllAutomaticRules().size(), 3);
+  public void testFindRuleByEventAndDomain() {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    RuleEntity ruleEntity = newRule();
+    assertNotNull(ruleDAO.findRuleByEventAndDomain(ruleEntity.getEvent(), ruleEntity.getArea()));
   }
 
   @Test
@@ -117,33 +112,45 @@ public class RuleDAOTest extends AbstractServiceTest {
     newRule("rule2", "domain3");
     assertEquals(ruleDAO.getAllEvents().size(), 2);
   }
-  
+
   @Test
-  public void testFindAllChallengesByUserByDomain() {
-    assertEquals(0, ruleDAO.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size());
-    DomainEntity domain1 = newDomain("domain1");
-    DomainEntity domain2 = newDomain("domain2");
-    newChallenge("rule1", domain1.getTitle(), 1l);
-    newChallenge("rule2", domain1.getTitle(), 2l);
-    newChallenge("rule3", domain2.getTitle(), 3l);
-    assertEquals(1, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3, Collections.singletonList(1l)).size());
-    assertEquals(2, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3 , Arrays.asList(1l, 2l)).size());
-    assertEquals(1, ruleDAO.findAllChallengesByUserByDomain(domain1.getId(), 0, 3 , Arrays.asList(1l, 3l)).size());
-    assertEquals(1, ruleDAO.findAllChallengesByUserByDomain(domain2.getId(), 0, 3 , Arrays.asList(2l, 3l)).size());
+  public void testGetAllRules() {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    newRule("rule1", "domain1");
+    assertEquals(ruleDAO.getAllEvents().size(), 1);
+    newRule("rule1", "domain2");
+    assertEquals(ruleDAO.getAllEvents().size(), 2);
+    newRule("rule2", "domain3");
+    assertEquals(ruleDAO.getAllEvents().size(), 3);
   }
 
-   @Test
-  public void testCountAllChallengesByUserByDomain() {
-    assertEquals(0, ruleDAO.countAllChallengesByUserByDomain(0, Collections.singletonList(0l)));
-    DomainEntity domain1 = newDomain("domain1");
-    DomainEntity domain2 = newDomain("domain2");
-    newChallenge("rule1", domain1.getTitle(), 1l);
-    newChallenge("rule2", domain1.getTitle(), 2l);
-    newChallenge("rule3", domain2.getTitle(), 3l);
-    assertEquals(1, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(), Collections.singletonList(1l)));
-    assertEquals(2, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 2l)));
-    assertEquals(1, ruleDAO.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 3l)));
-    assertEquals(1, ruleDAO.countAllChallengesByUserByDomain(domain2.getId(), Arrays.asList(2l, 3l)));
+  @Test
+  public void testFindRulesByFilter() {
+    RuleFilter filter = new RuleFilter();
+
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
+    RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
+    filter.setDomainId(ruleEntity1.getDomainEntity().getId());
+    filter.setSpaceIds(Collections.singletonList(1l));
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 1);
+    newRule("rule2", "domain1", 1l);
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
+    newRule("rule3", "domain3", 1l);
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
+  }
+
+  @Test
+  public void testCountRulesByFilter() {
+    RuleFilter filter = new RuleFilter();
+    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
+    filter.setDomainId(ruleEntity1.getDomainEntity().getId());
+    filter.setSpaceIds(Collections.singletonList(1l));
+    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    newRule("rule2", "domain1", 1l);
+    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    newRule("rule3", "domain3", 1l);
+    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
   }
 
 }

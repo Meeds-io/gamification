@@ -53,10 +53,10 @@ public class RuleMapper {
       rule.setAudience(ruleDTO.getAudience());
     }
     if (ruleDTO.getStartDate() != null) {
-      rule.setStartDate(Utils.parseRFC3339Date(ruleDTO.getStartDate()));
+      rule.setStartDate(Utils.parseSimpleDate(ruleDTO.getStartDate()));
     }
     if (ruleDTO.getEndDate() != null) {
-      rule.setEndDate(Utils.parseRFC3339Date(ruleDTO.getEndDate()));
+      rule.setEndDate(Utils.parseSimpleDate(ruleDTO.getEndDate()));
     }
     if (ruleDTO.getType() != null) {
       rule.setType(ruleDTO.getType());
@@ -97,10 +97,10 @@ public class RuleMapper {
         rule.setAudience(ruleEntity.getAudience());
       }
       if (ruleEntity.getStartDate() != null) {
-        rule.setStartDate(Utils.toRFC3339Date(ruleEntity.getStartDate()));
+        rule.setStartDate(Utils.toSimpleDateFormat(ruleEntity.getStartDate()));
       }
       if (ruleEntity.getEndDate() != null) {
-        rule.setEndDate(Utils.toRFC3339Date(ruleEntity.getEndDate()));
+        rule.setEndDate(Utils.toSimpleDateFormat(ruleEntity.getEndDate()));
       }
       if (ruleEntity.getType() != null) {
         rule.setType(ruleEntity.getType());

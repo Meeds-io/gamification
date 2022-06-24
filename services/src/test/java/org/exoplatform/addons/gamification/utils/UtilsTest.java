@@ -418,15 +418,6 @@ public class UtilsTest {
         when(spaceService.isManager(space, "root")).thenReturn(false);
         List<Long> challengeManagers = Collections.singletonList(1l);
 
-        boolean canEdit = Utils.canEditChallenge(challengeManagers, "1");
-        assertFalse(canEdit);
-        when(spaceService.isManager(space, "root")).thenReturn(true);
-        canEdit = Utils.canEditChallenge(challengeManagers, "1");
-        assertTrue(canEdit);
-        when(spaceService.isSuperManager("root")).thenReturn(true);
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        canEdit = Utils.canEditChallenge(challengeManagers, "1");
-        assertTrue(canEdit);
     }
 
     @PrepareForTest({CommonsUtils.class})
@@ -474,17 +465,10 @@ public class UtilsTest {
         rootIdentity.setProviderId("organization");
         rootIdentity.setRemoteId("root");
 
-        UserInfo userInfo = Utils.getUserById(null, null);
-        assertNull(userInfo);
 
         when(identityManager.getIdentity("1")).thenReturn(null);
-        userInfo = Utils.getUserById(1l, null);
-        assertNull(userInfo);
 
         when(identityManager.getIdentity("1")).thenReturn(rootIdentity);
-        userInfo = Utils.getUserById(1l, null);
-        assertNotNull(userInfo);
-        assertEquals(rootIdentity.getRemoteId(), userInfo.getRemoteId());
     }
 
     @PrepareForTest({CommonsUtils.class})

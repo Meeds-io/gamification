@@ -234,14 +234,15 @@ public class ChallengeRest implements ResourceContainer {
     if (limit <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
+    String currentUser = Utils.getCurrentUser();
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);
-    filter.setDomainId(domainId);
-    String currentUser = Utils.getCurrentUser();
+    filter.setUsername(currentUser);
 
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {
+        filter.setDomainId(domainId);
         List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
                                                                                     currentUser,
                                                                                     offset,
@@ -255,6 +256,7 @@ public class ChallengeRest implements ResourceContainer {
         List<DomainWithChallengesRestEntity> domainsWithChallenges = domains.stream().map(domain -> {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
           try {
+            filter.setDomainId(domain.getId());
             List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
                                                                                         currentUser,
                                                                                         offset,

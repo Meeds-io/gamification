@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.storage;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +27,10 @@ public class RuleStorage {
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
     RuleEntity ruleEntity = RuleMapper.ruleDTOToRule(ruleDTO);
+    ruleEntity.setLastModifiedDate(new Date());
     if (ruleEntity.getId() == null) {
       ruleEntity = ruleDAO.create(ruleEntity);
     } else if (!ruleEntity.isDeleted()) {
-      ruleEntity.setLastModifiedDate(new Date());
       ruleEntity = ruleDAO.update(ruleEntity);
     }
     return RuleMapper.ruleToRuleDTO(ruleEntity);
@@ -57,19 +58,21 @@ public class RuleStorage {
   }
 
   public List<RuleDTO> findRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    List<RuleEntity> ruleEntities = new ArrayList<>();
     if (StringUtils.isBlank(ruleFilter.getTerm())) {
-      List<RuleEntity> ruleEntities = ruleDAO.findRulesByFilter(ruleFilter, offset, limit);
-      return ruleEntities.stream().map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
+      ruleEntities = ruleDAO.findRulesByFilter(ruleFilter, offset, limit);
     } else {
-     return  ruleSearchConnector.search(ruleFilter, offset, limit);
+      ruleEntities = ruleSearchConnector.search(ruleFilter, offset, limit);
     }
+    return ruleEntities.stream().map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
+
   }
 
   public int countRulesByFilter(RuleFilter ruleFilter) {
     if (StringUtils.isBlank(ruleFilter.getTerm())) {
       return ruleDAO.countRulesByFilter(ruleFilter);
     } else {
-      return  ruleSearchConnector.count(ruleFilter, 0, 10);
+      return  ruleSearchConnector.count(ruleFilter);
     }
   }
 
@@ -98,7 +101,7 @@ public class RuleStorage {
   }
 
   public void deleteRule(long ruleId) throws ObjectNotFoundException {
-    deleteRule(ruleId, true);
+    deleteRule(ruleId, false);
   }
 
   public RuleDTO deleteRule(long ruleId, boolean force) throws ObjectNotFoundException {

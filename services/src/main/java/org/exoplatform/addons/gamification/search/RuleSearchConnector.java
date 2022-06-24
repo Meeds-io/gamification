@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
@@ -71,7 +72,7 @@ public class RuleSearchConnector {
     }
   }
 
-  public List<RuleDTO> search(RuleFilter filter, long offset, long limit) {
+  public List<RuleEntity> search(RuleFilter filter, long offset, long limit) {
     if (offset < 0) {
       throw new IllegalArgumentException("Offset must be positive");
     }
@@ -92,13 +93,7 @@ public class RuleSearchConnector {
     return buildSearchResult(jsonResponse);
   }
 
-  public int count(RuleFilter filter, long offset, long limit) {
-    if (offset < 0) {
-      throw new IllegalArgumentException("Offset must be positive");
-    }
-    if (limit < 0) {
-      throw new IllegalArgumentException("Limit must be positive");
-    }
+  public int count(RuleFilter filter) {
     if (StringUtils.isBlank(filter.getTerm())) {
       throw new IllegalArgumentException("Filter term is mandatory");
     }
@@ -131,10 +126,10 @@ public class RuleSearchConnector {
   }
 
   @SuppressWarnings("rawtypes")
-  private List<RuleDTO> buildSearchResult(String jsonResponse) {
+  private List<RuleEntity> buildSearchResult(String jsonResponse) {
     LOG.debug("Search Query response from ES : {} ", jsonResponse);
 
-    List<RuleDTO> results = new ArrayList<>();
+    List<RuleEntity> results = new ArrayList<>();
     JSONParser parser = new JSONParser();
 
     Map json = null;
@@ -153,7 +148,7 @@ public class RuleSearchConnector {
     JSONArray jsonHits = (JSONArray) jsonResult.get("hits");
     for (Object jsonHit : jsonHits) {
       try {
-        RuleDTO rule = new RuleDTO();
+        RuleEntity rule = new RuleEntity();
 
         JSONObject jsonHitObject = (JSONObject) jsonHit;
         JSONObject hitSource = (JSONObject) jsonHitObject.get("_source");
@@ -166,13 +161,13 @@ public class RuleSearchConnector {
         boolean enabled = Boolean.valueOf(String.valueOf(hitSource.get("enabled")));
         boolean deleted = Boolean.valueOf(String.valueOf(hitSource.get("deleted")));
         String createdBy = (String) hitSource.get("createdBy");
-        String createdDate = (String) hitSource.get("createdDate");
-        String lastModifiedDate = (String) hitSource.get("lastModifiedDate");
+        Date createdDate = parseDate(hitSource,"createdDate" );
+        Date lastModifiedDate = parseDate(hitSource,"lastModifiedDate");
         String lastModifiedBy = (String) hitSource.get("lastModifiedBy");
         String event = (String) hitSource.get("event");
         long audience = parseLong(hitSource, "audience");
-        String startDate = (String) hitSource.get("startDate");
-        String endDate = (String) hitSource.get("endDate");
+        Date startDate =  parseDate(hitSource,"startDate");
+        Date endDate = parseDate(hitSource,"endDate");
         String type = (String) hitSource.get("type");
         String managers = (String) hitSource.get("managers");
 
@@ -180,7 +175,7 @@ public class RuleSearchConnector {
         rule.setTitle(title);
         rule.setDescription(description);
         rule.setEvent(event);
-        rule.setDomainDTO(Utils.getDomainById(domainId));
+        rule.setDomainEntity(Utils.getDomainById(domainId));
         rule.setScore(score);
         rule.setArea(area);
         rule.setEnabled(enabled);
@@ -217,12 +212,17 @@ public class RuleSearchConnector {
       return 0;
     }
     JSONObject total = (JSONObject) jsonResult.get("total");
-    return (int) total.get("value");
+    return Integer.parseInt(total.get("value").toString());
   }
 
   private Long parseLong(JSONObject hitSource, String key) {
     String value = (String) hitSource.get(key);
     return StringUtils.isBlank(value) ? null : Long.parseLong(value);
+  }
+
+  private Date parseDate(JSONObject hitSource, String key) {
+    Long value = parseLong(hitSource, key);
+    return value != 0 ? new Date(value) : null;
   }
 
   private List<Long> getManagersList(String managers) {

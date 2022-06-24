@@ -34,13 +34,17 @@
       v-else
       :domains="domainsHavingChallenges"
       :challenges-by-domain-id="challengesByDomainId"
-      :challenge-per-page="challengePerPage"
       :loading="loading"
       class="pl-2 pt-5" />
 
     <v-flex v-if="search && !domainsHavingChallenges.length" class="searchNoResults d-flex my-auto border-box-sizing">
       <div class="d-flex flex-column ma-auto text-center text-sub-title">
         <div>
+          <img
+            src="/challenges/images/Challenge_app_backg_image.png"
+            :alt="$t('challenges.welcomeMessageImgAlt')"
+            class="mx-4"
+            loading="lazy">
           <i class="uiIconSearchLight text-sub-title my-auto">
             <i class="uiIconCloseLight text-sub-title"></i>
           </i>
@@ -72,8 +76,6 @@ export default {
     canAddChallenge: false,
     loading: true,
     domainsWithChallenges: [],
-    searchedChallenges: [],
-    challengePerPage: 4,
     announcementsPerChallenge: 2,
     search: '',
   }),
@@ -82,27 +84,16 @@ export default {
       return this.displayWelcomeMessage && 'emptyChallenges' || '';
     },
     domainsHavingChallenges() {
-      if (this.search && this.search.trim().length) {
-        return this.searchedChallenges.filter(domain => domain.challenges.length > 0);
-      } else {
-        return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
-      }
+      return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
     },
     displayWelcomeMessage() {
       return !this.loading && !this.domainsHavingChallenges.length && !this.search.length;
     },
     challengesByDomainId() {
       const challengesByDomainId = {};
-      if (this.search && this.search.trim().length) {
-        this.searchedChallenges.forEach(domain => {
-          challengesByDomainId[domain.id] = domain.challenges;
-        });
-      } else {
-        this.domainsHavingChallenges.forEach(domain => {
-          challengesByDomainId[domain.id] = domain.challenges;
-        });
-      }
-
+      this.domainsHavingChallenges.forEach(domain => {
+        challengesByDomainId[domain.id] = domain.challenges;
+      });
       return challengesByDomainId;
     },
     domainsById() {
@@ -127,7 +118,7 @@ export default {
   watch: {
     search(value)  {
       if (value && value.trim().length) {
-        this.searchChallenges(value, false);
+        this.getChallenges(value, false);
       }
     }
   },
@@ -166,11 +157,7 @@ export default {
       this.getChallenges(false);
     },
     loadMore(domainId) {
-      if (this.search && this.search.trim().length) {
-        this.searchChallenges( this.search,true, domainId);
-      } else {
-        this.getChallenges(true, domainId);
-      }
+      this.getChallenges(true, domainId);
     },
     openChallengeDrawer(){
       this.$refs.challengeDrawer.open();
@@ -178,7 +165,7 @@ export default {
     getChallenges(append, domainId) {
       this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
-      this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
+      this.$challengesServices.getAllChallengesByUser( this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
         .then(result => {
           if (!result) {
             return;
@@ -232,23 +219,6 @@ export default {
       this.$challengeUtils.displayAlert({
         type: alertType,
         message: alertMessage,
-      });
-    },
-    searchChallenges(value, append, domainId) {
-      this.loading = true;
-      const offset = append && domainId && this.challengesByDomainId[domainId]?.length  || 0 ;
-      this.$challengesServices.search(value, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId).then(challenges => {
-        if (domainId) {
-          if (append) {
-            this.domainsById[domainId].challenges = this.challengesByDomainId[domainId].concat(challenges);
-          } else {
-            this.domainsById[domainId].challenges = challenges;
-          }
-        } else {
-          this.searchedChallenges =  challenges;
-        }
-      }).finally(() => {
-        this.loading = false;
       });
     },
   }

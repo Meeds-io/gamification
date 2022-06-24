@@ -1,16 +1,10 @@
 package org.exoplatform.addons.gamification.search;
 
-import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -19,7 +13,6 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.container.xml.ValueParam;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RuleSearchConnectorTest extends AbstractServiceTest {
@@ -53,31 +46,6 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     challengeSearchConnector = new RuleSearchConnector(configurationManager, client, getParams());
   }
 
-  @Test
-  public void testSearch() {
-    String term = "challenge";
-
-    Set<String> listIdSpace = Collections.singletonList(1l).stream().map(String::valueOf).collect(Collectors.toSet());
-    Set<String> listIdSpaceEmpty = Collections.emptyList().stream().map(String::valueOf).collect(Collectors.toSet());
-    assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, term, 1l, -1, 10));
-    assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, term, 1l, 1, -10));
-    assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpaceEmpty, term, 1l, 1, 10));
-    assertThrows(IllegalArgumentException.class, () -> challengeSearchConnector.search(listIdSpace, "", 1l, -1, 10));
-
-    String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
-    String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "10");
-
-    when(client.sendRequest(expectedESQuery, ES_INDEX)).thenReturn(searchResult);
-    when(client.sendRequest(unexpectedESQuery, ES_INDEX)).thenReturn("{}");
-
-    List<ChallengeSearchEntity> challenges = challengeSearchConnector.search(listIdSpace, "test", 1l, 0, 10);
-    assertNotNull(challenges);
-    assertEquals(0, challenges.size());
-
-    challenges = challengeSearchConnector.search(listIdSpace, term, 1l, 0, 10);
-    assertNotNull(challenges);
-    assertEquals(1, challenges.size());
-  }
 
   private InitParams getParams() {
     InitParams params = new InitParams();

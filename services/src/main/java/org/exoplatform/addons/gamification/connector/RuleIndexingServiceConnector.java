@@ -15,6 +15,8 @@
  */
 package org.exoplatform.addons.gamification.connector;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,13 +24,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.joda.time.DateTimeZone;
 
 public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
@@ -36,11 +42,11 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
   private static final Log   LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
 
-  private RuleStorage        ruleStorage;
+  private RuleDAO ruleDAO;
 
-  public RuleIndexingServiceConnector(RuleStorage ruleStorage, InitParams initParams) {
+  public RuleIndexingServiceConnector(RuleDAO ruleDAO, InitParams initParams) {
     super(initParams);
-    this.ruleStorage = ruleStorage;
+    this.ruleDAO = ruleDAO;
   }
 
   @Override
@@ -69,7 +75,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     }
     LOG.debug("Index document for rule with id={}", id);
 
-    RuleDTO rule = ruleStorage.findRuleById(Long.valueOf(id));
+    RuleEntity rule = ruleDAO.find(Long.valueOf(id));
     if (rule == null) {
       throw new IllegalStateException("rule with id '" + id + "' not found");
     }
@@ -78,18 +84,18 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("title", rule.getTitle());
     fields.put("description", rule.getDescription());
     fields.put("score", String.valueOf(rule.getScore()));
-    fields.put("area", rule.getArea());
-    fields.put("domainId", String.valueOf(rule.getDomainDTO().getId()));
+    fields.put("area", !StringUtils.isBlank(rule.getArea()) ? rule.getArea() : rule.getDomainEntity().getTitle());
+    fields.put("domainId", String.valueOf(rule.getDomainEntity().getId()));
     fields.put("event", rule.getEvent());
-    fields.put("audience", String.valueOf(rule.getAudience()));
-    fields.put("startDate", rule.getStartDate());
-    fields.put("endDate", rule.getEndDate());
+    fields.put("audience", String.valueOf(rule.getAudience() != null ? rule.getAudience() : 0));
+    fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
+    fields.put("endDate", toMilliSecondsString(rule.getEndDate()));
     fields.put("enabled", String.valueOf(rule.isEnabled()));
     fields.put("deleted", String.valueOf(rule.isDeleted()));
     fields.put("createdBy", rule.getCreatedBy());
-    fields.put("createdDate", rule.getCreatedDate());
+    fields.put("createdDate",toMilliSecondsString(rule.getCreatedDate()));
     fields.put("lastModifiedBy", rule.getLastModifiedBy());
-    fields.put("lastModifiedDate", rule.getLastModifiedDate());
+    fields.put("lastModifiedDate",toMilliSecondsString(rule.getLastModifiedDate()));
     fields.put("type", rule.getType().name());
     String managers = "";
     for (Long manager : rule.getManagers()) {
@@ -98,5 +104,8 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("managers", managers);
 
     return new Document(id, null, new Date(System.currentTimeMillis()), Collections.EMPTY_SET, fields);
+  }
+  private String toMilliSecondsString(Date date) {
+    return date != null ? String.valueOf(date.getTime()) : "0";
   }
 }

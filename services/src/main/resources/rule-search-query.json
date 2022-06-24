@@ -13,7 +13,7 @@
       },
       "should": {
         "match_phrase": {
-          "program": {
+          "domainId": {
             "query": "@domainId@",
             "boost": 3
           }
@@ -33,7 +33,7 @@
         },
         {
           "term": {
-            "program": {
+            "domainId": {
               "value": "@domainId@"
             }
           }

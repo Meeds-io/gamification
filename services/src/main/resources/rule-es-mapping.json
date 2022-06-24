@@ -44,16 +44,16 @@
       "format": "epoch_millis"
     },
     "managers": {
-      "type": "long"
+      "type": "text"
     },
     "domainId": {
       "type": "long"
     },
     "area": {
-      "type": "long"
+      "type": "text"
     },
     "event": {
-      "type": "long"
+      "type": "text"
     },
     "enabled": {
       "type": "boolean"
@@ -62,7 +62,7 @@
       "type": "boolean"
     },
     "createdBy": {
-      "type": "long"
+      "type": "text"
     },
     "createdDate": {
       "type": "date",
@@ -73,7 +73,7 @@
       "format": "epoch_millis"
     },
     "lastModifiedBy": {
-      "type": "long"
+      "type": "text"
     },
     "type": {
       "type": "keyword"

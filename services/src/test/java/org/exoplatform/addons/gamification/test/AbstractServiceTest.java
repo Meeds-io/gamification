@@ -168,7 +168,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   protected void setUp() throws Exception {
     begin();
-    gamificationService = getContainer().getComponentInstanceOfType(GamificationService.class);
+    gamificationService = CommonsUtils.getService(GamificationService.class);
     identityManager = CommonsUtils.getService(IdentityManager.class);
     activityManager = CommonsUtils.getService(ActivityManager.class);
     relationshipManager = CommonsUtils.getService(RelationshipManager.class);
@@ -268,7 +268,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return rule;
   }
 
-  protected RuleEntity newChallenge(String name, String domain, Long audience) {
+  protected RuleEntity newRule(String name, String domain, Long audience) {
     RuleEntity challenge = ruleDAO.findRuleByTitle(name+"_"+domain);
     if (challenge == null) {
       challenge = new RuleEntity();

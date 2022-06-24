@@ -1,6 +1,8 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
 import java.util.Date;
 import java.util.List;
@@ -12,13 +14,23 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 public class RuleServiceImpl implements RuleService {
 
+  private static final Log LOG                = ExoLogger.getExoLogger(RuleServiceImpl.class);
+
+
   private RuleStorage ruleStorage;
 
-  public RuleServiceImpl(RuleStorage ruleStorage) {
+  private ListenerService     listenerService;
+
+  public RuleServiceImpl(RuleStorage ruleStorage,  ListenerService listenerService) {
     this.ruleStorage = ruleStorage;
+    this.listenerService = listenerService;
+
   }
 
   public RuleDTO findEnableRuleByTitle(String ruleTitle) throws IllegalArgumentException {
@@ -89,6 +101,11 @@ public class RuleServiceImpl implements RuleService {
       throw new IllegalArgumentException("rule id is mandatory");
     }
     ruleStorage.deleteRule(id);
+    try {
+      listenerService.broadcast(POST_UPDATE_RULE_EVENT, this,id);
+    } catch (Exception e) {
+      LOG.error("Error broadcasting rule with id {} update event", id, e);
+    }
   }
 
   public RuleDTO addRule(RuleDTO ruleDTO) throws IllegalArgumentException, EntityExistsException {
@@ -99,7 +116,13 @@ public class RuleServiceImpl implements RuleService {
     if (oldRule != null) {
       throw new EntityExistsException("Rule with same event and domain already exist");
     }
-    return ruleStorage.saveRule(ruleDTO);
+    ruleDTO = ruleStorage.saveRule(ruleDTO);
+    try {
+      listenerService.broadcast(POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
+    } catch (Exception e) {
+      LOG.error("Error broadcasting rule with id {} creation event", ruleDTO.getId(), e);
+    }
+    return ruleDTO;
   }
 
   public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
@@ -111,6 +134,12 @@ public class RuleServiceImpl implements RuleService {
       ruleDTO.setTitle(ruleDTO.getEvent() + "_" + ruleDTO.getArea());
     }
     ruleDTO.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
-    return ruleStorage.saveRule(ruleDTO);
+    ruleDTO = ruleStorage.saveRule(ruleDTO);
+    try {
+      listenerService.broadcast(POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());
+    } catch (Exception e) {
+      LOG.error("Error broadcasting rule with id {} update event", ruleDTO.getId(), e);
+    }
+    return ruleDTO;
   }
 }

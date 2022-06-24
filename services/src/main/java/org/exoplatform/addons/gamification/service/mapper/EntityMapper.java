@@ -186,7 +186,6 @@ public class EntityMapper {
     if (challenge == null) {
       return null;
     }
-    RuleDTO ruleDTO = new RuleDTO();
     RuleDTO rule = new RuleDTO();
     if (challenge.getId() > 0) {
       rule.setId(challenge.getId());
@@ -197,6 +196,7 @@ public class EntityMapper {
     rule.setArea(challenge.getProgram());
     rule.setEnabled(false);
     rule.setDeleted(false);
+    rule.setDomainDTO(Utils.getDomainByTitle(challenge.getProgram()));
     if (challenge.getAudience() > 0) {
       rule.setAudience(challenge.getAudience());
     }
@@ -212,7 +212,7 @@ public class EntityMapper {
     } else {
       rule.setManagers(Collections.emptyList());
     }
-    return ruleDTO;
+    return rule;
   }
 
   public static Challenge fromRuleToChallenge(RuleDTO ruleDTO) {

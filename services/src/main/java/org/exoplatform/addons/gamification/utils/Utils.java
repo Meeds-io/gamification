@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -29,6 +30,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.portal.Constants;
 import org.exoplatform.portal.localization.LocaleContextInfoUtils;
@@ -197,12 +199,12 @@ public class Utils {
     return domainService.getDomainByTitle(domainTitle);
   }
 
-  public static DomainDTO getDomainById(long domainId) {
+  public static DomainEntity getDomainById(long domainId) {
     if (domainId <= 0) {
       return null;
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return domainService.getDomainByID(domainId);
+    return DomainMapper.domainDTOToDomain(domainService.getDomainByID(domainId));
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {

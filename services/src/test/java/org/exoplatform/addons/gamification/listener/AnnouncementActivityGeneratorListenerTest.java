@@ -23,12 +23,14 @@ import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.storage.api.ActivityStorage;
 import org.exoplatform.social.websocket.ActivityStreamWebSocketService;
@@ -44,7 +46,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.Collections;
 import java.util.Date;
 
-import static org.exoplatform.addons.gamification.rest.EntityBuilder.fromAnnouncementActivity;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -68,12 +69,16 @@ public class AnnouncementActivityGeneratorListenerTest {
   @Mock
   private ActivityStreamWebSocketService activityStreamWebSocketService;
 
+  @Mock
+  IdentityManager                        identityManager;
+
   @Test
   public void testGenerateAnnouncementActivity() throws IllegalAccessException, ObjectNotFoundException {
     PowerMockito.mockStatic(EntityBuilder.class);
     PowerMockito.mockStatic(Utils.class);
     AnnouncementActivityGeneratorListener announcementActivityGeneratorListener =
                                                                                 new AnnouncementActivityGeneratorListener(container,
+                                                                                                                          identityManager,
                                                                                                                           activityStorage,
                                                                                                                           challengeService,
                                                                                                                           activityStreamWebSocketService);
@@ -97,6 +102,7 @@ public class AnnouncementActivityGeneratorListenerTest {
                                                  null);
     AnnouncementActivity announcementActivity = new AnnouncementActivity(1,
                                                                          challenge.getId(),
+                                                                         challenge.getTitle(),
                                                                          1L,
                                                                          "announcement comment",
                                                                          1L,
@@ -113,7 +119,7 @@ public class AnnouncementActivityGeneratorListenerTest {
 
     ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
     activity.setId("1");
-    when(fromAnnouncementActivity(any(AnnouncementActivity.class))).thenReturn(announcement);
+    when(EntityMapper.fromAnnouncementActivity(any(AnnouncementActivity.class))).thenReturn(announcement);
     when(Utils.getCurrentUser()).thenReturn("root");
     when(Utils.getSpaceById(String.valueOf(challenge.getAudience()))).thenReturn(space);
     when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(spaceIdentity);

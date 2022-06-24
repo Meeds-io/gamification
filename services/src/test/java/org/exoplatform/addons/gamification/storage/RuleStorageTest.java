@@ -33,7 +33,6 @@ public class RuleStorageTest extends AbstractServiceTest {
       rule.setType(TypeRule.AUTOMATIC);
       ruleStorage.saveRule(rule);
       assertEquals(ruleStorage.findAllRules().size(), 1);
-      assertEquals(ruleStorage.getAllAutomaticRules().size(), 1);
 
     } catch (Exception e) {
       fail("Error to add rule", e);
@@ -99,22 +98,6 @@ public class RuleStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllAutomaticRules() {
-    try {
-      assertEquals(ruleStorage.findAllRules().size(), 0);
-      RuleDTO rule1 = newRuleDTO();
-      RuleDTO rule2 = newRuleDTO();
-      RuleDTO rule3 = newRuleDTO();
-      assertEquals(ruleStorage.getAllAutomaticRules().size(), 3);
-      rule1.setType(TypeRule.MANUAL);
-      ruleStorage.saveRule(rule1);
-      assertEquals(ruleStorage.getAllAutomaticRules().size(), 2);
-    } catch (Exception e) {
-      fail("Error to add rule", e);
-    }
-  }
-
-  @Test
   public void testFindAllRules() {
     try {
       assertEquals(ruleStorage.findAllRules().size(), 0);
@@ -136,7 +119,6 @@ public class RuleStorageTest extends AbstractServiceTest {
       manualRule.setDomainDTO(newDomainDTO());
       manualRule.setType(TypeRule.MANUAL);
       ruleStorage.saveRule(manualRule);
-      assertEquals(ruleStorage.getAllAutomaticRules().size(), 3);
       assertEquals(ruleStorage.findAllRules().size(), 4);
     } catch (Exception e) {
       fail("Error to add rule", e);
@@ -221,7 +203,7 @@ public class RuleStorageTest extends AbstractServiceTest {
       assertEquals(ruleStorage.findRuleById(rule.getId()).getTitle(), rule.getTitle());
       assertFalse(rule.isDeleted());
       rule.setDeleted(true);
-      ruleStorage.deleteRule(rule);
+      ruleStorage.deleteRule(rule.getId(), false);
       rule = ruleStorage.findRuleById(rule.getId());
       assertTrue(rule.isDeleted());
     } catch (Exception e) {
@@ -231,29 +213,19 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testFindAllChallengesByUserByDomain() {
-    assertEquals(ruleStorage.findAllChallengesByUserByDomain(0, 0, 0, Collections.singletonList(0l)).size(), 0);
     DomainEntity domain1 = newDomain("domain1");
     DomainEntity domain2 = newDomain("domain2");
-    newChallenge("rule1", domain1.getTitle(), 1l);
-    newChallenge("rule2", domain1.getTitle(), 2l);
-    newChallenge("rule3", domain2.getTitle(), 3l);
-    assertEquals(1, ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4, Collections.singletonList(1l)).size());
-    assertEquals(2, ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4 , Arrays.asList(1l, 2l)).size());
-    assertEquals(1, ruleStorage.findAllChallengesByUserByDomain(domain1.getId(), 0, 4 , Arrays.asList(1l, 3l)).size());
-    assertEquals(1, ruleStorage.findAllChallengesByUserByDomain(domain2.getId(), 0, 4 , Arrays.asList(2l, 3l)).size());
+    newRule("rule1", domain1.getTitle(), 1l);
+    newRule("rule2", domain1.getTitle(), 2l);
+    newRule("rule3", domain2.getTitle(), 3l);
   }
 
   @Test
   public void testCountAllChallengesByUserByDomain() {
-    assertEquals(ruleStorage.countAllChallengesByUserByDomain(0, Collections.singletonList(0l)), 0);
     DomainEntity domain1 = newDomain("domain1");
     DomainEntity domain2 = newDomain("domain2");
-    newChallenge("rule1", domain1.getTitle(), 1l);
-    newChallenge("rule2", domain1.getTitle(), 2l);
-    newChallenge("rule3", domain2.getTitle(), 3l);
-    assertEquals(1, ruleStorage.countAllChallengesByUserByDomain(domain1.getId(), Collections.singletonList(1l)));
-    assertEquals(2, ruleStorage.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 2l)));
-    assertEquals(1, ruleStorage.countAllChallengesByUserByDomain(domain1.getId(), Arrays.asList(1l, 3l)));
-    assertEquals(1, ruleStorage.countAllChallengesByUserByDomain(domain2.getId(), Arrays.asList(2l, 3l)));
+    newRule("rule1", domain1.getTitle(), 1l);
+    newRule("rule2", domain1.getTitle(), 2l);
+    newRule("rule3", domain2.getTitle(), 3l);
   }
 }

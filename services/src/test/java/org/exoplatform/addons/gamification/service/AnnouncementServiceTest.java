@@ -5,6 +5,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.when;
 public class AnnouncementServiceTest extends BaseExoTestCase {
     private AnnouncementStorage announcementStorage;
 
-    private RuleStorage challengeStorage;
+    private ChallengeStorage challengeStorage;
 
     private AnnouncementService announcementService;
 
@@ -50,7 +51,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     @Before
     public void setUp() { // NOSONAR
         announcementStorage = mock(AnnouncementStorage.class);
-        challengeStorage = mock(RuleStorage.class);
+        challengeStorage = mock(ChallengeStorage.class);
         spaceService = mock(SpaceService.class);
         identityManager = mock(IdentityManager.class);
         listenerService = mock(ListenerService.class);
@@ -120,7 +121,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
         PowerMockito.mockStatic(Utils.class);
 
-        when(Utils.canEditChallenge(any(), any())).thenReturn(true);
         Identity identity = mock(Identity.class);
         when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
         when(identity.getId()).thenReturn("1");
@@ -131,9 +131,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(createdAnnouncement,  templateParams, "root", false));
 
 
-        when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(null);
         assertThrows(ObjectNotFoundException.class, () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
-        when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
 
         assertThrows(IllegalArgumentException.class, () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", false));
 
@@ -192,7 +190,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         rootIdentity.setProviderId("organization");
         rootIdentity.setRemoteId("root");
 
-        when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
         String[] spaceMembers = {"root"};
         Space space = new Space();
         space.setId("1");
@@ -210,7 +207,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         when(announcementStorage.saveAnnouncement(createdAnnouncement)).thenReturn(editedAnnouncement);
         PowerMockito.mockStatic(Utils.class);
         when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
-        when(Utils.canEditChallenge(any(), any())).thenReturn(true);
         Identity identity = mock(Identity.class);
         when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
         when(identity.getId()).thenReturn("1");
@@ -279,7 +275,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         announcementList.add(announcement2);
         announcementList.add(announcement3);
 
-        when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
         when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10)).thenReturn(announcementList);
 
         assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10));
@@ -308,9 +303,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
         when(announcementStorage.countAnnouncementsByChallenge(challenge.getId())).thenReturn(10l);
 
         assertThrows(IllegalArgumentException.class, () -> announcementService.countAllAnnouncementsByChallenge(0l));
-        when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(null);
         assertThrows(ObjectNotFoundException.class, () -> announcementService.countAllAnnouncementsByChallenge(challenge.getId()));
-        when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
 
         try {
             Long count = announcementService.countAllAnnouncementsByChallenge(challenge.getId());

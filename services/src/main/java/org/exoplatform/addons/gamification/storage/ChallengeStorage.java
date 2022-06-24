@@ -15,6 +15,7 @@
  */
 package org.exoplatform.addons.gamification.storage;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class ChallengeStorage {
@@ -41,8 +43,8 @@ public class ChallengeStorage {
       RuleDTO storedRuleDTO = ruleStorage.findRuleById(ruleDTO.getId());
       ruleDTO.setCreatedBy(storedRuleDTO.getCreatedBy());
       ruleDTO.setEvent(storedRuleDTO.getEvent());
-      ruleDTO.setLastModifiedBy(username);
     }
+    ruleDTO.setLastModifiedBy(username);
     ruleDTO = ruleStorage.saveRule(ruleDTO);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }

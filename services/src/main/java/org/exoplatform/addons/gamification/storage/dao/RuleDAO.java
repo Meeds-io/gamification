@@ -38,9 +38,9 @@ import org.exoplatform.services.log.Log;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
-  private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAll";
+  private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
 
-  private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAll";
+  private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
 
   private static final Log     LOG                       = ExoLogger.getLogger(RuleDAO.class);
 
@@ -172,7 +172,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   public int countRulesByFilter(RuleFilter filter) {
-    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
+    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, true);
     return query.getSingleResult().intValue();
   }
 
@@ -186,7 +186,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (filterNamedQueries.containsKey(queryName)) {
       query = getEntityManager().createNamedQuery(queryName, clazz);
     } else {
-      String queryContent = getQueryfilterContent(predicates, count);
+      String queryContent = getQueryFilterContent(predicates, count);
       query = getEntityManager().createQuery(queryContent, clazz);
       getEntityManager().getEntityManagerFactory().addNamedQuery(queryName, query);
       filterNamedQueries.put(queryName, true);
@@ -221,13 +221,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (suffixes.isEmpty()) {
       queryName = count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX;
     } else {
-      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + StringUtils.join(suffixes, "By");
+      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX)+ "By" +  StringUtils.join(suffixes, "By");
     }
     return queryName;
   }
 
-  private String getQueryfilterContent(List<String> predicates, boolean count) {
-    String querySelect = count ? "SELECT COUNT(r) FROM Rule" : "SELECT r FROM Rule";
+  private String getQueryFilterContent(List<String> predicates, boolean count) {
+    String querySelect = count ? "SELECT COUNT(r) FROM Rule r " : "SELECT r FROM Rule r ";
     String orderBy = " ORDER BY r.endDate DESC";
 
     String queryContent;

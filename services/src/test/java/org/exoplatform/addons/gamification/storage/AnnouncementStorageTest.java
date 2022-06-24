@@ -11,6 +11,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.junit.Before;
@@ -40,14 +41,14 @@ public class AnnouncementStorageTest {
 
     private GamificationHistoryDAO announcementDAO;
 
-    private RuleStorage challengeStorage;
+    private RuleDAO ruleDAO;
     private AnnouncementStorage announcementStorage;
 
     @Before
     public void setUp() throws Exception { // NOSONAR
         announcementDAO = mock(GamificationHistoryDAO.class);
-        challengeStorage = mock(RuleStorage.class);
-        announcementStorage = new AnnouncementStorage(announcementDAO,challengeStorage);
+        ruleDAO = mock(RuleDAO.class);
+        announcementStorage = new AnnouncementStorage(announcementDAO,ruleDAO);
     }
 
     @PrepareForTest({ Utils.class, EntityMapper.class , DomainMapper.class})
@@ -110,10 +111,8 @@ public class AnnouncementStorageTest {
         PowerMockito.mockStatic(EntityMapper.class);
         Identity identity = mock(Identity.class);
         when(announcementDAO.create(anyObject())).thenReturn(newAnnouncementEntity);
-        when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
         when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
         when(EntityMapper.toEntity(challenge)).thenReturn(challengeEntity);
-        when(EntityMapper.toEntity(announcement)).thenReturn(announcementEntity);
         when(EntityMapper.fromEntity(newAnnouncementEntity)).thenReturn(announcementFromEntity);
         DomainDTO domainDTO = new DomainDTO();
         domainDTO.setTitle("gamification");

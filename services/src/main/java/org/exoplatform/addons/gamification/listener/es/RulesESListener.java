@@ -14,7 +14,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 @Asynchronous
-public class RulesESListener extends Listener<ChallengeService, Long> {
+public class RulesESListener extends Listener<Object, Long> {
   private static final Log      LOG = ExoLogger.getLogger(RulesESListener.class);
 
   private final PortalContainer container;
@@ -28,17 +28,17 @@ public class RulesESListener extends Listener<ChallengeService, Long> {
   }
 
   @Override
-  public void onEvent(Event<ChallengeService, Long> event) throws Exception {
+  public void onEvent(Event<Object, Long> event) throws Exception {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
-    Long challengeId = event.getData();
+    Long ruleId = event.getData();
     try {
       if (Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName())) {
-        LOG.debug("Notifying unindexing service for challenge with id={}", challengeId);
-        indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(challengeId));
+        LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
+        indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
       } else {
-        LOG.debug("Notifying indexing service for challenge with id={}", challengeId);
-        indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(challengeId));
+        LOG.debug("Notifying indexing service for rule with id={}", ruleId);
+        indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
       }
     } finally {
       RequestLifeCycle.end();

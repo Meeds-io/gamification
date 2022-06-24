@@ -6,6 +6,7 @@ import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -52,7 +53,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
 
     private static final String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
 
-    private RuleStorage challengeStorage;
+    private ChallengeStorage challengeStorage;
 
     private SpaceService spaceService;
 
@@ -66,13 +67,13 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        challengeStorage = mock(RuleStorage.class);
+        challengeStorage = mock(ChallengeStorage.class);
         spaceService = mock(SpaceService.class);
         spaceService = mock(SpaceService.class);
         params = new InitParams();
         listenerService = mock(ListenerService.class);
         challengeSearchConnector = mock(RuleSearchConnector.class);
-        challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, params, listenerService, challengeSearchConnector);
+        challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, listenerService, params);
         registry(getComponentClass());
         announcementService = CommonsUtils.getService(AnnouncementService.class);
         ConversationState.setCurrent(null);

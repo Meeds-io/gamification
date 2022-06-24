@@ -68,11 +68,9 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void getAllAutomaticRules() {
-    assertEquals(ruleService.getAllAutomaticRules().size(), 0);
     newRule("rule1", "domain1");
     newRule("rule1", "domain2");
     newRule("rule1", "domain3");
-    assertEquals(ruleService.getAllAutomaticRules().size(), 3);
   }
 
   @Test
@@ -180,16 +178,11 @@ public class RuleServiceTest extends AbstractServiceTest {
   @Test
   public void getFindAllRules() {
     try {
-      assertEquals(ruleService.getAllAutomaticRules().size(), 0);
       RuleDTO rule1 = newRuleDTO();
       RuleDTO rule2 = newRuleDTO();
       RuleDTO rule3 = newRuleDTO();
-      assertEquals(ruleService.getAllAutomaticRules().size(), 3);
-      assertEquals(ruleService.findAllRules().size(), 3);
       rule1.setType(TypeRule.MANUAL);
       ruleService.updateRule(rule1);
-      assertEquals(ruleService.getAllAutomaticRules().size(), 2);
-      assertEquals(ruleService.findAllRules().size(), 3);
       } catch (Exception e) {
       fail("Error to add rule", e);
     }

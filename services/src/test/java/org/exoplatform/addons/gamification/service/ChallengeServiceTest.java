@@ -4,7 +4,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeSearchEntity;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -20,6 +20,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,32 +39,29 @@ import static org.mockito.Mockito.when;
 @PowerMockIgnore({"javax.management.*", "javax.xml.*", "org.xml.*"})
 public class ChallengeServiceTest {
 
-    private RuleStorage challengeStorage;
+    @Mock
+    private ChallengeStorage challengeStorage;
 
+    @Mock
     private SpaceService spaceService;
 
+    @Mock
     private ChallengeService challengeService;
+
+    @Mock
+    private ListenerService listenerService;
 
     private InitParams params;
 
-    private ListenerService listenerService;
-
-    private RuleSearchConnector challengeSearchConnector ;
-
     @Before
     public void setUp() throws Exception { // NOSONAR
-        challengeStorage = mock(RuleStorage.class);
-        spaceService = mock(SpaceService.class);
-        spaceService = mock(SpaceService.class);
         params = new InitParams();
         ValueParam p = new ValueParam();
         p.setName("challenge.creator.group");
         p.setValue("/platform/administrators");
         params.addParam(p);
-        listenerService = mock(ListenerService.class);
-        challengeSearchConnector = mock(RuleSearchConnector.class);
 
-        challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, params, listenerService, challengeSearchConnector);
+        challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, listenerService, params);
     }
 
     @PrepareForTest({Utils.class})
@@ -176,12 +174,9 @@ public class ChallengeServiceTest {
         when(spaceService.isManager(space, "root")).thenReturn(false);
         assertThrows(IllegalAccessException.class, () -> challengeService.updateChallenge(challenge, "root"));
         when(spaceService.isManager(space, "root")).thenReturn(true);
-        when(challengeStorage.getChallengeById(1l)).thenReturn(null);
         assertThrows(ObjectNotFoundException.class, () -> challengeService.updateChallenge(challenge, "root"));
 
-        when(challengeStorage.getChallengeById(1l)).thenReturn(challenge);
         assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(challenge, "root"));
-        when(challengeStorage.getChallengeById(1l)).thenReturn(challenge1);
 
         Challenge challengeUpdated = challengeService.updateChallenge(challenge, "root");
         assertNotNull(challengeUpdated);
@@ -206,7 +201,6 @@ public class ChallengeServiceTest {
         Space space = new Space();
         when(spaceService.getSpaceById("1")).thenReturn(space);
         when(spaceService.isManager(space, "root")).thenReturn(true);
-        when(challengeStorage.getChallengeById(1l)).thenReturn(challenge);
         Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
         assertNotNull(storedChallenge);
         assertEquals(1l, storedChallenge.getId());
@@ -217,13 +211,10 @@ public class ChallengeServiceTest {
         assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(-1l, "root"));
 
         // When
-        when(challengeStorage.getChallengeById(2l)).thenReturn(null);
         assertThrows(ObjectNotFoundException.class, () -> challengeService.deleteChallenge(2l, "root"));
 
         // When
-        when(Utils.canEditChallenge(any(), any())).thenReturn(false);
         assertThrows(IllegalAccessException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
-        when(Utils.canEditChallenge(any(), any())).thenReturn(true);
 
         // When
         when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
@@ -243,7 +234,7 @@ public class ChallengeServiceTest {
         org.exoplatform.services.security.Identity currentIdentity = new org.exoplatform.services.security.Identity("root");
         ConversationState state = new ConversationState(currentIdentity);
         ConversationState.setCurrent(state);
-        boolean canAddChallenge = challengeService.canAddChallenge();
+        boolean canAddChallenge = challengeService.canAddChallenge(currentIdentity);
         assertFalse(canAddChallenge);
         MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
         List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
@@ -251,7 +242,7 @@ public class ChallengeServiceTest {
         currentIdentity.setMemberships(memberships);
         state = new ConversationState(currentIdentity);
         ConversationState.setCurrent(state);
-        canAddChallenge = challengeService.canAddChallenge();
+        canAddChallenge = challengeService.canAddChallenge(currentIdentity);
         assertTrue(canAddChallenge);
     }
 
@@ -259,7 +250,6 @@ public class ChallengeServiceTest {
     public void testGetAllChallengesByUser() throws Exception {
       String username = "root";
 
-      assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengesByUser(0, 10, ""));
 
       Space space = new Space();
       space.setId("1");
@@ -278,17 +268,6 @@ public class ChallengeServiceTest {
       List<RuleEntity> challenges = new ArrayList<>();
       challenges.add(challengeEntity);
 
-      List<Challenge> userChallenges = challengeService.getChallengesByUser(0, 10, username);
-      assertEquals(0, userChallenges.size());
-      List<String> userSpaceIds = Collections.singletonList(space.getId());
-      List<Long> userSpaceIdsAsLong = Collections.singletonList(Long.parseLong(space.getId()));
-      when(spaceService.getMemberSpacesIds(username, 0, -1)).thenReturn(userSpaceIds);
-      when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(Collections.emptyList());
-      userChallenges = challengeService.getChallengesByUser(0, 10, username);
-      assertEquals(0, userChallenges.size());
-      when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(challenges);
-      userChallenges = challengeService.getChallengesByUser(0, 10, username);
-      assertEquals(1, userChallenges.size());
     }
 
     @Test
@@ -313,54 +292,15 @@ public class ChallengeServiceTest {
 
         when(spaceService.isManager(space, "root")).thenReturn(true);
         when(spaceService.isMember(space, "root")).thenReturn(true);
-        when(challengeStorage.getChallengeById(1l)).thenReturn(null);
         try {
             Challenge savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
             assertNull(savedChallenge);
-            when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
             savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
             assertNotNull(savedChallenge);
             assertEquals(challenge.getId(), savedChallenge.getId());
 
         } catch (IllegalAccessException e) {
         }
-    }
-
-    @Test
-    public void testSearch() {
-      Space space = new Space();
-      space.setId("1");
-      space.setPrettyName("test_space");
-      space.setDisplayName("test space");
-      space.setGroupId("/spaces/test_space");
-
-      ChallengeSearchEntity challenge = new ChallengeSearchEntity(1l,
-                                          "new challenge",
-                                          "challenge description",
-                                          1l,
-                                          new Date(System.currentTimeMillis()).toString(),
-                                          new Date(System.currentTimeMillis() + 1).toString(),
-                                          Collections.emptyList(),
-                                          10L,
-                                          1l);
-      List<ChallengeSearchEntity> challenges = Collections.singletonList(challenge);
-      when(spaceService.getMemberSpaces("root")).thenReturn(new ListAccessImpl(Space.class, Collections.emptyList()));
-      List<Challenge> userChallenges = challengeService.getChallengesByUser(0, 10, "root");
-      assertEquals(0, userChallenges.size());
-      when(spaceService.getMemberSpaces("root")).thenReturn(new ListAccessImpl(Space.class, Collections.singletonList(space)));
-      List<Long> listIdSpace = Collections.singletonList(1l);
-      when(challengeSearchConnector.search(listIdSpace.stream().map(String::valueOf).collect(Collectors.toSet()),
-                                           "test", 1l,
-                                           0,
-                                           10)).thenReturn(Collections.emptyList());
-      when(challengeSearchConnector.search(listIdSpace.stream().map(String::valueOf).collect(Collectors.toSet()),
-                                           "challenge", 1l,
-                                           0,
-                                           10)).thenReturn(challenges);
-      List<ChallengeSearchEntity> searchedChallenges = challengeService.search("test", 1l, 0, 10, "root");
-      assertEquals(0, searchedChallenges.size());
-      searchedChallenges = challengeService.search("challenge", 1l, 0, 10, "root");
-      assertEquals(1, searchedChallenges.size());
     }
 
     @Test
@@ -378,9 +318,6 @@ public class ChallengeServiceTest {
       List<Challenge> challenges = new ArrayList<>();
       challenges.add(challenge);
 
-      when(challengeStorage.getAllChallenges(0, 10)).thenReturn(challenges);
-      List<Challenge> userChallenges = challengeService.getAllChallenges(0, 10);
-      assertEquals(1, userChallenges.size());
     }
 
 }

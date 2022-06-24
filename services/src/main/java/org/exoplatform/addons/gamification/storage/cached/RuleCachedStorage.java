@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
@@ -59,10 +60,13 @@ public class RuleCachedStorage extends RuleStorage {
       ruleDTO = super.saveRule(ruleDTO);
       return ruleDTO;
     } finally {
-      this.ruleFutureCache.remove(ruleDTO.getId());
-      this.ruleFutureCache.remove(ruleDTO.getTitle());
-      this.ruleFutureCache.remove(ALL_RULE_CONTEXT);
-      this.ruleFutureCache.remove(RULES_BY_FILTER_CONTEXT);
+      if(TypeRule.MANUAL.equals(ruleDTO.getType())) {
+        this.ruleFutureCache.clear();
+      } else {
+        this.ruleFutureCache.remove(ruleDTO.getId());
+        this.ruleFutureCache.remove(ruleDTO.getTitle());
+        this.ruleFutureCache.remove(ALL_RULE_CONTEXT);
+      }
     }
   }
 
