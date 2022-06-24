@@ -35,12 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </a>
     </td>
     <td class="text-truncate align-center">
-      <v-chip
-        :color="actionTypeColor"
-        :dark="actionTypeDark"
-        :outlined="!actionTypeDark">
-        {{ actionTypeLabel }}
-      </v-chip>
+      {{ actionTypeLabel }}
     </td>
     <td class="text-truncate align-center">
       {{ domainDescription }}
@@ -49,9 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ score }}
     </td>
     <td class="text-truncate align-center">
-      <v-chip :color="statusColor" dark>
-        {{ statusLabel }}
-      </v-chip>
+      {{ statusLabel }}
     </td>
     <td class="text-truncate actions align-center">
       <v-menu
@@ -158,14 +151,6 @@ export default {
       default: return '';
       }
     },
-    statusColor() {
-      switch (this.status) {
-      case 'REJECTED': return 'red';
-      case 'ACCEPTED': return 'green';
-      case 'EDITED': return 'teal';
-      default: return '';
-      }
-    },
     actionTypeLabel() {
       if (this.isAutomaticType) {
         return this.$t('realization.label.auto');
@@ -173,17 +158,6 @@ export default {
         return this.$t('realization.label.manual');
       }
       return '-';
-    },
-    actionTypeColor() {
-      if (this.isAutomaticType) {
-        return 'blue-grey';
-      } else if (this.isManualType) {
-        return '';
-      }
-      return '-';
-    },
-    actionTypeDark() {
-      return this.isAutomaticType;
     },
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
