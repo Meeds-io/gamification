@@ -37,21 +37,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-expansion-panel-content>
       <v-container>
         <v-row no-gutters>
-          <template v-for="(challenge, index) in challenges">
-            <v-col
-              :key="index"
-              class="mb-4 challenge-column"
-              >
-              <challenge-card
-                :domain="domain"
-                :challenge="challenge" />
-            </v-col>
-            <v-responsive
-              v-if="index === challenges.length/2 -1"
-              :key="`width-${index}`"
-              width="100%">
-            </v-responsive>
-          </template>
+          <v-col
+            v-for="challenge in challenges"
+            :key="challenge.id"
+            class="mb-4 challenge-column"
+            cols="12"
+            sm="6"
+            lg="3"
+            xl="2">
+            <challenge-card
+              :domain="domain"
+              :challenge="challenge" />
+          </v-col>
         </v-row>
         <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
           <v-btn

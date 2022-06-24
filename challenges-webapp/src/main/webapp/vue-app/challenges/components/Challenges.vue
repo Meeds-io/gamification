@@ -10,8 +10,8 @@
       class="pa-4">
       <div class="border-box-sizing clickable addChallengeButton" v-if="canAddChallenge">
         <v-btn class="btn btn-primary" @click="openChallengeDrawer">
-          <i class="fas fa-plus pr-1"></i>
-          <span class="ms-2 d-none d-lg-inline">
+          <v-icon>fas fa-plus</v-icon>
+          <span class="mx-2 d-none d-lg-inline">
             {{ $t('challenges.button.addChallenge') }}
           </span>
         </v-btn>
