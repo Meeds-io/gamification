@@ -40,17 +40,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-col
             v-for="challenge in challenges"
             :key="challenge.id"
-            class="mb-4"
+            class="mb-4 challenge-column"
             cols="12"
-            md="6"
-            lg="4"
-            xl="3">
+            sm="6"
+            lg="3"
+            xl="2">
             <challenge-card
               :domain="domain"
               :challenge="challenge" />
           </v-col>
         </v-row>
-        <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
+        <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
           <v-btn
             :loading="loading"
             :disabled="loading"

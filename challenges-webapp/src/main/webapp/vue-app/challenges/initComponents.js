@@ -2,7 +2,7 @@ import Challenges from './components/Challenges.vue';
 import WelcomeMessage from './components/WelcomeMessage.vue';
 import ChallengeCard from './components/ChallengeCard.vue';
 import ChallengesList from './components/ChallengesList.vue';
-import ChallengesListItem from './components/ChallengesListItem.vue';
+import DomainChallengesList from './components/DomainChallengesList.vue';
 import ChallengeDrawer from './components/ChallengeDrawer.vue';
 import Assignment from './components/Assignment.vue';
 import ChallengeDatePicker from './components/ChallengeDatePicker.vue';
@@ -18,7 +18,7 @@ const components = {
   'welcome-message': WelcomeMessage,
   'challenge-card': ChallengeCard,
   'challenges-list': ChallengesList,
-  'challenges-list-item': ChallengesListItem,
+  'domain-challenges-list': DomainChallengesList,
   'challenge-drawer': ChallengeDrawer,
   'challenge-assignment': Assignment,
   'challenge-date-picker': ChallengeDatePicker,
