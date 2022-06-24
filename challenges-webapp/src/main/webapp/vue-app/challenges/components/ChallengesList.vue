@@ -3,7 +3,7 @@
     :value="domainIndexes"
     multiple
     flat>
-    <challenges-list-item
+    <domain-challenges-list
       v-for="domain in domains"
       :key="domain.id"
       :domain="domain"
