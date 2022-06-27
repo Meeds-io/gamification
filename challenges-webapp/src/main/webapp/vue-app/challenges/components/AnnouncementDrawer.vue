@@ -162,7 +162,13 @@ export default {
       this.$refs.announcementDrawer.startLoading();
 
       this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
-        this.$root.$emit('show-alert', {type: 'success',message: `<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcementCreateSuccess')}</a>`});
+        this.$challengeUtils.displayAlert({
+          type: 'success',
+          message: this.$t('challenges.announcementCreateSuccess'),
+          link: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}`,
+          linkMessage: this.$t('challenges.linkToAnnouncementActivity'),
+          linkClass: 'd-block justify-start px-0 text-capitalize pt-2',
+        });
         this.$root.$emit('announcement-added', {detail: {announcement: announcement , challengeId: this.challenge.id}});
         this.close();
       })
@@ -175,7 +181,10 @@ export default {
           } else  {
             msg = this.$t('challenges.announcementErrorSave');
           }
-          this.$root.$emit('show-alert', {type: 'error',message: msg});
+          this.$challengeUtils.displayAlert({
+            message: msg,
+            type: 'error',
+          });
         })
         .finally(() => this.$refs.announcementDrawer.endLoading());
     },
@@ -187,7 +196,7 @@ export default {
         this.challenge = event;
         this.$nextTick().then(() => this.open());
       }
-    }
+    },
   }
 };
 </script>
