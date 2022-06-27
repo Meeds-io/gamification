@@ -48,7 +48,7 @@
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="$root.$emit('open-challenge-details',{ challenge: challenge, domain: domain } )">
+            <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
