@@ -1,7 +1,7 @@
 <template>
   <div
     id="descriptionId"
-    class="challengeDescription">
+    class="activityRichEditor">
     <div class="py-1 px-2 subtitle-1">
       {{ $t('challenges.label.describeYourChallenge') }}
     </div>
@@ -12,10 +12,12 @@
       cols="30"
       rows="10"
       class="d-none"></textarea>
-    <span class="tooManyChars">
+    <div
+      :class="!validLength && 'tooManyChars' || ''"
+      class="activityCharsCount">
       {{ charsCount }}{{ maxLength > -1 ? ' / ' + maxLength : '' }}
       <i class="uiIconMessageLength"></i>
-    </span>
+    </div>
   </div>
 </template>
 
@@ -37,6 +39,9 @@ export default {
   computed: {
     charsCount() {
       return this.inputVal && this.$utils.htmlToText(this.inputVal).length || 0;
+    },
+    validLength() {
+      return this.charsCount <= this.maxLength;
     },
   },
   watch: {
@@ -61,22 +66,18 @@ export default {
   methods: {
     initCKEditor() {
       this.inputVal = this.value || '';
-      const self = this;
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
-        removePlugins: 'suggester,maximize,resize',
+        extraPlugins: 'simpleLink,widget',
+        removePlugins: 'suggester,image,maximize,resize',
         toolbarLocation: 'bottom',
         autoGrow_onStartup: true,
         toolbar: [
           ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
         ],
         on: {
-          change: function (evt) {
-            self.inputVal = evt.editor.getData();
-          },
-          destroy: function () {
-            self.inputVal = '';
-          }
+          change: evt => this.inputVal = evt.editor.getData(),
+          destroy: () => this.inputVal = '',
         }
       });
     },
