@@ -89,9 +89,7 @@
           <div class="challengeDescription py-4 my-2">
             <challenge-description
               ref="challengeDescription"
-              :challenge="challenge"
               v-model="challenge.description"
-              :value="challenge.description"
               @invalidDescription="invalidDescription($event)"
               @validDescription="validDescription($event)"
               @addDescription="addDescription($event)" />
@@ -235,7 +233,7 @@ export default {
       this.$refs.challengeAssignment.assigneeObj = this.challenge.managers;
       this.$set(this.challenge,'audience', space.id);
     },
-    reset(){
+    reset() {
       this.challenge = {};
       this.$refs.challengeProgram.broadcast = true;
       this.$refs.challengeDatePicker.startDate = null;
@@ -269,7 +267,6 @@ export default {
     },
     close() {
       this.reset();
-      this.$refs.challengeDescription.deleteDescription();
       this.$refs.challengeDrawer.close();
     },
     removeManager(id) {
@@ -366,20 +363,30 @@ export default {
             this.close();
             this.challenge = {};
           })
-          .catch(e => {
-            this.displayAlert(String(e), 'error');
+          .catch(() => {
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('challenges.challengeCreateError'),
+            });
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       } else {
         this.$refs.challengeDrawer.startLoading();
-        this.$challengesServices.saveChallenge(this.challenge).then((challenge) =>{
-          this.displayAlert(this.$t('challenges.challengeCreateSuccess'), 'success');
-          this.$root.$emit('challenge-added', challenge);
-          this.close();
-          this.challenge = {};
-        })
-          .catch(e => {
-            this.displayAlert(String(e), 'error');
+        this.$challengesServices.saveChallenge(this.challenge)
+          .then((challenge) =>{
+            this.$root.$emit('challenge-added', challenge);
+            this.$challengeUtils.displayAlert({
+              type: 'success',
+              message: this.$t('challenges.challengeCreateSuccess'),
+            });
+            this.close();
+            this.challenge = {};
+          })
+          .catch(() => {
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('challenges.challengeCreateError'),
+            });
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       }

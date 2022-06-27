@@ -70,7 +70,7 @@ export function getFromDate(date) {
 }
 
 export function displayAlert(alert) {
-  document.dispatchEvent(new CustomEvent({detail: alert}));
+  document.dispatchEvent(new CustomEvent('notification-alert', {detail: alert}));
 }
 
 export const getIsoDate = (date) => {

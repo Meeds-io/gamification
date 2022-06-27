@@ -8,7 +8,6 @@
     <textarea
       id="descriptionContent"
       ref="editor"
-      v-sanitized-html="inputVal"
       v-model="inputVal"
       cols="30"
       rows="10"
@@ -25,39 +24,24 @@ export default {
   props: {
     value: {
       type: String,
-      default: ''
-    },
-    challenge: {
-      type: Object,
-      default: function () {
-        return {};
-      }
+      default: null
     }
   },
   data() {
     return {
       inputVal: '',
-      charsCount: 0,
-      editorReady: false,
       maxLength: 1300,
       disabled: false,
     };
   },
   computed: {
-    challengeDescription () {
-      return this.challenge?.description || '';
-    }
+    charsCount() {
+      return this.inputVal && this.$utils.htmlToText(this.inputVal).length || 0;
+    },
   },
   watch: {
-    inputVal(val) {
-      this.$emit('addDescription',val);
-    },
-    value() {
-      this.inputVal = this.challengeDescription;
-    },
-    reset() {
-      CKEDITOR.instances['descriptionContent'].destroy(true);
-      this.editorReady = false;
+    inputVal() {
+      this.$emit('input', this.inputVal);
     },
     charsCount() {
       if (this.charsCount > this.maxLength) {
@@ -68,51 +52,27 @@ export default {
     },
   },
   created() {
+    CKEDITOR.basePath = '/commons-extension/ckeditor/';
     this.initCKEditor();
   },
+  beforeDestroy() {
+    this.destroyCKEditor();
+  },
   methods: {
-    initCKEditor: function () {
-      CKEDITOR.plugins.addExternal('embedsemantic', '/commons-extension/eXoPlugins/embedsemantic/', 'plugin.js');
-      let extraPlugins = 'simpleLink,widget,embedsemantic';
-      const windowWidth = $(window).width();
-      const windowHeight = $(window).height();
-      if (windowWidth > windowHeight && windowWidth < 768) {
-        extraPlugins = 'simpleLink,selectImage,embedsemantic';
-      }
-      CKEDITOR.basePath = '/commons-extension/ckeditor/';
-      const self = this;
+    initCKEditor() {
+      this.inputVal = this.value || '';
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
-        //removePlugins: 'suggester,simpleLink,confighelper',
-        extraPlugins: extraPlugins,
-        removePlugins: 'confirmBeforeReload,maximize,resize',
+        removePlugins: 'suggester,maximize,resize',
         toolbarLocation: 'bottom',
         autoGrow_onStartup: true,
         toolbar: [
           ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
         ],
-        on: {
-          blur: function () {
-            $(document.body).trigger('click');
-          },
-          change: function(evt) {
-            const newData = evt.editor.getData();
-            self.inputVal = newData;
-            let pureText = newData ? newData.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim() : '';
-            const div = document.createElement('div');
-            div.innerHTML = pureText;
-            pureText = div.textContent || div.innerText || '';
-            self.charsCount = pureText.length;
-          },
-          destroy: function () {
-            self.inputVal = '';
-            self.charsCount = 0;
-          }
-        },
       });
     },
-    deleteDescription: function() {
-      if (  CKEDITOR.instances['descriptionContent']) {
+    destroyCKEditor() {
+      if (CKEDITOR.instances['descriptionContent']) {
         CKEDITOR.instances['descriptionContent'].destroy();
       }
     },
