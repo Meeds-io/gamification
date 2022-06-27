@@ -37,20 +37,17 @@
       :loading="loading"
       class="pl-2 pt-5" />
 
-    <v-flex v-if="search && !domainsHavingChallenges.length" class="searchNoResults d-flex my-auto border-box-sizing">
-      <div class="d-flex flex-column ma-auto text-center text-sub-title">
-        <div>
-          <img
-            src="/challenges/images/Challenge_app_backg_image.png"
-            :alt="$t('challenges.welcomeMessageImgAlt')"
-            class="mx-4"
-            loading="lazy">
-          <i class="uiIconSearchLight text-sub-title my-auto">
-            <i class="uiIconCloseLight text-sub-title"></i>
-          </i>
+    <v-flex v-if="search && !domainsHavingChallenges.length" class="searchNoResults justify-center d-flex border-box-sizing">
+      <div>
+        <img
+          src="/challenges/images/challenge_not_found_filter_image.png"
+          :alt="$t('challenges.search.noResults')"
+          class="mx-4 searchNoResultsImg"
+          loading="lazy">
+        <div class="d-flex flex-column ma-auto text-center text-sub-title">
+          <span class="title">{{ $t('challenges.search.noResults') }}</span>
+          <span class="text-sub-title subtitle-1">{{ $t('challenges.search.noResultsMessage') }}</span>
         </div>
-        <span class="headline">{{ $t('challenges.search.noResults') }}</span>
-        <span class="caption">{{ $t('challenges.search.noResultsMessage') }}</span>
       </div>
     </v-flex>
 
@@ -78,6 +75,10 @@ export default {
     domainsWithChallenges: [],
     announcementsPerChallenge: 2,
     search: '',
+    startSearchAfterInMilliseconds: 600,
+    endTypingKeywordTimeout: 50,
+    startTypingKeywordTimeout: 0,
+    typing: false,
   }),
   computed: {
     classWelcomeMessage() {
@@ -116,9 +117,12 @@ export default {
     }
   },
   watch: {
-    search(value)  {
-      if (value && value.trim().length) {
-        this.getChallenges(value, false);
+    search()  {
+      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+      if (!this.typing) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+        this.typing = true;
+        this.waitForEndTyping();
       }
     }
   },
@@ -154,9 +158,11 @@ export default {
       }
     },
     refreshChallenges() {
+      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
       this.getChallenges(false);
     },
     loadMore(domainId) {
+      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
       this.getChallenges(true, domainId);
     },
     openChallengeDrawer(){
@@ -165,7 +171,7 @@ export default {
     getChallenges(append, domainId) {
       this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
-      this.$challengesServices.getAllChallengesByUser( this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
+      this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
         .then(result => {
           if (!result) {
             return;
@@ -220,6 +226,16 @@ export default {
         type: alertType,
         message: alertMessage,
       });
+    },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() > this.startTypingKeywordTimeout) {
+          this.typing = false;
+          this.getChallenges(false, false);
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
     },
   }
 };

@@ -115,13 +115,13 @@ public class RuleDAOTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRules() {
-    assertEquals(ruleDAO.findAll().size(), 0);
+    assertEquals(ruleDAO.getAllRules().size(), 0);
     newRule("rule1", "domain1");
-    assertEquals(ruleDAO.getAllEvents().size(), 1);
+    assertEquals(ruleDAO.getAllRules().size(), 1);
     newRule("rule1", "domain2");
-    assertEquals(ruleDAO.getAllEvents().size(), 2);
+    assertEquals(ruleDAO.getAllRules().size(), 2);
     newRule("rule2", "domain3");
-    assertEquals(ruleDAO.getAllEvents().size(), 3);
+    assertEquals(ruleDAO.getAllRules().size(), 3);
   }
 
   @Test
@@ -146,11 +146,11 @@ public class RuleDAOTest extends AbstractServiceTest {
     RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    assertEquals(ruleDAO.countRulesByFilter(filter), 1);
     newRule("rule2", "domain1", 1l);
-    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    assertEquals(ruleDAO.countRulesByFilter(filter), 2);
     newRule("rule3", "domain3", 1l);
-    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    assertEquals(ruleDAO.countRulesByFilter(filter), 2);
   }
 
 }

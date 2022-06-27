@@ -221,7 +221,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (suffixes.isEmpty()) {
       queryName = count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX;
     } else {
-      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX)+ "By" +  StringUtils.join(suffixes, "By");
+      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + "By" + StringUtils.join(suffixes, "By");
     }
     return queryName;
   }
@@ -232,9 +232,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     String queryContent;
     if (predicates.isEmpty()) {
-      queryContent = querySelect + orderBy;
+      queryContent = querySelect ;
     } else {
-      queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ") + orderBy;
+      queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
+    }
+    if (!count) {
+      queryContent = queryContent + orderBy;
     }
     return queryContent;
   }

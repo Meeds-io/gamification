@@ -37,7 +37,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     client = mock(ElasticSearchingClient.class);
     try {
       searchResult = IOUtil.getStreamContentAsString(getClass().getClassLoader()
-                                                               .getResourceAsStream("challenges-search-result.json"));
+                                                               .getResourceAsStream("rule-search-result.json"));
       Mockito.reset(configurationManager);
       when(configurationManager.getInputStream("FILE_PATH")).thenReturn(new ByteArrayInputStream(FAKE_ES_QUERY.getBytes()));
     } catch (Exception e) {

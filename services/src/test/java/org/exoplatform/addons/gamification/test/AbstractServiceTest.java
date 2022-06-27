@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -29,11 +29,13 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint;
 import org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint;
+import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.configuration.RuleServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
@@ -42,14 +44,17 @@ import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.storage.DomainStorage;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
+import org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage;
 import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
+import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.component.test.ConfigurationUnit;
@@ -57,6 +62,13 @@ import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
+import org.exoplatform.container.configuration.ConfigurationManager;
+import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.PropertiesParam;
+import org.exoplatform.container.xml.ValueParam;
+import org.exoplatform.services.cache.CacheService;
+import org.exoplatform.services.cache.concurrent.ConcurrentFIFOExoCache;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ProviderBinder;
 import org.exoplatform.services.rest.impl.RequestHandlerImpl;
@@ -69,6 +81,11 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
+import org.exoplatform.social.core.space.spi.SpaceService;
+import org.mockito.Mock;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ConfiguredBy({
     @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
@@ -114,6 +131,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final int       offset              = 0;
 
   protected static final int       limit               = 3;
+
+  private static final String ES_INDEX        = "rule_alias";
 
   protected IdentityManager        identityManager;
 
@@ -163,17 +182,48 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RealizationsStorage    realizationsStorage;
 
+  protected RuleSearchConnector ruleSearchConnector;
+
+  protected ConfigurationManager configurationManager;
+
+  protected ElasticSearchingClient elasticSearchingClient;
+
+  protected CacheService cacheService;
+
+  protected ListenerService listenerService;
+
+  protected SpaceService spaceService;
+
+  protected ChallengeStorage challengeStorage;
+
+
+  private static final String                            RULE_CACHE_NAME         = "gamification.rule";
+
+
   Identity                         userIdentity      = new Identity(TEST_USER_SENDER);
 
   @Override
   protected void setUp() throws Exception {
     begin();
-    gamificationService = CommonsUtils.getService(GamificationService.class);
+    configurationManager = mock(ConfigurationManager.class);
+    elasticSearchingClient = mock(ElasticSearchingClient.class);
+    ruleSearchConnector = mock(RuleSearchConnector.class);
+    cacheService = mock(CacheService.class);
+    listenerService = mock(ListenerService.class);
+    spaceService = mock(SpaceService.class);
+    ruleDAO = CommonsUtils.getService(RuleDAO.class);
+    ruleSearchConnector = new RuleSearchConnector(configurationManager, elasticSearchingClient, getParams());
+    when(cacheService.getCacheInstance(RULE_CACHE_NAME)).thenReturn(new ConcurrentFIFOExoCache<>(RULE_CACHE_NAME, 500));
+    ruleStorage = new RuleCachedStorage(ruleDAO, ruleSearchConnector, cacheService);
+    challengeStorage = new ChallengeStorage(ruleStorage);
+    ruleService = new RuleServiceImpl(ruleStorage, listenerService);
     identityManager = CommonsUtils.getService(IdentityManager.class);
+    gamificationHistoryDAO = CommonsUtils.getService(GamificationHistoryDAO.class);
+    domainStorage = CommonsUtils.getService(DomainStorage.class);
+    gamificationService = new GamificationService(identityManager, spaceService, gamificationHistoryDAO, ruleService);
     activityManager = CommonsUtils.getService(ActivityManager.class);
     relationshipManager = CommonsUtils.getService(RelationshipManager.class);
     badgeService = CommonsUtils.getService(BadgeService.class);
-    ruleService = CommonsUtils.getService(RuleService.class);
     domainService = CommonsUtils.getService(DomainService.class);
     entityManagerService = CommonsUtils.getService(EntityManagerService.class);
     manageBadgesEndpoint = CommonsUtils.getService(ManageBadgesEndpoint.class);
@@ -182,10 +232,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
     badgeStorage = CommonsUtils.getService(BadgeDAO.class);
     domainDAO = CommonsUtils.getService(DomainDAO.class);
-    domainStorage = CommonsUtils.getService(DomainStorage.class);
-    ruleDAO = CommonsUtils.getService(RuleDAO.class);
-    ruleStorage = CommonsUtils.getService(RuleStorage.class);
-    gamificationHistoryDAO = CommonsUtils.getService(GamificationHistoryDAO.class);
     realizationsStorage = CommonsUtils.getService(RealizationsStorage.class);
     ExoContainer container = getContainer();
     binder = container.getComponentInstanceOfType(ResourceBinder.class);
@@ -451,6 +497,21 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     assertEquals(h1.getReceiver(), h2.getReceiver());
     assertEquals(h1.getEarnerId(), h2.getEarnerId());
     assertEquals(h1.getCreatedBy(), h2.getCreatedBy());
+  }
+
+  private InitParams getParams() {
+    InitParams params = new InitParams();
+    PropertiesParam propertiesParam = new PropertiesParam();
+    propertiesParam.setName("constructor.params");
+    propertiesParam.setProperty("index", ES_INDEX);
+
+    ValueParam valueParam = new ValueParam();
+    valueParam.setName("query.file.path");
+    valueParam.setValue("FILE_PATH");
+
+    params.addParameter(propertiesParam);
+    params.addParameter(valueParam);
+    return params;
   }
 
   protected static class MockSecurityContext implements SecurityContext {
