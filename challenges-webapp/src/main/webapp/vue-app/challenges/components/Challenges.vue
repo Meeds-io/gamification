@@ -180,7 +180,7 @@ export default {
       this.$refs.deleteChallengeConfirmDialog.open();
     },
     showAlert(alertType, alertMessage){
-      this.$root.$emit('challenge-notification-alert', {
+      this.$challengeUtils.displayAlert({
         type: alertType,
         message: alertMessage,
       });

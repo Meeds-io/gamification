@@ -169,7 +169,6 @@ export default {
           linkMessage: this.$t('challenges.linkToAnnouncementActivity'),
           linkClass: 'd-block justify-start px-0 text-capitalize pt-2',
         });
-        this.displayAlert(`<a href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${announcement.activityId}" target="_blank" rel="noopener noreferrer">${this.$t('challenges.announcementCreateSuccess')}</a>`, 'success');
         this.$root.$emit('announcement-added', {detail: {announcement: announcement , challengeId: this.challenge.id}});
         this.close();
       })
@@ -198,12 +197,6 @@ export default {
         this.$nextTick().then(() => this.open());
       }
     },
-    displayAlert(message, type) {
-      this.$root.$emit('challenge-notification-alert', {
-        type,
-        message,
-      });
-    }
   }
 };
 </script>

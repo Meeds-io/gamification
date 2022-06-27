@@ -342,7 +342,10 @@ export default {
     },
     SaveChallenge() {
       if (this.challenge.startDate > this.challenge.endDate){
-        this.displayAlert(this.$t('challenges.challengeDateError'), 'error');
+        this.$challengeUtils.displayAlert({
+          type: 'error',
+          message: this.$t('challenges.challengeDateError'),
+        });
         return;
       }
       if (this.challenge && this.challenge.id){
@@ -391,12 +394,6 @@ export default {
           .finally(() => this.$refs.challengeDrawer.endLoading());
       }
     },
-    displayAlert(message, type) {
-      this.$root.$emit('challenge-notification-alert', {
-        type,
-        message,
-      });
-    }
   }
 };
 </script>
