@@ -85,11 +85,11 @@
       </div>
       <div class="pl-4 pr-4">
         <v-chip
-          :title="domain && domain.title"
+          :title="domainTitle"
           :color="domainShipColor"
           class="identitySuggesterItem mt-2">
           <span class="text-truncate">
-            {{ domain && domain.title }}
+            {{ domainTitle }}
           </span>
           <span v-if="isDomainDisabled" class="mx-1">
             ( {{ $t('challenges.label.disabled') }} )
@@ -127,45 +127,42 @@ export default {
     challenge: null,
     winners: [],
     maxAvatarToShow: 5,
-    domain: null
   }),
   computed: {
     avatarToDisplay () {
       return this.winners ;
     },
     space() {
-      return this.challenge && this.challenge.space;
+      return this.challenge?.space;
     },
     users() {
-      return this.challenge && this.challenge.managers || [];
+      return this.challenge?.managers || [];
     },
     announcementCount() {
-      return this.challenge && this.challenge.announcementsCount || this.winners.length;
+      return this.challenge?.announcementsCount || this.winners.length;
     },
     isDomainDeleted() {
-      return this.domain &&  this.domain.deleted ;
+      return this.challenge?.program?.deleted ;
     },
     isDomainDisabled() {
-      return this.domain && !this.domain.enabled;
+      return !this.challenge?.program?.enabled;
     },
     isDomainDisabledOrDeleted() {
-      return this.domain && (this.domain.deleted || !this.domain.enabled);
+      return this.challenge?.program && (this.challenge.program.deleted || !this.challenge.program.enabled);
     },
     domainShipColor() {
       return !this.isDomainDisabledOrDeleted && 'primary' || '#e0e0e0';
+    },
+    domainTitle() {
+      return this.challenge?.program?.title;
     }
   },
   created() {
     this.$root.$on('open-challenge-details', this.open);
   },
   methods: {
-    open(event) {
-      const challenge = event.challenge;
-      if (!challenge) {
-        return;
-      }
-      this.domain  = event.domain;
-      this.challenge = event.challenge;
+    open(challenge) {
+      this.challenge = challenge;
       window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${this.challenge.id}`);
 
       this.$refs.challengeDetails.open();
