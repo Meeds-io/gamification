@@ -1,10 +1,11 @@
 <template>
   <exo-drawer
     ref="challengeDrawer"
+    v-model="drawer"
     class="challengeDrawer"
     :right="!$vuetify.rtl"
-    @closed="close"
-    eager>
+    eager
+    @closed="close">
     <template slot="title">
       <span class="pb-2"> {{ drawerTitle }} </span>
     </template>
@@ -88,6 +89,7 @@
           </div>
           <div class="challengeDescription py-4 my-2">
             <challenge-description
+              v-if="drawer"
               ref="challengeDescription"
               v-model="challenge.description"
               @invalidDescription="invalidDescription($event)"
@@ -149,6 +151,7 @@ export default {
         length: (v) => (v && v.length < 250) || this.$t('challenges.label.challengeTitleLengthExceed') ,
         value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
       },
+      drawer: false,
       challenge: null,
       audience: '',
       isValid: {
@@ -250,11 +253,11 @@ export default {
       this.disabledUpdate = false ;
       this.$refs.challengeAssignment.disabledUnAssign = false;
       this.$refs.challengeDescription.disabled = false;
-      this.warning= null;
+      this.warning = null;
       this.$refs.challengeProgram.program = null;
     },
     open(challenge) {
-      this.challenge = challenge || {
+      this.challenge = challenge && JSON.parse(JSON.stringify(challenge)) || {
         points: 20,
       };
       this.$refs.challengeDrawer.open();

@@ -11,7 +11,7 @@
       v-model="inputVal"
       cols="30"
       rows="10"
-      :disabled="disabled"></textarea>
+      class="d-none"></textarea>
     <span class="tooManyChars">
       {{ charsCount }}{{ maxLength > -1 ? ' / ' + maxLength : '' }}
       <i class="uiIconMessageLength"></i>
@@ -61,6 +61,7 @@ export default {
   methods: {
     initCKEditor() {
       this.inputVal = this.value || '';
+      const self = this;
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
         removePlugins: 'suggester,maximize,resize',
@@ -69,6 +70,14 @@ export default {
         toolbar: [
           ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
         ],
+        on: {
+          change: function (evt) {
+            self.inputVal = evt.editor.getData();
+          },
+          destroy: function () {
+            self.inputVal = '';
+          }
+        }
       });
     },
     destroyCKEditor() {
