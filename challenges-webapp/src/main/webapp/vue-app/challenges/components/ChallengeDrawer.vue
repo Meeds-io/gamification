@@ -1,10 +1,11 @@
 <template>
   <exo-drawer
     ref="challengeDrawer"
+    v-model="drawer"
     class="challengeDrawer"
     :right="!$vuetify.rtl"
-    @closed="close"
-    eager>
+    eager
+    @closed="close">
     <template slot="title">
       <span class="pb-2"> {{ drawerTitle }} </span>
     </template>
@@ -88,10 +89,9 @@
           </div>
           <div class="challengeDescription py-4 my-2">
             <challenge-description
+              v-if="drawer"
               ref="challengeDescription"
-              :challenge="challenge"
               v-model="challenge.description"
-              :value="challenge.description"
               @invalidDescription="invalidDescription($event)"
               @validDescription="validDescription($event)"
               @addDescription="addDescription($event)" />
@@ -151,6 +151,7 @@ export default {
         length: (v) => (v && v.length < 250) || this.$t('challenges.label.challengeTitleLengthExceed') ,
         value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
       },
+      drawer: false,
       challenge: null,
       audience: '',
       isValid: {
@@ -235,7 +236,7 @@ export default {
       this.$refs.challengeAssignment.assigneeObj = this.challenge.managers;
       this.$set(this.challenge,'audience', space.id);
     },
-    reset(){
+    reset() {
       this.challenge = {};
       this.$refs.challengeProgram.broadcast = true;
       this.$refs.challengeDatePicker.startDate = null;
@@ -252,11 +253,11 @@ export default {
       this.disabledUpdate = false ;
       this.$refs.challengeAssignment.disabledUnAssign = false;
       this.$refs.challengeDescription.disabled = false;
-      this.warning= null;
+      this.warning = null;
       this.$refs.challengeProgram.program = null;
     },
     open(challenge) {
-      this.challenge = challenge || {
+      this.challenge = challenge && JSON.parse(JSON.stringify(challenge)) || {
         points: 20,
       };
       this.$refs.challengeDrawer.open();
@@ -269,7 +270,6 @@ export default {
     },
     close() {
       this.reset();
-      this.$refs.challengeDescription.deleteDescription();
       this.$refs.challengeDrawer.close();
     },
     removeManager(id) {
@@ -345,7 +345,10 @@ export default {
     },
     SaveChallenge() {
       if (this.challenge.startDate > this.challenge.endDate){
-        this.$root.$emit('show-alert', {type: 'error',message: this.$t('challenges.challengeDateError')});
+        this.$challengeUtils.displayAlert({
+          type: 'error',
+          message: this.$t('challenges.challengeDateError'),
+        });
         return;
       }
       if (this.challenge && this.challenge.id){
@@ -356,26 +359,40 @@ export default {
           this.challenge.program = this.challenge.program.title;
         }
         this.$refs.challengeDrawer.startLoading();
-        this.$challengesServices.updateChallenge(this.challenge).then(() =>{
-          this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeUpdateSuccess')});
-          this.$root.$emit('challenge-updated');
-          this.close();
-          this.challenge = {};
-        })
-          .catch(e => {
-            this.$root.$emit('show-alert', {type: 'error',message: String(e)});
+        this.$challengesServices.updateChallenge(this.challenge)
+          .then(challenge =>{
+            this.$challengeUtils.displayAlert({
+              type: 'success',
+              message: this.$t('challenges.challengeUpdateSuccess'),
+            });
+            this.$root.$emit('challenge-updated', challenge);
+            this.close();
+            this.challenge = {};
+          })
+          .catch(() => {
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('challenges.challengeCreateError'),
+            });
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       } else {
         this.$refs.challengeDrawer.startLoading();
-        this.$challengesServices.saveChallenge(this.challenge).then((challenge) =>{
-          this.$root.$emit('show-alert', {type: 'success',message: this.$t('challenges.challengeCreateSuccess')});
-          this.$root.$emit('challenge-added', challenge);
-          this.close();
-          this.challenge = {};
-        })
-          .catch(e => {
-            this.$root.$emit('show-alert', {type: 'error',message: String(e)});
+        this.$challengesServices.saveChallenge(this.challenge)
+          .then((challenge) =>{
+            this.$root.$emit('challenge-added', challenge);
+            this.$challengeUtils.displayAlert({
+              type: 'success',
+              message: this.$t('challenges.challengeCreateSuccess'),
+            });
+            this.close();
+            this.challenge = {};
+          })
+          .catch(() => {
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('challenges.challengeCreateError'),
+            });
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       }
