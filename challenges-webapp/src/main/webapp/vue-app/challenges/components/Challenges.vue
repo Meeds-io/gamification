@@ -75,11 +75,11 @@ export default {
       return domainsById;
     },
     challengePerPage() {
-      if (this.$vuetify.breakpoint.width <= eXo.env.portal.vuetifyPreset.breakpoint.thresholds.sm ) {
+      if (this.$vuetify.breakpoint.xs) {
         return 2;
-      } else if (this.$vuetify.breakpoint.width <= eXo.env.portal.vuetifyPreset.breakpoint.thresholds.lg) {
+      } else if (this.$vuetify.breakpoint.smAndDown) {
         return 4;
-      } else if (this.$vuetify.breakpoint.width <= eXo.env.portal.vuetifyPreset.breakpoint.thresholds.xl) {
+      } else if (this.$vuetify.breakpoint.lgAndDown) {
         return 8;
       } else {
         return 12;
