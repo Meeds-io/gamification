@@ -82,4 +82,73 @@ public class ChallengeStorageTest extends AbstractServiceTest {
     assertNull(savedChallenge);
   }
 
+  @Test
+  public void testGetChallengeById() {
+    DomainEntity domain = newDomain();
+    Challenge challenge = new Challenge(0,
+                                        "new challenge",
+                                        "challenge description",
+                                        1l,
+                                        Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
+                                        Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
+                                        Collections.emptyList(),
+                                        10L,
+                                        domain.getTitle());
+
+    challenge = challengeStorage.saveChallenge(challenge, "root");
+    assertNotNull(challenge);
+    assertNotSame(0, challenge.getId());
+    Challenge savedChallenge = challengeStorage.getChallengeById(challenge.getId());
+    assertNotNull(savedChallenge);
+  }
+
+  @Test
+  public void testFindChallengesByFilter() {
+    DomainEntity domain = newDomain();
+    Challenge challenge = new Challenge(0,
+                                        "new challenge",
+                                        "challenge description",
+                                        1l,
+                                        Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
+                                        Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
+                                        Collections.emptyList(),
+                                        10L,
+                                        domain.getTitle());
+    RuleFilter filter = new RuleFilter();
+    filter.setDomainId(domain.getId());
+    filter.setSpaceIds(Collections.singletonList(1l));
+    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 0);
+    challengeStorage.saveChallenge(challenge, "root");
+    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 1);
+    challengeStorage.saveChallenge(challenge, "root");
+    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 2);
+    filter.setDomainId(100l);
+    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 0);
+
+  }
+  @Test
+  public void testCountChallengesByFilter() {
+    DomainEntity domain = newDomain();
+    Challenge challenge = new Challenge(0,
+                                        "new challenge",
+                                        "challenge description",
+                                        1l,
+                                        Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
+                                        Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
+                                        Collections.emptyList(),
+                                        10L,
+                                        domain.getTitle());
+    RuleFilter filter = new RuleFilter();
+    filter.setDomainId(domain.getId());
+    filter.setSpaceIds(Collections.singletonList(1l));
+    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    challengeStorage.saveChallenge(challenge, "root");
+    assertEquals(ruleDAO.countRulesByFilter(filter), 1);
+    challengeStorage.saveChallenge(challenge, "root");
+    assertEquals(ruleDAO.countRulesByFilter(filter), 2);
+    filter.setDomainId(100l);
+    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+
+  }
+
 }

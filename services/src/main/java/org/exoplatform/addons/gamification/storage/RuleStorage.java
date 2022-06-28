@@ -29,6 +29,7 @@ public class RuleStorage {
     RuleEntity ruleEntity = RuleMapper.ruleDTOToRule(ruleDTO);
     ruleEntity.setLastModifiedDate(new Date());
     if (ruleEntity.getId() == null) {
+      ruleEntity.setCreatedDate(new Date());
       ruleEntity = ruleDAO.create(ruleEntity);
     } else if (!ruleEntity.isDeleted()) {
       ruleEntity = ruleDAO.update(ruleEntity);

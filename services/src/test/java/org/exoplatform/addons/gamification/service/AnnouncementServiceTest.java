@@ -73,6 +73,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
         Announcement announcement = new Announcement(0,
                 challenge.getId(),
+                challenge.getTitle(),
                 1L,
                 "announcement comment",
                 1L,
@@ -81,6 +82,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
         Announcement announcementWithoutAssignee = new Announcement(0,
                 challenge.getId(),
+                challenge.getTitle(),
+
                 null,
                 "announcement comment",
                 1L,
@@ -89,6 +92,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
         Announcement createdAnnouncement = new Announcement(1,
                 challenge.getId(),
+                challenge.getTitle(),
+
                 1L,
                 "announcement comment",
                 1L,
@@ -162,6 +167,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                 "gamification");
         Announcement announcement = new Announcement(0,
                 challenge.getId(),
+                challenge.getTitle(),
+
                 1L,
                 "announcement comment",
                 1L,
@@ -169,6 +176,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                 null);
         Announcement createdAnnouncement = new Announcement(1,
                 challenge.getId(),
+                challenge.getTitle(),
                 1L,
                 "announcement comment",
                 1L,
@@ -176,6 +184,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                 null);
         Announcement editedAnnouncement = new Announcement(1,
                 challenge.getId(),
+                challenge.getTitle(),
                 1L,
                 "announcement comment",
                 1L,
@@ -251,6 +260,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                 "gamification");
         Announcement announcement1 = new Announcement(0,
                 challenge.getId(),
+                challenge.getTitle(),
                 1L,
                 "announcement comment",
                 1L,
@@ -258,6 +268,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                 null);
         Announcement announcement2 = new Announcement(1,
                 challenge.getId(),
+                challenge.getTitle(),
                 1L,
                 "announcement comment",
                 1L,
@@ -265,6 +276,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                 null);
         Announcement announcement3 = new Announcement(1,
                 challenge.getId(),
+                challenge.getTitle(),
                 1L,
                 "announcement comment",
                 1L,
@@ -316,6 +328,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     public void testGetAnnouncementById() {
         Announcement announcement = new Announcement(1,
                 1l,
+                "challenge title",
                 1L,
                 "announcement comment",
                 1L,

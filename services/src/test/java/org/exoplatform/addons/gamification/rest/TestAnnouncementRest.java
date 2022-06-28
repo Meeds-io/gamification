@@ -216,6 +216,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
             challenge = challengeService.createChallenge(challenge, "root1");
             Announcement announcement = new Announcement(0,
                     challenge.getId(),
+                    challenge.getTitle(),
                     1L,
                     "announcement comment",
                     1L,

@@ -95,6 +95,7 @@ public class AnnouncementActivityGeneratorListenerTest {
 
     Announcement announcement = new Announcement(1,
                                                  challenge.getId(),
+                                                 challenge.getTitle(),
                                                  1L,
                                                  "announcement comment",
                                                  1L,

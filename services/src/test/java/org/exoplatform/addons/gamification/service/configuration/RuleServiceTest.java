@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -16,8 +16,10 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import java.util.Collections;
 import java.util.Date;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
@@ -26,17 +28,34 @@ import org.junit.Test;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+import static org.exoplatform.social.core.jpa.storage.entity.MetadataEntity_.name;
+
 public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
-  public void testFindEnableRuleByTitle() {
+  public void testFindEnableRuleByTitle() throws Exception {
     assertEquals(ruleDAO.findAll().size(), 0);
+    DomainDTO domain = newDomainDTO();
     assertNull(ruleService.findEnableRuleByTitle(RULE_NAME));
-    RuleEntity ruleEntity = newRule();
-    assertNotNull(ruleService.findEnableRuleByTitle(RULE_NAME));
-    ruleEntity.setEnabled(false);
-    ruleDAO.update(ruleEntity);
-    assertNull(ruleService.findEnableRuleByTitle(RULE_NAME));
+    RuleDTO rule = new RuleDTO();
+    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setTitle("rule");
+    rule.setDescription("Description");
+    rule.setArea(domain.getTitle());
+    rule.setEnabled(true);
+    rule.setDeleted(false);
+    rule.setEvent("rule");
+    rule.setCreatedBy(TEST_USER_SENDER);
+    rule.setLastModifiedBy(TEST_USER_SENDER);
+    rule.setLastModifiedDate(new Date().toString());
+    rule.setDomainDTO(domain);
+    rule.setType(TypeRule.AUTOMATIC);
+    rule.setManagers(Collections.emptyList());
+    rule = ruleService.addRule(rule);
+    assertNotNull(ruleService.findEnableRuleByTitle(rule.getTitle()));
+    rule.setEnabled(false);
+    ruleService.updateRule(rule);
+    assertNull(ruleService.findEnableRuleByTitle(rule.getTitle()));
   }
 
   @Test
