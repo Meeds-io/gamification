@@ -123,6 +123,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <type>org.exoplatform.addons.gamification.rest.RealizationsRest</type>
   </component>
   <component>
+    <type>org.exoplatform.addons.gamification.service.RuleIndexingService</type>
+  </component>
+  <component>
     <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
     <init-params>
         <value-param>
