@@ -13,6 +13,8 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.json.JSONException;
 import org.json.JSONWriter;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +43,11 @@ public class TestChallengeRest extends AbstractServiceTest {
         super.setUp();
         registry(getComponentClass());
         ConversationState.setCurrent(null);
+    }
+
+    @After
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test

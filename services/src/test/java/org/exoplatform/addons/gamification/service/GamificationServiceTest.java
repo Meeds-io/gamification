@@ -19,6 +19,8 @@ package org.exoplatform.addons.gamification.service;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.IdentityType;
@@ -32,6 +34,17 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationServiceTest extends AbstractServiceTest {
+
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testSaveActionHistory() {

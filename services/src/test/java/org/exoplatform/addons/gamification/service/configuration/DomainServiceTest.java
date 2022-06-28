@@ -21,6 +21,8 @@ import java.util.Date;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -31,6 +33,17 @@ import javax.persistence.EntityNotFoundException;
 import static org.junit.Assert.assertThrows;
 
 public class DomainServiceTest extends AbstractServiceTest {
+
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testGetAllDomains() {

@@ -7,6 +7,7 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,6 +31,11 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
   }
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
+
 
   @Test
   public void testGetAllPointsByUserId() {

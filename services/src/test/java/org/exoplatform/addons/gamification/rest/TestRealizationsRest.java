@@ -12,6 +12,7 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,10 @@ public class TestRealizationsRest extends AbstractServiceTest {
         super.setUp();
         registry(getComponentClass());
         startSessionAs("root");
+    }
+    @After
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test

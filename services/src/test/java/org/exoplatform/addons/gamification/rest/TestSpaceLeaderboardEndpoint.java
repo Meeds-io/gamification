@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +29,12 @@ public class TestSpaceLeaderboardEndpoint extends AbstractServiceTest {
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
   }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
+
 
   @Test
   public void testGetAllLeadersByRank() {

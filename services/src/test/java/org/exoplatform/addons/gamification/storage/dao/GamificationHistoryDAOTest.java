@@ -7,11 +7,23 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testFindAllActionsHistoryAgnostic() {

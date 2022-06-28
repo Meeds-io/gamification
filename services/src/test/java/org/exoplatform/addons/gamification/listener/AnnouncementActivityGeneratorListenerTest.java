@@ -120,10 +120,9 @@ public class AnnouncementActivityGeneratorListenerTest {
 
     ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
     activity.setId("1");
-    when(EntityMapper.fromAnnouncementActivity(any(AnnouncementActivity.class))).thenReturn(announcement);
     when(Utils.getCurrentUser()).thenReturn("root");
     when(Utils.getSpaceById(String.valueOf(challenge.getAudience()))).thenReturn(space);
-    when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(spaceIdentity);
+    when(identityManager.getIdentity(anyString())).thenReturn(spaceIdentity);
 
     when(challengeService.getChallengeById(anyLong(), anyString())).thenReturn(challenge);
     when(announcementService.updateAnnouncement(any(Announcement.class))).thenReturn(announcement);

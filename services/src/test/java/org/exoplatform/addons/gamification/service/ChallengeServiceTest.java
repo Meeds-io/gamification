@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -116,13 +116,9 @@ public class ChallengeServiceTest {
         assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(null, "root"));
         assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challengeCreated, "root"));
 
-        when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(null);
-        assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challenge, "root"));
-        when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(rootIdentity);
-
-        when(spaceService.isManager(space, "root")).thenReturn(false);
+        when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(false);
         assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-        when(spaceService.isManager(space, "root")).thenReturn(true);
+        when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
 
         Challenge savedChallenge = challengeService.createChallenge(challenge, "root");
         assertNotNull(savedChallenge);

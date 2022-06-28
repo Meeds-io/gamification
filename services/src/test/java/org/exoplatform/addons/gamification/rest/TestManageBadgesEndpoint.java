@@ -25,6 +25,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
 import org.json.JSONWriter;
+import org.junit.After;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
@@ -52,6 +53,11 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
     startSessionAs("root1");
     registry(getComponentClass());
   }
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
+
 
   /**
    * Testing get All badges

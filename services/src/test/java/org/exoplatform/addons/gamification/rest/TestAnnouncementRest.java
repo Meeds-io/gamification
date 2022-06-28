@@ -21,6 +21,8 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.json.JSONWriter;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +79,11 @@ public class TestAnnouncementRest extends AbstractServiceTest {
         registry(getComponentClass());
         announcementService = CommonsUtils.getService(AnnouncementService.class);
         ConversationState.setCurrent(null);
+    }
+
+    @After
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test

@@ -17,6 +17,8 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
@@ -24,6 +26,17 @@ import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 public class BadgeServiceTest extends AbstractServiceTest {
+
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testFindBadgeByTitle() {

@@ -79,7 +79,10 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -91,6 +94,8 @@ import static org.mockito.Mockito.when;
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.social.component.service-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml") })
 
+@RunWith(MockitoJUnitRunner.class)
+@PowerMockIgnore({"javax.management.*", "javax.xml.*", "org.xml.*"})
 public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final String    GAMIFICATION_DOMAIN = "TeamWork";

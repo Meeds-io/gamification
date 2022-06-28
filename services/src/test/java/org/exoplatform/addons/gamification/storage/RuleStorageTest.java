@@ -8,12 +8,25 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Ty
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Date;
 
 public class RuleStorageTest extends AbstractServiceTest {
+
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testSaveRule() {

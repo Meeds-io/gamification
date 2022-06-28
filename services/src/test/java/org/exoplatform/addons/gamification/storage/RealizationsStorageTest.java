@@ -5,11 +5,23 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 
 public class RealizationsStorageTest extends AbstractServiceTest {
 
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testGetAllRealizationsByDate() {

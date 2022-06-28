@@ -17,6 +17,10 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.PropertyManager;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -25,6 +29,16 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import java.util.Collections;
 
 public class RuleDAOTest extends AbstractServiceTest {
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    super.setUp();
+  }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
 
   @Test
   public void testFindEnableRuleByTitle() {

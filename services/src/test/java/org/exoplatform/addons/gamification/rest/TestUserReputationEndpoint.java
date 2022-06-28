@@ -5,6 +5,7 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,12 @@ public class TestUserReputationEndpoint extends AbstractServiceTest {
     newGamificationActionsHistory();
     newGamificationActionsHistory();
   }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
+
 
   @Test
   public void testGetReputationStatus() {

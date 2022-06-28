@@ -28,6 +28,7 @@ import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.json.JSONWriter;
+import org.junit.After;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
@@ -50,6 +51,12 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     registry(getComponentClass());
     ConversationState.setCurrent(null);
   }
+
+  @After
+  public void tearDown() {
+    super.tearDown();
+  }
+
 
   /**
    * Testing get All rules
