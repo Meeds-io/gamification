@@ -131,13 +131,26 @@ export default {
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
       this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
         .then(result => {
+          if (!result) {
+            return;
+          }
           if (domainId) {
+            const program = Object.assign({}, this.domainsById[domainId]);
+            Object.assign(program, {challenges: null});
+            result.forEach(challenge => challenge.program = program);
             if (append) {
               this.domainsById[domainId].challenges = this.challengesByDomainId[domainId].concat(result);
             } else {
               this.domainsById[domainId].challenges = result;
             }
           } else {
+            result.forEach(domain => {
+              if (domain.challenges) {
+                const program = Object.assign({}, domain);
+                Object.assign(program, {challenges: null});
+                Object.values(domain.challenges).forEach(challenge => challenge.program = program);
+              }
+            });
             this.domainsWithChallenges = result;
           }
         }).finally(() => {
@@ -167,7 +180,7 @@ export default {
       this.$refs.deleteChallengeConfirmDialog.open();
     },
     showAlert(alertType, alertMessage){
-      this.$root.$emit('challenge-notification-alert', {
+      this.$challengeUtils.displayAlert({
         type: alertType,
         message: alertMessage,
       });

@@ -99,7 +99,7 @@ export default {
     program() {
       if (this.program && this.broadcast){
         this.$emit('addProgram',this.program.title);
-      } else if (!this.broadcast ) {
+      } else if (!this.broadcast) {
         this.broadcast = true;
       }
     },
@@ -116,15 +116,12 @@ export default {
   },
   methods: {
     getAllDomains() {
-      this.$challengesServices.getAllDomains() .then(domains => {
-        this.domains =  domains.slice().filter(domain => domain.enabled);
-      }).catch(e => {
-        this.$root.$emit('show-alert', {type: 'error',message: String(e)});
-      });
+      this.$challengesServices.getAllDomains()
+        .then(domains => this.domains =  domains.slice().filter(domain => domain.enabled));
     },
     remove(item) {
       this.program = null;
-      this.$emit('removeProgram',item.title);
+      this.$emit('removeProgram', item.title);
     },
   },
 };

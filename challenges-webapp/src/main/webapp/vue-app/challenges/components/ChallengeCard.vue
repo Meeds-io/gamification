@@ -16,34 +16,39 @@
                 <v-menu
                   v-if="enableEdit"
                   v-model="showMenu"
-                  offset-y
-                  attach
                   :left="!$vuetify.rtl"
-                  :right="$vuetify.rtl">
-                  <template #activator="{ on }">
+                  :right="$vuetify.rtl"
+                  bottom
+                  offset-y
+                  attach>
+                  <template #activator="{ on, attrs }">
                     <v-btn
                       icon
-                      class="ml-2"
-                      v-on="on"
-                      @blur="closeMenu()">
-                      <v-icon>mdi-dots-vertical</v-icon>
+                      small
+                      class="me-2"
+                      v-bind="attrs"
+                      v-on="on">
+                      <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
                     </v-btn>
                   </template>
-                  <v-list>
-                    <v-list-item class="editList" @mousedown="$event.preventDefault()">
-                      <v-list-item-title class="editLabel" @click="editChallenge">{{ $t('challenges.edit') }}</v-list-item-title>
+                  <v-list dense class="pa-0">
+                    <v-list-item
+                      class="editList"
+                      dense
+                      @click="editChallenge">
+                      <v-list-item-title class="editLabel">{{ $t('challenges.edit') }}</v-list-item-title>
                     </v-list-item>
                     <v-list-item
                       v-if="enableDelete"
                       class="editList"
-                      @mousedown="$event.preventDefault()">
-                      <v-list-item-title class="editLabel" @click="$root.$emit('challenge-delete-confirm', challenge)">{{ $t('challenges.delete') }}</v-list-item-title>
+                      @click="$root.$emit('challenge-delete-confirm', challenge)">
+                      <v-list-item-title class="editLabel">{{ $t('challenges.delete') }}</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="$root.$emit('open-challenge-details',{ challenge: challenge, domain: domain } )">
+            <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
@@ -161,6 +166,14 @@ export default {
   },
   created() {
     this.$root.$on('announcement-added', this.announcementAdded);
+    // Workaround to fix closing menu when clicking outside
+    $(document).mousedown(() => {
+      if (this.showMenu) {
+        window.setTimeout(() => {
+          this.showMenu = false;
+        }, 200);
+      }
+    });
   },
   methods: {
     editChallenge() {
@@ -175,9 +188,6 @@ export default {
         });
         this.challenge.announcementsCount++;
       }
-    },
-    closeMenu() {
-      this.showMenu= false;
     },
     getStatus() {
       const currentDate = new Date();
