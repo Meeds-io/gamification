@@ -36,17 +36,15 @@ import org.exoplatform.services.log.Log;
 
 public class RuleServiceImpl implements RuleService {
 
-  private static final Log LOG                = ExoLogger.getExoLogger(RuleServiceImpl.class);
+  private static final Log LOG = ExoLogger.getExoLogger(RuleServiceImpl.class);
 
+  private RuleStorage      ruleStorage;
 
-  private RuleStorage ruleStorage;
-
-  private ListenerService     listenerService;
+  private ListenerService  listenerService;
 
   public RuleServiceImpl(RuleStorage ruleStorage,  ListenerService listenerService) {
     this.ruleStorage = ruleStorage;
     this.listenerService = listenerService;
-
   }
 
   public RuleDTO findEnableRuleByTitle(String ruleTitle) throws IllegalArgumentException {

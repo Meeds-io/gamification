@@ -118,8 +118,9 @@ public class AnnouncementRest implements ResourceContainer {
           @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
           @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), }
   )
-  public Response getAllAnnouncementByChallenge(@Context
-  Request request,
+  public Response getAllAnnouncementByChallenge(
+                                                @Context
+                                                Request request,
                                                 @Context
                                                 UriInfo uriInfo,
                                                 @ApiParam(value = "id of the challenge", required = true)

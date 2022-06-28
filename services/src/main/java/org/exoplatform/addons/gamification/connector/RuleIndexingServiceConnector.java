@@ -15,26 +15,22 @@
  */
 package org.exoplatform.addons.gamification.connector;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.joda.time.DateTimeZone;
 
 public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
@@ -97,13 +93,11 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("lastModifiedBy", rule.getLastModifiedBy());
     fields.put("lastModifiedDate",toMilliSecondsString(rule.getLastModifiedDate()));
     fields.put("type", rule.getType().name());
-    String managers = "";
-    for (Long manager : rule.getManagers()) {
-      managers = managers + manager + "#";
+    Document document = new Document(id, null, new Date(System.currentTimeMillis()), Collections.emptySet(), fields);
+    if (CollectionUtils.isNotEmpty(rule.getManagers())) {
+      document.addListField("managers", rule.getManagers().stream().map(String::valueOf).collect(Collectors.toList()));
     }
-    fields.put("managers", managers);
-
-    return new Document(id, null, new Date(System.currentTimeMillis()), Collections.EMPTY_SET, fields);
+    return document;
   }
   private String toMilliSecondsString(Date date) {
     return date != null ? String.valueOf(date.getTime()) : "0";

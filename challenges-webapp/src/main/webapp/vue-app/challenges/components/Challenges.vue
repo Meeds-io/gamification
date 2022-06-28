@@ -27,31 +27,18 @@
           class="pa-0 mx-3" />
       </div>
     </v-toolbar>
-    <welcome-message
+    <challenge-welcome-message
       v-if="displayWelcomeMessage"
       :can-add-challenge="canAddChallenge" />
+    <challenge-no-results v-else-if="displayNoSearchResult" />
     <challenges-list
-      v-else
+      v-else-if="displayChallengesList"
       :domains="domainsHavingChallenges"
       :challenges-by-domain-id="challengesByDomainId"
       :loading="loading"
       class="pl-2 pt-5" />
 
-    <v-flex v-if="search && !domainsHavingChallenges.length" class="searchNoResults justify-center d-flex border-box-sizing">
-      <div>
-        <img
-          src="/challenges/images/challenge_not_found_filter_image.png"
-          :alt="$t('challenges.search.noResults')"
-          class="mx-4 searchNoResultsImg"
-          loading="lazy">
-        <div class="d-flex flex-column ma-auto text-center text-sub-title">
-          <span class="title">{{ $t('challenges.search.noResults') }}</span>
-          <span class="text-sub-title subtitle-1">{{ $t('challenges.search.noResultsMessage') }}</span>
-        </div>
-      </div>
-    </v-flex>
-
-    <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
+    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
     <challenge-details-drawer ref="challengeDetails" />
     <challenge-winners-details ref="winnersDetails" />
     <exo-confirm-dialog
@@ -88,7 +75,13 @@ export default {
       return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
     },
     displayWelcomeMessage() {
-      return !this.loading && !this.domainsHavingChallenges.length && !this.search.length;
+      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && !this.search?.length;
+    },
+    displayNoSearchResult() {
+      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && this.search?.length;
+    },
+    displayChallengesList() {
+      return this.domainsHavingChallenges.length;
     },
     challengesByDomainId() {
       const challengesByDomainId = {};
@@ -120,16 +113,22 @@ export default {
     search()  {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
       if (!this.typing) {
-        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
         this.typing = true;
         this.waitForEndTyping();
       }
-    }
+    },
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
   },
   created() {
-    this.$challengesServices.canAddChallenge()
-      .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
-    this.getChallenges(false);
+    const promises = [];
+    promises.push(this.computeCanAddChallenge());    
+    promises.push(this.getChallenges(false));
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
     this.$root.$on('challenge-deleted', this.refreshChallenges);
@@ -139,17 +138,21 @@ export default {
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (challengeId) {
       setTimeout(() => {
-        this.$challengesServices.getChallengeById(challengeId).then(challenge => {
-          if (challenge && challenge.id) {
-            this.$root.$emit('open-challenge-details', challenge);
-            window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
-          } else {
-            window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
-            this.showAlert('error', this.$t('challenges.viewChallengeError'));
-          }
-        });
+        const retrieveChallengePromise = this.$challengesServices.getChallengeById(challengeId)
+          .then(challenge => {
+            if (challenge && challenge.id) {
+              this.$root.$emit('open-challenge-details', challenge);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
+            } else {
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+              this.showAlert('error', this.$t('challenges.viewChallengeError'));
+            }
+          });
+        promises.push(retrieveChallengePromise);
       }, 10);
     }
+    Promise.all(promises)
+      .finally(() => this.$root.$applicationLoaded());
   },
   methods: {
     pushChallenge(challenge) {
@@ -157,13 +160,15 @@ export default {
         this.challengesByDomainId[challenge.program.id].push(challenge);
       }
     },
+    computeCanAddChallenge() {
+      return this.$challengesServices.canAddChallenge()
+        .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
+    },
     refreshChallenges() {
-      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-      this.getChallenges(false);
+      return this.getChallenges(false);
     },
     loadMore(domainId) {
-      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-      this.getChallenges(true, domainId);
+      return this.getChallenges(true, domainId);
     },
     openChallengeDrawer(){
       this.$refs.challengeDrawer.open();
@@ -171,7 +176,7 @@ export default {
     getChallenges(append, domainId) {
       this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
-      this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
+      return this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
         .then(result => {
           if (!result) {
             return;
@@ -195,12 +200,10 @@ export default {
             });
             this.domainsWithChallenges = result;
           }
-        }).finally(() => {
-          this.loading = false;
-          this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
-        });
+        }).finally(() => this.loading = false);
     },
     deleteChallenge() {
+      this.loading = true;
       this.$challengesServices.deleteChallenge(this.selectedChallenge.id).then(() =>{
         this.showAlert('success', this.$t('challenges.deleteSuccess'));
         this.$root.$emit('challenge-deleted');
@@ -215,7 +218,8 @@ export default {
             msg = this.$t('challenges.deleteErrorSave');
           }
           this.showAlert('error', msg);
-        });
+        })
+        .finally(() => this.loading = false);
     },
     confirmDelete(challenge) {
       this.selectedChallenge = challenge;

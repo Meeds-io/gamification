@@ -52,7 +52,6 @@
           <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
           <challenge-program
             ref="challengeProgram"
-            :can-add-challenge="canAddChallenge"
             @addProgram="addProgram($event)"
             @removeProgram="removeProgram($event)" />
 
@@ -117,17 +116,8 @@
     </template>
   </exo-drawer>
 </template>
-
 <script>
-
 export default {
-  name: 'ChallengeDrawer',
-  props: {
-    canAddChallenge: {
-      type: Boolean,
-      default: false
-    },
-  },
   computed: {
     drawerTitle(){
       return this.challenge && this.challenge.id ? this.$t('challenges.button.editChallenge') : this.$t('challenges.button.addChallenge') ;
@@ -199,7 +189,7 @@ export default {
     this.$root.$on('edit-challenge-details', this.open);
   },
   methods: {
-    setUp(){
+    setUp() {
       const space = this.challenge.space ;
       const NewAudience = {
         id: `space:${ space.displayName }` ,
@@ -261,8 +251,11 @@ export default {
         points: 20,
       };
       this.$refs.challengeDrawer.open();
-      this.$refs.challengeDescription.initCKEditor();
-      this.setUp();
+      this.$nextTick()
+        .then(() => {
+          this.$refs.challengeDescription.initCKEditor();
+          this.setUp();
+        });
     },
     close() {
       this.reset();

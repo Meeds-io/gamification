@@ -80,6 +80,6 @@ public interface DomainService {
    * @param id : domain id
    * @return
    */
-    DomainDTO getDomainByID (Long id);
+  DomainDTO getDomainById(Long id);
 
 }
