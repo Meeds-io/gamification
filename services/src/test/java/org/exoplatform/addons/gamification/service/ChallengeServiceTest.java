@@ -17,9 +17,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import liquibase.pro.packaged.L;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -89,7 +91,7 @@ public class ChallengeServiceTest {
                                                new Date(System.currentTimeMillis() + 1).toString(),
                                                Collections.emptyList(),
                                                10L,
-                                               "gamification");        // Given
+                                               "gamification"); // Given
     Challenge challengeSystem = new Challenge(0,
                                               "new system challenge",
                                               "system challenge description",
@@ -249,29 +251,6 @@ public class ChallengeServiceTest {
   }
 
   @Test
-  public void testGetAllChallengesByUser() throws Exception {
-    String username = "root";
-
-    Space space = new Space();
-    space.setId("1");
-    space.setPrettyName("test_space");
-    space.setDisplayName("test space");
-    space.setGroupId("/spaces/test_space");
-
-    RuleEntity challengeEntity = new RuleEntity();
-    challengeEntity.setTitle("Challenge 1");
-    challengeEntity.setDescription("description 1");
-    challengeEntity.setStartDate(new Date(System.currentTimeMillis()));
-    challengeEntity.setEndDate(new Date(System.currentTimeMillis() + 1));
-    challengeEntity.setId(1l);
-    challengeEntity.setAudience(1l);
-    challengeEntity.setManagers(Collections.emptyList());
-    List<RuleEntity> challenges = new ArrayList<>();
-    challenges.add(challengeEntity);
-
-  }
-
-  @Test
   public void testGetChallengeById() throws IllegalAccessException {
     assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
     Challenge challenge = new Challenge(1l,
@@ -301,7 +280,7 @@ public class ChallengeServiceTest {
   }
 
   @Test
-  public void testGetAllChallenges() {
+  public void testGetChallengesByFilterAndUser() {
 
     Challenge challenge = new Challenge(1l,
                                         "Challenge",
@@ -314,7 +293,48 @@ public class ChallengeServiceTest {
                                         "gamification");
     List<Challenge> challenges = new ArrayList<>();
     challenges.add(challenge);
+    RuleFilter filter = new RuleFilter();
 
+    List<String> userSpaceIds = Collections.singletonList("1");
+
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(Collections.emptyList());
+    List<Challenge> savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
+    assertEquals(0, savedChallenges.size());
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(userSpaceIds);
+    when(challengeStorage.findChallengesByFilter(filter, 0, 10)).thenReturn(challenges);
+
+    savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
+
+    assertEquals(1, savedChallenges.size());
+  }
+
+  @Test
+  public void testCountChallengesByFilterAndUser() {
+
+    Challenge challenge = new Challenge(1l,
+                                        "Challenge",
+                                        "description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+    List<Challenge> challenges = new ArrayList<>();
+    challenges.add(challenge);
+    RuleFilter filter = new RuleFilter();
+
+    List<String> userSpaceIds = Collections.singletonList("1");
+
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(Collections.emptyList());
+    int count = challengeService.countChallengesByFilterAndUser(filter, "root");
+    assertEquals(0, count);
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(userSpaceIds);
+    when(challengeStorage.countChallengesByFilter(filter)).thenReturn(3);
+
+    count = challengeService.countChallengesByFilterAndUser(filter, "root");
+
+    assertEquals(3, count);
   }
 
 }

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -158,8 +157,8 @@ public class RuleSearchConnector {
         int score = parseLong(hitSource, "score").intValue();
         String area = (String) hitSource.get("area");
         Long domainId = parseLong(hitSource, "domainId");
-        boolean enabled = Boolean.valueOf(String.valueOf(hitSource.get("enabled")));
-        boolean deleted = Boolean.valueOf(String.valueOf(hitSource.get("deleted")));
+        boolean enabled = Boolean.parseBoolean(String.valueOf(hitSource.get("enabled")));
+        boolean deleted = Boolean.parseBoolean(String.valueOf(hitSource.get("deleted")));
         String createdBy = (String) hitSource.get("createdBy");
         Date createdDate = parseDate(hitSource,"createdDate" );
         Date lastModifiedDate = parseDate(hitSource,"lastModifiedDate");
@@ -225,7 +224,7 @@ public class RuleSearchConnector {
   }
 
   private List<Long> getManagersList(JSONObject hitSource, String key) {
-    JSONArray jsonHits = (JSONArray) hitSource.get("managers");
+    JSONArray jsonHits = (JSONArray) hitSource.get(key);
     if (jsonHits.isEmpty()) {
       return Collections.emptyList();
     } else {

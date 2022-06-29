@@ -21,8 +21,6 @@ public class RuleIndexingService implements Startable {
 
   private RuleService           ruleService;
 
-  private static int            ruleIndexingCount;
-
   private final PortalContainer container;
 
   public RuleIndexingService(IndexingService indexingService, RuleService ruleService, PortalContainer container) {
@@ -38,6 +36,7 @@ public class RuleIndexingService implements Startable {
     log.info("Start indexing old rules");
     long startupTime = System.currentTimeMillis();
     try {
+      int ruleIndexingCount = 0;
       List<RuleDTO> rules = ruleService.findAllRules();
       for (RuleDTO ruleDTO : rules) {
         indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleDTO.getId()));
@@ -56,7 +55,7 @@ public class RuleIndexingService implements Startable {
   }
 
   @Override
-  public void stop() {
+  public void stop() { //NOSONAR
 
   }
 }
