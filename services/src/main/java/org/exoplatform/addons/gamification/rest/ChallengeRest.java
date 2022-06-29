@@ -322,7 +322,7 @@ public class ChallengeRest implements ResourceContainer {
   }
 
   @DELETE
-  @Path("/delete/{id}")
+  @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @ApiOperation(
