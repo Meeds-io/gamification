@@ -27,17 +27,6 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 public class BadgeServiceTest extends AbstractServiceTest {
 
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testFindBadgeByTitle() {
     assertNull(badgeService.findBadgeByTitle(BADGE_NAME));

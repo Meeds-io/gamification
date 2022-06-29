@@ -34,16 +34,6 @@ import static org.exoplatform.social.core.jpa.storage.entity.MetadataEntity_.nam
 
 public class RuleServiceTest extends AbstractServiceTest {
 
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testFindEnableRuleByTitle() throws Exception {
     assertEquals(ruleDAO.findAll().size(), 0);

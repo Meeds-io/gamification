@@ -73,11 +73,6 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest {
     this.domain = domainService.addDomain(domain);
   }
 
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   /**
    * Testing the Status Code
    **/

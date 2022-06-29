@@ -17,17 +17,6 @@ import java.util.Date;
 
 public class RuleStorageTest extends AbstractServiceTest {
 
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testSaveRule() {
     assertEquals(ruleStorage.findAllRules().size(), 0);

@@ -13,6 +13,7 @@ import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +34,12 @@ public class TestRealizationsRest extends AbstractServiceTest {
 
     protected static final String toDate = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
 
+    @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         registry(getComponentClass());
         startSessionAs("root");
-    }
-    @After
-    public void tearDown() {
-        super.tearDown();
     }
 
     @Test

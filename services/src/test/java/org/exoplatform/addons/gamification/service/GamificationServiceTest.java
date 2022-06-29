@@ -35,17 +35,6 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationServiceTest extends AbstractServiceTest {
 
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testSaveActionHistory() {
     List<GamificationActionsHistory> histories = gamificationHistoryDAO.findAll();

@@ -34,17 +34,6 @@ import static org.junit.Assert.assertThrows;
 
 public class DomainServiceTest extends AbstractServiceTest {
 
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testGetAllDomains() {
     assertEquals(domainService.getAllDomains().size(), 0);

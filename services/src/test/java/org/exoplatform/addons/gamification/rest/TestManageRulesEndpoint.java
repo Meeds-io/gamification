@@ -29,6 +29,7 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.json.JSONWriter;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
@@ -45,18 +46,13 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     return ManageRulesEndpoint.class;
   }
 
+  @Before
   @Override
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setUp();
     registry(getComponentClass());
     ConversationState.setCurrent(null);
   }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
 
   /**
    * Testing get All rules

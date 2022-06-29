@@ -63,18 +63,15 @@ public class TestAnnouncementRest extends AbstractServiceTest {
 
     private ListenerService listenerService;
 
-    private RuleSearchConnector challengeSearchConnector ;
-
-
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         challengeStorage = mock(ChallengeStorage.class);
         spaceService = mock(SpaceService.class);
         spaceService = mock(SpaceService.class);
         params = new InitParams();
         listenerService = mock(ListenerService.class);
-        challengeSearchConnector = mock(RuleSearchConnector.class);
         challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, listenerService, params);
         registry(getComponentClass());
         announcementService = CommonsUtils.getService(AnnouncementService.class);

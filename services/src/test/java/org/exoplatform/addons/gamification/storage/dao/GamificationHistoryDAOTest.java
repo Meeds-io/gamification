@@ -15,16 +15,6 @@ import java.util.List;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testFindAllActionsHistoryAgnostic() {
     assertEquals(gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER).size(), 0);

@@ -62,7 +62,6 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     challengeSearchConnector = new RuleSearchConnector(configurationManager, client, getParams());
   }
 
-
   private InitParams getParams() {
     InitParams params = new InitParams();
     PropertiesParam propertiesParam = new PropertiesParam();

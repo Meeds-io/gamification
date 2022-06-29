@@ -23,6 +23,7 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
   }
 
   @Before
+  @Override
   public void setUp() throws Exception {
     super.setUp();
     startSessionAs("root1");
@@ -31,12 +32,6 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
   }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
 
   @Test
   public void testGetAllLeadersByRank() {

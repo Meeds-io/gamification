@@ -39,15 +39,11 @@ public class TestChallengeRest extends AbstractServiceTest {
     private static final String endDate = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY));
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         registry(getComponentClass());
         ConversationState.setCurrent(null);
-    }
-
-    @After
-    public void tearDown() {
-        super.tearDown();
     }
 
     @Test

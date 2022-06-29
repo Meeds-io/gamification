@@ -32,16 +32,6 @@ import java.util.Date;
 
 public class ChallengeStorageTest extends AbstractServiceTest {
 
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
   @Test
   public void testSaveChallenge() {
     DomainEntity domain = newDomain();

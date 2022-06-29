@@ -30,16 +30,6 @@ import java.util.Collections;
 
 public class RuleDAOTest extends AbstractServiceTest {
 
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testFindEnableRuleByTitle() {
     assertEquals(ruleDAO.findAll().size(), 0);

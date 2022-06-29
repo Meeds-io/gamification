@@ -12,17 +12,6 @@ import org.junit.Test;
 
 public class RealizationsStorageTest extends AbstractServiceTest {
 
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    super.setUp();
-  }
-
-  @After
-  public void tearDown() {
-    super.tearDown();
-  }
-
   @Test
   public void testGetAllRealizationsByDate() {
     assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
