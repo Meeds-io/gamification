@@ -52,7 +52,6 @@
           :template-params="templateParams"
           ck-editor-type="announcementContent"
           class="flex"
-          use-extra-plugins
           @validity-updated=" validInput = $event" />
       </div>
       <div
