@@ -255,6 +255,10 @@ public class UtilsTest {
         when(spaceService.isSuperManager("root")).thenReturn(true);
         when(spaceService.hasRedactor(space)).thenReturn(false);
 
+        IdentityManager identityManager = mock(IdentityManager.class);
+        when(CommonsUtils.getService(IdentityManager.class)).thenReturn(identityManager);
+        when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
+
         UserInfo userInfo = Utils.toUserInfo(rootIdentity, space, Collections.singletonList(1l));
         assertNotNull(userInfo);
         assertEquals("root", userInfo.getRemoteId());

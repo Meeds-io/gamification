@@ -23,8 +23,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -143,14 +141,13 @@ public class ChallengeStorageTest extends AbstractServiceTest {
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    assertEquals(challengeStorage.countChallengesByFilter(filter), 0);
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(ruleDAO.countRulesByFilter(filter), 1);
+    assertEquals(challengeStorage.countChallengesByFilter(filter), 1);
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(ruleDAO.countRulesByFilter(filter), 2);
+    assertEquals(challengeStorage.countChallengesByFilter(filter), 2);
     filter.setDomainId(100l);
-    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
-
+    assertEquals(challengeStorage.countChallengesByFilter(filter), 0);
   }
 
 }

@@ -176,16 +176,11 @@ public class ChallengeServiceTest {
     assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(new Challenge(), "root"));
     when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
 
-    when(spaceService.isManager(space, "root")).thenReturn(false);
-    assertThrows(IllegalAccessException.class, () -> challengeService.updateChallenge(challenge, "root"));
-    when(spaceService.isManager(space, "root")).thenReturn(true);
     assertThrows(ObjectNotFoundException.class, () -> challengeService.updateChallenge(challenge, "root"));
-
-    assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(challenge, "root"));
+    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge1);
 
     Challenge challengeUpdated = challengeService.updateChallenge(challenge, "root");
     assertNotNull(challengeUpdated);
-    assertEquals(1l, challenge1.getId());
     assertEquals("update challenge", challengeUpdated.getTitle());
   }
 
@@ -206,6 +201,7 @@ public class ChallengeServiceTest {
     Space space = new Space();
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(true);
+    when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
     Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
     assertNotNull(storedChallenge);
     assertEquals(1l, storedChallenge.getId());
@@ -223,6 +219,7 @@ public class ChallengeServiceTest {
 
     // When
     when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
+    when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
     assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
     // When
@@ -275,7 +272,7 @@ public class ChallengeServiceTest {
   }
 
   @Test
-  public void testGetChallengeById() {
+  public void testGetChallengeById() throws IllegalAccessException {
     assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
     Challenge challenge = new Challenge(1l,
                                         "update challenge",
@@ -295,15 +292,12 @@ public class ChallengeServiceTest {
 
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(spaceService.isMember(space, "root")).thenReturn(true);
-    try {
-      Challenge savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
-      assertNull(savedChallenge);
-      savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
-      assertNotNull(savedChallenge);
-      assertEquals(challenge.getId(), savedChallenge.getId());
-
-    } catch (IllegalAccessException e) {
-    }
+    Challenge savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
+    assertNull(savedChallenge);
+    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
+    savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
+    assertNotNull(savedChallenge);
+    assertEquals(challenge.getId(), savedChallenge.getId());
   }
 
   @Test
