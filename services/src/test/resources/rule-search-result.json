@@ -1,23 +1,36 @@
 {
   "hits": {
-    "total": 2,
+    "total": {
+      "value": 1,
+      "relation": "eq"
+    },
     "max_score": 1,
     "hits": [
       {
-        "_index": "challenge_v1",
-        "_type": "challenges",
+        "_index": "rule_v1",
+        "_type": "rule",
         "_id": "1",
         "_score": 1,
         "_source": {
-          "startDate": "2022-05-10T00:00:00",
-          "endDate": "2022-05-15T00:00:00",
-          "audience": "1",
-          "managers": "1",
-          "description": "challenge description",
-          "points": "21",
-          "title": "challenge description",
-          "program": "gamification",
-          "id": "52"
+          "area": "reward",
+          "audience": "0",
+          "endDate": "0",
+          "lastModifiedDate": "1656453834109",
+          "lastModifiedBy": "Gamification",
+          "description": "You received a Kudos",
+          "title": "def_receiveKudos",
+          "type": "AUTOMATIC",
+          "domainId": "3",
+          "enabled": "true",
+          "score": "5",
+          "lastUpdatedDate": 1656454351566,
+          "deleted": "false",
+          "createdDate": "1656453834109",
+          "createdBy": "Gamification",
+          "managers": [ 1 , 2],
+          "id": "13",
+          "event": "receiveKudos",
+          "startDate": "0"
         }
       }
     ]

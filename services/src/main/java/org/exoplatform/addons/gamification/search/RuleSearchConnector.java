@@ -169,7 +169,6 @@ public class RuleSearchConnector {
         Date startDate =  parseDate(hitSource,"startDate");
         Date endDate = parseDate(hitSource,"endDate");
         String type = (String) hitSource.get("type");
-        String managers = (String) hitSource.get("managers");
 
         rule.setId(id);
         rule.setTitle(title);
@@ -184,7 +183,7 @@ public class RuleSearchConnector {
         rule.setEndDate(endDate);
         rule.setStartDate(startDate);
         rule.setType(TypeRule.valueOf(type));
-        rule.setManagers(getManagersList(managers));
+        rule.setManagers(getManagersList(hitSource, "managers"));
         rule.setCreatedBy(createdBy);
         rule.setCreatedDate(createdDate);
         rule.setLastModifiedBy(lastModifiedBy);
@@ -192,7 +191,7 @@ public class RuleSearchConnector {
 
         results.add(rule);
       } catch (Exception e) {
-        LOG.warn("Error processing challenge search result item, ignore it from results", e);
+        LOG.warn("Error processing rules search result item, ignore it from results", e);
       }
     }
     return results;
@@ -225,13 +224,17 @@ public class RuleSearchConnector {
     return value != 0 ? new Date(value) : null;
   }
 
-  private List<Long> getManagersList(String managers) {
-    List<String> managersList = List.of(managers.split("#"));
-    List<Long> listManagers = new ArrayList<>();
-    for (String s : managersList) {
-      listManagers.add(Long.valueOf(s));
+  private List<Long> getManagersList(JSONObject hitSource, String key) {
+    JSONArray jsonHits = (JSONArray) hitSource.get("managers");
+    if (jsonHits.isEmpty()) {
+      return Collections.emptyList();
+    } else {
+      List<Long> listManagers = new ArrayList<>();
+      for (Object obj : jsonHits) {
+        listManagers.add((Long) obj);
+      }
+      return listManagers;
     }
-    return listManagers;
   }
 
   private String removeSpecialCharacters(String string) {
