@@ -58,7 +58,8 @@ public class RuleSearchConnector {
       + "            \"domainId\": {\n"
       + "              \"value\": \"@domainId@\"\n"
       + "            }\n"
-      + "          }\n";
+      + "          }\n"
+      + "        }\n";
 
   private final ConfigurationManager   configurationManager;
 
@@ -139,7 +140,8 @@ public class RuleSearchConnector {
       query = query.replace("@domain_filtering@", "");
     }
 
-    return query.replace("@term_query@", termQuery)
+    return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
+                .replace("@term_query@", termQuery)
                 .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
                 .replace("@offset@", String.valueOf(offset))
                 .replace("@limit@", String.valueOf(limit));
