@@ -24,6 +24,7 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,10 +34,6 @@ public class TestAnnouncementRest extends AbstractServiceTest {
   protected Class<?> getComponentClass() {
     return AnnouncementRest.class;
   }
-
-  private ChallengeService    challengeService;
-
-  private AnnouncementService announcementService;
 
   private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
@@ -58,13 +55,15 @@ public class TestAnnouncementRest extends AbstractServiceTest {
   public void testCreatAnnouncement() throws Exception {
     startSessionAs("root1");
     DomainDTO domain = newDomainDTO();
+    Identity identity = identityManager.getOrCreateUserIdentity("root1");
+    long identityId = Long.parseLong(identity.getId());
     Challenge challenge = new Challenge(0,
                                         "update challenge",
                                         "challenge description",
                                         1l,
                                         startDate,
                                         endDate,
-                                        Collections.emptyList(),
+                                        Collections.singletonList(identityId),
                                         10L,
                                         domain.getTitle());
     challenge = challengeService.createChallenge(challenge);
@@ -82,6 +81,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
               .value(challenge.getId())
               .key("assignee")
               .value("1")
+              .key("challengeTitle")
+              .value("challengeTitle")
               .key("comment")
               .value("announcement comment")
               .key("creator")
@@ -122,6 +123,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
               .value(1000)
               .key("assignee")
               .value("1")
+              .key("challengeTitle")
+              .value("challengeTitle")
               .key("comment")
               .value("announcement comment")
               .key("creator")
@@ -181,7 +184,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         Collections.emptyList(),
                                         10L,
                                         domain.getTitle());
-    challenge = challengeService.createChallenge(challenge, "root1");
+    challenge = challengeService.createChallenge(challenge);
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),
                                                  challenge.getTitle(),

@@ -23,9 +23,6 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -113,14 +110,14 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge.getId() == 0) {
       throw new IllegalArgumentException("challenge id must not be equal to 0");
     }
-    checkChallengePermissionAndDates(challenge, username);
     Challenge oldChallenge = challengeStorage.getChallengeById(challenge.getId());
     if (oldChallenge == null) {
       throw new ObjectNotFoundException("challenge is not exist");
     }
-    if (oldChallenge.equals(challenge)) {
-      throw new IllegalArgumentException("there are no changes to save");
-    }
+    checkChallengePermissionAndDates(oldChallenge, username); // Test if user
+                                                              // was manager
+    checkChallengePermissionAndDates(challenge, username); // Test if user is
+                                                           // remaining manager
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
       listenerService.broadcast(POST_UPDATE_RULE_EVENT, this, challenge.getId());
@@ -203,7 +200,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private void checkChallengePermissionAndDates(Challenge challenge, String username) throws IllegalAccessException {
     if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
-      throw new IllegalAccessException("User is not allowed to create challenge with id " + challenge.getId());
+      if (challenge.getId() > 0) {
+        throw new IllegalAccessException("User " + username + " is not allowed to update challenge with id " + challenge.getId());
+      } else {
+        throw new IllegalAccessException("User " + username
+            + " is not allowed to create challenge that he/she can't manage");
+      }
     }
     Date startDate = Utils.parseSimpleDate(challenge.getStartDate());
     Date endDate = Utils.parseSimpleDate(challenge.getEndDate());

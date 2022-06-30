@@ -189,6 +189,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ruleStorage = CommonsUtils.getService(RuleStorage.class);
     activityManager = CommonsUtils.getService(ActivityManager.class);
     relationshipManager = CommonsUtils.getService(RelationshipManager.class);
+    challengeService = CommonsUtils.getService(ChallengeService.class);
+    announcementService = CommonsUtils.getService(AnnouncementService.class);
     badgeService = CommonsUtils.getService(BadgeService.class);
     domainService = CommonsUtils.getService(DomainService.class);
     ruleService = CommonsUtils.getService(RuleService.class);

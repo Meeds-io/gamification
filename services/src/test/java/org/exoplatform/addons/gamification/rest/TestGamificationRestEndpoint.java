@@ -95,7 +95,7 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
+    assertEquals(500, response.getStatus());
   }
 
   @Test
@@ -133,7 +133,7 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
+    assertEquals(500, response.getStatus());
     assertEquals("2", ((GamificationRestEndpoint.GamificationPoints) response.getEntity()).getCode());
   }
 
