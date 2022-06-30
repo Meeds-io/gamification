@@ -83,13 +83,18 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.findRuleByEventAndDomain(ruleTitle, domain);
   }
 
-  public List<RuleDTO> findAllRules() {
+  public List<RuleDTO> findAllRules() {// NOSONAR
     return ruleStorage.findAllRules();
   }
 
   @Override
   public List<RuleDTO> findAllRules(int offset, int limit) {
     return ruleStorage.findAllRules(offset, limit);
+  }
+
+  @Override
+  public int countAllRules() {
+    return ruleStorage.countRulesByFilter(null);
   }
 
   public List<RuleDTO> getActiveRules() {

@@ -55,6 +55,9 @@
     "event": {
       "type": "keyword"
     },
+    "enabled": {
+      "type": "boolean"
+    },
     "createdBy": {
       "type": "long"
     },

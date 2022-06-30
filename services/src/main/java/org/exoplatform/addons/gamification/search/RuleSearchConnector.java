@@ -58,7 +58,7 @@ public class RuleSearchConnector {
       + "            \"domainId\": {\n"
       + "              \"value\": \"@domainId@\"\n"
       + "            }\n"
-      + "          }\n"
+      + "          }\n";
 
   private final ConfigurationManager   configurationManager;
 
@@ -179,7 +179,6 @@ public class RuleSearchConnector {
         String area = (String) hitSource.get("area");
         Long domainId = parseLong(hitSource, "domainId");
         boolean enabled = Boolean.parseBoolean(String.valueOf(hitSource.get("enabled")));
-        boolean deleted = Boolean.parseBoolean(String.valueOf(hitSource.get("deleted")));
         String createdBy = (String) hitSource.get("createdBy");
         Date createdDate = parseDate(hitSource, "createdDate");
         Date lastModifiedDate = parseDate(hitSource, "lastModifiedDate");
@@ -198,15 +197,14 @@ public class RuleSearchConnector {
         rule.setScore((int) score);
         rule.setArea(area);
         rule.setEnabled(enabled);
-        rule.setDeleted(deleted);
         rule.setAudience(audience);
         rule.setEndDate(endDate);
         rule.setStartDate(startDate);
         rule.setType(TypeRule.valueOf(type));
         rule.setManagers(getManagersList(hitSource, "managers"));
-        rule.setCreatedBy(createdBy);
+        rule.setCreatedBy(getUserRemoteId(createdBy));
         rule.setCreatedDate(createdDate);
-        rule.setLastModifiedBy(lastModifiedBy);
+        rule.setLastModifiedBy(getUserRemoteId(lastModifiedBy));
         rule.setLastModifiedDate(lastModifiedDate);
 
         results.add(rule);

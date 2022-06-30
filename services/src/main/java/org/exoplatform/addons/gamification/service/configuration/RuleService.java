@@ -26,28 +26,28 @@ public interface RuleService {
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
      */
-     RuleDTO findEnableRuleByTitle (String ruleTitle) throws IllegalArgumentException;
+     RuleDTO findEnableRuleByTitle (String ruleTitle);
 
     /**
      * Get RuleEntity by id
      * @param id : rule's id param
      * @return an instance of RuleDTO
      */
-    RuleDTO findRuleById (Long id) throws IllegalArgumentException;
+    RuleDTO findRuleById (Long id);
 
     /**
      * Find enable RuleEntity by title
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
      */
-     List<RuleDTO> findEnabledRulesByEvent (String ruleTitle) throws IllegalArgumentException;
+     List<RuleDTO> findEnabledRulesByEvent (String ruleTitle);
 
     /**
      * Find a RuleEntity by title
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
      */
-     RuleDTO findRuleByTitle (String ruleTitle) throws IllegalArgumentException;
+     RuleDTO findRuleByTitle (String ruleTitle);
 
 
     /**
@@ -56,7 +56,7 @@ public interface RuleService {
      * @param domain : rule's domain param
      * @return an instance of RuleDTO
      */
-    RuleDTO findRuleByEventAndDomain (String ruleTitle, String domain) throws IllegalArgumentException;
+    RuleDTO findRuleByEventAndDomain (String ruleTitle, String domain);
 
     /**
      * Get all Rules from DB
@@ -65,13 +65,21 @@ public interface RuleService {
      * @since Meeds 1.4.0
      */
     @Deprecated(since = "Meeds 1.4.0", forRemoval = true)
-    List<RuleDTO> findAllRules() ;
+    List<RuleDTO> findAllRules(); // NOSONAR
 
     /**
-     * Get all Rules from DB
-     * @return RuleDTO list
+     * Get all Rules using offset and limit.
+     * 
+     * @param offset Offset of result
+     * @param limit Limit of result
+     * @return {@link List} of {@link RuleDTO}
      */
     List<RuleDTO> findAllRules(int offset, int limit) ;
+
+    /**
+     * @return count of all existing rules
+     */
+    int countAllRules();
 
     /**
      * Get all active Rules from DB
@@ -83,7 +91,7 @@ public interface RuleService {
      * * @param domain : rule's domain param
      * @return RuleDTO list
      */
-    List<RuleDTO> getAllRulesByDomain(String domain) throws IllegalArgumentException;
+    List<RuleDTO> getAllRulesByDomain(String domain);
 
     /**
      * Get all Rules by with null DomainDTO from DB
@@ -122,4 +130,5 @@ public interface RuleService {
      * @return RuleDTO object
      */
      RuleDTO updateRule (RuleDTO ruleDTO) throws Exception;
+
 }

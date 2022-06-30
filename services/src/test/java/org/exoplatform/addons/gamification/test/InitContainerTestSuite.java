@@ -18,7 +18,16 @@ package org.exoplatform.addons.gamification.test;
 
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityGeneratorListenerTest;
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdaterTest;
-import org.exoplatform.addons.gamification.rest.*;
+import org.exoplatform.addons.gamification.rest.TestAnnouncementRest;
+import org.exoplatform.addons.gamification.rest.TestChallengeRest;
+import org.exoplatform.addons.gamification.rest.TestGamificationRestEndpoint;
+import org.exoplatform.addons.gamification.rest.TestLeaderboardEndpoint;
+import org.exoplatform.addons.gamification.rest.TestManageBadgesEndpoint;
+import org.exoplatform.addons.gamification.rest.TestManageDomainsEndpoint;
+import org.exoplatform.addons.gamification.rest.TestManageRulesEndpoint;
+import org.exoplatform.addons.gamification.rest.TestRealizationsRest;
+import org.exoplatform.addons.gamification.rest.TestSpaceLeaderboardEndpoint;
+import org.exoplatform.addons.gamification.rest.TestUserReputationEndpoint;
 import org.exoplatform.addons.gamification.search.RuleSearchConnectorTest;
 import org.exoplatform.addons.gamification.service.AnnouncementServiceTest;
 import org.exoplatform.addons.gamification.service.ChallengeServiceTest;

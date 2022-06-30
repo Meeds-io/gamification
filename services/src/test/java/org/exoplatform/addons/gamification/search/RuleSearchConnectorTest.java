@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.List;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
@@ -86,7 +85,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   @Test
   public void testSearch() {
     String term = "rule";
-    DomainDTO domain = newDomainDTO();
+    newDomainDTO();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
     List<Long> listIdSpaceEmpty = Collections.emptyList();
@@ -120,7 +119,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   @Test
   public void testCount() {
     String term = "rule";
-    DomainDTO domain = newDomainDTO();
+    newDomainDTO();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
     List<Long> listIdSpaceEmpty = Collections.emptyList();

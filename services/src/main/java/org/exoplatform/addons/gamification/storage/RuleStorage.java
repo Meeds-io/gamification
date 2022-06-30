@@ -1,6 +1,5 @@
 package org.exoplatform.addons.gamification.storage;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +58,7 @@ public class RuleStorage {
   }
 
   public List<RuleDTO> findRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    List<RuleEntity> ruleEntities = new ArrayList<>();
+    List<RuleEntity> ruleEntities = null;
     if (StringUtils.isBlank(ruleFilter.getTerm())) {
       ruleEntities = ruleDAO.findRulesByFilter(ruleFilter, offset, limit);
     } else {
@@ -70,10 +69,12 @@ public class RuleStorage {
   }
 
   public int countRulesByFilter(RuleFilter ruleFilter) {
-    if (StringUtils.isBlank(ruleFilter.getTerm())) {
+    if (ruleFilter == null) {
+      return ruleDAO.count().intValue();
+    } else if (StringUtils.isBlank(ruleFilter.getTerm())) {
       return ruleDAO.countRulesByFilter(ruleFilter);
     } else {
-      return  ruleSearchConnector.count(ruleFilter);
+      return ruleSearchConnector.count(ruleFilter);
     }
   }
 
