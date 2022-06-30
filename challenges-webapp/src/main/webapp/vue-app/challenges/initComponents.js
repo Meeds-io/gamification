@@ -12,6 +12,7 @@ import ChallengeDetailsDrawer from './components/ChallengeDetailsDrawer.vue';
 import AnnouncementDrawer from './components/AnnouncementDrawer.vue';
 import WinnersDrawer from './components/WinnersDrawer.vue';
 import challengeProgram from './components/ProgramSuggester.vue';
+import EngagementCenter from './components/EngagementCenter.vue';
 
 const components = {
   'challenges': Challenges,
@@ -27,7 +28,8 @@ const components = {
   'challenge-details-drawer': ChallengeDetailsDrawer,
   'announce-drawer': AnnouncementDrawer,
   'challenge-winners-details': WinnersDrawer,
-  'challenge-program': challengeProgram
+  'challenge-program': challengeProgram,
+  'engagement-center': EngagementCenter,
 };
 
 for (const key in components) {

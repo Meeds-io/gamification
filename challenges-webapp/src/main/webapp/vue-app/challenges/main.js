@@ -31,9 +31,9 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
-      template: `<challenges id="${appId}" />`,
+      template: `<engagement-center id="${appId}" />`,
       vuetify,
       i18n
-    }, `#${appId}`, 'Challenges');
+    }, `#${appId}`, 'Engagement');
   });
 }
