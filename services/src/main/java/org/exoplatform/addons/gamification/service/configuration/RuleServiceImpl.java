@@ -87,6 +87,11 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.findAllRules();
   }
 
+  @Override
+  public List<RuleDTO> findAllRules(int offset, int limit) {
+    return ruleStorage.findAllRules(offset, limit);
+  }
+
   public List<RuleDTO> getActiveRules() {
     return ruleStorage.getActiveRules();
   }

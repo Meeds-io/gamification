@@ -68,6 +68,12 @@ public interface RuleService {
     List<RuleDTO> findAllRules() ;
 
     /**
+     * Get all Rules from DB
+     * @return RuleDTO list
+     */
+    List<RuleDTO> findAllRules(int offset, int limit) ;
+
+    /**
      * Get all active Rules from DB
      * @return RuleDTO list
      */

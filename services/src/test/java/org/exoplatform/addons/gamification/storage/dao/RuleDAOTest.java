@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -17,10 +17,6 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.utils.PropertyManager;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;

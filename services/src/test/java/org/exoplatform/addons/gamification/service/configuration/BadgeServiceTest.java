@@ -17,8 +17,6 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;

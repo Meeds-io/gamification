@@ -42,6 +42,7 @@ public class RulesESListener extends Listener<Object, Long> {
   public RulesESListener(PortalContainer container,
                          IndexingService indexingService,
                          RuleService ruleService) {
+s
     this.container = container;
     this.indexingService = indexingService;
     this.ruleService = ruleService;
@@ -59,12 +60,13 @@ public class RulesESListener extends Listener<Object, Long> {
         LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
         indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
       } else {
-        LOG.debug("Notifying indexing service for rule with id={}", ruleId);
-        indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
+        if (rule != null && rule.isEnabled() && !rule.isDeleted()) {
+          LOG.debug("Notifying indexing service for rule with id={}", ruleId);
+          indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
+        }
       }
     } finally {
       RequestLifeCycle.end();
     }
   }
-
 }

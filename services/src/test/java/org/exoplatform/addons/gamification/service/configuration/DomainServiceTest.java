@@ -21,8 +21,6 @@ import java.util.Date;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;

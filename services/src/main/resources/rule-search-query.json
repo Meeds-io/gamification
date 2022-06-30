@@ -7,7 +7,6 @@
         "terms": {
           "audience": [
             @spaceList@
-          ]
         }
       },
       "must": [
@@ -18,7 +17,7 @@
               "description"
             ],
             "query": "*@term_query@*",
-            "fuzziness": 1 ,
+            "fuzziness": 1,
             "phrase_slop": 1
           }
         }

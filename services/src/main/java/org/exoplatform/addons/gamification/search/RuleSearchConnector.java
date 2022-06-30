@@ -39,6 +39,8 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -57,7 +59,6 @@ public class RuleSearchConnector {
       + "              \"value\": \"@domainId@\"\n"
       + "            }\n"
       + "          }\n"
-      + "        }";
 
   private final ConfigurationManager   configurationManager;
 
@@ -69,7 +70,13 @@ public class RuleSearchConnector {
 
   private String                       searchQuery;
 
-  public RuleSearchConnector(ConfigurationManager configurationManager, ElasticSearchingClient client, InitParams initParams) {
+  private IdentityManager              identityManager;
+
+  public RuleSearchConnector(ConfigurationManager configurationManager,
+                             ElasticSearchingClient client,
+                             IdentityManager identityManager,
+                             InitParams initParams) {
+    this.identityManager = identityManager;
     this.configurationManager = configurationManager;
     this.client = client;
 
@@ -98,9 +105,6 @@ public class RuleSearchConnector {
     if (filter.getSpaceIds().isEmpty()) {
       throw new IllegalArgumentException("Filter spaceIds is mandatory");
     }
-    if (filter.getDomainId() == 0) {
-      throw new IllegalArgumentException("filter domain id must be positive");
-    }
     String esQuery = buildQueryStatement(filter, offset, limit);
     String jsonResponse = this.client.sendRequest(esQuery, this.index);
     return buildSearchResult(jsonResponse);
@@ -112,9 +116,6 @@ public class RuleSearchConnector {
     }
     if (filter.getSpaceIds().isEmpty()) {
       throw new IllegalArgumentException("Filter spaceIds is mandatory");
-    }
-    if (filter.getDomainId() == 0) {
-      throw new IllegalArgumentException("filter domain id must be positive");
     }
     String esQuery = buildQueryStatement(filter, 0, 0);
     String jsonResponse = this.client.sendRequest(esQuery, this.index);
@@ -137,8 +138,8 @@ public class RuleSearchConnector {
     } else {
       query = query.replace("@domain_filtering@", "");
     }
-    return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
-                .replace("@term_query@", termQuery)
+
+    return query.replace("@term_query@", termQuery)
                 .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
                 .replace("@offset@", String.valueOf(offset))
                 .replace("@limit@", String.valueOf(limit));
@@ -254,6 +255,15 @@ public class RuleSearchConnector {
       }
       return listManagers;
     }
+  }
+
+  private String getUserRemoteId(String id) {
+    if (StringUtils.isBlank(id)) {
+      return "";
+    }
+    Identity identity = identityManager.getIdentity(id);
+    return identity != null ? identity.getRemoteId() : "";
+
   }
 
   private String removeSpecialCharacters(String string) {

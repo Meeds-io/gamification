@@ -3,12 +3,14 @@ package org.exoplatform.addons.gamification.rest;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.SecurityContext;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.junit.Before;
-import org.junit.Test;
+
 
 public class TestSpaceLeaderboardEndpoint extends AbstractServiceTest {
 

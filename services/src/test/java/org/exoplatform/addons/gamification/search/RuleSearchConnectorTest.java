@@ -1,6 +1,6 @@
 /**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 Meeds Association
+ * Copyright (C) 2022 Meeds Association
  * contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,7 +65,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving ES Query content", e);
     }
-    ruleSearchConnector = new RuleSearchConnector(configurationManager, client, getParams());
+    ruleSearchConnector = new RuleSearchConnector(configurationManager, client,identityManager, getParams());
   }
 
   private InitParams getParams() {
@@ -100,8 +100,6 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     filter.setSpaceIds(listIdSpaceEmpty);
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
     filter.setSpaceIds(listIdSpace);
-    assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
-    filter.setDomainId(domain.getId());
 
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
     String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "10");
@@ -132,8 +130,6 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     filter.setSpaceIds(listIdSpaceEmpty);
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.count(filter));
     filter.setSpaceIds(listIdSpace);
-    assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.count(filter));
-    filter.setDomainId(domain.getId());
 
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "0");
     String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "0");

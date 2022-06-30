@@ -80,6 +80,10 @@ public class RuleStorage {
   public List<RuleDTO> findAllRules() {
     return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRules());
   }
+  public List<RuleDTO> findAllRules(int offset, int limit) {
+    List<RuleEntity> ruleEntities = ruleDAO.findRulesByFilter(new RuleFilter(), offset, limit);
+    return RuleMapper.rulesToRuleDTOs(ruleEntities);
+  }
 
   public List<RuleDTO> getActiveRules() {
     return RuleMapper.rulesToRuleDTOs(ruleDAO.getActiveRules());
