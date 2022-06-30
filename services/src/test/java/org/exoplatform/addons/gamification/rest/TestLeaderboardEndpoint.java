@@ -7,7 +7,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,6 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
   }
 
   @Before
-  @Override
   public void setUp() throws Exception {
     super.setUp();
     startSessionAs("root1");

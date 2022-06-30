@@ -7,16 +7,7 @@
         "terms": {
           "audience": [
             @spaceList@
-          ],
-          "boost": 3
-        }
-      },
-      "should": {
-        "match_phrase": {
-          "domainId": {
-            "query": "@domainId@",
-            "boost": 3
-          }
+          ]
         }
       },
       "must": [
@@ -30,14 +21,8 @@
             "fuzziness": 1 ,
             "phrase_slop": 1
           }
-        },
-        {
-          "term": {
-            "domainId": {
-              "value": "@domainId@"
-            }
-          }
         }
+        @domain_filtering@
       ]
     }
   }

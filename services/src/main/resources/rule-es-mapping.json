@@ -50,19 +50,13 @@
       "type": "long"
     },
     "area": {
-      "type": "text"
+      "type": "keyword"
     },
     "event": {
-      "type": "text"
-    },
-    "enabled": {
-      "type": "boolean"
-    },
-    "deleted": {
-      "type": "boolean"
+      "type": "keyword"
     },
     "createdBy": {
-      "type": "text"
+      "type": "long"
     },
     "createdDate": {
       "type": "date",
@@ -73,7 +67,7 @@
       "format": "epoch_millis"
     },
     "lastModifiedBy": {
-      "type": "text"
+      "type": "long"
     },
     "type": {
       "type": "keyword"

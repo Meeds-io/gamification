@@ -16,6 +16,8 @@
 package org.exoplatform.addons.gamification.listener.es;
 
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.container.ExoContainerContext;
@@ -29,16 +31,20 @@ import org.exoplatform.services.log.Log;
 
 @Asynchronous
 public class RulesESListener extends Listener<Object, Long> {
-  private static final Log      LOG = ExoLogger.getLogger(RulesESListener.class);
+  private static final Log LOG = ExoLogger.getLogger(RulesESListener.class);
 
-  private final PortalContainer container;
+  private PortalContainer  container;
 
-  private final IndexingService indexingService;
+  private IndexingService  indexingService;
+
+  private RuleService      ruleService;
 
   public RulesESListener(PortalContainer container,
-                         IndexingService indexingService) {
+                         IndexingService indexingService,
+                         RuleService ruleService) {
     this.container = container;
     this.indexingService = indexingService;
+    this.ruleService = ruleService;
   }
 
   @Override
@@ -46,8 +52,10 @@ public class RulesESListener extends Listener<Object, Long> {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
     Long ruleId = event.getData();
+    boolean ruleDeleted = Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
+    RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
     try {
-      if (Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName())) {
+      if (rule == null || rule.isDeleted() || !rule.isEnabled()) {
         LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
         indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
       } else {

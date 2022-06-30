@@ -17,7 +17,12 @@ package org.exoplatform.addons.gamification.search;
 
 import java.io.InputStream;
 import java.text.Normalizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,6 +49,15 @@ public class RuleSearchConnector {
   private static final Log             LOG                          = ExoLogger.getLogger(RuleSearchConnector.class);
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
+
+  private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
+      + "        {\n"
+      + "          \"term\": {\n"
+      + "            \"domainId\": {\n"
+      + "              \"value\": \"@domainId@\"\n"
+      + "            }\n"
+      + "          }\n"
+      + "        }";
 
   private final ConfigurationManager   configurationManager;
 
@@ -84,7 +98,7 @@ public class RuleSearchConnector {
     if (filter.getSpaceIds().isEmpty()) {
       throw new IllegalArgumentException("Filter spaceIds is mandatory");
     }
-    if (filter.getDomainId() == 0 ) {
+    if (filter.getDomainId() == 0) {
       throw new IllegalArgumentException("filter domain id must be positive");
     }
     String esQuery = buildQueryStatement(filter, offset, limit);
@@ -99,7 +113,7 @@ public class RuleSearchConnector {
     if (filter.getSpaceIds().isEmpty()) {
       throw new IllegalArgumentException("Filter spaceIds is mandatory");
     }
-    if (filter.getDomainId() == 0 ) {
+    if (filter.getDomainId() == 0) {
       throw new IllegalArgumentException("filter domain id must be positive");
     }
     String esQuery = buildQueryStatement(filter, 0, 0);
@@ -117,11 +131,17 @@ public class RuleSearchConnector {
       return word;
     }).collect(Collectors.toList());
     String termQuery = StringUtils.join(termsQuery, " AND ");
-    return retrieveSearchQuery().replace("@domainId@", String.valueOf(filter.getDomainId()))
-                                .replace("@term_query@", termQuery)
-                                .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
-                                .replace("@offset@", String.valueOf(offset))
-                                .replace("@limit@", String.valueOf(limit));
+    String query = retrieveSearchQuery();
+    if (filter.getDomainId() > 0) {
+      query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
+    } else {
+      query = query.replace("@domain_filtering@", "");
+    }
+    return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
+                .replace("@term_query@", termQuery)
+                .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
+                .replace("@offset@", String.valueOf(offset))
+                .replace("@limit@", String.valueOf(limit));
   }
 
   @SuppressWarnings("rawtypes")
@@ -154,19 +174,19 @@ public class RuleSearchConnector {
         long id = parseLong(hitSource, "id");
         String title = (String) hitSource.get("title");
         String description = (String) hitSource.get("description");
-        int score = parseLong(hitSource, "score").intValue();
+        long score = parseLong(hitSource, "score");
         String area = (String) hitSource.get("area");
         Long domainId = parseLong(hitSource, "domainId");
         boolean enabled = Boolean.parseBoolean(String.valueOf(hitSource.get("enabled")));
         boolean deleted = Boolean.parseBoolean(String.valueOf(hitSource.get("deleted")));
         String createdBy = (String) hitSource.get("createdBy");
-        Date createdDate = parseDate(hitSource,"createdDate" );
-        Date lastModifiedDate = parseDate(hitSource,"lastModifiedDate");
+        Date createdDate = parseDate(hitSource, "createdDate");
+        Date lastModifiedDate = parseDate(hitSource, "lastModifiedDate");
         String lastModifiedBy = (String) hitSource.get("lastModifiedBy");
         String event = (String) hitSource.get("event");
         long audience = parseLong(hitSource, "audience");
-        Date startDate =  parseDate(hitSource,"startDate");
-        Date endDate = parseDate(hitSource,"endDate");
+        Date startDate = parseDate(hitSource, "startDate");
+        Date endDate = parseDate(hitSource, "endDate");
         String type = (String) hitSource.get("type");
 
         rule.setId(id);
@@ -174,7 +194,7 @@ public class RuleSearchConnector {
         rule.setDescription(description);
         rule.setEvent(event);
         rule.setDomainEntity(Utils.getDomainById(domainId));
-        rule.setScore(score);
+        rule.setScore((int) score);
         rule.setArea(area);
         rule.setEnabled(enabled);
         rule.setDeleted(deleted);
@@ -213,9 +233,9 @@ public class RuleSearchConnector {
     return Integer.parseInt(total.get("value").toString());
   }
 
-  private Long parseLong(JSONObject hitSource, String key) {
+  private long parseLong(JSONObject hitSource, String key) {
     String value = (String) hitSource.get(key);
-    return StringUtils.isBlank(value) ? null : Long.parseLong(value);
+    return StringUtils.isBlank(value) ? 0 : Long.parseLong(value);
   }
 
   private Date parseDate(JSONObject hitSource, String key) {

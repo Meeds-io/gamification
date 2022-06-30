@@ -31,6 +31,8 @@ import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
@@ -38,11 +40,16 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
   private static final Log   LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
 
-  private RuleDAO ruleDAO;
+  private RuleDAO            ruleDAO;
 
-  public RuleIndexingServiceConnector(RuleDAO ruleDAO, InitParams initParams) {
+  private IdentityManager    identityManager;
+
+  public RuleIndexingServiceConnector(RuleDAO ruleDAO,
+                                      IdentityManager identityManager,
+                                      InitParams initParams) {
     super(initParams);
     this.ruleDAO = ruleDAO;
+    this.identityManager = identityManager;
   }
 
   @Override
@@ -86,12 +93,10 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("audience", String.valueOf(rule.getAudience() != null ? rule.getAudience() : 0));
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
     fields.put("endDate", toMilliSecondsString(rule.getEndDate()));
-    fields.put("enabled", String.valueOf(rule.isEnabled()));
-    fields.put("deleted", String.valueOf(rule.isDeleted()));
-    fields.put("createdBy", rule.getCreatedBy());
-    fields.put("createdDate",toMilliSecondsString(rule.getCreatedDate()));
-    fields.put("lastModifiedBy", rule.getLastModifiedBy());
-    fields.put("lastModifiedDate",toMilliSecondsString(rule.getLastModifiedDate()));
+    fields.put("createdBy", getUserIdentityId(rule.getCreatedBy()));
+    fields.put("createdDate", toMilliSecondsString(rule.getCreatedDate()));
+    fields.put("lastModifiedBy", getUserIdentityId(rule.getLastModifiedBy()));
+    fields.put("lastModifiedDate", toMilliSecondsString(rule.getLastModifiedDate()));
     fields.put("type", rule.getType().name());
     Document document = new Document(id, null, new Date(System.currentTimeMillis()), Collections.emptySet(), fields);
     if (CollectionUtils.isNotEmpty(rule.getManagers())) {
@@ -99,6 +104,18 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     }
     return document;
   }
+
+  private String getUserIdentityId(String username) {
+    String userIdentityId = "0";
+    if (StringUtils.isNotBlank(username)) {
+      Identity identity = identityManager.getOrCreateUserIdentity(username);
+      if (identity != null) {
+        userIdentityId = identity.getId();
+      }
+    }
+    return userIdentityId;
+  }
+
   private String toMilliSecondsString(Date date) {
     return date != null ? String.valueOf(date.getTime()) : "0";
   }

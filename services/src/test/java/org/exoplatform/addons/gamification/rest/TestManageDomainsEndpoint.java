@@ -26,9 +26,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.security.ConversationState;
-import org.json.JSONObject;
 import org.json.JSONWriter;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

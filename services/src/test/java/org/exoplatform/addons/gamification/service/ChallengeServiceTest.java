@@ -281,7 +281,6 @@ public class ChallengeServiceTest {
 
   @Test
   public void testGetChallengesByFilterAndUser() {
-
     Challenge challenge = new Challenge(1l,
                                         "Challenge",
                                         "description",
@@ -310,7 +309,6 @@ public class ChallengeServiceTest {
 
   @Test
   public void testCountChallengesByFilterAndUser() {
-
     Challenge challenge = new Challenge(1l,
                                         "Challenge",
                                         "description",
