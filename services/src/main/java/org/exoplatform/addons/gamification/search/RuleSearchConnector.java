@@ -250,8 +250,8 @@ public class RuleSearchConnector {
       return Collections.emptyList();
     } else {
       List<Long> listManagers = new ArrayList<>();
-      for (Object obj : jsonHits) {
-        listManagers.add((Long) obj);
+      for (Object value : jsonHits) {
+        listManagers.add(Long.parseLong(String.valueOf(value)));
       }
       return listManagers;
     }

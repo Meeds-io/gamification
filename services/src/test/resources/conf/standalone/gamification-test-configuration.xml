@@ -161,7 +161,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <init-params>
             <value-param>
                 <name>query.file.path</name>
-                <value>${exo.rule.es.query.path:jar:/rule-search-query.json}</value>
+                <value>jar:/rule-search-query.json</value>
             </value-param>
             <properties-param>
                 <name>constructor.params</name>
