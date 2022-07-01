@@ -23,6 +23,8 @@ import java.util.Date;
 import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
+import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnectorTest;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -176,6 +178,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RealizationsStorage    realizationsStorage;
 
+  protected RuleIndexingServiceConnector ruleIndexingServiceConnector  ;
+
   Identity                         userIdentity        = new Identity(TEST_USER_SENDER);
 
   @Override
@@ -204,6 +208,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     challengeStorage = CommonsUtils.getService(ChallengeStorage.class);
     domainDAO = CommonsUtils.getService(DomainDAO.class);
     realizationsStorage = CommonsUtils.getService(RealizationsStorage.class);
+    ruleIndexingServiceConnector = CommonsUtils.getService(RuleIndexingServiceConnector .class);
     ExoContainer container = getContainer();
     binder = container.getComponentInstanceOfType(ResourceBinder.class);
     RequestHandlerImpl requestHandler = container.getComponentInstanceOfType(RequestHandlerImpl.class);

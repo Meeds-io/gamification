@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -279,19 +279,22 @@ public class ChallengeServiceTest {
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
-
     Space space = new Space();
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(false);
     when(spaceService.isMember(space, "root")).thenReturn(false);
     assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
-
-    when(spaceService.isManager(space, "root")).thenReturn(true);
-    when(spaceService.isMember(space, "root")).thenReturn(true);
     Challenge savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
     assertNull(savedChallenge);
+    savedChallenge = challengeService.getChallengeById(challenge.getId());
+    assertNull(savedChallenge);
     when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
+    assertThrows(IllegalAccessException.class, () -> challengeService.getChallengeById(challenge.getId(), "root"));
+    when(spaceService.isManager(space, "root")).thenReturn(true);
+    when(spaceService.isMember(space, "root")).thenReturn(true);
     savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
+    assertNotNull(savedChallenge);
+    savedChallenge = challengeService.getChallengeById(challenge.getId());
     assertNotNull(savedChallenge);
     assertEquals(challenge.getId(), savedChallenge.getId());
   }
@@ -350,6 +353,13 @@ public class ChallengeServiceTest {
     count = challengeService.countChallengesByFilterAndUser(filter, "root");
 
     assertEquals(3, count);
+  }
+
+  @Test
+  public void testClearUserChallengeCache() {
+    doNothing().when(challengeStorage).clearCache();
+    challengeService.clearUserChallengeCache();
+    verify(challengeStorage, times(1)).clearCache();
   }
 
 }
