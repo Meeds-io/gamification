@@ -308,7 +308,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       challenge.setDomainEntity(newDomain(domain));
       challenge.setType(TypeRule.MANUAL);
       challenge.setAudience(audience);
-      challenge.setManagers(Collections.emptyList());
+      challenge.setManagers(Collections.singletonList(1l));
       challenge = ruleDAO.create(challenge);
     }
     return challenge;

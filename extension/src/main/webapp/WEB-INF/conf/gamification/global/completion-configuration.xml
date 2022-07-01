@@ -125,15 +125,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <component>
     <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
     <init-params>
-        <value-param>
-            <name>query.file.path</name>
-            <value>${exo.gamification.rules.es.query.path:war:/conf/gamification/search/rule-search-query.json}</value>
-        </value-param>
-        <properties-param>
-            <name>constructor.params</name>
-            <property name="searchType" value="rule"/>
-            <property name="index" value="rule_alias"/>
-        </properties-param>
+      <value-param>
+        <name>query.file.path</name>
+        <value>${exo.gamification.rules.es.query.path:war:/conf/gamification/search/rule-search-query.json}</value>
+      </value-param>
+      <properties-param>
+        <name>constructor.params</name>
+        <property name="searchType" value="rule"/>
+        <property name="index" value="rule_alias"/>
+      </properties-param>
     </init-params>
   </component>
 

@@ -23,11 +23,13 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+import static org.junit.Assert.assertThrows;
 
 public class RuleServiceTest extends AbstractServiceTest {
 
@@ -62,11 +64,13 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
     assertNotNull(ruleService.findRuleById(ruleEntity.getId()));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleById(null));
   }
 
   @Test
   public void testFindEnabledRulesByEvent() {
     assertEquals(ruleDAO.findAll().size(), 0);
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findEnabledRulesByEvent(null));
     assertEquals(ruleService.findEnabledRulesByEvent("rule1").size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
     RuleEntity r2 = newRule("rule1", "domain2");
@@ -82,6 +86,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     newRule();
     assertNotNull(ruleService.findRuleByTitle(RULE_NAME));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByTitle(null));
   }
 
   @Test
@@ -108,6 +113,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     newRule("rule3", "domain2");
     assertEquals(ruleService.getAllRulesByDomain("domain1").size(), 2);
     assertEquals(ruleService.getAllRulesByDomain("domain2").size(), 1);
+    assertThrows(IllegalArgumentException.class, () -> ruleService.getAllRulesByDomain(null));
   }
 
   @Test
@@ -141,68 +147,65 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testDeleteRule() {
-    try {
-      RuleEntity ruleEntity = newRule();
-      assertEquals(ruleEntity.isDeleted(), false);
-      ruleService.deleteRule(ruleEntity.getId());
-      assertEquals(ruleEntity.isDeleted(), true);
-    } catch (Exception e) {
-      fail("Error to delete rule", e);
-    }
+  public void testDeleteRule() throws Exception {
 
+    RuleEntity ruleEntity = newRule();
+    assertEquals(ruleEntity.isDeleted(), false);
+    ruleService.deleteRule(ruleEntity.getId());
+    assertEquals(ruleEntity.isDeleted(), true);
+    assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRule(null));
   }
 
   @Test
-  public void testAddRule() {
-    try {
-      assertEquals(ruleDAO.findAll().size(), 0);
-      RuleEntity rule = new RuleEntity();
-      rule.setScore(Integer.parseInt(TEST__SCORE));
-      rule.setTitle(RULE_NAME);
-      rule.setDescription("Description");
-      rule.setArea(GAMIFICATION_DOMAIN);
-      rule.setEnabled(true);
-      rule.setDeleted(false);
-      rule.setEvent(RULE_NAME);
-      rule.setCreatedBy(TEST_USER_SENDER);
-      rule.setCreatedDate(new Date());
-      rule.setLastModifiedBy(TEST_USER_SENDER);
-      rule.setLastModifiedDate(new Date());
-      rule.setDomainEntity(newDomain());
-      rule.setType(TypeRule.AUTOMATIC);
-      ruleService.addRule(RuleMapper.ruleToRuleDTO(rule));
-      assertEquals(ruleDAO.findAll().size(), 1);
-    } catch (Exception e) {
-      fail("Error to add rule", e);
-    }
+  public void testAddRule() throws Exception {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    assertThrows(IllegalArgumentException.class, () -> ruleService.addRule(null));
+    RuleEntity rule = new RuleEntity();
+    rule.setScore(Integer.parseInt(TEST__SCORE));
+    rule.setTitle(RULE_NAME);
+    rule.setDescription("Description");
+    rule.setArea(GAMIFICATION_DOMAIN);
+    rule.setEnabled(true);
+    rule.setDeleted(false);
+    rule.setEvent(RULE_NAME);
+    rule.setCreatedBy(TEST_USER_SENDER);
+    rule.setCreatedDate(new Date());
+    rule.setLastModifiedBy(TEST_USER_SENDER);
+    rule.setLastModifiedDate(new Date());
+    rule.setDomainEntity(newDomain());
+    rule.setType(TypeRule.AUTOMATIC);
+    ruleService.addRule(RuleMapper.ruleToRuleDTO(rule));
+    assertEquals(ruleDAO.findAll().size(), 1);
   }
 
   @Test
-  public void testUpdateRule() {
-    try {
-      assertEquals(ruleDAO.findAll().size(), 0);
-      RuleEntity ruleEntity = newRule();
-      ruleEntity.setDescription("new_description");
-      ruleService.updateRule(RuleMapper.ruleToRuleDTO(ruleEntity));
-      ruleEntity = ruleDAO.find(ruleEntity.getId());
-      assertEquals(ruleEntity.getDescription(), "new_description");
-    } catch (Exception e) {
-      fail("Error to add rule", e);
-    }
-
+  public void testUpdateRule() throws Exception {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(new RuleDTO()));
+    RuleEntity ruleEntity = newRule();
+    ruleEntity.setDescription("new_description");
+    ruleService.updateRule(RuleMapper.ruleToRuleDTO(ruleEntity));
+    RuleDTO ruleDTO = ruleService.findRuleById(ruleEntity.getId());
+    assertEquals(ruleEntity.getDescription(), ruleDTO.getDescription());
   }
 
   @Test
   public void getFindAllRules() {
-    try {
-      RuleDTO rule1 = newRuleDTO();
-      RuleDTO rule2 = newRuleDTO();
-      RuleDTO rule3 = newRuleDTO();
-      rule1.setType(TypeRule.MANUAL);
-      ruleService.updateRule(rule1);
-    } catch (Exception e) {
-      fail("Error to add rule", e);
-    }
+    newRuleDTO();
+    newRuleDTO();
+    newRuleDTO();
+    assertEquals(2, ruleService.findAllRules(0, 2).size());
+    assertEquals(3, ruleService.findAllRules(0, 3).size());
+
+  }
+
+  @Test
+  public void getFindRuleByEventAndDomain() {
+    RuleDTO rule = newRuleDTO();
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", rule.getDomainDTO().getTitle()));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(rule.getTitle(), ""));
+    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(rule.getTitle(), rule.getDomainDTO().getTitle());
+    assertEquals(rule.getTitle(), ruleDTO.getTitle());
+    assertEquals(rule.getDomainDTO().getTitle(), ruleDTO.getDomainDTO().getTitle());
   }
 }
