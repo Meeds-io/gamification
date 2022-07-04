@@ -16,17 +16,29 @@
           </span>
         </v-btn>
       </div>
+      <v-spacer />
+      <div class="challengeFilter">
+        <v-text-field
+          v-model="search"
+          :placeholder="$t('challenges.filter.search')"
+          prepend-inner-icon="fa-filter"
+          single-line
+          hide-details
+          class="pa-0 mx-3" />
+      </div>
     </v-toolbar>
-    <welcome-message
+    <challenge-welcome-message
       v-if="displayWelcomeMessage"
       :can-add-challenge="canAddChallenge" />
+    <challenge-no-results v-else-if="displayNoSearchResult" />
     <challenges-list
-      v-else
+      v-else-if="displayChallengesList"
       :domains="domainsHavingChallenges"
       :challenges-by-domain-id="challengesByDomainId"
       :loading="loading"
       class="pl-2 pt-5" />
-    <challenge-drawer ref="challengeDrawer" :can-add-challenge="canAddChallenge" />
+
+    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
     <challenge-details-drawer ref="challengeDetails" />
     <challenge-winners-details ref="winnersDetails" />
     <exo-confirm-dialog
@@ -49,6 +61,11 @@ export default {
     loading: true,
     domainsWithChallenges: [],
     announcementsPerChallenge: 2,
+    search: '',
+    startSearchAfterInMilliseconds: 600,
+    endTypingKeywordTimeout: 50,
+    startTypingKeywordTimeout: 0,
+    typing: false,
   }),
   computed: {
     classWelcomeMessage() {
@@ -58,7 +75,13 @@ export default {
       return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
     },
     displayWelcomeMessage() {
-      return !this.loading && !this.domainsHavingChallenges.length;
+      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && !this.search?.length;
+    },
+    displayNoSearchResult() {
+      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && this.search?.length;
+    },
+    displayChallengesList() {
+      return this.domainsHavingChallenges.length;
     },
     challengesByDomainId() {
       const challengesByDomainId = {};
@@ -86,10 +109,26 @@ export default {
       }
     }
   },
+  watch: {
+    search()  {
+      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
+      }
+    },
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
+  },
   created() {
-    this.$challengesServices.canAddChallenge()
-      .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
-    this.getChallenges(false);
+    const promises = [];
+    promises.push(this.computeCanAddChallenge());    
+    promises.push(this.getChallenges(false));
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
     this.$root.$on('challenge-deleted', this.refreshChallenges);
@@ -99,17 +138,21 @@ export default {
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (challengeId) {
       setTimeout(() => {
-        this.$challengesServices.getChallengeById(challengeId).then(challenge => {
-          if (challenge && challenge.id) {
-            this.$root.$emit('open-challenge-details', challenge);
-            window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
-          } else {
-            window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
-            this.showAlert('error', this.$t('challenges.viewChallengeError'));
-          }
-        });
+        const retrieveChallengePromise = this.$challengesServices.getChallengeById(challengeId)
+          .then(challenge => {
+            if (challenge && challenge.id) {
+              this.$root.$emit('open-challenge-details', challenge);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
+            } else {
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+              this.showAlert('error', this.$t('challenges.viewChallengeError'));
+            }
+          });
+        promises.push(retrieveChallengePromise);
       }, 10);
     }
+    Promise.all(promises)
+      .finally(() => this.$root.$applicationLoaded());
   },
   methods: {
     pushChallenge(challenge) {
@@ -117,11 +160,15 @@ export default {
         this.challengesByDomainId[challenge.program.id].push(challenge);
       }
     },
+    computeCanAddChallenge() {
+      return this.$challengesServices.canAddChallenge()
+        .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
+    },
     refreshChallenges() {
-      this.getChallenges(false);
+      return this.getChallenges(false);
     },
     loadMore(domainId) {
-      this.getChallenges(true, domainId);
+      return this.getChallenges(true, domainId);
     },
     openChallengeDrawer(){
       this.$refs.challengeDrawer.open();
@@ -129,7 +176,7 @@ export default {
     getChallenges(append, domainId) {
       this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
-      this.$challengesServices.getAllChallengesByUser(offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
+      return this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
         .then(result => {
           if (!result) {
             return;
@@ -153,12 +200,10 @@ export default {
             });
             this.domainsWithChallenges = result;
           }
-        }).finally(() => {
-          this.loading = false;
-          this.$nextTick().then(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading'))) ;
-        });
+        }).finally(() => this.loading = false);
     },
     deleteChallenge() {
+      this.loading = true;
       this.$challengesServices.deleteChallenge(this.selectedChallenge.id).then(() =>{
         this.showAlert('success', this.$t('challenges.deleteSuccess'));
         this.$root.$emit('challenge-deleted');
@@ -173,7 +218,8 @@ export default {
             msg = this.$t('challenges.deleteErrorSave');
           }
           this.showAlert('error', msg);
-        });
+        })
+        .finally(() => this.loading = false);
     },
     confirmDelete(challenge) {
       this.selectedChallenge = challenge;
@@ -184,7 +230,17 @@ export default {
         type: alertType,
         message: alertMessage,
       });
-    }
+    },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() > this.startTypingKeywordTimeout) {
+          this.typing = false;
+          this.getChallenges(false, false);
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
+    },
   }
 };
 </script>

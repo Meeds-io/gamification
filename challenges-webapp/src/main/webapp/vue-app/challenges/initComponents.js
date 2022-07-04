@@ -1,5 +1,6 @@
 import Challenges from './components/Challenges.vue';
 import WelcomeMessage from './components/WelcomeMessage.vue';
+import NoResultFound from './components/NoResultFound.vue';
 import ChallengeCard from './components/ChallengeCard.vue';
 import ChallengesList from './components/ChallengesList.vue';
 import DomainChallengesList from './components/DomainChallengesList.vue';
@@ -14,7 +15,8 @@ import challengeProgram from './components/ProgramSuggester.vue';
 
 const components = {
   'challenges': Challenges,
-  'welcome-message': WelcomeMessage,
+  'challenge-welcome-message': WelcomeMessage,
+  'challenge-no-results': NoResultFound,
   'challenge-card': ChallengeCard,
   'challenges-list': ChallengesList,
   'domain-challenges-list': DomainChallengesList,

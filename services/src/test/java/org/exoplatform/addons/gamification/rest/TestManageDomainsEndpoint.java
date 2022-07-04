@@ -1,6 +1,6 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 Meeds Association
+ * Copyright (C) 2022 Meeds Association
  * contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.security.ConversationState;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;

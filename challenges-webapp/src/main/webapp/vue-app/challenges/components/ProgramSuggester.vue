@@ -48,7 +48,6 @@
           </span>
         </v-chip>
       </template>
-
       <template slot="item" slot-scope="data">
         <v-list-item-title
           class="text-truncate identitySuggestionMenuItemText"
@@ -57,15 +56,8 @@
     </v-autocomplete>
   </v-flex>
 </template>
-
 <script>
 export default {
-  props: {
-    canAddChallenge: {
-      type: Boolean,
-      default: false
-    },
-  },
   data() {
     return {
       id: `AutoComplete${parseInt(Math.random() * 10000)}`,
@@ -104,15 +96,13 @@ export default {
       }
     },
   },
+  created() {
+    this.getAllDomains();
+  },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
       this.$refs.selectAutoComplete.isFocused = false;
     });
-  },
-  created() {
-    if (this.canAddChallenge) {
-      this.getAllDomains();
-    }
   },
   methods: {
     getAllDomains() {

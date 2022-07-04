@@ -1,10 +1,16 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_EVENT;
+
+import java.util.List;
+import java.util.Map;
+
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.RuleStorage;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
@@ -13,24 +19,18 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.exoplatform.addons.gamification.service.EntityBuilder.toAnnouncementActivity;
-import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_EVENT;
-
 public class AnnouncementServiceImpl implements AnnouncementService {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementServiceImpl.class);
 
   private AnnouncementStorage announcementStorage;
 
-  private RuleStorage challengeStorage;
+  private ChallengeStorage    challengeStorage;
 
   private ListenerService     listenerService;
 
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
-                                 RuleStorage challengeStorage,
+                                 ChallengeStorage challengeStorage,
                                  ListenerService listenerService) {
     this.announcementStorage = announcementStorage;
     this.challengeStorage = challengeStorage;
@@ -38,9 +38,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Announcement createAnnouncement(Announcement announcement, Map<String, String> templateParams, String currentUser, boolean system) throws IllegalArgumentException,
-                                                                                        ObjectNotFoundException,
-                                                                                        IllegalAccessException {
+  public Announcement createAnnouncement(Announcement announcement,
+                                         Map<String, String> templateParams,
+                                         String currentUser,
+                                         boolean system) throws IllegalArgumentException,
+                                                         ObjectNotFoundException,
+                                                         IllegalAccessException {
     if (announcement == null) {
       throw new IllegalArgumentException("announcement is mandatory");
     }
@@ -63,7 +66,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     announcement = announcementStorage.saveAnnouncement(announcement);
     if (!system) {
       try {
-        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, toAnnouncementActivity(announcement, templateParams));
+        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, EntityMapper.toAnnouncementActivity(announcement, templateParams));
       } catch (Exception e) {
         LOG.error("Unexpected error", e);
       }
