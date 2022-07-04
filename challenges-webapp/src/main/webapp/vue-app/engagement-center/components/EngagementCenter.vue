@@ -1,6 +1,6 @@
 <!--
 This file is part of the Meeds project (https://meeds.io/).
-Copyright (C) 2020 Meeds Association
+Copyright (C) 2022 Meeds Association
 contact@meeds.io
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <main v-if="engagementCenterEnabled">
       <v-tabs
         v-model="tab"
-        slider-size="4">
-        <v-tab>{{ $t('engagementCenter.label.realizations') }}</v-tab>
-        <v-tab>{{ $t('engagementCenter.label.programs') }}</v-tab>
+        slider-size="4"
+        class="mb-4">
+        <v-tab class="px-5">{{ $t('engagementCenter.label.challenges') }}</v-tab>
+        <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tab" class="tabs-content">
-        <v-tab-item class="pa-4" eager>
+      <v-tabs-items v-model="tab">
+        <v-tab-item eager>
           <challenges />
         </v-tab-item>
         <v-tab-item eager />
@@ -39,17 +40,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   data: () => ({
-    engagementCenterEnabled: eXo.env.portal.engagementcenterEnabled,
+    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
   }),
-  watch: {
-    tab() {
-      if (this.tab === 0) {
-        // window.history.pushState('engagementcenter', 'My engagement center', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/realizations`);
-      } else if (this.tab === 1) {
-        // window.history.pushState('engagementcenter', 'My engagement center', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
-      }
-    },
-  },
 };
 </script>

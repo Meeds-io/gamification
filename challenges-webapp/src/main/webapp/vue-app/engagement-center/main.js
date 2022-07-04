@@ -16,7 +16,7 @@ const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 
 document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
 
-const appId = 'ChallengesApplication';
+const appId = 'EngagementCenterApplication';
 
 //getting language of the PLF
 const lang = eXo && eXo.env.portal.language || 'en';
@@ -34,6 +34,6 @@ export function init() {
       template: `<engagement-center id="${appId}" />`,
       vuetify,
       i18n
-    }, `#${appId}`, 'Engagement');
+    }, `#${appId}`, 'EngagementCenter');
   });
 }
