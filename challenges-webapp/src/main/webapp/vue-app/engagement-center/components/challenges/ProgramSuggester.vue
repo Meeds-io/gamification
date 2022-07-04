@@ -64,7 +64,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-chip>
       </template>
-
       <template slot="item" slot-scope="data">
         <v-list-item-title
           class="text-truncate identitySuggestionMenuItemText"
@@ -73,15 +72,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-autocomplete>
   </v-flex>
 </template>
-
 <script>
 export default {
-  props: {
-    canAddChallenge: {
-      type: Boolean,
-      default: false
-    },
-  },
   data() {
     return {
       id: `AutoComplete${parseInt(Math.random() * 10000)}`,
@@ -120,15 +112,13 @@ export default {
       }
     },
   },
+  created() {
+    this.getAllDomains();
+  },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
       this.$refs.selectAutoComplete.isFocused = false;
     });
-  },
-  created() {
-    if (this.canAddChallenge) {
-      this.getAllDomains();
-    }
   },
   methods: {
     getAllDomains() {

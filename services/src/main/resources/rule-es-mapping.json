@@ -1,0 +1,79 @@
+{
+  "properties": {
+    "id": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "index_options": "offsets",
+      "fields": {
+        "raw": {
+          "type": "keyword"
+        },
+        "whitespace": {
+          "type": "text",
+          "analyzer": "whitespace_lowercase_asciifolding"
+        }
+      }
+    },
+    "description": {
+      "type": "text",
+      "index_options": "offsets",
+      "fields": {
+        "raw": {
+          "type": "keyword"
+        },
+        "whitespace": {
+          "type": "text",
+          "analyzer": "whitespace_lowercase_asciifolding"
+        }
+      }
+    },
+    "audience": {
+      "type": "long"
+    },
+    "score": {
+      "type": "long"
+    },
+    "startDate": {
+      "type": "date",
+      "format": "epoch_millis"
+    },
+    "endDate": {
+      "type": "date",
+      "format": "epoch_millis"
+    },
+    "managers": {
+      "type": "long"
+    },
+    "domainId": {
+      "type": "long"
+    },
+    "area": {
+      "type": "keyword"
+    },
+    "event": {
+      "type": "keyword"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "createdBy": {
+      "type": "long"
+    },
+    "createdDate": {
+      "type": "date",
+      "format": "epoch_millis"
+    },
+    "lastModifiedDate": {
+      "type": "date",
+      "format": "epoch_millis"
+    },
+    "lastModifiedBy": {
+      "type": "long"
+    },
+    "type": {
+      "type": "keyword"
+    }
+  }
+}

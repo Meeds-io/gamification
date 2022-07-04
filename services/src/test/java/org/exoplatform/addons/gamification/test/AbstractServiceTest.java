@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -8,11 +8,11 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.test;
 
@@ -23,6 +23,8 @@ import java.util.Date;
 import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
+import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnectorTest;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -34,7 +36,10 @@ import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.*;
+import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
@@ -42,6 +47,7 @@ import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.storage.DomainStorage;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
@@ -56,7 +62,6 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ProviderBinder;
 import org.exoplatform.services.rest.impl.RequestHandlerImpl;
@@ -69,15 +74,23 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
-@ConfiguredBy({
-    @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.social.component.service-configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml") })
+@ConfiguredBy(
+  { @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
+      @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
+      @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
+      @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
+      @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.social.component.service-configuration.xml"),
+      @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml") }
+)
 
+@RunWith(MockitoJUnitRunner.class)
+@PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
 public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final String    GAMIFICATION_DOMAIN = "TeamWork";
@@ -123,8 +136,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected EntityManagerService   entityManagerService;
 
-  protected GamificationService    gamificationService;
-
   protected ManageBadgesEndpoint   manageBadgesEndpoint;
 
   protected ManageDomainsEndpoint  manageDomainsEndpoint;
@@ -149,44 +160,55 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleService            ruleService;
 
+  protected GamificationService    gamificationService;
+
   protected BadgeDAO               badgeStorage;
 
   protected DomainDAO              domainDAO;
 
   protected DomainStorage          domainStorage;
 
-  protected RuleDAO                ruleDAO;
-
   protected RuleStorage            ruleStorage;
+
+  protected ChallengeStorage       challengeStorage;
+
+  protected RuleDAO                ruleDAO;
 
   protected GamificationHistoryDAO gamificationHistoryDAO;
 
   protected RealizationsStorage    realizationsStorage;
 
-  Identity                         userIdentity      = new Identity(TEST_USER_SENDER);
+  protected RuleIndexingServiceConnector ruleIndexingServiceConnector  ;
+
+  Identity                         userIdentity        = new Identity(TEST_USER_SENDER);
 
   @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     begin();
-    gamificationService = getContainer().getComponentInstanceOfType(GamificationService.class);
+    ruleDAO = CommonsUtils.getService(RuleDAO.class);
+    gamificationHistoryDAO = CommonsUtils.getService(GamificationHistoryDAO.class);
     identityManager = CommonsUtils.getService(IdentityManager.class);
+    domainStorage = CommonsUtils.getService(DomainStorage.class);
+    ruleStorage = CommonsUtils.getService(RuleStorage.class);
     activityManager = CommonsUtils.getService(ActivityManager.class);
     relationshipManager = CommonsUtils.getService(RelationshipManager.class);
+    challengeService = CommonsUtils.getService(ChallengeService.class);
+    announcementService = CommonsUtils.getService(AnnouncementService.class);
     badgeService = CommonsUtils.getService(BadgeService.class);
-    ruleService = CommonsUtils.getService(RuleService.class);
     domainService = CommonsUtils.getService(DomainService.class);
+    ruleService = CommonsUtils.getService(RuleService.class);
+    gamificationService = CommonsUtils.getService(GamificationService.class);
     entityManagerService = CommonsUtils.getService(EntityManagerService.class);
     manageBadgesEndpoint = CommonsUtils.getService(ManageBadgesEndpoint.class);
     manageDomainsEndpoint = CommonsUtils.getService(ManageDomainsEndpoint.class);
     requestHandler = getContainer().getComponentInstanceOfType(RequestHandlerImpl.class);
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
     badgeStorage = CommonsUtils.getService(BadgeDAO.class);
+    challengeStorage = CommonsUtils.getService(ChallengeStorage.class);
     domainDAO = CommonsUtils.getService(DomainDAO.class);
-    domainStorage = CommonsUtils.getService(DomainStorage.class);
-    ruleDAO = CommonsUtils.getService(RuleDAO.class);
-    ruleStorage = CommonsUtils.getService(RuleStorage.class);
-    gamificationHistoryDAO = CommonsUtils.getService(GamificationHistoryDAO.class);
     realizationsStorage = CommonsUtils.getService(RealizationsStorage.class);
+    ruleIndexingServiceConnector = CommonsUtils.getService(RuleIndexingServiceConnector .class);
     ExoContainer container = getContainer();
     binder = container.getComponentInstanceOfType(ResourceBinder.class);
     RequestHandlerImpl requestHandler = container.getComponentInstanceOfType(RequestHandlerImpl.class);
@@ -200,9 +222,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   @Override
-  protected void tearDown() {
-    end();
-    RequestLifeCycle.begin(getContainer());
+  @After
+  public void tearDown() {
+    restartTransaction();
     gamificationHistoryDAO.deleteAll();
     ruleDAO.deleteAll();
     badgeStorage.deleteAll();
@@ -245,13 +267,14 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     }
     return rule;
   }
+
   protected RuleEntity newRule(String name, String domain) {
 
-    RuleEntity rule = ruleDAO.findRuleByTitle(name+"_"+domain);
+    RuleEntity rule = ruleDAO.findRuleByTitle(name + "_" + domain);
     if (rule == null) {
       rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));
-      rule.setTitle(name+"_"+domain);
+      rule.setTitle(name + "_" + domain);
       rule.setDescription("Description");
       rule.setArea(domain);
       rule.setEnabled(true);
@@ -268,12 +291,12 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return rule;
   }
 
-  protected RuleEntity newChallenge(String name, String domain, Long audience) {
-    RuleEntity challenge = ruleDAO.findRuleByTitle(name+"_"+domain);
+  protected RuleEntity newRule(String name, String domain, Long audience) {
+    RuleEntity challenge = ruleDAO.findRuleByTitle(name + "_" + domain);
     if (challenge == null) {
       challenge = new RuleEntity();
       challenge.setScore(Integer.parseInt(TEST__SCORE));
-      challenge.setTitle(name+"_"+domain);
+      challenge.setTitle(name + "_" + domain);
       challenge.setDescription("Description");
       challenge.setArea(domain);
       challenge.setEnabled(true);
@@ -285,7 +308,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       challenge.setDomainEntity(newDomain(domain));
       challenge.setType(TypeRule.MANUAL);
       challenge.setAudience(audience);
-      challenge.setManagers(Collections.emptyList());
+      challenge.setManagers(Collections.singletonList(1l));
       challenge = ruleDAO.create(challenge);
     }
     return challenge;
@@ -293,11 +316,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled) {
 
-    RuleEntity rule = ruleDAO.findRuleByTitle(name+"_"+domain);
+    RuleEntity rule = ruleDAO.findRuleByTitle(name + "_" + domain);
     if (rule == null) {
       rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));
-      rule.setTitle(name+"_"+domain);
+      rule.setTitle(name + "_" + domain);
       rule.setDescription("Description");
       rule.setArea(domain);
       rule.setEnabled(isEnabled);
@@ -403,7 +426,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return badge;
   }
 
-  protected GamificationActionsHistory newGamificationActionsHistory(){
+  protected GamificationActionsHistory newGamificationActionsHistory() {
     RuleEntity rule = newRule();
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
@@ -423,7 +446,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
-  protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO(){
+
+  protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO() {
     return GamificationActionsHistoryMapper.fromEntity(newGamificationActionsHistory());
   }
 
@@ -434,7 +458,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected DomainDTO newDomainDTO() {
     return DomainMapper.domainToDomainDTO(newDomain());
   }
-  protected DomainDTO newDomainDTO(String name ) {
+
+  protected DomainDTO newDomainDTO(String name) {
     return DomainMapper.domainToDomainDTO(newDomain(name));
   }
 

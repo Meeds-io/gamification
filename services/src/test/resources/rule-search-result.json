@@ -1,0 +1,38 @@
+{
+  "hits": {
+    "total": {
+      "value": 1,
+      "relation": "eq"
+    },
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "rule_v1",
+        "_type": "rule",
+        "_id": "1",
+        "_score": 1,
+        "_source": {
+          "area": "reward",
+          "audience": "0",
+          "endDate": "0",
+          "lastModifiedDate": "1656453834109",
+          "lastModifiedBy": "Gamification",
+          "description": "You received a Kudos",
+          "title": "def_receiveKudos",
+          "type": "AUTOMATIC",
+          "domainId": "3",
+          "enabled": "true",
+          "score": "5",
+          "lastUpdatedDate": 1656454351566,
+          "deleted": "false",
+          "createdDate": "1656453834109",
+          "createdBy": "Gamification",
+          "managers": [ 1 , 2],
+          "id": "13",
+          "event": "receiveKudos",
+          "startDate": "0"
+        }
+      }
+    ]
+  }
+}
