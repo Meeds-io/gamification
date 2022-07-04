@@ -150,7 +150,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
                     .build();
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} in the specified period - Gamification public API", userId, e);
-            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching earned points by period")).build();
+            return Response.serverError().entity(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching earned points by period")).build();
         }
     }
     @Path("leaderboard/date")
@@ -180,7 +180,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
                     .build();
         } catch (Exception e) {
             LOG.error("Error while building gloabl leaderboard between dates {} and {} - Gamification public API", startDateEntry, endDateEntry, e);
-            return Response.ok(new GamificationPoints().code("2").message("Error while fetching earned points by period")).build();
+            return Response.serverError().entity(new GamificationPoints().code("2").message("Error while fetching earned points by period")).build();
         }
 
     }

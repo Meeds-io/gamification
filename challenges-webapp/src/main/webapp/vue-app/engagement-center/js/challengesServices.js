@@ -16,7 +16,7 @@
  */
 
 export function canAddChallenge() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/canAddChallenge`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges/canAddChallenge`, {
     headers: {
       'Content-Type': 'text/plain'
     },
@@ -31,7 +31,7 @@ export function canAddChallenge() {
 }
 
 export function saveChallenge(challenge) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/addChallenge`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges/`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -48,7 +48,7 @@ export function saveChallenge(challenge) {
 }
 
 export function updateChallenge(challenge) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/updateChallenge`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges/`, {
     method: 'PUT',
     credentials: 'include',
     headers: {
@@ -64,8 +64,11 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(offset, limit, announcements, domainId, groupByDomain) {
+export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain) {
   const formData = new FormData();
+  if (term) {
+    formData.append('term', term);
+  }
   if (offset) {
     formData.append('offset', offset);
   }
@@ -83,7 +86,7 @@ export function getAllChallengesByUser(offset, limit, announcements, domainId, g
   }
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/allChallenge?${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -126,7 +129,7 @@ export function saveAnnouncement(announcement) {
 }
 
 export function getChallengeById(id) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/${id}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges/${id}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -155,7 +158,7 @@ export function getAllDomains() {
 
 
 export function deleteChallenge(challengeId) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenge/api/delete/${challengeId}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges/${challengeId}`, {
     method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
