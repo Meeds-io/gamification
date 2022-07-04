@@ -78,7 +78,7 @@ export default {
       default: function() {
         return {};
       },
-    },
+    }
   },
   computed: {
     title() {
@@ -89,7 +89,7 @@ export default {
       return this.domain.challengesSize;
     },
     hasMore() {
-      return this.domain.challengesSize > this.domain.challenges.length;
+      return this.domain.challengesSize > this.domain.challenges.length ;
     },
   },
 };

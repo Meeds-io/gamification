@@ -7,6 +7,7 @@
 
 #ChallengesApplication {
   background-color: @white !important;
+  min-height: ~"calc(100vh - 120px)";
 
   .welcomeMessage {
     margin: 0 20% 10%;
@@ -26,7 +27,11 @@
       font-weight: normal !important;
     }
   }
-
+  .challengeFilter{
+    width: 25%;
+    max-width: 400px;
+    min-width: 150px;
+  }
   .challengeDrawer {
     .alert{
       text-align: center;
@@ -225,6 +230,7 @@
     }
   }
 }
+
 .emptyChallenges {
   min-height: ~"calc(100vh - 100px)" ;
 }
