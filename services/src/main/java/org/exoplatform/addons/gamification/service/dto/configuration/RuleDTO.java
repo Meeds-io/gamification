@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -8,60 +8,63 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
-
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 
 import java.io.Serializable;
 import java.util.List;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
 public class RuleDTO implements Serializable {
 
-  protected Long    id;
+  private static final long serialVersionUID = 7423093905330790451L;
 
-  protected String  title;
+  protected Long            id;
 
-  protected String  description;
+  protected String          title;
 
-  protected int     score;
+  protected String          description;
 
-  protected String  area;
+  protected int             score;
 
-  private DomainDTO domainDTO;
+  protected String          area;
 
-  protected boolean enabled;
+  private DomainDTO         domainDTO;
 
-  protected boolean deleted;
+  protected boolean         enabled;
 
-  private String    createdBy;
+  protected boolean         deleted;
 
-  private String    createdDate;
+  private String            createdBy;
 
-  private String    lastModifiedBy;
+  private String            createdDate;
 
-  private String    event;
+  private String            lastModifiedBy;
 
-  private String    lastModifiedDate;
+  private String            event;
 
-  private long      audience;
+  private String            lastModifiedDate;
 
-  private String    startDate;
+  private long              audience;
 
-  private String    endDate;
+  private String            startDate;
 
-  private TypeRule   type;
+  private String            endDate;
 
-  private List<Long> managers;
+  private TypeRule          type;
 
-  public RuleDTO() {
-
-  }
+  private List<Long>        managers;
 
   public List<Long> getManagers() {
     return managers;

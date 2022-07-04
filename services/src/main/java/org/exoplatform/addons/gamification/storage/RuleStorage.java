@@ -1,30 +1,36 @@
 package org.exoplatform.addons.gamification.storage;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
-import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.search.RuleSearchConnector;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class RuleStorage {
 
-  private RuleDAO ruleDAO;
+  private RuleSearchConnector ruleSearchConnector;
 
-  public RuleStorage(RuleDAO ruleDAO) {
+  private RuleDAO             ruleDAO;
+
+  public RuleStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector) {
+    this.ruleSearchConnector = ruleSearchConnector;
     this.ruleDAO = ruleDAO;
   }
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
     RuleEntity ruleEntity = RuleMapper.ruleDTOToRule(ruleDTO);
+    ruleEntity.setLastModifiedDate(new Date());
     if (ruleEntity.getId() == null) {
+      ruleEntity.setCreatedDate(new Date());
       ruleEntity = ruleDAO.create(ruleEntity);
     } else if (!ruleEntity.isDeleted()) {
-      ruleEntity.setLastModifiedDate(new Date());
       ruleEntity = ruleDAO.update(ruleEntity);
     }
     return RuleMapper.ruleToRuleDTO(ruleEntity);
@@ -41,7 +47,6 @@ public class RuleStorage {
   public List<RuleDTO> findEnabledRulesByEvent(String event) {
     List<RuleEntity> entities = ruleDAO.findEnabledRulesByEvent(event);
     return RuleMapper.rulesToRuleDTOs(entities);
-
   }
 
   public RuleDTO findRuleByTitle(String ruleTitle) {
@@ -52,12 +57,33 @@ public class RuleStorage {
     return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByEventAndDomain(event, domain));
   }
 
-  public List<RuleDTO> getAllAutomaticRules() {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllAutomaticRules());
+  public List<RuleDTO> findRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    List<RuleEntity> ruleEntities = null;
+    if (StringUtils.isBlank(ruleFilter.getTerm())) {
+      ruleEntities = ruleDAO.findRulesByFilter(ruleFilter, offset, limit);
+    } else {
+      ruleEntities = ruleSearchConnector.search(ruleFilter, offset, limit);
+    }
+    return ruleEntities.stream().map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
+
+  }
+
+  public int countRulesByFilter(RuleFilter ruleFilter) {
+    if (ruleFilter == null) {
+      return ruleDAO.count().intValue();
+    } else if (StringUtils.isBlank(ruleFilter.getTerm())) {
+      return ruleDAO.countRulesByFilter(ruleFilter);
+    } else {
+      return ruleSearchConnector.count(ruleFilter);
+    }
   }
 
   public List<RuleDTO> findAllRules() {
     return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRules());
+  }
+  public List<RuleDTO> findAllRules(int offset, int limit) {
+    List<RuleEntity> ruleEntities = ruleDAO.findRulesByFilter(new RuleFilter(), offset, limit);
+    return RuleMapper.rulesToRuleDTOs(ruleEntities);
   }
 
   public List<RuleDTO> getActiveRules() {
@@ -80,55 +106,22 @@ public class RuleStorage {
     return ruleDAO.getDomainList();
   }
 
-  public void deleteRule(RuleDTO rule) {
-    RuleEntity ruleEntity = RuleMapper.ruleDTOToRule(rule);
-    ruleDAO.update(ruleEntity);
+  public void deleteRule(long ruleId) throws ObjectNotFoundException {
+    deleteRule(ruleId, false);
   }
 
-  public Challenge saveChallenge(Challenge challenge, String username) {
-    RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
-
-    if (challenge.getId() == 0) {
-      challengeEntity.setId(null);
-      challengeEntity.setCreatedBy(username);
-      challengeEntity.setType(TypeRule.MANUAL);
-      challengeEntity.setEvent(challengeEntity.getTitle());
-      challengeEntity = ruleDAO.create(challengeEntity);
+  public RuleDTO deleteRule(long ruleId, boolean force) throws ObjectNotFoundException {
+    RuleEntity ruleEntity = ruleDAO.find(ruleId);
+    if (ruleEntity == null) {
+      throw new ObjectNotFoundException("Rule with id " + ruleId + " does not exist");
+    }
+    if (force) {
+      ruleDAO.delete(ruleEntity);
     } else {
-      RuleEntity ruleEntity = ruleDAO.find(challengeEntity.getId());
-      challengeEntity.setCreatedBy(ruleEntity.getCreatedBy());
-      challengeEntity.setType(ruleEntity.getType());
-      challengeEntity.setEvent(ruleEntity.getEvent());
-      challengeEntity.setLastModifiedBy(username);
-      challengeEntity = ruleDAO.update(challengeEntity);
+      ruleEntity.setDeleted(true);
+      ruleDAO.update(ruleEntity);
     }
-
-    return EntityMapper.fromEntity(challengeEntity);
-  }
-
-  public Challenge getChallengeById(long challengeId) {
-    RuleEntity challengeEntity = this.ruleDAO.find(challengeId);
-    if (challengeEntity == null || challengeEntity.getType() == TypeRule.AUTOMATIC) {
-      return null;
-    }
-    return EntityMapper.fromEntity(challengeEntity);
-  }
-
-  public List<RuleEntity> findAllChallengesByUser(int offset, int limit, List<Long> ids) {
-    return ruleDAO.findAllChallengesByUser(offset, limit, ids);
-  }
-
-  public List<RuleEntity> findAllChallengesByUserByDomain(long domainId, int offset, int limit, List<Long> ids) {
-    return ruleDAO.findAllChallengesByUserByDomain(domainId, offset, limit, ids);
-  }
-
-  public int countAllChallengesByUserByDomain(long domainId, List<Long> ids) {
-    return ruleDAO.countAllChallengesByUserByDomain(domainId, ids);
-  }
-
-  public void deleteChallenge(Challenge challenge) {
-    RuleEntity challengeEntity = EntityMapper.toEntity(challenge);
-    this.ruleDAO.delete(challengeEntity);
+    return RuleMapper.ruleToRuleDTO(ruleEntity);
   }
 
   public void clearCache() { // NOSONAR
