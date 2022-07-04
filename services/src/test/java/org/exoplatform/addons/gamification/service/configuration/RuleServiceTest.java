@@ -14,6 +14,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+
 package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.Collections;
@@ -202,10 +203,13 @@ public class RuleServiceTest extends AbstractServiceTest {
   @Test
   public void getFindRuleByEventAndDomain() {
     RuleDTO rule = newRuleDTO();
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", rule.getDomainDTO().getTitle()));
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(rule.getTitle(), ""));
-    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(rule.getTitle(), rule.getDomainDTO().getTitle());
-    assertEquals(rule.getTitle(), ruleDTO.getTitle());
-    assertEquals(rule.getDomainDTO().getTitle(), ruleDTO.getDomainDTO().getTitle());
+    String ruleTitle = rule.getTitle();
+    String domainTitle = rule.getDomainDTO() != null ? rule.getDomainDTO().getTitle() : " ";
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", domainTitle));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(ruleTitle, ""));
+    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(ruleTitle, domainTitle);
+    String newDomainTitle = ruleDTO.getDomainDTO() != null ? ruleDTO.getDomainDTO().getTitle() : "";
+    assertEquals(ruleTitle, ruleDTO.getTitle());
+    assertEquals(domainTitle, newDomainTitle);
   }
 }
