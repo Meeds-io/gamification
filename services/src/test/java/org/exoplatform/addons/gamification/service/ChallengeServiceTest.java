@@ -1,15 +1,50 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package org.exoplatform.addons.gamification.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import liquibase.pro.packaged.L;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.storage.RuleStorage;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.utils.ListAccess;
-import org.exoplatform.commons.utils.ListAccessImpl;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -18,299 +53,313 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.time.ZonedDateTime;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.xml.*", "org.xml.*"})
+@PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
 public class ChallengeServiceTest {
-    private RuleStorage challengeStorage;
 
-    private SpaceService spaceService;
+  @Mock
+  private ChallengeStorage challengeStorage;
 
-    private ChallengeService challengeService;
+  @Mock
+  private SpaceService     spaceService;
 
-    private InitParams params;
+  @Mock
+  private ListenerService  listenerService;
 
-    @Before
-    public void setUp() throws Exception { // NOSONAR
-        challengeStorage = mock(RuleStorage.class);
-        spaceService = mock(SpaceService.class);
-        InitParams ps = new InitParams();
-        ValueParam p = new ValueParam();
-        p.setName("challenge.creator.group");
-        p.setValue("/platform/administrators");
-        ps.addParam(p);
-        challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, ps);
-    }
+  private ChallengeService challengeService;
 
-    @PrepareForTest({Utils.class})
-    @Test
-    public void testCreateChallenge() throws IllegalAccessException {
-        // Given
-        Challenge challenge = new Challenge(0,
-                "new challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
-        Challenge challengeCreated = new Challenge(1l,
-                "new challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");        // Given
-        Challenge challengeSystem = new Challenge(0,
-                "new system challenge",
-                "system challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
-        Challenge challengeCreatedSystem = new Challenge(2l,
-                "new challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
-        Identity rootIdentity = new Identity();
-        rootIdentity.setId("1");
-        rootIdentity.setProviderId("organization");
-        rootIdentity.setRemoteId("root");
-        PowerMockito.mockStatic(Utils.class);
-        Space space = new Space();
-        when(spaceService.getSpaceById("1")).thenReturn(space);
-        when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challengeCreated);
+  private InitParams       params;
 
-        assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(null, "root"));
-        assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challengeCreated, "root"));
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    params = new InitParams();
+    ValueParam p = new ValueParam();
+    p.setName("challenge.creator.group");
+    p.setValue("/platform/administrators");
+    params.addParam(p);
 
-        when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(null);
-        assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challenge, "root"));
-        when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(rootIdentity);
+    challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, listenerService, params);
+  }
 
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-        when(spaceService.isManager(space, "root")).thenReturn(true);
+  @PrepareForTest({ Utils.class })
+  @Test
+  public void testCreateChallenge() throws IllegalAccessException {
+    // Given
+    Challenge challenge = new Challenge(0,
+                                        "new challenge",
+                                        "challenge description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+    Challenge challengeCreated = new Challenge(1l,
+                                               "new challenge",
+                                               "challenge description",
+                                               1l,
+                                               new Date(System.currentTimeMillis()).toString(),
+                                               new Date(System.currentTimeMillis() + 1).toString(),
+                                               Collections.emptyList(),
+                                               10L,
+                                               "gamification"); // Given
+    Challenge challengeSystem = new Challenge(0,
+                                              "new system challenge",
+                                              "system challenge description",
+                                              1l,
+                                              new Date(System.currentTimeMillis()).toString(),
+                                              new Date(System.currentTimeMillis() + 1).toString(),
+                                              Collections.emptyList(),
+                                              10L,
+                                              "gamification");
+    Challenge challengeCreatedSystem = new Challenge(2l,
+                                                     "new challenge",
+                                                     "challenge description",
+                                                     1l,
+                                                     new Date(System.currentTimeMillis()).toString(),
+                                                     new Date(System.currentTimeMillis() + 1).toString(),
+                                                     Collections.emptyList(),
+                                                     10L,
+                                                     "gamification");
+    Identity rootIdentity = new Identity();
+    rootIdentity.setId("1");
+    rootIdentity.setProviderId("organization");
+    rootIdentity.setRemoteId("root");
+    PowerMockito.mockStatic(Utils.class);
+    Space space = new Space();
+    when(spaceService.getSpaceById("1")).thenReturn(space);
+    when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challengeCreated);
 
-        Challenge savedChallenge = challengeService.createChallenge(challenge, "root");
-        assertNotNull(savedChallenge);
-        assertEquals(1l, savedChallenge.getId());
-        when(challengeStorage.saveChallenge(challengeSystem, "SYSTEM")).thenReturn(challengeCreatedSystem);
-        savedChallenge = challengeService.createChallenge(challengeSystem);
-        assertNotNull(savedChallenge);
-        assertEquals(2l, savedChallenge.getId());
-    }
+    assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(null, "root"));
+    assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challengeCreated, "root"));
 
-    @Test
-    public void testUpdateChallenge() throws ObjectNotFoundException, IllegalAccessException {
-        // Given
-        Challenge challenge = new Challenge(1l,
-                "update challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
-        Challenge challenge1 = new Challenge(1l,
-                "new challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
+    when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(false);
+    assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
+    when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
 
-        Challenge challenge2 = new Challenge(1l,
-                "update challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
-        Space space = new Space();
-        when(spaceService.getSpaceById("1")).thenReturn(space);
-        when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challenge2);
+    Challenge savedChallenge = challengeService.createChallenge(challenge, "root");
+    assertNotNull(savedChallenge);
+    assertEquals(1l, savedChallenge.getId());
+    when(challengeStorage.saveChallenge(challengeSystem, "SYSTEM")).thenReturn(challengeCreatedSystem);
+    savedChallenge = challengeService.createChallenge(challengeSystem);
+    assertNotNull(savedChallenge);
+    assertEquals(2l, savedChallenge.getId());
+  }
 
-        assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(null, "root"));
-        assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(new Challenge(), "root"));
+  @PrepareForTest({ Utils.class })
+  @Test
+  public void testUpdateChallenge() throws ObjectNotFoundException, IllegalAccessException {
+    PowerMockito.mockStatic(Utils.class);
 
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        assertThrows(IllegalAccessException.class, () -> challengeService.updateChallenge(challenge, "root"));
-        when(spaceService.isManager(space, "root")).thenReturn(true);
-        when(challengeStorage.getChallengeById(1l)).thenReturn(null);
-        assertThrows(ObjectNotFoundException.class, () -> challengeService.updateChallenge(challenge, "root"));
+    // Given
+    Challenge challenge = new Challenge(1l,
+                                        "update challenge",
+                                        "challenge description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+    Challenge challenge1 = new Challenge(1l,
+                                         "new challenge",
+                                         "challenge description",
+                                         1l,
+                                         new Date(System.currentTimeMillis()).toString(),
+                                         new Date(System.currentTimeMillis() + 1).toString(),
+                                         Collections.emptyList(),
+                                         10L,
+                                         "gamification");
 
-        when(challengeStorage.getChallengeById(1l)).thenReturn(challenge);
-        assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(challenge, "root"));
-        when(challengeStorage.getChallengeById(1l)).thenReturn(challenge1);
+    Challenge challenge2 = new Challenge(1l,
+                                         "update challenge",
+                                         "challenge description",
+                                         1l,
+                                         new Date(System.currentTimeMillis()).toString(),
+                                         new Date(System.currentTimeMillis() + 1).toString(),
+                                         Collections.emptyList(),
+                                         10L,
+                                         "gamification");
+    Space space = new Space();
+    when(spaceService.getSpaceById("1")).thenReturn(space);
+    when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challenge2);
 
-        Challenge challengeUpdated = challengeService.updateChallenge(challenge, "root");
-        assertNotNull(challengeUpdated);
-        assertEquals(1l, challenge1.getId());
-        assertEquals("update challenge", challengeUpdated.getTitle());
-    }
+    when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(false);
+    assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(null, "root"));
+    assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(new Challenge(), "root"));
+    when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
 
-    @PrepareForTest({Utils.class})
-    @Test
-    public void testDeleteChallenge() throws ObjectNotFoundException, IllegalAccessException {
-        // Given
-        Challenge challenge = new Challenge(1l,
-                "update challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
+    assertThrows(ObjectNotFoundException.class, () -> challengeService.updateChallenge(challenge, "root"));
+    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge1);
 
-        Space space = new Space();
-        when(spaceService.getSpaceById("1")).thenReturn(space);
-        when(spaceService.isManager(space, "root")).thenReturn(true);
-        when(challengeStorage.getChallengeById(1l)).thenReturn(challenge);
-        Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
-        assertNotNull(storedChallenge);
-        assertEquals(1l, storedChallenge.getId());
+    Challenge challengeUpdated = challengeService.updateChallenge(challenge, "root");
+    assertNotNull(challengeUpdated);
+    assertEquals("update challenge", challengeUpdated.getTitle());
+  }
 
-        PowerMockito.mockStatic(Utils.class);
+  @PrepareForTest({ Utils.class })
+  @Test
+  public void testDeleteChallenge() throws ObjectNotFoundException, IllegalAccessException {
+    // Given
+    Challenge challenge = new Challenge(1l,
+                                        "update challenge",
+                                        "challenge description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
 
-        // When
-        assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(-1l, "root"));
+    Space space = new Space();
+    when(spaceService.getSpaceById("1")).thenReturn(space);
+    when(spaceService.isManager(space, "root")).thenReturn(true);
+    when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
+    Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
+    assertNotNull(storedChallenge);
+    assertEquals(1l, storedChallenge.getId());
 
-        // When
-        when(challengeStorage.getChallengeById(2l)).thenReturn(null);
-        assertThrows(ObjectNotFoundException.class, () -> challengeService.deleteChallenge(2l, "root"));
+    PowerMockito.mockStatic(Utils.class);
 
-        // When
-        when(Utils.canEditChallenge(any(), any())).thenReturn(false);
-        assertThrows(IllegalAccessException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
-        when(Utils.canEditChallenge(any(), any())).thenReturn(true);
+    // When
+    assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(-1l, "root"));
 
-        // When
-        when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
-        assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
+    // When
+    assertThrows(ObjectNotFoundException.class, () -> challengeService.deleteChallenge(2l, "root"));
 
-        // When
-        when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(10).toInstant()));
-        assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
+    // When
+    assertThrows(IllegalAccessException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
-        when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(0l);
-        when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(-10).toInstant()));
-        challengeService.deleteChallenge(challenge.getId(), "root");
-    }
+    // When
+    when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
+    when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
+    assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
-    @Test
-    public void testCanAddChallenge() {
-        org.exoplatform.services.security.Identity currentIdentity = new org.exoplatform.services.security.Identity("root");
-        ConversationState state = new ConversationState(currentIdentity);
-        ConversationState.setCurrent(state);
-        boolean canAddChallenge = challengeService.canAddChallenge();
-        assertFalse(canAddChallenge);
-        MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
-        List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
-        memberships.add(membershipentry);
-        currentIdentity.setMemberships(memberships);
-        state = new ConversationState(currentIdentity);
-        ConversationState.setCurrent(state);
-        canAddChallenge = challengeService.canAddChallenge();
-        assertTrue(canAddChallenge);
-    }
+    // When
+    when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(10).toInstant()));
+    assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
-    @Test
-    public void testGetAllChallengesByUser() throws Exception {
-      String username = "root";
+    when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(0l);
+    when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(-10).toInstant()));
+    challengeService.deleteChallenge(challenge.getId(), "root");
+  }
 
-      assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengesByUser(0, 10, ""));
+  @Test
+  public void testCanAddChallenge() {
+    org.exoplatform.services.security.Identity currentIdentity = new org.exoplatform.services.security.Identity("root");
+    ConversationState state = new ConversationState(currentIdentity);
+    ConversationState.setCurrent(state);
+    boolean canAddChallenge = challengeService.canAddChallenge(currentIdentity);
+    assertFalse(canAddChallenge);
+    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
+    List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
+    memberships.add(membershipentry);
+    currentIdentity.setMemberships(memberships);
+    state = new ConversationState(currentIdentity);
+    ConversationState.setCurrent(state);
+    canAddChallenge = challengeService.canAddChallenge(currentIdentity);
+    assertTrue(canAddChallenge);
+  }
 
-      Space space = new Space();
-      space.setId("1");
-      space.setPrettyName("test_space");
-      space.setDisplayName("test space");
-      space.setGroupId("/spaces/test_space");
+  @Test
+  public void testGetChallengeById() throws IllegalAccessException {
+    assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
+    Challenge challenge = new Challenge(1l,
+                                        "update challenge",
+                                        "challenge description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+    Space space = new Space();
+    when(spaceService.getSpaceById("1")).thenReturn(space);
+    when(spaceService.isManager(space, "root")).thenReturn(false);
+    when(spaceService.isMember(space, "root")).thenReturn(false);
+    assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
+    Challenge savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
+    assertNull(savedChallenge);
+    savedChallenge = challengeService.getChallengeById(challenge.getId());
+    assertNull(savedChallenge);
+    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
+    assertThrows(IllegalAccessException.class, () -> challengeService.getChallengeById(challenge.getId(), "root"));
+    when(spaceService.isManager(space, "root")).thenReturn(true);
+    when(spaceService.isMember(space, "root")).thenReturn(true);
+    savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
+    assertNotNull(savedChallenge);
+    savedChallenge = challengeService.getChallengeById(challenge.getId());
+    assertNotNull(savedChallenge);
+    assertEquals(challenge.getId(), savedChallenge.getId());
+  }
 
-      RuleEntity challengeEntity = new RuleEntity();
-      challengeEntity.setTitle("Challenge 1");
-      challengeEntity.setDescription("description 1");
-      challengeEntity.setStartDate(new Date(System.currentTimeMillis()));
-      challengeEntity.setEndDate(new Date(System.currentTimeMillis() + 1));
-      challengeEntity.setId(1l);
-      challengeEntity.setAudience(1l);
-      challengeEntity.setManagers(Collections.emptyList());
-      List<RuleEntity> challenges = new ArrayList<>();
-      challenges.add(challengeEntity);
+  @Test
+  public void testGetChallengesByFilterAndUser() {
+    Challenge challenge = new Challenge(1l,
+                                        "Challenge",
+                                        "description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+    List<Challenge> challenges = new ArrayList<>();
+    challenges.add(challenge);
+    RuleFilter filter = new RuleFilter();
 
-      List<Challenge> userChallenges = challengeService.getChallengesByUser(0, 10, username);
-      assertEquals(0, userChallenges.size());
-      List<String> userSpaceIds = Collections.singletonList(space.getId());
-      List<Long> userSpaceIdsAsLong = Collections.singletonList(Long.parseLong(space.getId()));
-      when(spaceService.getMemberSpacesIds(username, 0, -1)).thenReturn(userSpaceIds);
-      when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(Collections.emptyList());
-      userChallenges = challengeService.getChallengesByUser(0, 10, username);
-      assertEquals(0, userChallenges.size());
-      when(challengeStorage.findAllChallengesByUser(0, 10, userSpaceIdsAsLong)).thenReturn(challenges);
-      userChallenges = challengeService.getChallengesByUser(0, 10, username);
-      assertEquals(1, userChallenges.size());
-    }
+    List<String> userSpaceIds = Collections.singletonList("1");
 
-    @Test
-    public void testGetChallengeById() {
-        assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
-        Challenge challenge = new Challenge(1l,
-                "update challenge",
-                "challenge description",
-                1l,
-                new Date(System.currentTimeMillis()).toString(),
-                new Date(System.currentTimeMillis() + 1).toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification");
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(Collections.emptyList());
+    List<Challenge> savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
+    assertEquals(0, savedChallenges.size());
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(userSpaceIds);
+    when(challengeStorage.findChallengesByFilter(filter, 0, 10)).thenReturn(challenges);
 
+    savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
 
-        Space space = new Space();
-        when(spaceService.getSpaceById("1")).thenReturn(space);
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        when(spaceService.isMember(space, "root")).thenReturn(false);
-        assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
+    assertEquals(1, savedChallenges.size());
+  }
 
-        when(spaceService.isManager(space, "root")).thenReturn(true);
-        when(spaceService.isMember(space, "root")).thenReturn(true);
-        when(challengeStorage.getChallengeById(1l)).thenReturn(null);
-        try {
-            Challenge savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
-            assertNull(savedChallenge);
-            when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
-            savedChallenge = challengeService.getChallengeById(challenge.getId(), "root");
-            assertNotNull(savedChallenge);
-            assertEquals(challenge.getId(), savedChallenge.getId());
+  @Test
+  public void testCountChallengesByFilterAndUser() {
+    Challenge challenge = new Challenge(1l,
+                                        "Challenge",
+                                        "description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification");
+    List<Challenge> challenges = new ArrayList<>();
+    challenges.add(challenge);
+    RuleFilter filter = new RuleFilter();
 
-        } catch (IllegalAccessException e) {
-        }
-    }
+    List<String> userSpaceIds = Collections.singletonList("1");
+
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(Collections.emptyList());
+    int count = challengeService.countChallengesByFilterAndUser(filter, "root");
+    assertEquals(0, count);
+    when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(userSpaceIds);
+    when(challengeStorage.countChallengesByFilter(filter)).thenReturn(3);
+
+    count = challengeService.countChallengesByFilterAndUser(filter, "root");
+
+    assertEquals(3, count);
+  }
+
+  @Test
+  public void testClearUserChallengeCache() {
+    doNothing().when(challengeStorage).clearCache();
+    challengeService.clearUserChallengeCache();
+    verify(challengeStorage, times(1)).clearCache();
+  }
+
 }

@@ -28,7 +28,7 @@ public class ChallengeRestEntity implements Cloneable {
 
   private Long                         points;
 
-  private DomainDTO                       program;
+  private DomainDTO                    program;
 
   @Override
   public ChallengeRestEntity clone() { // NOSONAR

@@ -60,7 +60,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @Path("/all")
   @RolesAllowed("users")
   public Response getAllRules() {
-
     ConversationState conversationState = ConversationState.getCurrent();
     if (conversationState != null) {
       try {
