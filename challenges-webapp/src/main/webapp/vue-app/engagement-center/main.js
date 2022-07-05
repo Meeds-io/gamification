@@ -16,7 +16,7 @@ const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 
 document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
 
-const appId = 'ChallengesApplication';
+const appId = 'EngagementCenterApplication';
 
 //getting language of the PLF
 const lang = eXo && eXo.env.portal.language || 'en';
@@ -31,9 +31,9 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
-      template: `<challenges id="${appId}" />`,
+      template: `<engagement-center id="${appId}" />`,
       vuetify,
       i18n
-    }, `#${appId}`, 'Challenges');
+    }, `#${appId}`, 'EngagementCenter');
   });
 }

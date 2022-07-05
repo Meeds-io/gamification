@@ -17,6 +17,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+    <component>
+      <key>programEngagementFeatureProperties</key>
+      <type>org.exoplatform.container.ExtendedPropertyConfigurator</type>
+      <init-params>
+        <properties-param>
+          <name>programEngagementFeatureProperties</name>
+          <description>New program engagement Feature enablement flag</description>
+          <property name="exo.feature.engagementCenter.enabled" value="${exo.feature.engagementCenter.enabled:false}" />
+        </properties-param>
+      </init-params>
+    </component>
     <external-component-plugins>
         <target-component>org.exoplatform.appcenter.service.ApplicationCenterService</target-component>
         <component-plugin>
