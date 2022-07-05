@@ -22,7 +22,7 @@ const config = {
     ]
   },
   entry: {
-    challenges: './src/main/webapp/vue-app/challenges/main.js',
+    engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
     challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
   },
   plugins: [

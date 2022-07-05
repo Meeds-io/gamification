@@ -1,5 +1,6 @@
 <template>
-  <v-app
+  <div
+    id="ChallengesApplication"
     class="challenges-application border-box-sizing"
     :class="classWelcomeMessage"
     role="main"
@@ -51,7 +52,7 @@
     <announce-drawer
       ref="announceDrawer"
       :challenge="selectedChallenge" />
-  </v-app>
+  </div>
 </template>
 <script>
 export default {
