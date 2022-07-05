@@ -1,5 +1,6 @@
 <template>
   <div
+    id="ChallengesApplication"
     class="challenges-application border-box-sizing"
     :class="classWelcomeMessage"
     role="main"
