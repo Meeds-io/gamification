@@ -20,6 +20,7 @@
       <v-spacer />
       <div class="challengeFilter">
         <v-text-field
+          id="filter"
           v-model="search"
           :placeholder="$t('challenges.filter.search')"
           prepend-inner-icon="fa-filter"
