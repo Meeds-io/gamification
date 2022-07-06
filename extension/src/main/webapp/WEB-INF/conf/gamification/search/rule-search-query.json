@@ -14,7 +14,7 @@
         {
           "query_string": {
             "fields": ["title", "description"],
-            "query": "@term_query@",
+            "query": "*@term_query@*",
             "fuzziness": 1,
             "phrase_slop": 1
           }

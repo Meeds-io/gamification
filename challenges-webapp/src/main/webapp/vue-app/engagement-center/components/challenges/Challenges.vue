@@ -36,6 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-spacer />
       <div class="challengeFilter">
         <v-text-field
+          id="filter"
           v-model="search"
           :placeholder="$t('challenges.filter.search')"
           prepend-inner-icon="fa-filter"
