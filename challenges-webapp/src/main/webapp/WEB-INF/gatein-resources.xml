@@ -16,7 +16,7 @@
     <module>
       <script>
         <minify>false</minify>
-        <path>/js/challenges.bundle.js</path>
+        <path>/js/engagementCenter.bundle.js</path>
       </script>
       <depends>
         <module>commonVueComponents</module>

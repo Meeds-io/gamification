@@ -1,3 +1,19 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 import './initComponents.js';
 import './extensions.js';
 
@@ -16,7 +32,7 @@ const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 
 document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
 
-const appId = 'ChallengesApplication';
+const appId = 'EngagementCenterApplication';
 
 //getting language of the PLF
 const lang = eXo && eXo.env.portal.language || 'en';
@@ -31,9 +47,9 @@ export function init() {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
-      template: `<challenges id="${appId}" />`,
+      template: `<engagement-center id="${appId}" />`,
       vuetify,
       i18n
-    }, `#${appId}`, 'Challenges');
+    }, `#${appId}`, 'EngagementCenter');
   });
 }
