@@ -34,15 +34,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
       <v-spacer />
-      <div class="challengeFilter">
-        <v-text-field
-          id="filter"
-          v-model="search"
-          :placeholder="$t('challenges.filter.search')"
-          prepend-inner-icon="fa-filter"
-          single-line
-          hide-details
-          class="pa-0 mx-3" />
+      <div class="challengeFilter text-center d-flex align-center justify-space-around">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-text-field
+              id="EngagementCenterApplicationSearchFilter"
+              v-on="on"
+              v-model="search"
+              :placeholder="$t('challenges.filter.search')"
+              prepend-inner-icon="fa-filter"
+              single-line
+              hide-details
+              class="pa-0 mx-3" />
+          </template>
+          <span> {{ $t('challenges.filter.searchTooltip') }} </span>
+        </v-tooltip>
       </div>
     </v-toolbar>
     <challenge-welcome-message
@@ -129,6 +135,11 @@ export default {
   },
   watch: {
     search()  {
+      if (!this.search?.length ) {
+        this.getChallenges(false);
+      } else if (this.search.length < 3 ) {
+        return ;
+      }
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
       if (!this.typing) {
         this.typing = true;
