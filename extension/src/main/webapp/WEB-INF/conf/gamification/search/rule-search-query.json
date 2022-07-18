@@ -13,8 +13,11 @@
       "must": [
         {
           "query_string": {
-            "fields": ["title", "description"],
-            "query": "title:*@term_query@* OR description:@term_query@~1",
+            "fields": [
+              "title",
+              "description"
+            ],
+            "query": "title:(*@term@*) OR description:(@term_query@)",
             "fuzziness": 1,
             "phrase_slop": 1
           }
@@ -23,19 +26,27 @@
       ]
     }
   },
-  "highlight" : {
-    "number_of_fragments" : 2,
-    "fragment_size" : 150,
-    "no_match_size" : 0,
+  "highlight": {
+    "number_of_fragments": 2,
+    "fragment_size": 150,
+    "no_match_size": 0,
     "order": "score",
-    "fields" : {
-      "title" : {
-        "pre_tags" : ["<span class='searchMatchExcerpt'>"],
-        "post_tags" : ["</span>"]
+    "fields": {
+      "title": {
+        "pre_tags": [
+          "<span class='searchMatchExcerpt'>"
+        ],
+        "post_tags": [
+          "</span>"
+        ]
       },
-      "description" : {
-        "pre_tags" : ["<span class='searchMatchExcerpt'>"],
-        "post_tags" : ["</span>"]
+      "description": {
+        "pre_tags": [
+          "<span class='searchMatchExcerpt'>"
+        ],
+        "post_tags": [
+          "</span>"
+        ]
       }
     }
   }

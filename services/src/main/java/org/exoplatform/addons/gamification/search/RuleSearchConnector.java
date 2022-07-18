@@ -137,10 +137,13 @@ public class RuleSearchConnector {
     if (StringUtils.isBlank(term)) {
       return null;
     }
-    List<String> termsQuery = Arrays.stream(term.split(" "))
-                                    .filter(StringUtils::isNotBlank)
-                                    .map(String::trim)
-                                    .collect(Collectors.toList());
+    List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
+      word = word.trim();
+      if (word.length() > 4) {
+        word = word + "~1";
+      }
+      return word;
+    }).collect(Collectors.toList());
     String termQuery = StringUtils.join(termsQuery, " AND ");
     String query = retrieveSearchQuery();
     if (filter.getDomainId() > 0) {
@@ -150,6 +153,7 @@ public class RuleSearchConnector {
     }
 
     return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
+                .replace("@term@", term)
                 .replace("@term_query@", termQuery)
                 .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
                 .replace("@offset@", String.valueOf(offset))
