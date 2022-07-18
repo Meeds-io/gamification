@@ -172,6 +172,7 @@ export default {
     },
     createAnnouncement() {
       this.announcement.challengeId =  this.challenge.id;
+      this.announcement.challengeTitle =  this.challenge.title;
       this.announcement.createdDate = new Date();
       this.announcement.templateParams = this.templateParams;
       this.$refs.announcementDrawer.startLoading();

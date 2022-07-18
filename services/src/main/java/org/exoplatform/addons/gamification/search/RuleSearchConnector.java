@@ -60,7 +60,9 @@ public class RuleSearchConnector {
       + "            }\n"
       + "          }\n"
       + "        }\n";
-
+  
+  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"'*~&|";
+  
   private final ConfigurationManager   configurationManager;
 
   private final ElasticSearchingClient client;
@@ -107,6 +109,9 @@ public class RuleSearchConnector {
       throw new IllegalArgumentException("Filter spaceIds is mandatory");
     }
     String esQuery = buildQueryStatement(filter, offset, limit);
+    if (StringUtils.isBlank(esQuery)) {
+      return Collections.emptyList();
+    }
     String jsonResponse = this.client.sendRequest(esQuery, this.index);
     return buildSearchResult(jsonResponse);
   }
@@ -119,15 +124,22 @@ public class RuleSearchConnector {
       throw new IllegalArgumentException("Filter spaceIds is mandatory");
     }
     String esQuery = buildQueryStatement(filter, 0, 0);
+    if (StringUtils.isBlank(esQuery)) {
+      return 0;
+    }
     String jsonResponse = this.client.sendRequest(esQuery, this.index);
     return buildCountResult(jsonResponse);
   }
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
     String term = removeSpecialCharacters(filter.getTerm());
+    term = escapeIllegalCharacterInQuery(term);
+    if (StringUtils.isBlank(term)) {
+      return null;
+    }
     List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
       word = word.trim();
-      if (word.length() > 5) {
+      if (word.length() > 4) {
         word = word + "~1";
       }
       return word;
@@ -141,6 +153,7 @@ public class RuleSearchConnector {
     }
 
     return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
+                .replace("@term@", term)
                 .replace("@term_query@", termQuery)
                 .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
                 .replace("@offset@", String.valueOf(offset))
@@ -272,6 +285,15 @@ public class RuleSearchConnector {
     return string;
   }
 
+  public static String escapeIllegalCharacterInQuery(String query) {
+    if (StringUtils.isBlank(query)) {
+      return null;
+    }
+    for (char c : ILLEGAL_SEARCH_CHARACTERS.toCharArray()) {
+      query = query.replace(c + "", "\\" + c);
+    }
+    return query.replace("'", "''");
+  }
   private String retrieveSearchQuery() {
     if (StringUtils.isBlank(this.searchQuery) || PropertyManager.isDevelopping()) {
       try {
