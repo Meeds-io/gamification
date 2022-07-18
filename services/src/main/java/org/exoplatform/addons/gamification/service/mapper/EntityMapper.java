@@ -125,7 +125,8 @@ public class EntityMapper {
     announcementEntity.setComment(announcement.getComment());
     announcementEntity.setCreatedDate(createDate);
     announcementEntity.setRuleId(announcement.getChallengeId());
-    announcementEntity.setActionTitle(announcement.getChallengeTitle());
+    announcementEntity.setActionTitle(announcement.getChallengeTitle() != null ? announcement.getChallengeTitle()
+                                                                               : ruleEntity.getTitle());
     announcementEntity.setCreator(announcement.getCreator());
     announcementEntity.setDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
     announcementEntity.setCreatedDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
