@@ -28,6 +28,7 @@ import AnnouncementDrawer from './components/challenges/AnnouncementDrawer.vue';
 import WinnersDrawer from './components/challenges/WinnersDrawer.vue';
 import challengeProgram from './components/challenges/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
+import NoResultFound from './components/challenges/NoResultFound.vue';
 
 const components = {
   'challenges': Challenges,
@@ -44,6 +45,7 @@ const components = {
   'challenge-winners-details': WinnersDrawer,
   'challenge-program': challengeProgram,
   'engagement-center': EngagementCenter,
+  'challenge-no-results': NoResultFound,
 };
 
 for (const key in components) {

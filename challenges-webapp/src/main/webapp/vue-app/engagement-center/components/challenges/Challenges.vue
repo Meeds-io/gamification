@@ -34,14 +34,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
       <v-spacer />
-      <div class="challengeFilter">
+      <div class="challengeFilter text-center d-flex align-center justify-space-around">
         <v-text-field
+          id="EngagementCenterApplicationSearchFilter"
           v-model="search"
           :placeholder="$t('challenges.filter.search')"
           prepend-inner-icon="fa-filter"
           single-line
           hide-details
           class="pa-0 mx-3" />
+        <v-tooltip
+          id="EngagementCenterApplicationSearchFilterTooltip"
+          :value="displayMinimumCharactersToolTip"
+          attach>
+          <span> {{ $t('challenges.filter.searchTooltip') }} </span>
+        </v-tooltip>
       </div>
     </v-toolbar>
     <challenge-welcome-message
@@ -53,7 +60,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :domains="domainsHavingChallenges"
       :challenges-by-domain-id="challengesByDomainId"
       :loading="loading"
-      class="pl-2 pt-5" />
+      class="pl-2 pt-8" />
 
     <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
     <challenge-details-drawer ref="challengeDetails" />
@@ -83,6 +90,7 @@ export default {
     endTypingKeywordTimeout: 50,
     startTypingKeywordTimeout: 0,
     typing: false,
+    displayMinimumCharactersToolTip: false,
   }),
   computed: {
     classWelcomeMessage() {
@@ -128,6 +136,14 @@ export default {
   },
   watch: {
     search()  {
+      this.displayMinimumCharactersToolTip = false;
+      if (!this.search?.length) {
+        this.getChallenges(false);
+        return;
+      } else if (this.search.length < 3) {
+        this.displayMinimumCharactersToolTip = true;
+        return;
+      }
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
       if (!this.typing) {
         this.typing = true;
