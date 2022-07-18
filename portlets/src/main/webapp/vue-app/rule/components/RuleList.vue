@@ -393,8 +393,8 @@ export default {
                     this.domainTitle(item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1||
                     item.score.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1)
                     && (this.enabledFilter === null || ( item.enabled === this.enabledFilter && item.type === 'AUTOMATIC' ) ||
-                    ( this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) !== 'ENDED') ||
-                    ( !this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) === 'ENDED'))
+                    ( this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) === 'STARTED') ||
+                    ( !this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) !== 'STARTED'))
         );
       });
     },
