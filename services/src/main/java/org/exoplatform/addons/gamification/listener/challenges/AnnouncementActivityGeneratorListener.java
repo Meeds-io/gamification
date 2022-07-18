@@ -46,7 +46,6 @@ import org.exoplatform.social.core.storage.api.ActivityStorage;
 import org.exoplatform.social.websocket.ActivityStreamWebSocketService;
 import org.exoplatform.social.websocket.entity.ActivityStreamModification;
 
-@Asynchronous
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
 
   private static final Log               LOG = ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
