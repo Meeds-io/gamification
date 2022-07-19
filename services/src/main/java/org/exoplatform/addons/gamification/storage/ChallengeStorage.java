@@ -15,6 +15,7 @@
  */
 package org.exoplatform.addons.gamification.storage;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,6 +55,9 @@ public class ChallengeStorage {
 
   public List<Challenge> findChallengesByFilter(RuleFilter ruleFilter, int offset, int limit) {
     List<RuleDTO> rules = ruleStorage.findRulesByFilter(ruleFilter, offset, limit);
+    if (rules.isEmpty ()) {
+      return Collections.emptyList ();
+    }
     return rules.stream().map(EntityMapper::fromRuleToChallenge).collect(Collectors.toList());
   }
 

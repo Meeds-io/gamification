@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.es.ElasticSearchException;
@@ -52,6 +53,10 @@ public class RuleSearchConnector {
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
 
+  private static final String          START_DATE                   = "startDate";
+
+  private static final String          END_DATE                     = "endDate";
+
   private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
       + "        {\n"
       + "          \"term\": {\n"
@@ -61,6 +66,17 @@ public class RuleSearchConnector {
       + "          }\n"
       + "        }\n";
 
+
+  private static final String          DATE_FILTERING_QUERY       = ", \n @startDateQuery@ @endDateQuery@ \n";
+
+  private static final String          DATE_FIELD_FILTERING_QUERY   = " {\n"
+      + "       \"range\": {\n"
+      +"          \"@dateField@\": {\n"
+      +"            \"@condition@\": \"@date@\"\n"
+      +"           }\n"
+      +"        }\n"
+      +"      }\n";
+  
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|";
 
   private final ConfigurationManager   configurationManager;
@@ -151,6 +167,37 @@ public class RuleSearchConnector {
       query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
     } else {
       query = query.replace("@domain_filtering@", "");
+    }
+    
+    if (filter.getFilterType() != null && !FilterType.ALL.equals(filter.getFilterType())) {
+      FilterType filterType = filter.getFilterType();
+      String date = toMilliSecondsString ( new Date (System.currentTimeMillis ()) );
+      query = query.replace("@date_filtering@", DATE_FILTERING_QUERY);
+      if (FilterType.STARTED.equals(filterType)) {
+        query = query.replace("@startDateQuery@", DATE_FIELD_FILTERING_QUERY)
+                     .replace("@dateField@", START_DATE)
+                     .replace("@condition@", "lt");
+        query = query.replace("@endDateQuery@","," + DATE_FIELD_FILTERING_QUERY)
+                     .replace("@dateField@", END_DATE)
+                     .replace("@condition@", "gte")
+                     .replaceAll("@date@", date);
+      }
+      if (FilterType.NOT_STARTED.equals(filterType)) {
+        query = query.replace("@startDateQuery@", DATE_FIELD_FILTERING_QUERY)
+                     .replace("@endDateQuery@", "")
+                     .replace("@dateField@", START_DATE)
+                     .replace("@condition@", "gt")
+                     .replace("@date@", date);
+      }
+      if (FilterType.ENDED.equals(filterType)) {
+        query = query.replace("@endDateQuery@", DATE_FIELD_FILTERING_QUERY)
+                     .replace("@startDateQuery@", "")
+                     .replace("@dateField@", END_DATE)
+                     .replace("@condition@", "lt")
+                     .replace("@date@", date);
+      }
+    } else {
+      query = query.replace("@date_filtering@", "");
     }
 
     return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
@@ -306,5 +353,9 @@ public class RuleSearchConnector {
       }
     }
     return this.searchQuery;
+  }
+  
+  private String toMilliSecondsString(Date date) {
+    return date != null ? String.valueOf(date.getTime()) : "0";
   }
 }

@@ -55,6 +55,7 @@ import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -309,6 +310,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       challenge.setType(TypeRule.MANUAL);
       challenge.setAudience(audience);
       challenge.setManagers(Collections.singletonList(1l));
+      challenge.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+          + 2 * MILLIS_IN_A_DAY))));
+      challenge.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+          - 2 * MILLIS_IN_A_DAY))));
       challenge = ruleDAO.create(challenge);
     }
     return challenge;

@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -127,7 +128,7 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testFindRulesByFilter() {
     RuleFilter filter = new RuleFilter();
-
+    filter.setFilterType(FilterType.ALL);
     assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
     RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
@@ -137,6 +138,12 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
     newRule("rule3", "domain3", 1l);
     assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
+    filter.setFilterType(FilterType.STARTED);
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
+    filter.setFilterType(FilterType.NOT_STARTED);
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
+    filter.setFilterType(FilterType.ENDED);
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
   }
 
   @Test

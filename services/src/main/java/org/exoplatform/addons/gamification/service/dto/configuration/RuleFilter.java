@@ -22,6 +22,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
 
 @Data
 @NoArgsConstructor
@@ -37,5 +38,7 @@ public class RuleFilter implements Serializable {
   private long              domainId;
 
   private List<Long>        spaceIds;
+
+  private FilterType        filterType;
 
 }

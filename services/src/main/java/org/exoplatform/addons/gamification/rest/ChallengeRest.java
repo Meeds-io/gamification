@@ -24,6 +24,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -222,12 +223,18 @@ public class ChallengeRest implements ResourceContainer {
                                          @QueryParam("announcements")
                                          int announcementsPerChallenge,
                                          @ApiParam(
+                                             value = "term to search challenges with",
+                                             required = false
+                                         )
+                                         @QueryParam("term")
+                                         String term,
+                                         @ApiParam(
                                              value = "Number of announcements per challenge",
                                              required = false,
                                              defaultValue = "0"
                                          )
-                                         @QueryParam("term")
-                                         String term) {
+                                         @QueryParam("filter")
+                                         String filterType) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -238,7 +245,11 @@ public class ChallengeRest implements ResourceContainer {
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);
     filter.setUsername(currentUser);
-
+    if (StringUtils.isBlank(filterType)) {
+      filter.setFilterType(FilterType.STARTED);
+    } else {
+      filter.setFilterType(FilterType.valueOf(filterType));
+    }
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {
