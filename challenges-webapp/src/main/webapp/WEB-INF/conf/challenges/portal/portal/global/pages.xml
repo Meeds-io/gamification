@@ -23,23 +23,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <page>
     <name>challenges</name>
     <title>challenges</title>
-    <access-permissions>*:/platform/users</access-permissions>
+    <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
     <edit-permission>*:/platform/administrators</edit-permission>
     <container id="challengesParentContainer" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
-      <access-permissions>*:/platform/users</access-permissions>
+      <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
       <container id="top-challenges-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
         <name>top-challenges-container</name>
-        <access-permissions>*:/platform/users</access-permissions>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
         <factory-id>addonContainer</factory-id>
       </container>
       <container id="challenges-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
         <name>challenges-container</name>
-        <access-permissions>*:/platform/users</access-permissions>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
         <factory-id>addonContainer</factory-id>
       </container>
       <container id="bottom-challenges-container" template="system:/groovy/portal/webui/container/UIAddOnContainer.gtmpl">
         <name>bottom-challenges-container</name>
-        <access-permissions>*:/platform/users</access-permissions>
+        <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
         <factory-id>addonContainer</factory-id>
       </container>
     </container>
