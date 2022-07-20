@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -34,6 +35,7 @@ import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
 import org.exoplatform.commons.utils.PropertyManager;
+import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
@@ -52,17 +54,12 @@ public class RuleSearchConnector {
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
 
-  private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
-      + "        {\n"
-      + "          \"term\": {\n"
-      + "            \"domainId\": {\n"
-      + "              \"value\": \"@domainId@\"\n"
-      + "            }\n"
-      + "          }\n"
+  private static final String          DOMAIN_FILTERING_QUERY       = ",\n" + "        {\n" + "          \"term\": {\n"
+      + "            \"domainId\": {\n" + "              \"value\": \"@domainId@\"\n" + "            }\n" + "          }\n"
       + "        }\n";
-  
-  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"'*~&|";
-  
+
+  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|";
+
   private final ConfigurationManager   configurationManager;
 
   private final ElasticSearchingClient client;
@@ -132,19 +129,11 @@ public class RuleSearchConnector {
   }
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
-    String term = removeSpecialCharacters(filter.getTerm());
-    term = escapeIllegalCharacterInQuery(term);
-    if (StringUtils.isBlank(term)) {
+    String term = buildTerm(filter.getTerm());
+    String termQuery = buildTermQuery(filter.getTerm());
+    if (StringUtils.isBlank(term) && StringUtils.isBlank(termQuery)) {
       return null;
     }
-    List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
-      word = word.trim();
-      if (word.length() > 4) {
-        word = word + "~1";
-      }
-      return word;
-    }).collect(Collectors.toList());
-    String termQuery = StringUtils.join(termsQuery, " AND ");
     String query = retrieveSearchQuery();
     if (filter.getDomainId() > 0) {
       query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
@@ -281,7 +270,7 @@ public class RuleSearchConnector {
 
   private String removeSpecialCharacters(String string) {
     string = Normalizer.normalize(string, Normalizer.Form.NFD);
-    string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "").replace("'", " ");
+    string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     return string;
   }
 
@@ -290,10 +279,11 @@ public class RuleSearchConnector {
       return null;
     }
     for (char c : ILLEGAL_SEARCH_CHARACTERS.toCharArray()) {
-      query = query.replace(c + "", "\\" + c);
+      query = query.replace(c + "", "\\\\" + c);
     }
-    return query.replace("'", "''");
+    return query;
   }
+
   private String retrieveSearchQuery() {
     if (StringUtils.isBlank(this.searchQuery) || PropertyManager.isDevelopping()) {
       try {
@@ -304,6 +294,32 @@ public class RuleSearchConnector {
       }
     }
     return this.searchQuery;
+  }
+
+  private String buildTermQuery(String termQuery) {
+    if (StringUtils.isBlank(termQuery)) {
+      return null;
+    }
+    String charIgnore = "!#:?=.,*+-;~`_&<>|";
+    termQuery = termQuery.stripLeading().stripTrailing();
+    List<String> termsQuery = Arrays.stream(termQuery.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
+      word = word.trim();
+      if (word.length() > 4 && !StringCommonUtils.isContainSpecialCharacter(word)) {
+        word = word + "~1";
+      }
+      word = StringCommonUtils.encodeSpecialCharToHTMLnumber(word, charIgnore, true);
+      return StringEscapeUtils.escapeHtml(word);
+    }).collect(Collectors.toList());
+    return StringUtils.join(termsQuery, " AND ");
+  }
+
+  private String buildTerm(String term) {
+    term = escapeIllegalCharacterInQuery(term);
+    if (StringUtils.isBlank(term)) {
+      return null;
+    }
+    term = term.stripLeading().stripTrailing();
+    return removeSpecialCharacters(term);
   }
 
 }
