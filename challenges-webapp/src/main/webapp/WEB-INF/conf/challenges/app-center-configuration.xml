@@ -73,6 +73,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         <field name="isMobile">
                             <boolean>true</boolean>
                         </field>
+                        <field name="permissions">
+                            <collection type="java.util.ArrayList" item-type="java.lang.String">
+                                <value>
+                                    <string>*:/platform/users</string>
+                                </value>
+                                <value>
+                                    <string>*:/platform/externals</string>
+                                </value>
+                            </collection>
+                        </field>
                     </object>
                 </object-param>
             </init-params>
