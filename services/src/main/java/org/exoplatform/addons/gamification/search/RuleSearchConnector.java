@@ -52,8 +52,13 @@ public class RuleSearchConnector {
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
 
-  private static final String          DOMAIN_FILTERING_QUERY       = ",\n" + "        {\n" + "          \"term\": {\n"
-      + "            \"domainId\": {\n" + "              \"value\": \"@domainId@\"\n" + "            }\n" + "          }\n"
+  private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
+      + "        {\n"
+      + "          \"term\": {\n"
+      + "            \"domainId\": {\n"
+      + "              \"value\": \"@domainId@\"\n"
+      + "            }\n"
+      + "          }\n"
       + "        }\n";
 
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|";
@@ -132,8 +137,7 @@ public class RuleSearchConnector {
     if (StringUtils.isBlank(term)) {
       return null;
     }
-    term = term.stripLeading();
-    term = term.stripTrailing();
+    term = term.trim();
     List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
       word = word.trim();
       if (word.length() > 4) {
