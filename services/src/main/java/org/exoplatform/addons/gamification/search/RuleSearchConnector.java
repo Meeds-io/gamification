@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -35,7 +34,6 @@ import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
 import org.exoplatform.commons.utils.PropertyManager;
-import org.exoplatform.commons.utils.StringCommonUtils;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
@@ -131,10 +129,11 @@ public class RuleSearchConnector {
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
     String term = removeSpecialCharacters(filter.getTerm());
     term = escapeIllegalCharacterInQuery(term);
-    term = term.stripLeading().stripTrailing();
     if (StringUtils.isBlank(term)) {
       return null;
     }
+    term = term.stripLeading();
+    term = term.stripTrailing();
     List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
       word = word.trim();
       if (word.length() > 4) {
