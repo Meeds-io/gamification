@@ -60,9 +60,9 @@ public class RuleSearchConnector {
       + "            }\n"
       + "          }\n"
       + "        }\n";
-  
-  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"'*~&|";
-  
+
+  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|";
+
   private final ConfigurationManager   configurationManager;
 
   private final ElasticSearchingClient client;
@@ -137,6 +137,7 @@ public class RuleSearchConnector {
     if (StringUtils.isBlank(term)) {
       return null;
     }
+    term = term.trim();
     List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
       word = word.trim();
       if (word.length() > 4) {
@@ -281,7 +282,7 @@ public class RuleSearchConnector {
 
   private String removeSpecialCharacters(String string) {
     string = Normalizer.normalize(string, Normalizer.Form.NFD);
-    string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "").replace("'", " ");
+    string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     return string;
   }
 
@@ -290,10 +291,11 @@ public class RuleSearchConnector {
       return null;
     }
     for (char c : ILLEGAL_SEARCH_CHARACTERS.toCharArray()) {
-      query = query.replace(c + "", "\\" + c);
+      query = query.replace(c + "", "\\\\" + c);
     }
-    return query.replace("'", "''");
+    return query;
   }
+
   private String retrieveSearchQuery() {
     if (StringUtils.isBlank(this.searchQuery) || PropertyManager.isDevelopping()) {
       try {
@@ -305,5 +307,4 @@ public class RuleSearchConnector {
     }
     return this.searchQuery;
   }
-
 }
