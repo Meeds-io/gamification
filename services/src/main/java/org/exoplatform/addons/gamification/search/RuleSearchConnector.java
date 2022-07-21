@@ -129,11 +129,20 @@ public class RuleSearchConnector {
   }
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
-    String term = buildTerm(filter.getTerm());
-    String termQuery = buildTermQuery(filter.getTerm());
-    if (StringUtils.isBlank(term) && StringUtils.isBlank(termQuery)) {
+    String term = removeSpecialCharacters(filter.getTerm());
+    term = escapeIllegalCharacterInQuery(term);
+    term = term.stripLeading().stripTrailing();
+    if (StringUtils.isBlank(term)) {
       return null;
     }
+    List<String> termsQuery = Arrays.stream(term.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
+      word = word.trim();
+      if (word.length() > 4) {
+        word = word + "~1";
+      }
+      return word;
+    }).collect(Collectors.toList());
+    String termQuery = StringUtils.join(termsQuery, " AND ");
     String query = retrieveSearchQuery();
     if (filter.getDomainId() > 0) {
       query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
@@ -295,31 +304,4 @@ public class RuleSearchConnector {
     }
     return this.searchQuery;
   }
-
-  private String buildTermQuery(String termQuery) {
-    if (StringUtils.isBlank(termQuery)) {
-      return null;
-    }
-    String charIgnore = "!#:?=.,*+-;~`_&<>|";
-    termQuery = termQuery.stripLeading().stripTrailing();
-    List<String> termsQuery = Arrays.stream(termQuery.split(" ")).filter(StringUtils::isNotBlank).map(word -> {
-      word = word.trim();
-      if (word.length() > 4 && !StringCommonUtils.isContainSpecialCharacter(word)) {
-        word = word + "~1";
-      }
-      word = StringCommonUtils.encodeSpecialCharToHTMLnumber(word, charIgnore, true);
-      return StringEscapeUtils.escapeHtml(word);
-    }).collect(Collectors.toList());
-    return StringUtils.join(termsQuery, " AND ");
-  }
-
-  private String buildTerm(String term) {
-    term = escapeIllegalCharacterInQuery(term);
-    if (StringUtils.isBlank(term)) {
-      return null;
-    }
-    term = term.stripLeading().stripTrailing();
-    return removeSpecialCharacters(term);
-  }
-
 }
