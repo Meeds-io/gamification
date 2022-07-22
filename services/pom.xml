@@ -31,6 +31,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <description>eXo Gamification services</description>
 
     <properties>
+        <rest.api.doc.title>Gamification Rest Api</rest.api.doc.title>
+        <rest.api.doc.version>1.0</rest.api.doc.version>
+        <rest.api.doc.description>Gamification addon rest endpoints</rest.api.doc.description>
+
         <exo.test.coverage.ratio>0.61</exo.test.coverage.ratio>
     </properties>
 
@@ -234,6 +238,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>io.openapitools.swagger</groupId>
+                    <artifactId>swagger-maven-plugin</artifactId>
+                    <configuration>
+                        <useResourcePackagesChildren>true</useResourcePackagesChildren>
+                        <resourcePackages>
+                            <locations>org.exoplatform.addons.gamification.rest</locations>
+                        </resourcePackages>
+                        <swaggerConfig>
+                            <info>
+                                <title>${rest.api.doc.title}</title>
+                                <version>${rest.api.doc.version}</version>
+                                <description>${rest.api.doc.description}</description>
+                                <license>
+                                    <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+                                    <name>LGPL</name>
+                                </license>
+                            </info>
+                        </swaggerConfig>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
