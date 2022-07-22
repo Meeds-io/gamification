@@ -219,7 +219,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       FilterType filterType = filter.getFilterType();
       if (FilterType.STARTED.equals(filterType)) {
         suffixes.add("StartDateAndEndDate");
-        predicates.add("r.startDate < :date AND r.endDate >= :date");
+        predicates.add("r.startDate <= :date AND r.endDate >= :date");
       }
       if (FilterType.NOT_STARTED.equals(filterType)) {
         suffixes.add("StartDate");

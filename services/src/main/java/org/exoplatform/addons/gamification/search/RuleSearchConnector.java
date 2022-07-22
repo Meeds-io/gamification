@@ -57,6 +57,16 @@ public class RuleSearchConnector {
 
   private static final String          END_DATE                     = "endDate";
 
+  private static final String          DATE_FIELD                   = "@dateField@";
+
+  private static final String          START_DATE_QUERY             = "@startDateQuery@";
+
+  private static final String          END_DATE_QUERY               = "@endDateQuery@";
+
+  private static final String          DATE_CONDITION               = "@condition@";
+
+  private static final String          DATE                         = "@date@";
+
   private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
       + "        {\n"
       + "          \"term\": {\n"
@@ -171,30 +181,31 @@ public class RuleSearchConnector {
     
     if (filter.getFilterType() != null && !FilterType.ALL.equals(filter.getFilterType())) {
       FilterType filterType = filter.getFilterType();
-      String date = toMilliSecondsString ( new Date (System.currentTimeMillis ()) );
+      String date = toMilliSecondsString(new Date(System.currentTimeMillis()));
       query = query.replace("@date_filtering@", DATE_FILTERING_QUERY);
       if (FilterType.STARTED.equals(filterType)) {
-        query = query.replace("@startDateQuery@", DATE_FIELD_FILTERING_QUERY)
-                     .replace("@dateField@", START_DATE)
-                     .replace("@condition@", "lt");
-        query = query.replace("@endDateQuery@","," + DATE_FIELD_FILTERING_QUERY)
-                     .replace("@dateField@", END_DATE)
-                     .replace("@condition@", "gte")
-                     .replaceAll("@date@", date);
+        query = query.replace(START_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
+                     .replace(DATE_FIELD, START_DATE)
+                     .replace(DATE_CONDITION, "lte")
+                     .replace(DATE, date);
+        query = query.replace(END_DATE_QUERY, "," + DATE_FIELD_FILTERING_QUERY)
+                     .replace(DATE_FIELD, END_DATE)
+                     .replace(DATE_CONDITION, "gte")
+                     .replace(DATE, date);
       }
       if (FilterType.NOT_STARTED.equals(filterType)) {
-        query = query.replace("@startDateQuery@", DATE_FIELD_FILTERING_QUERY)
-                     .replace("@endDateQuery@", "")
-                     .replace("@dateField@", START_DATE)
-                     .replace("@condition@", "gt")
-                     .replace("@date@", date);
+        query = query.replace(START_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
+                     .replace(END_DATE_QUERY, "")
+                     .replace(DATE_FIELD, START_DATE)
+                     .replace(DATE_CONDITION, "gt")
+                     .replace(DATE, date);
       }
       if (FilterType.ENDED.equals(filterType)) {
-        query = query.replace("@endDateQuery@", DATE_FIELD_FILTERING_QUERY)
-                     .replace("@startDateQuery@", "")
-                     .replace("@dateField@", END_DATE)
-                     .replace("@condition@", "lt")
-                     .replace("@date@", date);
+        query = query.replace(END_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
+                     .replace(START_DATE_QUERY, "")
+                     .replace(DATE_FIELD, END_DATE)
+                     .replace(DATE_CONDITION, "lt")
+                     .replace(DATE, date);
       }
     } else {
       query = query.replace("@date_filtering@", "");

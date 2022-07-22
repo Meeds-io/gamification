@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -99,7 +100,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     filter.setSpaceIds(listIdSpaceEmpty);
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
     filter.setSpaceIds(listIdSpace);
-
+    filter.setFilterType(FilterType.STARTED);
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
     String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "10");
 

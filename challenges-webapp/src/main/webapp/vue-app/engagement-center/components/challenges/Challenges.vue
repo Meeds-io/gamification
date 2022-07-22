@@ -62,7 +62,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <span class="text-truncate d-none d-lg-inline">
                 {{ filterChallengeLabel }}
               </span>
-              <i class="uiIconMiniArrowDown uiIconLightGray filter_menuIcon"></i>
+              <v-icon class="uiIconMiniArrowDown uiIconLightGray filter_menuIcon" small />
             </button>
           </template>
           <v-list>
