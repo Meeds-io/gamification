@@ -23,6 +23,7 @@
             "phrase_slop": 1
           }
         }
+        @date_filtering@
         @domain_filtering@
       ]
     }

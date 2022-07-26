@@ -127,7 +127,7 @@ public class AnnouncementRest implements ResourceContainer {
                                                 @PathParam("challengeId")
                                                 String challengeId,
                                                 @ApiParam(value = "Offset of result", required = false)
-                                                @DefaultValue("0")
+                                                
                                                 @QueryParam("offset")
                                                 int offset,
                                                 @ApiParam(value = "Limit of result", required = false)
