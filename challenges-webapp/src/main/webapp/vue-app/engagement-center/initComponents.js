@@ -49,9 +49,9 @@ const components = {
   'challenge-program': challengeProgram,
   'engagement-center': EngagementCenter,
   'challenge-no-results': NoResultFound,
-  'programs': Programs,
-  'programs-list': ProgramsList,
-  'program-card': ProgramCard,
+  'engagement-center-programs': Programs,
+  'engagement-center-programs-list': ProgramsList,
+  'engagement-center-program-card': ProgramCard,
 };
 
 for (const key in components) {

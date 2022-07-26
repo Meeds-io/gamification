@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
       <v-spacer />
     </v-toolbar>
-    <programs-list class="my-10 mx-4" :programs="programs" />
+    <engagement-center-programs-list class="my-10 mx-4" :programs="programs" />
   </div>
 </template>
 
@@ -46,10 +46,10 @@ export default {
     };
   },
   created() {
-    this.getAllPrograms();
+    this.retrievePrograms();
   },
   methods: {
-    getAllPrograms() {
+    retrievePrograms() {
       this.$challengesServices.getAllDomains()
         .then(programs => this.programs =  programs.slice().filter(program => program.enabled));
     },

@@ -41,7 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span class="text-header-title dark-grey-color text-truncate">  {{ program.title }} </span>
         </div>
         <div class="center">
-          <span> <v-icon class="fas fa-trophy trophy" /> {{ programBudget }} </span>
+          <span> <v-icon class="fas fa-trophy trophy small" /> {{ programBudget }} </span>
         </div>
       </div>
     </v-card>
@@ -60,7 +60,7 @@ export default {
       return this.program?.cover || '/challenges/images/program_default_cover_back.png';
     },
     programBudget(){
-      return this.$t('programs.budget').replace('{0}',this.program?.budget || 0);
+      return this.$t('programs.budget', {0: this.program?.budget || 0});
     }
   }
 };
