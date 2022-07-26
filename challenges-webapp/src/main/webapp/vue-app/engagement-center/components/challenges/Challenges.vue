@@ -50,6 +50,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span> {{ $t('challenges.filter.searchTooltip') }} </span>
         </v-tooltip>
       </div>
+      <div class="pt-1">
+        <select
+            v-model="filter"
+            class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter"
+            @change="getChallenges">
+          <option
+            v-for="filter in challengesFilter"
+            :key="filter.value"
+            :value="filter.value">
+            <span class="d-none d-lg-inline">
+              {{ filter.text }}
+            </span>
+          </option>
+        </select>
+      </div>
     </v-toolbar>
     <challenge-welcome-message
       v-if="displayWelcomeMessage"
@@ -91,6 +106,7 @@ export default {
     startTypingKeywordTimeout: 0,
     typing: false,
     displayMinimumCharactersToolTip: false,
+    filter: 'STARTED',
   }),
   computed: {
     classWelcomeMessage() {
@@ -132,7 +148,23 @@ export default {
       } else {
         return 12;
       }
-    }
+    },
+    challengesFilter() {
+      return [{
+        text: this.$t('challenges.filter.allChallenges'),
+        value: 'ALL',
+      },{
+        text: this.$t('challenges.filter.activeChallenges'),
+        value: 'STARTED',
+      },{
+        text: this.$t('challenges.filter.UpcomingChallenges'),
+        value: 'NOT_STARTED',
+      },{
+        text: this.$t('challenges.filter.endedChallenges'),
+        value: 'ENDED',
+      }];
+    },
+
   },
   watch: {
     search()  {
@@ -209,7 +241,7 @@ export default {
     getChallenges(append, domainId) {
       this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
-      return this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId)
+      return this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId, this.filter)
         .then(result => {
           if (!result) {
             return;
@@ -273,7 +305,7 @@ export default {
           this.waitForEndTyping();
         }
       }, this.endTypingKeywordTimeout);
-    },
+    }
   }
 };
 </script>

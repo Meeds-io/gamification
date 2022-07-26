@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.es.ElasticSearchException;
@@ -52,6 +53,22 @@ public class RuleSearchConnector {
 
   private static final String          SEARCH_QUERY_FILE_PATH_PARAM = "query.file.path";
 
+  private static final String          START_DATE                   = "startDate";
+
+  private static final String          END_DATE                     = "endDate";
+
+  private static final String          DATE_FIELD                   = "@dateField@";
+
+  private static final String          START_DATE_QUERY             = "@startDateQuery@";
+
+  private static final String          END_DATE_QUERY               = "@endDateQuery@";
+
+  private static final String          DATE_CONDITION               = "@condition@";
+
+  private static final String          DATE                         = "@date@";
+  
+  private static final String          DATE_FILTERING               = "@date_filtering@";
+
   private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
       + "        {\n"
       + "          \"term\": {\n"
@@ -61,6 +78,17 @@ public class RuleSearchConnector {
       + "          }\n"
       + "        }\n";
 
+
+  private static final String          DATE_FILTERING_QUERY         = ", \n @startDateQuery@ @endDateQuery@ \n";
+
+  private static final String          DATE_FIELD_FILTERING_QUERY   = " {\n"
+      + "       \"range\": {\n"
+      +"          \"@dateField@\": {\n"
+      +"            \"@condition@\": \"@date@\"\n"
+      +"           }\n"
+      +"        }\n"
+      +"      }\n";
+  
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
   private final ConfigurationManager   configurationManager;
@@ -151,6 +179,43 @@ public class RuleSearchConnector {
       query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
     } else {
       query = query.replace("@domain_filtering@", "");
+    }
+    DateFilterType dateFilterType = filter.getDateFilterType();
+    if (dateFilterType != null) {
+      String date = String.valueOf(System.currentTimeMillis());
+      switch (dateFilterType) {
+      case STARTED:
+        query = query.replace(DATE_FILTERING, DATE_FILTERING_QUERY);
+        query = query.replace(START_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
+                     .replace(DATE_FIELD, START_DATE)
+                     .replace(DATE_CONDITION, "lte")
+                     .replace(DATE, date);
+        query = query.replace(END_DATE_QUERY, "," + DATE_FIELD_FILTERING_QUERY)
+                     .replace(DATE_FIELD, END_DATE)
+                     .replace(DATE_CONDITION, "gte")
+                     .replace(DATE, date);
+        break;
+      case NOT_STARTED:
+        query = query.replace(DATE_FILTERING, DATE_FILTERING_QUERY);
+        query = query.replace(START_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
+                     .replace(END_DATE_QUERY, "")
+                     .replace(DATE_FIELD, START_DATE)
+                     .replace(DATE_CONDITION, "gt")
+                     .replace(DATE, date);
+        break;
+      case ENDED:
+        query = query.replace(DATE_FILTERING, DATE_FILTERING_QUERY);
+        query = query.replace(END_DATE_QUERY, DATE_FIELD_FILTERING_QUERY)
+                     .replace(START_DATE_QUERY, "")
+                     .replace(DATE_FIELD, END_DATE)
+                     .replace(DATE_CONDITION, "lt")
+                     .replace(DATE, date);
+        break;
+      default:
+        query = query.replace(DATE_FILTERING, "");
+      }
+    } else {
+      query = query.replace(DATE_FILTERING, "");
     }
 
     return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
