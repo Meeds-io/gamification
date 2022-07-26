@@ -17,12 +17,16 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 import java.util.Collections;
+import java.util.Date;
 
 public class RuleDAOTest extends AbstractServiceTest {
 
@@ -127,7 +131,7 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testFindRulesByFilter() {
     RuleFilter filter = new RuleFilter();
-
+    filter.setDateFilterType(DateFilterType.ALL);
     assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
     RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
@@ -137,6 +141,53 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
     newRule("rule3", "domain3", 1l);
     assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
+    filter.setDateFilterType(DateFilterType.STARTED);
+    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 2);
+    filter.setDateFilterType(DateFilterType.NOT_STARTED);
+    RuleEntity ruleEntityNotStarted = new RuleEntity();
+    ruleEntityNotStarted.setScore(Integer.parseInt(TEST__SCORE));
+    ruleEntityNotStarted.setTitle("ruleEntityNotStarted");
+    ruleEntityNotStarted.setDescription("ruleEntityNotStarted Description");
+    ruleEntityNotStarted.setArea("domain1");
+    ruleEntityNotStarted.setEnabled(true);
+    ruleEntityNotStarted.setDeleted(false);
+    ruleEntityNotStarted.setEvent("ruleEntityNotStarted");
+    ruleEntityNotStarted.setCreatedBy(TEST_USER_SENDER);
+    ruleEntityNotStarted.setLastModifiedBy(TEST_USER_SENDER);
+    ruleEntityNotStarted.setLastModifiedDate(new Date());
+    ruleEntityNotStarted.setDomainEntity(newDomain("domain1"));
+    ruleEntityNotStarted.setType(TypeRule.MANUAL);
+    ruleEntityNotStarted.setAudience(1l);
+    ruleEntityNotStarted.setManagers(Collections.singletonList(1l));
+    ruleEntityNotStarted.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+        + 10 * MILLIS_IN_A_DAY))));
+    ruleEntityNotStarted.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+        + 2 * MILLIS_IN_A_DAY))));
+    ruleDAO.create(ruleEntityNotStarted);
+    assertEquals(1, ruleDAO.findRulesByFilter(filter, 0, 10).size());
+    filter.setDateFilterType(DateFilterType.ENDED);
+
+    RuleEntity ruleEntityEnded = new RuleEntity();
+    ruleEntityEnded.setScore(Integer.parseInt(TEST__SCORE));
+    ruleEntityEnded.setTitle("ruleEntityEnded");
+    ruleEntityEnded.setDescription("ruleEntityEnded Description");
+    ruleEntityEnded.setArea("domain1");
+    ruleEntityEnded.setEnabled(true);
+    ruleEntityEnded.setDeleted(false);
+    ruleEntityEnded.setEvent("ruleEntityEnded");
+    ruleEntityEnded.setCreatedBy(TEST_USER_SENDER);
+    ruleEntityEnded.setLastModifiedBy(TEST_USER_SENDER);
+    ruleEntityEnded.setLastModifiedDate(new Date());
+    ruleEntityEnded.setDomainEntity(newDomain("domain1"));
+    ruleEntityEnded.setType(TypeRule.MANUAL);
+    ruleEntityEnded.setAudience(1l);
+    ruleEntityEnded.setManagers(Collections.singletonList(1l));
+    ruleEntityEnded.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+        - 2 * MILLIS_IN_A_DAY))));
+    ruleEntityEnded.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+        - 5 * MILLIS_IN_A_DAY))));
+    ruleDAO.create(ruleEntityEnded);
+    assertEquals(1, ruleDAO.findRulesByFilter(filter, 0, 10).size());
   }
 
   @Test

@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -16,11 +16,7 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -30,6 +26,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
@@ -203,6 +200,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
     }
+    DateFilterType dateFilterType = filter.getDateFilterType ();
+    if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
+      query.setParameter("date", Calendar.getInstance().getTime());
+    }
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) {
@@ -213,6 +214,25 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       suffixes.add("Audience");
       predicates.add("r.audience in (:ids)");
+    }
+    if (filter.getDateFilterType() != null) {
+      DateFilterType dateFilterType = filter.getDateFilterType();
+      switch (dateFilterType) {
+      case STARTED:
+        suffixes.add("StartDateAndEndDate");
+        predicates.add("r.startDate <= :date AND r.endDate >= :date");
+        break;
+      case NOT_STARTED:
+        suffixes.add("StartDate");
+        predicates.add("r.startDate > :date");
+        break;
+      case ENDED:
+        suffixes.add("EndDate");
+        predicates.add("r.endDate < :date");
+        break;
+      default:
+        break;
+      }
     }
   }
 

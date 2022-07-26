@@ -24,6 +24,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -222,12 +223,19 @@ public class ChallengeRest implements ResourceContainer {
                                          @QueryParam("announcements")
                                          int announcementsPerChallenge,
                                          @ApiParam(
-                                             value = "Number of announcements per challenge",
-                                             required = false,
-                                             defaultValue = "0"
+                                             value = "term to search challenges with",
+                                             required = false
                                          )
                                          @QueryParam("term")
-                                         String term) {
+                                         String term,
+                                         @ApiParam(
+                                           value = "Challenge period filtering. Possible values: STARTED, NOT_STARTED, ENDED, ALL",
+                                           defaultValue = "ALL",
+                                           required = false
+                                         )
+                                         @DefaultValue("ALL")
+                                         @QueryParam("filter")
+                                         String dateFilterType) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -238,7 +246,7 @@ public class ChallengeRest implements ResourceContainer {
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);
     filter.setUsername(currentUser);
-
+    filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {
