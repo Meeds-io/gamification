@@ -229,8 +229,9 @@ public class ChallengeRest implements ResourceContainer {
                                          @QueryParam("term")
                                          String term,
                                          @ApiParam(
-                                             value = "Challenge period filtering. Possible values: STARTED, NOT_STARTED, ENDED, ALL",
-                                             required = false
+                                           value = "Challenge period filtering. Possible values: STARTED, NOT_STARTED, ENDED, ALL",
+                                           defaultValue = "ALL",
+                                           required = false
                                          )
                                          @DefaultValue("ALL")
                                          @QueryParam("filter")
