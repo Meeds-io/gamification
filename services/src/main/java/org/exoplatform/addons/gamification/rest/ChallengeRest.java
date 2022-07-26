@@ -229,10 +229,10 @@ public class ChallengeRest implements ResourceContainer {
                                          @QueryParam("term")
                                          String term,
                                          @ApiParam(
-                                             value = "date filter to filter challenges with its status",
-                                             required = false,
-                                             defaultValue = "0"
+                                             value = "Challenge period filtering. Possible values: STARTED, NOT_STARTED, ENDED, ALL",
+                                             required = false
                                          )
+                                         @DefaultValue("ALL")
                                          @QueryParam("filter")
                                          String dateFilterType) {
     if (offset < 0) {
@@ -245,11 +245,7 @@ public class ChallengeRest implements ResourceContainer {
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);
     filter.setUsername(currentUser);
-    if (StringUtils.isBlank(dateFilterType)) {
-      filter.setDateFilterType(DateFilterType.STARTED);
-    } else {
-      filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
-    }
+    filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {

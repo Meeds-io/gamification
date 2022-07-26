@@ -39,6 +39,6 @@ public class RuleFilter implements Serializable {
 
   private List<Long>        spaceIds;
 
-  private DateFilterType dateFilterType;
+  private DateFilterType    dateFilterType;
 
 }

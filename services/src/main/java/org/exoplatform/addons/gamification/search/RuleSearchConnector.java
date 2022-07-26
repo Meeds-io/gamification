@@ -67,7 +67,7 @@ public class RuleSearchConnector {
 
   private static final String          DATE                         = "@date@";
   
-  private static final String          DATE_FILTERING                         = "@date_filtering@";
+  private static final String          DATE_FILTERING               = "@date_filtering@";
 
   private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
       + "        {\n"
@@ -79,7 +79,7 @@ public class RuleSearchConnector {
       + "        }\n";
 
 
-  private static final String          DATE_FILTERING_QUERY       = ", \n @startDateQuery@ @endDateQuery@ \n";
+  private static final String          DATE_FILTERING_QUERY         = ", \n @startDateQuery@ @endDateQuery@ \n";
 
   private static final String          DATE_FIELD_FILTERING_QUERY   = " {\n"
       + "       \"range\": {\n"

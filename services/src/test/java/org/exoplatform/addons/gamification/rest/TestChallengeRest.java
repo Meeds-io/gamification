@@ -48,7 +48,7 @@ public class TestChallengeRest extends AbstractServiceTest {
 
   private static final String startDate       = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
 
-  private static final String endDate         = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + 2 * MILLIS_IN_A_DAY));
+  private static final String endDate         = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY));
 
   @Override
   @Before
@@ -471,7 +471,7 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("startDate")
               .value(startDate)
               .key("endDate")
-              .value(Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 2 * MILLIS_IN_A_DAY)))
+              .value(endDate)
               .key("managers")
               .value(Collections.singletonList(1l))
               .key("points")

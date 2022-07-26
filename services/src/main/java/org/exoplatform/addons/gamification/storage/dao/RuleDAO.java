@@ -200,7 +200,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
     }
-    if (filter.getDateFilterType () != null && ! DateFilterType.ALL.equals(filter.getDateFilterType ())) {
+    DateFilterType dateFilterType = filter.getDateFilterType ();
+    if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
       query.setParameter("date", Calendar.getInstance().getTime());
     }
   }
