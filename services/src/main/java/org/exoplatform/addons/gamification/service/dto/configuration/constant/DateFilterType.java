@@ -17,6 +17,6 @@
 
 package org.exoplatform.addons.gamification.service.dto.configuration.constant;
 
-public enum FilterType {
+public enum DateFilterType {
   STARTED, NOT_STARTED, ENDED, ALL
 }

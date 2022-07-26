@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -26,9 +26,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.services.log.ExoLogger;
@@ -201,8 +200,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
     }
-    if (filter.getFilterType() != null && !FilterType.ALL.equals(filter.getFilterType())) {
-      query.setParameter("date", Utils.parseSimpleDate( Utils.toSimpleDateFormat(new Date(System.currentTimeMillis()))));
+    if (filter.getDateFilterType () != null && ! DateFilterType.ALL.equals(filter.getDateFilterType ())) {
+      query.setParameter("date", Calendar.getInstance().getTime());
     }
   }
 
@@ -215,19 +214,23 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       suffixes.add("Audience");
       predicates.add("r.audience in (:ids)");
     }
-    if (filter.getFilterType() != null) {
-      FilterType filterType = filter.getFilterType();
-      if (FilterType.STARTED.equals(filterType)) {
+    if (filter.getDateFilterType() != null) {
+      DateFilterType dateFilterType = filter.getDateFilterType();
+      switch (dateFilterType) {
+      case STARTED:
         suffixes.add("StartDateAndEndDate");
         predicates.add("r.startDate <= :date AND r.endDate >= :date");
-      }
-      if (FilterType.NOT_STARTED.equals(filterType)) {
+        break;
+      case NOT_STARTED:
         suffixes.add("StartDate");
         predicates.add("r.startDate > :date");
-      }
-      if (FilterType.ENDED.equals(filterType)) {
+        break;
+      case ENDED:
         suffixes.add("EndDate");
         predicates.add("r.endDate < :date");
+        break;
+      default:
+        break;
       }
     }
   }

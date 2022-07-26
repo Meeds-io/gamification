@@ -50,36 +50,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span> {{ $t('challenges.filter.searchTooltip') }} </span>
         </v-tooltip>
       </div>
-      <div class="filter_menu pt-1">
-        <v-menu
-          v-model="showFilterMenu"
-          offset-y>
-          <template #activator="{ on }">
-            <button
-              class="btn"
-              v-on="on"
-              @blur="closeFilterMenu">
-              <span class="text-truncate d-none d-lg-inline">
-                {{ filterChallengeLabel }}
-              </span>
-              <v-icon class="uiIconMiniArrowDown uiIconLightGray filter_menuIcon" small />
-            </button>
-          </template>
-          <v-list>
-            <v-list-item @mousedown="$event.preventDefault()">
-              <v-list-item-title @click="filter ='ALL'">{{ $t('challenges.filter.allChallenges') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item @mousedown="$event.preventDefault()">
-              <v-list-item-title @click="filter ='STARTED'">{{ $t('challenges.filter.activeChallenges') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item @mousedown="$event.preventDefault()">
-              <v-list-item-title @click="filter ='NOT_STARTED'">{{ $t('challenges.filter.UpcomingChallenges') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item @mousedown="$event.preventDefault()">
-              <v-list-item-title @click="filter ='ENDED'">{{ $t('challenges.filter.endedChallenges') }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+      <div class="pt-1">
+        <select
+            v-model="filter"
+            class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter"
+            @change="getChallenges">
+          <option
+              v-for="filter in challengesFilter"
+              :key="filter.value"
+              :value="filter.value">
+            <span class="d-none d-lg-inline">
+              {{ filter.text }}
+            </span>
+          </option>
+        </select>
       </div>
     </v-toolbar>
     <challenge-welcome-message
@@ -123,8 +107,6 @@ export default {
     typing: false,
     displayMinimumCharactersToolTip: false,
     filter: 'STARTED',
-    showFilterMenu: false,
-    filterChallengeLabel: '',
   }),
   computed: {
     classWelcomeMessage() {
@@ -166,7 +148,23 @@ export default {
       } else {
         return 12;
       }
-    }
+    },
+    challengesFilter() {
+      return [{
+        text: this.$t('challenges.filter.allChallenges'),
+        value: 'ALL',
+      },{
+        text: this.$t('challenges.filter.activeChallenges'),
+        value: 'STARTED',
+      },{
+        text: this.$t('challenges.filter.UpcomingChallenges'),
+        value: 'NOT_STARTED',
+      },{
+        text: this.$t('challenges.filter.endedChallenges'),
+        value: 'ENDED',
+      }];
+    },
+
   },
   watch: {
     search()  {
@@ -190,19 +188,6 @@ export default {
       } else {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
-    },
-    filter()  {
-      if (this.filter === 'ALL') {
-        this.filterChallengeLabel = this.$t('challenges.filter.allChallenges');
-      } else if (this.filter === 'STARTED'){
-        this.filterChallengeLabel = this.$t('challenges.filter.activeChallenges');
-      } else if (this.filter === 'NOT_STARTED') {
-        this.filterChallengeLabel = this.$t('challenges.filter.UpcomingChallenges');
-      } else if (this.filter === 'ENDED') {
-        this.filterChallengeLabel = this.$t('challenges.filter.endedChallenges');
-      }
-      this.getChallenges(false);
-      this.showFilterMenu= false;
     },
   },
   created() {
@@ -231,7 +216,6 @@ export default {
         promises.push(retrieveChallengePromise);
       }, 10);
     }
-    this.filterChallengeLabel = this.$t('challenges.filter.activeChallenges');
     Promise.all(promises)
       .finally(() => this.$root.$applicationLoaded());
   },
@@ -321,10 +305,7 @@ export default {
           this.waitForEndTyping();
         }
       }, this.endTypingKeywordTimeout);
-    },
-    closeFilterMenu() {
-      this.showFilterMenu = false;
-    },
+    }
   }
 };
 </script>

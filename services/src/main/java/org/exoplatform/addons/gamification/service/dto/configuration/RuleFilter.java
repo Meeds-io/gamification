@@ -22,7 +22,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 
 @Data
 @NoArgsConstructor
@@ -39,6 +39,6 @@ public class RuleFilter implements Serializable {
 
   private List<Long>        spaceIds;
 
-  private FilterType        filterType;
+  private DateFilterType dateFilterType;
 
 }

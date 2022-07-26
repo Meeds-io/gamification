@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -100,7 +100,6 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     filter.setSpaceIds(listIdSpaceEmpty);
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
     filter.setSpaceIds(listIdSpace);
-    filter.setFilterType(FilterType.STARTED);
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
     String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "10");
 
@@ -143,5 +142,55 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     filter.setTerm(term);
     count = ruleSearchConnector.count(filter);
     assertEquals(1, count);
+  }
+
+  @Test
+  public void testSearchWithDateFilter() {
+    String term = DateFilterType.ALL.name();
+    newDomainDTO();
+    RuleFilter filter = new RuleFilter();
+    List<Long> listIdSpace = Collections.singletonList(1l);
+    filter.setTerm("test");
+    filter.setSpaceIds(listIdSpace);
+    String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term)
+                                          .replaceAll("@offset@", "0")
+                                          .replaceAll("@limit@", "10");
+    String unexpectedESQueryNotStarted = FAKE_ES_QUERY.replaceAll("@term_query@", DateFilterType.NOT_STARTED.name() + "~1")
+                                             .replaceAll("@offset@", "0")
+                                             .replaceAll("@limit@", "10");
+    String unexpectedESQueryStarted = FAKE_ES_QUERY.replaceAll("@term_query@", DateFilterType.STARTED.name() + "~1")
+                                             .replaceAll("@offset@", "0")
+                                             .replaceAll("@limit@", "10");
+    String unexpectedESQueryEnded = FAKE_ES_QUERY.replaceAll("@term_query@", DateFilterType.ENDED.name() + "~1")
+                                             .replaceAll("@offset@", "0")
+                                             .replaceAll("@limit@", "10");
+
+    when(client.sendRequest(expectedESQuery, ES_INDEX)).thenReturn(searchResult);
+    when(client.sendRequest(unexpectedESQueryNotStarted, ES_INDEX)).thenReturn("{}");
+    when(client.sendRequest(unexpectedESQueryStarted, ES_INDEX)).thenReturn("{}");
+    when(client.sendRequest(unexpectedESQueryEnded, ES_INDEX)).thenReturn("{}");
+
+    filter.setDateFilterType(DateFilterType.STARTED);
+    filter.setTerm(DateFilterType.STARTED.name());
+    List<RuleEntity> rules = ruleSearchConnector.search(filter, 0, 10);
+    assertNotNull(rules);
+    assertEquals(0, rules.size());
+
+    filter.setDateFilterType(DateFilterType.NOT_STARTED);
+    filter.setTerm(DateFilterType.NOT_STARTED.name());
+    rules = ruleSearchConnector.search(filter, 0, 10);
+    assertNotNull(rules);
+    assertEquals(0, rules.size());
+
+    filter.setDateFilterType(DateFilterType.ENDED);
+    filter.setTerm(DateFilterType.ENDED.name());
+    rules = ruleSearchConnector.search(filter, 0, 10);
+    assertNotNull(rules);
+    assertEquals(0, rules.size());
+
+    filter.setTerm(term);
+    rules = ruleSearchConnector.search(filter, 0, 10);
+    assertNotNull(rules);
+    assertEquals(1, rules.size());
   }
 }

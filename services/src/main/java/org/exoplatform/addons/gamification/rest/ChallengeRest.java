@@ -24,7 +24,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.FilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -229,12 +229,12 @@ public class ChallengeRest implements ResourceContainer {
                                          @QueryParam("term")
                                          String term,
                                          @ApiParam(
-                                             value = "Number of announcements per challenge",
+                                             value = "date filter to filter challenges with its status",
                                              required = false,
                                              defaultValue = "0"
                                          )
                                          @QueryParam("filter")
-                                         String filterType) {
+                                         String dateFilterType) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -245,10 +245,10 @@ public class ChallengeRest implements ResourceContainer {
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);
     filter.setUsername(currentUser);
-    if (StringUtils.isBlank(filterType)) {
-      filter.setFilterType(FilterType.STARTED);
+    if (StringUtils.isBlank(dateFilterType)) {
+      filter.setDateFilterType(DateFilterType.STARTED);
     } else {
-      filter.setFilterType(FilterType.valueOf(filterType));
+      filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
     }
     try {
       LOG.info("start getting challenges");
