@@ -15,34 +15,31 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
-    <main v-if="engagementCenterEnabled">
-      <v-tabs
-        v-model="tab"
-        slider-size="4"
-        class="mb-4">
-        <v-tab class="px-5">{{ $t('engagementCenter.label.challenges') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
-      </v-tabs>
-      <v-tabs-items v-model="tab">
-        <v-tab-item eager>
-          <challenges />
-        </v-tab-item>
-        <v-tab-item eager />
-        <engagement-center-programs />
-      </v-tabs-items>
-    </main>
-    <main v-else>
-      <challenges />
-    </main>
-  </v-app>
+  <v-row no-gutters>
+    <v-col
+      v-for="program in programs"
+      :key="program.id"
+      class="mb-4"
+      cols="12"
+      sm="6"
+      lg="3"
+      xl="2">
+      <engagement-center-program-card
+        :program="program"
+        class="mx-2" />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 export default {
-  data: () => ({
-    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
-    tab: null,
-  }),
+  props: {
+    programs: {
+      type: Array,
+      default: function() {
+        return [];
+      },
+    },
+  }
 };
 </script>
