@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="pa-4">
       <div class="border-box-sizing clickable addChallengeButton">
         <v-btn class="btn btn-primary">
-          <v-icon>fas fa-plus</v-icon>
+          <v-icon small>fas fa-plus</v-icon>
           <span class="mx-2 d-none d-lg-inline">
             {{ $t('programs.button.addProgram') }}
           </span>
