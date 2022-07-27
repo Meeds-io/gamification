@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-row no-gutters>
+  <v-row v-if="!loading" no-gutters>
     <v-col
       v-for="program in programs"
       :key="program.id"
@@ -39,6 +39,10 @@ export default {
       default: function() {
         return [];
       },
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   }
 };
