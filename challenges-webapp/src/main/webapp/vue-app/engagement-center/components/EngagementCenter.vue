@@ -25,11 +25,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
-        <v-tab-item eager>
+        <v-tab-item>
           <challenges />
         </v-tab-item>
-        <v-tab-item eager />
-        <engagement-center-programs />
+        <v-tab-item>
+          <engagement-center-programs />
+        </v-tab-item>
       </v-tabs-items>
     </main>
     <main v-else>

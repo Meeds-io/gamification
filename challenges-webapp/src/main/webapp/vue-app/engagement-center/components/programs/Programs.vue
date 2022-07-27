@@ -20,21 +20,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="border-box-sizing"
     role="main"
     flat>
-    <v-toolbar
-      color="transparent"
-      flat
-      class="pa-4">
-      <div class="border-box-sizing clickable addChallengeButton">
-        <v-btn class="btn btn-primary">
-          <v-icon>fas fa-plus</v-icon>
-          <span class="mx-2 d-none d-lg-inline">
-            {{ $t('programs.button.addProgram') }}
-          </span>
-        </v-btn>
-      </div>
-      <v-spacer />
-    </v-toolbar>
-    <engagement-center-programs-list class="my-10 mx-4" :programs="programs" />
+    <engagement-center-programs-list
+      :loading="loading"
+      :programs="programs"
+      class="py-10 mx-4" />
   </div>
 </template>
 
@@ -42,16 +31,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
-      programs: null
+      programs: null,
+      loading: false,
     };
+  },
+  watch: {
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
   },
   created() {
     this.retrievePrograms();
   },
   methods: {
     retrievePrograms() {
+      this.loading = true;
       this.$challengesServices.getAllDomains()
-        .then(programs => this.programs =  programs.slice().filter(program => program.enabled));
+        .then(programs => this.programs =  programs.slice().filter(program => program.enabled))
+        .finally(() => this.loading = false);
     },
   },
 };
