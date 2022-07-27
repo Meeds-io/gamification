@@ -55,7 +55,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           id="EngagementCenterApplicationChallengesQuickFilter"
           v-model="filter"
           class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter"
-          @change="getChallenges">
+          @change="refreshChallenges">
           <option
             v-for="filter in challengesFilter"
             :key="filter.value"
