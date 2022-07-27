@@ -28,6 +28,9 @@ import AnnouncementDrawer from './components/challenges/AnnouncementDrawer.vue';
 import WinnersDrawer from './components/challenges/WinnersDrawer.vue';
 import challengeProgram from './components/challenges/ProgramSuggester.vue';
 import EngagementCenter from './components/EngagementCenter.vue';
+import Programs from './components/programs/Programs.vue';
+import ProgramsList from './components/programs/ProgramsList.vue';
+import ProgramCard from './components/programs/ProgramCard.vue';
 
 const components = {
   'challenges': Challenges,
@@ -44,6 +47,9 @@ const components = {
   'challenge-winners-details': WinnersDrawer,
   'challenge-program': challengeProgram,
   'engagement-center': EngagementCenter,
+  'engagement-center-programs': Programs,
+  'engagement-center-programs-list': ProgramsList,
+  'engagement-center-program-card': ProgramCard,
 };
 
 for (const key in components) {
