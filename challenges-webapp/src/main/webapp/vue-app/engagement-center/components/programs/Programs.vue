@@ -15,35 +15,45 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
-    <main v-if="engagementCenterEnabled">
-      <v-tabs
-        v-model="tab"
-        slider-size="4"
-        class="mb-4">
-        <v-tab class="px-5">{{ $t('engagementCenter.label.challenges') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
-      </v-tabs>
-      <v-tabs-items v-model="tab">
-        <v-tab-item>
-          <challenges />
-        </v-tab-item>
-        <v-tab-item>
-          <engagement-center-programs />
-        </v-tab-item>
-      </v-tabs-items>
-    </main>
-    <main v-else>
-      <challenges />
-    </main>
-  </v-app>
+  <div
+    id="EngagementCenterPrograms"
+    class="border-box-sizing"
+    role="main"
+    flat>
+    <engagement-center-programs-list
+      :loading="loading"
+      :programs="programs"
+      class="py-10 mx-4" />
+  </div>
 </template>
 
 <script>
 export default {
-  data: () => ({
-    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
-    tab: null,
-  }),
+  data() {
+    return {
+      programs: null,
+      loading: false,
+    };
+  },
+  watch: {
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
+  },
+  created() {
+    this.retrievePrograms();
+  },
+  methods: {
+    retrievePrograms() {
+      this.loading = true;
+      this.$challengesServices.getAllDomains()
+        .then(programs => this.programs =  programs.slice().filter(program => program.enabled))
+        .finally(() => this.loading = false);
+    },
+  },
 };
 </script>
