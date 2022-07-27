@@ -27,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="pa-4">
       <div class="border-box-sizing clickable addChallengeButton" v-if="canAddChallenge">
         <v-btn class="btn btn-primary" @click="openChallengeDrawer">
-          <v-icon>fas fa-plus</v-icon>
+          <v-icon small>fas fa-plus</v-icon>
           <span class="mx-2 d-none d-lg-inline">
             {{ $t('challenges.button.addChallenge') }}
           </span>
@@ -52,9 +52,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
       <div class="pt-1">
         <select
+          id="EngagementCenterApplicationChallengesQuickFilter"
           v-model="filter"
-          class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter"
-          @change="getChallenges">
+          class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter mb-3"
+          @change="refreshChallenges">
           <option
             v-for="filter in challengesFilter"
             :key="filter.value"
