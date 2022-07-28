@@ -33,22 +33,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-btn>
       </div>
-      <v-spacer />
-      <div class="pt-1">
-        <select
-          v-model="filter"
-          class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter"
-          @change="getChallenges">
-          <option
-            v-for="filter in challengesFilter"
-            :key="filter.value"
-            :value="filter.value">
-            <span class="d-none d-lg-inline">
-              {{ filter.text }}
-            </span>
-          </option>
-        </select>
-      </div>
     </v-toolbar>
     <welcome-message
       v-if="displayWelcomeMessage"
