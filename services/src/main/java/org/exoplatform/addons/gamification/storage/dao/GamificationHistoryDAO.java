@@ -27,9 +27,13 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.service.effective.*;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
+import net.bytebuddy.build.HashCodeAndEqualsPlugin.Sorted;
+
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
   public static final String            STATUS = "status";
+  private static final String DESC = "desc";
+  private static final String ASC = "asc";
 
 
   /**
@@ -415,7 +419,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     List<GamificationActionsHistory> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
   }
-  public List<GamificationActionsHistory> getAllRealizationsByDate(Date fromDate, Date toDate, int offset, int limit) {
+  public List<GamificationActionsHistory> getAllRealizationsByDate(Date fromDate, Date toDate, String sortBy, boolean sortDescending, int offset, int limit) {
     TypedQuery<GamificationActionsHistory> query =
                                                  getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDate",
                                                                                      GamificationActionsHistory.class);
@@ -425,6 +429,12 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (limit != 0) {
       query.setFirstResult(offset);
       query.setMaxResults(limit);
+    }
+    query.setParameter("sortBy", sortBy);
+    if (sortDescending) {
+    	query.setParameter("orderBy", DESC);
+    } else {
+    	query.setParameter("orderBy", ASC);
     }
     List<GamificationActionsHistory> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList ;

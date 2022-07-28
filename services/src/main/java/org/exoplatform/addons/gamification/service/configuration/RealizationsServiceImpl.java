@@ -22,6 +22,8 @@ public class RealizationsServiceImpl implements RealizationsService {
   @Override
   public List<GamificationActionsHistoryDTO> getAllRealizationsByDate(String fromDate,
                                                                       String toDate,
+                                                                      String sortBy,
+                                                                      boolean sortDescending,
                                                                       int offset,
                                                                       int limit) throws IllegalArgumentException {
     if (StringUtils.isBlank(fromDate)) {
@@ -36,7 +38,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (dateFrom.after(dateTo)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
-    return realizationsStorage.getAllRealizationsByDate(dateFrom, dateTo, offset, limit);
+    return realizationsStorage.getAllRealizationsByDate(dateFrom, dateTo, sortBy, sortDescending, offset, limit);
   }
 
   @Override

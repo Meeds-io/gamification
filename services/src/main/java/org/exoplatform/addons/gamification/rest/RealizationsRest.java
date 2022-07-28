@@ -66,6 +66,12 @@ public class RealizationsRest implements ResourceContainer {
                                                 @ApiParam(value = "result toDate", required = true)
                                                 @QueryParam("toDate")
                                                 String toDate,
+                                                @ApiParam(value = "Sort field. Possible values: ... Default = ", defaultValue = "name", required = false)
+                                                @QueryParam("sortBy")
+                                                String sortBy,
+                                                @ApiParam(value = "Whether to retrieve results sorted descending or not", required = false)
+                                                @QueryParam("sortDescending")
+                                                boolean sortDescending,
                                                 @ApiParam(value = "Offset of result", required = false)
                                                 @DefaultValue("0")
                                                 @QueryParam("offset")
@@ -84,6 +90,8 @@ public class RealizationsRest implements ResourceContainer {
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
                                                                                                                          toDate,
+                                                                                                                         sortBy,
+                                                                                                                         sortDescending,
                                                                                                                          offset,
                                                                                                                          limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
@@ -145,7 +153,7 @@ public class RealizationsRest implements ResourceContainer {
   @RolesAllowed("administrators")
   @Produces("application/vnd.ms-excel")
   @Path("getExport")
-  @ApiOperation(value = "Gets CSV report", httpMethod = "GET", response = Response.class, notes = "Given a a csv file of actions")
+  @ApiOperation(value = "Gets CSV report", httpMethod = "GET", response = Response.class, notes = "Given a csv file of actions")
   @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
       @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getReport(@ApiParam(value = "result fromDate", required = true)
@@ -157,6 +165,8 @@ public class RealizationsRest implements ResourceContainer {
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
                                                                                                              toDate,
+                                                                                                             null,                                                                                                          
+                                                                                                             false, 
                                                                                                              0,
                                                                                                              0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =

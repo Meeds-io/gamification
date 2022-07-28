@@ -17,8 +17,8 @@ public class RealizationsStorage {
         this.gamificationHistoryDAO = gamificationHistoryDAO;
     }
 
-    public List<GamificationActionsHistoryDTO> getAllRealizationsByDate (Date fromDate, Date toDate, int offset, int limit){
-        List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.getAllRealizationsByDate(fromDate, toDate, offset, limit);
+    public List<GamificationActionsHistoryDTO> getAllRealizationsByDate (Date fromDate, Date toDate, String sortBy, boolean sortDescending, int offset, int limit){
+        List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.getAllRealizationsByDate(fromDate, toDate, sortBy, sortDescending, offset, limit);
         return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
     }
 

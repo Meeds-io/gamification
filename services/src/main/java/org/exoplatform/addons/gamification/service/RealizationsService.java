@@ -12,6 +12,8 @@ public interface RealizationsService {
    *
    * @param fromDate fromDate
    * @param toDate toDate
+   * @param toDate sortBy
+   * @param toDate sortDescending
    * @param offset Offset
    * @param limit Limit
    * @return A {@link List <GamificationActionsHistoryDTO>} object
@@ -19,6 +21,8 @@ public interface RealizationsService {
    */
   List<GamificationActionsHistoryDTO> getAllRealizationsByDate(String fromDate,
                                                                String toDate,
+                                                               String sortBy,
+                                                               boolean sortDescending,
                                                                int offset,
                                                                int limit) throws IllegalArgumentException;
 
