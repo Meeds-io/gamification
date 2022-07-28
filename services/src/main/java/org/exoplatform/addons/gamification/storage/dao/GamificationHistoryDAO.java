@@ -420,21 +420,22 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
   public List<GamificationActionsHistory> getAllRealizationsByDate(Date fromDate, Date toDate, String sortBy, boolean sortDescending, int offset, int limit) {
-    TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDate",
-                                                                                     GamificationActionsHistory.class);
+	  TypedQuery<GamificationActionsHistory> query = null;
+	  if (sortBy != null) {
+	    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findSortedRealizationsByDate",
+                                                    GamificationActionsHistory.class);
+	    query.setParameter("orderField", sortBy);
+	    query.setParameter("orderType", sortDescending);
+	} else {
+	    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDate",
+                                                    GamificationActionsHistory.class);
+	}
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
     query.setParameter("type", IdentityType.USER);
     if (limit != 0) {
       query.setFirstResult(offset);
       query.setMaxResults(limit);
-    }
-    query.setParameter("sortBy", sortBy);
-    if (sortDescending) {
-    	query.setParameter("orderBy", DESC);
-    } else {
-    	query.setParameter("orderBy", ASC);
     }
     List<GamificationActionsHistory> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList ;
