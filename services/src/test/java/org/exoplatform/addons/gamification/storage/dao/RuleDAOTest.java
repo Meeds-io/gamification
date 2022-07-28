@@ -16,13 +16,13 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 import java.util.Collections;
@@ -156,7 +156,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityNotStarted.setLastModifiedBy(TEST_USER_SENDER);
     ruleEntityNotStarted.setLastModifiedDate(new Date());
     ruleEntityNotStarted.setDomainEntity(newDomain("domain1"));
-    ruleEntityNotStarted.setType(TypeRule.MANUAL);
+    ruleEntityNotStarted.setType(EntityType.MANUAL);
     ruleEntityNotStarted.setAudience(1l);
     ruleEntityNotStarted.setManagers(Collections.singletonList(1l));
     ruleEntityNotStarted.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
@@ -179,7 +179,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityEnded.setLastModifiedBy(TEST_USER_SENDER);
     ruleEntityEnded.setLastModifiedDate(new Date());
     ruleEntityEnded.setDomainEntity(newDomain("domain1"));
-    ruleEntityEnded.setType(TypeRule.MANUAL);
+    ruleEntityEnded.setType(EntityType.MANUAL);
     ruleEntityEnded.setAudience(1l);
     ruleEntityEnded.setManagers(Collections.singletonList(1l));
     ruleEntityEnded.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
@@ -193,15 +193,15 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testCountRulesByFilter() {
     RuleFilter filter = new RuleFilter();
-    assertEquals(ruleDAO.countRulesByFilter(filter), 0);
+    assertEquals(0, ruleDAO.countRulesByFilter(filter));
     RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(ruleDAO.countRulesByFilter(filter), 1);
+    assertEquals(1, ruleDAO.countRulesByFilter(filter));
     newRule("rule2", "domain1", 1l);
-    assertEquals(ruleDAO.countRulesByFilter(filter), 2);
+    assertEquals(2, ruleDAO.countRulesByFilter(filter));
     newRule("rule3", "domain3", 1l);
-    assertEquals(ruleDAO.countRulesByFilter(filter), 2);
+    assertEquals(2, ruleDAO.countRulesByFilter(filter));
   }
 
 }

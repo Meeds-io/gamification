@@ -28,8 +28,8 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -337,13 +337,13 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
 
     List<GamificationActionsHistory> histories = new ArrayList<>();
-    histories.add(newGamificationActionsHistoryToBeSorted(rule1Automatic.getEvent(), null));
-    histories.add(newGamificationActionsHistoryToBeSorted("", rule3Manual.getId()));
-    histories.add(newGamificationActionsHistoryToBeSorted("", rule1Automatic.getId()));
-    histories.add(newGamificationActionsHistoryToBeSorted(rule3Manual.getEvent(), null));
-    histories.add(newGamificationActionsHistoryToBeSorted("", rule2Automatic.getId()));
-    histories.add(newGamificationActionsHistoryToBeSorted(rule2Automatic.getEvent(), null));
-    histories.add(newGamificationActionsHistoryToBeSorted("", rule3Manual.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryWithRuleId("", rule3Manual.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId("", rule1Automatic.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId(rule3Manual.getEvent(), null));
+    histories.add(newGamificationActionsHistoryWithRuleId("", rule2Automatic.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId(rule2Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryWithRuleId("", rule3Manual.getId()));
 
     RealizationsFilter dateFilter = new RealizationsFilter();
     dateFilter.setFromDate(fromDate);
@@ -449,10 +449,17 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   }
   
   @Test
+<<<<<<< HEAD
   public void testFindAllRealizationsByFilterSortByActionTypeInDateRange() {
     RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, TypeRule.AUTOMATIC);
     RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, TypeRule.AUTOMATIC);
     RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
+=======
+  public void testFindRealizationsByFilterSortByActionTypeInDateRange() {
+    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, EntityType.AUTOMATIC);
+    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, EntityType.AUTOMATIC);
+    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, EntityType.MANUAL);
+>>>>>>> 8de1916a... MEED-112: implement add program feature
 
     List<GamificationActionsHistory> histories = new ArrayList<>();
     histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule1Automatic.getEvent(), null));

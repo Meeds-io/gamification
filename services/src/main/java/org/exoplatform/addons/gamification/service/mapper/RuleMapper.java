@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -18,7 +18,7 @@ package org.exoplatform.addons.gamification.service.mapper;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.utils.Utils;
 
 import java.util.Collections;
@@ -61,7 +61,7 @@ public class RuleMapper {
     if (ruleDTO.getType() != null) {
       rule.setType(ruleDTO.getType());
     } else {
-      rule.setType(TypeRule.AUTOMATIC);
+      rule.setType(EntityType.AUTOMATIC);
     }
     if (ruleDTO.getManagers() != null) {
       rule.setManagers(ruleDTO.getManagers());
@@ -75,7 +75,7 @@ public class RuleMapper {
       rule.setCreatedDate(Utils.parseRFC3339Date(ruleDTO.getCreatedDate()));
     }
     rule.setLastModifiedBy(ruleDTO.getLastModifiedBy());
-    rule.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDTO.getDomainDTO()));
+    rule.setDomainEntity(DomainMapper.domainDTOToDomainEntity(ruleDTO.getDomainDTO()));
     return rule;
   }
 
@@ -105,7 +105,7 @@ public class RuleMapper {
       if (ruleEntity.getType() != null) {
         rule.setType(ruleEntity.getType());
       } else {
-        rule.setType(TypeRule.AUTOMATIC);
+        rule.setType(EntityType.AUTOMATIC);
       }
       if (ruleEntity.getManagers() != null) {
         rule.setManagers(ruleEntity.getManagers());

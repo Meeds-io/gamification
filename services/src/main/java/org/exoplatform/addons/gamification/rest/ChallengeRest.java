@@ -27,13 +27,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.rest.model.DomainWithChallengesRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -247,7 +251,8 @@ public class ChallengeRest implements ResourceContainer {
         LOG.info("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
-        List<DomainDTO> domains = domainService.getAllDomains();
+        DomainFilter domainFilter = new DomainFilter(EntityFilterType.AUTOMATIC, EntityStatusType.ENABLED);
+        List<DomainDTO> domains = domainService.getAllDomains(offset, limit, domainFilter);
         List<DomainWithChallengesRestEntity> domainsWithChallenges = domains.stream().map(domain -> {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
           try {
@@ -341,13 +346,12 @@ public class ChallengeRest implements ResourceContainer {
       challengeService.deleteChallenge(challengeId, currentUser);
       return Response.ok().build();
     } catch (ObjectNotFoundException e) {
-      LOG.error("User '{}' attempts to to delete not existing challenge", currentUser, e);
-      return Response.status(Response.Status.NOT_FOUND).entity("challenge trying to delete not found").build();
+      return Response.status(Response.Status.NOT_FOUND).entity("The challenge doesn't exist").build();
     } catch (IllegalAccessException e) {
-      LOG.error("unauthorized user {} trying to delete a challenge", currentUser, e);
+      LOG.error("User {} is not authorized to delete challenge with id {}", currentUser, challengeId, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to delete a challenge").build();
     } catch (Exception e) {
-      LOG.error("Error when deleting challenge", e);
+      LOG.error("Error when deleting challenge with id {}", challengeId, e);
       return Response.serverError().entity("Error when deleting challenge").build();
     }
   }

@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.services.log.ExoLogger;
@@ -46,7 +46,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
                                                      .setParameter("ruleTitle", ruleTitle);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
       return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
@@ -59,7 +59,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
                                                      .setParameter("event", event);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -70,7 +70,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public RuleEntity findRuleByTitle(String ruleTitle) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByTitle", RuleEntity.class);
     query.setParameter("ruleTitle", ruleTitle);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
       return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
@@ -84,7 +84,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
                                                      .setParameter("event", event)
                                                      .setParameter("domain", domain);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
       return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
@@ -107,7 +107,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     try {
       TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
                                                        .setParameter("isEnabled", true);
-      query.setParameter("type", TypeRule.AUTOMATIC);
+      query.setParameter("type", EntityType.AUTOMATIC);
       return query.getResultList();
     } catch (PersistenceException e) {
       LOG.error("Error : Unable to fetch active rules", e);
@@ -119,7 +119,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
                                                      .setParameter("domain", domain);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -131,7 +131,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<RuleEntity> getAllRulesWithNullDomain() throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesWithNullDomain", RuleEntity.class);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -142,7 +142,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public List<String> getDomainList() throws PersistenceException {
     TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getDomainList", String.class);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -153,7 +153,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public List<String> getAllEvents() throws PersistenceException {
     TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
-    query.setParameter("type", TypeRule.AUTOMATIC);
+    query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -161,13 +161,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<String> getRuleEventsByType(TypeRule ruleType) {
+  public List<String> getRuleEventsByType(EntityType ruleType) {
     TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
     query.setParameter("type", ruleType);
     return query.getResultList();
   }
 
-  public List<Long> getRuleIdsByType(TypeRule ruleType) {
+  public List<Long> getRuleIdsByType(EntityType ruleType) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRuleIdsByType", Long.class);
     query.setParameter("type", ruleType);
     return query.getResultList();

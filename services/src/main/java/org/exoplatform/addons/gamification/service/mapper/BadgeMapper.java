@@ -72,7 +72,7 @@ public class BadgeMapper {
                 if (badgeDTO.getLastModifiedDate() != null) {
                     badge.setLastModifiedDate(formatter.parse(badgeDTO.getLastModifiedDate()));
                 }
-                badge.setDomainEntity(DomainMapper.domainDTOToDomain(badgeDTO.getDomainDTO()));
+                badge.setDomainEntity(DomainMapper.domainDTOToDomainEntity(badgeDTO.getDomainDTO()));
                 return badge;
             }
 

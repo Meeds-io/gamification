@@ -16,10 +16,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;

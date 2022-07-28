@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;

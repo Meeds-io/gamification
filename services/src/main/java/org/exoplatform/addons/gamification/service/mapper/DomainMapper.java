@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -14,47 +14,33 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 package org.exoplatform.addons.gamification.service.mapper;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainOwnerEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 public class DomainMapper {
 
-  private static final Log        LOG       = ExoLogger.getLogger(DomainMapper.class);
-
-  public DomainMapper() {
+  private DomainMapper() {
   }
 
-  public static DomainDTO domainToDomainDTO(DomainEntity domain) {
-   return new DomainDTO(domain.getId(),
-            domain.getTitle(),
-            domain.getDescription(),
-            domain.getPriority(),
-            domain.getCreatedBy(),
-            Utils.toRFC3339Date(domain.getCreatedDate()),
-            domain.getLastModifiedBy(),
-            Utils.toRFC3339Date(domain.getLastModifiedDate()),
-           domain.isDeleted(),
-           domain.isEnabled()
-            );
+  public static List<DomainDTO> domainsToDomainDTOs(List<DomainEntity> domains) {
+    return domains.stream().filter(Objects::nonNull).map(DomainMapper::domainEntityToDomainDTO).collect(Collectors.toList());
   }
 
-  public static List<DomainDTO> domainssToDomainDTOs(List<DomainEntity> domains) {
-    return domains.stream()
-                  .filter(Objects::nonNull)
-                  .map((DomainEntity domain) -> domainToDomainDTO(domain))
-                  .collect(Collectors.toList());
-  }
-
-  public static DomainEntity domainDTOToDomain(DomainDTO domainDTO) {
-
+  public static DomainEntity domainDTOToDomainEntity(DomainDTO domainDTO) {
     if (domainDTO == null) {
       return null;
     } else {
@@ -66,46 +52,48 @@ public class DomainMapper {
       domain.setLastModifiedBy(domainDTO.getLastModifiedBy());
       domain.setDeleted(domainDTO.isDeleted());
       domain.setEnabled(domainDTO.isEnabled());
-      if(domainDTO.getCreatedDate() != null) {
+      if (domainDTO.getCreatedDate() != null) {
         domain.setCreatedDate(Utils.parseRFC3339Date(domainDTO.getCreatedDate()));
       }
       domain.setLastModifiedDate(Utils.parseRFC3339Date(domainDTO.getLastModifiedDate()));
       domain.setPriority(domainDTO.getPriority());
+      domain.setBudget(domainDTO.getBudget());
+      domain.setCoverFileId(domainDTO.getCoverFileId());
+      if (StringUtils.isBlank(domainDTO.getType())) {
+        domain.setType(EntityType.AUTOMATIC);
+      } else {
+        domain.setType(EntityType.valueOf(domainDTO.getType()));
+      }
       return domain;
     }
-  }
-
-  public static List<DomainEntity> domainDTOsToDomains(List<DomainDTO> domainDTOs) {
-    return domainDTOs.stream()
-                     .filter(Objects::nonNull)
-                     .map((DomainDTO domainDTO) -> domainDTOToDomain(domainDTO))
-                     .collect(Collectors.toList());
-  }
-
-  public static DomainEntity domainFromId(Long id) {
-    if (id == null) {
-      return null;
-    }
-    DomainEntity domain = new DomainEntity();
-    domain.setId(id);
-    return domain;
   }
 
   public static DomainDTO domainEntityToDomainDTO(DomainEntity domainEntity) {
     if (domainEntity == null) {
       return null;
-    } else {
-      return new DomainDTO(domainEntity.getId(),
-              domainEntity.getTitle(),
-              domainEntity.getDescription(),
-              domainEntity.getPriority(),
-              domainEntity.getCreatedBy(),
-              Utils.toRFC3339Date(domainEntity.getCreatedDate()),
-              domainEntity.getLastModifiedBy(),
-              Utils.toRFC3339Date(domainEntity.getLastModifiedDate()),
-              domainEntity.isDeleted(),
-              domainEntity.isEnabled()
-      );
     }
+    long lastUpdateTime = domainEntity.getLastModifiedDate() == null ? 0 : domainEntity.getLastModifiedDate().getTime();
+    String coverUrl = Utils.buildAttachmentUrl(String.valueOf(domainEntity.getId()), lastUpdateTime, Utils.TYPE);
+    List<DomainOwnerEntity> ownerEntities = domainEntity.getOwners();
+    Set<Long> owners = ownerEntities == null ? Collections.emptySet()
+                                             : ownerEntities.stream()
+                                                            .map(DomainOwnerEntity::getIdentityId)
+                                                            .collect(Collectors.toSet());
+    return new DomainDTO(domainEntity.getId(),
+                         domainEntity.getTitle(),
+                         domainEntity.getDescription(),
+                         domainEntity.getPriority(),
+                         domainEntity.getCreatedBy(),
+                         Utils.toRFC3339Date(domainEntity.getCreatedDate()),
+                         domainEntity.getLastModifiedBy(),
+                         Utils.toRFC3339Date(domainEntity.getLastModifiedDate()),
+                         domainEntity.isDeleted(),
+                         domainEntity.isEnabled(),
+                         domainEntity.getBudget(),
+                         domainEntity.getType().name(),
+                         domainEntity.getCoverFileId(),
+                         coverUrl,
+                         owners);
   }
+
 }

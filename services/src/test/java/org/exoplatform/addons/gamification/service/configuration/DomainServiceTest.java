@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -16,128 +16,199 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
-import java.util.Date;
+import static org.junit.Assert.assertThrows;
 
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
-import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-
-import javax.persistence.EntityNotFoundException;
-import static org.junit.Assert.assertThrows;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class DomainServiceTest extends AbstractServiceTest {
 
   @Test
-  public void testGetAllDomains() {
-    assertEquals(domainService.getAllDomains().size(), 0);
-    Date createDate = new Date(System.currentTimeMillis());
-    Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
-    DomainDTO domain1 = new DomainDTO();
-    domain1.setTitle("domain1");
-    domain1.setDescription("Description");
-    domain1.setCreatedBy(TEST_USER_SENDER);
-    domain1.setCreatedDate(Utils.toRFC3339Date(createDate));
-    domain1.setLastModifiedBy(TEST_USER_SENDER);
-    domain1.setDeleted(false);
-    domain1.setEnabled(true);
-    domain1.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.addDomain(domain1);
-    DomainDTO domain2 = new DomainDTO();
-    domain2.setTitle("domain2");
-    domain2.setDescription("Description");
-    domain2.setCreatedBy(TEST_USER_SENDER);
-    domain2.setCreatedDate(Utils.toRFC3339Date(createDate));
-    domain2.setLastModifiedBy(TEST_USER_SENDER);
-    domain2.setDeleted(false);
-    domain2.setEnabled(true);
-    domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.addDomain(domain2);
-    DomainDTO domain3 = new DomainDTO();
-    domain3.setTitle("domain3");
-    domain3.setDescription("Description");
-    domain3.setCreatedBy(TEST_USER_SENDER);
-    domain3.setCreatedDate(Utils.toRFC3339Date(createDate));
-    domain3.setLastModifiedBy(TEST_USER_SENDER);
-    domain3.setDeleted(false);
-    domain3.setEnabled(true);
-    domain3.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.addDomain(domain3);
-    assertEquals(domainService.getAllDomains().size(), 3);
+  public void testGetAllDomains() throws Exception {
+
+    DomainFilter filter = new DomainFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, domainService.getAllDomains(offset, 10, filter).size());
+    newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
+    newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
+    assertEquals(4, domainService.getAllDomains(offset, 10, filter).size());
+
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(2, domainService.getAllDomains(offset, 10, filter).size());
+    newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
+    assertEquals(2, domainService.getAllDomains(offset, 10, filter).size());
+
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(2, domainService.getAllDomains(offset, 10, filter).size());
+    newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
+    assertEquals(2, domainService.getAllDomains(offset, 10, filter).size());
+
+    filter.setEntityStatusType(EntityStatusType.ALL);
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    assertEquals(6, domainService.getAllDomains(offset, 10, filter).size());
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, domainService.getAllDomains(offset, 10, filter).size());
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(1, domainService.getAllDomains(offset, 10, filter).size());
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(1, domainService.getAllDomains(offset, 10, filter).size());
+  }
+
+  @Test
+  public void testCountAllDomains() {
+    DomainFilter filter = new DomainFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, domainService.countDomains(filter));
+    newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
+    newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
+    newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
+    assertEquals(4, domainService.countDomains(filter));
+
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(2, domainService.countDomains(filter));
+    newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
+    assertEquals(2, domainService.countDomains(filter));
+
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(2, domainService.countDomains(filter));
+    newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
+    assertEquals(2, domainService.countDomains(filter));
+
+    filter.setEntityStatusType(EntityStatusType.ALL);
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    assertEquals(6, domainService.countDomains(filter));
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, domainService.countDomains(filter));
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(1, domainService.countDomains(filter));
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(1, domainService.countDomains(filter));
   }
 
   @Test
   public void testFindEnabledDomainByTitle() {
+    assertThrows(IllegalArgumentException.class, () -> domainService.findEnabledDomainByTitle(""));
+
     assertNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    DomainDTO domainDTO = newDomainDTO();
+    newDomainDTO(EntityType.MANUAL, GAMIFICATION_DOMAIN, true, Collections.singleton(1l));
     assertNotNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    domainDTO.setEnabled(false);
-    try {
-      domainService.updateDomain(domainDTO);
-    } catch (ObjectNotFoundException e) {
-    //
-    }
-    assertNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
+    newDomainDTO(EntityType.MANUAL, "disabledDomain", false, Collections.singleton(1l));
+    assertNull(domainService.findEnabledDomainByTitle("disabledDomain"));
   }
 
   @Test
-  public void testAddDomain() {
+  public void testAddDomain() throws Exception {
     assertEquals(domainDAO.findAll().size(), 0);
-    Date createDate = new Date(System.currentTimeMillis());
-    Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
-    DomainDTO domain = new DomainDTO();
-    domain.setTitle(GAMIFICATION_DOMAIN);
-    domain.setDescription("Description");
-    domain.setCreatedBy(TEST_USER_SENDER);
-    domain.setCreatedDate(Utils.toRFC3339Date(createDate));
-    domain.setLastModifiedBy(TEST_USER_SENDER);
-    domain.setDeleted(false);
-    domain.setEnabled(true);
-    domain.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domain = domainService.addDomain(domain);
-    assertNotNull(domainDAO.find(domain.getId()));
+    DomainDTO autoDomain = new DomainDTO();
+    autoDomain.setTitle(GAMIFICATION_DOMAIN);
+    autoDomain.setDescription("Description");
+    autoDomain.setCreatedBy(TEST_USER_SENDER);
+    autoDomain.setCreatedDate(Utils.toRFC3339Date(new Date()));
+    autoDomain.setLastModifiedBy(TEST_USER_SENDER);
+    autoDomain.setDeleted(false);
+    autoDomain.setEnabled(true);
+    autoDomain.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
+    autoDomain.setCreatedDate(Utils.toRFC3339Date(new Date()));
+    autoDomain.setBudget(20l);
+    assertThrows(IllegalArgumentException.class, () -> domainService.addDomain(null, "root1", true));
+    DomainDTO domainWithId = new DomainDTO();
+    domainWithId.setId(150l);
+    assertThrows(IllegalArgumentException.class, () -> domainService.addDomain(domainWithId, "root1", true));
+    autoDomain = domainService.addDomain(autoDomain, "root1", true);
+    assertNotNull(autoDomain);
+    assertEquals(EntityType.AUTOMATIC.name(), autoDomain.getType());
+    assertNotNull(domainDAO.find(autoDomain.getId()));
+
+    DomainDTO manualDomain = new DomainDTO();
+    manualDomain.setTitle(GAMIFICATION_DOMAIN);
+    manualDomain.setDescription("Description");
+    manualDomain.setCreatedBy(TEST_USER_SENDER);
+    manualDomain.setCreatedDate(Utils.toRFC3339Date(new Date()));
+    manualDomain.setLastModifiedBy(TEST_USER_SENDER);
+    manualDomain.setDeleted(false);
+    manualDomain.setEnabled(true);
+    manualDomain.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
+    manualDomain.setCreatedDate(Utils.toRFC3339Date(new Date()));
+    manualDomain.setBudget(20l);
+    manualDomain.setOwners(new HashSet<>());
+    manualDomain.setCoverFileId(1L);
+    manualDomain.setType(EntityType.MANUAL.name());
+    assertThrows(IllegalArgumentException.class, () -> domainService.addDomain(manualDomain, "root1", true));
+    manualDomain.setOwners(Collections.singleton(1234l));
+    assertThrows(IllegalAccessException.class, () -> domainService.addDomain(manualDomain, "root1", false));
+    DomainDTO savedDomain = domainService.addDomain(manualDomain, "root1", true);
+    assertNotNull(savedDomain);
+    assertEquals(EntityType.MANUAL.name(), savedDomain.getType());
+    assertNotNull(domainDAO.find(savedDomain.getId()));
   }
 
   @Test
-  public void testUpdateDomain() {
-    try {
-      DomainEntity domainEntity = newDomain();
-      domainEntity.setDescription("desc_2");
-      domainService.updateDomain(DomainMapper.domainToDomainDTO(domainEntity));
-      domainEntity = domainDAO.find(domainEntity.getId());
-      assertEquals(domainEntity.getDescription(), "desc_2");
-    } catch (Exception e) {
-      fail("Error when updating domain", e);
-    }
+  public void testUpdateDomain() throws Exception {
+    DomainDTO notExistDomain = new DomainDTO();
+    notExistDomain.setId(150l);
+    assertThrows(ObjectNotFoundException.class, () -> domainService.updateDomain(notExistDomain, "root1", true));
+    DomainDTO domain = newDomainDTO(EntityType.MANUAL, "domain1", true, Collections.singleton(1l));
+    domain.setDescription("desc_2");
+    assertThrows(IllegalAccessException.class, () -> domainService.updateDomain(domain, "root10", false));
 
+    domainService.updateDomain(domain, "root1", true);
+    DomainEntity domainEntity = domainDAO.find(domain.getId());
+    assertEquals(domainEntity.getDescription(), "desc_2");
   }
 
   @Test
-  public void testDeleteDomain() {
-    try {
-      DomainEntity domainEntity = newDomain();
-      assertEquals(domainEntity.isDeleted(), false);
-      domainService.deleteDomain(domainEntity.getId());
-      assertEquals(domainEntity.isDeleted(), true);
-      assertThrows(EntityNotFoundException.class, () ->  domainService.deleteDomain(58620l));
-    } catch (Exception e) {
-      fail("Error when deleteing domain", e);
-    }
+  public void testDeleteDomain() throws Exception {
+    DomainDTO domain = newDomainDTO(EntityType.MANUAL, "domain1", true, Collections.singleton(1l));
+    assertFalse(domain.isDeleted());
+    domain.setDeleted(true);
+    domainService.deleteDomain(domain.getId(), "root1", true);
+    DomainEntity domainEntity = domainDAO.find(domain.getId());
+    assertTrue(domainEntity.isDeleted());
   }
 
   @Test
   public void testGetDomainByTitle() {
+    assertThrows(IllegalArgumentException.class, () -> domainService.getDomainByTitle(""));
     assertNull(domainService.getDomainByTitle(GAMIFICATION_DOMAIN));
+    newDomain();
+    DomainDTO domain = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
+    assertNotNull(domain);
+    assertEquals(domain.getTitle(), GAMIFICATION_DOMAIN);
+  }
+
+  @Test
+  public void testGetDomainById() {
+    assertEquals(domainDAO.findAll().size(), 0);
+    assertThrows(IllegalArgumentException.class, () -> domainService.getDomainById(-1l));
     DomainDTO domainDTO = newDomainDTO();
-    assertNotNull(domainService.getDomainByTitle(GAMIFICATION_DOMAIN));
-    domainDTO.setDeleted(true);
-    domainService.addDomain(domainDTO);
-    domainDTO = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
     assertNotNull(domainDTO);
-    assertEquals(domainDTO.getTitle(), GAMIFICATION_DOMAIN);
+    DomainDTO domain = domainService.getDomainById(domainDTO.getId());
+    assertNotNull(domain);
+    assertEquals(domainDTO.getId(), domain.getId());
+  }
+  @Test
+  public void TestGetFileDetailAsStream() throws IOException {
+    assertNull(domainService.getFileDetailAsStream(0));
+    assertNull(domainService.getFileDetailAsStream(150l));
+    assertNotNull(domainService.getFileDetailAsStream(1l));
   }
 }

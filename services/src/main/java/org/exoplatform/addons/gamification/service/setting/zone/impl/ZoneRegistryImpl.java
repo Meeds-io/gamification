@@ -24,6 +24,7 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.IdentityConstants;
 import org.picocontainer.Startable;
 
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
 
     }
 
-    private void store(ZoneConfig zoneConfig) {
+    private void store(ZoneConfig zoneConfig) throws Exception {
 
         DomainDTO domainDTO = new DomainDTO();
         domainDTO.setTitle(zoneConfig.getZoneName());
@@ -89,6 +90,6 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         } catch (Exception e) {
             domainDTO.setPriority(10);
         }
-        domainService.addDomain(domainDTO);
+        domainService.addDomain(domainDTO, IdentityConstants.SYSTEM, true);
     }
 }

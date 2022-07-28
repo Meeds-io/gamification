@@ -28,10 +28,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.common.http.HTTPStatus;

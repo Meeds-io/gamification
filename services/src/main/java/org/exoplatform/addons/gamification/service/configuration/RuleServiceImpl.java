@@ -26,6 +26,7 @@ import java.util.List;
 import javax.persistence.EntityExistsException;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -52,8 +53,8 @@ public class RuleServiceImpl implements RuleService {
     return rule != null && rule.isEnabled() ? rule : null;
   }
 
-  public RuleDTO findRuleById(Long id) throws IllegalArgumentException {
-    if (id == null) {
+  public RuleDTO findRuleById(long id) throws IllegalArgumentException {
+    if (id == 0) {
       throw new IllegalArgumentException("Rule id is mandatory");
     }
     return ruleStorage.findRuleById(id);

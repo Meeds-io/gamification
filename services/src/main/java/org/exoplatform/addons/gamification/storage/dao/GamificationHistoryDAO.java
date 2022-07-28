@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -26,8 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.*;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
@@ -481,14 +481,14 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                                 int offset,
                                                                                 int limit) {
     List<GamificationActionsHistory> resultList = new ArrayList<>();
-    List<TypeRule> types = Arrays.asList(TypeRule.values());
+    List<EntityType> types = Arrays.asList(EntityType.values());
     if (sortDescending) {
       Collections.reverse(types);
     }
     int limitToRetrieve = limit + offset;
-    Iterator<TypeRule> typesIterator = types.iterator();
+    Iterator<EntityType> typesIterator = types.iterator();
     while (typesIterator.hasNext() && CollectionUtils.size(resultList) < limitToRetrieve) {
-      TypeRule ruleType = typesIterator.next();
+      EntityType ruleType = typesIterator.next();
       List<GamificationActionsHistory> actions = getAllActionsHistoriesByRuleType(ruleType,
                                                                                   fromDate,
                                                                                   toDate,
@@ -507,7 +507,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
-  private List<GamificationActionsHistory> getAllActionsHistoriesByRuleType(TypeRule ruleType,
+  private List<GamificationActionsHistory> getAllActionsHistoriesByRuleType(EntityType ruleType,
                                                                             Date fromDate,
                                                                             Date toDate,
                                                                             int offset,
@@ -594,14 +594,14 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                                      int offset,
                                                                                      int limit) {
        List<GamificationActionsHistory> resultList = new ArrayList<>();
-       List<TypeRule> types = Arrays.asList(TypeRule.values());
+       List<EntityType> types = Arrays.asList(EntityType.values());
        if (sortDescending) {
          Collections.reverse(types);
        }
        int limitToRetrieve = limit + offset;
-       Iterator<TypeRule> typesIterator = types.iterator();
+       Iterator<EntityType> typesIterator = types.iterator();
        while (typesIterator.hasNext() && CollectionUtils.size(resultList) < limitToRetrieve) {
-         TypeRule ruleType = typesIterator.next();
+         EntityType ruleType = typesIterator.next();
          List<GamificationActionsHistory> actions = getUsersActionsHistoriesByRuleType(ruleType,
                                                                                        fromDate,
                                                                                        toDate,
@@ -621,7 +621,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
        }
      }
 
-     private List<GamificationActionsHistory> getUsersActionsHistoriesByRuleType(TypeRule ruleType,
+     private List<GamificationActionsHistory> getUsersActionsHistoriesByRuleType(EntityType ruleType,
                                                                                  Date fromDate,
                                                                                  Date toDate,
                                                                                  Long earnerId,

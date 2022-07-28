@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -28,6 +28,9 @@ import org.json.JSONObject;
 import org.exoplatform.addons.gamification.portlets.common.BaseController;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.commons.juzu.ajax.Ajax;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -67,8 +70,9 @@ public class ManageDomainsController extends BaseController {
 
     }
 
+    DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ALL);
     // ----Load categories by context
-    List<DomainDTO> domains = domainService.getAllDomains();
+    List<DomainDTO> domains = domainService.getAllDomains(0, 0, domainFilter);
 
     JSONArray domainsJson = new JSONArray();
     // --- Build json response

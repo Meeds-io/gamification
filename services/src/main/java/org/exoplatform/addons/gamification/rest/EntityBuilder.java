@@ -22,11 +22,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
+import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -86,6 +89,32 @@ public class EntityBuilder {
                                    fromAnnouncementList(challengeAnnouncements),
                                    challenge.getPoints(),
                                    noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
+  }
+
+  public static DomainRestEntity toRestEntity(DomainDTO domain, String username) {
+    if (domain == null) {
+      return null;
+    }
+    return new DomainRestEntity(domain.getId(),
+                                domain.getTitle(),
+                                domain.getDescription(),
+                                domain.getPriority(),
+                                domain.getCreatedBy(),
+                                domain.getCreatedDate(),
+                                domain.getLastModifiedBy(),
+                                domain.getLastModifiedDate(),
+                                domain.isDeleted(),
+                                domain.isEnabled(),
+                                domain.getBudget(),
+                                domain.getType(),
+                                domain.getCoverFileId(),
+                                domain.getCoverUrl(),
+                                Utils.getDomainOwnersByIds(domain.getOwners()),
+                                Utils.toUserInfo(username, domain.getOwners()));
+  }
+
+  public static List<DomainRestEntity> toRestEntities(List<DomainDTO> domains, String username) {
+    return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).collect(Collectors.toList());
   }
 
 }

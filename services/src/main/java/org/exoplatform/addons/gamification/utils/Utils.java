@@ -1,5 +1,10 @@
 package org.exoplatform.addons.gamification.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -18,10 +23,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
@@ -32,6 +39,9 @@ import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.IOUtil;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.Constants;
 import org.exoplatform.portal.localization.LocaleContextInfoUtils;
 import org.exoplatform.services.log.ExoLogger;
@@ -48,6 +58,8 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.web.security.codec.CodecInitializer;
+import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
 public class Utils {
 
@@ -74,9 +86,19 @@ public class Utils {
 
   private static RuleService            ruleService;
 
-  public static final String             ANNOUNCEMENT_ACTIVITY_TYPE = "challenges-announcement";
+  public static final String            ANNOUNCEMENT_ACTIVITY_TYPE  = "challenges-announcement";
 
   public static final String            SYSTEM_USERNAME             = "SYSTEM";
+
+  public static byte[]                  defaultProgramCover         = null; // NOSONAR
+
+  public static final long              DEFAULT_COVER_LAST_MODIFIED = System.currentTimeMillis();
+
+  public static final String            BASE_URL_DOMAINS_REST_API   = "/gamification/domains";
+
+  public static final String            DEFAULT_IMAGE_REMOTE_ID     = "default-cover";
+
+  public static final String            TYPE                        = "cover";
 
   private Utils() { // NOSONAR
   }
@@ -130,9 +152,8 @@ public class Utils {
       throw new IllegalArgumentException("space is not exist");
     }
     if (StringUtils.isNotBlank(username)) {
-      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username)
-          || spaceService.isManager(space, username) || spaceService.isSuperManager(username)
-                                             : spaceService.isMember(space, username);
+      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username) || spaceService.isManager(space, username)
+          || spaceService.isSuperManager(username) : spaceService.isMember(space, username);
     } else {
       return false;
     }
@@ -204,41 +225,54 @@ public class Utils {
       return null;
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return DomainMapper.domainDTOToDomain(domainService.getDomainById(domainId));
+    return DomainMapper.domainDTOToDomainEntity(domainService.getDomainById(domainId));
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
     if (ruleId == 0) {
       return null;
     }
-    try {
-      RuleService ruleService = CommonsUtils.getService(RuleService.class);
-      return ruleService.findRuleById(ruleId);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
+    RuleService ruleService = CommonsUtils.getService(RuleService.class);
+    return ruleService.findRuleById(ruleId);
   }
 
   public static RuleDTO getRuleByTitle(String title) {
-    try {
-      return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
-
+    return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
   }
 
   public static List<UserInfo> getManagersByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
     try {
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      if (ids.isEmpty()) {
-        return Collections.emptyList();
-      }
       List<UserInfo> users = new ArrayList<>();
       for (Long id : ids) {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
           users.add(toUserInfo(identity));
+        }
+      }
+      return users;
+    } catch (Exception e) {
+      LOG.error("Error when getting challenge managers {}", e);
+      return Collections.emptyList();
+    }
+  }
+
+  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+    try {
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+      List<UserInfo> users = new ArrayList<>();
+      for (Long id : ids) {
+        Identity identity = identityManager.getIdentity(String.valueOf(id));
+        if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
+          UserInfo userInfo = toUserInfo(identity);
+          userInfo.setDomainOwner(true);
+          users.add(userInfo);
         }
       }
       return users;
@@ -277,6 +311,23 @@ public class Utils {
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
+    return userInfo;
+  }
+
+  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners) {
+    if (StringUtils.isBlank(username)) {
+      return null;
+    }
+    Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
+    if (identity == null) {
+      return null;
+    }
+    UserInfo userInfo = new UserInfo();
+    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    userInfo.setFullName(identity.getProfile().getFullName());
+    userInfo.setRemoteId(identity.getRemoteId());
+    userInfo.setId(identity.getId());
+    userInfo.setDomainOwner(isProgramOwner(domainsOwners, Long.valueOf(identity.getId())));
     return userInfo;
   }
 
@@ -390,8 +441,9 @@ public class Utils {
   }
 
   public static void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
-    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
-                                                                                     : new HashMap<>(activity.getTemplateParams());
+    Map<String, String> currentTemplateParams =
+                                              activity.getTemplateParams() == null ? new HashMap<>()
+                                                                                   : new HashMap<>(activity.getTemplateParams());
     if (templateParams != null) {
       templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
     }
@@ -405,4 +457,90 @@ public class Utils {
     activity.setTemplateParams(currentTemplateParams);
   }
 
+   public static boolean isAdministrator(org.exoplatform.services.security.Identity identity) {
+    return identity != null && identity.isMemberOf("/platform/administrators") ;
+  }
+
+  public static boolean isProgramOwner(Set<Long> ownerIds, long userId) {
+    return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
+  }
+
+  public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type) {
+    if (Long.valueOf(domainId) == 0) {
+      return null;
+    }
+
+    if (lastModifiedDate == null || lastModifiedDate <= 0) {
+      domainId = DEFAULT_IMAGE_REMOTE_ID;
+      lastModifiedDate = DEFAULT_COVER_LAST_MODIFIED;
+    }
+
+    String lastModifiedString = String.valueOf(lastModifiedDate);
+    String token = generateAttachmentToken(domainId, type, lastModifiedString);
+    if (org.apache.commons.lang.StringUtils.isNotBlank(token)) {
+      try {
+        token = URLEncoder.encode(token, "UTF8");
+      } catch (UnsupportedEncodingException e) {
+        LOG.warn("Error encoding token", e);
+        token = org.apache.commons.lang.StringUtils.EMPTY;
+      }
+    }
+
+    return new StringBuilder(getBaseURLDomainRest()).append("/")
+                                                    .append(domainId)
+                                                    .append("/")
+                                                    .append(type)
+                                                    .append("?lastModified=")
+                                                    .append(lastModifiedString)
+                                                    .append("&r=")
+                                                    .append(token)
+                                                    .toString();
+
+  }
+
+  public static String generateAttachmentToken(String domainId, String attachmentType, String lastModifiedDate) {
+    String token = null;
+    CodecInitializer codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
+    if (codecInitializer == null) {
+      LOG.debug("Can't find an instance of CodecInitializer, an empty token will be generated");
+      token = org.apache.commons.lang.StringUtils.EMPTY;
+    } else {
+      try {
+        String tokenPlain = attachmentType + ":" + domainId + ":" + lastModifiedDate;
+        token = codecInitializer.getCodec().encode(tokenPlain);
+      } catch (TokenServiceInitializationException e) {
+        LOG.warn("Error generating token of {} for domain {}. An empty token will be used", attachmentType, domainId, e);
+        token = org.apache.commons.lang.StringUtils.EMPTY;
+      }
+    }
+    return token;
+  }
+
+  public static boolean isAttachmentTokenValid(String token, String domainId, String attachmentType, String lastModifiedDate) {
+    if (org.apache.commons.lang.StringUtils.isBlank(token)) {
+      LOG.warn("An empty token is used for {} for domain {}", attachmentType, domainId);
+      return false;
+    }
+    String validToken = generateAttachmentToken(domainId, attachmentType, lastModifiedDate);
+    return org.apache.commons.lang.StringUtils.equals(validToken, token);
+  }
+
+  public static String getBaseURLDomainRest() {
+    return "/" + PortalContainer.getCurrentPortalContainerName() + "/" + PortalContainer.getCurrentRestContextName()
+        + BASE_URL_DOMAINS_REST_API;
+  }
+
+  public static Response.ResponseBuilder getDefaultCover() throws IOException {
+    if (defaultProgramCover == null) {
+      InputStream is = PortalContainer.getInstance()
+                                      .getPortalContext()
+                                      .getResourceAsStream("/skin/images/program_default_cover_back.png");
+      if (is == null) {
+        defaultProgramCover = new byte[] {};
+      } else {
+        defaultProgramCover = IOUtil.getStreamContentAsBytes(is);
+      }
+    }
+    return Response.ok(new ByteArrayInputStream(defaultProgramCover), "image/png");
+  }
 }

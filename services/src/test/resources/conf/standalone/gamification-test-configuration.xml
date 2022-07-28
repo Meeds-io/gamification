@@ -62,6 +62,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <key>org.exoplatform.commons.file.services.FileService</key>
+        <type>org.exoplatform.addons.gamification.mock.FileServiceMock</type>
+    </component>
+    <component>
+        <type>org.exoplatform.upload.UploadService</type>
+        <init-params>
+            <value-param>
+                <name>upload.limit.size</name>
+                <description>Maximum size of the file to upload in MB</description>
+                <value>10</value>
+            </value-param>
+        </init-params>
+    </component>
+    <component>
+        <type>org.exoplatform.web.security.codec.CodecInitializer</type>
+        <init-params>
+            <value-param>
+                <name>gatein.conf.dir</name>
+                <value>jar:/conf</value>
+            </value-param>
+        </init-params>
+    </component>
+    <component>
         <key>org.exoplatform.social.core.space.spi.SpaceService</key>
         <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
     </component>
@@ -106,6 +129,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <type>org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO</type>
+    </component>
+
+    <component>
         <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
     </component>
 
@@ -115,9 +142,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
-    </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO</type>
     </component>
 
     <component>
