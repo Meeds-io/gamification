@@ -86,7 +86,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     Map<String, String> fields = new HashMap<>();
     fields.put("id", Long.toString(rule.getId()));
     fields.put("title", rule.getTitle());
-    fields.put("description", getDescription(rule.getDescription()));
+    fields.put("description", StringEscapeUtils.unescapeHtml(rule.getDescription()));
     fields.put("score", String.valueOf(rule.getScore()));
     fields.put("area", !StringUtils.isBlank(rule.getArea()) ? rule.getArea() : rule.getDomainEntity().getTitle());
     fields.put("domainId", String.valueOf(rule.getDomainEntity().getId()));
@@ -119,10 +119,5 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
   private String toMilliSecondsString(Date date) {
     return date != null ? String.valueOf(date.getTime()) : "0";
-  }
-
-  private String getDescription(String s) {
-    s = StringEscapeUtils.unescapeHtml(s);
-    return s.replace("<", " <").replace(">", "> ");
   }
 }

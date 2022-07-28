@@ -13,11 +13,7 @@
       "must": [
         {
           "query_string": {
-            "fields": [
-              "title",
-              "description"
-            ],
-            "query": "title:(*@term@*) OR description.whitespace:(@term_query@)",
+            "query": "title:(*@term@*) OR description:(@term_query@)",
             "default_operator": "AND",
             "fuzziness": 1,
             "phrase_slop": 1
