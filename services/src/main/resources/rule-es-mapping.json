@@ -12,7 +12,7 @@
         },
         "whitespace": {
           "type": "text",
-          "analyzer": "whitespace_lowercase_asciifolding"
+          "analyzer": "whitespace_lowercase_asciifolding_html_strip"
         }
       }
     },
@@ -25,7 +25,7 @@
         },
         "whitespace": {
           "type": "text",
-          "analyzer": "keyword_html_strip"
+          "analyzer": "whitespace_lowercase_asciifolding_html_strip"
         }
       }
     },
