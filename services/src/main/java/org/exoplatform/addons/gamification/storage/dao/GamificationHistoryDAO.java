@@ -424,7 +424,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 	  if (sortBy != null) {
 	    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findSortedRealizationsByDate",
                                                     GamificationActionsHistory.class);
-	    query.setParameter("orderField", sortBy);
 	    query.setParameter("orderType", sortDescending);
 	} else {
 	    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDate",

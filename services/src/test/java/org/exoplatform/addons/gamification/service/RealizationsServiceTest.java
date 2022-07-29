@@ -85,17 +85,21 @@ public class RealizationsServiceTest {
         gamificationActionsHistoryDTOList.add(gHistory3);
         when(realizationsStorage.getAllRealizationsByDate(fromDate,
                 toDate,
+                null, 
+                false, 
                 offset,
                 limit)).thenReturn(gamificationActionsHistoryDTOList);
 
-        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate("", Utils.toRFC3339Date(toDate), offset, limit));
-        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate), "", offset, limit));
-        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(toDate), Utils.toRFC3339Date(fromDate), offset, limit));
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate("", Utils.toRFC3339Date(toDate), null, false, offset, limit));
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate), "", null, false, offset, limit));
+        assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(toDate), Utils.toRFC3339Date(fromDate), null, false, offset, limit));
 
         // When
         List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
                 realizationsService.getAllRealizationsByDate(Utils.toRFC3339Date(fromDate),
                         Utils.toRFC3339Date(toDate),
+                        null, 
+                        false, 
                         offset,
                         limit);
         // Then

@@ -84,7 +84,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     @NamedQuery(name = "GamificationActionsHistory.countAnnouncementsByChallenge", query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"),
     @NamedQuery(name = "GamificationActionsHistory.findAllAnnouncementByChallenge", query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.createdDate desc"),
     @NamedQuery(name = "GamificationActionsHistory.findRealizationsByDate", query = "SELECT DISTINCT g FROM GamificationActionsHistory g where g.earnerType = :type AND g.date BETWEEN :fromDate AND :toDate ORDER BY g.createdDate desc"),
-    @NamedQuery(name = "GamificationActionsHistory.findSortedRealizationsByDate", query = "SELECT DISTINCT g FROM GamificationActionsHistory g where g.earnerType = :type AND g.date BETWEEN :fromDate AND :toDate ORDER BY g.createdDate desc, :orderField :orderType"),
+    @NamedQuery(name = "GamificationActionsHistory.findRealizationsByDateSortedByRuleIdAscAndActionTitleAsc", query = "SELECT DISTINCT g FROM GamificationActionsHistory g where g.earnerType = :type AND g.date BETWEEN :fromDate AND :toDate ORDER BY g.createdDate desc, g.ruleId asc, g.actionTitle asc"),
+    @NamedQuery(name = "GamificationActionsHistory.findRealizationsByDateSortedByRuleIdDescAndActionTitleDesc", query = "SELECT DISTINCT g FROM GamificationActionsHistory g where g.earnerType = :type AND g.date BETWEEN :fromDate AND :toDate ORDER BY g.createdDate desc, g.ruleId desc, g.actionTitle desc"),
     })
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
