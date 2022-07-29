@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
@@ -85,7 +86,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     Map<String, String> fields = new HashMap<>();
     fields.put("id", Long.toString(rule.getId()));
     fields.put("title", rule.getTitle());
-    fields.put("description", rule.getDescription());
+    fields.put("description", StringEscapeUtils.unescapeHtml(rule.getDescription()));
     fields.put("score", String.valueOf(rule.getScore()));
     fields.put("area", !StringUtils.isBlank(rule.getArea()) ? rule.getArea() : rule.getDomainEntity().getTitle());
     fields.put("domainId", String.valueOf(rule.getDomainEntity().getId()));
