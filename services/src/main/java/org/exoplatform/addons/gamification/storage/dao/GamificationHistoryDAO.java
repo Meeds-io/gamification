@@ -424,6 +424,21 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
+  public List<GamificationActionsHistory> getAllRealizationsByDate(Date fromDate, Date toDate, int offset, int limit) {
+    TypedQuery<GamificationActionsHistory> query =
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDate",
+                                                                                     GamificationActionsHistory.class);
+    query.setParameter("fromDate", fromDate);
+    query.setParameter("toDate", toDate);
+    query.setParameter("type", IdentityType.USER);
+    if (limit != 0) {
+      query.setFirstResult(offset);
+      query.setMaxResults(limit);
+    }
+    List<GamificationActionsHistory> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
+
   public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter filter, int offset, int limit) {
     TypedQuery<GamificationActionsHistory> query = buildQueryFromFilter(filter, GamificationActionsHistory.class, false);
     query.setFirstResult(offset);

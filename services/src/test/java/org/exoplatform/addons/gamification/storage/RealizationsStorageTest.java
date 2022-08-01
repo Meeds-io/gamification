@@ -28,16 +28,16 @@ public class RealizationsStorageTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRealizationsByDate() {
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, null, false, offset, limit).size(),0);
+    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, null, false, offset, limit).size(), 3);
+    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(), 3);
   }
 
   @Test
   public void testGetRealizationById() {
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, null, false, offset, limit).size(),0);
+    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     GamificationActionsHistoryDTO newGHistory = realizationsStorage.getRealizationById(gHistory.getId());
     assertNotNull(newGHistory);
@@ -46,7 +46,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
 
   @Test
   public void testUpdateRealizationStatus() {
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, null, false, offset, limit).size(),0);
+    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
     gHistory.setStatus(HistoryStatus.REJECTED.name());

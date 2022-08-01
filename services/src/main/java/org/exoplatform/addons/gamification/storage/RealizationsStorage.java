@@ -17,10 +17,23 @@ public class RealizationsStorage {
     this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
 
-  public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter (RealizationsFilter realizationFilter, int offset, int limit){
-        List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.findRealizationsByFilter(realizationFilter, offset, limit);
-        return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
-    }
+  public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter realizationFilter,
+                                                                        int offset,
+                                                                        int limit) {
+    List<GamificationActionsHistory> gamificationActionsHistoryList =
+                                                                    gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
+                                                                                                                    offset,
+                                                                                                                    limit);
+    return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
+  }
+
+  public List<GamificationActionsHistoryDTO> getAllRealizationsByDate(Date fromDate, Date toDate, int offset, int limit) {
+    List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.getAllRealizationsByDate(fromDate,
+                                                                                                                      toDate,
+                                                                                                                      offset,
+                                                                                                                      limit);
+    return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
+  }
 
   public GamificationActionsHistoryDTO getRealizationById(Long id) {
     GamificationActionsHistory gamificationActionsHistory = gamificationHistoryDAO.find(id);
