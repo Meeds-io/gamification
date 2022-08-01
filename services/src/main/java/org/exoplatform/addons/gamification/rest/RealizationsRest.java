@@ -66,7 +66,7 @@ public class RealizationsRest implements ResourceContainer {
                                                 @ApiParam(value = "result toDate", required = true)
                                                 @QueryParam("toDate")
                                                 String toDate,
-                                                @ApiParam(value = "Sort field. Possible values: ... Default = ", defaultValue = "name", required = false)
+                                                @ApiParam(value = "Sort field. Possible values: ruleId or actionTitle Default = ", defaultValue = "actionTitle", required = false)
                                                 @QueryParam("sortBy")
                                                 String sortBy,
                                                 @ApiParam(value = "Whether to retrieve results sorted descending or not", required = false)

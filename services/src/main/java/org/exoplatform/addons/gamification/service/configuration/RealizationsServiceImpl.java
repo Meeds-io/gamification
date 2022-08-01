@@ -3,6 +3,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -26,6 +27,7 @@ public class RealizationsServiceImpl implements RealizationsService {
                                                                       boolean sortDescending,
                                                                       int offset,
                                                                       int limit) throws IllegalArgumentException {
+    RealizationsFilter filter = new RealizationsFilter();
     if (StringUtils.isBlank(fromDate)) {
       throw new IllegalArgumentException("fromDate is mandatory");
     }
@@ -38,12 +40,24 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (dateFrom.after(dateTo)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
-    return realizationsStorage.getAllRealizationsByDate(dateFrom, dateTo, sortBy, sortDescending, offset, limit);
+    if(sortBy == "ActionType") {
+      filter.setIsSortedByActionTitle(true);
+      filter.setIsSortedByRuleId(true);
+    }
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    
+    filter.setSortDescending(sortDescending);
+    return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
   }
 
   @Override
-  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status,String actionLabel, Long points, String domain) throws IllegalArgumentException,
-                                                                             ObjectNotFoundException {
+  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
+                                                               HistoryStatus status,
+                                                               String actionLabel,
+                                                               Long points,
+                                                               String domain) throws IllegalArgumentException,
+                                                                              ObjectNotFoundException {
 
     if (gHistoryId == null) {
       throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
@@ -53,14 +67,14 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (gHistory == null) {
       throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
     }
-    if(!actionLabel.isEmpty()){
+    if (!actionLabel.isEmpty()) {
       gHistory.setActionTitle(actionLabel);
     }
-    if(points != 0){
+    if (points != 0) {
       gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
       gHistory.setActionScore(points);
     }
-    if(!domain.isEmpty()){
+    if (!domain.isEmpty()) {
       gHistory.setDomain(domain);
     }
     gHistory.setStatus(status.name());
