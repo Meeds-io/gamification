@@ -89,7 +89,7 @@ public class RuleSearchConnector {
       +"        }\n"
       +"      }\n";
   
-  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|";
+  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|#%";
 
   private final ConfigurationManager   configurationManager;
 
@@ -356,7 +356,7 @@ public class RuleSearchConnector {
       return null;
     }
     for (char c : ILLEGAL_SEARCH_CHARACTERS.toCharArray()) {
-      query = query.replace(c + "", "\\\\" + c);
+      query = query.replace(c + "", "");
     }
     return query;
   }
