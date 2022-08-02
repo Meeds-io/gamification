@@ -266,8 +266,8 @@ public class RuleSearchConnector {
         String lastModifiedBy = (String) hitSource.get("lastModifiedBy");
         String event = (String) hitSource.get("event");
         long audience = parseLong(hitSource, "audience");
-        Date startDate = parseDate(hitSource, "startDate");
-        Date endDate = parseDate(hitSource, "endDate");
+        Date startDate = parseDate(hitSource, START_DATE);
+        Date endDate = parseDate(hitSource, END_DATE);
         String type = (String) hitSource.get("type");
 
         rule.setId(id);
