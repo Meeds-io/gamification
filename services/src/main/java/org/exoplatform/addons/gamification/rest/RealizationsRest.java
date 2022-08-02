@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -32,7 +33,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.*;
 @RolesAllowed("administrators")
 public class RealizationsRest implements ResourceContainer {
 
-  private static final Log    LOG = ExoLogger.getLogger(RealizationsRest.class);
+  private static final Log    LOG       = ExoLogger.getLogger(RealizationsRest.class);
 
   private RealizationsService realizationsService;
 
@@ -44,8 +45,7 @@ public class RealizationsRest implements ResourceContainer {
   private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
 
   // File header
-  private static final String HEADER    =
-                                     "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
+  private static final String HEADER    = "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
 
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
@@ -61,25 +61,34 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response getAllRealizations(@ApiParam(value = "result fromDate", required = true)
-                                                @QueryParam("fromDate")
-                                                String fromDate,
-                                                @ApiParam(value = "result toDate", required = true)
-                                                @QueryParam("toDate")
-                                                String toDate,
-                                                @ApiParam(value = "Sort field. Possible values: ruleId or actionTitle Default = ", defaultValue = "actionTitle", required = false)
-                                                @QueryParam("sortBy")
-                                                String sortBy,
-                                                @ApiParam(value = "Whether to retrieve results sorted descending or not", required = false)
-                                                @QueryParam("sortDescending")
-                                                boolean sortDescending,
-                                                @ApiParam(value = "Offset of result", required = false)
-                                                @DefaultValue("0")
-                                                @QueryParam("offset")
-                                                int offset,
-                                                @ApiParam(value = "Limit of result", required = false)
-                                                @DefaultValue("10")
-                                                @QueryParam("limit")
-                                                int limit) {
+  @QueryParam("fromDate")
+  String fromDate,
+                                     @ApiParam(value = "result toDate", required = true)
+                                     @QueryParam("toDate")
+                                     String toDate,
+                                     @ApiParam(value = "Sort field. Possible values: ruleId or actionTitle Default = ", defaultValue = "actionTitle", required = false)
+                                     @QueryParam("sortBy")
+                                     String sortBy,
+                                     @ApiParam(value = "Whether to retrieve results sorted descending or not", required = false)
+                                     @QueryParam("sortDescending")
+                                     boolean sortDescending,
+                                     @ApiParam(value = "Offset of result", required = false)
+                                     @DefaultValue("0")
+                                     @QueryParam("offset")
+                                     int offset,
+                                     @ApiParam(value = "Limit of result", required = false)
+                                     @DefaultValue("10")
+                                     @QueryParam("limit")
+                                     int limit) {
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    if (sortBy == "ActionType") {
+      filter.setIsSortedByActionTitle(true);
+      filter.setIsSortedByRuleId(true);
+    }
+    filter.setSortDescending(sortDescending);
+    filter.setFromDate(fromDate);
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -88,12 +97,8 @@ public class RealizationsRest implements ResourceContainer {
     }
 
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
-                                                                                                                         toDate,
-                                                                                                                         sortBy,
-                                                                                                                         sortDescending,
-                                                                                                                         offset,
-                                                                                                                         limit);
+      List<GamificationActionsHistoryDTO> gActionsHistoryList =
+                                                              realizationsService.getAllRealizationsByDate(filter, offset, limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of Realizations", e);
@@ -133,9 +138,9 @@ public class RealizationsRest implements ResourceContainer {
       GamificationActionsHistoryDTO gamificationActionsHistoryDTO =
                                                                   realizationsService.updateRealizationStatus(Long.valueOf(realizationId),
                                                                                                               HistoryStatus.valueOf(status),
-                                                                          actionLabel,
-                                                                          points,
-                                                                          domain);
+                                                                                                              actionLabel,
+                                                                                                              points,
+                                                                                                              domain);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO)).build();
     } catch (ObjectNotFoundException e) {
       LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
@@ -157,16 +162,17 @@ public class RealizationsRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
       @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getReport(@ApiParam(value = "result fromDate", required = true)
-                            @QueryParam("fromDate")
-                            String fromDate,
+  @QueryParam("fromDate")
+  String fromDate,
                             @ApiParam(value = "result toDate", required = true)
                             @QueryParam("toDate")
                             String toDate) {
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(fromDate,
-                                                                                                             toDate,
-                                                                                                             null,                                                                                                          
-                                                                                                             false, 
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(filter,
                                                                                                              0,
                                                                                                              0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
@@ -175,21 +181,21 @@ public class RealizationsRest implements ResourceContainer {
       String filename = "report_Actions";
       filename += formater.format(new Date());
       File temp;
-      temp = File.createTempFile(filename, ".xlsx"); //NOSONAR
+      temp = File.createTempFile(filename, ".xlsx"); // NOSONAR
       temp.deleteOnExit();
-      BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); //NOSONAR
+      BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); // NOSONAR
       bw.write(xlsxString);
       bw.close();
-      Response.ResponseBuilder response = Response.ok(temp); //NOSONAR
+      Response.ResponseBuilder response = Response.ok(temp); // NOSONAR
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
     } catch (Exception e) {
-      LOG.error("Error when creating temp file",e);
+      LOG.error("Error when creating temp file", e);
       return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
-private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities)  {
+  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
     Locale locale = getCurrentUserLocale();
     StringBuilder sbResult = new StringBuilder();
     // Add header
@@ -232,7 +238,7 @@ private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificati
         sbResult.append(DELIMITER);
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
-        LOG.error("Error when computing to XLSX ",e);
+        LOG.error("Error when computing to XLSX ", e);
       }
     });
     return sbResult.toString();

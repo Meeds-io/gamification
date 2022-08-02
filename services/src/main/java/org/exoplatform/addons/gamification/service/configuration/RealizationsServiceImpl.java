@@ -21,13 +21,11 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public List<GamificationActionsHistoryDTO> getAllRealizationsByDate(String fromDate,
-                                                                      String toDate,
-                                                                      String sortBy,
-                                                                      boolean sortDescending,
+  public List<GamificationActionsHistoryDTO> getAllRealizationsByDate( RealizationsFilter filter,
                                                                       int offset,
                                                                       int limit) throws IllegalArgumentException {
-    RealizationsFilter filter = new RealizationsFilter();
+    String fromDate = filter.getFromDate();
+    String toDate = filter.getToDate();
     if (StringUtils.isBlank(fromDate)) {
       throw new IllegalArgumentException("fromDate is mandatory");
     }
@@ -40,14 +38,6 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (dateFrom.after(dateTo)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
-    if(sortBy == "ActionType") {
-      filter.setIsSortedByActionTitle(true);
-      filter.setIsSortedByRuleId(true);
-    }
-    filter.setFromDate(fromDate);
-    filter.setToDate(toDate);
-    
-    filter.setSortDescending(sortDescending);
     return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
   }
 

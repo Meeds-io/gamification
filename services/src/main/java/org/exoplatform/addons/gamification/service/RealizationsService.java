@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
@@ -10,19 +11,13 @@ public interface RealizationsService {
   /**
    * Retrieves all Realizations by Date.
    *
-   * @param fromDate fromDate
-   * @param toDate toDate
-   * @param toDate sortBy
-   * @param toDate sortDescending
+   * @param filter filter
    * @param offset Offset
    * @param limit Limit
    * @return A {@link List <GamificationActionsHistoryDTO>} object
    * @throws IllegalAccessException when Dates parameters are not set correctly
    */
-  List<GamificationActionsHistoryDTO> getAllRealizationsByDate(String fromDate,
-                                                               String toDate,
-                                                               String sortBy,
-                                                               boolean sortDescending,
+  List<GamificationActionsHistoryDTO> getAllRealizationsByDate(RealizationsFilter filter,
                                                                int offset,
                                                                int limit) throws IllegalArgumentException;
 
