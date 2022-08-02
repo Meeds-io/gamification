@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <component>
         <key>org.exoplatform.addons.gamification.storage.RuleStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage </type>
+        <type>org.exoplatform.addons.gamification.storage.cached.RuleCachedStorage</type>
     </component>
 
     <component>
@@ -145,6 +145,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.commons.search.es.client.ElasticIndexingAuditTrail</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.commons.search.es.client.ElasticSearchingClient</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
+        <init-params>
+            <value-param>
+                <name>query.file.path</name>
+                <value>jar:/rule-search-query.json</value>
+            </value-param>
+            <properties-param>
+                <name>constructor.params</name>
+                <property name="searchType" value="rule"/>
+                <property name="index" value="rule_alias"/>
+            </properties-param>
+        </init-params>
+    </component>
+
+    <component>
         <key>org.exoplatform.commons.api.persistence.DataInitializer</key>
         <type>org.exoplatform.commons.persistence.impl.LiquibaseDataInitializer
         </type>
@@ -168,6 +195,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
     </component>
+
+    <component>
+        <type>org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector</type>
+        <init-params>
+            <value-param>
+                <name>mapping.file.path</name>
+                <value>${exo.rule.es.mapping.path:jar:/rule-es-mapping.json}</value>
+            </value-param>
+            <properties-param>
+                <name>constructor.params</name>
+                <property name="index_alias" value="rule_alias"/>
+                <property name="index_current" value="rule_v1"/>
+            </properties-param>
+        </init-params>
+    </component>
+
     <external-component-plugins>
         <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
         <component-plugin>

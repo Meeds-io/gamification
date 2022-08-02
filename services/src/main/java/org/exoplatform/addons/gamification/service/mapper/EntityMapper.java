@@ -8,51 +8,41 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package org.exoplatform.addons.gamification.service.mapper;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.dto.configuration.*;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.space.model.Space;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
+import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.utils.Utils;
 
 public class EntityMapper {
 
   private EntityMapper() {
-  }
-
-  public static Challenge fromEntity(RuleEntity challengeEntity) {
-    if (challengeEntity == null) {
-      return null;
-    }
-    return new Challenge(challengeEntity.getId(),
-                         challengeEntity.getTitle(),
-                         challengeEntity.getDescription(),
-                         challengeEntity.getAudience(),
-                         challengeEntity.getStartDate() == null ? null : Utils.toSimpleDateFormat(challengeEntity.getStartDate()),
-                         challengeEntity.getEndDate() == null ? null : Utils.toSimpleDateFormat(challengeEntity.getEndDate()),
-                         challengeEntity.getManagers(),
-                         (long) challengeEntity.getScore(),
-                         challengeEntity.getDomainEntity() != null ? challengeEntity.getDomainEntity().getTitle() : null);
   }
 
   public static RuleEntity toEntity(Challenge challenge) {
@@ -85,18 +75,10 @@ public class EntityMapper {
     challengeEntity.setScore(challenge.getPoints().intValue());
 
     DomainDTO domain = Utils.getEnabledDomainByTitle(challenge.getProgram());
-    if (domain != null ) {
+    if (domain != null) {
       challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(domain));
     }
     return challengeEntity;
-  }
-
-  public static List<Challenge> fromChallengeEntities(List<RuleEntity> challengeEntities) {
-    if (CollectionUtils.isEmpty(challengeEntities)) {
-      return new ArrayList<>(Collections.emptyList());
-    } else {
-      return challengeEntities.stream().map(EntityMapper::fromEntity).collect(Collectors.toList());
-    }
   }
 
   public static AnnouncementRestEntity fromAnnouncement(Announcement announcement) {
@@ -105,7 +87,7 @@ public class EntityMapper {
     }
     return new AnnouncementRestEntity(announcement.getId(),
                                       Utils.getUserRemoteId(String.valueOf(announcement.getAssignee() != null ? announcement.getAssignee()
-                                                                                           : announcement.getCreator())),
+                                                                                                              : announcement.getCreator())),
                                       announcement.getCreatedDate(),
                                       announcement.getActivityId());
   }
@@ -116,6 +98,7 @@ public class EntityMapper {
     }
     return new Announcement(announcementEntity.getId(),
                             announcementEntity.getRuleId(),
+                            announcementEntity.getActionTitle(),
                             Long.parseLong(announcementEntity.getEarnerId()),
                             announcementEntity.getComment(),
                             announcementEntity.getCreator(),
@@ -123,7 +106,7 @@ public class EntityMapper {
                             announcementEntity.getActivityId());
   }
 
-  public static GamificationActionsHistory toEntity(Announcement announcement) {
+  public static GamificationActionsHistory toEntity(Announcement announcement, RuleEntity ruleEntity) {
     if (announcement == null) {
       return null;
     }
@@ -142,9 +125,11 @@ public class EntityMapper {
     announcementEntity.setComment(announcement.getComment());
     announcementEntity.setCreatedDate(createDate);
     announcementEntity.setRuleId(announcement.getChallengeId());
+    announcementEntity.setActionTitle(announcement.getChallengeTitle() != null ? announcement.getChallengeTitle()
+                                                                               : ruleEntity.getTitle());
     announcementEntity.setCreator(announcement.getCreator());
-    announcementEntity.setDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
-    announcementEntity.setCreatedDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
+    announcementEntity.setDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
+    announcementEntity.setCreatedDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
     announcementEntity.setStatus(HistoryStatus.ACCEPTED);
     if (createDate != null) {
@@ -156,6 +141,13 @@ public class EntityMapper {
     announcementEntity.setCreatedBy(creator != null ? creator : "Gamification Inner Process");
     announcementEntity.setLastModifiedBy(creator != null ? creator : "Gamification Inner Process");
 
+    DomainEntity domainEntity = ruleEntity.getDomainEntity();
+    announcementEntity.setEarnerType(IdentityType.USER);
+    announcementEntity.setActionScore(ruleEntity.getScore());
+    announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
+    announcementEntity.setDomainEntity(domainEntity);
+    announcementEntity.setDomain(domainEntity.getTitle());
+    announcementEntity.setObjectId("");
     return announcementEntity;
   }
 
@@ -167,53 +159,76 @@ public class EntityMapper {
     }
   }
 
-  public static List<AnnouncementRestEntity> fromAnnouncementList(List<Announcement> announcements) {
-    if (CollectionUtils.isEmpty(announcements)) {
-      return new ArrayList<>(Collections.emptyList());
-    } else {
-      return announcements.stream().map(EntityMapper::fromAnnouncement).collect(Collectors.toList());
-    }
+  public static Announcement fromAnnouncementActivity(AnnouncementActivity announcementActivity) {
+    return new Announcement(announcementActivity.getId(),
+                            announcementActivity.getChallengeId(),
+                            announcementActivity.getChallengeTitle(),
+                            announcementActivity.getAssignee(),
+                            announcementActivity.getComment(),
+                            announcementActivity.getCreator(),
+                            announcementActivity.getCreatedDate(),
+                            announcementActivity.getActivityId());
+
   }
 
-  public static ChallengeRestEntity fromChallenge(AnnouncementService announcementService,
-                                                  Challenge challenge,
-                                                  int announcementsPerChallenge,
-                                                  boolean noDomain) throws IllegalAccessException,
-                                                                    ObjectNotFoundException {
+  public static AnnouncementActivity toAnnouncementActivity(Announcement announcement, Map<String, String> templateParams) {
+    return new AnnouncementActivity(announcement.getId(),
+                                    announcement.getChallengeId(),
+                                    announcement.getChallengeTitle(),
+                                    announcement.getAssignee(),
+                                    announcement.getComment(),
+                                    announcement.getCreator(),
+                                    announcement.getCreatedDate(),
+                                    announcement.getActivityId(),
+                                    templateParams);
+  }
+
+  public static RuleDTO fromChallengeToRule(Challenge challenge) {
     if (challenge == null) {
       return null;
     }
-    List<Announcement> challengeAnnouncements = null;
-    if (announcementsPerChallenge > 0) {
-      challengeAnnouncements = announcementService.findAllAnnouncementByChallenge(challenge.getId(),
-                                                                                  0,
-                                                                                  announcementsPerChallenge);
-    } else {
-      challengeAnnouncements = Collections.emptyList();
+    RuleDTO rule = new RuleDTO();
+    if (challenge.getId() > 0) {
+      rule.setId(challenge.getId());
     }
-    return fromChallenge(challenge, challengeAnnouncements, noDomain);
+    rule.setScore(challenge.getPoints() == null ? 0 : challenge.getPoints().intValue());
+    rule.setTitle(challenge.getTitle());
+    rule.setDescription(challenge.getDescription());
+    rule.setArea(challenge.getProgram());
+    rule.setEnabled(false);
+    rule.setDeleted(false);
+    rule.setDomainDTO(Utils.getDomainByTitle(challenge.getProgram()));
+    if (challenge.getAudience() > 0) {
+      rule.setAudience(challenge.getAudience());
+    }
+    if (challenge.getEndDate() != null) {
+      rule.setEndDate(challenge.getEndDate());
+    }
+    if (challenge.getStartDate() != null) {
+      rule.setStartDate(challenge.getStartDate());
+    }
+    rule.setType(TypeRule.MANUAL);
+    if (challenge.getManagers() != null) {
+      rule.setManagers(challenge.getManagers());
+    } else {
+      rule.setManagers(Collections.emptyList());
+    }
+    return rule;
   }
 
-  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements) {
-    return fromChallenge(challenge, challengeAnnouncements, false);
+  public static Challenge fromRuleToChallenge(RuleDTO ruleDTO) {
+    if (ruleDTO == null) {
+      return null;
+    }
+    return new Challenge(ruleDTO.getId(),
+                         ruleDTO.getTitle(),
+                         ruleDTO.getDescription(),
+                         ruleDTO.getAudience(),
+                         ruleDTO.getStartDate(),
+                         ruleDTO.getEndDate(),
+                         ruleDTO.getManagers(),
+                         (long) ruleDTO.getScore(),
+                         ruleDTO.getDomainDTO() == null ? null : ruleDTO.getDomainDTO().getTitle());
   }
 
-  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements, boolean noDomain) {
-    Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
-    return new ChallengeRestEntity(challenge.getId(),
-                                   challenge.getTitle(),
-                                   challenge.getDescription(),
-                                   space,
-                                   challenge.getStartDate(),
-                                   challenge.getEndDate(),
-                                   Utils.createUser(Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
-                                                                                 Utils.getCurrentUser()),
-                                                    space,
-                                                    challenge.getManagers()),
-                                   Utils.getManagersByIds(challenge.getManagers()),
-                                   Utils.countAnnouncementsByChallenge(challenge.getId()),
-                                   fromAnnouncementList(challengeAnnouncements),
-                                   challenge.getPoints(),
-                                   noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
-  }
 }

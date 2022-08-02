@@ -198,38 +198,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <!-- End Test-->
     </dependencies>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/*.properties</include>
-                    <include>**/*.xsl</include>
-                    <include>**/*.dtd</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                    <include>**/*.drl</include>
-                    <include>**/*.doc</include>
-                    <include>**/*.xls</include>
-                    <include>**/*.ppt</include>
-                    <include>**/*.txt</include>
-                    <include>**/*.jar</include>
-                    <include>**/*.pom</include>
-                    <include>**/*.sha1</include>
-                    <include>**/*.conf</include>
-                    <include>**/*.gtmpl</include>
-                    <include>**/*.gif</include>
-                    <include>**/*.jpg</include>
-                    <include>**/*.png</include>
-                    <include>**/*.csv</include>
-                </includes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>com.jcabi</groupId>

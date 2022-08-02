@@ -8,11 +8,11 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.activity.processor;
 
@@ -22,14 +22,14 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.service.LinkProvider;
 
 public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcessorPlugin {
@@ -44,9 +44,14 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
 
   private AnnouncementService announcementService;
 
-  public ChallengeAnnouncementActivityProcessor(InitParams params, AnnouncementService announcementService) {
+  private IdentityManager     identityManager;
+
+  public ChallengeAnnouncementActivityProcessor(AnnouncementService announcementService,
+                                                IdentityManager identityManager,
+                                                InitParams params) {
     super(params);
     this.announcementService = announcementService;
+    this.identityManager = identityManager;
   }
 
   @Override
@@ -68,9 +73,10 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
         throw new ObjectNotFoundException("announcement does not exist");
       }
       Map<String, String> params = new HashMap<>();
-      UserInfo userInfo = Utils.getUserById(announcement.getAssignee(), null);
-      params.put("announcementAssigneeUsername", userInfo.getRemoteId());
-      params.put("announcementAssigneeFullName", userInfo.getFullName());
+
+      Identity identity = identityManager.getIdentity(String.valueOf(announcement.getAssignee()));
+      params.put("announcementAssigneeUsername", identity.getRemoteId());
+      params.put("announcementAssigneeFullName", identity.getProfile().getFullName());
       params.put("announcementChallenge",
                  getAnnouncementChallenge(String.valueOf(announcement.getChallengeId()),
                                           activity.getTemplateParams().get("announcementDescription")));

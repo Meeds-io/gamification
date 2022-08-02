@@ -119,14 +119,15 @@ public class GamificationActionsHistoryMapper {
       } else {
         spaceName = Utils.getSpaceFromObjectID(gHistory.getObjectId());
       }
+      RuleDTO rule = gHistory.getRuleId() != null && gHistory.getRuleId() != 0 ? Utils.getRuleById(gHistory.getRuleId())
+                                                                               : Utils.getRuleByTitle(gHistory.getActionTitle());
 
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
                                                       Utils.getUserFullName(gHistory.getEarnerId()),
-                                                      gHistory.getRuleId() != null
-                                                          && gHistory.getRuleId() != 0 ? Utils.getRuleById(gHistory.getRuleId())
-                                                                                       : Utils.getRuleByTitle(gHistory.getActionTitle()),
+                                                      rule,
                                                       Utils.getDomainByTitle(gHistory.getDomain()),
-                                                      gHistory.getActionTitle(),
+                                                      gHistory.getActionTitle() != null ? gHistory.getActionTitle()
+                                                                                        : rule.getTitle(),
                                                       gHistory.getActionScore(),
                                                       Utils.getUserFullName(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
                                                                                                           : gHistory.getReceiver()),
