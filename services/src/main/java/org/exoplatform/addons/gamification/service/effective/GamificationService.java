@@ -326,10 +326,7 @@ public class GamificationService {
       }
       String spacePrettyName = identity.getRemoteId();
       Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
-      return space != null
-          && (!Space.HIDDEN.equals(space.getVisibility())
-              || spaceService.isSuperManager(currentUser)
-              || spaceService.isMember(space, currentUser));
+      return space != null && (!Space.HIDDEN.equals(space.getVisibility()) || spaceService.isMember(space, currentUser));
     }).limit(limit).collect(Collectors.toList());
     return result;
   }
