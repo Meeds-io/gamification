@@ -1,3 +1,20 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package org.exoplatform.addons.gamification.utils;
 
 import org.exoplatform.addons.gamification.service.AnnouncementService;
@@ -235,7 +252,7 @@ public class UtilsTest {
         rootProfile.setProperty("firstName", "root");
         rootProfile.setProperty("lastName", "root");
         rootIdentity.setProfile(rootProfile);
-        UserInfo simpleUserInfo = Utils.createUser(rootIdentity);
+        UserInfo simpleUserInfo = Utils.toUserInfo(rootIdentity);
         assertNotNull(simpleUserInfo);
         assertEquals("root", simpleUserInfo.getRemoteId());
         String[] spaceMembers = {"root"};
@@ -255,7 +272,11 @@ public class UtilsTest {
         when(spaceService.isSuperManager("root")).thenReturn(true);
         when(spaceService.hasRedactor(space)).thenReturn(false);
 
-        UserInfo userInfo = Utils.createUser(rootIdentity, space, Collections.singletonList(1l));
+        IdentityManager identityManager = mock(IdentityManager.class);
+        when(CommonsUtils.getService(IdentityManager.class)).thenReturn(identityManager);
+        when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
+
+        UserInfo userInfo = Utils.toUserInfo(rootIdentity, space, Collections.singletonList(1l));
         assertNotNull(userInfo);
         assertEquals("root", userInfo.getRemoteId());
         assertTrue(userInfo.isCanAnnounce());
@@ -392,44 +413,7 @@ public class UtilsTest {
         canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
     }
-
-    @PrepareForTest({CommonsUtils.class})
-    @Test
-    public void testCanEditChallenge() {
-        ConversationState.setCurrent(new ConversationState(new org.exoplatform.services.security.Identity("root")));
-        SpaceService spaceService = mock(SpaceService.class);
-        IdentityManager identityManager = mock(IdentityManager.class);
-        PowerMockito.mockStatic(CommonsUtils.class);
-        when(CommonsUtils.getService(SpaceService.class)).thenReturn(spaceService);
-        when(CommonsUtils.getService(IdentityManager.class)).thenReturn(identityManager);
-        Identity rootIdentity = new Identity();
-        rootIdentity.setId("1");
-        rootIdentity.setProviderId("organization");
-        rootIdentity.setRemoteId("root");
-        when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
-
-        Space space = new Space();
-        space.setId("1");
-        space.setPrettyName("test_space");
-        space.setDisplayName("test space");
-        space.setGroupId("/spaces/test_space");
-        when(spaceService.getSpaceById("1")).thenReturn(space);
-        when(spaceService.isSuperManager("root")).thenReturn(false);
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        List<Long> challengeManagers = Collections.singletonList(1l);
-
-        boolean canEdit = Utils.canEditChallenge(challengeManagers, "1");
-        assertFalse(canEdit);
-        when(spaceService.isManager(space, "root")).thenReturn(true);
-        canEdit = Utils.canEditChallenge(challengeManagers, "1");
-        assertTrue(canEdit);
-        when(spaceService.isSuperManager("root")).thenReturn(true);
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        canEdit = Utils.canEditChallenge(challengeManagers, "1");
-        assertTrue(canEdit);
-
-    }
-
+    
     @PrepareForTest({CommonsUtils.class})
     @Test
     public void testGetSpaceById() {
@@ -463,31 +447,7 @@ public class UtilsTest {
         assertNotNull(savedSpace);
         assertEquals(space.getId(), savedSpace.getId());
     }
-
-    @PrepareForTest({CommonsUtils.class})
-    @Test
-    public void testGetUserById() {
-        PowerMockito.mockStatic(CommonsUtils.class);
-        IdentityManager identityManager = mock(IdentityManager.class);
-        when(CommonsUtils.getService(IdentityManager.class)).thenReturn(identityManager);
-        Identity rootIdentity = new Identity();
-        rootIdentity.setId("1");
-        rootIdentity.setProviderId("organization");
-        rootIdentity.setRemoteId("root");
-
-        UserInfo userInfo = Utils.getUserById(null, null);
-        assertNull(userInfo);
-
-        when(identityManager.getIdentity("1")).thenReturn(null);
-        userInfo = Utils.getUserById(1l, null);
-        assertNull(userInfo);
-
-        when(identityManager.getIdentity("1")).thenReturn(rootIdentity);
-        userInfo = Utils.getUserById(1l, null);
-        assertNotNull(userInfo);
-        assertEquals(rootIdentity.getRemoteId(), userInfo.getRemoteId());
-    }
-
+    
     @PrepareForTest({CommonsUtils.class})
     @Test
     public void testGetManagersByIds() {

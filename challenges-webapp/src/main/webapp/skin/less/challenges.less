@@ -7,6 +7,7 @@
 
 #ChallengesApplication {
   background-color: @white !important;
+  min-height: ~"calc(100vh - 120px)";
 
   .welcomeMessage {
     margin: 0 20% 10%;
@@ -26,7 +27,18 @@
       font-weight: normal !important;
     }
   }
-
+  .challengeFilter{
+    width: 25%;
+    max-width: 400px;
+    min-width: 190px;
+    .v-tooltip__content{
+      right: 12px ~'!important; /** orientation=lt */ ';
+      left: auto ~'!important; /** orientation=lt */ ';
+      left: 12px ~'!important; /** orientation=rt */ ';
+      right: auto ~'!important; /** orientation=rt */ ';
+      top: auto !important;
+    }
+  }
   .challengeDrawer {
     .alert{
       text-align: center;
@@ -225,6 +237,7 @@
     }
   }
 }
+
 .emptyChallenges {
   min-height: ~"calc(100vh - 100px)" ;
 }
