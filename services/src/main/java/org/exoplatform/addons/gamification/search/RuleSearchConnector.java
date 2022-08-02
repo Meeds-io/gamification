@@ -61,7 +61,7 @@ public class RuleSearchConnector {
       + "          }\n"
       + "        }\n";
 
-  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"\'*~&|#%@";
+  private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
   private final ConfigurationManager   configurationManager;
 
