@@ -30,6 +30,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.service.effective.*;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
+import groovy.util.OrderBy;
+
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
   public static final String   STATUS                    = "status";
@@ -474,9 +476,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   private <T> void addQueryFilterParameters(RealizationsFilter filter, TypedQuery<T> query) {
-    query.setParameter("fromDate", filter.getFromDate());
-    query.setParameter("toDate", filter.getToDate());
     query.setParameter("type", IdentityType.USER);
+    query.setParameter("toDate", filter.getToDate());
+    query.setParameter("fromDate", filter.getFromDate());
     if (filter.getIsSortedByActionTitle() == true) {
       query.setParameter("actionTitle", filter.getIsSortedByActionTitle());
     }
@@ -497,22 +499,22 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     predicates.add(":type");
     if (filter.getFromDate() != null) {
       suffixes.add("fromDate");
-      datePredicates.add(":fromDate :fromDate");
+      datePredicates.add(":fromDate");
     }
     if (filter.getToDate() != null) {
       suffixes.add("toDate");
-      datePredicates.add(":toDate :toDate");
+      datePredicates.add(" :toDate");
     }
 
-    if (filter.getIsSortedByActionTitle() == true) {
+    if (filter.getIsSortedByActionTitle() != null && filter.getIsSortedByActionTitle() == true) {
       suffixes.add("sortDescending");
       suffixes.add("ActionTitle");
-      sortPredicates.add(":actionTitle :sortDescending");
+      sortPredicates.add(" :actionTitle :sortDescending");
     }
-    if (filter.getIsSortedByRuleId() == true) {
+    if (filter.getIsSortedByRuleId() != null && filter.getIsSortedByRuleId() == true) {
       suffixes.add("sortDescending");
       suffixes.add("ids");
-      sortPredicates.add(":ids :sortDescending");
+      sortPredicates.add(" :ids :sortDescending");
     }
   }
 
@@ -533,11 +535,17 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     String querySelect = count ? "SELECT COUNT(g) FROM GamificationActionsHistory g "
                                : "SELECT DISTINCT g FROM GamificationActionsHistory g ";
     String queryContent;
+    String queryOrderBy;
     if (predicates.isEmpty()) {
       queryContent = querySelect;
     } else {
-      queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ") + "AND g.date BETWEEN"
-          + StringUtils.join(datePredicates, " AND ") + "ORDER BY g." + StringUtils.join(sortPredicates, " AND g.");
+      if (sortPredicates.isEmpty()) {
+        queryOrderBy = "";
+      } else {
+        queryOrderBy = " ORDER BY g." +StringUtils.join(sortPredicates, " AND g.");
+      }
+      queryContent = querySelect + " WHERE g.earnerType = " + StringUtils.join(predicates, " AND ") + " AND g.date BETWEEN "
+          + StringUtils.join(datePredicates, " AND ") +  queryOrderBy;
     }
     return queryContent;
   }
