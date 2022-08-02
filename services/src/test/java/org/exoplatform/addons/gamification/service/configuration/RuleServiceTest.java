@@ -91,13 +91,6 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void getAllAutomaticRules() {
-    newRule("rule1", "domain1");
-    newRule("rule1", "domain2");
-    newRule("rule1", "domain3");
-  }
-
-  @Test
   public void testGetActiveRules() {
     assertEquals(ruleService.getActiveRules().size(), 0);
     newRule("rule1", "domain1", false);

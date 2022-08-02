@@ -413,34 +413,7 @@ public class UtilsTest {
         canAnnounce = Utils.canAnnounce("1", username);
         assertTrue(canAnnounce);
     }
-
-    @PrepareForTest({CommonsUtils.class})
-    @Test
-    public void testCanEditChallenge() {
-        ConversationState.setCurrent(new ConversationState(new org.exoplatform.services.security.Identity("root")));
-        SpaceService spaceService = mock(SpaceService.class);
-        IdentityManager identityManager = mock(IdentityManager.class);
-        PowerMockito.mockStatic(CommonsUtils.class);
-        when(CommonsUtils.getService(SpaceService.class)).thenReturn(spaceService);
-        when(CommonsUtils.getService(IdentityManager.class)).thenReturn(identityManager);
-        Identity rootIdentity = new Identity();
-        rootIdentity.setId("1");
-        rootIdentity.setProviderId("organization");
-        rootIdentity.setRemoteId("root");
-        when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
-
-        Space space = new Space();
-        space.setId("1");
-        space.setPrettyName("test_space");
-        space.setDisplayName("test space");
-        space.setGroupId("/spaces/test_space");
-        when(spaceService.getSpaceById("1")).thenReturn(space);
-        when(spaceService.isSuperManager("root")).thenReturn(false);
-        when(spaceService.isManager(space, "root")).thenReturn(false);
-        List<Long> challengeManagers = Collections.singletonList(1l);
-
-    }
-
+    
     @PrepareForTest({CommonsUtils.class})
     @Test
     public void testGetSpaceById() {
@@ -474,24 +447,7 @@ public class UtilsTest {
         assertNotNull(savedSpace);
         assertEquals(space.getId(), savedSpace.getId());
     }
-
-    @PrepareForTest({CommonsUtils.class})
-    @Test
-    public void testGetUserById() {
-        PowerMockito.mockStatic(CommonsUtils.class);
-        IdentityManager identityManager = mock(IdentityManager.class);
-        when(CommonsUtils.getService(IdentityManager.class)).thenReturn(identityManager);
-        Identity rootIdentity = new Identity();
-        rootIdentity.setId("1");
-        rootIdentity.setProviderId("organization");
-        rootIdentity.setRemoteId("root");
-
-
-        when(identityManager.getIdentity("1")).thenReturn(null);
-
-        when(identityManager.getIdentity("1")).thenReturn(rootIdentity);
-    }
-
+    
     @PrepareForTest({CommonsUtils.class})
     @Test
     public void testGetManagersByIds() {
