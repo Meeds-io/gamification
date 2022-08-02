@@ -51,7 +51,7 @@ public class AnnouncementActivityUpdaterTest {
     AnnouncementActivityUpdater announcementActivityUpdater =
                                                             new AnnouncementActivityUpdater(activityManager, announcementService);
 
-    Announcement announcement = new Announcement(1l, 1l, 1L, "announcement comment", 1L, new Date().toString(), null);
+    Announcement announcement = new Announcement(1l, 1l, "challenge title", 1L, "announcement comment", 1L, new Date().toString(), null);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setType("not announcement activity");
     ActivityLifeCycleEvent activityLifeCycleEvent = new ActivityLifeCycleEvent(ActivityLifeCycleEvent.Type.UPDATE_ACTIVITY,

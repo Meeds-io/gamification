@@ -78,7 +78,7 @@ export default {
       default: function() {
         return {};
       },
-    },
+    }
   },
   computed: {
     title() {
