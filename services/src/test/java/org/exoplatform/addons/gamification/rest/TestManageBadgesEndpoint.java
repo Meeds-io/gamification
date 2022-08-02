@@ -1,6 +1,6 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 Meeds Association
+ * Copyright (C) 2022 Meeds Association
  * contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
 import org.json.JSONWriter;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
-import org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.log.ExoLogger;
@@ -46,8 +46,9 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
     return ManageBadgesEndpoint.class;
   }
 
+  @Before
   @Override
-  protected void setUp() throws Exception {
+  public void setUp() throws Exception {
     super.setUp();
     startSessionAs("root1");
     registry(getComponentClass());

@@ -8,39 +8,44 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-public class DomainDTO implements Cloneable {
+import java.io.Serializable;
 
-  protected Long                  id;
+public class DomainDTO implements Serializable, Cloneable {
 
-  protected String                title;
+  private static final long serialVersionUID = -8857818632949907592L;
 
-  protected String                description;
+  protected Long            id;
 
-  protected int                   priority;
+  protected String          title;
 
-  private String                  createdBy;
+  protected String          description;
 
-  private String                  createdDate;
+  protected int             priority;
 
-  private String                  lastModifiedBy;
+  private String            createdBy;
 
-  private String                  lastModifiedDate;
+  private String            createdDate;
 
-  protected boolean               deleted;
+  private String            lastModifiedBy;
 
-  protected boolean               enabled;
+  private String            lastModifiedDate;
 
-  public DomainDTO() {  }
+  protected boolean         deleted;
 
-  public DomainDTO(Long id,
+  protected boolean         enabled;
+
+  public DomainDTO() {
+  }
+
+  public DomainDTO(Long id, // NOSONAR
                    String title,
                    String description,
                    int priority,
@@ -64,17 +69,16 @@ public class DomainDTO implements Cloneable {
 
   @Override
   protected DomainDTO clone() { // NOSONAR
-   return new DomainDTO(id,
-           title,
-           description,
-           priority,
-           createdBy,
-           createdDate,
-           lastModifiedBy,
-           lastModifiedDate,
-           deleted,
-           enabled
-           );
+    return new DomainDTO(id,
+                         title,
+                         description,
+                         priority,
+                         createdBy,
+                         createdDate,
+                         lastModifiedBy,
+                         lastModifiedDate,
+                         deleted,
+                         enabled);
   }
 
   public Long getId() {

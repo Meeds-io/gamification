@@ -1,14 +1,13 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 
 public class CacheKey implements Serializable {
 
   private static final long serialVersionUID = 8953827201312560226L;
 
-  private List<Long>        ids;
+  private RuleFilter        filter;
 
   private int               offset;
 
@@ -22,29 +21,6 @@ public class CacheKey implements Serializable {
 
   private Integer           context;
 
-  public CacheKey(Integer context, List<Long> ids, int offset, int limit) {
-    this.ids = ids;
-    this.offset = offset;
-    this.limit = limit;
-    this.context = context;
-  }
-
-  public CacheKey(Integer context, List<Long> ids, String title, int offset, int limit) {
-    this.ids = ids;
-    this.title = title;
-    this.offset = offset;
-    this.limit = limit;
-    this.context = context;
-  }
-
-  public CacheKey(Integer context, List<Long> ids, long domainId, int offset, int limit) {
-    this.ids = ids;
-    this.domainId = domainId;
-    this.offset = offset;
-    this.limit = limit;
-    this.context = context;
-  }
-
   public CacheKey(Integer context, Long id) {
     this.id = id;
     this.context = context;
@@ -55,12 +31,11 @@ public class CacheKey implements Serializable {
     this.context = context;
   }
 
-  public List<Long> getIds() {
-    return ids;
-  }
-
-  public void setIds(List<Long> ids) {
-    this.ids = ids;
+  public CacheKey(Integer context, RuleFilter filter, int offset, int limit) {
+    this.context = context;
+    this.filter = filter;
+    this.offset = offset;
+    this.limit = limit;
   }
 
   public int getOffset() {
@@ -95,6 +70,14 @@ public class CacheKey implements Serializable {
     this.title = title;
   }
 
+  public RuleFilter getFilter() {
+    return filter;
+  }
+
+  public void setFilter(RuleFilter filter) {
+    this.filter = filter;
+  }
+
   public Integer getContext() {
     return context;
   }
@@ -113,7 +96,7 @@ public class CacheKey implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(context, domainId, id, ids, limit, offset, title);
+    return Objects.hash(context, domainId, id, filter, limit, offset, title);
   }
 
   @Override
@@ -126,7 +109,7 @@ public class CacheKey implements Serializable {
       return false;
     CacheKey other = (CacheKey) obj;
     return Objects.equals(context, other.context) && domainId == other.domainId && Objects.equals(id, other.id)
-        && Objects.equals(ids, other.ids) && limit == other.limit && offset == other.offset
+        && Objects.equals(filter, other.filter) && limit == other.limit && offset == other.offset
         && Objects.equals(title, other.title);
   }
 
