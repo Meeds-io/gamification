@@ -18,14 +18,22 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
@@ -288,5 +296,20 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     assertEquals(gamificationHistoryDAO.getAllRealizationsByDate(fromDate,toDate,offset,limit).size(), limit);
+  }
+  
+  @Test
+  public void testFindRealizationsByFilter() {
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setIsSortedByActionTitle(true);
+    assertEquals(gamificationHistoryDAO.findRealizationsByFilter(filter, 0, 10).size(), 0);
+    GamificationActionsHistory gamificationActionsHistory1 = new GamificationActionsHistory();
+    gamificationActionsHistory1.setActionTitle("aForAction");
+    GamificationActionsHistory gamificationActionsHistory2 = new GamificationActionsHistory();
+    gamificationActionsHistory2.setActionTitle("bForAction");
+    GamificationActionsHistory gamificationActionsHistory3 = new GamificationActionsHistory();
+    gamificationActionsHistory3.setActionTitle("cForAction");
+    
+    
   }
 }

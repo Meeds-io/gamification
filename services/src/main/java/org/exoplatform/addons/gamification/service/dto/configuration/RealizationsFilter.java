@@ -17,12 +17,9 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 
 @Data
 @NoArgsConstructor
@@ -40,4 +37,5 @@ public class RealizationsFilter implements Serializable {
   private String            fromDate;
   
   private String            toDate;
+ 
 }

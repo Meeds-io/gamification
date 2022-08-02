@@ -11,11 +11,11 @@ public interface RealizationsService {
   /**
    * Retrieves all Realizations by Date.
    *
-   * @param filter filter
+   * @param RealizationsFilter filter
    * @param offset Offset
    * @param limit Limit
    * @return A {@link List <GamificationActionsHistoryDTO>} object
-   * @throws IllegalAccessException when Dates parameters are not set correctly
+   * @throws IllegalAccessException when RealizationsFilter parameters are not set correctly
    */
   List<GamificationActionsHistoryDTO> getAllRealizationsByDate(RealizationsFilter filter,
                                                                int offset,

@@ -503,12 +503,14 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       suffixes.add("toDate");
       datePredicates.add(":toDate :toDate");
     }
-    suffixes.add("sortDescending");
+
     if (filter.getIsSortedByActionTitle() == true) {
+      suffixes.add("sortDescending");
       suffixes.add("ActionTitle");
       sortPredicates.add(":actionTitle :sortDescending");
     }
     if (filter.getIsSortedByRuleId() == true) {
+      suffixes.add("sortDescending");
       suffixes.add("ids");
       sortPredicates.add(":ids :sortDescending");
     }

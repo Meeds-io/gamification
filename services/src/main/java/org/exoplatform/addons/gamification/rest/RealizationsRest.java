@@ -88,7 +88,6 @@ public class RealizationsRest implements ResourceContainer {
       filter.setIsSortedByRuleId(true);
     }
     filter.setSortDescending(sortDescending);
-    filter.setFromDate(fromDate);
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
