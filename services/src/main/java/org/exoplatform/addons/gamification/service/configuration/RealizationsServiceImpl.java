@@ -24,18 +24,15 @@ public class RealizationsServiceImpl implements RealizationsService {
   public List<GamificationActionsHistoryDTO> getAllRealizationsByDate( RealizationsFilter filter,
                                                                       int offset,
                                                                       int limit) throws IllegalArgumentException {
-    String fromDate = filter.getFromDate();
-    String toDate = filter.getToDate();
-    if (StringUtils.isBlank(fromDate)) {
+    Date fromDate = filter.getFromDate();
+    Date toDate = filter.getToDate();
+    if (StringUtils.isBlank(fromDate.toString())) {
       throw new IllegalArgumentException("fromDate is mandatory");
     }
-    if (StringUtils.isBlank(toDate)) {
+    if (StringUtils.isBlank(toDate.toString())) {
       throw new IllegalArgumentException("toDate is mandatory");
     }
-    Date dateFrom = Utils.parseRFC3339Date(fromDate);
-    Date dateTo = Utils.parseRFC3339Date(toDate);
-
-    if (dateFrom.after(dateTo)) {
+    if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
     return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);

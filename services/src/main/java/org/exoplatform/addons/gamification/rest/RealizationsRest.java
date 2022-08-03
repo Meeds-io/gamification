@@ -81,8 +81,10 @@ public class RealizationsRest implements ResourceContainer {
                                      @QueryParam("limit")
                                      int limit) {
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setFromDate(fromDate);
-    filter.setToDate(toDate);
+    Date dateFrom = Utils.parseRFC3339Date(fromDate);
+    Date dateTo = Utils.parseRFC3339Date(toDate);
+    filter.setFromDate(dateFrom);
+    filter.setToDate(dateTo);
     if (sortBy == "ActionType") {
       filter.setIsSortedByActionTitle(true);
       filter.setIsSortedByRuleId(true);
@@ -167,13 +169,13 @@ public class RealizationsRest implements ResourceContainer {
                             @QueryParam("toDate")
                             String toDate) {
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setFromDate(fromDate);
-    filter.setToDate(toDate);
-    
+    Date dateFrom = Utils.parseRFC3339Date(fromDate);
+    Date dateTo = Utils.parseRFC3339Date(toDate);
+    filter.setFromDate(dateFrom);
+    filter.setToDate(dateTo);
+
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(filter,
-                                                                                                             0,
-                                                                                                             0);
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(filter, 0, 0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                         GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
       String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);

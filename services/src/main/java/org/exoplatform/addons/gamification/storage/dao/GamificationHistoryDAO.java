@@ -479,10 +479,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("type", IdentityType.USER);
     query.setParameter("toDate", filter.getToDate());
     query.setParameter("fromDate", filter.getFromDate());
-    if (filter.getIsSortedByActionTitle() == true) {
+    if (filter.getIsSortedByActionTitle() != null && filter.getIsSortedByActionTitle() == true) {
       query.setParameter("actionTitle", filter.getIsSortedByActionTitle());
     }
-    if (filter.getIsSortedByRuleId() == true) {
+    if (filter.getIsSortedByRuleId() != null && filter.getIsSortedByRuleId() == true) {
       query.setParameter("ids", filter.getIsSortedByRuleId());
     }
     if (filter.getSortDescending() != null) {

@@ -17,11 +17,8 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-
-import javax.ws.rs.DefaultValue;
-
+import java.util.Date;
 import lombok.AllArgsConstructor;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -38,51 +35,8 @@ public class RealizationsFilter implements Serializable {
 
   private Boolean           sortDescending;
 
-  private String            fromDate;
+  private Date              fromDate;
 
-  private String            toDate;
-  
-
-  public Boolean getIsSortedByActionTitle() {
-    return isSortedByActionTitle;
-  }
-
-  public void setIsSortedByActionTitle(Boolean isSortedByActionTitle) {
-    this.isSortedByActionTitle = isSortedByActionTitle;
-  }
-
-  public Boolean getIsSortedByRuleId() {
-    return isSortedByRuleId;
-  }
-
-  public void setIsSortedByRuleId(Boolean isSortedByRuleId) {
-    this.isSortedByRuleId = isSortedByRuleId;
-  }
-
-  public Boolean getSortDescending() {
-    return sortDescending;
-  }
-
-  public void setSortDescending(Boolean sortDescending) {
-    this.sortDescending = sortDescending;
-  }
-
-  public String getFromDate() {
-    return fromDate;
-  }
-
-  public void setFromDate(String fromDate) {
-    this.fromDate = fromDate;
-  }
-
-  public String getToDate() {
-    return toDate;
-  }
-
-  public void setToDate(String toDate) {
-    this.toDate = toDate;
-  }
-  
-  
+  private Date              toDate;
 
 }

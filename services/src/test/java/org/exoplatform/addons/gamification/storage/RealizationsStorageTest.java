@@ -27,10 +27,10 @@ import org.junit.Test;
 public class RealizationsStorageTest extends AbstractServiceTest {
 
   @Test
-  public void testGetAllRealizationsByDate() {
+  public void testFindAllRealizationsByFilter() {
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setFromDate(fromDate.toString());
-    filter.setToDate(toDate.toString());
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
     assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
@@ -41,8 +41,8 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   @Test
   public void testGetRealizationById() {
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setFromDate(fromDate.toString());
-    filter.setToDate(toDate.toString());
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
     assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     GamificationActionsHistoryDTO newGHistory = realizationsStorage.getRealizationById(gHistory.getId());
@@ -53,8 +53,8 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   @Test
   public void testUpdateRealizationStatus() {
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setFromDate(fromDate.toString());
-    filter.setToDate(toDate.toString());
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
     assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
