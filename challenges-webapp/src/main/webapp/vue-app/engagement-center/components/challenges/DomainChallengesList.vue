@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-expansion-panel>
+  <v-expansion-panel v-if="!loading">
     <v-expansion-panel-header class="pa-3" hide-actions>
       <template #default="{open}">
         <v-list-item flat dense>
@@ -78,6 +78,10 @@ export default {
       default: function() {
         return {};
       },
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
