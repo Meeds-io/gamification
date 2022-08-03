@@ -291,25 +291,14 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRealizationsByDate() {
-    assertEquals(gamificationHistoryDAO.getAllRealizationsByDate(fromDate,toDate,offset,limit).size(), 0);
+	RealizationsFilter filter = new RealizationsFilter();
+	filter.setFromDate(fromDate);
+	filter.setToDate(toDate);
+    assertEquals(gamificationHistoryDAO.findRealizationsByFilter(filter,offset,limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.getAllRealizationsByDate(fromDate,toDate,offset,limit).size(), limit);
+    assertEquals(gamificationHistoryDAO.findRealizationsByFilter(filter,offset,limit).size(), limit);
   }
   
-  @Test
-  public void testFindRealizationsByFilter() {
-    RealizationsFilter filter = new RealizationsFilter();
-    filter.setIsSortedByActionTitle(true);
-    assertEquals(gamificationHistoryDAO.findRealizationsByFilter(filter, 0, 10).size(), 0);
-    GamificationActionsHistory gamificationActionsHistory1 = new GamificationActionsHistory();
-    gamificationActionsHistory1.setActionTitle("aForAction");
-    GamificationActionsHistory gamificationActionsHistory2 = new GamificationActionsHistory();
-    gamificationActionsHistory2.setActionTitle("bForAction");
-    GamificationActionsHistory gamificationActionsHistory3 = new GamificationActionsHistory();
-    gamificationActionsHistory3.setActionTitle("cForAction");
-    
-    
-  }
 }

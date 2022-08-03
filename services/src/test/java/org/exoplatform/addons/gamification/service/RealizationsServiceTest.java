@@ -79,6 +79,7 @@ public class RealizationsServiceTest {
     // Given
     RealizationsFilter filter = new RealizationsFilter();
     filter.setFromDate(toDate);
+    filter.setToDate(fromDate);
     GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
@@ -89,12 +90,10 @@ public class RealizationsServiceTest {
     when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
 
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(filter, offset, limit));
-    filter.setFromDate(null);
-    filter.setToDate(toDate);
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByDate(filter, offset, limit));
-    filter.setFromDate(fromDate);
 
     // When
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
     List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
                                                                                  realizationsService.getAllRealizationsByDate(filter,
                                                                                                                               offset,

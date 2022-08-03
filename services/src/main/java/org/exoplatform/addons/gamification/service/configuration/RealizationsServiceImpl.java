@@ -14,57 +14,46 @@ import java.util.List;
 
 public class RealizationsServiceImpl implements RealizationsService {
 
-  private RealizationsStorage realizationsStorage;
+	private RealizationsStorage realizationsStorage;
 
-  public RealizationsServiceImpl(RealizationsStorage realizationsStorage) {
-    this.realizationsStorage = realizationsStorage;
-  }
+	public RealizationsServiceImpl(RealizationsStorage realizationsStorage) {
+		this.realizationsStorage = realizationsStorage;
+	}
 
-  @Override
-  public List<GamificationActionsHistoryDTO> getAllRealizationsByDate( RealizationsFilter filter,
-                                                                      int offset,
-                                                                      int limit) throws IllegalArgumentException {
-    Date fromDate = filter.getFromDate();
-    Date toDate = filter.getToDate();
-    if (StringUtils.isBlank(fromDate.toString())) {
-      throw new IllegalArgumentException("fromDate is mandatory");
-    }
-    if (StringUtils.isBlank(toDate.toString())) {
-      throw new IllegalArgumentException("toDate is mandatory");
-    }
-    if (fromDate.after(toDate)) {
-      throw new IllegalArgumentException("Dates parameters are not set correctly");
-    }
-    return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
-  }
+	@Override
+	public List<GamificationActionsHistoryDTO> getAllRealizationsByDate(RealizationsFilter filter, int offset,
+			int limit) throws IllegalArgumentException {
+		Date fromDate = filter.getFromDate();
+		Date toDate = filter.getToDate();
+		if (fromDate.after(toDate)) {
+			throw new IllegalArgumentException("Dates parameters are not set correctly");
+		}
+		return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
+	}
 
-  @Override
-  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
-                                                               HistoryStatus status,
-                                                               String actionLabel,
-                                                               Long points,
-                                                               String domain) throws IllegalArgumentException,
-                                                                              ObjectNotFoundException {
+	@Override
+	public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status,
+			String actionLabel, Long points, String domain) throws IllegalArgumentException, ObjectNotFoundException {
 
-    if (gHistoryId == null) {
-      throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
-    }
-    GamificationActionsHistoryDTO gHistory = realizationsStorage.getRealizationById(gHistoryId);
+		if (gHistoryId == null) {
+			throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
+		}
+		GamificationActionsHistoryDTO gHistory = realizationsStorage.getRealizationById(gHistoryId);
 
-    if (gHistory == null) {
-      throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
-    }
-    if (!actionLabel.isEmpty()) {
-      gHistory.setActionTitle(actionLabel);
-    }
-    if (points != 0) {
-      gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
-      gHistory.setActionScore(points);
-    }
-    if (!domain.isEmpty()) {
-      gHistory.setDomain(domain);
-    }
-    gHistory.setStatus(status.name());
-    return realizationsStorage.updateRealizationStatus(gHistory);
-  }
+		if (gHistory == null) {
+			throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
+		}
+		if (!actionLabel.isEmpty()) {
+			gHistory.setActionTitle(actionLabel);
+		}
+		if (points != 0) {
+			gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
+			gHistory.setActionScore(points);
+		}
+		if (!domain.isEmpty()) {
+			gHistory.setDomain(domain);
+		}
+		gHistory.setStatus(status.name());
+		return realizationsStorage.updateRealizationStatus(gHistory);
+	}
 }
