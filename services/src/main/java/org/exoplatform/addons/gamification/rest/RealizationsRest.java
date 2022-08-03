@@ -69,7 +69,7 @@ public class RealizationsRest implements ResourceContainer {
 			@ApiParam(value = "Whether to retrieve results sorted descending or not", required = false) @QueryParam("sortDescending") Boolean sortDescending,
 			@ApiParam(value = "Offset of result", required = false) @DefaultValue("0") @QueryParam("offset") int offset,
 			@ApiParam(value = "Limit of result", required = false) @DefaultValue("10") @QueryParam("limit") int limit) {
-	    if (StringUtils.isBlank(fromDate.toString()) || StringUtils.isBlank(toDate.toString())) {
+	    if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
 	    	return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
 	      }
 		RealizationsFilter filter = new RealizationsFilter();
@@ -77,7 +77,7 @@ public class RealizationsRest implements ResourceContainer {
 		Date dateTo = Utils.parseRFC3339Date(toDate);
 		filter.setFromDate(dateFrom);
 		filter.setToDate(dateTo);
-		if (sortBy == "ActionType") {
+		if (sortBy.equals("ActionType")) {
 			filter.setIsSortedByActionTitle(true);
 			filter.setIsSortedByRuleId(true);
 			filter.setSortDescending(sortDescending);
