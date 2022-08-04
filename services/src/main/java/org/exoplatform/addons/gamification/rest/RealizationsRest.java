@@ -77,7 +77,7 @@ public class RealizationsRest implements ResourceContainer {
 		Date dateTo = Utils.parseRFC3339Date(toDate);
 		filter.setFromDate(dateFrom);
 		filter.setToDate(dateTo);
-		if (sortBy.equals("ActionType")) {
+		if (sortBy == "ActionType") {
 			filter.setIsSortedByActionTitle(true);
 			filter.setIsSortedByRuleId(true);
 			filter.setSortDescending(sortDescending);
