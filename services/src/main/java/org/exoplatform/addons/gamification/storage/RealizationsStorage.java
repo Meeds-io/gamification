@@ -17,11 +17,16 @@ public class RealizationsStorage {
     public RealizationsStorage(GamificationHistoryDAO gamificationHistoryDAO) {
         this.gamificationHistoryDAO = gamificationHistoryDAO;
     }
-    
-    public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter (RealizationsFilter realizationFilter, int offset, int limit){
-      List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.findRealizationsByFilter(realizationFilter, offset, limit);
+
+    public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter realizationFilter,
+                                                                          int offset,
+                                                                          int limit) {
+      List<GamificationActionsHistory> gamificationActionsHistoryList =
+                                                                      gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
+                                                                                                                      offset,
+                                                                                                                      limit);
       return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
-  }
+    }
 
     public GamificationActionsHistoryDTO getRealizationById(Long id){
         GamificationActionsHistory gamificationActionsHistory = gamificationHistoryDAO.find(id);

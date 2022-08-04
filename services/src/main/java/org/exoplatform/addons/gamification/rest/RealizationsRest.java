@@ -62,27 +62,40 @@ public class RealizationsRest implements ResourceContainer {
 	@ApiResponses(value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
 			@ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
 			@ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-	public Response getAllRealizations(
-			@ApiParam(value = "result fromDate", required = true) @QueryParam("fromDate") String fromDate,
-			@ApiParam(value = "result toDate", required = true) @QueryParam("toDate") String toDate,
-			@ApiParam(value = "Sort field. Possible values: ruleId or actionTitle Default = ", defaultValue = "actionTitle", required = false) @QueryParam("sortBy") String sortBy,
-			@ApiParam(value = "Whether to retrieve results sorted descending or not", required = false) @QueryParam("sortDescending") Boolean sortDescending,
-			@ApiParam(value = "Offset of result", required = false) @DefaultValue("0") @QueryParam("offset") int offset,
-			@ApiParam(value = "Limit of result", required = false) @DefaultValue("10") @QueryParam("limit") int limit) {
-	    if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
-	    	return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
-	      }
-		RealizationsFilter filter = new RealizationsFilter();
-		Date dateFrom = Utils.parseRFC3339Date(fromDate);
-		Date dateTo = Utils.parseRFC3339Date(toDate);
-		filter.setFromDate(dateFrom);
-		filter.setToDate(dateTo);
+  public Response getAllRealizations(@ApiParam(value = "result fromDate", required = true)
+  @QueryParam("fromDate")
+  String fromDate,
+                                     @ApiParam(value = "result toDate", required = true)
+                                     @QueryParam("toDate")
+                                     String toDate,
+                                     @ApiParam(value = "Sort field. Possible values: ruleId or actionTitle Default = ", defaultValue = "actionTitle", required = false)
+                                     @QueryParam("sortBy")
+                                     String sortBy,
+                                     @ApiParam(value = "Whether to retrieve results sorted descending or not", required = false)
+                                     @QueryParam("sortDescending")
+                                     Boolean sortDescending,
+                                     @ApiParam(value = "Offset of result", required = false)
+                                     @DefaultValue("0")
+                                     @QueryParam("offset")
+                                     int offset,
+                                     @ApiParam(value = "Limit of result", required = false)
+                                     @DefaultValue("10")
+                                     @QueryParam("limit")
+                                     int limit) {
+    if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
+    }
+    RealizationsFilter filter = new RealizationsFilter();
+    Date dateFrom = Utils.parseRFC3339Date(fromDate);
+    Date dateTo = Utils.parseRFC3339Date(toDate);
+    filter.setFromDate(dateFrom);
+    filter.setToDate(dateTo);
     if (StringUtils.equals(sortBy, "ActionType")) {
-			filter.setIsSortedByActionTitle(true);
-			filter.setIsSortedByRuleId(true);
-			filter.setSortDescending(sortDescending);
-		}
-		
+      filter.setIsSortedByActionTitle(true);
+      filter.setIsSortedByRuleId(true);
+      filter.setSortDescending(sortDescending);
+    }
+
 		if (offset < 0) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
 		}
@@ -144,13 +157,17 @@ public class RealizationsRest implements ResourceContainer {
 			@ApiResponse(code = 500, message = "Internal server error"),
 			@ApiResponse(code = 400, message = "Invalid query input") })
 	public Response getReport(
-			@ApiParam(value = "result fromDate", required = true) @QueryParam("fromDate") String fromDate,
-			@ApiParam(value = "result toDate", required = true) @QueryParam("toDate") String toDate) {
-		RealizationsFilter filter = new RealizationsFilter();
-		Date dateFrom = Utils.parseRFC3339Date(fromDate);
-		Date dateTo = Utils.parseRFC3339Date(toDate);
-		filter.setFromDate(dateFrom);
-		filter.setToDate(dateTo);
+                            @ApiParam(value = "result fromDate", required = true)
+                            @QueryParam("fromDate")
+                            String fromDate,
+                            @ApiParam(value = "result toDate", required = true)
+                            @QueryParam("toDate")
+                            String toDate) {
+    RealizationsFilter filter = new RealizationsFilter();
+    Date dateFrom = Utils.parseRFC3339Date(fromDate);
+    Date dateTo = Utils.parseRFC3339Date(toDate);
+    filter.setFromDate(dateFrom);
+    filter.setToDate(dateTo);
 
 		try {
 			List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService
