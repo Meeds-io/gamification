@@ -36,6 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :headers="realizationsHeaders"
       :items="realizations"
       :loading="loading"
+      :options.sync="options"
       disable-pagination
       hide-default-footer
       class="mx-6 mt-6 realizationsTable">
@@ -74,6 +75,9 @@ export default {
     realizationsPerPage: 10,
     loading: true,
     loadMore: false,
+    sortBy: null,
+    sortDirection: false,
+    options: {},
     limitReached: false,
     showLoadMoreButton: false,
     toDate: new Date().toISOString() ,
@@ -114,7 +118,7 @@ export default {
         {
           text: this.$t('realization.label.actionType'),
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'actionType',
           class: 'actionHeader px-1'
         },
@@ -157,12 +161,20 @@ export default {
         this.loadRealizations();
       }
     },
+    options: {
+      handler () {
+        this.sortBy = this.options.sortBy;
+        this.sortDescending = this.options.sortDesc;
+        this.loadRealizations(this.sortBy, this.sortDescending);
+      },
+      deep: true,
+    },
   },
   methods: {
     loadRealizations(loadMore) {
       this.loading = true;
-      const offset = loadMore ? this.realizations.length : 0;
-      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,offset,this.realizationsPerPage).then(realizations => {
+      //const offset = loadMore ? this.realizations.length : 0;
+      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,this.sortBy,this.sortDescending,0,this.realizationsPerPage).then(realizations => {
         if (realizations.length >= this.realizationsPerPage) {
           this.showLoadMoreButton = true;
         } else {

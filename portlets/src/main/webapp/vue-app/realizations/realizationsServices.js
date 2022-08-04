@@ -1,6 +1,6 @@
 
-export function getAllRealizations(fromDate, toDate, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&offset=${offset || 0}&limit=${limit|| 10}`, {
+export function getAllRealizations(fromDate, toDate, sortBy, sortDescending, offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 10}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
