@@ -165,16 +165,33 @@ export default {
       handler () {
         this.sortBy = this.options.sortBy;
         this.sortDescending = this.options.sortDesc;
-        this.loadRealizations(this.sortBy, this.sortDescending);
+        if (this.sortBy.length !== 0) {
+          this.sortRealizations();
+        } else { this.loadRealizations();}
       },
       deep: true,
     },
   },
   methods: {
+    sortRealizations(loadMore) {
+      this.loading = true;
+      const offset = loadMore ? this.realizations.length : 0;
+      this.$realizationsServices.getSortedRealizations(this.fromDate,this.toDate,this.sortBy,this.sortDescending,offset,this.realizationsPerPage).then(realizations => {
+        if (realizations.length >= this.realizationsPerPage) {
+          this.showLoadMoreButton = true;
+        } else {
+          this.showLoadMoreButton = false;
+        }
+        this.realizations = loadMore && this.realizations.concat(realizations) || realizations;
+
+      }).finally(() => {
+        this.loading = false;
+      });
+    },
     loadRealizations(loadMore) {
       this.loading = true;
-      //const offset = loadMore ? this.realizations.length : 0;
-      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,this.sortBy,this.sortDescending,0,this.realizationsPerPage).then(realizations => {
+      const offset = loadMore ? this.realizations.length : 0;
+      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,offset,this.realizationsPerPage).then(realizations => {
         if (realizations.length >= this.realizationsPerPage) {
           this.showLoadMoreButton = true;
         } else {

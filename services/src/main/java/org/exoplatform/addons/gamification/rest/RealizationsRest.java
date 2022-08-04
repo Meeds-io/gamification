@@ -35,7 +35,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.*;
 @RolesAllowed("administrators")
 public class RealizationsRest implements ResourceContainer {
 
-  private static final Log    LOG       = ExoLogger.getLogger(RealizationsRest.class);
+  private static final Log LOG = ExoLogger.getLogger(RealizationsRest.class);
 
   private RealizationsService realizationsService;
 
@@ -44,10 +44,10 @@ public class RealizationsRest implements ResourceContainer {
 
   private static final String SEPARATOR = "\n";
 
-  private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
+  private SimpleDateFormat formater = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
 
   // File header
-  private static final String HEADER    = "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
+  private static final String HEADER = "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
 
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
@@ -63,8 +63,8 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response getAllRealizations(@ApiParam(value = "result fromDate", required = true)
-  @QueryParam("fromDate")
-  String fromDate,
+                                     @QueryParam("fromDate")
+                                     String fromDate,
                                      @ApiParam(value = "result toDate", required = true)
                                      @QueryParam("toDate")
                                      String toDate,
@@ -105,7 +105,7 @@ public class RealizationsRest implements ResourceContainer {
 
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
-                                                              realizationsService.getAllRealizationsByDate(filter, offset, limit);
+          realizationsService.getAllRealizationsByDate(filter, offset, limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of Realizations", e);
@@ -125,8 +125,8 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response updateRealizations(@ApiParam(value = "id of realization", required = true)
-  @QueryParam("realizationId")
-  String realizationId,
+                                     @QueryParam("realizationId")
+                                     String realizationId,
                                      @ApiParam(value = "new status of realization", required = true)
                                      @QueryParam("status")
                                      String status,
@@ -143,11 +143,11 @@ public class RealizationsRest implements ResourceContainer {
     String currentUser = Utils.getCurrentUser();
     try {
       GamificationActionsHistoryDTO gamificationActionsHistoryDTO =
-                                                                  realizationsService.updateRealizationStatus(Long.valueOf(realizationId),
-                                                                                                              HistoryStatus.valueOf(status),
-                                                                                                              actionLabel,
-                                                                                                              points,
-                                                                                                              domain);
+          realizationsService.updateRealizationStatus(Long.valueOf(realizationId),
+                                                      HistoryStatus.valueOf(status),
+                                                      actionLabel,
+                                                      points,
+                                                      domain);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO)).build();
     } catch (ObjectNotFoundException e) {
       LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
@@ -169,8 +169,8 @@ public class RealizationsRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
       @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getReport(@ApiParam(value = "result fromDate", required = true)
-  @QueryParam("fromDate")
-  String fromDate,
+                            @QueryParam("fromDate")
+                            String fromDate,
                             @ApiParam(value = "result toDate", required = true)
                             @QueryParam("toDate")
                             String toDate) {
@@ -183,7 +183,7 @@ public class RealizationsRest implements ResourceContainer {
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(filter, 0, 0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-                                                                                        GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
       String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());

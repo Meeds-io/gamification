@@ -479,6 +479,17 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       suffixes.add("toDate");
       datePredicates.add(":toDate");
     }
+    
+    if (filter.getIsSortedByRuleId() != null && filter.getIsSortedByRuleId() == true) {
+      suffixes.add("sortDescending");
+      suffixes.add("ids");
+      if (filter.getSortDescending()) {
+        sortPredicates.add(" g.ruleId ASC");
+      } else {
+        sortPredicates.add(" g.ruleId DESC NULLS LAST");
+      }
+
+    }
 
     if (filter.getIsSortedByActionTitle() != null && filter.getIsSortedByActionTitle() == true) {
       suffixes.add("sortDescending");
@@ -488,16 +499,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       } else {
         sortPredicates.add(" g.actionTitle DESC");
       }
-    }
-    if (filter.getIsSortedByRuleId() != null && filter.getIsSortedByRuleId() == true) {
-      suffixes.add("sortDescending");
-      suffixes.add("ids");
-      if (filter.getSortDescending()) {
-        sortPredicates.add(" g.ruleId ASC");
-      } else {
-        sortPredicates.add(" g.ruleId DESC");
-      }
-
     }
   }
 
