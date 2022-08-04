@@ -77,11 +77,12 @@ public class RealizationsRest implements ResourceContainer {
 		Date dateTo = Utils.parseRFC3339Date(toDate);
 		filter.setFromDate(dateFrom);
 		filter.setToDate(dateTo);
-		if (sortBy == "ActionType") {
+    if (StringUtils.equals(sortBy, "ActionType")) {
 			filter.setIsSortedByActionTitle(true);
 			filter.setIsSortedByRuleId(true);
 			filter.setSortDescending(sortDescending);
 		}
+		
 		if (offset < 0) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
 		}
