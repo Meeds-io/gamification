@@ -35,7 +35,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.*;
 @RolesAllowed("administrators")
 public class RealizationsRest implements ResourceContainer {
 
-  private static final Log LOG = ExoLogger.getLogger(RealizationsRest.class);
+  private static final Log    LOG = ExoLogger.getLogger(RealizationsRest.class);
 
   private RealizationsService realizationsService;
 
@@ -44,10 +44,11 @@ public class RealizationsRest implements ResourceContainer {
 
   private static final String SEPARATOR = "\n";
 
-  private SimpleDateFormat formater = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
+  private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
 
   // File header
-  private static final String HEADER = "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
+  private static final String HEADER    =
+                                     "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
 
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
@@ -68,12 +69,14 @@ public class RealizationsRest implements ResourceContainer {
                                      @ApiParam(value = "result toDate", required = true)
                                      @QueryParam("toDate")
                                      String toDate,
-                                     @ApiParam(value = "Sort field. Possible values: ruleId or actionTitle Default = ", defaultValue = "actionTitle", required = false)
+                                     @ApiParam(value = "Sort field. Possible values: date or actionType.", defaultValue = "date", required = false)
                                      @QueryParam("sortBy")
-                                     String sortBy,
-                                     @ApiParam(value = "Whether to retrieve results sorted descending or not", required = false)
+                                     @DefaultValue("date")
+                                     String sortField,
+                                     @ApiParam(value = "Whether to retrieve results sorted descending or not", defaultValue = "true", required = false)
                                      @QueryParam("sortDescending")
-                                     Boolean sortDescending,
+                                     @DefaultValue("true")
+                                     boolean sortDescending,
                                      @ApiParam(value = "Offset of result", required = false)
                                      @DefaultValue("0")
                                      @QueryParam("offset")
@@ -90,11 +93,8 @@ public class RealizationsRest implements ResourceContainer {
     Date dateTo = Utils.parseRFC3339Date(toDate);
     filter.setFromDate(dateFrom);
     filter.setToDate(dateTo);
-    if (StringUtils.equals(sortBy, "actionType")) {
-      filter.setIsSortedByActionTitle(true);
-      filter.setIsSortedByRuleId(true);
-      filter.setSortDescending(sortDescending);
-    }
+    filter.setSortDescending(sortDescending);
+    filter.setSortField(sortField);
 
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
@@ -105,7 +105,7 @@ public class RealizationsRest implements ResourceContainer {
 
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
-          realizationsService.getAllRealizationsByDate(filter, offset, limit);
+          realizationsService.getAllRealizationsByFilter(filter, offset, limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of Realizations", e);
@@ -181,7 +181,7 @@ public class RealizationsRest implements ResourceContainer {
     filter.setToDate(dateTo);
 
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByDate(filter, 0, 0);
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByFilter(filter, 0, 0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
           GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
       String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);

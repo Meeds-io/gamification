@@ -34,6 +34,7 @@ release.properties
 
 # eclipse project file
 .settings/
+.metadata/
 .classpath
 .project
 
@@ -51,4 +52,3 @@ node_modules/
 etc/
 # Munified files
 webapp/javascript
-/.metadata/

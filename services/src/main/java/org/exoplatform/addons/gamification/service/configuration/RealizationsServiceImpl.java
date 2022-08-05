@@ -19,11 +19,20 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public List<GamificationActionsHistoryDTO> getAllRealizationsByDate(RealizationsFilter filter,
-                                                                      int offset,
-                                                                      int limit) throws IllegalArgumentException {
+  public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter filter,
+                                                                        int offset,
+                                                                        int limit) {
+    if (filter == null) {
+      throw new IllegalArgumentException("filter is mandatory");
+    }
     Date fromDate = filter.getFromDate();
     Date toDate = filter.getToDate();
+    if (fromDate == null) {
+      throw new IllegalArgumentException("fromDate is mandatory");
+    }
+    if (toDate == null) {
+      throw new IllegalArgumentException("toDate is mandatory");
+    }
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
@@ -35,8 +44,7 @@ public class RealizationsServiceImpl implements RealizationsService {
                                                                HistoryStatus status,
                                                                String actionLabel,
                                                                Long points,
-                                                               String domain) throws IllegalArgumentException,
-                                                                              ObjectNotFoundException {
+                                                               String domain) throws ObjectNotFoundException {
 
     if (gHistoryId == null) {
       throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");

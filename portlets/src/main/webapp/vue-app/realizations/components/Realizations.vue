@@ -34,11 +34,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-toolbar>
     <v-data-table
       :headers="realizationsHeaders"
-      :items="realizations"
+      :items="realizationsToDisplay"
       :loading="loading"
-      :options.sync="options"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDescending"
       disable-pagination
       hide-default-footer
+      must-sort
       class="mx-6 mt-6 realizationsTable">
       <template slot="item" slot-scope="props">
         <realization-item
@@ -52,11 +54,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       flat
       class="pa-2 mb-4">
       <v-btn
-        v-if="showLoadMoreButton"
+        v-if="hasMore"
         class="btn"
         :loading="loading"
         :disabled="loading"
-        @click="loadRealizations(true)"
+        @click="loadMore"
         block>
         <span class="ms-2 d-none d-lg-inline">
           {{ $t("realization.label.loadMore") }}
@@ -72,15 +74,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data: () => ({
     realizations: [],
-    realizationsPerPage: 10,
+    offset: 0,
+    limit: 10,
+    pageSize: 10,
     loading: true,
-    loadMore: false,
-    sortBy: null,
-    sortDirection: false,
-    options: {},
+    sortBy: 'date',
+    sortDescending: true,
     limitReached: false,
-    showLoadMoreButton: false,
-    toDate: new Date().toISOString() ,
+    toDate: new Date().toISOString(),
     fromDate: null ,
     selectedPeriod: null,
     dateFormat: {
@@ -92,12 +93,18 @@ export default {
     },
   }),
   computed: {
+    hasMore() {
+      return this.limit <= this.realizations.length;
+    },
+    realizationsToDisplay() {
+      return this.realizations.slice(0, this.limit);
+    },
     realizationsHeaders() {
       return [
         {
           text: this.$t('realization.label.date'),
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'date',
           class: 'actionHeader px-2',
         },
@@ -161,47 +168,28 @@ export default {
         this.loadRealizations();
       }
     },
-    options: {
-      handler () {
-        this.sortBy = this.options.sortBy;
-        this.sortDescending = this.options.sortDesc;
-        if (this.sortBy.length !== 0) {
-          this.sortRealizations();
-        } else { this.loadRealizations();}
-      },
-      deep: true,
+    sortBy(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.loadRealizations();
+      }
+    },
+    sortDescending(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.loadRealizations();
+      }
     },
   },
   methods: {
-    sortRealizations(loadMore) {
-      this.loading = true;
-      const offset = loadMore ? this.realizations.length : 0;
-      this.$realizationsServices.getSortedRealizations(this.fromDate,this.toDate,this.sortBy,this.sortDescending,offset,this.realizationsPerPage).then(realizations => {
-        if (realizations.length >= this.realizationsPerPage) {
-          this.showLoadMoreButton = true;
-        } else {
-          this.showLoadMoreButton = false;
-        }
-        this.realizations = loadMore && this.realizations.concat(realizations) || realizations;
-
-      }).finally(() => {
-        this.loading = false;
-      });
+    loadMore() {
+      this.limit += this.pageSize;
+      return this.loadRealizations();
     },
-    loadRealizations(loadMore) {
+    loadRealizations() {
       this.loading = true;
-      const offset = loadMore ? this.realizations.length : 0;
-      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,offset,this.realizationsPerPage).then(realizations => {
-        if (realizations.length >= this.realizationsPerPage) {
-          this.showLoadMoreButton = true;
-        } else {
-          this.showLoadMoreButton = false;
-        }
-        this.realizations = loadMore && this.realizations.concat(realizations) || realizations;
-
-      }).finally(() => {
-        this.loading = false;
-      });
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+        .then(realizations => {
+          this.realizations = realizations || [];
+        }).finally(() => this.loading = false);
     },
     exportFile() {
       return this.$realizationsServices.exportFile(this.fromDate, this.toDate);
