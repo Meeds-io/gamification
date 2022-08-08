@@ -94,7 +94,7 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
+    assertEquals(400, response.getStatus());
 
     restPath = "/gamification/api/v1/points/date?userId=root1";
     envctx = new EnvironmentContext();
