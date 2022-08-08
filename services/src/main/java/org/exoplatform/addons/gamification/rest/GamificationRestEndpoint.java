@@ -25,8 +25,6 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -57,6 +55,8 @@ public class GamificationRestEndpoint implements ResourceContainer {
     private IdentityManager identityManager;
     private DomainService domainService;
     private RuleService ruleService;
+    private static final String DATETIMEFORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATEFORMAT = "dd-MM-yyyy";
 
     public GamificationRestEndpoint(GamificationService gamificationService, IdentityManager identityManager, DomainService domainService, RuleService ruleService) {
         this.cacheControl = new CacheControl();
@@ -147,7 +147,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
       }
       Date startDate;
       try {
-        startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
+        startDate = DateUtils.parseDate(startDateEntry, DATETIMEFORMAT, DATEFORMAT);
       } catch (ParseException pe) {
         return Response.status(Status.BAD_REQUEST)
                        .entity("'startDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
@@ -155,7 +155,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
       }
       Date endDate;
       try {
-        endDate = DateUtils.parseDate(endDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
+        endDate = DateUtils.parseDate(endDateEntry, DATETIMEFORMAT, DATEFORMAT);
       } catch (ParseException pe) {
         return Response.status(Status.BAD_REQUEST)
                        .entity("'endDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
@@ -206,7 +206,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
       }
       Date startDate;
       try {
-        startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
+        startDate = DateUtils.parseDate(startDateEntry, DATETIMEFORMAT, DATEFORMAT);
       } catch (ParseException pe) {
         return Response.status(Status.BAD_REQUEST)
                        .entity("'startDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
@@ -214,7 +214,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
       }
       Date endDate;
       try {
-        endDate = DateUtils.parseDate(endDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
+        endDate = DateUtils.parseDate(endDateEntry, DATETIMEFORMAT, DATEFORMAT);
       } catch (ParseException pe) {
         return Response.status(Status.BAD_REQUEST)
                        .entity("'endDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
