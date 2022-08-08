@@ -161,6 +161,18 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
+  public List<String> getRuleEventsByType(TypeRule ruleType) {
+    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
+    query.setParameter("type", ruleType);
+    return query.getResultList();
+  }
+
+  public List<Long> getRuleIdsByType(TypeRule ruleType) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRuleIdsByType", Long.class);
+    query.setParameter("type", ruleType);
+    return query.getResultList();
+  }
+
   public List<RuleEntity> findRulesByFilter(RuleFilter filter, int offset, int limit) {
     TypedQuery<RuleEntity> query = buildQueryFromFilter(filter, RuleEntity.class, false);
     query.setFirstResult(offset);
