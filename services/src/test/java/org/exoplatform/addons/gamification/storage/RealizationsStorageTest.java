@@ -8,11 +8,11 @@
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 package org.exoplatform.addons.gamification.storage;
@@ -20,24 +20,30 @@ package org.exoplatform.addons.gamification.storage;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 
 import org.junit.Test;
-
 
 public class RealizationsStorageTest extends AbstractServiceTest {
 
   @Test
-  public void testGetAllRealizationsByDate() {
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
+  public void testFindAllRealizationsByFilter() {
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(), 3);
+    assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 3);
   }
 
   @Test
   public void testGetRealizationById() {
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     GamificationActionsHistoryDTO newGHistory = realizationsStorage.getRealizationById(gHistory.getId());
     assertNotNull(newGHistory);
@@ -46,7 +52,10 @@ public class RealizationsStorageTest extends AbstractServiceTest {
 
   @Test
   public void testUpdateRealizationStatus() {
-    assertEquals(realizationsStorage.getAllRealizationsByDate(fromDate, toDate, offset, limit).size(),0);
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
     gHistory.setStatus(HistoryStatus.REJECTED.name());

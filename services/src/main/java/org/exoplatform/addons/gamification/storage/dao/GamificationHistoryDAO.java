@@ -21,9 +21,13 @@ import java.util.*;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.*;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
@@ -31,6 +35,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
   public static final String            STATUS = "status";
 
+  private RuleDAO ruleDAO;
+
+  public GamificationHistoryDAO(RuleDAO ruleDAO) {
+    this.ruleDAO = ruleDAO;
+  }
 
   /**
    * Get all ActionHistory records and convert them to list of type
@@ -415,19 +424,106 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     List<GamificationActionsHistory> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
   }
-  public List<GamificationActionsHistory> getAllRealizationsByDate(Date fromDate, Date toDate, int offset, int limit) {
+
+  public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter realizationFilter,
+                                                                   int offset,
+                                                                   int limit) {
+    Date fromDate = realizationFilter.getFromDate();
+    Date toDate = realizationFilter.getToDate();
+
+    boolean sortDescending = realizationFilter.isSortDescending();
+    String sortField = realizationFilter.getSortField();
+
+    if (StringUtils.equals(sortField, "actionType")) {
+      return findRealizationsOrderedByRuleType(fromDate, toDate, sortDescending, offset, limit);
+    } else {
+      return findRealizationsOrderedByDate(fromDate, toDate, sortDescending, offset, limit);
+    }
+  }
+
+  private List<GamificationActionsHistory> findRealizationsOrderedByDate(Date fromDate,
+                                                                         Date toDate,
+                                                                         boolean sortDescending,
+                                                                         int offset,
+                                                                         int limit) {
+    TypedQuery<GamificationActionsHistory> query;
+    if (sortDescending) {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescending",
+                                                  GamificationActionsHistory.class);
+    } else {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscending",
+                                                  GamificationActionsHistory.class);
+    }
+    query.setParameter("fromDate", fromDate);
+    query.setParameter("toDate", toDate);
+    query.setParameter("type", IdentityType.USER);
+    if (limit > 0) {
+      query.setMaxResults(limit);
+    }
+    if (offset > 0) {
+      query.setFirstResult(offset);
+    }
+    List<GamificationActionsHistory> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  private List<GamificationActionsHistory> findRealizationsOrderedByRuleType(Date fromDate,
+                                                                             Date toDate,
+                                                                             boolean sortDescending,
+                                                                             int offset,
+                                                                             int limit) {
+    List<GamificationActionsHistory> resultList = new ArrayList<>();
+    List<TypeRule> types = Arrays.asList(TypeRule.values());
+    if (sortDescending) {
+      Collections.reverse(types);
+    }
+    int limitToRetrieve = limit + offset;
+    Iterator<TypeRule> typesIterator = types.iterator();
+    while (typesIterator.hasNext() && CollectionUtils.size(resultList) < limitToRetrieve) {
+      TypeRule ruleType = typesIterator.next();
+      List<GamificationActionsHistory> actions = getActionsHistoryByRuleType(ruleType,
+                                                                             fromDate,
+                                                                             toDate,
+                                                                             0,
+                                                                             limitToRetrieve - resultList.size());
+      CollectionUtils.addAll(resultList, actions);
+    }
+    if (offset > 0) {
+      if (resultList.size() <= offset) {
+        return Collections.emptyList();
+      } else {
+        return resultList.subList(offset, resultList.size());
+      }
+    } else {
+      return resultList;
+    }
+  }
+
+  private List<GamificationActionsHistory> getActionsHistoryByRuleType(TypeRule ruleType,
+                                                                       Date fromDate,
+                                                                       Date toDate,
+                                                                       int offset,
+                                                                       int limit) {
+
+    List<Long> ruleIds = ruleDAO.getRuleIdsByType(ruleType);
+    List<String> ruleEventNames = ruleDAO.getRuleEventsByType(ruleType);
+
     TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDate",
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
                                                                                      GamificationActionsHistory.class);
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
     query.setParameter("type", IdentityType.USER);
-    if (limit != 0) {
-      query.setFirstResult(offset);
+    query.setParameter("ruleIds", ruleIds);
+    query.setParameter("ruleEventNames", ruleEventNames);
+    if (limit > 0) {
       query.setMaxResults(limit);
     }
+    if (offset > 0) {
+      query.setFirstResult(offset);
+    }
     List<GamificationActionsHistory> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList ;
+    return resultList == null ? new ArrayList<>() : new ArrayList<>(resultList);
   }
 
 }

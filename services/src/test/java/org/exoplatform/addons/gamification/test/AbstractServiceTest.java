@@ -320,6 +320,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled) {
+    return newRule(name, domain, isEnabled, TypeRule.AUTOMATIC);
+  }
+
+  protected RuleEntity newRule(String name, String domain, Boolean isEnabled, TypeRule ruleType) {
 
     RuleEntity rule = ruleDAO.findRuleByTitle(name + "_" + domain);
     if (rule == null) {
@@ -335,7 +339,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(newDomain(domain));
-      rule.setType(TypeRule.AUTOMATIC);
+      rule.setType(ruleType);
       rule.setManagers(Collections.emptyList());
       rule = ruleDAO.create(rule);
     }
@@ -444,6 +448,27 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
+  }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryToBeSorted(String actionTitle, Long ruleId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(TEST_USER_SENDER);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(actionTitle);
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(ruleId);
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");

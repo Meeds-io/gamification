@@ -34,6 +34,7 @@ release.properties
 
 # eclipse project file
 .settings/
+.metadata/
 .classpath
 .project
 
