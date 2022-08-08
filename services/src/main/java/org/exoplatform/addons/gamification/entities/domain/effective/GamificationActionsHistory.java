@@ -152,7 +152,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY g.ruleId g.createdDate DESC"
+        + " ORDER BY g.createdDate DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAscending",
@@ -162,30 +162,13 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " ORDER BY g.createdDate ASC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateOrderByRuleTypeDescending",
-    query = "SELECT\n"
-        + "  history,\n"
-        + "  (SELECT DISTINCT(rule.type) FROM Rule rule \n"
-        + "    WHERE (history.ruleId IS NOT NULL AND history.ruleId = rule.id) \n"
-        + "       OR (history.actionTitle IS NOT NULL AND history.actionTitle = rule.event) \n"
-        + "  ) AS actionType \n"
-        + " FROM GamificationActionsHistory history \n"
+    name = "GamificationActionsHistory.findRealizationsByDateAndRules",
+    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY actionType DESC, history.createdDate DESC"
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateOrderByRuleTypeAscending",
-    query = "SELECT\n"
-        + "  history,\n"
-        + "  (SELECT DISTINCT(rule.type) FROM Rule rule \n"
-        + "    WHERE (history.ruleId IS NOT NULL AND history.ruleId = rule.id) \n"
-        + "       OR (history.actionTitle IS NOT NULL AND history.actionTitle = rule.event) \n"
-        + "  ) AS actionType \n"
-        + " FROM GamificationActionsHistory history \n"
-        + " WHERE g.earnerType = :type"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY actionType ASC, history.createdDate DESC"
+        + " AND (g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
+        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames)) \n"
+        + " ORDER BY g.createdDate DESC"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;

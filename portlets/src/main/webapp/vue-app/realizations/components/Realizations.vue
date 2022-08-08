@@ -170,26 +170,36 @@ export default {
     },
     sortBy(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.loadRealizations();
+        this.sortUpdated();
       }
     },
     sortDescending(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.loadRealizations();
+        this.sortUpdated();
       }
     },
   },
   methods: {
+    sortUpdated() {
+      if (!this.loading) {
+        this.loading = true;
+        this.loadRealizations();
+      }
+    },
     loadMore() {
       this.limit += this.pageSize;
       return this.loadRealizations();
     },
     loadRealizations() {
       this.loading = true;
+      return this.getRealizations()
+        .finally(() => this.loading = false);
+    },
+    getRealizations() {
       return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
-        }).finally(() => this.loading = false);
+        });
     },
     exportFile() {
       return this.$realizationsServices.exportFile(this.fromDate, this.toDate);

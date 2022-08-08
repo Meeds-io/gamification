@@ -131,8 +131,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     assertEquals("eventName_areaName", entity.getTitle());
     response = launcher.service("POST", restPath, "", h, data, envctx);
     assertNotNull(response);
-    assertEquals(304, response.getStatus());
-    ConversationState.setCurrent(null);
+    assertEquals(409, response.getStatus());
   }
 
   /**

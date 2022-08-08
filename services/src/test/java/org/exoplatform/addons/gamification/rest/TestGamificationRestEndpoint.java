@@ -96,6 +96,33 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
+    restPath = "/gamification/api/v1/points/date?userId=root1";
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    restPath = "/gamification/api/v1/points/date?userId=root1&startDate=" + lastWeek;
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    restPath = "/gamification/api/v1/points/date?userId=root1&startDate=" + nextWeek + "&endDate=" + lastWeek;
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
     restPath = "/gamification/api/v1/points/date?userId=root1&startDate=" + lastWeek + "&endDate=" + nextWeek;
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -104,15 +131,6 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-
-    restPath = "/gamification/api/v1/points/date?userId=root1";
-    envctx = new EnvironmentContext();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    response = launcher.service("GET", restPath, "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(500, response.getStatus());
   }
 
   @Test
@@ -123,12 +141,40 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     String lastWeek = dateTimeFormatter.format(lastWeekDate.toInstant().atOffset(ZoneOffset.UTC));
     String nextWeek = dateTimeFormatter.format(nextWeekDate.toInstant().atOffset(ZoneOffset.UTC));
-    String restPath = "/gamification/api/v1/leaderboard/date?earnerType=&startDate=" + lastWeek + "&endDate=" + nextWeek;
+
+    String restPath = "/gamification/api/v1/leaderboard/date?earnerType=USER";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     ContainerResponse response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    restPath = "/gamification/api/v1/leaderboard/date?earnerType=USER&startDate=" + lastWeek;
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    restPath = "/gamification/api/v1/leaderboard/date?earnerType=&startDate=" + nextWeek + "&endDate=" + lastWeek;
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    restPath = "/gamification/api/v1/leaderboard/date?earnerType=&startDate=" + lastWeek + "&endDate=" + nextWeek;
+    envctx = new EnvironmentContext();
+    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    response = launcher.service("GET", restPath, "", null, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     assertEquals(1, ((GamificationRestEndpoint.GamificationPoints) response.getEntity()).getLeaderboard().size());
@@ -142,16 +188,6 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     assertEquals(1, ((GamificationRestEndpoint.GamificationPoints) response.getEntity()).getLeaderboard().size());
-
-    restPath = "/gamification/api/v1/leaderboard/date?earnerType=USER";
-    envctx = new EnvironmentContext();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    response = launcher.service("GET", restPath, "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(500, response.getStatus());
-    assertEquals("2", ((GamificationRestEndpoint.GamificationPoints) response.getEntity()).getCode());
   }
 
   @Test
