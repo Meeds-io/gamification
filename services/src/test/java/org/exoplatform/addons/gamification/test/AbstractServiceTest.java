@@ -124,7 +124,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final Date      fromDate            = new Date(System.currentTimeMillis());
 
   protected static final Date      toDate              = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
-
+  
+  protected static final Date      OutOfRangeDate      = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
+  
   protected static final int       offset              = 0;
 
   protected static final int       limit               = 3;
@@ -476,6 +478,28 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(Date createdDate, String actionTitle, Long ruleId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(TEST_USER_SENDER);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(actionTitle);
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(ruleId);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setDate(createdDate);
+    gHistory.setCreatedDate(createdDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
+  }
 
   protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO() {
     return GamificationActionsHistoryMapper.fromEntity(newGamificationActionsHistory());
@@ -506,6 +530,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     assertEquals(h1.getReceiver(), h2.getReceiver());
     assertEquals(h1.getEarnerId(), h2.getEarnerId());
     assertEquals(h1.getCreatedBy(), h2.getCreatedBy());
+  }
+  
+  public boolean isThisDateWithinThisRange(Date date) {
+    return (date.before(toDate) || date.equals(toDate)) && (date.after(fromDate) || date.equals(fromDate));
   }
 
   protected static class MockSecurityContext implements SecurityContext {
