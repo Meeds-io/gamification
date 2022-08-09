@@ -18,6 +18,9 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import org.exoplatform.services.security.Identity;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +31,8 @@ import lombok.NoArgsConstructor;
 public class RealizationsFilter implements Serializable {
 
   private static final long serialVersionUID = 7863115218512008696L;
+  
+  private Identity            userIdentity;
 
   private String            sortField;
 
