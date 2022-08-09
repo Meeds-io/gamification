@@ -166,8 +166,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " AND (g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
-        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames)) \n"
+        + " AND (g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds) \n"
+        + "      OR g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames)) \n"
         + " ORDER BY g.createdDate DESC"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {

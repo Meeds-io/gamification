@@ -40,7 +40,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :sort-desc.sync="sortDescending"
       disable-pagination
       hide-default-footer
-      must-sort
       class="mx-6 mt-6 realizationsTable">
       <template slot="item" slot-scope="props">
         <realization-item
@@ -78,7 +77,7 @@ export default {
     limit: 10,
     pageSize: 10,
     loading: true,
-    sortBy: 'date',
+    sortBy: '',
     sortDescending: true,
     limitReached: false,
     toDate: new Date().toISOString(),
