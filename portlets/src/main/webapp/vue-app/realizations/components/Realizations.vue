@@ -78,7 +78,7 @@ export default {
     limit: 10,
     pageSize: 10,
     loading: true,
-    sortBy: 'date',
+    sortBy: 'actionType',
     sortDescending: true,
     limitReached: false,
     toDate: new Date().toISOString(),
