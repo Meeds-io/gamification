@@ -6,7 +6,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Realization
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 
-import java.util.Date;
 import java.util.List;
 
 public class RealizationsStorage {

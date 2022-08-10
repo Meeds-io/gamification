@@ -170,6 +170,9 @@ export default {
     },
     sortBy(newVal, oldVal) {
       if (newVal !== oldVal) {
+        if (this.sortDescending){
+          this.sortDescending = false;
+        }
         this.sortUpdated();
       }
     },
