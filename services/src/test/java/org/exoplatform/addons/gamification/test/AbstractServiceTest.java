@@ -479,6 +479,27 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return gHistory;
   }
   
+  protected GamificationActionsHistory newGamificationActionsHistoryByEarnerId(String earnerId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
+  }
+  
   protected GamificationActionsHistory newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(Date createdDate, String actionTitle, Long ruleId) {
     RuleEntity rule = newRule();
     GamificationActionsHistory gHistory = new GamificationActionsHistory();

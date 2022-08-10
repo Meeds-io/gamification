@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.storage.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,9 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Ty
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
+
 import org.junit.Test;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
@@ -512,6 +516,46 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                      .map(GamificationActionsHistory::getCreatedDate)
                      .map(date -> isThisDateWithinThisRange(date))
                      .reduce(true, Boolean::logicalAnd));
+  }
+  
+  @Test
+  public void testFindRealizationsByConnectedUserType() {
+    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, TypeRule.AUTOMATIC);
+    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, TypeRule.AUTOMATIC);
+    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
+
+    //Test get All Realizations when Admin calls
+    List<GamificationActionsHistory> histories = new ArrayList<>();
+    histories.add(newGamificationActionsHistoryByEarnerId("1"));
+    histories.add(newGamificationActionsHistoryByEarnerId("1"));
+    histories.add(newGamificationActionsHistoryByEarnerId("1"));
+    histories.add(newGamificationActionsHistoryByEarnerId("1"));
+    histories.add(newGamificationActionsHistoryByEarnerId("1"));
+    histories.add(newGamificationActionsHistoryByEarnerId("1"));
+    histories.add(newGamificationActionsHistoryByEarnerId("2"));
+
+    RealizationsFilter dateFilter = new RealizationsFilter();
+    Identity identityAdmin = new Identity("1");
+    MembershipEntry me = new MembershipEntry(null);
+    Identity identitySimpleUSer = new Identity("arfaoui", me);
+    
+    dateFilter.setFromDate(fromDate);
+    dateFilter.setToDate(toDate);
+    dateFilter.setSortField("actionType");
+    dateFilter.setSortDescending(true);
+    dateFilter.setUserIdentity(identityAdmin);
+
+    List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result);
+    assertEquals(6, result.size());
+    
+    //Test get All Realizations when a simple user calls
+    dateFilter.setUserIdentity(identitySimpleUSer);
+    List<GamificationActionsHistory> result1 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result);
+    assertEquals(5, result.size());
+
+    
   }
   
 }
