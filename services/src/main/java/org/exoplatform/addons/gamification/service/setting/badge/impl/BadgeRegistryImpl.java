@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BadgeRegistryImpl implements Startable, BadgeRegistry {
@@ -45,9 +46,12 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
     private FileService fileService;
     private DomainService domainService;
 
-    public BadgeRegistryImpl(FileService fileService, NameSpaceService nameSpaceService) {
+    public BadgeRegistryImpl(FileService fileService,
+                             BadgeService badgeService,
+                             NameSpaceService nameSpaceService) {
         this.badgesMap = new HashMap<String, BadgeConfig>();
         this.fileService = fileService;
+        this.badgeService = badgeService;
     }
 
     @Override
@@ -64,13 +68,10 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
     @Override
     public void start() {
-
-        badgeService = CommonsUtils.getService(BadgeService.class);
-
         try {
             // Processing registered rules
-
-            if(badgeService.getAllBadges().isEmpty()){
+            List<BadgeDTO> badges = badgeService.getAllBadges();
+            if(badges.isEmpty()){
                 for (BadgeConfig badge : badgesMap.values()) {
                     BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(),badge.getDomain());
 
@@ -80,8 +81,6 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
                 }
             }
-
-
         } catch (Exception e) {
             LOG.error("Error when processing Rules ", e);
         }
@@ -120,6 +119,10 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
             // Load icone's binary
             inputStream = BadgeRegistryImpl.class.getClassLoader().getResourceAsStream("medias/images/"+iconTitle);
+            if (inputStream == null) {
+              LOG.warn("Can't find icon of badge with name '{}'. Ignore adding badge icon", iconTitle);
+              return 0;
+            }
 
             fileItem = new FileItem(null,
                     iconTitle,

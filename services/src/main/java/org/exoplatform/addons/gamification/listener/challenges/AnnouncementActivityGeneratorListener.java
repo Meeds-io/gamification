@@ -29,10 +29,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.component.RequestLifeCycle;
-import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -50,8 +46,6 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
 
   private static final Log               LOG = ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
 
-  private ExoContainer                   container;
-
   private IdentityManager                identityManager;
 
   private ActivityStorage                activityStorage;
@@ -60,12 +54,10 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
 
   private ActivityStreamWebSocketService activityStreamWebSocketService;
 
-  public AnnouncementActivityGeneratorListener(ExoContainer container,
-                                               IdentityManager identityManager,
+  public AnnouncementActivityGeneratorListener(IdentityManager identityManager,
                                                ActivityStorage activityStorage,
                                                ChallengeService challengeService,
                                                ActivityStreamWebSocketService activityStreamWebSocketService) {
-    this.container = container;
     this.identityManager = identityManager;
     this.activityStorage = activityStorage;
     this.challengeService = challengeService;
@@ -74,8 +66,6 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
 
   @Override
   public void onEvent(Event<AnnouncementService, AnnouncementActivity> event) {
-    ExoContainerContext.setCurrentContainer(container);
-    RequestLifeCycle.begin(container);
     AnnouncementActivity announcementActivity = event.getData();
     try {
       Announcement announcement = EntityMapper.fromAnnouncementActivity(announcementActivity);
@@ -95,8 +85,6 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
                announcementActivity.getId(),
                announcementActivity.getCreator(),
                e);
-    } finally {
-      RequestLifeCycle.end();
     }
   }
 

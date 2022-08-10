@@ -22,6 +22,8 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+
+import java.util.Collections;
 import java.util.List;
 
 public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
@@ -65,7 +67,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return null;
+            return Collections.emptyList();
         }
 
     }
@@ -77,7 +79,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return null;
+            return Collections.emptyList();
         }
 
     }
@@ -89,7 +91,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return null;
+            return Collections.emptyList();
         }
 
     }
@@ -101,7 +103,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return null;
+          return Collections.emptyList();
         }
 
     }
@@ -112,7 +114,7 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
         try {
             return query.getResultList();
         } catch (NoResultException e) {
-            return null;
+          return Collections.emptyList();
         }
 
     }

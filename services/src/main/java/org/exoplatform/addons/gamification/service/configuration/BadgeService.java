@@ -27,6 +27,8 @@ import org.exoplatform.services.log.Log;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+
+import java.util.Collections;
 import java.util.List;
 
 public class BadgeService {
@@ -43,7 +45,6 @@ public class BadgeService {
      * @param badgeTitle : badge title
      * @return an instance BadgeDTO
      */
-    @ExoTransactional
     public BadgeDTO findBadgeByTitle(String badgeTitle) {
 
         try {
@@ -65,7 +66,6 @@ public class BadgeService {
      * @param badgeId : badge id
      * @return an instance BadgeDTO
      */
-    @ExoTransactional
     public BadgeDTO findBadgeById(Long badgeId) {
 
         try {
@@ -88,7 +88,6 @@ public class BadgeService {
      * @param domain : badge domain
      * @return an instance BadgeDTO
      */
-    @ExoTransactional
     public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, String domain) {
 
         try {
@@ -110,20 +109,14 @@ public class BadgeService {
      * Return all badges within the DB
      * @return a list of BadgeDTO
      */
-    @ExoTransactional
     public List<BadgeDTO> getAllBadges() {
-        try {
-            //--- load all Rules
-            List<BadgeEntity> badges = badgeStorage.getAllBadges();
-            if (badges != null) {
-                return BadgeMapper.badgesToBadgeDTOs(badges);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find Badges", e.getMessage());
-        }
-        return null;
-
+      // --- load all Rules
+      List<BadgeEntity> badges = badgeStorage.getAllBadges();
+      if (badges == null) {
+        return Collections.emptyList();
+      } else {
+        return BadgeMapper.badgesToBadgeDTOs(badges);
+      }
     }
 
 
@@ -132,7 +125,6 @@ public class BadgeService {
      * @param badgeDTO : an object of type RuleDTO
      * @return BadgeDTO object
      */
-    @ExoTransactional
     public BadgeDTO addBadge (BadgeDTO badgeDTO) {
 
         BadgeEntity badgeEntity = null;
@@ -171,7 +163,6 @@ public class BadgeService {
      * @param badgeDTO : an instance of type BadgeDTO
      * @return BadgeDTO object
      */
-    @ExoTransactional
     public BadgeDTO updateBadge (BadgeDTO badgeDTO) {
 
         BadgeEntity badgeEntity = null;
@@ -200,7 +191,6 @@ public class BadgeService {
      * Delete a BadgeEntity using the id
      * @param id : badge id
      */
-    @ExoTransactional
     public void deleteBadge (Long id) {
 
         try {
@@ -222,7 +212,6 @@ public class BadgeService {
 
     }
 
-    @ExoTransactional
     public List<BadgeDTO> findBadgesByDomain(String badgeDomain) {
 
         try {
@@ -240,7 +229,6 @@ public class BadgeService {
 
     }
 
-    @ExoTransactional
     public List<BadgeDTO> findEnabledBadgesByDomain(String badgeDomain) {
 
         try {
@@ -263,7 +251,6 @@ public class BadgeService {
      * Get all Rules by with null DomainDTO from DB
      * @return RuleDTO list
      */
-    @ExoTransactional
     public List<BadgeDTO> getAllBadgesWithNullDomain() throws Exception{
         try {
             List<BadgeEntity> rules =  badgeStorage.getAllBadgesWithNullDomain();
@@ -283,7 +270,6 @@ public class BadgeService {
      * Get all Domains from Rules from DB
      * @return String list
      */
-    @ExoTransactional
     public List<String> getDomainListFromBadges() {
         return badgeStorage.getDomainList();
     }

@@ -23,7 +23,6 @@ import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainer;
@@ -77,8 +76,7 @@ public class AnnouncementActivityGeneratorListenerTest {
     PowerMockito.mockStatic(EntityBuilder.class);
     PowerMockito.mockStatic(Utils.class);
     AnnouncementActivityGeneratorListener announcementActivityGeneratorListener =
-                                                                                new AnnouncementActivityGeneratorListener(container,
-                                                                                                                          identityManager,
+                                                                                new AnnouncementActivityGeneratorListener(identityManager,
                                                                                                                           activityStorage,
                                                                                                                           challengeService,
                                                                                                                           activityStreamWebSocketService);
