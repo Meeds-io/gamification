@@ -16,6 +16,8 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import java.util.List;
+
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
@@ -23,9 +25,6 @@ import javax.persistence.TypedQuery;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements GenericDAO<DomainEntity, Long> {
 
