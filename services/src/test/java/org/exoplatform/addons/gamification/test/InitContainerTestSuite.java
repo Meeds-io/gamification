@@ -35,6 +35,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementServiceTest;
 import org.exoplatform.addons.gamification.service.ChallengeServiceTest;
 import org.exoplatform.addons.gamification.service.GamificationServiceTest;
 import org.exoplatform.addons.gamification.service.RealizationsServiceTest;
+import org.exoplatform.addons.gamification.service.configuration.BadgeRegistryTest;
 import org.exoplatform.addons.gamification.service.configuration.BadgeServiceTest;
 import org.exoplatform.addons.gamification.service.configuration.DomainServiceTest;
 import org.exoplatform.addons.gamification.service.configuration.RuleServiceTest;
@@ -59,6 +60,7 @@ import org.junit.runners.Suite.SuiteClasses;
         GamificationServiceTest.class,
         RuleServiceTest.class,
         BadgeServiceTest.class,
+        BadgeRegistryTest.class,
         DomainServiceTest.class,
         BadgeDAOTest.class,
         RuleDAOTest.class,

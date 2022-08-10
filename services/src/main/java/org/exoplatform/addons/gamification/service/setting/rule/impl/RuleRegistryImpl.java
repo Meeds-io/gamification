@@ -72,7 +72,6 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
     public void start() {
 
         ruleService = CommonsUtils.getService(RuleService.class);
-        RequestLifeCycle.begin(PortalContainer.getInstance());
         try {
             // Processing registered rules
 
@@ -82,12 +81,8 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                     store(rule,ruleDTO);
                 }
             }
-
-
         } catch (Exception e) {
             LOG.error("Error when processing Rules ", e);
-        } finally {
-            RequestLifeCycle.end();
         }
     }
 
