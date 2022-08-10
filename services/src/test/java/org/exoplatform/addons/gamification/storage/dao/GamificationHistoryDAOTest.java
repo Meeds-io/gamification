@@ -447,5 +447,71 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                                      .map(GamificationActionsHistory::getId)
                                      .collect(Collectors.toList()));
   }
+  
+  @Test
+  public void testFindRealizationsByFilterSortByActionTypeInDateRange() {
+    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, TypeRule.AUTOMATIC);
+    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, TypeRule.AUTOMATIC);
+    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
 
+    List<GamificationActionsHistory> histories = new ArrayList<>();
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule1Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, "", rule3Manual.getId()));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, "", rule1Automatic.getId()));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule3Manual.getEvent(), null));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, "", rule2Automatic.getId()));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule2Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(OutOfRangeDate, rule3Manual.getEvent(), rule3Manual.getId()));
+
+    RealizationsFilter dateFilter = new RealizationsFilter();
+    dateFilter.setFromDate(fromDate);
+    dateFilter.setToDate(toDate);
+    dateFilter.setSortField("actionType");
+    dateFilter.setSortDescending(true);
+
+    List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(result);
+    assertEquals(2, result.size());
+    assertEquals(Arrays.asList(histories.get(1).getId(), histories.get(3).getId()),
+                 result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
+    assertTrue(result.stream()
+               .map(GamificationActionsHistory::getCreatedDate)
+               .map(date -> isThisDateWithinThisRange(date))
+               .reduce(true, Boolean::logicalAnd));
+
+    result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(Arrays.asList(histories.get(1).getId(), histories.get(3).getId(), histories.get(0).getId()),
+                 result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
+    assertTrue(result.stream()
+               .map(GamificationActionsHistory::getCreatedDate)
+               .map(date -> isThisDateWithinThisRange(date))
+               .reduce(true, Boolean::logicalAnd));
+
+    dateFilter.setSortDescending(false);
+    result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
+    assertNotNull(result);
+    assertEquals(2, result.size());
+    assertEquals(Arrays.asList(histories.get(0).getId(), histories.get(2).getId()),
+                 result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
+    assertTrue(result.stream()
+               .map(GamificationActionsHistory::getCreatedDate)
+               .map(date -> isThisDateWithinThisRange(date))
+               .reduce(true, Boolean::logicalAnd));
+
+    result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 2, 6);
+    assertNotNull(result);
+    assertEquals(4, result.size());
+    assertEquals(Arrays.asList(histories.get(4).getId(),
+                               histories.get(5).getId(),
+                               histories.get(1).getId(),
+                               histories.get(3).getId()),
+                 result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
+    assertTrue(result.stream()
+                     .map(GamificationActionsHistory::getCreatedDate)
+                     .map(date -> isThisDateWithinThisRange(date))
+                     .reduce(true, Boolean::logicalAnd));
+  }
+  
 }
