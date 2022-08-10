@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -518,12 +520,9 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                      .reduce(true, Boolean::logicalAnd));
   }
   
+  @SuppressWarnings("deprecation")
   @Test
   public void testFindRealizationsByConnectedUserType() {
-    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, TypeRule.AUTOMATIC);
-    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, TypeRule.AUTOMATIC);
-    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
-
     //Test get All Realizations when Admin calls
     List<GamificationActionsHistory> histories = new ArrayList<>();
     histories.add(newGamificationActionsHistoryByEarnerId("1"));
@@ -535,9 +534,11 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     histories.add(newGamificationActionsHistoryByEarnerId("2"));
 
     RealizationsFilter dateFilter = new RealizationsFilter();
+
     Identity identityAdmin = new Identity("1");
-    MembershipEntry me = new MembershipEntry(null);
-    Identity identitySimpleUSer = new Identity("arfaoui", me);
+    List<MembershipEntry> AdministratorMemberships = new LinkedList<MembershipEntry>();
+    AdministratorMemberships.add(new MembershipEntry("/platform/administrators"));
+    identityAdmin.setMemberships(AdministratorMemberships);
     
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
@@ -550,10 +551,14 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     assertEquals(6, result.size());
     
     //Test get All Realizations when a simple user calls
+    Identity identitySimpleUSer = new Identity("2");
+    List<MembershipEntry> WebContributorMemberships = new LinkedList<MembershipEntry>();
+    WebContributorMemberships.add(new MembershipEntry("otherMembership"));
+    identitySimpleUSer.setMemberships(WebContributorMemberships);
     dateFilter.setUserIdentity(identitySimpleUSer);
     List<GamificationActionsHistory> result1 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
-    assertNotNull(result);
-    assertEquals(5, result.size());
+    assertNotNull(result1);
+    assertEquals(5, result1.size());
 
     
   }
