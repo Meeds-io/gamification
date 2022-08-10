@@ -56,7 +56,6 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
 
     @Override
     public void start() {
-      RequestLifeCycle.begin(PortalContainer.getInstance());
       try {
         // Processing registered domains
         for (ZoneConfig domain : zoneMap.values()) {
@@ -68,8 +67,6 @@ public class ZoneRegistryImpl implements Startable, ZoneRegistry {
         }
       } catch (Exception e) {
         LOG.error("Error when saving Domains ", e);
-      } finally {
-        RequestLifeCycle.end();
       }
     }
 
