@@ -165,7 +165,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findRealizationsByDateDescendingByUserGrantee",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
-        + " WHERE g.earnerId = :id"
+        + " AND g.earnerId = :id"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " ORDER BY g.createdDate DESC"
          )
@@ -173,7 +173,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findRealizationsByDateAscendingByUserGrantee",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
         + " WHERE g.earnerType = :type"
-        + " WHERE g.earnerId = :id"
+        + " AND g.earnerId = :id"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " ORDER BY g.createdDate ASC"
          )
@@ -190,7 +190,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findRealizationsByDateAndRulesByUserGrantee",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
-        + " WHERE g.earnerId = :id"
+        + " AND g.earnerId = :id"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " AND (g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames)) \n"
