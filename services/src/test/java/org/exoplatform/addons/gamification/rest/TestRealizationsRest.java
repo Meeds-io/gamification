@@ -16,9 +16,22 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.SecurityContext;
+
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -27,12 +40,6 @@ import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.SecurityContext;
-import java.util.Date;
-import java.util.List;
 
 public class TestRealizationsRest extends AbstractServiceTest {
 
@@ -55,7 +62,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllRealizations() throws Exception {
+  public void testGetAllRealizationsDefaultSort() throws Exception {
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
         + "&offset=-1&limit=10";
     EnvironmentContext envctx = new EnvironmentContext();
@@ -91,6 +98,179 @@ public class TestRealizationsRest extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
     realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
     assertEquals(1, realizations.size());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testGetAllRealizationsSortByDateDescending() throws Exception {
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(0, realizations.size());
+
+    // add new realization
+    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    for (int i = 0; i < limit * 2; i++) {
+      createdActionHistories.add(newGamificationActionsHistory());
+    }
+    Collections.reverse(createdActionHistories);
+
+    response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(limit, realizations.size());
+    assertEquals(createdActionHistories.subList(0, limit)
+                                       .stream()
+                                       .map(GamificationActionsHistory::getId)
+                                       .collect(Collectors.toList()),
+                 realizations.stream()
+                             .map(GamificationActionsHistoryRestEntity::getId)
+                             .collect(Collectors.toList()));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testGetAllRealizationsSortByDateAscending() throws Exception {
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=false";
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(0, realizations.size());
+
+    // add new realization
+    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    for (int i = 0; i < limit * 2; i++) {
+      createdActionHistories.add(newGamificationActionsHistory());
+    }
+
+    response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(limit, realizations.size());
+    assertEquals(createdActionHistories.subList(0, limit)
+                                       .stream()
+                                       .map(GamificationActionsHistory::getId)
+                                       .collect(Collectors.toList()),
+                 realizations.stream()
+                             .map(GamificationActionsHistoryRestEntity::getId)
+                             .collect(Collectors.toList()));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testGetAllRealizationsSortByActionTypeDescending() throws Exception {
+    RuleEntity rule1Automatic = newRule("testGetAllRealizationsSortByActionTypeDescending1", "domain1", true, TypeRule.AUTOMATIC);
+    RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, TypeRule.MANUAL);
+
+    // add new realization
+    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    for (int i = 0; i < limit; i++) {
+      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule2Manual.getEvent(), rule2Manual.getId()));
+    }
+    for (int i = 0; i < limit; i++) {
+      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule1Automatic.getEvent(), rule1Automatic.getId()));
+    }
+
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(limit, realizations.size());
+    assertEquals(createdActionHistories.subList(0, limit)
+                                       .stream()
+                                       .map(GamificationActionsHistory::getId)
+                                       .collect(Collectors.toList()),
+                 realizations.stream()
+                             .map(GamificationActionsHistoryRestEntity::getId)
+                             .collect(Collectors.toList()));
+
+    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+        + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
+    response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(createdActionHistories.size(), realizations.size());
+    assertEquals(createdActionHistories.stream()
+                                       .map(GamificationActionsHistory::getId)
+                                       .collect(Collectors.toList()),
+                 realizations.stream()
+                             .map(GamificationActionsHistoryRestEntity::getId)
+                             .collect(Collectors.toList()));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testGetAllRealizationsSortByActionTypeAscending() throws Exception {
+    RuleEntity rule1Automatic = newRule("testGetAllRealizationsSortByActionTypeDescending1", "domain1", true, TypeRule.AUTOMATIC);
+    RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, TypeRule.MANUAL);
+
+    // add new realization
+    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    for (int i = 0; i < limit; i++) {
+      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule1Automatic.getEvent(), rule1Automatic.getId()));
+    }
+    for (int i = 0; i < limit; i++) {
+      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule2Manual.getEvent(), rule2Manual.getId()));
+    }
+
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(limit, realizations.size());
+    assertEquals(createdActionHistories.subList(0, limit)
+                                       .stream()
+                                       .map(GamificationActionsHistory::getId)
+                                       .collect(Collectors.toList()),
+                 realizations.stream()
+                             .map(GamificationActionsHistoryRestEntity::getId)
+                             .collect(Collectors.toList()));
+
+    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+        + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
+    response = launcher.service("GET", restPath, "", h, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    assertEquals(createdActionHistories.size(), realizations.size());
+    assertEquals(createdActionHistories.stream()
+                                       .map(GamificationActionsHistory::getId)
+                                       .collect(Collectors.toList()),
+                 realizations.stream()
+                             .map(GamificationActionsHistoryRestEntity::getId)
+                             .collect(Collectors.toList()));
   }
 
   @Test

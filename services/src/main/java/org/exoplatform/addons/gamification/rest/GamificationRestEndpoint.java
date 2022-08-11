@@ -25,8 +25,6 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -40,6 +38,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.Status;
+
 import java.text.ParseException;
 import java.time.*;
 import java.time.temporal.TemporalAdjusters;
@@ -55,6 +55,8 @@ public class GamificationRestEndpoint implements ResourceContainer {
     private IdentityManager identityManager;
     private DomainService domainService;
     private RuleService ruleService;
+    private static final String DATETIMEFORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATEFORMAT = "dd-MM-yyyy";
 
     public GamificationRestEndpoint(GamificationService gamificationService, IdentityManager identityManager, DomainService domainService, RuleService ruleService) {
         this.cacheControl = new CacheControl();
@@ -128,61 +130,118 @@ public class GamificationRestEndpoint implements ResourceContainer {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
     public Response getAllPointsByUserIdByDate(@QueryParam("userId") String userId, @QueryParam("startDate") String startDateEntry, @QueryParam("endDate") String endDateEntry) {
-        if (StringUtils.isBlank(userId)) {
-            LOG.warn("Enable to serve request due to bad request parameter «userId»");
-            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("userId parameter must be specified")).build();
+      if (StringUtils.isBlank(userId)) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'userId' field is mandatory")
+                       .build();
+      }
+      if (StringUtils.isBlank(startDateEntry)) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'startDate' field is mandatory")
+                       .build();
+      }
+      if (StringUtils.isBlank(endDateEntry)) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'endDate' field is mandatory")
+                       .build();
+      }
+      Date startDate;
+      try {
+        startDate = DateUtils.parseDate(startDateEntry, DATETIMEFORMAT, DATEFORMAT);
+      } catch (ParseException pe) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'startDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
+                       .build();
+      }
+      Date endDate;
+      try {
+        endDate = DateUtils.parseDate(endDateEntry, DATETIMEFORMAT, DATEFORMAT);
+      } catch (ParseException pe) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'endDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
+                       .build();
+      }
+      try {
+        if (startDate.after(endDate)) {
+          return Response.status(Status.BAD_REQUEST)
+                         .entity("'endDate' has to be after 'startDate'")
+                         .build();
         }
-        try {
-            Date startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
-            Date endDate = DateUtils.parseDate(endDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
-
-            if (startDate.after(endDate)) {
-                return Response.ok(new GamificationPoints().userId(userId).points(0L).code("1").message("date parameters are not correctly set")).build();
-            }
-            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
-            Long earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), startDate, endDate);
-            return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
-        } catch (ParseException pe) {
-            LOG.error("Error to parse parameters {} or {} ", startDateEntry, endDateEntry);
-            return Response.serverError()
-                    .cacheControl(cacheControl)
-                    .entity("Error to parse startDate or endDate to Date object please use the following pattern : dd-MM-yyyy")
-                    .build();
-        } catch (Exception e) {
-            LOG.error("Error while fetching earned points for user {} in the specified period - Gamification public API", userId, e);
-            return Response.serverError().entity(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching earned points by period")).build();
-        }
+        Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
+        Long earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), startDate, endDate);
+        return Response.ok(new GamificationPoints().userId(userId)
+                                                   .points(earnedXP)
+                                                   .code("0")
+                                                   .message("Gamification API is called successfully"))
+                       .build();
+      } catch (Exception e) {
+        LOG.warn("Error while fetching earned points for user {} in the specified period - Gamification public API", userId, e);
+        return Response.serverError()
+                       .entity(new GamificationPoints().userId(userId)
+                                                       .points(0L)
+                                                       .code("2")
+                                                       .message("Error while fetching earned points by period"))
+                       .build();
+      }
     }
+
     @Path("leaderboard/date")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
-  public Response getLeaderboardByDate(@Context UriInfo uriInfo,
-                                       @QueryParam("earnerType") String earnerType,
-                                       @QueryParam("startDate") String startDateEntry,
-                                       @QueryParam("endDate") String endDateEntry) {
-
-        try {
-            Date startDate = DateUtils.parseDate(startDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
-            Date endDate = DateUtils.parseDate(endDateEntry, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy");
-
-            if (startDate.after(endDate)) {
-                return Response.ok(new GamificationPoints().code("2").message("Dates parameters are not set correctly")).build();
-            }
-            List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(earnerType), startDate, endDate);
-            return Response.ok(new GamificationPoints().code("0").leaderboard(leaderboard).message("Gamification API is called successfully")).build();
-
-        } catch (ParseException pe) {
-            LOG.error("Error to parse parameters {} or {} ", startDateEntry, endDateEntry);
-            return Response.serverError()
-                    .cacheControl(cacheControl)
-                    .entity("Error to parse startDate or endDate to Date object please use the following pattern : dd-MM-yyyy")
-                    .build();
-        } catch (Exception e) {
-            LOG.error("Error while building gloabl leaderboard between dates {} and {} - Gamification public API", startDateEntry, endDateEntry, e);
-            return Response.serverError().entity(new GamificationPoints().code("2").message("Error while fetching earned points by period")).build();
+    public Response getLeaderboardByDate(@Context UriInfo uriInfo,
+                                         @QueryParam("earnerType") String earnerType,
+                                         @QueryParam("startDate") String startDateEntry,
+                                         @QueryParam("endDate")
+                                         String endDateEntry) {
+      if (StringUtils.isBlank(startDateEntry)) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'startDate' field is mandatory")
+                       .build();
+      }
+      if (StringUtils.isBlank(endDateEntry)) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'endDate' field is mandatory")
+                       .build();
+      }
+      Date startDate;
+      try {
+        startDate = DateUtils.parseDate(startDateEntry, DATETIMEFORMAT, DATEFORMAT);
+      } catch (ParseException pe) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'startDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
+                       .build();
+      }
+      Date endDate;
+      try {
+        endDate = DateUtils.parseDate(endDateEntry, DATETIMEFORMAT, DATEFORMAT);
+      } catch (ParseException pe) {
+        return Response.status(Status.BAD_REQUEST)
+                       .entity("'endDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
+                       .build();
+      }
+      try {
+        if (startDate.after(endDate)) {
+          return Response.status(Status.BAD_REQUEST)
+                         .entity("'endDate' has to be after 'startDate'")
+                         .build();
         }
+        List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(earnerType),
+                                                                                                  startDate,
+                                                                                                  endDate);
+        return Response.ok(new GamificationPoints().code("0")
+                                                   .leaderboard(leaderboard)
+                                                   .message("Gamification API is called successfully"))
+                       .build();
 
+      } catch (Exception e) {
+        LOG.warn("Error while building gloabl leaderboard between dates {} and {} - Gamification public API",
+                 startDateEntry,
+                 endDateEntry,
+                 e);
+        return Response.serverError()
+                       .build();
+      }
     }
 
     /**
