@@ -24,7 +24,6 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
-import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnectorTest;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;

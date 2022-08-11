@@ -448,20 +448,24 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                          boolean sortDescending,
                                                                          int offset,
                                                                          int limit) {
-
     TypedQuery<GamificationActionsHistory> query;
-
-    if (sortDescending) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescending",
-                                                  GamificationActionsHistory.class);
-    } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscending",
-                                                  GamificationActionsHistory.class);
-    }
     if (isAdministrator) {
-      query.setParameter("customQuery", ":type");
+      if (sortDescending) {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescendingAdminAccessPrivilege",
+                                                    GamificationActionsHistory.class);
+      } else {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscendingAdminAccessPrivilege",
+                                                    GamificationActionsHistory.class);
+      }
     } else {
-      query.setParameter("customQuery", ":type AND g.earnerId = " + userId);
+      if (sortDescending) {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescendingUserAccessPrivilege",
+                                                    GamificationActionsHistory.class);
+      } else {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscendingUserAccessPrivilege",
+                                                    GamificationActionsHistory.class);
+      }
+      query.setParameter("earnerId", userId);
     }
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
@@ -524,22 +528,19 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     List<String> ruleEventNames = ruleDAO.getRuleEventsByType(ruleType);
 
     TypedQuery<GamificationActionsHistory> query;
-
-    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
-                                                GamificationActionsHistory.class);
-    
     if (isAdministrator) {
-      query.setParameter("customQuery", ":type");
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesAdminAccessPrivilege",
+                                                  GamificationActionsHistory.class);
     } else {
-      query.setParameter("customQuery", ":type AND g.earnerId = " + userId);
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesUserAccessPrivilege",
+                                                  GamificationActionsHistory.class);
+      query.setParameter("earnerId", userId);
     }
-    
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
     query.setParameter("type", IdentityType.USER);
     query.setParameter("ruleIds", ruleIds);
     query.setParameter("ruleEventNames", ruleEventNames);
-    
     if (limit > 0) {
       query.setMaxResults(limit);
     }

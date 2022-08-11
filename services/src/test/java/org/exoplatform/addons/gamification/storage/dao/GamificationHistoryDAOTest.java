@@ -19,10 +19,7 @@ package org.exoplatform.addons.gamification.storage.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +33,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Ty
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.MembershipEntry;
-
 import org.junit.Test;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
@@ -356,6 +350,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("actionType");
     dateFilter.setSortDescending(true);
+    dateFilter.setAdministrator(true);
 
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
@@ -404,6 +399,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     RealizationsFilter dateFilter = new RealizationsFilter();
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
+    dateFilter.setAdministrator(true);
 
     // Test default Sort field = 'date' with sort descending = false
     List<GamificationActionsHistory> filteredRealizations = gamificationHistoryDAO.findRealizationsByFilter(dateFilter,
@@ -474,6 +470,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("actionType");
     dateFilter.setSortDescending(true);
+    dateFilter.setAdministrator(true);
 
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
@@ -520,10 +517,9 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                      .reduce(true, Boolean::logicalAnd));
   }
   
-
   @Test
   public void testFindRealizationsByConnectedUserType() {
-    // Test get All Realizations when Admin calls
+    // Test get All Realizations when Admin calls, Sort field = 'actionType' with sort descending = true
     List<GamificationActionsHistory> histories = new ArrayList<>();
     histories.add(newGamificationActionsHistoryByEarnerId("1"));
     histories.add(newGamificationActionsHistoryByEarnerId("1"));
@@ -542,19 +538,59 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setUserId("1");
     dateFilter.setAdministrator(true);
 
-    List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
-    assertNotNull(result);
-    assertEquals(6, result.size());
-
-    // Test get All Realizations when a simple user calls
-
-    dateFilter.setUserId("2");
-    dateFilter.setAdministrator(false);
-
     List<GamificationActionsHistory> result1 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result1);
-    assertEquals(5, result1.size());
-
+    assertEquals(6, result1.size());
+    
+    // Test get All Realizations when Admin calls, Sort field = 'actionType' with sort descending = false
+    dateFilter.setSortDescending(false);
+    List<GamificationActionsHistory> result2 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result2);
+    assertEquals(6, result2.size());
+    
+    // Test get All Realizations when a simple user calls, Sort field = 'actionType' with sort descending = false
+    dateFilter.setUserId("2");
+    dateFilter.setAdministrator(false);
+    List<GamificationActionsHistory> result3 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result3);
+    assertEquals(1, result3.size());
+       
+    // Test get All Realizations when a simple user calls, Sort field = 'actionType' with sort descending = true
+    dateFilter.setSortDescending(true);
+    List<GamificationActionsHistory> result4 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result4);
+    assertEquals(1, result4.size());
+    
+    // Test get All Realizations when Admin calls, Sort field = 'date' with sort descending = true
+    dateFilter.setSortField("date");
+    dateFilter.setSortDescending(true);
+    dateFilter.setAdministrator(true);
+    List<GamificationActionsHistory> result5 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result5);
+    assertEquals(6, result5.size());
+    
+    // Test get All Realizations when Admin calls, Sort field = 'date' with sort descending = false
+    dateFilter.setSortField("date");
+    dateFilter.setSortDescending(false);
+    List<GamificationActionsHistory> result6 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result6);
+    assertEquals(6, result6.size());
+    
+    // Test get All Realizations when a simple user calls, Sort field = 'date' with sort descending = false
+    dateFilter.setSortField("date");
+    dateFilter.setSortDescending(false);
+    dateFilter.setAdministrator(false);
+    dateFilter.setUserId("2");
+    List<GamificationActionsHistory> result7 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result7);
+    assertEquals(1, result7.size());
+    
+    // Test get All Realizations when a simple user calls, Sort field = 'date' with sort descending = true
+    dateFilter.setSortField("date");
+    dateFilter.setSortDescending(true);
+    List<GamificationActionsHistory> result8 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
+    assertNotNull(result8);
+    assertEquals(1, result8.size());
   }
   
 }
