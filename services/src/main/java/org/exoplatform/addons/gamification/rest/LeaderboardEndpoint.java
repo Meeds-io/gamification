@@ -24,6 +24,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
@@ -42,7 +43,6 @@ import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.swagger.annotations.ApiParam;
 
 @Path("/gamification/leaderboard")
 @Produces(MediaType.APPLICATION_JSON)
@@ -76,10 +76,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @Path("rank/all")
   @RolesAllowed("users")
   public Response getAllLeadersByRank(@Context UriInfo uriInfo,
-                                      @ApiParam(value = "Get leaderboard of user or space", required = false) @DefaultValue("user") @QueryParam("earnerType") String earnerType,
-                                      @ApiParam(value = "Limit of identities to retrieve", required = false) @DefaultValue("10") @QueryParam("limit") int limit,
-                                      @ApiParam(value = "Period name, possible values: WEEK, MONTH or ALL", required = false) @DefaultValue("ALL") @QueryParam("period") String period,
-                                      @ApiParam(value = "Get only the top 10 or all", required = false) @DefaultValue("true") @QueryParam("loadCapacity") boolean loadCapacity) {
+                                      @Parameter(description = "Get leaderboard of user or space") @DefaultValue("user") @QueryParam("earnerType") String earnerType,
+                                      @Parameter(description = "Limit of identities to retrieve") @DefaultValue("10") @QueryParam("limit") int limit,
+                                      @Parameter(description = "Period name, possible values: WEEK, MONTH or ALL") @DefaultValue("ALL") @QueryParam("period") String period,
+                                      @Parameter(description = "Get only the top 10 or all") @DefaultValue("true") @QueryParam("loadCapacity") boolean loadCapacity) {
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     IdentityType identityType = IdentityType.getType(earnerType);
     leaderboardFilter.setIdentityType(identityType);
