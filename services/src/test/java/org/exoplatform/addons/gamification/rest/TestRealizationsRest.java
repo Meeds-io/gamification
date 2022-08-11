@@ -64,8 +64,6 @@ public class TestRealizationsRest extends AbstractServiceTest {
     super.setUp();
     registry(getComponentClass());
     startSessionAs("root");
-    IdentityManagerMock identityManagerMock = new IdentityManagerMock();
-    identityManagerMock.getIdentity("root");
     Identity rootIdentity = ConversationState.getCurrent().getIdentity();
     MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
