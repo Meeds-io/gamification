@@ -520,10 +520,10 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                      .reduce(true, Boolean::logicalAnd));
   }
   
-  @SuppressWarnings("deprecation")
+
   @Test
   public void testFindRealizationsByConnectedUserType() {
-    //Test get All Realizations when Admin calls
+    // Test get All Realizations when Admin calls
     List<GamificationActionsHistory> histories = new ArrayList<>();
     histories.add(newGamificationActionsHistoryByEarnerId("1"));
     histories.add(newGamificationActionsHistoryByEarnerId("1"));
@@ -535,32 +535,26 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
     RealizationsFilter dateFilter = new RealizationsFilter();
 
-    Identity identityAdmin = new Identity("1");
-    List<MembershipEntry> AdministratorMemberships = new LinkedList<MembershipEntry>();
-    AdministratorMemberships.add(new MembershipEntry("/platform/administrators"));
-    identityAdmin.setMemberships(AdministratorMemberships);
-    
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("actionType");
     dateFilter.setSortDescending(true);
-    dateFilter.setUserIdentity(identityAdmin);
+    dateFilter.setUserId("1");
+    dateFilter.setAdministrator(true);
 
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result);
     assertEquals(6, result.size());
-    
-    //Test get All Realizations when a simple user calls
-    Identity identitySimpleUSer = new Identity("2");
-    List<MembershipEntry> WebContributorMemberships = new LinkedList<MembershipEntry>();
-    WebContributorMemberships.add(new MembershipEntry("otherMembership"));
-    identitySimpleUSer.setMemberships(WebContributorMemberships);
-    dateFilter.setUserIdentity(identitySimpleUSer);
+
+    // Test get All Realizations when a simple user calls
+
+    dateFilter.setUserId("2");
+    dateFilter.setAdministrator(false);
+
     List<GamificationActionsHistory> result1 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result1);
     assertEquals(5, result1.size());
 
-    
   }
   
 }

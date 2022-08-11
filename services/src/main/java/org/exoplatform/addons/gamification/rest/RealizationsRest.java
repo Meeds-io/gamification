@@ -98,8 +98,9 @@ public class RealizationsRest implements ResourceContainer {
     RealizationsFilter filter = new RealizationsFilter();
     
     Identity identity = ConversationState.getCurrent().getIdentity();
-    filter.setUserIdentity(identity);
-    
+    boolean isAdministrator = identity != null ? identity.isMemberOf("/platform/administrators") : false;
+    filter.setUserId(getCurrentUser());
+    filter.setAdministrator(isAdministrator);
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
     

@@ -30,13 +30,12 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.*;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.services.security.Identity;
 
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
-  public static final String            STATUS = "status";
+  public static final String STATUS = "status";
 
-  private RuleDAO ruleDAO;
+  private RuleDAO            ruleDAO;
 
   public GamificationHistoryDAO(RuleDAO ruleDAO) {
     this.ruleDAO = ruleDAO;
@@ -426,52 +425,43 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter realizationFilter,
-                                                                   int offset,
-                                                                   int limit) {
+  public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter realizationFilter, int offset, int limit) {
     Date fromDate = realizationFilter.getFromDate();
     Date toDate = realizationFilter.getToDate();
-    Identity identity = realizationFilter.getUserIdentity();
-    
+    String userId = realizationFilter.getUserId();
+    boolean isAdministrator = realizationFilter.isAdministrator();
+
     boolean sortDescending = realizationFilter.isSortDescending();
     String sortField = realizationFilter.getSortField();
 
     if (StringUtils.equals(sortField, "actionType")) {
-      return findRealizationsOrderedByRuleType(identity, fromDate, toDate, sortDescending, offset, limit);
+      return findRealizationsOrderedByRuleType(userId, isAdministrator, fromDate, toDate, sortDescending, offset, limit);
     } else {
-      return findRealizationsOrderedByDate(identity, fromDate, toDate, sortDescending, offset, limit);
+      return findRealizationsOrderedByDate(userId, isAdministrator, fromDate, toDate, sortDescending, offset, limit);
     }
   }
 
-  private List<GamificationActionsHistory> findRealizationsOrderedByDate(Identity identity,
+  private List<GamificationActionsHistory> findRealizationsOrderedByDate(String userId,
+                                                                         boolean isAdministrator,
                                                                          Date fromDate,
                                                                          Date toDate,
                                                                          boolean sortDescending,
                                                                          int offset,
                                                                          int limit) {
 
-    
     TypedQuery<GamificationActionsHistory> query;
-    String userId = identity.getUserId();
-    
-    if (identity.isMemberOf("/platform/administrators")) {
-      if (sortDescending) {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescending",
-                                                    GamificationActionsHistory.class);
-      } else {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscending",
-                                                    GamificationActionsHistory.class);
-      }
+
+    if (sortDescending) {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescending",
+                                                  GamificationActionsHistory.class);
     } else {
-      if (sortDescending) {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescendingByUserGrantee",
-                                                    GamificationActionsHistory.class);
-        query.setParameter("id", userId);
-      } else {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscendingByUserGrantee",
-                                                    GamificationActionsHistory.class);
-        query.setParameter("id", userId);
-      }
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscending",
+                                                  GamificationActionsHistory.class);
+    }
+    if (isAdministrator) {
+      query.setParameter("customQuery", ":type");
+    } else {
+      query.setParameter("customQuery", ":type AND g.earnerId = " + userId);
     }
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
@@ -486,7 +476,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  private List<GamificationActionsHistory> findRealizationsOrderedByRuleType(Identity identity,
+  private List<GamificationActionsHistory> findRealizationsOrderedByRuleType(String userId,
+                                                                             boolean isAdministrator,
                                                                              Date fromDate,
                                                                              Date toDate,
                                                                              boolean sortDescending,
@@ -501,7 +492,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     Iterator<TypeRule> typesIterator = types.iterator();
     while (typesIterator.hasNext() && CollectionUtils.size(resultList) < limitToRetrieve) {
       TypeRule ruleType = typesIterator.next();
-      List<GamificationActionsHistory> actions = getActionsHistoryByRuleType(identity,
+      List<GamificationActionsHistory> actions = getActionsHistoryByRuleType(userId,
+                                                                             isAdministrator,
                                                                              ruleType,
                                                                              fromDate,
                                                                              toDate,
@@ -520,7 +512,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
-  private List<GamificationActionsHistory> getActionsHistoryByRuleType(Identity identity,
+  private List<GamificationActionsHistory> getActionsHistoryByRuleType(String userId,
+                                                                       boolean isAdministrator,
                                                                        TypeRule ruleType,
                                                                        Date fromDate,
                                                                        Date toDate,
@@ -529,24 +522,24 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     List<Long> ruleIds = ruleDAO.getRuleIdsByType(ruleType);
     List<String> ruleEventNames = ruleDAO.getRuleEventsByType(ruleType);
-    String userId = identity.getUserId();
-    
+
     TypedQuery<GamificationActionsHistory> query;
 
-    if (identity.isMemberOf("/platform/administrators")) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
-                                                  GamificationActionsHistory.class);
+    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
+                                                GamificationActionsHistory.class);
+    
+    if (isAdministrator) {
+      query.setParameter("customQuery", ":type");
     } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesByUserGrantee",
-                                                  GamificationActionsHistory.class);
-      query.setParameter("id", userId);
+      query.setParameter("customQuery", ":type AND g.earnerId = " + userId);
     }
-
+    
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
     query.setParameter("type", IdentityType.USER);
     query.setParameter("ruleIds", ruleIds);
     query.setParameter("ruleEventNames", ruleEventNames);
+    
     if (limit > 0) {
       query.setMaxResults(limit);
     }

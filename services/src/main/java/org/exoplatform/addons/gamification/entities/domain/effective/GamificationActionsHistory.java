@@ -150,52 +150,26 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateDescending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
+        + " WHERE g.earnerType = :customQuery"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " ORDER BY g.id DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAscending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
-        + " WHERE g.earnerType = :type"
+        + " WHERE g.earnerType = :customQuery"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " ORDER BY g.id ASC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateDescendingByUserGrantee",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
-        + " AND g.earnerId = :id"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY g.createdDate DESC"
-         )
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAscendingByUserGrantee",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
-        + " WHERE g.earnerType = :type"
-        + " AND g.earnerId = :id"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY g.createdDate ASC"
-         )
-@NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAndRules",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
+        + " WHERE g.earnerType = :customQuery"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
         + " ORDER BY g.id DESC"
 )
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAndRulesByUserGrantee",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
-        + " AND g.earnerId = :id"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " AND (g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
-        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames)) \n"
-        + " ORDER BY g.createdDate DESC"
-        )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
