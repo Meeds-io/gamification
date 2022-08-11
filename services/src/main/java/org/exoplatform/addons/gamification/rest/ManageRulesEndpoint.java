@@ -32,6 +32,8 @@ import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.Response.Status;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -99,9 +101,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @Path("/add")
   public Response addRule(@ApiParam(value = "rule object to save", required = true)
                                      RuleDTO ruleDTO) {
-
     ConversationState conversationState = ConversationState.getCurrent();
-
     if (conversationState != null) {
       String currentUserName = conversationState.getIdentity().getUserId();
       try {
@@ -117,23 +117,14 @@ public class ManageRulesEndpoint implements ResourceContainer {
         return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
 
       } catch (EntityExistsException e) {
-
-        LOG.error("Rule with event {} and domain {} already exist", ruleDTO.getEvent(), ruleDTO.getArea(), e);
-
-        return Response.notModified().cacheControl(cacheControl).entity("Rule already exists").build();
+        return Response.status(Status.CONFLICT).entity("Rule already exists").build();
       } catch (Exception e) {
-
-        LOG.error("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
-
+        LOG.warn("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
         return Response.serverError().cacheControl(cacheControl).entity("Error adding new rule").build();
-
       }
-
     } else {
-
       return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
-
   }
 
   @PUT

@@ -34,10 +34,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-toolbar>
     <v-data-table
       :headers="realizationsHeaders"
-      :items="realizations"
+      :items="realizationsToDisplay"
       :loading="loading"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDescending"
       disable-pagination
       hide-default-footer
+      must-sort
       class="mx-6 mt-6 realizationsTable">
       <template slot="item" slot-scope="props">
         <realization-item
@@ -51,11 +54,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       flat
       class="pa-2 mb-4">
       <v-btn
-        v-if="showLoadMoreButton"
+        v-if="hasMore"
         class="btn"
         :loading="loading"
         :disabled="loading"
-        @click="loadRealizations(true)"
+        @click="loadMore"
         block>
         <span class="ms-2 d-none d-lg-inline">
           {{ $t("realization.label.loadMore") }}
@@ -71,12 +74,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data: () => ({
     realizations: [],
-    realizationsPerPage: 10,
+    offset: 0,
+    limit: 10,
+    pageSize: 10,
     loading: true,
-    loadMore: false,
+    sortBy: 'date',
+    sortDescending: true,
     limitReached: false,
-    showLoadMoreButton: false,
-    toDate: new Date().toISOString() ,
+    toDate: new Date().toISOString(),
     fromDate: null ,
     selectedPeriod: null,
     dateFormat: {
@@ -88,12 +93,18 @@ export default {
     },
   }),
   computed: {
+    hasMore() {
+      return this.limit <= this.realizations.length;
+    },
+    realizationsToDisplay() {
+      return this.realizations.slice(0, this.limit);
+    },
     realizationsHeaders() {
       return [
         {
           text: this.$t('realization.label.date'),
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'date',
           class: 'actionHeader px-2',
         },
@@ -114,7 +125,7 @@ export default {
         {
           text: this.$t('realization.label.actionType'),
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'actionType',
           class: 'actionHeader px-1'
         },
@@ -157,22 +168,41 @@ export default {
         this.loadRealizations();
       }
     },
+    sortBy(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (this.sortDescending){
+          this.sortDescending = false;
+        }
+        this.sortUpdated();
+      }
+    },
+    sortDescending(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.sortUpdated();
+      }
+    },
   },
   methods: {
-    loadRealizations(loadMore) {
+    sortUpdated() {
+      if (!this.loading) {
+        this.loading = true;
+        this.loadRealizations();
+      }
+    },
+    loadMore() {
+      this.limit += this.pageSize;
+      return this.loadRealizations();
+    },
+    loadRealizations() {
       this.loading = true;
-      const offset = loadMore ? this.realizations.length : 0;
-      this.$realizationsServices.getAllRealizations(this.fromDate,this.toDate,offset,this.realizationsPerPage).then(realizations => {
-        if (realizations.length >= this.realizationsPerPage) {
-          this.showLoadMoreButton = true;
-        } else {
-          this.showLoadMoreButton = false;
-        }
-        this.realizations = loadMore && this.realizations.concat(realizations) || realizations;
-
-      }).finally(() => {
-        this.loading = false;
-      });
+      return this.getRealizations()
+        .finally(() => this.loading = false);
+    },
+    getRealizations() {
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+        .then(realizations => {
+          this.realizations = realizations || [];
+        });
     },
     exportFile() {
       return this.$realizationsServices.exportFile(this.fromDate, this.toDate);
