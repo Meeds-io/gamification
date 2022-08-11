@@ -28,6 +28,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.mock.IdentityManagerMock;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
@@ -37,6 +38,9 @@ import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,12 +57,20 @@ public class TestRealizationsRest extends AbstractServiceTest {
 
   protected static final String toDate          = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
 
+  @SuppressWarnings("deprecation")
   @Before
   @Override
   public void setUp() throws Exception {
     super.setUp();
     registry(getComponentClass());
     startSessionAs("root");
+    IdentityManagerMock identityManagerMock = new IdentityManagerMock();
+    identityManagerMock.getIdentity("root");
+    Identity rootIdentity = ConversationState.getCurrent().getIdentity();
+    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
+    List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
+    memberships.add(membershipentry);
+    rootIdentity.setMemberships(memberships);
   }
 
   @Test
