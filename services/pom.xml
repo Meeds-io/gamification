@@ -104,8 +104,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <artifactId>social-component-service</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- swagger -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- Test Dependencies -->
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

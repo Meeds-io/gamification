@@ -21,6 +21,12 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -36,14 +42,9 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.rest.api.EntityBuilder;
 import org.exoplatform.social.rest.api.RestUtils;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Path("/gamification/announcement/api")
-@Api(value = "/gamification/announcement/api", description = "Manages announcement associated to users") // NOSONAR
+@Tag(name = "/gamification/announcement/api", description = "Manages announcement associated to users")
 @RolesAllowed("users")
 public class AnnouncementRest implements ResourceContainer {
 
@@ -60,20 +61,19 @@ public class AnnouncementRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Path("addAnnouncement")
-  @ApiOperation(
-      value = "Creates a new Announcement",
-      httpMethod = "POST",
-      response = Response.class,
-      consumes = "application/json"
+  @Operation(
+      summary = "Creates a new Announcement",
+      method = "POST",
+      description = "Creates a new Announcement"
   )
   @ApiResponses(
-      value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"),
-          @ApiResponse(code = HTTPStatus.FORBIDDEN, message = "Forbidden operation"), }
+      value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+          @ApiResponse(responseCode = "400", description = "Invalid query input"),
+          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+          @ApiResponse(responseCode = "500", description = "Internal server error"),
+          @ApiResponse(responseCode = "403", description = "Forbidden operation"), }
   )
-  public Response createAnnouncement(@ApiParam(value = "Announcement object to create", required = true)
+  public Response createAnnouncement(@RequestBody(description = "Announcement object to create", required = true)
   AnnouncementActivity announcementActivity) {
     if (announcementActivity == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("announcement object is mandatory").build();
@@ -107,30 +107,29 @@ public class AnnouncementRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Path("ByChallengeId/{challengeId}")
-  @ApiOperation(
-      value = "Retrieves the list of challenges available for an owner",
-      httpMethod = "GET",
-      response = Response.class,
-      produces = "application/json"
+  @Operation(
+      summary = "Retrieves the list of challenges available for an owner",
+      method = "GET",
+      description = "Retrieves the list of challenges available for an owner"
   )
   @ApiResponses(
-      value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), }
+      value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+          @ApiResponse(responseCode = "500", description = "Internal server error"), }
   )
   public Response getAllAnnouncementByChallenge(
                                                 @Context
                                                 Request request,
                                                 @Context
                                                 UriInfo uriInfo,
-                                                @ApiParam(value = "id of the challenge", required = true)
+                                                @Parameter(description = "id of the challenge", required = true)
                                                 @PathParam("challengeId")
                                                 String challengeId,
-                                                @ApiParam(value = "Offset of result", required = false)
+                                                @Parameter(description = "Offset of result")
                                                 @DefaultValue("0")
                                                 @QueryParam("offset")
                                                 int offset,
-                                                @ApiParam(value = "Limit of result", required = false)
+                                                @Parameter(description = "Limit of result")
                                                 @DefaultValue("10")
                                                 @QueryParam("limit")
                                                 int limit) {

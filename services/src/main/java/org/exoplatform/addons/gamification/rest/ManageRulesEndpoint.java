@@ -16,8 +16,9 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.services.log.ExoLogger;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Path("/gamification/rules")
-@Api(value = "/gamification/rules", description = "Manages rules") // NOSONAR
+@Tag(name = "/gamification/rules", description = "Manages rules")
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
 
@@ -97,7 +98,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @Consumes({ MediaType.APPLICATION_JSON })
   @RolesAllowed("administrators")
   @Path("/add")
-  public Response addRule(@ApiParam(value = "rule object to save", required = true)
+  public Response addRule(@RequestBody(description = "rule object to save", required = true)
                                      RuleDTO ruleDTO) {
 
     ConversationState conversationState = ConversationState.getCurrent();
@@ -139,7 +140,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @PUT
   @RolesAllowed("administrators")
   @Path("/update")
-  public Response updateRule(@Context HttpServletRequest request,@ApiParam(value = "rule object to update", required = true)
+  public Response updateRule(@Context HttpServletRequest request,@RequestBody(description = "rule object to update", required = true)
                                         RuleDTO ruleDTO) {
 
     ConversationState conversationState = ConversationState.getCurrent();
@@ -186,7 +187,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @PUT
   @RolesAllowed("administrators")
   @Path("/delete/{id}")
-  public Response deleteRule(@ApiParam(value = "id of the rule", required = true)
+  public Response deleteRule(@Parameter(description = "id of the rule", required = true)
   @PathParam("id")
           Long id) {
     ConversationState conversationState = ConversationState.getCurrent();
