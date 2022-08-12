@@ -6,8 +6,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Realization
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.security.Identity;
 
 import java.util.Date;
 import java.util.List;
@@ -37,12 +35,6 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
-    }
-    if(ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators"))
-    {
-      filter.setAdministrator(true);
-    } else {
-      filter.setAdministrator(false);
     }
     return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
   }

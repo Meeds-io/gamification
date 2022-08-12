@@ -88,7 +88,6 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList.add(gHistory2);
     gamificationActionsHistoryDTOList.add(gHistory3);
     when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
-
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByFilter(filter, offset, limit));
 
     // When
