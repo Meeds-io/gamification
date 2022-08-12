@@ -472,7 +472,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
-    assertEquals(Arrays.asList(histories.get(1).getId(), histories.get(3).getId()),
+    assertEquals(Arrays.asList(histories.get(3).getId(), histories.get(1).getId()),
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                .map(GamificationActionsHistory::getCreatedDate)
@@ -482,7 +482,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
     assertNotNull(result);
     assertEquals(3, result.size());
-    assertEquals(Arrays.asList(histories.get(1).getId(), histories.get(3).getId(), histories.get(0).getId()),
+    assertEquals(Arrays.asList(histories.get(3).getId(), histories.get(1).getId(), histories.get(5).getId()),
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                .map(GamificationActionsHistory::getCreatedDate)
@@ -493,7 +493,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
-    assertEquals(Arrays.asList(histories.get(0).getId(), histories.get(2).getId()),
+    assertEquals(Arrays.asList(histories.get(5).getId(), histories.get(4).getId()),
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                .map(GamificationActionsHistory::getCreatedDate)
@@ -503,10 +503,10 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 2, 6);
     assertNotNull(result);
     assertEquals(4, result.size());
-    assertEquals(Arrays.asList(histories.get(4).getId(),
-                               histories.get(5).getId(),
-                               histories.get(1).getId(),
-                               histories.get(3).getId()),
+    assertEquals(Arrays.asList(histories.get(2).getId(),
+                               histories.get(0).getId(),
+                               histories.get(3).getId(),
+                               histories.get(1).getId()),
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                      .map(GamificationActionsHistory::getCreatedDate)
