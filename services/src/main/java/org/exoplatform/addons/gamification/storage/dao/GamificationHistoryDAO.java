@@ -451,18 +451,18 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     TypedQuery<GamificationActionsHistory> query;
     if (isAdministrator) {
       if (sortDescending) {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescendingAdminAccessPrivilege",
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescending",
                                                     GamificationActionsHistory.class);
       } else {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscendingAdminAccessPrivilege",
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscending",
                                                     GamificationActionsHistory.class);
       }
     } else {
       if (sortDescending) {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescendingUserAccessPrivilege",
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateDescending",
                                                     GamificationActionsHistory.class);
       } else {
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscendingUserAccessPrivilege",
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateAscending",
                                                     GamificationActionsHistory.class);
       }
       query.setParameter("earnerId", userId);
@@ -529,10 +529,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     TypedQuery<GamificationActionsHistory> query;
     if (isAdministrator) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesAdminAccessPrivilege",
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
                                                   GamificationActionsHistory.class);
     } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesUserAccessPrivilege",
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",
                                                   GamificationActionsHistory.class);
       query.setParameter("earnerId", userId);
     }

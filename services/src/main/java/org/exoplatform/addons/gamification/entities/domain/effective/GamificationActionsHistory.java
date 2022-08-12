@@ -148,21 +148,21 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateDescendingAdminAccessPrivilege",
+    name = "GamificationActionsHistory.findRealizationsByDateDescending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " ORDER BY g.id DESC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAscendingAdminAccessPrivilege",
+    name = "GamificationActionsHistory.findRealizationsByDateAscending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " ORDER BY g.id ASC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAndRulesAdminAccessPrivilege",
+    name = "GamificationActionsHistory.findRealizationsByDateAndRules",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
@@ -171,7 +171,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " ORDER BY g.id DESC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateDescendingUserAccessPrivilege",
+    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateDescending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.earnerId = :earnerId"
@@ -179,7 +179,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " ORDER BY g.createdDate DESC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAscendingUserAccessPrivilege",
+    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAscending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
         + " WHERE g.earnerType = :type"
         + " AND g.earnerId = :earnerId"
@@ -187,7 +187,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " ORDER BY g.createdDate ASC"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAndRulesUserAccessPrivilege",
+    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.earnerId = :earnerId"
