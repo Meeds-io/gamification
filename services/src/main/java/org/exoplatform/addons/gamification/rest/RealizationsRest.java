@@ -17,8 +17,6 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
-import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.security.Identity;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -96,10 +94,7 @@ public class RealizationsRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
     RealizationsFilter filter = new RealizationsFilter();
-    Identity identity = ConversationState.getCurrent().getIdentity();
-    boolean isAdministrator = identity != null ? identity.isMemberOf("/platform/administrators") : false;
     filter.setUserId(getCurrentUser());
-    filter.setAdministrator(isAdministrator);
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
     filter.setFromDate(dateFrom);

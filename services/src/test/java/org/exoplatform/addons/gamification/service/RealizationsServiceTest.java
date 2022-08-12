@@ -80,6 +80,7 @@ public class RealizationsServiceTest {
     RealizationsFilter filter = new RealizationsFilter();
     filter.setFromDate(toDate);
     filter.setToDate(fromDate);
+    filter.setUserId("1");
     GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
