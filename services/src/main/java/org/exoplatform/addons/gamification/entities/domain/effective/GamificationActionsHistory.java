@@ -145,21 +145,21 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallenge",
-    query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.createdDate desc"
+    query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateDescending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY g.createdDate DESC"
+        + " ORDER BY g.id DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAscending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
         + " WHERE g.earnerType = :type"
         + " AND g.date BETWEEN :fromDate AND :toDate"
-        + " ORDER BY g.createdDate ASC"
+        + " ORDER BY g.id ASC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAndRules",
@@ -168,7 +168,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " AND g.date BETWEEN :fromDate AND :toDate"
         + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
-        + " ORDER BY g.createdDate DESC"
+        + " ORDER BY g.id DESC"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
