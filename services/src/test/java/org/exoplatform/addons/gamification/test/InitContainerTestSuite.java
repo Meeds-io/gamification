@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.test;
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnectorTest;
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityGeneratorListenerTest;
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdaterTest;
+import org.exoplatform.addons.gamification.listener.GamificationRelationshipListenerTest;
 import org.exoplatform.addons.gamification.listener.RulesESListenerTest;
 import org.exoplatform.addons.gamification.rest.TestAnnouncementRest;
 import org.exoplatform.addons.gamification.rest.TestChallengeRest;
@@ -88,7 +89,8 @@ import org.junit.runners.Suite.SuiteClasses;
         RuleSearchConnectorTest.class,
         RuleIndexingUpgradePluginTest.class,
         RuleIndexingServiceConnectorTest.class,
-        RulesESListenerTest.class
+        RulesESListenerTest.class,
+        GamificationRelationshipListenerTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
