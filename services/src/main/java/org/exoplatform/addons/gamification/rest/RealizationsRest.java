@@ -81,7 +81,7 @@ public class RealizationsRest implements ResourceContainer {
                                      @QueryParam("sortDescending")
                                      @DefaultValue("true")
                                      boolean sortDescending,
-                                     @ApiParam(value = "Id of the connected user", required = false)
+                                     @ApiParam(value = "Identifier of the connected user", required = false)
                                      @QueryParam("earnerId")
                                      Long earnerId,
                                      @ApiParam(value = "Offset of result", required = false)
@@ -114,7 +114,7 @@ public class RealizationsRest implements ResourceContainer {
 
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
-          realizationsService.getAllRealizationsByFilter(filter, identity, offset, limit);
+          realizationsService.getRealizationsByFilter(filter, identity, offset, limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of Realizations", e);
@@ -185,13 +185,17 @@ public class RealizationsRest implements ResourceContainer {
                             @QueryParam("toDate")
                             String toDate) {
     RealizationsFilter filter = new RealizationsFilter();
+    Identity identity = ConversationState.getCurrent().getIdentity();
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
     filter.setFromDate(dateFrom);
     filter.setToDate(dateTo);
 
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByFilter(filter, 0, 0);
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
+                                                                                                               identity,
+                                                                                                               0,
+                                                                                                               0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
           GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
       String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);

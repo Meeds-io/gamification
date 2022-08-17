@@ -19,7 +19,7 @@ public interface RealizationsService {
    * @param limit Limit
    * @return A {@link List <GamificationActionsHistoryDTO>} object
    */
-  List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter filter,
+  List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter filter,
                                                                  Identity identity,
                                                                  int offset,
                                                                  int limit);

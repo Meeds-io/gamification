@@ -20,7 +20,7 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter filter,
+  public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter filter,
                                                                         Identity identity,
                                                                         int offset,
                                                                         int limit) {
@@ -40,9 +40,9 @@ public class RealizationsServiceImpl implements RealizationsService {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
     if (earnerId <= 0 && !isAdministrator(identity)) {
-      throw new IllegalArgumentException("Connected user does not have the right privileges to access realizations");
+      return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
     }
-    return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
+    return realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit);
   }
 
   @Override
