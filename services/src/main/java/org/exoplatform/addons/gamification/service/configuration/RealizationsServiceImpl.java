@@ -6,7 +6,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Realization
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 
 import java.util.Date;
@@ -35,9 +34,6 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     if (toDate == null) {
       throw new IllegalArgumentException("toDate is mandatory");
-    }
-    if (userId == null) {
-      throw new IllegalArgumentException("userId is mandatory");
     }
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");

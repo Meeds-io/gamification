@@ -30,6 +30,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -68,6 +69,8 @@ public class TestRealizationsRest extends AbstractServiceTest {
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
     memberships.add(membershipentry);
     rootIdentity.setMemberships(memberships);
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setUserId("root");
   }
 
   @Test

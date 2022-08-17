@@ -109,7 +109,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final String    TEST_USER_RECEIVER  = "55";
 
   /* Sender */
-  protected static final String    TEST_USER_SENDER    = "1";
+  protected static final String    TEST_USER_SENDER    = "root";
 
   /* Link to the activity stream */
   protected static final String    TEST_LINK_ACTIVITY  = "/portal/intranet//activity?id=245590";
