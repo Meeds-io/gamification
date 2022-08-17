@@ -4,6 +4,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Gamificatio
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.security.Identity;
 
 import java.util.List;
 
@@ -13,11 +14,13 @@ public interface RealizationsService {
    * Retrieves all Realizations by Filter.
    *
    * @param filter used to filter realizations using {@link RealizationsFilter}
+   * @param current identity {@link Identity}
    * @param offset Offset
    * @param limit Limit
    * @return A {@link List <GamificationActionsHistoryDTO>} object
    */
   List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter filter,
+                                                                 Identity identity,
                                                                  int offset,
                                                                  int limit);
 

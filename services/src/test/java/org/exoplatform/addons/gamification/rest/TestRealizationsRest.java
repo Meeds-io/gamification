@@ -63,14 +63,14 @@ public class TestRealizationsRest extends AbstractServiceTest {
   public void setUp() throws Exception {
     super.setUp();
     registry(getComponentClass());
-    startSessionAs("root");
+    startSessionAs("1");
     Identity rootIdentity = ConversationState.getCurrent().getIdentity();
     MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
     memberships.add(membershipentry);
     rootIdentity.setMemberships(memberships);
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setUserId("root");
+    filter.setUserId("1");
   }
 
   @Test

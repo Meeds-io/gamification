@@ -21,6 +21,7 @@ public class RealizationsServiceImpl implements RealizationsService {
 
   @Override
   public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter filter,
+                                                                        Identity identity,
                                                                         int offset,
                                                                         int limit) {
     if (filter == null) {
@@ -28,7 +29,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     Date fromDate = filter.getFromDate();
     Date toDate = filter.getToDate();
-    String userId = filter.getUserId();
+    Long earnerId = filter.getEarnerId();
     if (fromDate == null) {
       throw new IllegalArgumentException("fromDate is mandatory");
     }
@@ -38,9 +39,9 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
-    Identity identity = new Identity(userId);
-    boolean isAdministrator = identity != null ? identity.isMemberOf("/platform/administrators") : false;
-    filter.setAdministrator(isAdministrator);
+    if (earnerId <= 0 && !isAdministrator(identity)) {
+      throw new IllegalArgumentException("Connected user does not have the right privileges to access realizations");
+    }
     return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
   }
 
@@ -71,5 +72,12 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     gHistory.setStatus(status.name());
     return realizationsStorage.updateRealizationStatus(gHistory);
+  }
+  
+  private boolean isAdministrator(Identity identity) {
+    if(identity != null) {
+      return identity.isMemberOf("/platform/administrators");
+    }
+    return false;
   }
 }

@@ -33,9 +33,9 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
-  public static final String STATUS = "status";
+  public static final String            STATUS = "status";
 
-  private RuleDAO            ruleDAO;
+  private RuleDAO ruleDAO;
 
   public GamificationHistoryDAO(RuleDAO ruleDAO) {
     this.ruleDAO = ruleDAO;
@@ -425,7 +425,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter realizationFilter, int offset, int limit) {
+  public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter realizationFilter, 
+                                                                   int offset, 
+                                                                   int limit) {
     Date fromDate = realizationFilter.getFromDate();
     Date toDate = realizationFilter.getToDate();
     String userId = realizationFilter.getUserId();
