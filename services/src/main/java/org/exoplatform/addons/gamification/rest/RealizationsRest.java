@@ -1,8 +1,11 @@
 package org.exoplatform.addons.gamification.rest;
 
-import io.swagger.annotations.*;
-
 import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
@@ -10,7 +13,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Realization
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -31,7 +33,7 @@ import java.util.Locale;
 import static org.exoplatform.addons.gamification.utils.Utils.*;
 
 @Path("/gamification/realizations/api")
-@Api(value = "/gamification/realizations/api", description = "Manages users realizations") // NOSONAR
+@Tag(name = "/gamification/realizations/api", description = "Manages users realizations")
 @RolesAllowed("administrators")
 public class RealizationsRest implements ResourceContainer {
 
@@ -59,32 +61,35 @@ public class RealizationsRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
   @Path("allRealizations")
-  @ApiOperation(value = "Retrieves the list of challenges available for an owner", httpMethod = "GET", response = Response.class, produces = "application/json")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
-      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response getAllRealizations(@ApiParam(value = "result fromDate", required = true)
-                                     @QueryParam("fromDate")
-                                     String fromDate,
-                                     @ApiParam(value = "result toDate", required = true)
-                                     @QueryParam("toDate")
-                                     String toDate,
-                                     @ApiParam(value = "Sort field. Possible values: date or actionType.", defaultValue = "date", required = false)
-                                     @QueryParam("sortBy")
-                                     @DefaultValue("date")
-                                     String sortField,
-                                     @ApiParam(value = "Whether to retrieve results sorted descending or not", defaultValue = "true", required = false)
-                                     @QueryParam("sortDescending")
-                                     @DefaultValue("true")
-                                     boolean sortDescending,
-                                     @ApiParam(value = "Offset of result", required = false)
-                                     @DefaultValue("0")
-                                     @QueryParam("offset")
-                                     int offset,
-                                     @ApiParam(value = "Limit of result", required = false)
-                                     @DefaultValue("10")
-                                     @QueryParam("limit")
-                                     int limit) {
+  @Operation(
+          summary = "Retrieves the list of challenges available for an owner",
+          method = "GET",
+          description = "Retrieves the list of challenges available for an owner")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response getAllRealizations(@Parameter(description = "result fromDate", required = true)
+                                                @QueryParam("fromDate")
+                                                String fromDate,
+                                                @Parameter(description = "result toDate", required = true)
+                                                @QueryParam("toDate")
+                                                String toDate,
+                                                @Parameter(description = "Sort field. Possible values: date or actionType.")
+                                                @QueryParam("sortBy")
+                                                @DefaultValue("date")
+                                                String sortField,
+                                                @Parameter(description = "Whether to retrieve results sorted descending or not")
+                                                @QueryParam("sortDescending")
+                                                @DefaultValue("true")
+                                                boolean sortDescending,
+                                                @Parameter(description = "Offset of result")
+                                                @DefaultValue("0")
+                                                @QueryParam("offset")
+                                                int offset,
+                                                @Parameter(description = "Limit of result")
+                                                @DefaultValue("10")
+                                                @QueryParam("limit")
+                                                int limit) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
@@ -118,25 +123,25 @@ public class RealizationsRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
   @Path("updateRealizations")
-  @ApiOperation(value = "Updates an existing realization", httpMethod = "PUT", response = Response.class, consumes = "application/json")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-      @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Object not found"),
-      @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response updateRealizations(@ApiParam(value = "id of realization", required = true)
-                                     @QueryParam("realizationId")
-                                     String realizationId,
-                                     @ApiParam(value = "new status of realization", required = true)
+  @Operation(summary = "Updates an existing realization", method = "PUT", description = "Updates an existing realization")
+  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response updateRealizations(@Parameter(description = "id of realization", required = true)
+  @QueryParam("realizationId")
+  String realizationId,
+                                     @Parameter(description = "new status of realization", required = true)
                                      @QueryParam("status")
                                      String status,
-                                     @ApiParam(value = "new action Label of realization", required = false)
+                                     @Parameter(description = "new action Label of realization")
                                      @QueryParam("actionLabel")
                                      String actionLabel,
-                                     @ApiParam(value = "new points of realization", required = false)
+                                     @Parameter(description = "new points of realization")
                                      @QueryParam("points")
                                      Long points,
-                                     @ApiParam(value = "new domain of realization", required = false)
+                                     @Parameter(description = "new domain of realization")
                                      @QueryParam("domain")
                                      String domain) {
 
@@ -165,13 +170,14 @@ public class RealizationsRest implements ResourceContainer {
   @RolesAllowed("administrators")
   @Produces("application/vnd.ms-excel")
   @Path("getExport")
-  @ApiOperation(value = "Gets CSV report", httpMethod = "GET", response = Response.class, notes = "Given a csv file of actions")
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
-      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
-  public Response getReport(@ApiParam(value = "result fromDate", required = true)
+  @Operation(summary = "Gets CSV report", method = "GET", description = "returns a csv file of actions")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input") })
+  public Response getReport(@Parameter(description = "result fromDate", required = true)
                             @QueryParam("fromDate")
                             String fromDate,
-                            @ApiParam(value = "result toDate", required = true)
+                            @Parameter(description = "result toDate", required = true)
                             @QueryParam("toDate")
                             String toDate) {
     RealizationsFilter filter = new RealizationsFilter();
