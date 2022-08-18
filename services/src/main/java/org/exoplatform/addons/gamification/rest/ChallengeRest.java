@@ -19,6 +19,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
@@ -33,14 +40,9 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Path("/gamification/challenges")
-@Api(value = "/challenge/api", description = "Manages challenge associated to users") // NOSONAR
+@Tag(name = "/challenge/api", description = "Manages challenge associated to users")
 @RolesAllowed("users")
 public class ChallengeRest implements ResourceContainer {
 
@@ -64,15 +66,15 @@ public class ChallengeRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Creates a new challenge", httpMethod = "POST", response = Response.class, consumes = "application/json")
+  @Operation(summary = "Creates a new challenge", method = "POST", description = "Creates a new challenge")
   @ApiResponses(
-      value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), }
+      value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+          @ApiResponse(responseCode = "400", description = "Invalid query input"),
+          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+          @ApiResponse(responseCode = "500", description = "Internal server error"), }
   )
   public Response createChallenge(
-                                  @ApiParam(value = "Challenge object to create", required = true)
+                                  @RequestBody(description = "Challenge object to create", required = true)
                                   Challenge challenge) {
     if (challenge == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("challenge object is mandatory").build();
@@ -98,27 +100,26 @@ public class ChallengeRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("{challengeId}")
   @RolesAllowed("users")
-  @ApiOperation(
-      value = "Retrieves a challenge by its id",
-      httpMethod = "GET",
-      response = Response.class,
-      produces = "application/json",
-      notes = "returns selected challenge if exists"
+  @Operation(
+      summary = "Retrieves a challenge by its id",
+      method = "GET",
+      description = "returns selected challenge if exists"
   )
   @ApiResponses(
-      value = { @ApiResponse(code = 200, message = "Request fulfilled"),
-          @ApiResponse(code = 400, message = "Invalid query input"), @ApiResponse(code = 403, message = "Unauthorized operation"),
-          @ApiResponse(code = 500, message = "Internal server error") }
+      value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+          @ApiResponse(responseCode = "400", description = "Invalid query input"),
+          @ApiResponse(responseCode = "403", description = "Unauthorized operation"),
+          @ApiResponse(responseCode = "500", description = "Internal server error") }
   )
   public Response getChallengeById(
-                                   @ApiParam(value = "Challenge technical id", required = true)
+                                   @Parameter(description = "Challenge technical id", required = true)
                                    @PathParam("challengeId")
                                    long challengeId,
-                                   @ApiParam(value = "Offset of result", required = false)
+                                   @Parameter(description = "Offset of result")
                                    @DefaultValue("0")
                                    @QueryParam("offset")
                                    int offset,
-                                   @ApiParam(value = "Limit of result", required = false)
+                                   @Parameter(description = "Limit of result")
                                    @DefaultValue("10")
                                    @QueryParam("limit")
                                    int limit) {
@@ -144,21 +145,20 @@ public class ChallengeRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(
-      value = "Updates an existing challenge",
-      httpMethod = "PUT",
-      response = Response.class,
-      consumes = "application/json"
+  @Operation(
+      summary = "Updates an existing challenge",
+      method = "PUT",
+      description = "Updates an existing challenge"
   )
   @ApiResponses(
-      value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Object not found"),
-          @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), }
+      value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+          @ApiResponse(responseCode = "404", description = "Object not found"),
+          @ApiResponse(responseCode = "400", description = "Invalid query input"),
+          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+          @ApiResponse(responseCode = "500", description = "Internal server error"), }
   )
   public Response updateChallenge(
-                                  @ApiParam(value = "challenge object to update", required = true)
+                                  @RequestBody(description = "challenge object to update", required = true)
                                   Challenge challenge) {
     if (challenge == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("challenge object is mandatory").build();
@@ -187,52 +187,39 @@ public class ChallengeRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(
-      value = "Retrieves the list of challenges available for an owner",
-      httpMethod = "GET",
-      response = Response.class,
-      produces = "application/json"
+  @Operation(
+      summary = "Retrieves the list of challenges available for an owner",
+      method = "GET",
+      description = "Retrieves the list of challenges available for an owner"
   )
   @ApiResponses(
-      value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), }
+      value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+          @ApiResponse(responseCode = "500", description = "Internal server error"), }
   )
   public Response getAllChallengesByUser(
-                                         @ApiParam(value = "Offset of result", required = false, defaultValue = "0")
+                                         @Parameter(description = "Offset of result") @Schema(defaultValue = "0")
                                          @QueryParam("offset")
                                          int offset,
-                                         @ApiParam(value = "Limit of result", required = false, defaultValue = "10")
+                                         @Parameter(description = "Limit of result") @Schema(defaultValue = "10")
                                          @QueryParam("limit")
                                          int limit,
-                                         @ApiParam(value = "Group challenges by domain", required = false, defaultValue = "false")
+                                         @Parameter(description = "Group challenges by domain") @Schema(defaultValue = "false")
                                          @QueryParam("groupByDomain")
                                          boolean groupByDomain,
-                                         @ApiParam(
-                                             value = "Used to filter challenges by domain",
-                                             required = false,
-                                             defaultValue = ""
-                                         )
+                                         @Parameter(description = "Used to filter challenges by domain") @Schema(defaultValue = "")
                                          @QueryParam("domainId")
                                          long domainId,
-                                         @ApiParam(
-                                             value = "Number of announcements per challenge",
-                                             required = false,
-                                             defaultValue = "0"
-                                         )
+                                         @Parameter(description = "Number of announcements per challenge") @Schema(defaultValue = "0")
                                          @QueryParam("announcements")
                                          int announcementsPerChallenge,
-                                         @ApiParam(
-                                             value = "term to search challenges with",
-                                             required = false
+                                         @Parameter(
+                                             description = "term to search challenges with"
                                          )
                                          @QueryParam("term")
                                          String term,
-                                         @ApiParam(
-                                           value = "Challenge period filtering. Possible values: STARTED, NOT_STARTED, ENDED, ALL",
-                                           defaultValue = "ALL",
-                                           required = false
-                                         )
+                                         @Parameter(description = "Challenge period filtering. Possible values: STARTED, NOT_STARTED, ENDED, ALL")
+                                         @Schema(defaultValue = "ALL")
                                          @DefaultValue("ALL")
                                          @QueryParam("filter")
                                          String dateFilterType) {
@@ -308,16 +295,13 @@ public class ChallengeRest implements ResourceContainer {
   @Path("canAddChallenge")
   @Produces(MediaType.TEXT_PLAIN)
   @RolesAllowed("users")
-  @ApiOperation(
-      value = "check if the current user can add a challenge",
-      httpMethod = "GET",
-      response = Response.class,
-      notes = "This checks if the current user user can add a challenge",
-      consumes = "application/json"
-  )
+  @Operation(
+      summary = "check if the current user can add a challenge",
+      method = "GET",
+      description = "This checks if the current user user can add a challenge")
   @ApiResponses(
-      value = { @ApiResponse(code = 200, message = "User ability to add a challenge is returned"),
-          @ApiResponse(code = 401, message = "User not authorized to add a challenge") }
+      value = { @ApiResponse(responseCode = "200", description = "User ability to add a challenge is returned"),
+          @ApiResponse(responseCode = "401", description = "User not authorized to add a challenge") }
   )
   public Response canAddChallenge() {
     try {
@@ -333,22 +317,19 @@ public class ChallengeRest implements ResourceContainer {
   @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(
-      value = "check if the current user can add a challenge",
-      httpMethod = "GET",
-      response = Response.class,
-      notes = "This checks if the current user user can add a challenge",
-      consumes = "application/json"
-  )
+  @Operation(
+      summary = "check if the current user can add a challenge",
+      method = "GET",
+      description = "This checks if the current user user can add a challenge")
   @ApiResponses(
-      value = { @ApiResponse(code = 200, message = "challenge deleted"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "User not authorized to delete a challenge"),
-          @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-          @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Object not found"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), }
+      value = { @ApiResponse(responseCode = "200", description = "challenge deleted"),
+          @ApiResponse(responseCode = "401", description = "User not authorized to delete a challenge"),
+          @ApiResponse(responseCode = "400", description = "Invalid query input"),
+          @ApiResponse(responseCode = "404", description = "Object not found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error"), }
   )
   public Response deleteChallenge(
-                                  @ApiParam(value = "challenge id to be deleted", required = true)
+                                  @Parameter(description = "challenge id to be deleted", required = true)
                                   @PathParam("id")
                                   Long challengeId) {
     if (challengeId == null || challengeId <= 0) {
