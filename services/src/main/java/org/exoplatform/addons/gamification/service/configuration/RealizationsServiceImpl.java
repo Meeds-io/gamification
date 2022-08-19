@@ -21,15 +21,17 @@ public class RealizationsServiceImpl implements RealizationsService {
 
   @Override
   public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter filter,
-                                                                        Identity identity,
-                                                                        int offset,
-                                                                        int limit) {
+                                                                     Identity identity,
+                                                                     int offset,
+                                                                     int limit) throws IllegalAccessException {
     if (filter == null) {
       throw new IllegalArgumentException("filter is mandatory");
     }
+    if (identity == null) {
+      throw new IllegalArgumentException("identity is mandatory");
+    }
     Date fromDate = filter.getFromDate();
     Date toDate = filter.getToDate();
-    Long earnerId = filter.getEarnerId();
     if (fromDate == null) {
       throw new IllegalArgumentException("fromDate is mandatory");
     }
@@ -39,8 +41,11 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
-    if (earnerId <= 0 && !isAdministrator(identity)) {
+    if (filter.getEarnerId() > 0 && isAdministrator(identity)) {
       return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
+    }
+    if (filter.getEarnerId() > 0 && !isAdministrator(identity)) {
+      throw new IllegalAccessException("User doesn't have enough privileges to access all achievements");
     }
     return realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit);
   }
@@ -75,9 +80,6 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
   
   private boolean isAdministrator(Identity identity) {
-    if(identity != null) {
-      return identity.isMemberOf("/platform/administrators");
-    }
-    return false;
+    return identity.isMemberOf("/platform/administrators");
   }
 }

@@ -19,18 +19,20 @@ public class RealizationsStorage {
   public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter realizationFilter,
                                                                         int offset,
                                                                         int limit) {
-    List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.findAllRealizationsByFilter(realizationFilter,
-                                                                                                                      offset,
-                                                                                                                      limit);
+    List<GamificationActionsHistory> gamificationActionsHistoryList =
+                                                                    gamificationHistoryDAO.findAllRealizationsByFilter(realizationFilter,
+                                                                                                                       offset,
+                                                                                                                       limit);
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
-  
+
   public List<GamificationActionsHistoryDTO> getUsersRealizationsByFilter(RealizationsFilter realizationFilter,
-                                                                        int offset,
-                                                                        int limit) {
-    List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.findUsersRealizationsByFilter(realizationFilter,
-                                                                                                                      offset,
-                                                                                                                      limit);
+                                                                          int offset,
+                                                                          int limit) {
+    List<GamificationActionsHistory> gamificationActionsHistoryList =
+                                                                    gamificationHistoryDAO.findUsersRealizationsByFilter(realizationFilter,
+                                                                                                                         offset,
+                                                                                                                         limit);
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
 

@@ -185,19 +185,17 @@ public class RealizationsRest implements ResourceContainer {
                             @QueryParam("toDate")
                             String toDate) {
     RealizationsFilter filter = new RealizationsFilter();
+    String currentUser = Utils.getCurrentUser();
     Identity identity = ConversationState.getCurrent().getIdentity();
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
     filter.setFromDate(dateFrom);
     filter.setToDate(dateTo);
-
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
-                                                                                                               identity,
-                                                                                                               0,
-                                                                                                               0);
+      List<GamificationActionsHistoryDTO> gActionsHistoryList =
+                                                              realizationsService.getRealizationsByFilter(filter, identity, 0, 0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+                                                                                        GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
       String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());
@@ -210,6 +208,9 @@ public class RealizationsRest implements ResourceContainer {
       Response.ResponseBuilder response = Response.ok(temp); // NOSONAR
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
+    } catch (IllegalAccessException e) {
+      LOG.debug("A not autorized user '{}' attempts to access realizations '{}'", currentUser, e);
+      return Response.status(Response.Status.FORBIDDEN).entity("user is not autorized").build();
     } catch (Exception e) {
       LOG.error("Error when creating temp file", e);
       return Response.serverError().entity(e.getMessage()).build();
