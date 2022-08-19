@@ -35,6 +35,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-tab-item v-if="isAdministrator">
           <realizations id="Realizations" />
         </v-tab-item>
+        <v-tab-item>
+          <template>
+            <extension-registry-components 
+              name="RealizationsTable"
+              type="realizations-table-extension" />
+          </template>
+        </v-tab-item>
       </v-tabs-items>
     </main>
     <main v-else>
