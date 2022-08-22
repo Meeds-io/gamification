@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="mb-4">
         <v-tab class="px-5">{{ $t('engagementCenter.label.challenges') }}</v-tab>
         <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
-        <v-tab class="px-5">{{ $t('engagementCenter.label.achievements') }}</v-tab>
+        <v-tab class="px-5" v-if="isAdministrator">{{ $t('engagementCenter.label.achievements') }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
@@ -48,6 +48,21 @@ export default {
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
+    isAdministrator: false,
   }),
+  created() {
+    this.isAdministratorCall();
+  },
+  methods: {
+    isAdministratorCall() {
+      fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=2022-07-31T23:00:00.000Z&toDate=2022-08-22T22:59:00.000Z&sortBy=date&sortDescending=true&offset=0&limit=11`)
+        .then(response => {
+          this.isAdministrator = response.status === 200;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }
 };
 </script>
