@@ -57,6 +57,21 @@ export default {
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
+    isAdministrator: false,
   }),
+  created() {
+    this.isAdministratorCall();
+  },
+  methods: {
+    isAdministratorCall() {
+      fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=2022-07-31T23:00:00.000Z&toDate=2022-08-22T22:59:00.000Z&sortBy=date&sortDescending=true&offset=0&limit=11`)
+        .then(response => {
+          this.isAdministrator = response.status === 200;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }
 };
 </script>
