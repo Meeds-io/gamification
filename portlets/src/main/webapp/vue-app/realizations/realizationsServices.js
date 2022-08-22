@@ -45,3 +45,14 @@ export function getAllDomains() {
     }
   });
 }
+
+export function getAllRealizationsStatus() {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=2022-07-31T23:00:00.000Z&toDate=2022-08-22T22:59:00.000Z&sortBy=date&sortDescending=true&offset=0&limit=11`)
+    .then(response => {
+      return response.status === 200;
+    })
+    .catch(err => {
+      throw new Error ('Server indicates that the response status code is not 200', err);
+    });
+    
+}

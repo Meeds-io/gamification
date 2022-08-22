@@ -16,7 +16,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="engagementCenterEnabled">
+    <main v-if="loading && engagementCenterEnabled">
+      <v-toolbar color="transparent" flat>
+        <v-spacer />
+        <v-progress-circular
+          color="primary"
+          class="mb-2"
+          indeterminate />
+        <v-spacer />
+      </v-toolbar>
+    </main>
+    <main v-if="!loading && engagementCenterEnabled">
       <v-tabs
         v-model="tab"
         slider-size="4"
@@ -58,19 +68,16 @@ export default {
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
     isAdministrator: false,
+    loading: true,
   }),
   created() {
-    this.isAdministratorCall();
+    this.init();
   },
   methods: {
-    isAdministratorCall() {
-      fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=2022-07-31T23:00:00.000Z&toDate=2022-08-22T22:59:00.000Z&sortBy=date&sortDescending=true&offset=0&limit=11`)
-        .then(response => {
-          this.isAdministrator = response.status === 200;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    init() {
+      this.$realizationsServices.getAllRealizationsStatus()
+        .then(resp => this.isAdministrator = resp);
+      this.loading = false;
     }
   }
 };
