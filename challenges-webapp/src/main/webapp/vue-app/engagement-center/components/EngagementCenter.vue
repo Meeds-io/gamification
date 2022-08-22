@@ -16,17 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="loading && engagementCenterEnabled">
-      <v-toolbar color="transparent" flat>
-        <v-spacer />
-        <v-progress-circular
-          color="primary"
-          class="mb-2"
-          indeterminate />
-        <v-spacer />
-      </v-toolbar>
-    </main>
-    <main v-if="!loading && engagementCenterEnabled">
+    <main v-if="engagementCenterEnabled">
       <v-tabs
         v-model="tab"
         slider-size="4"
@@ -68,16 +58,16 @@ export default {
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
     isAdministrator: false,
-    loading: true,
   }),
   created() {
     this.init();
   },
   methods: {
     init() {
+      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
       this.$realizationsServices.getAllRealizationsStatus()
-        .then(resp => this.isAdministrator = resp);
-      this.loading = false;
+        .then(resp => this.isAdministrator = resp)
+        .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
     }
   }
 };
