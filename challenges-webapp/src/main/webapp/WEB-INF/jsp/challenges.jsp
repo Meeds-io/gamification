@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <div class="VuetifyApp">
   <div id="EngagementCenterApplication">
     <script type="text/javascript">
-      require(['PORTLET/challenges/Challenges'], app => app.init('<%=isAdministrator%>'));
+      require(['PORTLET/challenges/Challenges'], app => app.init(<%=isAdministrator%>));
     </script>
   </div>
 </div>
