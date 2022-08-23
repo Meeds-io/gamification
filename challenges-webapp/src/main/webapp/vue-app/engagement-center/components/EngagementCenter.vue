@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-tab-item>
           <engagement-center-programs />
         </v-tab-item>
-        <v-tab-item>
+        <v-tab-item v-if="isAdministrator">
           <realizations id="Realizations" />
         </v-tab-item>
       </v-tabs-items>
@@ -45,21 +45,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
-    isAdministrator: false,
   }),
   created() {
-    this.init();
+    document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
   },
-  methods: {
-    init() {
-      document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-      this.$realizationsServices.getAllRealizationsStatus()
-        .then(resp => this.isAdministrator = resp)
-        .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
-    }
-  }
 };
 </script>

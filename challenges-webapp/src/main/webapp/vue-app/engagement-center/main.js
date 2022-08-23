@@ -43,11 +43,11 @@ const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
 ];
 
-export function init() {
+export function init(isAdministrator) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
-      template: `<engagement-center id="${appId}" />`,
+      template: `<engagement-center id="${appId}" isAdministrator="${isAdministrator}/>`,
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenter');
