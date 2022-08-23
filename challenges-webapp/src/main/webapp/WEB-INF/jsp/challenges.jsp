@@ -18,12 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <%@page import="org.exoplatform.services.security.Identity"%>
 
 <%
-ConversationState conversationState = ConversationState.getCurrent();
-    Identity currentIdentity = null;
-    if (conversationState != null) {
-      currentIdentity = ConversationState.getCurrent().getIdentity();
-    }
-    isAdministrator = currentIdentity.isMemberOf("/platform/administrators");
+    boolean isAdministrator = ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
 }
 %>
 <div class="VuetifyApp">
