@@ -86,6 +86,7 @@ export default {
     pageSize: 10,
     loading: true,
     sortBy: 'date',
+    earnerId: 1,
     sortDescending: true,
     limitReached: false,
     toDate: new Date().toISOString(),
@@ -123,13 +124,6 @@ export default {
           class: 'actionHeader px-1'
         },
         {
-          text: this.$t('realization.label.actionLabel'),
-          align: 'center',
-          sortable: false,
-          value: 'actionLabel',
-          class: 'actionHeader px-1'
-        },
-        {
           text: this.$t('realization.label.actionType'),
           align: 'center',
           sortable: true,
@@ -142,6 +136,13 @@ export default {
           sortable: false,
           value: 'programLabel',
           class: 'actionHeader px-0'
+        },
+        {
+          text: this.$t('realization.label.actionLabel'),
+          align: 'center',
+          sortable: false,
+          value: 'actionLabel',
+          class: 'actionHeader px-1'
         },
         {
           text: this.$t('realization.label.points'),
@@ -209,13 +210,13 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate,this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate);
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerId);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
