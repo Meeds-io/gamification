@@ -55,8 +55,5 @@ export default {
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
   }),
-  created() {
-    document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-  },
 };
 </script>
