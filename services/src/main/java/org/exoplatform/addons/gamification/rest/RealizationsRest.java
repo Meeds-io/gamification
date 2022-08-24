@@ -63,35 +63,35 @@ public class RealizationsRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
   @Path("allRealizations")
-  @ApiOperation(value = "Retrieves the list of challenges available for an owner", httpMethod = "GET", response = Response.class, produces = "application/json")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.OK, message = "Request fulfilled"),
-      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response getAllRealizations(@ApiParam(value = "result fromDate", required = true)
-                                     @QueryParam("fromDate")
-                                     String fromDate,
-                                     @ApiParam(value = "result toDate", required = true)
-                                     @QueryParam("toDate")
-                                     String toDate,
-                                     @ApiParam(value = "Sort field. Possible values: date or actionType.", defaultValue = "date", required = false)
-                                     @QueryParam("sortBy")
-                                     @DefaultValue("date")
-                                     String sortField,
-                                     @ApiParam(value = "Whether to retrieve results sorted descending or not", defaultValue = "true", required = false)
-                                     @QueryParam("sortDescending")
-                                     @DefaultValue("true")
-                                     boolean sortDescending,
-                                     @ApiParam(value = "Identifier of the connected user", required = false)
-                                     @QueryParam("earnerId")
-                                     Long earnerId,
-                                     @ApiParam(value = "Offset of result", required = false)
-                                     @DefaultValue("0")
-                                     @QueryParam("offset")
-                                     int offset,
-                                     @ApiParam(value = "Limit of result", required = false)
-                                     @DefaultValue("10")
-                                     @QueryParam("limit")
-                                     int limit) {
+  @Operation(summary = "Retrieves the list of challenges available for an owner", method = "GET", description = "Retrieves the list of challenges available for an owner")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response getAllRealizations(@Parameter(description = "result fromDate", required = true)
+                                                @QueryParam("fromDate")
+                                                String fromDate,
+                                                @Parameter(description = "result toDate", required = true)
+                                                @QueryParam("toDate")
+                                                String toDate,
+                                                @Parameter(description = "Sort field. Possible values: date or actionType.")
+                                                @QueryParam("sortBy")
+                                                @DefaultValue("date")
+                                                String sortField,
+                                                @Parameter(description = "Whether to retrieve results sorted descending or not")
+                                                @QueryParam("sortDescending")
+                                                @DefaultValue("true")
+                                                boolean sortDescending,
+                                                @Parameter(description = "Identifier of the connected user", required = false)
+                                                @QueryParam("earnerId")
+                                                Long earnerId,
+                                                @Parameter(description = "Offset of result")
+                                                @DefaultValue("0")
+                                                @QueryParam("offset")
+                                                int offset,
+                                                @Parameter(description = "Limit of result")
+                                                @DefaultValue("10")
+                                                @QueryParam("limit")
+                                                int limit) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
