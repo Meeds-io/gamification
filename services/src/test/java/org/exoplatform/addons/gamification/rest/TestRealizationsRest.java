@@ -16,6 +16,8 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,7 +32,6 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -40,11 +41,17 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.exoplatform.social.core.manager.IdentityManager;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TestRealizationsRest extends AbstractServiceTest {
 
   protected Class<?> getComponentClass() {
@@ -56,38 +63,36 @@ public class TestRealizationsRest extends AbstractServiceTest {
   protected static final String fromDate        = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
 
   protected static final String toDate          = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
-
-  @SuppressWarnings("deprecation")
+  
+  @Mock
+  IdentityManager identityManager;
+  
   @Before
   @Override
   public void setUp() throws Exception {
     super.setUp();
     registry(getComponentClass());
-    startSessionAs("1");
-    Identity rootIdentity = ConversationState.getCurrent().getIdentity();
-    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
-    List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
-    memberships.add(membershipentry);
-    rootIdentity.setMemberships(memberships);
-    RealizationsFilter filter = new RealizationsFilter();
-    filter.setUserId("1");
   }
 
   @Test
   public void testGetAllRealizationsDefaultSort() throws Exception {
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=-1&limit=10";
+        + "&earnerId=" + 1L +"&offset=-1&limit=10";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    
+    Identity root = new Identity("root");
+    ConversationState.setCurrent(new ConversationState(root));
+    
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
     restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=-10";
+        + "&earnerId=" + 1L + "&offset=0&limit=-10";
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     response = launcher.service("GET", restPath, "", h, null, envctx);
@@ -95,7 +100,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
     assertEquals(400, response.getStatus());
 
     restPath =
-             "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate + "&offset=0&limit=10";
+             "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate + "&earnerId=" + 1L + "&offset=0&limit=10";
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     response = launcher.service("GET", restPath, "", h, null, envctx);
@@ -116,7 +121,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   @Test
   public void testGetAllRealizationsSortByDateDescending() throws Exception {
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
+        + "&earnerId=" + 1L + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -153,7 +158,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   @Test
   public void testGetAllRealizationsSortByDateAscending() throws Exception {
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=false";
+        + "&earnerId=" + 1L + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=false";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -201,12 +206,16 @@ public class TestRealizationsRest extends AbstractServiceTest {
     }
 
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
+        + "&earnerId=" + 1L + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    
+    Identity root = new Identity("root");
+    ConversationState.setCurrent(new ConversationState(root));
+    
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -221,7 +230,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
                              .collect(Collectors.toList()));
 
     restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
+        + "&earnerId=" + 1L + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -251,7 +260,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
     }
 
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
+        + "&earnerId=" + 1L + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -271,7 +280,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
                              .collect(Collectors.toList()));
 
     restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
-        + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
+        + "&earnerId=" + 1L + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -289,7 +298,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   public void testGetReport() throws Exception {
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    String restPath = "/gamification/realizations/api/getExport?fromDate=" + fromDate + "&toDate=" + toDate;
+    String restPath = "/gamification/realizations/api/getExport?fromDate=" + fromDate + "&toDate=" + toDate  + "&earnerId=" + 1L;
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);

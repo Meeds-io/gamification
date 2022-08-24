@@ -31,12 +31,24 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     RealizationsFilter filter = new RealizationsFilter();
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
-    filter.setAdministrator(true);
     assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     assertEquals(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit).size(), 3);
+  }
+  
+  @Test
+  public void testFindUsersRealizationsByFilter() {
+    RealizationsFilter filter = new RealizationsFilter();
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    filter.setEarnerId(1L);
+    assertEquals(realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit).size(), 0);
+    newGamificationActionsHistory();
+    newGamificationActionsHistory();
+    newGamificationActionsHistory();
+    assertEquals(realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit).size(), 3);
   }
 
   @Test

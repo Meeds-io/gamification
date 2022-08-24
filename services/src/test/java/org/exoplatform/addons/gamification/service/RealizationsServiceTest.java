@@ -25,6 +25,10 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,13 +78,20 @@ public class RealizationsServiceTest {
     return gHistory;
   }
 
+  @SuppressWarnings("deprecation")
   @Test
-  public void testGetAllRealizationsByDate() {
+  public void testGetRealizationsByFilter() throws IllegalAccessException {
+    // Testing getAllRealizations when membership is /platform/administrators
     // Given
     RealizationsFilter filter = new RealizationsFilter();
     filter.setFromDate(toDate);
     filter.setToDate(fromDate);
-    filter.setUserId("1");
+    Identity rootIdentity = new Identity("1L");
+    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
+    List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
+    memberships.add(membershipentry);
+    rootIdentity.setMemberships(memberships);
+    filter.setEarnerId(1L);
     GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
@@ -89,19 +100,51 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList.add(gHistory2);
     gamificationActionsHistoryDTOList.add(gHistory3);
     when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.getAllRealizationsByFilter(filter, offset, limit));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
 
     // When
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
-                                                                                 realizationsService.getAllRealizationsByFilter(filter,
+                                                                                 realizationsService.getRealizationsByFilter(filter,
+                                                                                                                             rootIdentity,
                                                                                                                               offset,
                                                                                                                               limit);
     // Then
     assertNotNull(createdGamificationActionsHistoryDTOList);
     assertEquals(createdGamificationActionsHistoryDTOList.size(), 3);
+    
+    
+    // Testing getAllRealizations when membership is NOT /platform/administrators
+    Identity userIdentity = new Identity("2L");
+    MembershipEntry userMembershipEntry = new MembershipEntry("", "*");
+    List<MembershipEntry> userMemberships = new ArrayList<MembershipEntry>();
+    userMemberships.add(userMembershipEntry);
+    userIdentity.setMemberships(userMemberships);
+    filter.setEarnerId(2L);
+    GamificationActionsHistoryDTO gHistory4 = newGamificationActionsHistory();
+    GamificationActionsHistoryDTO gHistory5 = newGamificationActionsHistory();
+    GamificationActionsHistoryDTO gHistory6 = newGamificationActionsHistory();
+    List<GamificationActionsHistoryDTO> gamificationActionsHistoryDTOList1 = new ArrayList<>();
+    gamificationActionsHistoryDTOList1.add(gHistory4);
+    gamificationActionsHistoryDTOList1.add(gHistory5);
+    gamificationActionsHistoryDTOList1.add(gHistory6);
+    when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, null, offset, limit));
+
+    // When
+    filter.setFromDate(fromDate);
+    filter.setToDate(toDate);
+    List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList1 =
+                                                                                 realizationsService.getRealizationsByFilter(filter,
+                                                                                                                             userIdentity,
+                                                                                                                              offset,
+                                                                                                                              limit);
+    // Then
+    assertNotNull(createdGamificationActionsHistoryDTOList1);
+    assertEquals(createdGamificationActionsHistoryDTOList1.size(), 0);
   }
+  
 
   @Test
   public void updateRealizationStatus() {

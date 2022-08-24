@@ -81,7 +81,7 @@ public class RealizationsRest implements ResourceContainer {
                                                 @QueryParam("sortDescending")
                                                 @DefaultValue("true")
                                                 boolean sortDescending,
-                                                @Parameter(description = "Identifier of the connected user", required = false)
+                                                @Parameter(description = "Identifier of the connected user", required = true)
                                                 @QueryParam("earnerId")
                                                 Long earnerId,
                                                 @Parameter(description = "Offset of result")
@@ -183,7 +183,10 @@ public class RealizationsRest implements ResourceContainer {
                             String fromDate,
                             @Parameter(description = "result toDate", required = true)
                             @QueryParam("toDate")
-                            String toDate) {
+                            String toDate,
+                            @Parameter(description = "Identifier of the connected user", required = true)
+                            @QueryParam("earnerId")
+                            Long earnerId) {
     RealizationsFilter filter = new RealizationsFilter();
     String currentUser = Utils.getCurrentUser();
     Identity identity = ConversationState.getCurrent().getIdentity();
@@ -191,6 +194,7 @@ public class RealizationsRest implements ResourceContainer {
     Date dateTo = Utils.parseRFC3339Date(toDate);
     filter.setFromDate(dateFrom);
     filter.setToDate(dateTo);
+    filter.setEarnerId(earnerId);
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
                                                               realizationsService.getRealizationsByFilter(filter, identity, 0, 0);

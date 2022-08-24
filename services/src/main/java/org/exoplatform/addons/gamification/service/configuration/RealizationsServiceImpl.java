@@ -7,6 +7,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 public class RealizationsServiceImpl implements RealizationsService {
 
   private RealizationsStorage realizationsStorage;
+  
+  private static final Log    LOG = ExoLogger.getLogger(RealizationsServiceImpl.class);
 
   public RealizationsServiceImpl(RealizationsStorage realizationsStorage) {
     this.realizationsStorage = realizationsStorage;
@@ -45,7 +49,7 @@ public class RealizationsServiceImpl implements RealizationsService {
       return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
     }
     if (filter.getEarnerId() > 0 && !isAdministrator(identity)) {
-      throw new IllegalAccessException("User doesn't have enough privileges to access all achievements");
+      LOG.warn("User doesn't have enough privileges to access all achievements");
     }
     return realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit);
   }
