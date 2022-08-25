@@ -142,7 +142,7 @@ public class RealizationsServiceTest {
                                                                                                                               limit);
     // Then
     assertNotNull(createdGamificationActionsHistoryDTOList1);
-    assertEquals(createdGamificationActionsHistoryDTOList1.size(), 0);
+    assertEquals(0, createdGamificationActionsHistoryDTOList1.size());
   }
   
 
