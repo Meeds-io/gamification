@@ -7,6 +7,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
@@ -16,6 +17,8 @@ import java.util.List;
 public class RealizationsServiceImpl implements RealizationsService {
 
   private RealizationsStorage realizationsStorage;
+  
+  private IdentityManager identityManager;
   
   private static final Log    LOG = ExoLogger.getLogger(RealizationsServiceImpl.class);
 
@@ -45,13 +48,14 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
-    if (filter.getEarnerId() > 0 && isAdministrator(identity)) {
-      return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
+      return filter.getEarnerId() > 0 ? realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit)
+                                      : realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
+    } else {
+      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
+          + filter.getEarnerId());
     }
-    if (filter.getEarnerId() > 0 && !isAdministrator(identity)) {
-      LOG.warn("User doesn't have enough privileges to access all achievements");
-    }
-    return realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit);
   }
 
   @Override

@@ -84,9 +84,9 @@ public class RealizationsRest implements ResourceContainer {
                                                 @QueryParam("sortDescending")
                                                 @DefaultValue("true")
                                                 boolean sortDescending,
-                                                @Parameter(description = "Identifier of the connected user", required = true)
+                                                @Parameter(description = "Identifier of the user that will be used to filter achievements", required = false)
                                                 @QueryParam("earnerId")
-                                                Long earnerId,
+                                                long earnerId,
                                                 @Parameter(description = "Offset of result")
                                                 @DefaultValue("0")
                                                 @QueryParam("offset")
@@ -99,6 +99,7 @@ public class RealizationsRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
     RealizationsFilter filter = new RealizationsFilter();
+    String currentUser = Utils.getCurrentUser();
     Identity identity = ConversationState.getCurrent().getIdentity();
     filter.setEarnerId(earnerId);
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
@@ -119,6 +120,9 @@ public class RealizationsRest implements ResourceContainer {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
           realizationsService.getRealizationsByFilter(filter, identity, offset, limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
+    } catch (IllegalAccessException e) {
+      LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
+      return Response.status(Response.Status.FORBIDDEN).entity("user is not autorized").build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of Realizations", e);
       return Response.serverError().entity(e.getMessage()).build();
@@ -187,9 +191,15 @@ public class RealizationsRest implements ResourceContainer {
                             @Parameter(description = "result toDate", required = true)
                             @QueryParam("toDate")
                             String toDate,
-                            @Parameter(description = "Identifier of the connected user", required = true)
+                            @Parameter(description = "Identifier of the user that will be used to filter achievements", required = false)
                             @QueryParam("earnerId")
-                            Long earnerId) {
+                            long earnerId) {
+    if (StringUtils.isBlank(fromDate)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("'fromDate' parameter is mandatory").build();
+    }
+    if (StringUtils.isBlank(toDate)) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("'toDate' parameter is mandatory").build();
+    }
     RealizationsFilter filter = new RealizationsFilter();
     String currentUser = Utils.getCurrentUser();
     Identity identity = ConversationState.getCurrent().getIdentity();
@@ -216,7 +226,7 @@ public class RealizationsRest implements ResourceContainer {
       response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
       return response.build();
     } catch (IllegalAccessException e) {
-      LOG.debug("A not autorized user '{}' attempts to access realizations '{}'", currentUser, e);
+      LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
       return Response.status(Response.Status.FORBIDDEN).entity("user is not autorized").build();
     } catch (Exception e) {
       LOG.error("Error when creating temp file", e);

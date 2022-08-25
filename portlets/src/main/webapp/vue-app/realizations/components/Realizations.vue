@@ -86,7 +86,6 @@ export default {
     pageSize: 10,
     loading: true,
     sortBy: 'date',
-    earnerId: 1,
     sortDescending: true,
     limitReached: false,
     toDate: new Date().toISOString(),
@@ -114,14 +113,14 @@ export default {
           align: 'center',
           sortable: true,
           value: 'date',
-          class: 'actionHeader px-2',
+          class: 'actionHeader',
         },
         {
           text: this.$t('realization.label.grantee'),
           align: 'center',
           sortable: false,
           value: 'grantee',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.actionType'),
@@ -135,35 +134,35 @@ export default {
           align: 'center',
           sortable: false,
           value: 'programLabel',
-          class: 'actionHeader px-0'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.actionLabel'),
           align: 'center',
           sortable: false,
           value: 'actionLabel',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.points'),
           align: 'center',
           sortable: false,
           value: 'points',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.status'),
           align: 'center',
           sortable: false,
           value: 'status',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.actions'),
           align: 'center',
           sortable: false,
           value: '',
-          class: 'actionHeader px-2'
+          class: 'actionHeader'
         },
       ];
     },
