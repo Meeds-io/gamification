@@ -516,9 +516,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     List<Long> ruleIds = ruleDAO.getRuleIdsByType(ruleType);
     List<String> ruleEventNames = ruleDAO.getRuleEventsByType(ruleType);
 
-    TypedQuery<GamificationActionsHistory> query;
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
-                                                  GamificationActionsHistory.class);
+    TypedQuery<GamificationActionsHistory> query =
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
+                                                                                     GamificationActionsHistory.class);
     query.setParameter("fromDate", fromDate);
     query.setParameter("toDate", toDate);
     query.setParameter("type", IdentityType.USER);

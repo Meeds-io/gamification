@@ -63,7 +63,10 @@ public class RealizationsRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
   @Path("allRealizations")
-  @Operation(summary = "Retrieves the list of challenges available for an owner", method = "GET", description = "Retrieves the list of challenges available for an owner")
+  @Operation(
+          summary = "Retrieves the list of challenges available for an owner", 
+          method = "GET", 
+          description = "Retrieves the list of challenges available for an owner")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
