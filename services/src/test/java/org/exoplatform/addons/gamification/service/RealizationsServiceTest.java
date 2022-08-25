@@ -28,6 +28,7 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,8 @@ public class RealizationsServiceTest {
   private RealizationsStorage realizationsStorage;
 
   private RealizationsService realizationsService;
+  
+  private IdentityManager     identityManager;
 
   protected static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
@@ -59,7 +62,7 @@ public class RealizationsServiceTest {
   @Before
   public void setUp() throws Exception { // NOSONAR
     realizationsStorage = mock(RealizationsStorage.class);
-    realizationsService = new RealizationsServiceImpl(realizationsStorage);
+    realizationsService = new RealizationsServiceImpl(realizationsStorage, identityManager);
   }
 
   protected GamificationActionsHistoryDTO newGamificationActionsHistory() {

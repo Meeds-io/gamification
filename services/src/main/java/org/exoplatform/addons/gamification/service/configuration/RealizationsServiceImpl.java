@@ -8,8 +8,6 @@ import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 import java.util.Date;
 import java.util.List;
@@ -18,12 +16,11 @@ public class RealizationsServiceImpl implements RealizationsService {
 
   private RealizationsStorage realizationsStorage;
   
-  private IdentityManager identityManager;
-  
-  private static final Log    LOG = ExoLogger.getLogger(RealizationsServiceImpl.class);
+  private IdentityManager     identityManager;
 
-  public RealizationsServiceImpl(RealizationsStorage realizationsStorage) {
+  public RealizationsServiceImpl(RealizationsStorage realizationsStorage, IdentityManager identityManager) {
     this.realizationsStorage = realizationsStorage;
+    this.identityManager = identityManager;
   }
 
   @Override
@@ -48,6 +45,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
+    String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
       return filter.getEarnerId() > 0 ? realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit)
