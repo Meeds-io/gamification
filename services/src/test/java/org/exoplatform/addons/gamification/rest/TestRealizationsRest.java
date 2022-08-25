@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,10 +31,12 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -67,6 +70,9 @@ public class TestRealizationsRest extends AbstractServiceTest {
   @Mock
   IdentityManager identityManager;
   
+  @Mock
+  RealizationsStorage realizationsStorage;
+  
   @Before
   @Override
   public void setUp() throws Exception {
@@ -76,6 +82,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRealizationsDefaultSort() throws Exception {
+    RealizationsServiceImpl realizationsServiceImpl = new RealizationsServiceImpl(realizationsStorage, identityManager);
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
         + "&earnerId=" + 1L +"&offset=-1&limit=10";
     EnvironmentContext envctx = new EnvironmentContext();
@@ -83,10 +90,10 @@ public class TestRealizationsRest extends AbstractServiceTest {
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    
-    Identity root = new Identity("root");
+
+    Identity root = new Identity("root1");
     ConversationState.setCurrent(new ConversationState(root));
-    
+
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
@@ -127,6 +134,10 @@ public class TestRealizationsRest extends AbstractServiceTest {
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
+    
+    Identity root = new Identity("root1");
+    ConversationState.setCurrent(new ConversationState(root));
+    
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -213,7 +224,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     
-    Identity root = new Identity("root");
+    Identity root = new Identity("root1");
     ConversationState.setCurrent(new ConversationState(root));
     
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
