@@ -140,7 +140,7 @@ export default {
       return domainsById;
     },
     challengePerPage() {
-      if (this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.smAndDown || this.$vuetify.breakpoint.mdAndDown) {
+      if (this.$vuetify.breakpoint.width <= 768) {
         return 5;
       } else {
         return 6;
