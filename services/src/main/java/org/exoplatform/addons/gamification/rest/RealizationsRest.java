@@ -199,7 +199,7 @@ public class RealizationsRest implements ResourceContainer {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
                                                               realizationsService.getRealizationsByFilter(filter, identity, 0, 0);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-                                                                                        GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
       String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
       String filename = "report_Actions";
       filename += formater.format(new Date());
