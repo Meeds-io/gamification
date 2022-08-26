@@ -20,7 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <%
     boolean isAdministrator = ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
 %>
-<div class="VuetifyApp">
+<div class="VuetifyApp singlePageApplication">
   <div id="EngagementCenterApplication">
     <script type="text/javascript">
       require(['PORTLET/challenges/Challenges'], app => app.init(<%=isAdministrator%>));
