@@ -121,7 +121,7 @@ public class RealizationsRest implements ResourceContainer {
           realizationsService.getRealizationsByFilter(filter, identity, offset, limit);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
     } catch (IllegalAccessException e) {
-      LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
+      LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
       return Response.status(Response.Status.FORBIDDEN).build();
     } catch (Exception e) {
       LOG.warn("Error retrieving list of Realizations", e);
