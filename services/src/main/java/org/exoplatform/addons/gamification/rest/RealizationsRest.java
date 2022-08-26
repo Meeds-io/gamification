@@ -59,7 +59,7 @@ public class RealizationsRest implements ResourceContainer {
   }
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel"})
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
   @Path("allRealizations")
@@ -94,7 +94,11 @@ public class RealizationsRest implements ResourceContainer {
                                                 @Parameter(description = "Limit of result")
                                                 @DefaultValue("10")
                                                 @QueryParam("limit")
-                                                int limit) {
+                                                int limit,
+                                                @Parameter(description = "Response Type")
+                                                @DefaultValue("")
+                                                @QueryParam("returnType")
+                                                String returnType) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
@@ -112,20 +116,56 @@ public class RealizationsRest implements ResourceContainer {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
-    if (limit <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    if (returnType.isEmpty()) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("returnType must not be empty").build();
     }
+    if (returnType.equals("json")) {
+      if (limit <= 0) {
+        return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+      }
 
-    try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList =
-          realizationsService.getRealizationsByFilter(filter, identity, offset, limit);
-      return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
-    } catch (IllegalAccessException e) {
-      LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
+      try {
+        List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
+                                                                                                              identity,
+                                                                                                              offset,
+                                                                                                              limit);
+        return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
+      } catch (IllegalAccessException e) {
+        LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
+        return Response.status(Response.Status.FORBIDDEN).build();
+      } catch (Exception e) {
+        LOG.warn("Error retrieving list of Realizations", e);
+        return Response.serverError().entity(e.getMessage()).build();
+      }
+    } else if (returnType.equals("xls")) {
+      try {
+        List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
+                                                                                                              identity,
+                                                                                                              0,
+                                                                                                              0);
+        List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
+                                                                                          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+        String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
+        String filename = "report_Actions";
+        filename += formater.format(new Date());
+        File temp;
+        temp = File.createTempFile(filename, ".xlsx"); // NOSONAR
+        temp.deleteOnExit();
+        BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); // NOSONAR
+        bw.write(xlsxString);
+        bw.close();
+        Response.ResponseBuilder response = Response.ok(temp); // NOSONAR
+        response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
+        return response.build();
+      } catch (IllegalAccessException e) {
+        LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
+        return Response.status(Response.Status.FORBIDDEN).build();
+      } catch (Exception e) {
+        LOG.error("Error when creating temp file", e);
+        return Response.serverError().entity(e.getMessage()).build();
+      }
+    } else {
       return Response.status(Response.Status.FORBIDDEN).build();
-    } catch (Exception e) {
-      LOG.warn("Error retrieving list of Realizations", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -174,65 +214,6 @@ public class RealizationsRest implements ResourceContainer {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @GET
-  @RolesAllowed("administrators")
-  @Produces("application/vnd.ms-excel")
-  @Path("getExport")
-  @Operation(summary = "Gets CSV report", method = "GET", description = "returns a csv file of actions")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input") })
-  public Response getReport(@Parameter(description = "result fromDate", required = true)
-                            @QueryParam("fromDate")
-                            String fromDate,
-                            @Parameter(description = "result toDate", required = true)
-                            @QueryParam("toDate")
-                            String toDate,
-                            @Parameter(description = "Identifier of the user that will be used to filter achievements", required = false)
-                            @QueryParam("earnerId")
-                            long earnerId) {
-    if (StringUtils.isBlank(fromDate)) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("'fromDate' parameter is mandatory").build();
-    }
-    if (StringUtils.isBlank(toDate)) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("'toDate' parameter is mandatory").build();
-    }
-    RealizationsFilter filter = new RealizationsFilter();
-    String currentUser = Utils.getCurrentUser();
-    Identity identity = ConversationState.getCurrent().getIdentity();
-    Date dateFrom = Utils.parseRFC3339Date(fromDate);
-    Date dateTo = Utils.parseRFC3339Date(toDate);
-    filter.setFromDate(dateFrom);
-    filter.setToDate(dateTo);
-    filter.setEarnerId(earnerId);
-    try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList =
-                                                              realizationsService.getRealizationsByFilter(filter, identity, 0, 0);
-      List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
-      String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
-      String filename = "report_Actions";
-      filename += formater.format(new Date());
-      File temp;
-      temp = File.createTempFile(filename, ".xlsx"); // NOSONAR
-      temp.deleteOnExit();
-      BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); // NOSONAR
-      bw.write(xlsxString);
-      bw.close();
-      Response.ResponseBuilder response = Response.ok(temp); // NOSONAR
-      response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
-      return response.build();
-    } catch (IllegalAccessException e) {
-      LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
-      return Response.status(Response.Status.FORBIDDEN).build();
-    } catch (Exception e) {
-      LOG.error("Error when creating temp file", e);
-      return Response.serverError().entity(e.getMessage()).build();
-    }
-  }
 
   private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
     Locale locale = getCurrentUserLocale();

@@ -83,6 +83,7 @@ export default {
     realizations: [],
     offset: 0,
     limit: 10,
+    returnType: '',
     pageSize: 10,
     loading: true,
     sortBy: 'date',
@@ -209,13 +210,15 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate,this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      this.returnType = 'json';
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate,this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.returnType)
         .then(realizations => {
           this.realizations = realizations || [];
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerId);
+      this.returnType = 'xls';
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerId, this.returnType);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
