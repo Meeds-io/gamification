@@ -34,16 +34,11 @@ const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
 const appId = 'Realizations';
 
-document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-
 export function init() {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
-      mounted() {
-        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
-      },
       template: `<realizations id="${appId}" />`,
       i18n,
       vuetify,
