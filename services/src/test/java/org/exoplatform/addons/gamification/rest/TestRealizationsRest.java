@@ -66,13 +66,13 @@ public class TestRealizationsRest extends AbstractServiceTest {
   protected static final String fromDate        = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
 
   protected static final String toDate          = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
-  
+
   @Mock
-  IdentityManager identityManager;
-  
+  IdentityManager               identityManager;
+
   @Mock
-  RealizationsStorage realizationsStorage;
-  
+  RealizationsStorage           realizationsStorage;
+
   @Before
   @Override
   public void setUp() throws Exception {

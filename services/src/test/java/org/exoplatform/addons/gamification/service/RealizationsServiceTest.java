@@ -32,6 +32,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,12 +44,6 @@ import static org.mockito.Mockito.when;
 
 public class RealizationsServiceTest {
 
-  private RealizationsStorage realizationsStorage;
-
-  private RealizationsService realizationsService;
-  
-  private IdentityManager     identityManager;
-
   protected static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
   protected static final Date fromDate        = new Date();
@@ -59,9 +54,18 @@ public class RealizationsServiceTest {
 
   protected static final int  limit           = 3;
 
+  private IdentityManager     identityManager;
+
+  @Mock
+  RealizationsStorage         realizationsStorage;
+
+  @Mock
+  RealizationsService         realizationsService;
+
   @Before
   public void setUp() throws Exception { // NOSONAR
     realizationsStorage = mock(RealizationsStorage.class);
+    identityManager = mock(IdentityManager.class);
     realizationsService = new RealizationsServiceImpl(realizationsStorage, identityManager);
   }
 
@@ -89,7 +93,8 @@ public class RealizationsServiceTest {
     RealizationsFilter filter = new RealizationsFilter();
     filter.setFromDate(toDate);
     filter.setToDate(fromDate);
-    Identity rootIdentity = new Identity("1L");
+    Identity rootIdentity = new Identity("root1");
+    ConversationState.setCurrent(new ConversationState(rootIdentity));
     MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
     memberships.add(membershipentry);
@@ -115,11 +120,15 @@ public class RealizationsServiceTest {
                                                                                                                               limit);
     // Then
     assertNotNull(createdGamificationActionsHistoryDTOList);
-    assertEquals(createdGamificationActionsHistoryDTOList.size(), 3);
+    assertEquals(3, createdGamificationActionsHistoryDTOList.size());
     
     
     // Testing getAllRealizations when membership is NOT /platform/administrators
     Identity userIdentity = new Identity("2L");
+    org.exoplatform.social.core.identity.model.Identity identity = new org.exoplatform.social.core.identity.model.Identity("2", "2");
+    identity.setId("2");
+    identityManager.saveIdentity(identity);
+    ConversationState.setCurrent(new ConversationState(userIdentity));
     MembershipEntry userMembershipEntry = new MembershipEntry("", "*");
     List<MembershipEntry> userMemberships = new ArrayList<MembershipEntry>();
     userMemberships.add(userMembershipEntry);
@@ -133,6 +142,7 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList1.add(gHistory5);
     gamificationActionsHistoryDTOList1.add(gHistory6);
     when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
+    when(identityManager.getOrCreateUserIdentity("2L")).thenReturn(identity);
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, null, offset, limit));
 
     // When
