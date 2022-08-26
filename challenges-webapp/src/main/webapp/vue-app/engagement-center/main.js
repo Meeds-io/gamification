@@ -47,6 +47,9 @@ export function init(isAdministrator) {
   exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
     // init Vue app when locale ressources are ready
     Vue.createApp({
+      mounted() {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      },
       template: `<engagement-center id="${appId}" :is-administrator="${isAdministrator}"/>`,
       vuetify,
       i18n
