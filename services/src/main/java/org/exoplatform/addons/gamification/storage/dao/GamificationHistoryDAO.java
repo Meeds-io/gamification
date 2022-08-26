@@ -535,7 +535,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
   
   /**
-   * Find User's own Realizations by realizationFilter and offset and limit
+   * Retrieve filtered realizations.
    * 
    * @param realizationFilter : data Transfert Object {@link RealizationsFilter}
    * @param offset : the starting index, when supplied. Starts at 0.
