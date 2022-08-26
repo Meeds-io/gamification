@@ -45,12 +45,12 @@ export default {
     },
   },
   created() {
-    this.retrievePrograms();
+    this.retrievePrograms().finally(() => this.$root.$applicationLoaded());
   },
   methods: {
     retrievePrograms() {
       this.loading = true;
-      this.$challengesServices.getAllDomains()
+      return this.$challengesServices.getAllDomains()
         .then(programs => this.programs =  programs.slice().filter(program => program.enabled))
         .finally(() => this.loading = false);
     },

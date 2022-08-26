@@ -196,7 +196,8 @@ export default {
     loadRealizations() {
       this.loading = true;
       return this.getRealizations()
-        .finally(() => this.loading = false);
+        .then(() => this.loading = false)
+        .finally(() => this.$root.$applicationLoaded());
     },
     getRealizations() {
       return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
