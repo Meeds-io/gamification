@@ -537,10 +537,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   /**
    * Retrieve filtered realizations.
    * 
-   * @param realizationFilter : data Transfert Object {@link RealizationsFilter}
-   * @param offset : the starting index, when supplied. Starts at 0.
-   * @param limit : how many realizations we should load from DB
-   * @return a list of object of type GamificationActionsHistory
+   * @param realizationFilter used filter of type {@link RealizationsFilter} to search on realizations
+   * @param offset : Offset of the search
+   * @param limit : Max results to return
+   * @return {@link List} of {@link GamificationActionsHistory}
    */
   public List<GamificationActionsHistory> findUsersRealizationsByFilter(RealizationsFilter realizationFilter,
                                                                         int offset,
