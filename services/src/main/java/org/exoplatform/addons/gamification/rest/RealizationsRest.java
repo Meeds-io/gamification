@@ -227,7 +227,7 @@ public class RealizationsRest implements ResourceContainer {
       return response.build();
     } catch (IllegalAccessException e) {
       LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
-      return Response.status(Response.Status.FORBIDDEN).entity("user is not autorized").build();
+      return Response.status(Response.Status.FORBIDDEN).build();
     } catch (Exception e) {
       LOG.error("Error when creating temp file", e);
       return Response.serverError().entity(e.getMessage()).build();
