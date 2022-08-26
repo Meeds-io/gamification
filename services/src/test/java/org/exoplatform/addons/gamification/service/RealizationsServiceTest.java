@@ -147,7 +147,6 @@ public class RealizationsServiceTest {
     assertNotNull(createdGamificationActionsHistoryDTOList1);
     assertEquals(0, createdGamificationActionsHistoryDTOList1.size());
   }
-  
 
   @Test
   public void updateRealizationStatus() {
