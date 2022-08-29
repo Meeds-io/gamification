@@ -47,15 +47,11 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (isAdministrator(identity)) {
-      return realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
-    }
-    if (filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
-      return realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit);
-
+    if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
+      return filter.getEarnerId() > 0 ? realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit)
+          : realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
     } else {
-      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
-          + filter.getEarnerId());
+      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user " + filter.getEarnerId());
     }
   }
 

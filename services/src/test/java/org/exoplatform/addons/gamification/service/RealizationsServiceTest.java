@@ -99,7 +99,7 @@ public class RealizationsServiceTest {
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
     memberships.add(membershipentry);
     rootIdentity.setMemberships(memberships);
-    filter.setEarnerId(1L);
+    filter.setEarnerId(-1L);
     GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
