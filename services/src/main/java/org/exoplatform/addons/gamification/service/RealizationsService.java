@@ -1,11 +1,14 @@
 package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface RealizationsService {
@@ -34,4 +37,17 @@ public interface RealizationsService {
    *           technical identifier is not found
    */
   GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status, String actionLabel, Long points, String domain) throws ObjectNotFoundException;
+
+  /**
+   * compute xls from all Realizations .
+   *
+   * @param A {@link List <GamificationActionsHistoryDTO>} object
+   * @return A {xls string
+   * @throws IOException 
+   * @throws ObjectNotFoundException GamificationActionsHistory identified by its
+   *           technical identifier is not found
+   */
+  File writeXlsx(String filePath, String fileName,List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IllegalAccessException, IOException;
+  
 }
+
