@@ -88,7 +88,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-if="canReject"
               dense
-              @mousedown="$event.preventDefault()"
               @click="updateRealizations('REJECTED')">
               <v-icon size="13" class="dark-grey-color">fas fa-ban</v-icon>
               <v-list-item-title class="text-justify ps-3">
