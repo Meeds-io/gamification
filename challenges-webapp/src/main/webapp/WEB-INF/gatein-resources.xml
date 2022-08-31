@@ -22,6 +22,9 @@
         <module>commonVueComponents</module>
       </depends>
       <depends>
+        <module>realizationComponents</module>
+      </depends>
+      <depends>
         <module>extensionRegistry</module>
       </depends>
       <depends>

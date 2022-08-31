@@ -33,7 +33,8 @@ module.exports = {
         popularSpaces: './src/main/webapp/vue-app/popularSpaces/main.js',
         usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
         badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
-        Realizations: './src/main/webapp/vue-app/realizations/main.js'
+        realizationsComponents: './src/main/webapp/vue-app/realizations/initComponents.js',
+        realizations: './src/main/webapp/vue-app/realizations/main.js'
     },
     plugins: [
       new ESLintPlugin({
