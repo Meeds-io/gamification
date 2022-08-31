@@ -119,10 +119,6 @@ public class RealizationsServiceImpl implements RealizationsService {
     return realizationsStorage.updateRealizationStatus(gHistory);
   }
   
-  private boolean isAdministrator(Identity identity) {
-    return identity.isMemberOf("/platform/administrators");
-  }
-  
   @SuppressWarnings({ "resource", "static-access" })
   public byte[] exportXls(String fileName,
                           List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
@@ -210,5 +206,9 @@ public class RealizationsServiceImpl implements RealizationsService {
       }
     });
     return sbResult.toString();
+  }
+  
+  private boolean isAdministrator(Identity identity) {
+    return identity.isMemberOf("/platform/administrators");
   }
 }

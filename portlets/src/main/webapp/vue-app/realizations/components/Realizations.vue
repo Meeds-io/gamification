@@ -213,13 +213,13 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate,this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.retrieveAll ? 0 : this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerId, 'xls');
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.retrieveAll ? 0 : this.earnerId, 'xls');
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
