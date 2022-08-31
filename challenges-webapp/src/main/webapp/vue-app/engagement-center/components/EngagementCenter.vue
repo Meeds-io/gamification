@@ -23,6 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="mb-4">
         <v-tab class="px-5">{{ $t('engagementCenter.label.challenges') }}</v-tab>
         <v-tab class="px-5">{{ $t('engagementCenter.label.programs') }}</v-tab>
+        <v-tab class="px-5" v-if="isAdministrator">{{ $t('engagementCenter.label.achievements') }}</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
@@ -30,6 +31,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tab-item>
         <v-tab-item>
           <engagement-center-programs />
+        </v-tab-item>
+        <v-tab-item v-if="isAdministrator">
+          <realizations id="Realizations" />
         </v-tab-item>
       </v-tabs-items>
     </main>
@@ -41,6 +45,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
