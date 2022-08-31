@@ -80,7 +80,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-if="canAccept"
               dense
-              @mousedown="$event.preventDefault()"
               @click="updateRealizations('ACCEPTED')">
               <v-icon size="13" class="dark-grey-color">fas fa-check</v-icon>
               <v-list-item-title class="text-justify ps-3">
