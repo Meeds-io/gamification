@@ -83,7 +83,6 @@ export default {
     realizations: [],
     offset: 0,
     limit: 10,
-    returnType: '',
     pageSize: 10,
     loading: true,
     sortBy: 'date',
