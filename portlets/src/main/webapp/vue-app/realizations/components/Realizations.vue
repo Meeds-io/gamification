@@ -74,10 +74,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    isAdministrator: {
-      type: Boolean,
-      default: false,
-    },
+    earnerId: {
+      type: Number,
+      default: -1,
+    }
   },
   data: () => ({
     realizations: [],

@@ -1,14 +1,13 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.exoplatform.addons.gamification.rest.RealizationsRest;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
@@ -25,15 +24,10 @@ import static org.exoplatform.addons.gamification.utils.Utils.escapeIllegalChara
 import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
 import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,20 +36,22 @@ import java.util.Locale;
 public class RealizationsServiceImpl implements RealizationsService {
 
   private RealizationsStorage realizationsStorage;
-  
+
   private IdentityManager     identityManager;
-  
+
   // Delimiters that must be in the CSV file
   private static final String DELIMITER = ",";
 
   private static final String SEPARATOR = "\n";
 
-  private static final Log    LOG       = ExoLogger.getLogger(RealizationsService.class);
+  private static final Log    LOG       = ExoLogger.getLogger(RealizationsServiceImpl.class);
 
   private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
 
   // File header
-  private static final String HEADER    = "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
+  private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status,Spaces";
+
+  private static final String SHEETNAME = "Achivements Report";
 
   public RealizationsServiceImpl(RealizationsStorage realizationsStorage, IdentityManager identityManager) {
     this.realizationsStorage = realizationsStorage;
@@ -128,51 +124,46 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
   
   @SuppressWarnings({ "resource", "static-access" })
-  public File writeXlsx(String filePath, String fileName,List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
-    String data = computeXls(gamificationActionsHistoryRestEntities);
-    String[] dataToWrite = new String[]{data};
+  public byte[] exportXls(String fileName,
+                          List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
+    String data = stringifiedAchievements(gamificationActionsHistoryRestEntities);
+    String[] dataToWrite = data.split("\\r?\\n");
     fileName += formater.format(new Date());
-    // Create an object of File class to open xlsx file
     File temp = new File(fileName, ".xlsx"); // NOSONAR
     temp.deleteOnExit();
-    // Create an object of InputStream class to read excel file
     Workbook workbook = null;
-    WorkbookFactory workBookFactory = null ;
     if (!temp.exists()) {
-       if (temp.toString().endsWith(".xlsx")) {
-          workbook = new XSSFWorkbook();
-       } else {
-          workbook = new HSSFWorkbook();
-       }
+      if (temp.toString().endsWith(".xlsx")) {
+        workbook = new XSSFWorkbook();
+      } else {
+        workbook = new HSSFWorkbook();
+      }
     } else {
-       workbook = workBookFactory.create(new FileInputStream(temp));
+      if (workbook == null) {
+        LOG.error("Error when creating WorkBook ");
+      }
+      workbook = WorkbookFactory.create(new FileInputStream(temp));
     }
-    if(workbook.getSheet("Achivements Report") == null) {
-      workbook.createSheet("Achivements Report");
+    if (workbook.getSheet(SHEETNAME) == null) {
+      workbook.createSheet(SHEETNAME);
     }
-//Read excel sheet by sheet name    
-    Sheet sheet = workbook.getSheetAt(0);
-//Get the first row from the sheet
-    sheet.createRow(0);
-    Row row = sheet.getRow(0);
-    Row newRow = sheet.createRow(1);
-//Create a loop over the cell of newly created Row
-    for (int j = 0; j < row.getLastCellNum(); j++) {
-      // Fill data in row
-      Cell cell = newRow.createCell(j);
-      cell.setCellValue(dataToWrite[j]);
+    CreationHelper helper = workbook.getCreationHelper();
+    Sheet sheet = workbook.getSheet(SHEETNAME);
+
+    for (int i = 0; i < dataToWrite.length; i++) {
+      String[] str = dataToWrite[i].split(",");
+      Row row = sheet.createRow((short) i);
+      for (int j = 0; j < str.length; j++) {
+        row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
+      }
     }
-//Create an object of FileOutputStream class to create write data in excel file
-    FileOutputStream outputStream = new FileOutputStream(temp.getName() + ".xlsx");
-//write data in the excel file
-    workbook.write(outputStream);
-//close output stream
-    outputStream.close();
-    return temp;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    workbook.write(baos);
+    baos.close();
+    return baos.toByteArray();
   }
 
-
-  public String computeXls(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
+  public String stringifiedAchievements(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
     Locale locale = getCurrentUserLocale();
     StringBuilder sbResult = new StringBuilder();
     // Add header
@@ -203,11 +194,11 @@ public class RealizationsServiceImpl implements RealizationsService {
         sbResult.append(DELIMITER);
         sbResult.append(ga.getEarner());
         sbResult.append(DELIMITER);
-        sbResult.append(actionLabel);
-        sbResult.append(DELIMITER);
         sbResult.append(ga.getAction() != null ? ga.getAction().getType().name() : "-");
         sbResult.append(DELIMITER);
         sbResult.append(domainDescription);
+        sbResult.append(DELIMITER);
+        sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
         sbResult.append(ga.getScore());
         sbResult.append(DELIMITER);
@@ -215,10 +206,9 @@ public class RealizationsServiceImpl implements RealizationsService {
         sbResult.append(DELIMITER);
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
-        LOG.error("Error when computing to XLSX ", e);
+        LOG.error("Error when computing to XLS ", e);
       }
     });
     return sbResult.toString();
   }
-  
 }

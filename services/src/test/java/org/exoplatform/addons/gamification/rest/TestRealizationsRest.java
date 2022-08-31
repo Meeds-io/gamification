@@ -16,9 +16,6 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -51,7 +48,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -84,9 +80,10 @@ public class TestRealizationsRest extends AbstractServiceTest {
     registry(getComponentClass());
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void testGetAllRealizationsDefaultSort() throws Exception {
-    RealizationsServiceImpl realizationsServiceImpl = new RealizationsServiceImpl(realizationsStorage, identityManager);
+    new RealizationsServiceImpl(realizationsStorage, identityManager);
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
         + "&earnerId=" + 1L +"&offset=-1&limit=10" + "&returnType=" + jsonType;
     EnvironmentContext envctx = new EnvironmentContext();

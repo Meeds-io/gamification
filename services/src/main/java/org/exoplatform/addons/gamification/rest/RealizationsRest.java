@@ -24,8 +24,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +33,7 @@ import java.util.List;
 @RolesAllowed("administrators")
 public class RealizationsRest implements ResourceContainer {
 
-  private static final Log    LOG                = ExoLogger.getLogger(RealizationsRest.class);
+  private static final Log    LOG = ExoLogger.getLogger(RealizationsRest.class);
 
   private RealizationsService realizationsService;
 
@@ -131,8 +129,7 @@ public class RealizationsRest implements ResourceContainer {
         List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                           GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
         String filename = "report_Actions";
-        File file = File.createTempFile(filename, ".xlsx");
-        file = realizationsService.writeXlsx("", filename, gamificationActionsHistoryRestEntities);
+        byte[] file = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
         Response.ResponseBuilder response = Response.ok(file); // NOSONAR
         response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
         return response.build();
