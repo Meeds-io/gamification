@@ -30,8 +30,6 @@ if (extensionRegistry) {
 Vue.use(Vuetify);
 const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 
-document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-
 const appId = 'EngagementCenterApplication';
 
 //getting language of the PLF
