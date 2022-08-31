@@ -70,7 +70,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-if="canEdit"
               dense
-              @mousedown="$event.preventDefault()"
               @click="editRealization">
               <v-icon size="13" class="dark-grey-color">fas fa-edit</v-icon>
               <v-list-item-title class="text-justify ps-3">
