@@ -479,12 +479,40 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>eXoVueI18n</module>
     </depends>
   </module>
+
+  <module>
+    <name>realizationComponents</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/realizationsComponents.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+  </module>
+
   <portlet>
     <name>Realizations</name>
     <module>
       <script>
         <minify>false</minify>
-        <path>/js/Realizations.bundle.js</path>
+        <path>/js/realizations.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
@@ -494,6 +522,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
       <depends>
         <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>realizationComponents</module>
       </depends>
       <depends>
         <module>jquery</module>
@@ -507,6 +538,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
     </module>
   </portlet>
-
 
 </gatein-resources>
