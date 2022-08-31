@@ -25,7 +25,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :right="right"
     offset-y
     attach
-    min-width="auto">
+    min-width="auto"
+    max-width="450px">
     <template #activator="{ on, attrs }">
       <v-text-field
         :value="rangeDate"
