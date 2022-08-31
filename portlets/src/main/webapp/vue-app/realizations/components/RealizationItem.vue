@@ -70,27 +70,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-if="canEdit"
               dense
-              @mousedown="$event.preventDefault()">
+              @click="editRealization">
               <v-icon size="13" class="dark-grey-color">fas fa-edit</v-icon>
-              <v-list-item-title class="text-justify ps-3" @click="editRealization">
+              <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.edit') }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item
               v-if="canAccept"
               dense
-              @mousedown="$event.preventDefault()">
+              @click="updateRealizations('ACCEPTED')">
               <v-icon size="13" class="dark-grey-color">fas fa-check</v-icon>
-              <v-list-item-title class="text-justify ps-3" @click="updateRealizations('ACCEPTED')">
+              <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.accept') }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item
               v-if="canReject"
               dense
-              @mousedown="$event.preventDefault()">
+              @click="updateRealizations('REJECTED')">
               <v-icon size="13" class="dark-grey-color">fas fa-ban</v-icon>
-              <v-list-item-title class="text-justify ps-3" @click="updateRealizations('REJECTED')">
+              <v-list-item-title class="text-justify ps-3">
                 {{ $t('realization.label.reject') }}
               </v-list-item-title>
             </v-list-item>
