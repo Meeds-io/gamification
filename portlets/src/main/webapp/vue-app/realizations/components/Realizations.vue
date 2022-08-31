@@ -217,8 +217,7 @@ export default {
         });
     },
     exportFile() {
-      this.returnType = 'xls';
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerId, this.returnType);
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerId, 'xls');
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
