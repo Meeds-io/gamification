@@ -54,12 +54,7 @@ export default {
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
-    earnerId: -1,
+    earnerId: eXo.env.portal.userIdentityId,
   }),
-  created() {
-    if (!this.isAdministrator) {
-      this.earnerId = eXo.env.portal.userIdentityId;
-    }
-  },
 };
 </script>
