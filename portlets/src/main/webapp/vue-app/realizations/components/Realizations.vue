@@ -76,8 +76,12 @@ export default {
   props: {
     earnerId: {
       type: Number,
-      default: -1,
-    }
+      default: () => 0,
+    },
+    retrieveAll: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     realizations: [],
