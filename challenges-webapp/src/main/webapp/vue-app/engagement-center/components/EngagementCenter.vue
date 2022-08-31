@@ -32,8 +32,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-tab-item>
           <challenges />
         </v-tab-item>
-        <v-tab-item>
-          <realizations id="Realizations" :is-administrator="isAdministrator" />
+        <v-tab-item v-if="isAdministrator">
+          <realizations id="Realizations" :earner-id="earnerId" :retrieve-all="isAdministrator" />
         </v-tab-item>
       </v-tabs-items>
     </main>
