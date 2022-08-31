@@ -210,8 +210,7 @@ export default {
         });
     },
     getRealizations() {
-      this.returnType = 'json';
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate,this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.returnType)
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate,this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
