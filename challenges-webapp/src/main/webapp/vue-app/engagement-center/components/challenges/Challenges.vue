@@ -140,14 +140,10 @@ export default {
       return domainsById;
     },
     challengePerPage() {
-      if (this.$vuetify.breakpoint.xs) {
-        return 2;
-      } else if (this.$vuetify.breakpoint.smAndDown) {
-        return 4;
-      } else if (this.$vuetify.breakpoint.lgAndDown) {
-        return 8;
+      if (this.$vuetify.breakpoint.width <= 768) {
+        return 5;
       } else {
-        return 12;
+        return 6;
       }
     },
     challengesFilter() {
