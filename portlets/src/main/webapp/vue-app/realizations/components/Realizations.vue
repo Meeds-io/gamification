@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
-          :is-administrator="isAdministrator"
+          :is-administrator="retrieveAll"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
@@ -85,6 +85,7 @@ export default {
   },
   data: () => ({
     realizations: [],
+    realizationsHeaders: [],
     offset: 0,
     limit: 10,
     pageSize: 10,
@@ -110,7 +111,7 @@ export default {
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
     },
-    realizationsHeaders() {
+    commonRealizationsHeaders() {
       return [
         {
           text: this.$t('realization.label.date'),
@@ -161,13 +162,6 @@ export default {
           value: 'status',
           class: 'actionHeader'
         },
-        {
-          text: this.$t('realization.label.actions'),
-          align: 'center',
-          sortable: false,
-          value: '',
-          class: 'actionHeader'
-        },
       ];
     },
   },
@@ -192,6 +186,12 @@ export default {
         this.sortUpdated();
       }
     },
+  },
+  mounted() {
+    this.realizationsHeaders = this.commonRealizationsHeaders;
+    if (this.retrieveAll) {
+      this.realizationsHeaders.push({text: this.$t('realization.label.actions'),align: 'center',sortable: false,value: '',class: 'actionHeader'});
+    }
   },
   methods: {
     sortUpdated() {

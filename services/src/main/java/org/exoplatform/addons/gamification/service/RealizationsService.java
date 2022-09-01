@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -42,12 +43,12 @@ public interface RealizationsService {
    *
    * @param A {@link List <GamificationActionsHistoryDTO>} object
    * @param A filename String 
-   * @return A xls string
+   * @return A xls InputStream {@link InputStream}
    * @throws IOException
    * @throws ObjectNotFoundException GamificationActionsHistory identified by
    *           its technical identifier is not found
    */
-  byte[] exportXls(String fileName,
+  InputStream exportXls(String fileName,
                    List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IllegalAccessException,
                                                                                                       IOException;
   

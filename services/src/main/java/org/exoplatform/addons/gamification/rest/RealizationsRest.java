@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,6 +25,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +47,6 @@ public class RealizationsRest implements ResourceContainer {
   @GET
   @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel"})
   @Consumes(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
   @Path("allRealizations")
   @Operation(
           summary = "Retrieves the list of achievements switch a filter. The returned format can be of type JSON or XLS", 
@@ -105,10 +107,8 @@ public class RealizationsRest implements ResourceContainer {
     if (!returnType.isEmpty() && !(returnType.equals("json") || returnType.equals("xls"))) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported returnType, possible values: xls or json").build();
     }
-    if (returnType.equals("json")) {
-      if (limit <= 0) {
+    if (returnType.equals("json") && limit <= 0) {
         return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-      }
     }
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList =
@@ -124,8 +124,9 @@ public class RealizationsRest implements ResourceContainer {
         List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                           GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
         String filename = "report_Actions";
-        byte[] file = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
-        Response.ResponseBuilder response = Response.ok(file); // NOSONAR
+        InputStream xlsInputStream = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
+        byte[] targetArray = IOUtils.toByteArray(xlsInputStream);
+        Response.ResponseBuilder response = Response.ok(targetArray); // NOSONAR
         response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
         return response.build();
       }
@@ -138,7 +139,6 @@ public class RealizationsRest implements ResourceContainer {
       return Response.serverError().entity(e.getMessage()).build();
     }
     return Response.status(Response.Status.FORBIDDEN).build();
-
   }
 
   @PUT

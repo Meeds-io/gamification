@@ -24,10 +24,12 @@ import static org.exoplatform.addons.gamification.utils.Utils.escapeIllegalChara
 import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
 import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -119,44 +121,85 @@ public class RealizationsServiceImpl implements RealizationsService {
     return realizationsStorage.updateRealizationStatus(gHistory);
   }
   
-  @SuppressWarnings({ "resource", "static-access" })
-  public byte[] exportXls(String fileName,
-                          List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
+  public InputStream exportXls(String fileName,
+                               List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
     String data = stringifiedAchievements(gamificationActionsHistoryRestEntities);
     String[] dataToWrite = data.split("\\r?\\n");
     fileName += formater.format(new Date());
     File temp = new File(fileName, ".xlsx"); // NOSONAR
     temp.deleteOnExit();
     Workbook workbook = null;
-    if (!temp.exists()) {
-      if (temp.toString().endsWith(".xlsx")) {
-        workbook = new XSSFWorkbook();
+    InputStream is = null;
+    ByteArrayOutputStream baos = null;
+    try {
+      baos = new ByteArrayOutputStream();
+    } catch (Exception e) {
+      LOG.error("error while creating ByteArrayOutputStream", e);
+    }
+    try {
+      if (!temp.exists()) {
+        if (temp.toString().endsWith(".xlsx")) {
+          try {
+            workbook = new XSSFWorkbook();
+          } catch (Exception e) {
+            LOG.error("error while creating XSSFWorkbook", e);
+          }
+        } else {
+          try {
+            workbook = new HSSFWorkbook();
+          } catch (Exception e) {
+            LOG.error("error while creating HSSFWorkbook", e);
+          }
+        }
       } else {
-        workbook = new HSSFWorkbook();
+        if (workbook == null) {
+          LOG.error("WorkBook is null");
+        }
+        try {
+          workbook = WorkbookFactory.create(new FileInputStream(temp));
+        } catch (Exception e) {
+          LOG.error("error while creating FileInputStream", e);
+        }
       }
-    } else {
-      if (workbook == null) {
-        LOG.error("Error when creating WorkBook ");
+      if (workbook.getSheet(SHEETNAME) == null) {
+        workbook.createSheet(SHEETNAME);
       }
-      workbook = WorkbookFactory.create(new FileInputStream(temp));
-    }
-    if (workbook.getSheet(SHEETNAME) == null) {
-      workbook.createSheet(SHEETNAME);
-    }
-    CreationHelper helper = workbook.getCreationHelper();
-    Sheet sheet = workbook.getSheet(SHEETNAME);
+      CreationHelper helper = workbook.getCreationHelper();
+      Sheet sheet = workbook.getSheet(SHEETNAME);
 
-    for (int i = 0; i < dataToWrite.length; i++) {
-      String[] str = dataToWrite[i].split(",");
-      Row row = sheet.createRow((short) i);
-      for (int j = 0; j < str.length; j++) {
-        row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
+      for (int i = 0; i < dataToWrite.length; i++) {
+        String[] str = dataToWrite[i].split(",");
+        Row row = sheet.createRow((short) i);
+        for (int j = 0; j < str.length; j++) {
+          row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
+        }
+      }
+      workbook.write(baos);
+      byte[] barray = baos.toByteArray();
+      try {
+        is = new ByteArrayInputStream(barray);
+      } catch (Exception e) {
+        LOG.error("error while creating ByteArrayInputStream", e);
+      }
+    } catch (Exception e) {
+      LOG.error("error while creating workbook", e);
+    } finally {
+      if (workbook != null) {
+        try {
+          workbook.close();
+        } catch (Exception e) {
+          LOG.error("error while closing workbook", e);
+        }
+      }
+      if (baos != null) {
+        try {
+          baos.close();
+        } catch (Exception e) {
+          LOG.error("error while closing workbook", e);
+        }
       }
     }
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    workbook.write(baos);
-    baos.close();
-    return baos.toByteArray();
+    return is;
   }
 
   public String stringifiedAchievements(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
@@ -207,7 +250,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     });
     return sbResult.toString();
   }
-  
+
   private boolean isAdministrator(Identity identity) {
     return identity.isMemberOf("/platform/administrators");
   }
