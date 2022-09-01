@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <td class="text-truncate align-center">
       {{ statusLabel }}
     </td>
-    <td class="text-truncate actions align-center">
+    <td v-if="isAdministrator" class="text-truncate actions align-center">
       <v-menu
         v-if="hasActions"
         v-model="menu"
@@ -110,6 +110,10 @@ export default {
     dateFormat: {
       type: Object,
       default: null,
+    },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({

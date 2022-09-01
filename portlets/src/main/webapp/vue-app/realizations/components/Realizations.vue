@@ -46,6 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
+          :is-administrator="isAdministrator"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
@@ -72,6 +73,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     realizations: [],
     offset: 0,
