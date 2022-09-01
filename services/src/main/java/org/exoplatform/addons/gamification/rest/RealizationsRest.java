@@ -102,30 +102,25 @@ public class RealizationsRest implements ResourceContainer {
     if (returnType.isEmpty()) {
       return Response.status(Response.Status.BAD_REQUEST).entity("returnType must not be empty").build();
     }
+    if (!returnType.isEmpty() && !(returnType.equals("json") || returnType.equals("xls"))) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported returnType, possible values: xls or json").build();
+    }
     if (returnType.equals("json")) {
       if (limit <= 0) {
         return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
       }
-
-      try {
-        List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
-                                                                                                              identity,
-                                                                                                              offset,
-                                                                                                              limit);
+    }
+    try {
+      List<GamificationActionsHistoryDTO> gActionsHistoryList =
+                                                              realizationsService.getRealizationsByFilter(filter,
+                                                                                                          identity,
+                                                                                                          returnType.equals("xls") ? 0
+                                                                                                                                   : offset,
+                                                                                                          returnType.equals("xls") ? 0
+                                                                                                                                   : limit);
+      if (returnType.equals("json")) {
         return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
-      } catch (IllegalAccessException e) {
-        LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
-        return Response.status(Response.Status.FORBIDDEN).build();
-      } catch (Exception e) {
-        LOG.warn("Error retrieving list of Realizations", e);
-        return Response.serverError().entity(e.getMessage()).build();
-      }
-    } else if (returnType.equals("xls")) {
-      try {
-        List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
-                                                                                                              identity,
-                                                                                                              0,
-                                                                                                              0);
+      } else if (returnType.equals("xls")) {
         List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                           GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
         String filename = "report_Actions";
@@ -133,16 +128,17 @@ public class RealizationsRest implements ResourceContainer {
         Response.ResponseBuilder response = Response.ok(file); // NOSONAR
         response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
         return response.build();
-      } catch (IllegalAccessException e) {
-        LOG.debug("A not authorized user '{}' isn't allowed to access realizations. (earnerId = {})", currentUser, earnerId, e);
-        return Response.status(Response.Status.FORBIDDEN).build();
-      } catch (Exception e) {
-        LOG.error("Error when creating temp file", e);
-        return Response.serverError().entity(e.getMessage()).build();
       }
-    } else {
+
+    } catch (IllegalAccessException e) {
+      LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
       return Response.status(Response.Status.FORBIDDEN).build();
+    } catch (Exception e) {
+      LOG.warn("Error retrieving list of Realizations or exporting xls file", e);
+      return Response.serverError().entity(e.getMessage()).build();
     }
+    return Response.status(Response.Status.FORBIDDEN).build();
+
   }
 
   @PUT

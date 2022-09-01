@@ -1,5 +1,5 @@
-export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit, returnType) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 10}&returnType=${returnType}`, {
+export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 10}&returnType=json`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -11,8 +11,12 @@ export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDesce
   });
 }
 
-export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 10}`, {
+export function exportFile(fromDate, toDate, earnerId) {
+  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&returnType=xls`, '_blank');
+}
+
+export function updateRealization( id, status, actionLabel, domain, points) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/updateRealizations?realizationId=${id}&status=${status}&actionLabel=${actionLabel || ''}&domain=${domain || ''}&points=${points || 0}`, {
     method: 'PUT',
     credentials: 'include',
     headers: {
@@ -25,10 +29,6 @@ export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDesce
       throw new Error('Error updating realization status');
     }
   });
-}
-
-export function exportFile(fromDate, toDate, earnerId) {
-  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&returnType=xls`, '_blank');
 }
 
 export function getAllDomains() {

@@ -219,7 +219,7 @@ export default {
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.retrieveAll ? 0 : this.earnerId, 'xls');
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.retrieveAll ? 0 : this.earnerId);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
