@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
-          :is-administrator="retrieveAll"
+          :is-administrator="isAdministrator"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
@@ -78,6 +78,10 @@ export default {
       type: Number,
       default: () => 0,
     },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
     retrieveAll: {
       type: Boolean,
       default: false,
@@ -106,6 +110,9 @@ export default {
   computed: {
     hasMore() {
       return this.limit <= this.realizations.length;
+    },
+    earnerIdToRetrieve() {
+      return this.retrieveAll ? 0 : this.earnerId;
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -155,7 +162,7 @@ export default {
           class: 'actionHeader'
         },
       ];
-      if (this.retrieveAll) {
+      if (this.isAdministrator) {
         realizationsHeaders.push({
           text: this.$t('realization.label.status'),
           align: 'center',
@@ -209,13 +216,13 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.retrieveAll ? 0 : this.earnerId, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.retrieveAll ? 0 : this.earnerId);
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});

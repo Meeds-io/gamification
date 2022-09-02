@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -126,80 +127,21 @@ public class RealizationsServiceImpl implements RealizationsService {
     String data = stringifiedAchievements(gamificationActionsHistoryRestEntities);
     String[] dataToWrite = data.split("\\r?\\n");
     fileName += formater.format(new Date());
-    File temp = new File(fileName, ".xlsx"); // NOSONAR
+    File temp = File.createTempFile(fileName, ".xlsx");
     temp.deleteOnExit();
-    Workbook workbook = null;
-    InputStream is = null;
-    ByteArrayOutputStream baos = null;
-    try {
-      baos = new ByteArrayOutputStream();
-    } catch (Exception e) {
-      LOG.error("error while creating ByteArrayOutputStream", e);
-    }
-    try {
-      if (!temp.exists()) {
-        if (temp.toString().endsWith(".xlsx")) {
-          try {
-            workbook = new XSSFWorkbook();
-          } catch (Exception e) {
-            LOG.error("error while creating XSSFWorkbook", e);
-          }
-        } else {
-          try {
-            workbook = new HSSFWorkbook();
-          } catch (Exception e) {
-            LOG.error("error while creating HSSFWorkbook", e);
-          }
-        }
-      } else {
-        if (workbook == null) {
-          LOG.error("WorkBook is null");
-        }
-        try {
-          workbook = WorkbookFactory.create(new FileInputStream(temp));
-        } catch (Exception e) {
-          LOG.error("error while creating FileInputStream", e);
-        }
-      }
-      if (workbook.getSheet(SHEETNAME) == null) {
-        workbook.createSheet(SHEETNAME);
-      }
+    try (XSSFWorkbook workbook = new XSSFWorkbook(); FileOutputStream outputStream = new FileOutputStream(temp)) {
+      Sheet sheet = workbook.createSheet(SHEETNAME);
       CreationHelper helper = workbook.getCreationHelper();
-      Sheet sheet = workbook.getSheet(SHEETNAME);
-
       for (int i = 0; i < dataToWrite.length; i++) {
-        String[] str = dataToWrite[i].split(",");
         Row row = sheet.createRow((short) i);
+        String[] str = dataToWrite[i].split(",");
         for (int j = 0; j < str.length; j++) {
           row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
         }
       }
-      workbook.write(baos);
-      byte[] barray = baos.toByteArray();
-      try {
-        is = new ByteArrayInputStream(barray);
-      } catch (Exception e) {
-        LOG.error("error while creating ByteArrayInputStream", e);
-      }
-    } catch (Exception e) {
-      LOG.error("error while creating workbook", e);
-    } finally {
-      if (workbook != null) {
-        try {
-          workbook.close();
-        } catch (Exception e) {
-          LOG.error("error while closing workbook", e);
-        }
-      }
-      if (baos != null) {
-        try {
-          baos.close();
-        } catch (Exception e) {
-          LOG.error("error while closing workbook", e);
-        }
-      }
+      workbook.write(outputStream);
     }
-    return is;
+    return new FileInputStream(temp);
   }
 
   public String stringifiedAchievements(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {

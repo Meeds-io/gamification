@@ -55,6 +55,7 @@ public class RealizationsRest implements ResourceContainer {
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  @RolesAllowed("users")
   public Response getAllRealizations(@Parameter(description = "result fromDate", required = true)
                                                 @QueryParam("fromDate")
                                                 String fromDate,
@@ -98,39 +99,30 @@ public class RealizationsRest implements ResourceContainer {
     filter.setSortDescending(sortDescending);
     filter.setSortField(sortField);
 
+    boolean isXls = StringUtils.isNotBlank(returnType) && returnType.equals("xls");
+    if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXls) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported returnType, possible values: xls or json").build();
+    }
+    if (!isXls && limit <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    }
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
-    if (returnType.isEmpty()) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("returnType must not be empty").build();
-    }
-    if (!returnType.isEmpty() && !(returnType.equals("json") || returnType.equals("xls"))) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported returnType, possible values: xls or json").build();
-    }
-    if (returnType.equals("json") && limit <= 0) {
-        return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-    }
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList =
-                                                              realizationsService.getRealizationsByFilter(filter,
-                                                                                                          identity,
-                                                                                                          returnType.equals("xls") ? 0
-                                                                                                                                   : offset,
-                                                                                                          returnType.equals("xls") ? 0
-                                                                                                                                   : limit);
-      if (returnType.equals("json")) {
-        return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
-      } else if (returnType.equals("xls")) {
-        List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-                                                                                          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
+                                                                                                            identity,
+                                                                                                            isXls ? 0 : offset,
+                                                                                                            isXls ? -1 : limit);
+      List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities = GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+
+      if (isXls) {
         String filename = "report_Actions";
         InputStream xlsInputStream = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
-        byte[] targetArray = IOUtils.toByteArray(xlsInputStream);
-        Response.ResponseBuilder response = Response.ok(targetArray); // NOSONAR
-        response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
-        return response.build();
+        return Response.ok(xlsInputStream).header("Content-Disposition", "attachment; filename=" + filename + ".xlsx").build();
+      } else {
+        return Response.ok(gamificationActionsHistoryRestEntities).build();
       }
-
     } catch (IllegalAccessException e) {
       LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
       return Response.status(Response.Status.FORBIDDEN).build();
@@ -138,7 +130,6 @@ public class RealizationsRest implements ResourceContainer {
       LOG.warn("Error retrieving list of Realizations or exporting xls file", e);
       return Response.serverError().entity(e.getMessage()).build();
     }
-    return Response.status(Response.Status.FORBIDDEN).build();
   }
 
   @PUT
