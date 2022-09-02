@@ -85,7 +85,6 @@ export default {
   },
   data: () => ({
     realizations: [],
-    realizationsHeaders: [],
     offset: 0,
     limit: 10,
     pageSize: 10,
@@ -111,8 +110,8 @@ export default {
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
     },
-    commonRealizationsHeaders() {
-      return [
+    realizationsHeaders() {
+      const realizationsHeaders = [
         {
           text: this.$t('realization.label.date'),
           align: 'center',
@@ -155,14 +154,17 @@ export default {
           value: 'points',
           class: 'actionHeader'
         },
-        {
+      ];
+      if (this.retrieveAll) {
+        realizationsHeaders.push({
           text: this.$t('realization.label.status'),
           align: 'center',
           sortable: false,
           value: 'status',
           class: 'actionHeader'
-        },
-      ];
+        });
+      }
+      return realizationsHeaders;
     },
   },
   watch: {
@@ -186,12 +188,6 @@ export default {
         this.sortUpdated();
       }
     },
-  },
-  mounted() {
-    this.realizationsHeaders = this.commonRealizationsHeaders;
-    if (this.retrieveAll) {
-      this.realizationsHeaders.push({text: this.$t('realization.label.actions'),align: 'center',sortable: false,value: '',class: 'actionHeader'});
-    }
   },
   methods: {
     sortUpdated() {
