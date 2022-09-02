@@ -1,11 +1,22 @@
 package org.exoplatform.addons.gamification.rest;
 
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang3.StringUtils;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
@@ -17,20 +28,15 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-import static org.exoplatform.addons.gamification.utils.Utils.*;
 
 @Path("/gamification/realizations/api")
 @Tag(name = "/gamification/realizations/api", description = "Manages users realizations")
@@ -41,33 +47,21 @@ public class RealizationsRest implements ResourceContainer {
 
   private RealizationsService realizationsService;
 
-  // Delimiters that must be in the CSV file
-  private static final String DELIMITER = ",";
-
-  private static final String SEPARATOR = "\n";
-
-  private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
-
-  // File header
-  private static final String HEADER    =
-                                     "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
-
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
   }
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Consumes(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel"})
   @Path("allRealizations")
   @Operation(
-          summary = "Retrieves the list of challenges available for an owner",
-          method = "GET",
+          summary = "Retrieves the list of achievements switch a filter. The returned format can be of type JSON or XLS", 
+          method = "GET", 
           description = "Retrieves the list of challenges available for an owner")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  @RolesAllowed("users")
   public Response getAllRealizations(@Parameter(description = "result fromDate", required = true)
                                                 @QueryParam("fromDate")
                                                 String fromDate,
@@ -82,6 +76,9 @@ public class RealizationsRest implements ResourceContainer {
                                                 @QueryParam("sortDescending")
                                                 @DefaultValue("true")
                                                 boolean sortDescending,
+                                                @Parameter(description = "Identifier of the user that will be used to filter achievements", required = false)
+                                                @QueryParam("earnerId")
+                                                long earnerId,
                                                 @Parameter(description = "Offset of result")
                                                 @DefaultValue("0")
                                                 @QueryParam("offset")
@@ -89,11 +86,18 @@ public class RealizationsRest implements ResourceContainer {
                                                 @Parameter(description = "Limit of result")
                                                 @DefaultValue("10")
                                                 @QueryParam("limit")
-                                                int limit) {
+                                                int limit,
+                                                @Parameter(description = "Response Type")
+                                                @DefaultValue("")
+                                                @QueryParam("returnType")
+                                                String returnType) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
     RealizationsFilter filter = new RealizationsFilter();
+    String currentUser = Utils.getCurrentUser();
+    Identity identity = ConversationState.getCurrent().getIdentity();
+    filter.setEarnerId(earnerId);
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
     filter.setFromDate(dateFrom);
@@ -101,19 +105,38 @@ public class RealizationsRest implements ResourceContainer {
     filter.setSortDescending(sortDescending);
     filter.setSortField(sortField);
 
+    boolean isXls = StringUtils.isNotBlank(returnType) && returnType.equals("xls");
+    if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXls) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported returnType, possible values: xls or json").build();
+    }
+    if (!isXls && limit <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    }
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
-    if (limit <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-    }
-
     try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList =
-          realizationsService.getAllRealizationsByFilter(filter, offset, limit);
-      return Response.ok(GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList)).build();
+      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
+                                                                                                            identity,
+                                                                                                            isXls ? 0 : offset,
+                                                                                                            isXls ? -1 : limit);
+      List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities = GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+
+      if (isXls) {
+        String filename = "report_Actions";
+        InputStream xlsInputStream = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
+        return Response.ok(xlsInputStream)
+                       .header("Content-Disposition", "attachment; filename=" + filename + ".xlsx")
+                       .header("Content-Type", "application/vnd.ms-excel")
+                       .build();
+      } else {
+        return Response.ok(gamificationActionsHistoryRestEntities).header("Content-Type", MediaType.APPLICATION_JSON).build();
+      }
+    } catch (IllegalAccessException e) {
+      LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
+      return Response.status(Response.Status.FORBIDDEN).build();
     } catch (Exception e) {
-      LOG.warn("Error retrieving list of Realizations", e);
+      LOG.warn("Error retrieving list of Realizations or exporting xls file", e);
       return Response.serverError().entity(e.getMessage()).build();
     }
   }
@@ -161,99 +184,5 @@ public class RealizationsRest implements ResourceContainer {
       LOG.warn("Error updating a challenge", e);
       return Response.serverError().entity(e.getMessage()).build();
     }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @GET
-  @RolesAllowed("administrators")
-  @Produces("application/vnd.ms-excel")
-  @Path("getExport")
-  @Operation(summary = "Gets CSV report", method = "GET", description = "returns a csv file of actions")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input") })
-  public Response getReport(@Parameter(description = "result fromDate", required = true)
-                            @QueryParam("fromDate")
-                            String fromDate,
-                            @Parameter(description = "result toDate", required = true)
-                            @QueryParam("toDate")
-                            String toDate) {
-    RealizationsFilter filter = new RealizationsFilter();
-    Date dateFrom = Utils.parseRFC3339Date(fromDate);
-    Date dateTo = Utils.parseRFC3339Date(toDate);
-    filter.setFromDate(dateFrom);
-    filter.setToDate(dateTo);
-
-    try {
-      List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getAllRealizationsByFilter(filter, 0, 0);
-      List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
-      String xlsxString = computeXLSX(gamificationActionsHistoryRestEntities);
-      String filename = "report_Actions";
-      filename += formater.format(new Date());
-      File temp;
-      temp = File.createTempFile(filename, ".xlsx"); // NOSONAR
-      temp.deleteOnExit();
-      BufferedWriter bw = new BufferedWriter(new FileWriter(temp)); // NOSONAR
-      bw.write(xlsxString);
-      bw.close();
-      Response.ResponseBuilder response = Response.ok(temp); // NOSONAR
-      response.header("Content-Disposition", "attachment; filename=" + filename + ".xlsx");
-      return response.build();
-    } catch (Exception e) {
-      LOG.error("Error when creating temp file", e);
-      return Response.serverError().entity(e.getMessage()).build();
-    }
-  }
-
-  private String computeXLSX(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
-    Locale locale = getCurrentUserLocale();
-    StringBuilder sbResult = new StringBuilder();
-    // Add header
-    sbResult.append(HEADER);
-    // Add a new line after the header
-    sbResult.append(SEPARATOR);
-
-    gamificationActionsHistoryRestEntities.forEach(ga -> {
-      try {
-        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
-        String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
-        String actionLabel = "-";
-        actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
-        if (actionLabel == null && ga.getAction() != null) {
-          actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
-        } else {
-          actionLabel = escapeIllegalCharacterInMessage(actionLabel);
-        }
-        String domainDescription = "-";
-        if (ga.getDomain() != null) {
-          domainDescription = getI18NMessage(locale, domainTitleKey + ga.getDomain().getDescription().replace(" ", ""));
-          if (domainDescription == null) {
-            domainDescription = ga.getDomain().getDescription();
-          }
-        }
-        domainDescription = escapeIllegalCharacterInMessage(domainDescription);
-        sbResult.append(ga.getCreatedDate());
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getEarner());
-        sbResult.append(DELIMITER);
-        sbResult.append(actionLabel);
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getAction() != null ? ga.getAction().getType().name() : "-");
-        sbResult.append(DELIMITER);
-        sbResult.append(domainDescription);
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getScore());
-        sbResult.append(DELIMITER);
-        sbResult.append(ga.getStatus());
-        sbResult.append(DELIMITER);
-        sbResult.append(SEPARATOR);
-      } catch (Exception e) {
-        LOG.error("Error when computing to XLSX ", e);
-      }
-    });
-    return sbResult.toString();
   }
 }
