@@ -1,11 +1,22 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import static org.exoplatform.addons.gamification.utils.Utils.escapeIllegalCharacterInMessage;
+import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
+import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.exoplatform.addons.gamification.service.RealizationsService;
@@ -20,23 +31,9 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
-import static org.exoplatform.addons.gamification.utils.Utils.escapeIllegalCharacterInMessage;
-import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
-import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 public class RealizationsServiceImpl implements RealizationsService {
+
+  private static final Log    LOG       = ExoLogger.getLogger(RealizationsServiceImpl.class);
 
   private RealizationsStorage realizationsStorage;
 
@@ -46,10 +43,6 @@ public class RealizationsServiceImpl implements RealizationsService {
   private static final String DELIMITER = ",";
 
   private static final String SEPARATOR = "\n";
-
-  private static final Log    LOG       = ExoLogger.getLogger(RealizationsServiceImpl.class);
-
-  private SimpleDateFormat    formater  = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
 
   // File header
   private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status,Spaces";
@@ -87,9 +80,10 @@ public class RealizationsServiceImpl implements RealizationsService {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
       return filter.getEarnerId() > 0 ? realizationsStorage.getUsersRealizationsByFilter(filter, offset, limit)
-          : realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
+                                      : realizationsStorage.getAllRealizationsByFilter(filter, offset, limit);
     } else {
-      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user " + filter.getEarnerId());
+      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
+          + filter.getEarnerId());
     }
   }
 
@@ -121,12 +115,14 @@ public class RealizationsServiceImpl implements RealizationsService {
     gHistory.setStatus(status.name());
     return realizationsStorage.updateRealizationStatus(gHistory);
   }
-  
+
+  @Override
   public InputStream exportXls(String fileName,
                                List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
-    String data = stringifiedAchievements(gamificationActionsHistoryRestEntities);
+    String data = stringifyAchievements(gamificationActionsHistoryRestEntities);
     String[] dataToWrite = data.split("\\r?\\n");
-    fileName += formater.format(new Date());
+    SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
+    fileName += formatter.format(new Date());
     File temp = File.createTempFile(fileName, ".xlsx");
     temp.deleteOnExit();
     try (XSSFWorkbook workbook = new XSSFWorkbook(); FileOutputStream outputStream = new FileOutputStream(temp)) {
@@ -144,7 +140,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     return new FileInputStream(temp);
   }
 
-  public String stringifiedAchievements(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
+  private String stringifyAchievements(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
     Locale locale = getCurrentUserLocale();
     StringBuilder sbResult = new StringBuilder();
     // Add header
