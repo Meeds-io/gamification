@@ -46,7 +46,6 @@ public class RealizationsRest implements ResourceContainer {
 
   @GET
   @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel"})
-  @Consumes(MediaType.APPLICATION_JSON)
   @Path("allRealizations")
   @Operation(
           summary = "Retrieves the list of achievements switch a filter. The returned format can be of type JSON or XLS", 
@@ -119,9 +118,12 @@ public class RealizationsRest implements ResourceContainer {
       if (isXls) {
         String filename = "report_Actions";
         InputStream xlsInputStream = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
-        return Response.ok(xlsInputStream).header("Content-Disposition", "attachment; filename=" + filename + ".xlsx").build();
+        return Response.ok(xlsInputStream)
+                       .header("Content-Disposition", "attachment; filename=" + filename + ".xlsx")
+                       .header("Content-Type", "application/vnd.ms-excel")
+                       .build();
       } else {
-        return Response.ok(gamificationActionsHistoryRestEntities).build();
+        return Response.ok(gamificationActionsHistoryRestEntities).header("Content-Type", MediaType.APPLICATION_JSON).build();
       }
     } catch (IllegalAccessException e) {
       LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
