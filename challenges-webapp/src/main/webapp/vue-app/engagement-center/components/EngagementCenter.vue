@@ -33,7 +33,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <challenges />
         </v-tab-item>
         <v-tab-item>
-          <realizations id="Realizations" :is-administrator="isAdministrator" />
+          <realizations
+            id="Realizations"
+            :earner-id="earnerId"
+            :is-administrator="isAdministrator"
+            :retrieve-all="isAdministrator" />
         </v-tab-item>
       </v-tabs-items>
     </main>
@@ -54,6 +58,7 @@ export default {
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     tab: null,
+    earnerId: eXo.env.portal.userIdentityId,
   }),
 };
 </script>
