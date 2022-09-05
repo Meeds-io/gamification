@@ -46,15 +46,11 @@ public class DomainRestEntity implements Cloneable {
 
   private String         lastModifiedDate;
 
-  private boolean        deleted;
-
   private boolean        enabled;
 
   private Long           budget;
 
   private String         type;
-
-  private Long           coverFileId;
 
   private String         coverUrl;
 
@@ -72,11 +68,9 @@ public class DomainRestEntity implements Cloneable {
                           String createdDate,
                           String lastModifiedBy,
                           String lastModifiedDate,
-                          boolean deleted,
                           boolean enabled,
                           Long budget,
                           String type,
-                          Long coverFileId,
                           String coverUrl,
                           List<UserInfo> owners,
                           UserInfo userInfo) {
@@ -88,11 +82,9 @@ public class DomainRestEntity implements Cloneable {
     this.createdDate = createdDate;
     this.lastModifiedBy = lastModifiedBy;
     this.lastModifiedDate = lastModifiedDate;
-    this.deleted = deleted;
     this.enabled = enabled;
     this.budget = budget;
     this.type = type;
-    this.coverFileId = coverFileId;
     this.coverUrl = coverUrl;
     this.owners = owners;
     this.userInfo = userInfo;
@@ -108,11 +100,9 @@ public class DomainRestEntity implements Cloneable {
                                 createdDate,
                                 lastModifiedBy,
                                 lastModifiedDate,
-                                deleted,
                                 enabled,
                                 budget,
                                 type,
-                                coverFileId,
                                 coverUrl,
                                 coverUploadId,
                                 owners,

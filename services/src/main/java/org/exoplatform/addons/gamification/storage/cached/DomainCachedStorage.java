@@ -64,7 +64,7 @@ public class DomainCachedStorage extends DomainStorage {
         } else if (context.getContext() == DOMAIN_TITLE_CONTEXT) {
           return DomainCachedStorage.super.findEnabledDomainByTitle(context.getTitle());
         } else if (context.getContext() == ALL_DOMAIN_CONTEXT) {
-          return DomainCachedStorage.super.getAllDomains(context.getOffset(), context.getLimit(), context.getDomainFilter());
+          return DomainCachedStorage.super.getAllDomains(context.getDomainFilter(), context.getOffset(), context.getLimit());
         } else if (context.getContext() == DOMAIN_ENABLED_CONTEXT) {
           return DomainCachedStorage.super.getEnabledDomains();
         } else {
@@ -76,7 +76,7 @@ public class DomainCachedStorage extends DomainStorage {
   }
 
   @Override
-  public DomainDTO saveDomain(DomainDTO domain) throws Exception {
+  public DomainDTO saveDomain(DomainDTO domain) {
     try {
       domain = super.saveDomain(domain);
       return domain;
@@ -99,7 +99,7 @@ public class DomainCachedStorage extends DomainStorage {
 
   @Override
   @SuppressWarnings("unchecked")
-  public List<DomainDTO> getAllDomains(int offset, int limit, DomainFilter filter) {
+  public List<DomainDTO> getAllDomains(DomainFilter filter, int offset, int limit) {
     CacheKey key = new CacheKey(ALL_DOMAIN_CONTEXT, filter, offset, limit);
     return (List<DomainDTO>) this.domainFutureCache.get(key, key.hashCode());
   }

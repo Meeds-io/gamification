@@ -29,6 +29,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.DomainE
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainOwnerEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
 
 public class DomainMapper {
@@ -36,8 +37,11 @@ public class DomainMapper {
   private DomainMapper() {
   }
 
-  public static List<DomainDTO> domainsToDomainDTOs(List<DomainEntity> domains) {
-    return domains.stream().filter(Objects::nonNull).map(DomainMapper::domainEntityToDomainDTO).collect(Collectors.toList());
+  public static List<DomainDTO> domainsToDomainDTOs(List<DomainEntity> domains, DomainOwnerDAO domainOwnerDAO) {
+    return domains.stream()
+                  .filter(Objects::nonNull)
+                  .map(entity -> DomainMapper.domainEntityToDomainDTO(entity, domainOwnerDAO))
+                  .collect(Collectors.toList());
   }
 
   public static DomainEntity domainDTOToDomainEntity(DomainDTO domainDTO) {
@@ -68,17 +72,13 @@ public class DomainMapper {
     }
   }
 
-  public static DomainDTO domainEntityToDomainDTO(DomainEntity domainEntity) {
+  public static DomainDTO domainEntityToDomainDTO(DomainEntity domainEntity, DomainOwnerDAO domainOwnerDAO) {
     if (domainEntity == null) {
       return null;
     }
     long lastUpdateTime = domainEntity.getLastModifiedDate() == null ? 0 : domainEntity.getLastModifiedDate().getTime();
     String coverUrl = Utils.buildAttachmentUrl(String.valueOf(domainEntity.getId()), lastUpdateTime, Utils.TYPE);
-    List<DomainOwnerEntity> ownerEntities = domainEntity.getOwners();
-    Set<Long> owners = ownerEntities == null ? Collections.emptySet()
-                                             : ownerEntities.stream()
-                                                            .map(DomainOwnerEntity::getIdentityId)
-                                                            .collect(Collectors.toSet());
+    Set<Long> owners = getOwnerIds(domainEntity, domainOwnerDAO);
     return new DomainDTO(domainEntity.getId(),
                          domainEntity.getTitle(),
                          domainEntity.getDescription(),
@@ -94,6 +94,14 @@ public class DomainMapper {
                          domainEntity.getCoverFileId(),
                          coverUrl,
                          owners);
+  }
+
+  private static Set<Long> getOwnerIds(DomainEntity domainEntity, DomainOwnerDAO domainOwnerDAO) {
+    List<DomainOwnerEntity> ownerEntities = domainEntity.getOwners();
+    List<DomainOwnerEntity> entities = ownerEntities == null
+        && domainOwnerDAO != null ? domainOwnerDAO.getDomainOwners(domainEntity.getId()) : ownerEntities;
+    return entities == null ? Collections.emptySet()
+                            : entities.stream().map(DomainOwnerEntity::getIdentityId).collect(Collectors.toSet());
   }
 
 }

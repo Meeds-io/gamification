@@ -103,11 +103,9 @@ public class EntityBuilder {
                                 domain.getCreatedDate(),
                                 domain.getLastModifiedBy(),
                                 domain.getLastModifiedDate(),
-                                domain.isDeleted(),
                                 domain.isEnabled(),
                                 domain.getBudget(),
                                 domain.getType(),
-                                domain.getCoverFileId(),
                                 domain.getCoverUrl(),
                                 Utils.getDomainOwnersByIds(domain.getOwners()),
                                 Utils.toUserInfo(username, domain.getOwners()));

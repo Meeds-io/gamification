@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -75,12 +76,12 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
   protected EntityType            type;
 
   @Column(name = "BUDGET")
-  protected Long                  budget;
+  protected long                  budget;
 
   @Column(name = "COVER_FILE_ID")
-  protected Long                  coverFileId;
+  protected long                  coverFileId;
 
-  @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.PERSIST })
   private List<DomainOwnerEntity> owners;                                 // NOSONAR
 
   public Long getId() {
@@ -135,7 +136,7 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     return budget;
   }
 
-  public void setBudget(Long budget) {
+  public void setBudget(long budget) {
     this.budget = budget;
   }
 
@@ -143,7 +144,7 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     return coverFileId;
   }
 
-  public void setCoverFileId(Long coverFileId) {
+  public void setCoverFileId(long coverFileId) {
     this.coverFileId = coverFileId;
   }
 

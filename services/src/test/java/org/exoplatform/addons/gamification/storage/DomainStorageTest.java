@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
@@ -89,33 +88,32 @@ public class DomainStorageTest extends AbstractServiceTest {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(0, domainStorage.getAllDomains(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
-    assertEquals(4, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(4, domainStorage.getAllDomains(filter, offset, 10).size());
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(2, domainStorage.getAllDomains(filter, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
-    assertEquals(2, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(2, domainStorage.getAllDomains(filter, offset, 10).size());
 
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(2, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(2, domainStorage.getAllDomains(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(2, domainStorage.getAllDomains(filter, offset, 10).size());
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(6, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(6, domainStorage.getAllDomains(filter, offset, 10).size());
     filter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(2, domainStorage.getAllDomains(filter, offset, 10).size());
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, domainStorage.getAllDomains(offset, 10, filter).size());
+    assertEquals(1, domainStorage.getAllDomains(filter, offset, 10).size());
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(1, domainStorage.getAllDomains(offset, 10, filter).size());
-
+    assertEquals(1, domainStorage.getAllDomains(filter, offset, 10).size());
   }
 
   @Test

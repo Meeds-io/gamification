@@ -3,15 +3,24 @@ package org.exoplatform.addons.gamification.entities.domain.configuration;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 @ExoEntity
 @Entity(name = "GamificationDomainOwner")
 @Table(name = "GAMIFICATION_DOMAIN_OWNERS")
-@NamedQuery(name = "GamificationDomainOwner.deleteDomainOwners", query = "DELETE FROM GamificationDomainOwner a WHERE a.domain.id = :domainId")
-
+@NamedQuery(name = "GamificationDomainOwner.getDomainOwners", query = "SELECT o FROM GamificationDomainOwner o WHERE o.domain.id = :domainId")
 public class DomainOwnerEntity implements Serializable {
 
   private static final long serialVersionUID = 5875077131395950233L;
@@ -71,12 +80,12 @@ public class DomainOwnerEntity implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     DomainOwnerEntity other = (DomainOwnerEntity) obj;
-    return Objects.equals(domain, other.domain) && Objects.equals(id, other.id) && identityId == other.identityId;
+    return Objects.equals(domain.getId(), other.domain.getId()) && Objects.equals(id, other.id) && identityId == other.identityId;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(domain, id, identityId);
+    return Objects.hash(domain.getId(), id, identityId);
   }
 
 }

@@ -18,7 +18,6 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,11 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findByIdWithOwners",
                                                                          DomainEntity.class);
     query.setParameter("id", id);
-    return query.getSingleResult();
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    }
   }
 
   public DomainEntity findEnabledDomainByTitle(String domainTitle) {
@@ -71,8 +74,10 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
 
   public List<DomainEntity> getAllDomains(int offset, int limit, DomainFilter filter) {
     TypedQuery<DomainEntity> query = buildQueryFromFilter(filter, DomainEntity.class, false);
-    if (limit != 0) {
+    if (offset > 0) {
       query.setFirstResult(offset);
+    }
+    if (limit > 0) {
       query.setMaxResults(limit);
     }
     return query.getResultList();

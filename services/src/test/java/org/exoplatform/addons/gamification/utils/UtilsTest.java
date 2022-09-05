@@ -17,6 +17,24 @@
 
 package org.exoplatform.addons.gamification.utils;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
+import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
+import static org.exoplatform.addons.gamification.utils.Utils.TYPE;
+import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
+import static org.exoplatform.addons.gamification.utils.Utils.isAttachmentTokenValid;
+import static org.exoplatform.addons.gamification.utils.Utils.toUserInfo;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.junit.Test;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
@@ -30,14 +48,6 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
-import org.junit.Test;
-
-import java.util.*;
-
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
-import static org.exoplatform.addons.gamification.utils.Utils.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
 
 public class UtilsTest extends AbstractServiceTest {
 
@@ -144,6 +154,7 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testGetCurrentUser() {
+    ConversationState.setCurrent(null);
     String currentUser = Utils.getCurrentUser();
     assertNull(currentUser);
     ConversationState.setCurrent(new ConversationState(new org.exoplatform.services.security.Identity("root")));
@@ -329,17 +340,6 @@ public class UtilsTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testIsAdministrator() {
-    assertFalse(isAdministrator(null));
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity("root",
-                                                                                                         Collections.EMPTY_LIST);
-    ConversationState state = new ConversationState(identity);
-    ConversationState.setCurrent(state);
-    assertFalse(isAdministrator(ConversationState.getCurrent().getIdentity()));
-    ConversationState.setCurrent(null);
-  }
-
-  @Test
   public void testBuildAttachmentUrl() {
     Long lastModifiedDate = System.currentTimeMillis();
     String attachementURl = Utils.buildAttachmentUrl("0", lastModifiedDate, TYPE);
@@ -355,11 +355,11 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testIsAttachmentTokenValid() {
-    String  lastModifiedDate = String.valueOf(System.currentTimeMillis());
+    long lastModifiedTime = System.currentTimeMillis();
     String domainId ="1";
-    String token = Utils.generateAttachmentToken(domainId, TYPE, lastModifiedDate);
-    assertTrue(isAttachmentTokenValid(token, domainId, TYPE, lastModifiedDate));
-    assertFalse(isAttachmentTokenValid("", domainId, TYPE, lastModifiedDate));
+    String token = Utils.generateAttachmentToken(domainId, TYPE, lastModifiedTime);
 
+    assertTrue(isAttachmentTokenValid(token, domainId, TYPE, lastModifiedTime));
+    assertFalse(isAttachmentTokenValid("", domainId, TYPE, lastModifiedTime));
   }
 }

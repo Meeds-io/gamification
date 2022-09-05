@@ -1,8 +1,5 @@
 package org.exoplatform.addons.gamification.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDate;
@@ -23,7 +20,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
@@ -39,7 +35,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.commons.utils.IOUtil;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.Constants;
@@ -65,7 +60,7 @@ public class Utils {
 
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "challenge.announcement.activity";
 
-  private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
+  public static final long              DEFAULT_COVER_LAST_MODIFIED = System.currentTimeMillis();
 
   public static final DateTimeFormatter RFC_3339_FORMATTER          =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
@@ -90,15 +85,13 @@ public class Utils {
 
   public static final String            SYSTEM_USERNAME             = "SYSTEM";
 
-  public static byte[]                  defaultProgramCover         = null; // NOSONAR
-
-  public static final long              DEFAULT_COVER_LAST_MODIFIED = System.currentTimeMillis();
-
   public static final String            BASE_URL_DOMAINS_REST_API   = "/gamification/domains";
 
   public static final String            DEFAULT_IMAGE_REMOTE_ID     = "default-cover";
 
   public static final String            TYPE                        = "cover";
+
+  private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
 
   private Utils() { // NOSONAR
   }
@@ -457,10 +450,6 @@ public class Utils {
     activity.setTemplateParams(currentTemplateParams);
   }
 
-   public static boolean isAdministrator(org.exoplatform.services.security.Identity identity) {
-    return identity != null && identity.isMemberOf("/platform/administrators") ;
-  }
-
   public static boolean isProgramOwner(Set<Long> ownerIds, long userId) {
     return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
   }
@@ -475,8 +464,7 @@ public class Utils {
       lastModifiedDate = DEFAULT_COVER_LAST_MODIFIED;
     }
 
-    String lastModifiedString = String.valueOf(lastModifiedDate);
-    String token = generateAttachmentToken(domainId, type, lastModifiedString);
+    String token = generateAttachmentToken(domainId, type, lastModifiedDate);
     if (org.apache.commons.lang.StringUtils.isNotBlank(token)) {
       try {
         token = URLEncoder.encode(token, "UTF8");
@@ -491,14 +479,14 @@ public class Utils {
                                                     .append("/")
                                                     .append(type)
                                                     .append("?lastModified=")
-                                                    .append(lastModifiedString)
+                                                    .append(lastModifiedDate)
                                                     .append("&r=")
                                                     .append(token)
                                                     .toString();
 
   }
 
-  public static String generateAttachmentToken(String domainId, String attachmentType, String lastModifiedDate) {
+  public static String generateAttachmentToken(String domainId, String attachmentType, Long lastModifiedDate) {
     String token = null;
     CodecInitializer codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
     if (codecInitializer == null) {
@@ -516,13 +504,13 @@ public class Utils {
     return token;
   }
 
-  public static boolean isAttachmentTokenValid(String token, String domainId, String attachmentType, String lastModifiedDate) {
-    if (org.apache.commons.lang.StringUtils.isBlank(token)) {
+  public static boolean isAttachmentTokenValid(String token, String domainId, String attachmentType, Long lastModifiedDate) {
+    if (StringUtils.isBlank(token)) {
       LOG.warn("An empty token is used for {} for domain {}", attachmentType, domainId);
       return false;
     }
     String validToken = generateAttachmentToken(domainId, attachmentType, lastModifiedDate);
-    return org.apache.commons.lang.StringUtils.equals(validToken, token);
+    return StringUtils.equals(validToken, token);
   }
 
   public static String getBaseURLDomainRest() {
@@ -530,17 +518,4 @@ public class Utils {
         + BASE_URL_DOMAINS_REST_API;
   }
 
-  public static Response.ResponseBuilder getDefaultCover() throws IOException {
-    if (defaultProgramCover == null) {
-      InputStream is = PortalContainer.getInstance()
-                                      .getPortalContext()
-                                      .getResourceAsStream("/skin/images/program_default_cover_back.png");
-      if (is == null) {
-        defaultProgramCover = new byte[] {};
-      } else {
-        defaultProgramCover = IOUtil.getStreamContentAsBytes(is);
-      }
-    }
-    return Response.ok(new ByteArrayInputStream(defaultProgramCover), "image/png");
-  }
 }

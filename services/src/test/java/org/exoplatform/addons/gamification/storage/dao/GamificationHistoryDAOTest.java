@@ -332,9 +332,9 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
   @Test
   public void testFindAllRealizationsByFilterSortByActionType() {
-    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, TypeRule.AUTOMATIC);
-    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, TypeRule.AUTOMATIC);
-    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
+    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, EntityType.AUTOMATIC);
+    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, EntityType.AUTOMATIC);
+    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, EntityType.MANUAL);
 
     List<GamificationActionsHistory> histories = new ArrayList<>();
     histories.add(newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), null));
@@ -449,17 +449,10 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   }
   
   @Test
-<<<<<<< HEAD
-  public void testFindAllRealizationsByFilterSortByActionTypeInDateRange() {
-    RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, TypeRule.AUTOMATIC);
-    RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, TypeRule.AUTOMATIC);
-    RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, TypeRule.MANUAL);
-=======
   public void testFindRealizationsByFilterSortByActionTypeInDateRange() {
     RuleEntity rule1Automatic = newRule("testFindRealizationsByFilterSortByActionType1", "domain1", true, EntityType.AUTOMATIC);
     RuleEntity rule2Automatic = newRule("testFindRealizationsByFilterSortByActionType2", "domain2", true, EntityType.AUTOMATIC);
     RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, EntityType.MANUAL);
->>>>>>> 8de1916a... MEED-112: implement add program feature
 
     List<GamificationActionsHistory> histories = new ArrayList<>();
     histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule1Automatic.getEvent(), null));

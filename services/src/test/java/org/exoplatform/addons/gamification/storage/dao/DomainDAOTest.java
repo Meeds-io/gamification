@@ -14,8 +14,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package org.exoplatform.addons.gamification.storage.dao;
+
+import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
@@ -23,9 +24,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class DomainDAOTest extends AbstractServiceTest {
 
@@ -42,8 +40,10 @@ public class DomainDAOTest extends AbstractServiceTest {
     DomainEntity domainEntity = newDomain();
     assertNotNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
     domainEntity.setEnabled(false);
-    domainDAO.update(domainEntity);
+    DomainEntity updatedEntity = domainDAO.update(domainEntity);
     assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
+    assertEquals(domainEntity, updatedEntity);
+    assertEquals(domainEntity.hashCode(), updatedEntity.hashCode());
   }
 
   @Test
@@ -88,7 +88,6 @@ public class DomainDAOTest extends AbstractServiceTest {
     assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
     filter.setEntityFilterType(EntityFilterType.MANUAL);
     assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
-
   }
 
   @Test

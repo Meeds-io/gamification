@@ -25,7 +25,6 @@ import java.util.Set;
 
 import javax.ws.rs.core.SecurityContext;
 
-import org.exoplatform.upload.UploadService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -70,17 +69,17 @@ import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.testing.BaseExoTestCase;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
-import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ProviderBinder;
 import org.exoplatform.services.rest.impl.RequestHandlerImpl;
 import org.exoplatform.services.rest.impl.ResourceBinder;
 import org.exoplatform.services.rest.tools.ResourceLauncher;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.services.test.mock.MockPrincipal;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -90,9 +89,10 @@ import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 @ConfiguredBy({ @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
-    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.social.component.service-dependencies-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.social.component.service-configuration.xml"),
     @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/gamification-test-configuration.xml") })
 
@@ -200,36 +200,37 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   @Before
   public void setUp() throws Exception {
-    begin();
-    ruleDAO = CommonsUtils.getService(RuleDAO.class);
-    gamificationHistoryDAO = CommonsUtils.getService(GamificationHistoryDAO.class);
-    identityManager = CommonsUtils.getService(IdentityManager.class);
-    domainStorage = CommonsUtils.getService(DomainStorage.class);
-    fileService = CommonsUtils.getService(FileService.class);
-    ruleStorage = CommonsUtils.getService(RuleStorage.class);
-    activityManager = CommonsUtils.getService(ActivityManager.class);
-    relationshipManager = CommonsUtils.getService(RelationshipManager.class);
-    challengeService = CommonsUtils.getService(ChallengeService.class);
-    announcementService = CommonsUtils.getService(AnnouncementService.class);
-    badgeService = CommonsUtils.getService(BadgeService.class);
-    domainService = CommonsUtils.getService(DomainService.class);
-    ruleService = CommonsUtils.getService(RuleService.class);
-    gamificationService = CommonsUtils.getService(GamificationService.class);
-    entityManagerService = CommonsUtils.getService(EntityManagerService.class);
-    manageBadgesEndpoint = CommonsUtils.getService(ManageBadgesEndpoint.class);
-    manageDomainsEndpoint = CommonsUtils.getService(ManageDomainsEndpoint.class);
-    requestHandler = getContainer().getComponentInstanceOfType(RequestHandlerImpl.class);
+    super.setUp();
+    ExoContainerContext.setCurrentContainer(getContainer());
+
+    ruleDAO = ExoContainerContext.getService(RuleDAO.class);
+    gamificationHistoryDAO = ExoContainerContext.getService(GamificationHistoryDAO.class);
+    identityManager = ExoContainerContext.getService(IdentityManager.class);
+    domainStorage = ExoContainerContext.getService(DomainStorage.class);
+    fileService = ExoContainerContext.getService(FileService.class);
+    ruleStorage = ExoContainerContext.getService(RuleStorage.class);
+    activityManager = ExoContainerContext.getService(ActivityManager.class);
+    relationshipManager = ExoContainerContext.getService(RelationshipManager.class);
+    challengeService = ExoContainerContext.getService(ChallengeService.class);
+    announcementService = ExoContainerContext.getService(AnnouncementService.class);
+    badgeService = ExoContainerContext.getService(BadgeService.class);
+    domainService = ExoContainerContext.getService(DomainService.class);
+    ruleService = ExoContainerContext.getService(RuleService.class);
+    gamificationService = ExoContainerContext.getService(GamificationService.class);
+    entityManagerService = ExoContainerContext.getService(EntityManagerService.class);
+    manageBadgesEndpoint = ExoContainerContext.getService(ManageBadgesEndpoint.class);
+    manageDomainsEndpoint = ExoContainerContext.getService(ManageDomainsEndpoint.class);
+    requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
     rootIdentity = new Identity(OrganizationIdentityProvider.NAME, "root");
-    badgeStorage = CommonsUtils.getService(BadgeDAO.class);
-    challengeStorage = CommonsUtils.getService(ChallengeStorage.class);
-    domainDAO = CommonsUtils.getService(DomainDAO.class);
-    domainOwnerDAO = CommonsUtils.getService(DomainOwnerDAO.class);
-    realizationsStorage = CommonsUtils.getService(RealizationsStorage.class);
-    ruleIndexingServiceConnector = CommonsUtils.getService(RuleIndexingServiceConnector.class);
-    spaceService = CommonsUtils.getService(SpaceService.class);
-    ExoContainer container = getContainer();
-    binder = container.getComponentInstanceOfType(ResourceBinder.class);
-    RequestHandlerImpl requestHandler = container.getComponentInstanceOfType(RequestHandlerImpl.class);
+    badgeStorage = ExoContainerContext.getService(BadgeDAO.class);
+    challengeStorage = ExoContainerContext.getService(ChallengeStorage.class);
+    domainDAO = ExoContainerContext.getService(DomainDAO.class);
+    domainOwnerDAO = ExoContainerContext.getService(DomainOwnerDAO.class);
+    realizationsStorage = ExoContainerContext.getService(RealizationsStorage.class);
+    ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
+    spaceService = ExoContainerContext.getService(SpaceService.class);
+    binder = ExoContainerContext.getService(ResourceBinder.class);
+    RequestHandlerImpl requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
     // reset default providers to be sure it is clean.
     ProviderBinder.setInstance(new ProviderBinder());
     providers = ProviderBinder.getInstance();
@@ -237,6 +238,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     binder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
     launcher = new ResourceLauncher(requestHandler);
+    begin();
   }
 
   @Override
@@ -244,8 +246,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   public void tearDown() {
     restartTransaction();
     gamificationHistoryDAO.deleteAll();
-    ruleDAO.deleteAll();
     badgeStorage.deleteAll();
+    ruleDAO.deleteAll();
     domainOwnerDAO.deleteAll();
     domainDAO.deleteAll();
     domainStorage.clearCache();
@@ -259,6 +261,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected void startSessionAs(String user) {
     org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity(user);
+    ConversationState state = new ConversationState(identity);
+    ConversationState.setCurrent(state);
+    userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, user);
+  }
+
+  protected void startSessionAsAdministrator(String user) {
+    org.exoplatform.services.security.Identity identity =
+                                                        new org.exoplatform.services.security.Identity(user,
+                                                                                                       Collections.singleton(new MembershipEntry("/platform/administrators")));
     ConversationState state = new ConversationState(identity);
     ConversationState.setCurrent(state);
     userIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, user);
@@ -416,7 +427,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainDTO newDomainDTO(EntityType entityType, String name, boolean status, Set<Long> owners) {
-    return DomainMapper.domainEntityToDomainDTO(newDomain(entityType, name, status, owners));
+    return DomainMapper.domainEntityToDomainDTO(newDomain(entityType, name, status, owners), domainOwnerDAO);
   }
 
   protected DomainEntity newDomain(String name) {
@@ -434,6 +445,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       domain.setCreatedDate(new Date());
       domain = domainDAO.create(domain);
       domainStorage.clearCache();
+      restartTransaction();
     }
     return domain;
   }
@@ -589,11 +601,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainDTO newDomainDTO() {
-    return DomainMapper.domainEntityToDomainDTO(newDomain());
+    return DomainMapper.domainEntityToDomainDTO(newDomain(), domainOwnerDAO);
   }
 
   protected DomainDTO newDomainDTO(String name) {
-    return DomainMapper.domainEntityToDomainDTO(newDomain(name));
+    return DomainMapper.domainEntityToDomainDTO(newDomain(name), domainOwnerDAO);
   }
 
   protected BadgeDTO newBadgeDTO() {
@@ -639,4 +651,5 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       return null;
     }
   }
+
 }

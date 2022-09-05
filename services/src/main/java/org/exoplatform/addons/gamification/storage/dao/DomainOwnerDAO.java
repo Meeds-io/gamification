@@ -16,19 +16,21 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import java.util.List;
+
+import javax.persistence.TypedQuery;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainOwnerEntity;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
-import javax.persistence.Query;
-
 public class DomainOwnerDAO extends GenericDAOJPAImpl<DomainOwnerEntity, Long> {
 
+  @ExoTransactional
+  public List<DomainOwnerEntity> getDomainOwners(long domainId) {
+    TypedQuery<DomainOwnerEntity> query = getEntityManager().createNamedQuery("GamificationDomainOwner.getDomainOwners", DomainOwnerEntity.class);
+    query.setParameter("domainId", domainId);
+    return query.getResultList();
+  }
 
-	@ExoTransactional
-	public void deleteDomainOwners(long domainId) {
-		Query query = getEntityManager().createNamedQuery("GamificationDomainOwner.deleteDomainOwners");
-		query.setParameter("domainId", domainId);
-		query.executeUpdate();
-	}
 }

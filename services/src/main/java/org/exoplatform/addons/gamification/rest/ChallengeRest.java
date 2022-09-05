@@ -252,7 +252,7 @@ public class ChallengeRest implements ResourceContainer {
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
         DomainFilter domainFilter = new DomainFilter(EntityFilterType.AUTOMATIC, EntityStatusType.ENABLED);
-        List<DomainDTO> domains = domainService.getAllDomains(offset, limit, domainFilter);
+        List<DomainDTO> domains = domainService.getAllDomains(domainFilter, offset, limit);
         List<DomainWithChallengesRestEntity> domainsWithChallenges = domains.stream().map(domain -> {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
           try {
@@ -348,10 +348,10 @@ public class ChallengeRest implements ResourceContainer {
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity("The challenge doesn't exist").build();
     } catch (IllegalAccessException e) {
-      LOG.error("User {} is not authorized to delete challenge with id {}", currentUser, challengeId, e);
+      LOG.warn("User {} is not authorized to delete challenge with id {}", currentUser, challengeId, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to delete a challenge").build();
     } catch (Exception e) {
-      LOG.error("Error when deleting challenge with id {}", challengeId, e);
+      LOG.warn("Error when deleting challenge with id {}", challengeId, e);
       return Response.serverError().entity("Error when deleting challenge").build();
     }
   }

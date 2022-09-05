@@ -50,13 +50,13 @@ public class DomainDTO implements Serializable, Cloneable {
 
   private boolean           enabled;
 
-  private Long              budget;
+  private long              budget;
 
   private String            type;
 
   private String            coverUploadId;
 
-  private Long              coverFileId;
+  private long              coverFileId;
 
   private String            coverUrl;
 
@@ -72,9 +72,9 @@ public class DomainDTO implements Serializable, Cloneable {
                    String lastModifiedDate,
                    boolean deleted,
                    boolean enabled,
-                   Long budget,
+                   long budget,
                    String type,
-                   Long coverFileId,
+                   long coverFileId,
                    String coverUrl,
                    Set<Long> owners) {
     this.id = id;
@@ -95,7 +95,7 @@ public class DomainDTO implements Serializable, Cloneable {
   }
 
   @Override
-  protected DomainDTO clone() { // NOSONAR
+  public DomainDTO clone() { // NOSONAR
     return new DomainDTO(id,
                          title,
                          description,

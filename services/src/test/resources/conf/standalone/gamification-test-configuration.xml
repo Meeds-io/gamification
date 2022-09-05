@@ -62,19 +62,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <key>org.exoplatform.commons.file.services.FileService</key>
-        <type>org.exoplatform.addons.gamification.mock.FileServiceMock</type>
+      <key>org.exoplatform.upload.UploadService</key>
+      <type>org.exoplatform.social.core.mock.MockUploadService</type>
     </component>
-    <component>
-        <type>org.exoplatform.upload.UploadService</type>
-        <init-params>
-            <value-param>
-                <name>upload.limit.size</name>
-                <description>Maximum size of the file to upload in MB</description>
-                <value>10</value>
-            </value-param>
-        </init-params>
-    </component>
+
     <component>
         <type>org.exoplatform.web.security.codec.CodecInitializer</type>
         <init-params>
@@ -555,4 +546,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
 
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.file.services.NameSpaceService</target-component>
+        <component-plugin>
+            <name>SocialNameSpacePlugin</name>
+            <set-method>addNameSpacePlugin</set-method>
+            <type>org.exoplatform.commons.file.services.NameSpacePlugin</type>
+            <priority>1000</priority>
+            <init-params>
+                <properties-param>
+                    <name>fileNameSpace.params</name>
+                    <property name="name" value="gamification"/>
+                    <property name="description" value="gamification files storage"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+  <remove-configuration>org.exoplatform.portal.config.UserPortalConfigListener</remove-configuration>
+  <remove-configuration>org.exoplatform.portal.config.GroupPortalConfigListener</remove-configuration>
 </configuration>

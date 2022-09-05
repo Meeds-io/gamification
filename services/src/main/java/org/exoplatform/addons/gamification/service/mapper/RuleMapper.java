@@ -115,7 +115,7 @@ public class RuleMapper {
       rule.setCreatedDate(Utils.toRFC3339Date(ruleEntity.getCreatedDate()));
       rule.setLastModifiedDate(Utils.toRFC3339Date(ruleEntity.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
-      rule.setDomainDTO(DomainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity()));
+      rule.setDomainDTO(DomainMapper.domainEntityToDomainDTO(ruleEntity.getDomainEntity(), null));
 
       return rule;
     }
