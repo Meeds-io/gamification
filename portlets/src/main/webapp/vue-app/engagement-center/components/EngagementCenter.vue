@@ -16,7 +16,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="engagementCenterEnabled">
+    <main v-if="loading && engagementCenterEnabled">
+      <v-toolbar color="transparent" flat>
+        <v-spacer />
+        <v-progress-circular
+          color="primary"
+          class="mb-2"
+          indeterminate />
+        <v-spacer />
+      </v-toolbar>
+    </main>
+    <main v-if="!loading && engagementCenterEnabled">
       <v-tabs
         id="engagementCenterTabs"
         v-model="tab"
@@ -60,8 +70,39 @@ export default {
   },
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
+    loading: true,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
   }),
+  watch: {
+    tab() {
+      if (this.tab === 0) {
+        window.history.pushState('gamificationCenter', 'My programs', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/programs`);
+      } else if (this.tab === 1) {
+        window.history.pushState('gamificationCenter', 'My challenges', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/challenges`);
+      } else if (this.tab === 2) {
+        window.history.pushState('gamificationCenter', 'My achievements', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/achievements`);
+      }
+    },
+    loading() {
+      if (!this.loading) {
+        const urlPath = document.location.search || document.location.pathname;
+        if (urlPath === `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/programs`) {
+          this.tab = 0;
+        } else if (urlPath === `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/challenges`) {
+          this.tab = 1;
+        } else if  (urlPath === `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/achievements`) {
+          this.tab = 2;
+        }
+        else {
+          this.tab = 0;
+          window.history.pushState('gamificationCenter', 'My programs', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/programs`);
+        }
+      }
+    },
+  },
+  mounted() {
+    this.loading = false;
+  }
 };
 </script>
