@@ -253,7 +253,7 @@ public class ChallengeRest implements ResourceContainer {
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
         DomainFilter domainFilter = new DomainFilter(EntityFilterType.AUTOMATIC, EntityStatusType.ENABLED);
-        List<DomainDTO> domains = domainService.getAllDomains(domainFilter, offset, limit);
+        List<DomainDTO> domains = domainService.getAllDomains(domainFilter, 0, -1);
         List<DomainWithChallengesRestEntity> domainsWithChallenges = new ArrayList<>();
         for (DomainDTO domain : domains) {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
