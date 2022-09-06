@@ -17,16 +17,16 @@
 
 package org.exoplatform.addons.gamification.rest.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
-@AllArgsConstructor
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @NoArgsConstructor
-@Data
-public class DomainList implements Cloneable {
+@Getter
+@Setter
+public class DomainList {
 
   private List<DomainRestEntity> domains;
 
@@ -36,8 +36,4 @@ public class DomainList implements Cloneable {
 
   private int                    domainsSize;
 
-  @Override
-  protected DomainList clone() { // NOSONAR
-    return new DomainList(domains, domainsOffset, domainsLimit, domainsSize);
-  }
 }

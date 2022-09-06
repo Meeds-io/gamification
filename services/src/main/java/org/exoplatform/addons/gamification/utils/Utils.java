@@ -19,10 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -37,14 +34,8 @@ import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.Constants;
-import org.exoplatform.portal.localization.LocaleContextInfoUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.UserProfile;
-import org.exoplatform.services.resources.LocaleContextInfo;
-import org.exoplatform.services.resources.LocalePolicy;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -362,34 +353,6 @@ public class Utils {
     return space != null ? space.getDisplayName() : null;
   }
 
-  public static Locale getCurrentUserLocale() {
-    String username = getCurrentUser();
-    Locale locale = Locale.ENGLISH;
-
-    try {
-      LocalePolicy localePolicy = CommonsUtils.getService(LocalePolicy.class);
-      LocaleContextInfo localeCtx = LocaleContextInfoUtils.buildLocaleContextInfo((HttpServletRequest) null);
-      localeCtx.setUserProfileLocale(getUserLocale(username));
-      localeCtx.setRemoteUser(username);
-      Set<Locale> supportedLocales = LocaleContextInfoUtils.getSupportedLocales();
-
-      locale = localePolicy.determineLocale(localeCtx);
-      boolean supported = supportedLocales.contains(locale);
-
-      if (!supported && !"".equals(locale.getCountry())) {
-        locale = new Locale(locale.getLanguage());
-        supported = supportedLocales.contains(locale);
-      }
-      if (!supported) {
-        LOG.warn("Unsupported locale returned by LocalePolicy: " + localePolicy + ". Falling back to 'en'.");
-
-      }
-    } catch (Exception e) {
-      LOG.warn("Could not determine Locale for user {}. Falling back to 'en'.", username);
-    }
-    return locale;
-  }
-
   public static String getI18NMessage(Locale userLocale, String messageKey) {
     ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
     if (userLocale == null) {
@@ -402,24 +365,6 @@ public class Utils {
       LOG.warn("Resource bundle key " + messageKey + " not found");
       return null;
     }
-  }
-
-  public static Locale getUserLocale(String username) {
-    OrganizationService organizationService = CommonsUtils.getService(OrganizationService.class);
-    UserProfile profile = null;
-    try {
-      profile = organizationService.getUserProfileHandler().findUserProfileByName(username);
-    } catch (Exception e) {
-      LOG.error("Error when getting user locale ", e);
-    }
-    String lang = null;
-    if (profile != null) {
-      lang = profile.getAttribute(Constants.USER_LANGUAGE);
-    }
-    if (StringUtils.isNotBlank(lang)) {
-      return LocaleUtils.toLocale(lang);
-    }
-    return null;
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {

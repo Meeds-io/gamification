@@ -22,13 +22,15 @@ import java.util.List;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class DomainRestEntity implements Cloneable {
+@Getter
+@Setter
+public class DomainRestEntity {
 
   private Long           id;
 
@@ -88,25 +90,6 @@ public class DomainRestEntity implements Cloneable {
     this.coverUrl = coverUrl;
     this.owners = owners;
     this.userInfo = userInfo;
-  }
-
-  @Override
-  protected DomainRestEntity clone() { // NOSONAR
-    return new DomainRestEntity(id,
-                                title,
-                                description,
-                                priority,
-                                createdBy,
-                                createdDate,
-                                lastModifiedBy,
-                                lastModifiedDate,
-                                enabled,
-                                budget,
-                                type,
-                                coverUrl,
-                                coverUploadId,
-                                owners,
-                                userInfo);
   }
 
 }

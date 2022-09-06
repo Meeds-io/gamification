@@ -1,7 +1,6 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import static org.exoplatform.addons.gamification.utils.Utils.escapeIllegalCharacterInMessage;
-import static org.exoplatform.addons.gamification.utils.Utils.getCurrentUserLocale;
 import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
 
 import java.io.File;
@@ -19,12 +18,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.RealizationsService;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -116,68 +117,81 @@ public class RealizationsServiceImpl implements RealizationsService {
     return realizationsStorage.updateRealizationStatus(gHistory);
   }
 
-  @Override
-  public InputStream exportXlsx(String fileName,
-                               List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
-    String data = stringifyAchievements(gamificationActionsHistoryRestEntities);
-    String[] dataToWrite = data.split("\\r?\\n");
-    SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
-    fileName += formatter.format(new Date());
-    File temp = File.createTempFile(fileName, ".xlsx");
-    temp.deleteOnExit();
-    try (XSSFWorkbook workbook = new XSSFWorkbook(); FileOutputStream outputStream = new FileOutputStream(temp)) {
-      Sheet sheet = workbook.createSheet(SHEETNAME);
-      CreationHelper helper = workbook.getCreationHelper();
-      for (int i = 0; i < dataToWrite.length; i++) {
-        Row row = sheet.createRow((short) i);
-        String[] str = dataToWrite[i].split(",");
-        for (int j = 0; j < str.length; j++) {
-          row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
+  public InputStream exportXlsx(RealizationsFilter filter,
+                                Identity identity,
+                                String fileName,
+                                Locale locale) throws IllegalAccessException {
+    try {
+      List<GamificationActionsHistoryDTO> realizations = getRealizationsByFilter(filter, identity, 0, -1);
+      String data = stringifyAchievements(realizations, locale);
+      String[] dataToWrite = data.split("\\r?\\n");
+      SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
+      fileName += formatter.format(new Date());
+      File temp = File.createTempFile(fileName, ".xlsx");
+      temp.deleteOnExit();
+      try (XSSFWorkbook workbook = new XSSFWorkbook(); FileOutputStream outputStream = new FileOutputStream(temp)) {
+        Sheet sheet = workbook.createSheet(SHEETNAME);
+        CreationHelper helper = workbook.getCreationHelper();
+        for (int i = 0; i < dataToWrite.length; i++) {
+          Row row = sheet.createRow((short) i);
+          String[] str = dataToWrite[i].split(",");
+          for (int j = 0; j < str.length; j++) {
+            row.createCell(j).setCellValue(helper.createRichTextString(str[j]));
+          }
         }
+        workbook.write(outputStream);
       }
-      workbook.write(outputStream);
+      return new FileInputStream(temp);
+    } catch (IOException e) {
+      throw new IllegalStateException("Error exporting XLSX file for achievements with filter " + filter, e);
     }
-    return new FileInputStream(temp);
   }
 
-  private String stringifyAchievements(List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) {
-    Locale locale = getCurrentUserLocale();
+  private String stringifyAchievements(List<GamificationActionsHistoryDTO> realizations, Locale locale) { // NOSONAR
     StringBuilder sbResult = new StringBuilder();
     // Add header
     sbResult.append(HEADER);
     // Add a new line after the header
     sbResult.append(SEPARATOR);
 
-    gamificationActionsHistoryRestEntities.forEach(ga -> {
+    realizations.forEach(ga -> {
       try {
         String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionLabel = "-";
-        actionLabel = getI18NMessage(locale, actionLabelKey + ga.getActionLabel());
-        if (actionLabel == null && ga.getAction() != null) {
-          actionLabel = escapeIllegalCharacterInMessage(ga.getAction().getTitle());
+
+        RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? Utils.getRuleById(ga.getRuleId())
+                                                                     : Utils.getRuleByTitle(ga.getActionTitle());
+
+        DomainDTO domain = Utils.getDomainByTitle(ga.getDomain());
+
+        String ruleTitle = rule == null ? null : rule.getTitle();
+        String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
+        actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
+        if (actionLabel == null && rule != null && actionTitleKey != null) {
+          actionLabel = escapeIllegalCharacterInMessage(rule.getTitle());
         } else {
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
         String domainDescription = "-";
         if (ga.getDomain() != null) {
-          domainDescription = getI18NMessage(locale, domainTitleKey + ga.getDomain().getDescription().replace(" ", ""));
+          domainDescription = getI18NMessage(locale, domainTitleKey + domain.getDescription().replace(" ", ""));
           if (domainDescription == null) {
-            domainDescription = ga.getDomain().getDescription();
+            domainDescription = domain.getDescription();
           }
         }
         domainDescription = escapeIllegalCharacterInMessage(domainDescription);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getEarner());
+        sbResult.append(Utils.getUserFullName(ga.getEarnerId()));
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getAction() != null ? ga.getAction().getType().name() : "-");
+        sbResult.append(rule != null ? rule.getType().name() : "-");
         sbResult.append(DELIMITER);
         sbResult.append(domainDescription);
         sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
-        sbResult.append(ga.getScore());
+        sbResult.append(ga.getActionScore());
         sbResult.append(DELIMITER);
         sbResult.append(ga.getStatus());
         sbResult.append(DELIMITER);

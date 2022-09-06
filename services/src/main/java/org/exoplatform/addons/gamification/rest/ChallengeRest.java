@@ -3,7 +3,6 @@ package org.exoplatform.addons.gamification.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -19,13 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
@@ -33,7 +25,11 @@ import org.exoplatform.addons.gamification.rest.model.DomainWithChallengesRestEn
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.*;
+import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
@@ -43,6 +39,14 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 @Path("/gamification/challenges")
@@ -94,9 +98,6 @@ public class ChallengeRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a challenge", e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    } catch (Exception e) {
-      LOG.warn("Error creating a challenge", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -131,17 +132,20 @@ public class ChallengeRest implements ResourceContainer {
       LOG.warn("Bad request sent to server with empty challengeId");
       return Response.status(400).build();
     }
-    String currentUserId = Utils.getCurrentUser();
+    String currentUser = Utils.getCurrentUser();
     try {
-      Challenge challenge = challengeService.getChallengeById(challengeId, currentUserId);
+      Challenge challenge = challengeService.getChallengeById(challengeId, currentUser);
       if (challenge == null) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
       return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList)).build();
-    } catch (Exception e) {
-      LOG.error("Error getting challenge", e);
-      return Response.status(500).build();
+    } catch (ObjectNotFoundException e) {
+      LOG.debug("User '{}' attempts to retrieve a not existing challenge by id '{}'", currentUser, challengeId, e);
+      return Response.status(Response.Status.NOT_FOUND).entity("Challenge not found").build();
+    } catch (IllegalAccessException e) {
+      LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
 
@@ -181,9 +185,6 @@ public class ChallengeRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to update a challenge for owner '{}'", currentUser, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    } catch (Exception e) {
-      LOG.warn("Error updating a challenge", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -253,26 +254,23 @@ public class ChallengeRest implements ResourceContainer {
       } else if (groupByDomain) {
         DomainFilter domainFilter = new DomainFilter(EntityFilterType.AUTOMATIC, EntityStatusType.ENABLED);
         List<DomainDTO> domains = domainService.getAllDomains(domainFilter, offset, limit);
-        List<DomainWithChallengesRestEntity> domainsWithChallenges = domains.stream().map(domain -> {
+        List<DomainWithChallengesRestEntity> domainsWithChallenges = new ArrayList<>();
+        for (DomainDTO domain : domains) {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
-          try {
-            filter.setDomainId(domain.getId());
-            List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
-                                                                                        currentUser,
-                                                                                        offset,
-                                                                                        limit,
-                                                                                        announcementsPerChallenge,
-                                                                                        true);
-            domainWithChallenge.setChallenges(challengeRestEntities);
-            domainWithChallenge.setChallengesOffset(offset);
-            domainWithChallenge.setChallengesLimit(limit);
-            int size = challengeService.countChallengesByFilterAndUser(filter, currentUser);
-            domainWithChallenge.setChallengesSize(size);
-          } catch (IllegalAccessException | ObjectNotFoundException e) {
-            LOG.debug("Error retrieving challenges of domain {} for user {}", domain.getTitle(), currentUser, e);
-          }
-          return domainWithChallenge;
-        }).collect(Collectors.toList());
+          filter.setDomainId(domain.getId());
+          List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
+                                                                                      currentUser,
+                                                                                      offset,
+                                                                                      limit,
+                                                                                      announcementsPerChallenge,
+                                                                                      true);
+          domainWithChallenge.setChallenges(challengeRestEntities);
+          domainWithChallenge.setChallengesOffset(offset);
+          domainWithChallenge.setChallengesLimit(limit);
+          int size = challengeService.countChallengesByFilterAndUser(filter, currentUser);
+          domainWithChallenge.setChallengesSize(size);
+          domainsWithChallenges.add(domainWithChallenge);
+        }
         return Response.ok(domainsWithChallenges).build();
       } else {
         List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
@@ -287,12 +285,11 @@ public class ChallengeRest implements ResourceContainer {
         LOG.info("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       }
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to access not authorized challenges with owner Ids", currentUser, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    } catch (Exception e) {
-      LOG.warn("Error retrieving list of challenges", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -309,13 +306,8 @@ public class ChallengeRest implements ResourceContainer {
           @ApiResponse(responseCode = "401", description = "User not authorized to add a challenge") }
   )
   public Response canAddChallenge() {
-    try {
-      boolean canAddChallenge = challengeService.canAddChallenge(ConversationState.getCurrent().getIdentity());
-      return Response.ok(String.valueOf(canAddChallenge)).build();
-    } catch (Exception e) {
-      LOG.error("Error when checking if the authenticated user can add a challenge", e);
-      return Response.serverError().build();
-    }
+    boolean canAddChallenge = challengeService.canAddChallenge(ConversationState.getCurrent().getIdentity());
+    return Response.ok(String.valueOf(canAddChallenge)).build();
   }
 
   @DELETE
@@ -350,9 +342,6 @@ public class ChallengeRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       LOG.warn("User {} is not authorized to delete challenge with id {}", currentUser, challengeId, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to delete a challenge").build();
-    } catch (Exception e) {
-      LOG.warn("Error when deleting challenge with id {}", challengeId, e);
-      return Response.serverError().entity("Error when deleting challenge").build();
     }
   }
 

@@ -106,7 +106,7 @@ public class GamificationActionsHistoryMapper {
     return gHistoryEntity;
   }
 
-  public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
+  public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) { // NOSONAR
     try {
       String spaceName = "";
       if (gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
