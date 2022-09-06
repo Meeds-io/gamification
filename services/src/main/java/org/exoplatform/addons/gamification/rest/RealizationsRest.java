@@ -55,7 +55,7 @@ public class RealizationsRest implements ResourceContainer {
   @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel"})
   @Path("allRealizations")
   @Operation(
-          summary = "Retrieves the list of achievements switch a filter. The returned format can be of type JSON or XLS", 
+          summary = "Retrieves the list of achievements switch a filter. The returned format can be of type JSON or XLSX", 
           method = "GET", 
           description = "Retrieves the list of challenges available for an owner")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
@@ -105,11 +105,11 @@ public class RealizationsRest implements ResourceContainer {
     filter.setSortDescending(sortDescending);
     filter.setSortField(sortField);
 
-    boolean isXls = StringUtils.isNotBlank(returnType) && returnType.equals("xls");
-    if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXls) {
+    boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
+    if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Unsupported returnType, possible values: xls or json").build();
     }
-    if (!isXls && limit <= 0) {
+    if (!isXlsx && limit <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
     if (offset < 0) {
@@ -118,14 +118,14 @@ public class RealizationsRest implements ResourceContainer {
     try {
       List<GamificationActionsHistoryDTO> gActionsHistoryList = realizationsService.getRealizationsByFilter(filter,
                                                                                                             identity,
-                                                                                                            isXls ? 0 : offset,
-                                                                                                            isXls ? -1 : limit);
+                                                                                                            isXlsx ? 0 : offset,
+                                                                                                            isXlsx ? -1 : limit);
       List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities = GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
 
-      if (isXls) {
+      if (isXlsx) {
         String filename = "report_Actions";
-        InputStream xlsInputStream = realizationsService.exportXls(filename, gamificationActionsHistoryRestEntities);
-        return Response.ok(xlsInputStream)
+        InputStream xlsxInputStream = realizationsService.exportXlsx(filename, gamificationActionsHistoryRestEntities);
+        return Response.ok(xlsxInputStream)
                        .header("Content-Disposition", "attachment; filename=" + filename + ".xlsx")
                        .header("Content-Type", "application/vnd.ms-excel")
                        .build();
@@ -136,7 +136,7 @@ public class RealizationsRest implements ResourceContainer {
       LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}", currentUser, earnerId, e);
       return Response.status(Response.Status.FORBIDDEN).build();
     } catch (Exception e) {
-      LOG.warn("Error retrieving list of Realizations or exporting xls file", e);
+      LOG.warn("Error retrieving list of Realizations or exporting xlsx file", e);
       return Response.serverError().entity(e.getMessage()).build();
     }
   }
