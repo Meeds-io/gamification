@@ -72,6 +72,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
+  props: {
+    earnerId: {
+      type: Number,
+      default: () => 0,
+    },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+    retrieveAll: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     realizations: [],
     offset: 0,
@@ -96,31 +110,27 @@ export default {
     hasMore() {
       return this.limit <= this.realizations.length;
     },
+    earnerIdToRetrieve() {
+      return this.retrieveAll ? 0 : this.earnerId;
+    },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
     },
     realizationsHeaders() {
-      return [
+      const realizationsHeaders = [
         {
           text: this.$t('realization.label.date'),
           align: 'center',
           sortable: true,
           value: 'date',
-          class: 'actionHeader px-2',
+          class: 'actionHeader',
         },
         {
           text: this.$t('realization.label.grantee'),
           align: 'center',
           sortable: false,
           value: 'grantee',
-          class: 'actionHeader px-1'
-        },
-        {
-          text: this.$t('realization.label.actionLabel'),
-          align: 'center',
-          sortable: false,
-          value: 'actionLabel',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.actionType'),
@@ -134,30 +144,39 @@ export default {
           align: 'center',
           sortable: false,
           value: 'programLabel',
-          class: 'actionHeader px-0'
+          class: 'actionHeader'
+        },
+        {
+          text: this.$t('realization.label.actionLabel'),
+          align: 'center',
+          sortable: false,
+          value: 'actionLabel',
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.points'),
           align: 'center',
           sortable: false,
           value: 'points',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.status'),
           align: 'center',
           sortable: false,
           value: 'status',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
-        {
+      ];
+      if (this.isAdministrator) {
+        realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
           align: 'center',
           sortable: false,
-          value: '',
-          class: 'actionHeader px-2'
-        },
-      ];
+          class: 'actionHeader'
+        });
+      }
+      return realizationsHeaders;
     },
   },
   watch: {
@@ -202,13 +221,13 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate);
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
