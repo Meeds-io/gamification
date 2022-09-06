@@ -1,0 +1,609 @@
+@import "variables.less";
+@import "mixins.less";
+
+#ChallengesApplication {
+  background-color: @white !important;
+  min-height: ~"calc(100vh - 120px)";
+
+  .welcomeMessage {
+    margin: 0 20% 10%;
+    align-items: center;
+    text-align: center;
+    color: @darkGrey;
+
+    .title {
+      font-weight: bold;
+      font-size: 14px !important;
+    }
+  }
+
+  .addChallengeButton {
+    .v-btn {
+      text-transform: none !important;
+      font-weight: normal !important;
+    }
+  }
+  .challengeFilter{
+    width: 25%;
+    max-width: 400px;
+    min-width: 115px !important;
+    .v-tooltip__content{
+      right: 18% ~'!important; /** orientation=lt */ ';
+      left: auto ~'!important; /** orientation=lt */ ';
+      left: 18% ~'!important; /** orientation=rt */ ';
+      right: auto ~'!important; /** orientation=rt */ ';
+      top: 40px !important;
+    }
+  }
+  .challengeQuickFilter{
+    width: 15%;
+    max-width: max-content;
+    min-width: fit-content !important;
+  }
+}
+
+.emptyChallenges {
+  min-height: ~"calc(100vh - 100px)" ;
+}
+.challenge-card {
+  .cardOfChallenge {
+    width: 95%;
+    .contentCard {
+      max-height: 175px;
+      height: 175px
+    }
+
+    .footer {
+      .v-list-item {
+        min-height: 38px !important;
+      }
+
+      .addAnnounce {
+        width: 40%;
+        margin-right: 12px ~'; /** orientation=lt */ ';
+        margin-left: 12px ~'; /** orientation=rt */ ';
+        .btnAdd {
+          float: right ~'; /** orientation=lt */ ';
+          float: left ~'; /** orientation=rt */ ';
+          pointer-events: auto !important;
+        }
+      }
+    }
+  }
+
+  .contentChallenge {
+    cursor: pointer;
+    width: 30%;
+  }
+
+  .title {
+    .status {
+      font-size: 14px;
+      color: @greyColorLighten1;
+      width: 90%;
+      padding: 9px;
+      cursor: pointer;
+      .date {
+        margin-left:  0px ~'; /** orientation=lt */ ';
+        margin-right: 10px ~'; /** orientation=rt */ ';
+      }
+    }
+    .iconStatus {
+      margin-left: -8px;
+      font-size: 12px;
+    }
+    .startsColor {
+      color: @colorIconWarning;
+    }
+    .endedColor {
+      color: @errorColor;
+    }
+    .endsColor {
+      color: #476A9C;
+    }
+    .edit {
+      width: 10%;
+      .v-list.v-sheet.theme--light{
+        padding: 0px !important;
+      }
+      .editList {
+        min-height: 40px;
+        cursor: pointer;
+        .editLabel {
+          font-size: 0.8125rem;
+          font-weight: 500;
+          line-height: 1rem;
+        }
+      }
+
+    }
+    .subtitleChallenge {
+      font-weight: bold;
+      color: @baseColor;
+      text-align: center;
+      -webkit-line-clamp: 4;
+      height: 4.9em;
+    }
+  }
+  .points {
+    .trophy{
+      font-size: 16px;
+    }
+    color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default);
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px !important;
+  }
+}
+
+#announcementDrawer {
+  .titleChallenge {
+    color: @greyColorLighten1Default;
+    font-weight: bold;
+    font-size: 14px !important;
+  }
+  .separator {
+    border-color: @greyColorLighten1Default;
+    border-bottom: 0px !important;
+  }
+}
+
+#winnersDetails {
+  .accountTitleWrapper {
+    border-bottom: 1px solid @greyColorLighten1Default;
+
+    .accountTitleItem {
+      max-width: 100%;
+
+      &:before {
+        display: none !important;
+      }
+
+      &:hover {
+        &:before {
+          opacity: 0;
+        }
+      }
+
+      &:focus {
+        &:before {
+          opacity: 0;
+        }
+      }
+
+      .accountTitleLabel {
+        color: @toolbarLightLinkHoverColor;
+        font-size: 0.9rem !important;
+      }
+
+      .externalFlagClass {
+        color: @baseColorLight;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+#challengeDetails {
+  .titleChallenge {
+    color: @greyColorLighten1Default;
+    font-weight: bold;
+    font-size: 14px !important;
+  }
+
+  .separation {
+    border-color: @greyColorLighten1Default;
+    border-bottom: 0px !important;
+  }
+
+  .descriptionLabel {
+    color: @greyColorLighten1Default;
+  }
+  .winners{
+    display: flex;
+    .winnersLabel {
+      color: @greyColorLighten1Default;
+      flex: auto;
+      flex-basis: fit-content;
+    }
+    .viewAll{
+      color: @primaryColor ;
+      cursor: pointer;
+    }
+  }
+
+  .description {
+    color: @textColorDefault;
+  }
+
+  .date {
+    color: @baseColorLight;
+    margin-left:  10px ~'; /** orientation=lt */ ';
+    margin-right: 10px ~'; /** orientation=rt */ ';
+  }
+
+  .endDate {
+    .uiIconDueDate {
+      &:before {
+        content: "\ebf2";
+        color: @baseColorLight;
+        font-size: 22px;
+      }
+    }
+  }
+
+  .startDate {
+    .uiIconStartDate {
+      color: @baseColorLight;
+      font-size: 24px;
+      margin-left: -2px;
+
+      &:before {
+        content: "\ebf3";
+      }
+    }
+  }
+
+  .listMangers {
+    padding-left:  12px ~'; /** orientation=lt */ ';
+    padding-right: 12px ~'; /** orientation=rt */ ';
+  }
+
+  .points {
+    color: @darkGrey;
+    font-size: 14px !important;
+  }
+
+  ul li {
+    list-style-type: disc !important;
+  }
+}
+
+#EngagementCenterPrograms {
+  background-color: @white !important;
+  min-height: ~"calc(100vh - 120px)";
+}
+
+#Realizations {
+  margin: 25px;
+  background-color: @white !important;
+
+  .export{
+    font-weight: normal !important;
+  }
+  .realizationsTable{
+    .actionHeader{
+      font-weight: bold !important;
+      font-size: 14px !important;
+      color: @darkGrey;
+    }
+    .actionDescription{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 6;
+      -webkit-box-orient: vertical;
+      max-height: 10em;
+      word-break: break-word;
+      padding: 0;
+      height: auto;
+    }
+    .actionTitle {
+      word-break: break-word;
+    }
+    .actions {
+      .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled){
+        cursor: pointer;
+        font-size: 14px;
+        color: @darkGrey;
+      }
+    }
+    .defaultCursor {
+      cursor: default !important;
+    }
+  }
+  .selected-period-menu {
+     width: 18% !important;
+    .v-menu__content.theme--light.menuable__content__active {
+      max-width: 100% !important;
+      left: 155px !important;
+      right: 155px !important;
+      top : 55px  !important;
+    }
+    .theme--light.v-input input{
+      color: var(--allPagesGreyColorLighten1, @greyColorLighten1Default) !important;
+    }
+    .time-picker {
+      display: inline;
+      min-width: auto !important;
+      width: auto !important;
+      margin: 0;
+      padding: 0;
+    }
+    .date-time-selection {
+      letter-spacing: 0px !important;
+      white-space: normal;
+    }
+    .period-selection {
+      box-sizing: border-box;
+
+      .v-btn {
+        width: 33%;
+        box-sizing: border-box;
+        border: 0 !important;
+      }
+    }
+    .selected-period-input {
+      max-width: 225px !important;
+      .v-input__slot {
+        margin: 4px 0 0;
+      }
+    }
+    .selected-period-menu-content {
+      max-width: 400px !important;
+      width: 400px !important;
+    }
+    .v-picker__title{
+      border-top-left-radius: 0px !important;
+      border-top-right-radius: 0px !important;
+    }
+    .v-picker.v-card.v-picker--date.theme--light{
+      width: 400px;
+    }
+    .v-date-picker-table {
+      height: auto;
+    }
+    .v-date-picker-table--month tr td .v-btn {
+      box-sizing: border-box;
+    }
+    .v-picker__actions {
+      padding-top: 0;
+    }
+    .selected-period-menu {
+      .v-menu__content.theme--light.menuable__content__active {
+        max-width: 100% !important;
+        left: 155px !important;
+        right: 155px !important;
+        top : 55px  !important;
+      }
+    }
+  }
+  .editRealizationDrawer{
+    .pointsRealization{
+      width: 25%;
+    }
+    .tooManyChars {
+      position: absolute;
+      right: 24px ~'; /** orientation=lt */ ';
+      left: 24px ~'; /** orientation=rt */ ';
+    }
+    .uiIconMessageLength {
+      font-size: 14px;
+      color: @successColor;
+      &:before {
+        content: "\e910";
+      }
+    }
+    .labels {
+      color : @darkGrey;
+    }
+  }
+}
+.EngagementCenterDrawer {
+  .alert{
+    text-align: center;
+  }
+  .points {
+    max-width: 90px !important;
+  }
+  .EngagementCenter-title {
+    .v-input__slot {
+      &:before {
+        border: none !important;
+      }
+      &:after {
+        border: none !important;
+      }
+      textarea {
+        border: none !important;
+        padding: 3px 6px !important;
+        width: 100% !important;
+        font-size: 20px;
+        margin-top: -4px;
+        color: @textColor !important;
+        &::placeholder {
+          font-size: 19px !important;
+        }
+        &:focus {
+          box-shadow: none !important;
+        }
+      }
+    }
+  }
+  .EngagementCenterAssignItem{
+    position : relative ;
+    .assigneeName{
+      max-width : 75%;
+      .identitySuggesterItem {
+        background-color: @primaryColorLight ;
+        border: 1px solid @primaryDarkerColorGradientEnd ;
+        color: @btnPrimaryColor ;
+        width: max-content;
+      }
+    }
+    .challengeAssignBtn {
+      position: absolute;
+      width: 25% ;
+      left: 0  ~'; /** orientation=rt */ ';
+      right: 0  ~'; /** orientation=lt */ ';
+      .uiAddAssignIcon {
+        margin-top: -4px !important;
+        padding-right: 6px;
+
+        &:before {
+          content: "\e6c4";
+          color: @greyColorLighten1Default;
+          font-size: 15px;
+        }
+      }
+    }
+    .assignChallengeMenu {
+      .uiAssignToMeIcon {
+        margin-top: -4px;
+
+        &:before {
+          content: "\e6cc";
+          padding-right: 6px;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+  .challengeDates {
+    max-width: max-content;
+    padding-right: 10px;
+    .datePickerComponent {
+      &:after {
+        display: none !important;
+      }
+      input {
+        max-width: 90% !important;
+        padding: 12px 5px 0px 4px  ;
+        border: none;
+        box-shadow: none;
+        font-size : 16px;
+        &::placeholder {
+          font-size: 16px !important;
+        }
+      }
+    }
+    .challengePlanDateCalender {
+      max-height: 40px;
+
+      .uiIconStartDate {
+        color: @primaryColor;
+        font-size: 24px;
+        margin-left: -2px;
+
+        &:before {
+          content: "\ebf3";
+        }
+      }
+    }
+    .challengeEndDateCalender {
+      max-height: 40px;
+
+      .uiIconEndDate {
+        &:before {
+          content: "\ebf2";
+          color: @primaryColor;
+          font-size: 22px;
+        }
+      }
+      .v-picker__actions.v-card__actions {
+        border-top: 1px solid @borderColor;
+        margin-top: 4px;
+
+        .dateFooter {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+.assigneeAvatars {
+
+  .AllUsersAvatar {
+    box-shadow: 0 0 2px 1px @greyColor;
+    border-radius: 25px;
+    z-index: 1;
+    background: white;
+  }
+
+  .winnersAvatarsList {
+    padding-left: 18px ~'; /** orientation=lt */ ';
+    padding-right: 18px ~'; /** orientation=rt */ ';
+    .seeMoreAvatars {
+      .seeMoreItem {
+        position: relative;
+
+        &:before {
+          content: "";
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          background: @baseColorMedium;
+          border-radius: 50%;
+          opacity: .5;
+          z-index: 1;
+        }
+
+        .seeMoreAvatarList {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          text-align: center;
+          width: 30px;
+          height: 30px;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 15px;
+          font-weight: bold;
+          z-index: 1;
+        }
+      }
+    }
+    .announcesNumber {
+      color: @primaryColor;
+      cursor: pointer;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .projectManagersAvatar {
+      background-position: center;
+      background-size: cover;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+    }
+  }
+  .winners {
+    width: 60%;
+    .emptyWinners {
+      color: @baseColorLight;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  }
+}
+.EngagementCenterImageSelector{
+    .v-image__image {
+      filter: brightness(70%);
+    }
+  .changeImgButton {
+    top: 20%;
+    left: 42%;
+    position: absolute;
+
+    .v-input__prepend-outer {
+      margin: 0;
+
+      button {
+        color: @lightWhite;
+        padding: 3px;
+        size: 34px;
+      }
+    }
+
+    .v-input__control {
+      visibility: hidden;
+      width: 0;
+      height: 0;
+    }
+  }
+}
