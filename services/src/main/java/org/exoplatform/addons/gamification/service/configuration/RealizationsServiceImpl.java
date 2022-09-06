@@ -45,7 +45,7 @@ public class RealizationsServiceImpl implements RealizationsService {
   private static final String SEPARATOR = "\n";
 
   // File header
-  private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status,Spaces";
+  private static final String HEADER    = "Date,Grantee,Action type,Program label,Action label,Points,Status";
 
   private static final String SHEETNAME = "Achivements Report";
 
