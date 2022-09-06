@@ -117,7 +117,7 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public InputStream exportXls(String fileName,
+  public InputStream exportXlsx(String fileName,
                                List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IOException {
     String data = stringifyAchievements(gamificationActionsHistoryRestEntities);
     String[] dataToWrite = data.split("\\r?\\n");
@@ -183,7 +183,7 @@ public class RealizationsServiceImpl implements RealizationsService {
         sbResult.append(DELIMITER);
         sbResult.append(SEPARATOR);
       } catch (Exception e) {
-        LOG.error("Error when computing to XLS ", e);
+        LOG.error("Error when computing to XLSX ", e);
       }
     });
     return sbResult.toString();
