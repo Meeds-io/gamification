@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :format="dateFormat"
         :value="realization.createdDate" />
     </td>
-    <td class="text-truncate align-center">
+    <td v-if="isAdministrator" class="text-truncate align-center">
       {{ earner }}
     </td>
     <td class="align-center actionTitle px-0">
@@ -29,7 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :href="realization.url"
         :class="actionLabelClass"
         class="text-color">
-        <span class="actionDescription">
+        <span class="actionDescription pe-4">
           {{ actionLabel }}
         </span> 
       </a>
@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <td class="text-truncate align-center">
       {{ statusLabel }}
     </td>
-    <td class="text-truncate actions align-center">
+    <td v-if="isAdministrator" class="text-truncate actions align-center">
       <v-menu
         v-if="hasActions"
         v-model="menu"
@@ -110,6 +110,10 @@ export default {
     dateFormat: {
       type: Object,
       default: null,
+    },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
