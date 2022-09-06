@@ -12,7 +12,7 @@ export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDesce
 }
 
 export function exportFile(fromDate, toDate, earnerId) {
-  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&returnType=xls`, '_blank');
+  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&returnType=xlsx`, '_blank');
 }
 
 export function updateRealization( id, status, actionLabel, domain, points) {
