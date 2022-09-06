@@ -20,7 +20,7 @@ package org.exoplatform.addons.gamification.storage;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -28,6 +28,8 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Date;
+
+import static org.junit.Assert.assertThrows;
 
 public class RuleStorageTest extends AbstractServiceTest {
 
@@ -47,7 +49,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule.setLastModifiedBy(TEST_USER_SENDER);
     rule.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule.setDomainDTO(newDomainDTO());
-    rule.setType(TypeRule.AUTOMATIC);
+    rule.setType(EntityType.AUTOMATIC);
     ruleStorage.saveRule(rule);
     assertEquals(ruleStorage.findAllRules().size(), 1);
   }
@@ -109,7 +111,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     manualRule.setLastModifiedBy(TEST_USER_SENDER);
     manualRule.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     manualRule.setDomainDTO(newDomainDTO());
-    manualRule.setType(TypeRule.MANUAL);
+    manualRule.setType(EntityType.MANUAL);
     ruleStorage.saveRule(manualRule);
     assertEquals(ruleStorage.findAllRules().size(), 4);
   }
@@ -174,6 +176,8 @@ public class RuleStorageTest extends AbstractServiceTest {
     ruleStorage.deleteRule(rule.getId(), false);
     rule = ruleStorage.findRuleById(rule.getId());
     assertTrue(rule.isDeleted());
+
+    assertThrows(ObjectNotFoundException.class, () ->  ruleStorage.deleteRule(154l, false));
   }
 
   @Test
@@ -200,7 +204,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setLastModifiedBy(TEST_USER_SENDER);
     rule1.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule1.setDomainDTO(domain1);
-    rule1.setType(TypeRule.MANUAL);
+    rule1.setType(EntityType.MANUAL);
 
     RuleDTO rule2 = new RuleDTO();
     rule2.setScore(Integer.parseInt(TEST__SCORE));
@@ -216,7 +220,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setLastModifiedBy(TEST_USER_SENDER);
     rule2.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule2.setDomainDTO(domain1);
-    rule2.setType(TypeRule.MANUAL);
+    rule2.setType(EntityType.MANUAL);
 
     RuleDTO rule3 = new RuleDTO();
     rule3.setScore(Integer.parseInt(TEST__SCORE));
@@ -232,7 +236,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule3.setLastModifiedBy(TEST_USER_SENDER);
     rule3.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule3.setDomainDTO(domain2);
-    rule3.setType(TypeRule.MANUAL);
+    rule3.setType(EntityType.MANUAL);
 
     ruleStorage.saveRule(rule1);
     ruleStorage.saveRule(rule2);
@@ -269,7 +273,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setLastModifiedBy(TEST_USER_SENDER);
     rule1.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule1.setDomainDTO(domain1);
-    rule1.setType(TypeRule.MANUAL);
+    rule1.setType(EntityType.MANUAL);
 
     RuleDTO rule2 = new RuleDTO();
     rule2.setScore(Integer.parseInt(TEST__SCORE));
@@ -285,7 +289,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setLastModifiedBy(TEST_USER_SENDER);
     rule2.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule2.setDomainDTO(domain1);
-    rule2.setType(TypeRule.MANUAL);
+    rule2.setType(EntityType.MANUAL);
 
     RuleDTO rule3 = new RuleDTO();
     rule3.setScore(Integer.parseInt(TEST__SCORE));
@@ -301,7 +305,7 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule3.setLastModifiedBy(TEST_USER_SENDER);
     rule3.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     rule3.setDomainDTO(domain2);
-    rule3.setType(TypeRule.MANUAL);
+    rule3.setType(EntityType.MANUAL);
 
     ruleStorage.saveRule(rule1);
     ruleStorage.saveRule(rule2);
