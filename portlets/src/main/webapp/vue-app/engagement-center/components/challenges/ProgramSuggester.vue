@@ -123,7 +123,7 @@ export default {
   methods: {
     getAllDomains() {
       this.$challengesServices.getAllDomains()
-        .then(domains => this.domains =  domains.slice().filter(domain => domain.enabled));
+        .then(response => this.domains = response.domains);
     },
     remove(item) {
       this.program = null;
