@@ -64,7 +64,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
 
   protected static final String JSON_TYPE       = "json";
 
-  protected static final String XLS_TYPE        = "xls";
+  protected static final String XLSX_TYPE        = "xlsx";
 
   @Before
   @Override
@@ -286,7 +286,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     GamificationActionsHistory history1 = newGamificationActionsHistory();
     GamificationActionsHistory history2 = newGamificationActionsHistory();
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerId="
-        + 1L + "&returnType=" + XLS_TYPE;
+        + 1L + "&returnType=" + XLSX_TYPE;
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
