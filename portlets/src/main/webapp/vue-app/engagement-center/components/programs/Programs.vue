@@ -24,9 +24,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       color="transparent"
       flat
       class="pa-4">
-      <div class="border-box-sizing clickable" >
+      <div class="border-box-sizing clickable">
         <v-btn
-            v-if="canAddProgram"
+          v-if="canAddProgram"
           class="btn btn-primary"
           @click="$root.$emit('open-program-drawer')">
           <v-icon small>fas fa-plus</v-icon>
@@ -92,7 +92,7 @@ export default {
     retrievePrograms(append) {
       this.loading = true;
       const offset = append && this.programsList?.domains?.length || 0;
-      const returnSize = append ?  true : 0;
+      const returnSize = append ?  false : true;
       this.$programsServices
         .retrievePrograms(offset, this.programsPerPage, this.type, this.status, returnSize)
         .then((programsList) => {

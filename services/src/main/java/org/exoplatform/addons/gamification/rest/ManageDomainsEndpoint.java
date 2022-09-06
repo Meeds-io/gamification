@@ -146,6 +146,10 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     domainFilter.setEntityStatusType(statusType);
     String currentUser = Utils.getCurrentUser();
     // To be changed after implementing new services for engagementCenter
+    if(limit == 0 && offset == 0) {
+      List<DomainDTO> domains = domainService.getAllDomains(domainFilter, 0, -1);
+      return Response.ok(domains).build();
+    }
     DomainList domainList = new DomainList();
     List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
     if (returnSize) {
@@ -280,6 +284,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       if (domain == null) {
         return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
       }
+      isDefault = domain.getCoverFileId() == 0 ;
       lastUpdated = domain.getLastModifiedDate();
     }
 

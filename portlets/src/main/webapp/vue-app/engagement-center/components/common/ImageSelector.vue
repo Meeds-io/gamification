@@ -86,7 +86,7 @@ export default {
           this.$emit('error', this.$t('engagementCenter.error.uploadUnsupportedFileType'));
           return;
         }
-        if (file.size > this.maxUploadsSizeInMb) {
+        if (file.size > this.maxUploadsSizeInMb * 1024) {
           this.$emit('error', this.$uploadService.avatarExcceedsLimitError);
           return;
         }
