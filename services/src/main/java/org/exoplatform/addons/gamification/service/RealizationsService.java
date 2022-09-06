@@ -39,16 +39,16 @@ public interface RealizationsService {
   GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status, String actionLabel, Long points, String domain) throws ObjectNotFoundException;
 
   /**
-   * compute xls from all Realizations .
+   * compute xlsx from all Realizations .
    *
    * @param A {@link List <GamificationActionsHistoryDTO>} object
    * @param A filename String 
-   * @return A xls InputStream {@link InputStream}
+   * @return A xlsx InputStream {@link InputStream}
    * @throws IOException
    * @throws ObjectNotFoundException GamificationActionsHistory identified by
    *           its technical identifier is not found
    */
-  InputStream exportXls(String fileName,
+  InputStream exportXlsx(String fileName,
                    List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities) throws IllegalAccessException,
                                                                                                       IOException;
   
