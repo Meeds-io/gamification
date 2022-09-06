@@ -46,6 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
+          :is-administrator="isAdministrator"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
@@ -126,18 +127,11 @@ export default {
           class: 'actionHeader',
         },
         {
-          text: this.$t('realization.label.grantee'),
-          align: 'center',
-          sortable: false,
-          value: 'grantee',
-          class: 'actionHeader'
-        },
-        {
           text: this.$t('realization.label.actionType'),
           align: 'center',
           sortable: true,
           value: 'actionType',
-          class: 'actionHeader px-1'
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.programLabel'),
@@ -175,6 +169,14 @@ export default {
           sortable: false,
           class: 'actionHeader'
         });
+        realizationsHeaders.splice(1, 0,         
+          {
+            text: this.$t('realization.label.grantee'),
+            align: 'center',
+            sortable: false,
+            value: 'grantee',
+            class: 'actionHeader'
+          },);
       }
       return realizationsHeaders;
     },
