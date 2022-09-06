@@ -132,7 +132,7 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
   @Test
   public void testUpdateDomain() throws Exception {
     EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH, null, 0, "PUT", null);
+    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH + "/0", null, 0, HTTPMethods.PUT.toString(), null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
 
@@ -144,11 +144,11 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length());
 
-    ContainerResponse response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH, "", h, null, envctx);
+    ContainerResponse response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH + "/" + domain.getId(), "", h, null, envctx);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH, "", h, data.getBytes(), envctx);
+    response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH + "/" + domain.getId(), "", h, data.getBytes(), envctx);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
@@ -156,7 +156,7 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
     data = toJsonString(domain);
 
     startSessionAs(TEST_USER);
-    response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH, "", h, data.getBytes(), envctx);
+    response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH + "/" + domain.getId(), "", h, data.getBytes(), envctx);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
@@ -164,7 +164,7 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
     domain.setDescription("description modified");
     data = toJsonString(domain);
     startSessionAsAdministrator(TEST_USER);
-    response = launcher.service(HTTPMethods.PUT.name(), REST_PATH, "", h, data.getBytes(), envctx);
+    response = launcher.service(HTTPMethods.PUT.name(), REST_PATH + "/" + domain.getId(), "", h, data.getBytes(), envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 

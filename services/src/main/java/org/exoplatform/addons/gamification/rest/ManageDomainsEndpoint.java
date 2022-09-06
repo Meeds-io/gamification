@@ -113,26 +113,26 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getAllDomains(@Parameter(description = "Offset of results to retrieve", required = false)
-                                @QueryParam("offset")
-                                @DefaultValue("0")
-                                int offset,
-                                @Parameter(description = "Limit of results to retrieve", required = false)
-                                @QueryParam("limit")
-                                @DefaultValue("0")
-                                int limit,
-                                @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
-                                @QueryParam("type")
-                                @DefaultValue("AUTOMATIC")
-                                String type,
-                                @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false)
-                                @QueryParam("status")
-                                @DefaultValue("ENABLED")
-                                String status,
-                                @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
-                                @QueryParam("returnSize")
-                                @DefaultValue("false")
-                                boolean returnSize) {
+  public Response getDomains(@Parameter(description = "Offset of results to retrieve", required = false)
+                             @QueryParam("offset")
+                             @DefaultValue("0")
+                             int offset,
+                             @Parameter(description = "Limit of results to retrieve", required = false)
+                             @QueryParam("limit")
+                             @DefaultValue("0")
+                             int limit,
+                             @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
+                             @QueryParam("type")
+                             @DefaultValue("AUTOMATIC")
+                             String type,
+                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false)
+                             @QueryParam("status")
+                             @DefaultValue("ENABLED")
+                             String status,
+                             @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
+                             @QueryParam("returnSize")
+                             @DefaultValue("false")
+                             boolean returnSize) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -145,11 +145,6 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
     domainFilter.setEntityStatusType(statusType);
     String currentUser = Utils.getCurrentUser();
-    // To be changed after implementing new services for engagementCenter
-    if(limit == 0 && offset == 0) {
-      List<DomainDTO> domains = domainService.getAllDomains(domainFilter, 0, -1);
-      return Response.ok(domains).build();
-    }
     DomainList domainList = new DomainList();
     List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
     if (returnSize) {
@@ -187,6 +182,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @PUT
+  @Path("{id}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
@@ -195,14 +191,18 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response updateDomain(@Parameter(description = "domain object to update", required = true)
+  public Response updateDomain(@Parameter(description = "domain id", required = true)
+                               @PathParam("id")
+                               long domainId,
+                               @Parameter(description = "domain object to update", required = true)
                                DomainDTO domainDTO) {
     if (domainDTO == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("domain object is mandatory").build();
     }
-    if (domainDTO.getId() <= 0) {
+    if (domainId <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("domain technical identifier must be positive").build();
     }
+    domainDTO.setId(domainId);
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
       domainDTO = domainService.updateDomain(domainDTO, identity);

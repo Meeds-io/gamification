@@ -451,7 +451,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <changeSet  author="exo-gamification" id="1.0.0-39">
       <addColumn tableName="GAMIFICATION_DOMAIN">
-        <column name="BUDGET" type="BIGINT" />
+        <column name="BUDGET" type="BIGINT" defaultValueNumeric="0" />
       </addColumn>
       <addColumn tableName="GAMIFICATION_DOMAIN">
         <column name="TYPE" type="INT" defaultValueNumeric="0">
@@ -459,7 +459,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </column>
       </addColumn>
       <addColumn tableName="GAMIFICATION_DOMAIN">
-        <column name="COVER_FILE_ID" type="BIGINT" />
+        <column name="COVER_FILE_ID" type="BIGINT" defaultValueNumeric="0" />
       </addColumn>
     </changeSet>
 
