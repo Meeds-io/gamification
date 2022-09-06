@@ -79,42 +79,46 @@ public class GamificationRestEndpoint implements ResourceContainer {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
-    public Response getAllPointsByUserId(@QueryParam("userId") String userId, @QueryParam("period") String period) {
-        if (StringUtils.isBlank(userId)) {
-            LOG.warn("Enable to serve request due to bad request parameter «userId»");
-            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("userId parameter must be specified")).build();
+    public Response getAllPointsByUserId(
+                                         @QueryParam("userId")
+                                         String userId,
+                                         @QueryParam("period")
+                                         String period) {
+      if (StringUtils.isBlank(userId)) {
+        LOG.warn("Enable to serve request due to bad request parameter «userId»");
+        return Response.ok(new GamificationPoints().userId(userId)
+                                                   .points(0L)
+                                                   .code("2")
+                                                   .message("userId parameter must be specified"))
+                       .build();
+      }
+      Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
+      Long earnedXP = 0L;
+      if (period == null || StringUtils.equalsIgnoreCase(Period.ALL.name(), period)) {
+        earnedXP = gamificationService.findReputationByEarnerId(identity.getId());
+      } else {
+        period = period.toUpperCase();
+        // Check if the current user is already in top10
+        Date fromDate = null;
+        switch (period) {
+        case "WEEK":
+          fromDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
+          break;
+        case "MONTH":
+          fromDate = Date.from(LocalDate.now()
+                                        .with(TemporalAdjusters.firstDayOfMonth())
+                                        .atStartOfDay(ZoneId.systemDefault())
+                                        .toInstant());
+          break;
         }
-        try {
-            Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
-            Long earnedXP = 0L;
-            if (period == null || StringUtils.equalsIgnoreCase(Period.ALL.name(), period)) {
-              earnedXP = gamificationService.findReputationByEarnerId(identity.getId());
-            } else {
-              period = period.toUpperCase();
-              // Check if the current user is already in top10
-              Date fromDate = null;
-              switch (period) {
-              case "WEEK":
-                fromDate = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
-                break;
-              case "MONTH":
-                fromDate = Date.from(LocalDate.now()
-                                              .with(TemporalAdjusters.firstDayOfMonth())
-                                              .atStartOfDay(ZoneId.systemDefault())
-                                              .toInstant());
-                break;
-              }
-              Date toDate = Date.from(LocalDate.now()
-                                               .atStartOfDay(ZoneId.systemDefault())
-                                               .toInstant());
-              earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), fromDate, toDate);
-            }
-            return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
-        } catch (Exception e) {
-            LOG.error("Error while fetching earned points for user {} - Gamification public API", userId, e);
-            return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching all earned points")).build();
-        }
-
+        Date toDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), fromDate, toDate);
+      }
+      return Response.ok(new GamificationPoints().userId(userId)
+                                                 .points(earnedXP)
+                                                 .code("0")
+                                                 .message("Gamification API is called successfully"))
+                     .build();
     }
 
     /**
@@ -195,14 +199,10 @@ public class GamificationRestEndpoint implements ResourceContainer {
                                          @QueryParam("endDate")
                                          String endDateEntry) {
       if (StringUtils.isBlank(startDateEntry)) {
-        return Response.status(Status.BAD_REQUEST)
-                       .entity("'startDate' field is mandatory")
-                       .build();
+        return Response.status(Status.BAD_REQUEST).entity("'startDate' field is mandatory").build();
       }
       if (StringUtils.isBlank(endDateEntry)) {
-        return Response.status(Status.BAD_REQUEST)
-                       .entity("'endDate' field is mandatory")
-                       .build();
+        return Response.status(Status.BAD_REQUEST).entity("'endDate' field is mandatory").build();
       }
       Date startDate;
       try {
@@ -220,28 +220,17 @@ public class GamificationRestEndpoint implements ResourceContainer {
                        .entity("'endDate' has to use format 'yyyy-MM-dd HH:mm:ss' or 'dd-MM-yyyy'")
                        .build();
       }
-      try {
-        if (startDate.after(endDate)) {
-          return Response.status(Status.BAD_REQUEST)
-                         .entity("'endDate' has to be after 'startDate'")
-                         .build();
-        }
-        List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(earnerType),
-                                                                                                  startDate,
-                                                                                                  endDate);
-        return Response.ok(new GamificationPoints().code("0")
-                                                   .leaderboard(leaderboard)
-                                                   .message("Gamification API is called successfully"))
-                       .build();
-
-      } catch (Exception e) {
-        LOG.warn("Error while building gloabl leaderboard between dates {} and {} - Gamification public API",
-                 startDateEntry,
-                 endDateEntry,
-                 e);
-        return Response.serverError()
-                       .build();
+      if (startDate.after(endDate)) {
+        return Response.status(Status.BAD_REQUEST).entity("'endDate' has to be after 'startDate'").build();
       }
+      List<StandardLeaderboard> leaderboard = gamificationService.findAllLeaderboardBetweenDate(IdentityType.getType(earnerType),
+                                                                                                startDate,
+                                                                                                endDate);
+      return Response.ok(new GamificationPoints().code("0")
+                                                 .leaderboard(leaderboard)
+                                                 .message("Gamification API is called successfully"))
+                     .build();
+
     }
 
     /**
@@ -254,15 +243,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
     public Response getDomains() {
-
-        try {
-            return Response.ok(domainService.getEnabledDomains()).build();
-
-        } catch (Exception e) {
-            LOG.error("Error while fetching Enabled Domains", e);
-            return Response.serverError().entity("Error while fetching enabled domains").build();
-        }
-
+      return Response.ok(domainService.getEnabledDomains()).build();
     }
 
 
@@ -276,15 +257,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed("users")
     public Response getAllEvents() {
-
-        try {
-            return Response.ok(ruleService.getAllEvents()).build();
-
-        } catch (Exception e) {
-            LOG.error("Error while fetching All Events", e);
-            return Response.serverError().entity("Error while fetching all events").build();
-        }
-
+      return Response.ok(ruleService.getAllEvents()).build();
     }
 
     public static class GamificationPoints {

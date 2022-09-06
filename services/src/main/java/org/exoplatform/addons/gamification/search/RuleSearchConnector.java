@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
@@ -281,7 +281,7 @@ public class RuleSearchConnector {
         rule.setAudience(audience);
         rule.setEndDate(endDate);
         rule.setStartDate(startDate);
-        rule.setType(TypeRule.valueOf(type));
+        rule.setType(EntityType.valueOf(type));
         rule.setManagers(getManagersList(hitSource, "managers"));
         rule.setCreatedBy(getUserRemoteId(createdBy));
         rule.setCreatedDate(createdDate);

@@ -16,7 +16,7 @@
  */
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
@@ -87,7 +87,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
-  protected TypeRule        type;
+  protected EntityType        type;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "CHALLENGE_MANAGER_RULE", joinColumns = @JoinColumn(name = "ID"))
@@ -102,11 +102,11 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     this.managers = managers;
   }
 
-  public TypeRule getType() {
+  public EntityType getType() {
     return type;
   }
 
-  public void setType(TypeRule type) {
+  public void setType( EntityType type) {
     this.type = type;
   }
 
