@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-container v-if="!loading">
+  <v-container>
     <v-row no-gutters>
       <v-col
         v-for="program in programs"
@@ -26,6 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         lg="4">
         <engagement-center-program-card
           :program="program"
+          :is-administrator="isAdministrator"
           class="mx-2" />
       </v-col>
     </v-row>
@@ -55,6 +56,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    }
   },
   computed: {
     programs() {

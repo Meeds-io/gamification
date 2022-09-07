@@ -132,7 +132,7 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     isEnabled = enabled;
   }
 
-  public Long getBudget() {
+  public long getBudget() {
     return budget;
   }
 
@@ -140,7 +140,7 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     this.budget = budget;
   }
 
-  public Long getCoverFileId() {
+  public long getCoverFileId() {
     return coverFileId;
   }
 
