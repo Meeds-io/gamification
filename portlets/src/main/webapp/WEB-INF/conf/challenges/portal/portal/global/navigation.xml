@@ -25,6 +25,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <page-nodes>
         <node>
+            <name>challenges</name>
+            <label>#{portal.global.challenges}</label>
+            <visibility>SYSTEM</visibility>
+            <page-reference>portal::global::challenges</page-reference>
+        </node>
+        <node>
             <name>engagement</name>
             <label>#{portal.global.engagement}</label>
             <visibility>SYSTEM</visibility>
