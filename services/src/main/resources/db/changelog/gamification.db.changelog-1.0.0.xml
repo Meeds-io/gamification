@@ -464,6 +464,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </changeSet>
 
     <changeSet author="exo-gamification" id="1.0.0-40">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="GAMIFICATION_DOMAIN_OWNERS"/>
+            </not>
+        </preConditions>
       <createTable tableName="GAMIFICATION_DOMAIN_OWNERS">
         <column name="DOMAIN_OWNER_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1" incrementBy="1">
           <constraints nullable="false" primaryKey="true" primaryKeyName="PK_GAMIFICATION_DOMAIN_OWNER_ID" />
@@ -475,6 +480,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <constraints nullable="false" />
         </column>
       </createTable>
+      <modifySql dbms="mysql">
+        <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
+      </modifySql>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-41">
       <createIndex indexName="IDX_GAMIFICATION_DOMAIN_OWNERS_01" tableName="GAMIFICATION_DOMAIN_OWNERS">
         <column name="DOMAIN_ID" type="BIGINT"/>
         <column name="IDENTITY_ID" type="BIGINT"/>
@@ -485,25 +495,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <createIndex indexName="IDX_GAMIFICATION_DOMAIN_OWNERS_03" tableName="GAMIFICATION_DOMAIN_OWNERS">
         <column name="DOMAIN_ID" type="BIGINT"/>
       </createIndex>
-      <modifySql dbms="mysql">
-        <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci" />
-      </modifySql>
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-41">
+    <changeSet author="exo-gamification" id="1.0.0-42">
       <createSequence sequenceName="SEQ_GAMIFICATION_DOMAIN_OWNER_ID" startValue="1" />
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-42" dbms="oracle,postgresql,mssql,h2,sybase,db2,hsqldb">
+    <changeSet author="exo-gamification" id="1.0.0-43" dbms="oracle,postgresql,mssql,h2,sybase,db2,hsqldb">
       <modifyDataType columnName="TITLE" newDataType="VARCHAR(2000)" tableName="GAMIFICATION_DOMAIN" />
       <modifyDataType columnName="DESCRIPTION" newDataType="TEXT" tableName="GAMIFICATION_DOMAIN" />
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-43" dbms="mysql">
+    <changeSet author="exo-gamification" id="1.0.0-44" dbms="mysql">
       <modifyDataType columnName="TITLE" newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" tableName="GAMIFICATION_DOMAIN" />
       <modifyDataType columnName="DESCRIPTION" newDataType="TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" tableName="GAMIFICATION_DOMAIN" />
-    </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-44" dbms="mysql">
-      <modifyDataType columnName="DESCRIPTION" newDataType="VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci" tableName="GAMIFICATION_DOMAIN" />
-    </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-45" dbms="oracle,postgresql,mssql,h2,sybase,db2,hsqldb">
-        <modifyDataType columnName="DESCRIPTION" newDataType="VARCHAR(2000)" tableName="GAMIFICATION_DOMAIN" />
     </changeSet>
 </databaseChangeLog>
