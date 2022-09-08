@@ -17,6 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div class="challenge-card">
     <v-card
+      id="engagementCenterChallengeCard"
       class="mx-auto card cardOfChallenge"
       height="230"
       max-height="230"
