@@ -43,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
-          <challenges />
+          <challenges :challenge-id="challengeId"/>
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -73,6 +73,7 @@ export default {
     initialized: false,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
+    challengeId: null,
   }),
   watch: {
     tab() {
@@ -85,13 +86,15 @@ export default {
       }
     },
   },
-  mounted() {
+  created() {
     const urlPath = document.location.search || document.location.pathname;
-    if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`)) {
+    const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+    if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`) > -1) {
       this.tab = 0;
-    } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`)) {
+    } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`) > -1 || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`) > -1) {
+      this.challengeId = challengeId;
       this.tab = 1;
-    } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`)) {
+    } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`) > -1) {
       this.tab = 2;
     } else {
       this.tab = 0;

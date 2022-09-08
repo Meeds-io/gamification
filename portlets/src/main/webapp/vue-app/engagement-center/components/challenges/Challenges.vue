@@ -98,6 +98,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
+  props: {
+    challengeId: {
+      type: Number,
+      default: null
+    }
+  },
   data: () => ({
     selectedChallenge: null,
     canAddChallenge: false,
@@ -201,15 +207,15 @@ export default {
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     const urlPath = document.location.pathname;
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
-    if (challengeId) {
+    if (challengeId ? challengeId : this.challengeId) {
       setTimeout(() => {
         const retrieveChallengePromise = this.$challengesServices.getChallengeById(challengeId)
           .then(challenge => {
             if (challenge && challenge.id) {
               this.$root.$emit('open-challenge-details', challenge);
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${challengeId}`);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges/${challengeId}`);
             } else {
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`);
               this.showAlert('error', this.$t('challenges.viewChallengeError'));
             }
           });
