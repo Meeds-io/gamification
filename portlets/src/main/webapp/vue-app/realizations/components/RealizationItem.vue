@@ -24,21 +24,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <td v-if="isAdministrator" class="text-truncate align-center">
       {{ earner }}
     </td>
+    <td class="text-truncate align-center">
+      <span class="actionDescription pe-5"> 
+        {{ actionTypeLabel }}
+      </span> 
+    </td>
+    <td class="text-truncate align-center">
+      {{ domainDescription }}
+    </td>
     <td class="align-center actionTitle px-0">
       <a
         :href="realization.url"
         :class="actionLabelClass"
         class="text-color">
-        <span class="actionDescription pe-4">
+        <span class="actionDescription">
           {{ actionLabel }}
         </span> 
       </a>
-    </td>
-    <td class="text-truncate align-center">
-      {{ actionTypeLabel }}
-    </td>
-    <td class="text-truncate align-center">
-      {{ domainDescription }}
     </td>
     <td class="text-truncate align-center">
       {{ score }}
