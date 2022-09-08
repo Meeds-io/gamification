@@ -33,6 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <template #activator="{ on }">
         <div class="d-flex align-" v-on="on">
           <a
+            id="EngagementCenterAssignmentBtn"
             :disabled="disabledUnAssign"
             :class="assignButtonClass"
             class="challengeAssignBtn align-end mt-n8">

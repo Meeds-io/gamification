@@ -18,6 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app>
     <main v-if="engagementCenterEnabled">
       <v-tabs
+        id="engagementCenterTabs"
         v-model="tab"
         slider-size="4"
         class="mb-4">
@@ -27,7 +28,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <engagement-center-programs />
+          <engagement-center-programs id="engagementCenterProgramsTab" />
         </v-tab-item>
         <v-tab-item>
           <challenges />
