@@ -26,7 +26,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       flat
       class="pa-4">
       <div class="border-box-sizing clickable" v-if="canAddChallenge">
-        <v-btn class="btn btn-primary" @click="openChallengeDrawer">
+        <v-btn
+          id="engagementCenterAddChallengeBtn"
+          class="btn btn-primary"
+          @click="openChallengeDrawer">
           <v-icon small>fas fa-plus</v-icon>
           <span class="mx-2 d-none d-lg-inline text-capitalize-first-letter subtitle-1">
             {{ $t('challenges.button.addChallenge') }}

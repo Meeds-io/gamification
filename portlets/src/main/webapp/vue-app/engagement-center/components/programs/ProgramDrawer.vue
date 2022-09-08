@@ -34,6 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ warning }}
         </div>
         <v-form
+          id="EngagementCenterProgramDrawerForm"
           ref="form"
           v-model="isValidTitle"
           @submit="
@@ -41,6 +42,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             $event.stopPropagation();
           ">
           <v-textarea
+            id="EngagementCenterProgramDrawerTitleTextArea"
             v-model="program.title"
             :rules="[rules.length]"
             :placeholder="$t('programs.label.enterProgramTitle') "
@@ -62,11 +64,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="mb-2"
               @updated="addCover" />
             <span class="text-caption mt-2 text-light-color">
-              <i
-                icon
-                x-small
-                class="uiIconInformation dark-grey-color">
-              </i>
+              <v-icon class="mb-1" small>fas fa-info-circle</v-icon>
               {{ $t('programs.label.coverWarning') }}</span>
           </div>
           <div class="py-2">
@@ -87,9 +85,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 class="px-0">
                 <v-list-item-content class="f me-2 points">
                   <v-text-field
+                    id="EngagementCenterProgramDrawerBudget"
                     v-model="program.budget"
                     :rules="[rules.value]"
-                    class="pt-2 points"
+                    class="pt-2 points mt-n3"
                     type="number"
                     outlined
                     required />
@@ -117,9 +116,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
               <v-list-item class="px-0 mt-n6 mx-auto">
                 <v-list-item-content class="pt-1 mt-6">
-                  <span class="subtitle-1"> {{ $t('programs.label.enabled') }}</span>
+                  <span class="subtitle-1 text-light-color"> {{ $t('programs.label.enabled') }}</span>
                 </v-list-item-content>
-                <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2">
+                <v-list-item-content class="flex flex-grow-0 flex-shrink-0 overflow-visible me-7">
                   <v-switch
                     id="EngagementCenterProgramDrawerSwitch"
                     v-model="program.enabled" />

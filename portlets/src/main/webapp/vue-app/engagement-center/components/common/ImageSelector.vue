@@ -17,21 +17,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <template>
   <v-card
+    id="engagementCenterImgSelectorcard"
     elevation="0"
     height="140px"
     class="EngagementCenterImageSelector">
     <v-avatar
+      id="engagementCenterImgSelectorAvatar"
       width="100%"
       height="140px"
       class="align-start flex-grow-0"
       tile>
       <v-img
+        id="engagementCenterImgSelectorImg"
         :lazy-src="coverUrl"
         :src="coverUrl"
         transition="none"
         eager
         role="presentation" />
       <v-file-input
+        id="engagementCenterImgSelectorFileInput"
         ref="avatarInput"
         prepend-icon="mdi-image"
         class="changeImgButton"

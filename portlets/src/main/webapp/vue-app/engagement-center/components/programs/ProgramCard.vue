@@ -17,6 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div>
     <v-card
+      id="engagementCenterProgramCard"
       class="mx-auto card"
       height="240"
       max-height="240"
@@ -24,6 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="contentCard">
         <div class="d-flex flex-grow-1 pa-0">
           <v-img
+            id="engagementCenterProgramCardImg"
             :src="programCover"
             :alt="$t('programs.cover.default')"
             aspect-ratio="1"
