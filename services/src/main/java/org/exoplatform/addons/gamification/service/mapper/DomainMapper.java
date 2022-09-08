@@ -76,7 +76,7 @@ public class DomainMapper {
     if (domainEntity == null) {
       return null;
     }
-    long lastUpdateTime = domainEntity.getLastModifiedDate().getTime();
+    long lastUpdateTime = domainEntity.getLastModifiedDate() == null ? 0 : domainEntity.getLastModifiedDate().getTime();
     String coverUrl = Utils.buildAttachmentUrl(String.valueOf(domainEntity.getId()), lastUpdateTime, Utils.TYPE, domainEntity.getCoverFileId() == 0);
     Set<Long> owners = getOwnerIds(domainEntity, domainOwnerDAO);
     return new DomainDTO(domainEntity.getId(),
