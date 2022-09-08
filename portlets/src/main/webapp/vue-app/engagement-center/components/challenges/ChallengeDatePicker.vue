@@ -19,10 +19,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="challengePlanDateCalender d-flex align-center">
       <i class="uiIconStartDate uiIconBlue"></i>
       <div v-if="disabledStartDate" class="subtitle-1 mx-4 mt-1">
-        <date-format :value="startDate" />
+        <date-format
+          id="engagementCenterChallengeStartDate"
+          :value="startDate" />
       </div>
       <div v-else>
         <date-picker
+          id="engagementCenterChallengeStartDatePicker"
           ref="challengeStartDate"
           v-model="startDate"
           :default-value="false"
@@ -42,10 +45,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="challengeEndDateCalender d-flex align-center mt-1">
       <i class="uiIconEndDate uiIconBlue"></i>
       <div v-if="disabledEndDate" class="subtitle-1 mx-4 mt-1">
-        <date-format :value="endDate" />
+        <date-format
+          id="engagementCenterChallengeEndDatePicker"
+          :value="endDate" />
       </div>
       <div v-else>
         <date-picker
+          id="engagementCenterChallengeEndDatePicker"
           ref="challengeEndDate"
           v-model="endDate"
           :default-value="false"
