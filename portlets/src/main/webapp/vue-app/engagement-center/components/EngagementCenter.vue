@@ -93,10 +93,9 @@ export default {
       this.tab = 1;
     } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`)) {
       this.tab = 2;
-    }
-    else {
+    } else {
       this.tab = 0;
-      window.history.pushState('gamificationCenter', 'My programs', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/${eXo.env.portal.global.engagement}/programs`);
+      window.history.pushState(this.$t('engagementCenter.label.engagementCenter'), this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
     }
     this.initialized = true;
   }
