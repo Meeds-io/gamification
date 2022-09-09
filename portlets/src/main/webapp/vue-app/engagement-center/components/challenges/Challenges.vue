@@ -117,6 +117,7 @@ export default {
     typing: false,
     displayMinimumCharactersToolTip: false,
     filter: 'STARTED',
+    challengeIdFromUrl: null,
   }),
   computed: {
     classWelcomeMessage() {
@@ -170,7 +171,9 @@ export default {
         value: 'ENDED',
       }];
     },
-
+    providedId() {
+      return this.challengeIdFromUrl ? this.challengeIdFromUrl : this.challengeId;
+    },
   },
   watch: {
     search()  {
@@ -206,14 +209,14 @@ export default {
     this.$root.$on('challenge-load-more', this.loadMore);
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     const urlPath = document.location.pathname;
-    const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
-    if (challengeId ? challengeId : this.challengeId) {
+    this.challengeIdFromUrl = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+    if (this.providedId) {
       setTimeout(() => {
-        const retrieveChallengePromise = this.$challengesServices.getChallengeById(challengeId)
+        const retrieveChallengePromise = this.$challengesServices.getChallengeById(this.providedId)
           .then(challenge => {
             if (challenge && challenge.id) {
               this.$root.$emit('open-challenge-details', challenge);
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges/${challengeId}`);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges/${this.providedId}`);
             } else {
               window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`);
               this.showAlert('error', this.$t('challenges.viewChallengeError'));
