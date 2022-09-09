@@ -59,7 +59,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                             <string>Challenges</string>
                         </field>
                         <field name="url">
-                            <string>./challenges</string>
+                            <string>./engagement</string>
                         </field>
                         <field name="description">
                             <string>challenges application</string>
