@@ -78,11 +78,11 @@ export default {
   watch: {
     tab() {
       if (this.tab === 0) {
-        window.history.pushState(this.$t('engagementCenter.label.engagementCenter'), 'My Programs', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
       } else if (this.tab === 1) {
-        window.history.pushState(this.$t('engagementCenter.label.engagementCenter'), 'My Challenges', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`);
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`);
       } else if (this.tab === 2) {
-        window.history.pushState(this.$t('engagementCenter.label.engagementCenter'), 'My Achievements', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`);
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`);
       }
     },
   },
@@ -98,7 +98,7 @@ export default {
       this.tab = 2;
     } else {
       this.tab = 0;
-      window.history.pushState(this.$t('engagementCenter.label.engagementCenter'), 'My Programs', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
+      window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
     }
     this.initialized = true;
   }
