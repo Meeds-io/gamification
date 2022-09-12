@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.mock;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ListAccessImpl;
 import org.exoplatform.services.security.MembershipEntry;
@@ -41,10 +42,22 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public Space getSpaceByGroupId(String groupId) {
-    throw new UnsupportedOperationException();
+    if (groupId.equals("/spaces/test_space")) {
+      Space space = new Space();
+      space.setId("1");
+      space.setPrettyName("test_space");
+      space.setDisplayName("test space");
+      space.setGroupId("/spaces/test_space");
+      return space;
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
   public Space getSpaceById(String spaceId) {
+    if(!"1".equals(spaceId)){
+      return null;
+    }
     Space space = new Space();
     space.setId("1");
     space.setPrettyName("test_space");
@@ -52,6 +65,16 @@ public class SpaceServiceMock implements SpaceService {
     space.setGroupId("/spaces/test_space");
     return space;
   }
+
+  public boolean isRedactor(Space space, String userId) {
+    return userId == "root";
+  }
+
+  @Override
+  public boolean hasRedactor(Space space) {
+    return "test_space".equals(space.getPrettyName());
+  }
+
 
   public Space getSpaceByUrl(String spaceUrl) {
     throw new UnsupportedOperationException();
