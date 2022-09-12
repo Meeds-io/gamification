@@ -33,19 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <dependencies>
         <dependency>
             <groupId>org.exoplatform.addons.gamification</groupId>
-            <artifactId>gamification-extension</artifactId>
-            <type>war</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.exoplatform.addons.gamification</groupId>
             <artifactId>gamification-portlets</artifactId>
-            <type>war</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.exoplatform.addons.gamification</groupId>
-            <artifactId>challenges-portlets</artifactId>
             <type>war</type>
             <scope>provided</scope>
         </dependency>
