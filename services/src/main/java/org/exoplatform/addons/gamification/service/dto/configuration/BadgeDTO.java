@@ -67,50 +67,6 @@ public class BadgeDTO implements Serializable {
     public BadgeDTO() {
     }
 
-    public BadgeDTO(BadgeEntity badgeEntity) {
-
-        this.id = badgeEntity.getId();
-
-        this.title = badgeEntity.getTitle();
-
-        //TODO : save an inputStream
-        //this.icon = badgeEntity.getIcon();
-
-        this.neededScore = badgeEntity.getNeededScore();
-
-        if (badgeEntity.getStartValidityDate() != null) {
-            this.startValidityDate = formatter.format(badgeEntity.getStartValidityDate());
-        }
-
-        if (badgeEntity.getEndValidityDate() != null) {
-            this.endValidityDate = formatter.format(badgeEntity.getEndValidityDate());
-        }
-        this.enabled = badgeEntity.isEnabled();
-
-        this.deleted = badgeEntity.isDeleted();
-
-        this.description = badgeEntity.getDescription();
-
-        this.createdBy = badgeEntity.getCreatedBy();
-
-        if (badgeEntity.getCreatedDate() != null) {
-            this.createdDate = formatter.format(badgeEntity.getCreatedDate());
-        }
-
-        this.lastModifiedBy = badgeEntity.getLastModifiedBy();
-
-        if (badgeEntity.getLastModifiedDate() != null) {
-            this.lastModifiedDate = formatter.format(badgeEntity.getLastModifiedDate());
-        }
-
-        this.domain = badgeEntity.getDomain();
-
-        this.domainDTO = ((badgeEntity.getDomainEntity() == null) ? null : DomainMapper.domainEntityToDomainDTO(badgeEntity.getDomainEntity()));
-
-        this.iconFileId = badgeEntity.getIconFileId();
-
-    }
-
     public String getUploadId() {
         return uploadId;
     }
