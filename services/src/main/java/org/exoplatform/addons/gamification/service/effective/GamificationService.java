@@ -18,7 +18,9 @@ package org.exoplatform.addons.gamification.service.effective;
 
 import static java.util.Date.from;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
@@ -30,9 +32,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
+import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -291,25 +294,20 @@ public class GamificationService {
 
     // Build only an entry when a rule enable and exist
     if (ruleDto != null) {
-      aHistory = new GamificationActionsHistory();
-      aHistory.setActionScore(ruleDto.getScore());
-      aHistory.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
-      aHistory.setEarnerId(actor);
-      aHistory.setEarnerType(IdentityType.getType(actorIdentity.getProviderId()));
-      aHistory.setActionTitle(ruleDto.getEvent());
-      aHistory.setDomain(ruleDto.getArea());
+      GamificationActionsHistoryDTO actionsHistoryDTO = new GamificationActionsHistoryDTO();
+      actionsHistoryDTO.setActionScore(ruleDto.getScore());
+      actionsHistoryDTO.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
+      actionsHistoryDTO.setEarnerId(actor);
+      actionsHistoryDTO.setEarnerType(actorIdentity.getProviderId());
+      actionsHistoryDTO.setActionTitle(ruleDto.getEvent());
+      actionsHistoryDTO.setRuleId(ruleDto.getId());
       if (ruleDto.getDomainDTO() != null) {
-        aHistory.setDomainEntity(DomainMapper.domainDTOToDomain(ruleDto.getDomainDTO()));
+        actionsHistoryDTO.setDomain(ruleDto.getDomainDTO().getTitle());
       }
-      aHistory.setReceiver(receiver);
-      aHistory.setObjectId(objectId);
-      aHistory.setStatus(HistoryStatus.ACCEPTED);
-      // Set update metadata
-      aHistory.setLastModifiedDate(new Date());
-      aHistory.setLastModifiedBy("Gamification Inner Process");
-      // Set create metadata
-      aHistory.setCreatedBy("Gamification Inner Process");
-
+      actionsHistoryDTO.setReceiver(receiver);
+      actionsHistoryDTO.setObjectId(objectId);
+      actionsHistoryDTO.setStatus(HistoryStatus.ACCEPTED.name());
+      return GamificationActionsHistoryMapper.toEntity(actionsHistoryDTO);
     }
     return aHistory;
   }

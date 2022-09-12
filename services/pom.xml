@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <rest.api.doc.version>1.0</rest.api.doc.version>
         <rest.api.doc.description>Gamification addon rest endpoints</rest.api.doc.description>
 
-        <exo.test.coverage.ratio>0.62</exo.test.coverage.ratio>
+        <exo.test.coverage.ratio>0.63</exo.test.coverage.ratio>
     </properties>
 
     <dependencies>
@@ -156,6 +156,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-core</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.exoplatform.gatein.portal</groupId>

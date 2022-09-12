@@ -18,7 +18,7 @@ package org.exoplatform.addons.gamification.listener.es;
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.container.ExoContainerContext;
@@ -56,7 +56,7 @@ public class RulesESListener extends Listener<Object, Long> {
     boolean ruleDeleted = Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
     RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
     try {
-      if (rule == null || rule.isDeleted() || (!rule.isEnabled() && TypeRule.MANUAL != rule.getType())) {
+      if (rule == null || rule.isDeleted() || (!rule.isEnabled() && EntityType.MANUAL != rule.getType())) {
         LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
         indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
       } else {

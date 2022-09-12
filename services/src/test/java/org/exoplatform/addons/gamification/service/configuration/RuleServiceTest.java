@@ -22,7 +22,7 @@ import java.util.Date;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setLastModifiedBy(TEST_USER_SENDER);
     rule.setLastModifiedDate(new Date().toString());
     rule.setDomainDTO(domain);
-    rule.setType(TypeRule.AUTOMATIC);
+    rule.setType(EntityType.AUTOMATIC);
     rule.setManagers(Collections.emptyList());
     rule = ruleService.addRule(rule);
     assertNotNull(ruleService.findEnableRuleByTitle(rule.getTitle()));
@@ -65,7 +65,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
     assertNotNull(ruleService.findRuleById(ruleEntity.getId()));
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleById(null));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleById(0));
   }
 
   @Test
@@ -167,7 +167,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setLastModifiedBy(TEST_USER_SENDER);
     rule.setLastModifiedDate(new Date());
     rule.setDomainEntity(newDomain());
-    rule.setType(TypeRule.AUTOMATIC);
+    rule.setType(EntityType.AUTOMATIC);
     ruleService.addRule(RuleMapper.ruleToRuleDTO(rule));
     assertEquals(ruleDAO.findAll().size(), 1);
   }
