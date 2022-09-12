@@ -1,3 +1,20 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package org.exoplatform.addons.gamification.storage.cached;
 
 import java.io.Serializable;
@@ -8,7 +25,7 @@ import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
@@ -45,7 +62,7 @@ public class RuleCachedStorage extends RuleStorage {
         } else if (context.getContext() == ALL_RULE_CONTEXT) {
           return RuleCachedStorage.super.findAllRules();
         } else if (context.getContext() == RULES_BY_FILTER_CONTEXT) {
-          return RuleCachedStorage.super.findRulesByFilter(context.getFilter(), context.getOffset(), context.getLimit());
+          return RuleCachedStorage.super.findRulesByFilter(context.getRuleFilter(), context.getOffset(), context.getLimit());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
@@ -60,7 +77,7 @@ public class RuleCachedStorage extends RuleStorage {
       ruleDTO = super.saveRule(ruleDTO);
       return ruleDTO;
     } finally {
-      if (TypeRule.MANUAL.equals(ruleDTO.getType())) {
+      if (EntityType.MANUAL.equals(ruleDTO.getType())) {
         this.ruleFutureCache.clear();
       } else {
         this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, ruleDTO.getId()).hashCode());

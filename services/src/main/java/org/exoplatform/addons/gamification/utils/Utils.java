@@ -1,5 +1,7 @@
 package org.exoplatform.addons.gamification.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,11 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
@@ -31,14 +31,10 @@ import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.portal.Constants;
-import org.exoplatform.portal.localization.LocaleContextInfoUtils;
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.UserProfile;
-import org.exoplatform.services.resources.LocaleContextInfo;
-import org.exoplatform.services.resources.LocalePolicy;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -47,12 +43,14 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.web.security.codec.CodecInitializer;
+import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
 public class Utils {
 
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT = "challenge.announcement.activity";
 
-  private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
+  public static final long              DEFAULT_COVER_LAST_MODIFIED = System.currentTimeMillis();
 
   public static final DateTimeFormatter RFC_3339_FORMATTER          =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
@@ -73,9 +71,17 @@ public class Utils {
 
   private static RuleService            ruleService;
 
-  public static final String             ANNOUNCEMENT_ACTIVITY_TYPE = "challenges-announcement";
+  public static final String            ANNOUNCEMENT_ACTIVITY_TYPE  = "challenges-announcement";
 
   public static final String            SYSTEM_USERNAME             = "SYSTEM";
+
+  public static final String            BASE_URL_DOMAINS_REST_API   = "/gamification/domains";
+
+  public static final String            DEFAULT_IMAGE_REMOTE_ID     = "default-cover";
+
+  public static final String            TYPE                        = "cover";
+
+  private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
 
   private Utils() { // NOSONAR
   }
@@ -129,9 +135,8 @@ public class Utils {
       throw new IllegalArgumentException("space is not exist");
     }
     if (StringUtils.isNotBlank(username)) {
-      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username)
-          || spaceService.isManager(space, username) || spaceService.isSuperManager(username)
-                                             : spaceService.isMember(space, username);
+      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username) || spaceService.isManager(space, username)
+          || spaceService.isSuperManager(username) : spaceService.isMember(space, username);
     } else {
       return false;
     }
@@ -203,41 +208,54 @@ public class Utils {
       return null;
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return DomainMapper.domainDTOToDomain(domainService.getDomainById(domainId));
+    return DomainMapper.domainDTOToDomainEntity(domainService.getDomainById(domainId));
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
     if (ruleId == 0) {
       return null;
     }
-    try {
-      RuleService ruleService = CommonsUtils.getService(RuleService.class);
-      return ruleService.findRuleById(ruleId);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
+    RuleService ruleService = CommonsUtils.getService(RuleService.class);
+    return ruleService.findRuleById(ruleId);
   }
 
   public static RuleDTO getRuleByTitle(String title) {
-    try {
-      return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
-
+    return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
   }
 
   public static List<UserInfo> getManagersByIds(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
     try {
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      if (ids.isEmpty()) {
-        return Collections.emptyList();
-      }
       List<UserInfo> users = new ArrayList<>();
       for (Long id : ids) {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
           users.add(toUserInfo(identity));
+        }
+      }
+      return users;
+    } catch (Exception e) {
+      LOG.error("Error when getting challenge managers {}", e);
+      return Collections.emptyList();
+    }
+  }
+
+  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+    try {
+      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+      List<UserInfo> users = new ArrayList<>();
+      for (Long id : ids) {
+        Identity identity = identityManager.getIdentity(String.valueOf(id));
+        if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
+          UserInfo userInfo = toUserInfo(identity);
+          userInfo.setDomainOwner(true);
+          users.add(userInfo);
         }
       }
       return users;
@@ -279,6 +297,23 @@ public class Utils {
     return userInfo;
   }
 
+  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners) {
+    if (StringUtils.isBlank(username)) {
+      return null;
+    }
+    Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
+    if (identity == null) {
+      return null;
+    }
+    UserInfo userInfo = new UserInfo();
+    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+    userInfo.setFullName(identity.getProfile().getFullName());
+    userInfo.setRemoteId(identity.getRemoteId());
+    userInfo.setId(identity.getId());
+    userInfo.setDomainOwner(isProgramOwner(domainsOwners, Long.valueOf(identity.getId())));
+    return userInfo;
+  }
+
   public static Long countAnnouncementsByChallenge(Long challengeId) {
     AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
     try {
@@ -317,34 +352,6 @@ public class Utils {
     return space != null ? space.getDisplayName() : null;
   }
 
-  public static Locale getCurrentUserLocale() {
-    String username = getCurrentUser();
-    Locale locale = Locale.ENGLISH;
-
-    try {
-      LocalePolicy localePolicy = CommonsUtils.getService(LocalePolicy.class);
-      LocaleContextInfo localeCtx = LocaleContextInfoUtils.buildLocaleContextInfo((HttpServletRequest) null);
-      localeCtx.setUserProfileLocale(getUserLocale(username));
-      localeCtx.setRemoteUser(username);
-      Set<Locale> supportedLocales = LocaleContextInfoUtils.getSupportedLocales();
-
-      locale = localePolicy.determineLocale(localeCtx);
-      boolean supported = supportedLocales.contains(locale);
-
-      if (!supported && !"".equals(locale.getCountry())) {
-        locale = new Locale(locale.getLanguage());
-        supported = supportedLocales.contains(locale);
-      }
-      if (!supported) {
-        LOG.warn("Unsupported locale returned by LocalePolicy: " + localePolicy + ". Falling back to 'en'.");
-
-      }
-    } catch (Exception e) {
-      LOG.warn("Could not determine Locale for user {}. Falling back to 'en'.", username);
-    }
-    return locale;
-  }
-
   public static String getI18NMessage(Locale userLocale, String messageKey) {
     ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
     if (userLocale == null) {
@@ -359,24 +366,6 @@ public class Utils {
     }
   }
 
-  public static Locale getUserLocale(String username) {
-    OrganizationService organizationService = CommonsUtils.getService(OrganizationService.class);
-    UserProfile profile = null;
-    try {
-      profile = organizationService.getUserProfileHandler().findUserProfileByName(username);
-    } catch (Exception e) {
-      LOG.error("Error when getting user locale ", e);
-    }
-    String lang = null;
-    if (profile != null) {
-      lang = profile.getAttribute(Constants.USER_LANGUAGE);
-    }
-    if (StringUtils.isNotBlank(lang)) {
-      return LocaleUtils.toLocale(lang);
-    }
-    return null;
-  }
-
   public static String escapeIllegalCharacterInMessage(String message) {
     if (message == null) {
       return null;
@@ -389,8 +378,9 @@ public class Utils {
   }
 
   public static void buildActivityParams(ExoSocialActivity activity, Map<String, ?> templateParams) {
-    Map<String, String> currentTemplateParams = activity.getTemplateParams() == null ? new HashMap<>()
-                                                                                     : new HashMap<>(activity.getTemplateParams());
+    Map<String, String> currentTemplateParams =
+                                              activity.getTemplateParams() == null ? new HashMap<>()
+                                                                                   : new HashMap<>(activity.getTemplateParams());
     if (templateParams != null) {
       templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
     }
@@ -402,6 +392,74 @@ public class Utils {
       }
     }
     activity.setTemplateParams(currentTemplateParams);
+  }
+
+  public static boolean isProgramOwner(Set<Long> ownerIds, long userId) {
+    return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
+  }
+
+  public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type) {
+    if (Long.valueOf(domainId) == 0) {
+      return null;
+    }
+
+    if (lastModifiedDate == null || lastModifiedDate <= 0) {
+      domainId = DEFAULT_IMAGE_REMOTE_ID;
+      lastModifiedDate = DEFAULT_COVER_LAST_MODIFIED;
+    }
+
+    String token = generateAttachmentToken(domainId, type, lastModifiedDate);
+    if (org.apache.commons.lang.StringUtils.isNotBlank(token)) {
+      try {
+        token = URLEncoder.encode(token, "UTF8");
+      } catch (UnsupportedEncodingException e) {
+        LOG.warn("Error encoding token", e);
+        token = org.apache.commons.lang.StringUtils.EMPTY;
+      }
+    }
+
+    return new StringBuilder(getBaseURLDomainRest()).append("/")
+                                                    .append(domainId)
+                                                    .append("/")
+                                                    .append(type)
+                                                    .append("?lastModified=")
+                                                    .append(lastModifiedDate)
+                                                    .append("&r=")
+                                                    .append(token)
+                                                    .toString();
+
+  }
+
+  public static String generateAttachmentToken(String domainId, String attachmentType, Long lastModifiedDate) {
+    String token = null;
+    CodecInitializer codecInitializer = ExoContainerContext.getService(CodecInitializer.class);
+    if (codecInitializer == null) {
+      LOG.debug("Can't find an instance of CodecInitializer, an empty token will be generated");
+      token = org.apache.commons.lang.StringUtils.EMPTY;
+    } else {
+      try {
+        String tokenPlain = attachmentType + ":" + domainId + ":" + lastModifiedDate;
+        token = codecInitializer.getCodec().encode(tokenPlain);
+      } catch (TokenServiceInitializationException e) {
+        LOG.warn("Error generating token of {} for domain {}. An empty token will be used", attachmentType, domainId, e);
+        token = org.apache.commons.lang.StringUtils.EMPTY;
+      }
+    }
+    return token;
+  }
+
+  public static boolean isAttachmentTokenValid(String token, String domainId, String attachmentType, Long lastModifiedDate) {
+    if (StringUtils.isBlank(token)) {
+      LOG.warn("An empty token is used for {} for domain {}", attachmentType, domainId);
+      return false;
+    }
+    String validToken = generateAttachmentToken(domainId, attachmentType, lastModifiedDate);
+    return StringUtils.equals(validToken, token);
+  }
+
+  public static String getBaseURLDomainRest() {
+    return "/" + PortalContainer.getCurrentPortalContainerName() + "/" + PortalContainer.getCurrentRestContextName()
+        + BASE_URL_DOMAINS_REST_API;
   }
 
 }
