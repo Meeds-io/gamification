@@ -229,6 +229,9 @@ export default {
     },
     reset() {
       this.assigneeObj = [];
+    },
+    setUp(assigneeObj) {
+      this.assigneeObj = assigneeObj;
     }
   }
 };
