@@ -17,6 +17,8 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -38,10 +40,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -56,15 +58,15 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     return RealizationsRest.class;
   }
 
-  protected static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                                                         // NOSONAR
+  protected static final long   MILLIS_IN_A_DAY   = 1000 * 60 * 60 * 24;                                                        // NOSONAR
 
-  protected static final String FROM_DATE       = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
+  protected static final String FROM_DATE         = URLEncoder.encode(Utils.toRFC3339Date(new Date(System.currentTimeMillis())), StandardCharsets.UTF_8);
 
-  protected static final String TO_DATE         = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
+  protected static final String TO_DATE           = URLEncoder.encode(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)), StandardCharsets.UTF_8);
 
-  protected static final String JSON_TYPE       = "json";
+  protected static final String JSON_TYPE         = "json";
 
-  protected static final String XLSX_TYPE        = "xlsx";
+  protected static final String XLSX_TYPE         = "xlsx";
 
   @Before
   @Override
@@ -191,16 +193,16 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
   @SuppressWarnings("unchecked")
   @Test
   public void testGetAllRealizationsSortByActionTypeDescending() throws Exception {
-    RuleEntity rule1Automatic = newRule("testGetAllRealizationsSortByActionTypeDescending1", "domain1", true, TypeRule.AUTOMATIC);
-    RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, TypeRule.MANUAL);
+    RuleEntity rule1Automatic = newRule("testGetAllRealizationsSortByActionTypeDescending1", "domain1", true, EntityType.AUTOMATIC);
+    RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, EntityType.MANUAL);
 
     // add new realization
     List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < limit; i++) {
-      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule2Manual.getEvent(), rule2Manual.getId()));
+      createdActionHistories.add(0, newGamificationActionsHistoryWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
     }
     for (int i = 0; i < limit; i++) {
-      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule1Automatic.getEvent(), rule1Automatic.getId()));
+      createdActionHistories.add(0, newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
 
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerId="
@@ -238,16 +240,16 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
   @SuppressWarnings("unchecked")
   @Test
   public void testGetAllRealizationsSortByActionTypeAscending() throws Exception {
-    RuleEntity rule1Automatic = newRule("testGetAllRealizationsSortByActionTypeDescending1", "domain1", true, TypeRule.AUTOMATIC);
-    RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, TypeRule.MANUAL);
+    RuleEntity rule1Automatic = newRule("testGetAllRealizationsSortByActionTypeDescending1", "domain1", true, EntityType.AUTOMATIC);
+    RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, EntityType.MANUAL);
 
     // add new realization
     List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < limit; i++) {
-      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule1Automatic.getEvent(), rule1Automatic.getId()));
+      createdActionHistories.add(0, newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
     for (int i = 0; i < limit; i++) {
-      createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule2Manual.getEvent(), rule2Manual.getId()));
+      createdActionHistories.add(0, newGamificationActionsHistoryWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
     }
 
     String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerId="
