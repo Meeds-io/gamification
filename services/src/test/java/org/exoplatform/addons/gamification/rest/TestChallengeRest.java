@@ -17,7 +17,7 @@
 
 package org.exoplatform.addons.gamification.rest;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
