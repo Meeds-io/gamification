@@ -80,3 +80,20 @@ export function canAddProgram() {
     }
   });
 }
+
+export function updateProgram(program) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains/${program.id}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(program),
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error updating program');
+    }
+  });
+}
