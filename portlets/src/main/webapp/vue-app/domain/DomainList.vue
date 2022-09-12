@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div class="uiSearchForm uiSearchInput searchWithIcon">
             <input
               v-model="search"
-              :placeholder="this.$t('exoplatform.gamification.gamificationinformation.domain.search','Search')"
+              :placeholder="$t('exoplatform.gamification.gamificationinformation.domain.search','Search')"
               name="keyword"
               type="text"
               value="">
@@ -55,7 +55,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               type="button">
             </button>
             <i class="uiIconSuccess"></i>
-            {{ this.$t('exoplatform.gamification.domain.successdelete') }}
+            {{ $t('exoplatform.gamification.domain.successdelete') }}
           </div>
           <div
             id="collapseTwo"
@@ -72,7 +72,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <div class="popupHeader ClearFix">
                   <a class="uiIconClose pull-right" @click.prevent="collapseButtonn(domain,true)"></a>
 
-                  <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.rule.popupdelete') }}</span>
+                  <span class="PopupTitle popupTitle">{{ $t('exoplatform.gamification.rule.popupdelete') }}</span>
                 </div>
                 <div class="PopupContent popupContent">
                   <div class="media">
@@ -81,7 +81,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     </div>
                     <div class="media-body">
                       <p class="msg">
-                        {{ this.$t('exoplatform.gamification.areyousure.delete.domain','Are you sure you want to delete this domain ?')
+                        {{ $t('exoplatform.gamification.areyousure.delete.domain','Are you sure you want to delete this domain ?')
                         }}
                       </p>
                     </div>
@@ -93,7 +93,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         type="submit"
                         @click.prevent="collapseButtonn(domain,true), onCancel()">
                         {{
-                          this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
+                          $t('exoplatform.gamification.gamificationinformation.domain.cancel')
                         }}
                       </button>
 
@@ -102,7 +102,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         type="submit"
                         @click.prevent="onRemove(editedDomain.id),collapseButtonn(domain,true)">
                         {{
-                          this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
+                          $t('exoplatform.gamification.gamificationinformation.domain.confirm')
                         }}
                       </button>
                     </b-col>
@@ -119,12 +119,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <div class="popupHeader ClearFix">
                   <a class="uiIconClose pull-right" @click.prevent="collapseButtonn(domain,false)"></a>
 
-                  <span class="PopupTitle popupTitle">{{ this.$t('exoplatform.gamification.gamificationinformation.domain.popupedit',"Edit") }}</span>
+                  <span class="PopupTitle popupTitle">{{ $t('exoplatform.gamification.gamificationinformation.domain.popupedit',"Edit") }}</span>
                 </div>
                 <div class="PopupContent popupContent">
                   <form id="titleInputGroup">
                     <label class="col-form-label pt-0">{{
-                      this.$t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
+                      $t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
                       :</label>
                     <input
                       id="titleInput"
@@ -138,7 +138,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
                   <form id="descriptionInputGroup">
                     <label class="col-form-label pt-0">{{
-                      this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description")
+                      $t('exoplatform.gamification.gamificationinformation.domain.Description',"Description")
                     }} :</label>
                     <textarea
                       id="domainDescription"
@@ -164,15 +164,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         class="btn secondary pull-right"
                         type="submit"
                         @click.prevent="collapseButtonn(editedDomain,false), onCancel()">
-                        {{
-                          this.$t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+                        {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                       </button>
                       <button
                         class="btn-primary pull-right"
                         type="submit"
                         :disabled="isDisabled"
                         @click.prevent="onSave(editedDomain),collapseButtonn(editedDomain,false)">
-                        {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+                        {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
                       </button>
                     </b-col>
                   </div>
@@ -189,20 +188,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <thead>
               <tr>
                 <th class="domain-name-col">
-                  {{
-                    this.$t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Title',"Title") }}
                 </th>
                 <th class="domain-desc-col">
-                  {{
-                    this.$t('exoplatform.gamification.gamificationinformation.domain.Description',"Description") }}
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Description',"Description") }}
                 </th>
                 <th class="domain-desc-col">
-                  {{
-                    this.$t('exoplatform.gamification.enabled',"Enabled") }}
+                  {{ $t('exoplatform.gamification.enabled',"Enabled") }}
                 </th>
                 <th class="domain-action-col">
-                  {{
-                    this.$t('exoplatform.gamification.gamificationinformation.domain.Actions',"Actions") }}
+                  {{ $t('exoplatform.gamification.gamificationinformation.domain.Actions',"Actions") }}
                 </th>
               </tr>
             </thead>

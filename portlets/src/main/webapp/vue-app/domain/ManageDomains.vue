@@ -96,9 +96,9 @@ export default {
   },
   methods: {
     getAllDomains(){
-    axios.get('/portal/rest/gamification/domains')
+    axios.get('/portal/rest/gamification/domains?status=ALL')
       .then(response => {
-        this.domains = response.data;
+        this.domains = response.data && response.data.domains;
       })
       .catch(e => {
         this.addError = true;

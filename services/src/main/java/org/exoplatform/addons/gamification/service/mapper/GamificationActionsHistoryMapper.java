@@ -3,8 +3,8 @@ package org.exoplatform.addons.gamification.service.mapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -15,6 +15,7 @@ import org.exoplatform.social.core.service.LinkProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,7 @@ public class GamificationActionsHistoryMapper {
     }
     GamificationActionsHistory gHistoryEntity = new GamificationActionsHistory();
     gHistoryEntity.setId(gamificationActionsHistoryDTO.getId());
-    gHistoryEntity.setDomainEntity(DomainMapper.domainDTOToDomain(Utils.getEnabledDomainByTitle(gamificationActionsHistoryDTO.getDomain())));
+    gHistoryEntity.setDomainEntity(DomainMapper.domainDTOToDomainEntity(Utils.getEnabledDomainByTitle(gamificationActionsHistoryDTO.getDomain())));
     gHistoryEntity.setDomain(gamificationActionsHistoryDTO.getDomain());
     gHistoryEntity.setActionTitle(gamificationActionsHistoryDTO.getActionTitle());
     gHistoryEntity.setActionScore(gamificationActionsHistoryDTO.getActionScore());
@@ -88,9 +89,13 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setStatus(HistoryStatus.valueOf(gamificationActionsHistoryDTO.getStatus()));
     if (gamificationActionsHistoryDTO.getCreatedDate() != null) {
       gHistoryEntity.setCreatedDate(Utils.parseRFC3339Date(gamificationActionsHistoryDTO.getCreatedDate()));
+    } else {
+      gHistoryEntity.setCreatedDate(new Date());
     }
     if (gamificationActionsHistoryDTO.getLastModifiedDate() != null) {
       gHistoryEntity.setLastModifiedDate(Utils.parseRFC3339Date(gamificationActionsHistoryDTO.getLastModifiedDate()));
+    } else {
+      gHistoryEntity.setLastModifiedDate(new Date());
     }
     gHistoryEntity.setCreatedBy(gamificationActionsHistoryDTO.getCreatedBy() != null ? gamificationActionsHistoryDTO.getCreatedBy()
                                                                                      : "Gamification Inner Process");
@@ -99,7 +104,7 @@ public class GamificationActionsHistoryMapper {
     return gHistoryEntity;
   }
 
-  public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) {
+  public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) { // NOSONAR
     try {
       String spaceName = "";
       if (gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
