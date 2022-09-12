@@ -139,7 +139,7 @@ public class AnnouncementStorageTest {
         domainEntity.setTitle("gamification");
         PowerMockito.mockStatic(DomainMapper.class);
         when(Utils.getEnabledDomainByTitle(any())).thenReturn(domainDTO);
-        when(DomainMapper.domainDTOToDomain(domainDTO)).thenReturn(domainEntity);
+        when(DomainMapper.domainDTOToDomainEntity(domainDTO)).thenReturn(domainEntity);
 
         Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
 

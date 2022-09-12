@@ -35,8 +35,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <modules>
         <module>services</module>
         <module>portlets</module>
-        <module>extension</module>
-        <module>challenges-webapp</module>
         <module>packaging</module>
     </modules>
 
@@ -88,18 +86,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gamification-portlets</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>gamification-extension</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>challenges-portlets</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
