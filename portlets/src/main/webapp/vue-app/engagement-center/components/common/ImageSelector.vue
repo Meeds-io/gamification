@@ -29,8 +29,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       tile>
       <v-img
         id="engagementCenterImgSelectorImg"
-        :lazy-src="coverUrl"
-        :src="coverUrl"
+        :lazy-src="cover"
+        :src="cover"
         transition="none"
         eager
         role="presentation" />
@@ -51,10 +51,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   props: {
     value: {
-      type: Object,
-      default: () => {
-        return {};
-      }
+      type: String,
+      default: '/gamification-portlets/skin/images/program_default_cover_back.png'
     },
     maxUploadsSizeInMb: {
       type: Number,
@@ -62,10 +60,6 @@ export default {
         return 0;
       },
     },
-    cover: {
-      type: String,
-      default: '/gamification-portlets/skin/images/program_default_cover_back.png'
-    }
   },
   data() {
     return {
@@ -79,8 +73,8 @@ export default {
   },
 
   computed: {
-    coverUrl() {
-      return this.coverData || this.cover;
+    cover() {
+      return this.coverData || this.value;
     },
   },
   methods: {
