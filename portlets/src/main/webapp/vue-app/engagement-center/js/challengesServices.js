@@ -146,7 +146,7 @@ export function getChallengeById(id) {
 }
 
 export function getAllDomains() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?type=ALL`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
