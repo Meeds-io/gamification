@@ -1,13 +1,38 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
-import java.io.Serializable;
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class CacheKey implements Serializable {
 
   private static final long serialVersionUID = 8953827201312560226L;
 
-  private RuleFilter        filter;
+  private RuleFilter        ruleFilter;
+
+  private DomainFilter      domainFilter;
 
   private int               offset;
 
@@ -31,86 +56,23 @@ public class CacheKey implements Serializable {
     this.context = context;
   }
 
-  public CacheKey(Integer context, RuleFilter filter, int offset, int limit) {
+  public CacheKey(Integer context, RuleFilter ruleFilter, int offset, int limit) {
     this.context = context;
-    this.filter = filter;
+    this.ruleFilter = ruleFilter;
     this.offset = offset;
     this.limit = limit;
   }
 
-  public int getOffset() {
-    return offset;
-  }
-
-  public void setOffset(int offset) {
+  public CacheKey(Integer context, DomainFilter domainFilter, int offset, int limit) {
+    this.context = context;
+    this.domainFilter = domainFilter;
     this.offset = offset;
-  }
-
-  public int getLimit() {
-    return limit;
-  }
-
-  public void setLimit(int limit) {
     this.limit = limit;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public RuleFilter getFilter() {
-    return filter;
-  }
-
-  public void setFilter(RuleFilter filter) {
-    this.filter = filter;
-  }
-
-  public Integer getContext() {
-    return context;
-  }
-
-  public void setContext(Integer context) {
+  public CacheKey(Integer context, DomainFilter domainFilter) {
     this.context = context;
-  }
-
-  public long getDomainId() {
-    return domainId;
-  }
-
-  public void setDomainId(long domainId) {
-    this.domainId = domainId;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(context, domainId, id, filter, limit, offset, title);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    CacheKey other = (CacheKey) obj;
-    return Objects.equals(context, other.context) && domainId == other.domainId && Objects.equals(id, other.id)
-        && Objects.equals(filter, other.filter) && limit == other.limit && offset == other.offset
-        && Objects.equals(title, other.title);
+    this.domainFilter = domainFilter;
   }
 
 }

@@ -23,7 +23,7 @@ public class LeaderboardPortlet extends GenericPortlet {
 
     @RenderMode(name = "view")
     public void view(RenderRequest request, RenderResponse response) throws IOException, PortletException {
-        PortletRequestDispatcher prDispatcher = getPortletContext().getRequestDispatcher("/jsp/leaderboard/index.jsp");
+        PortletRequestDispatcher prDispatcher = getPortletContext().getRequestDispatcher("/WEB-INF/jsp/leaderboard/index.jsp");
         prDispatcher.include(request, response);
     }
 }
