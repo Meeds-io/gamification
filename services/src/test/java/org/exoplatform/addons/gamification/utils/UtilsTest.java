@@ -342,15 +342,14 @@ public class UtilsTest extends AbstractServiceTest {
   @Test
   public void testBuildAttachmentUrl() {
     Long lastModifiedDate = System.currentTimeMillis();
-    String attachementURl = Utils.buildAttachmentUrl("0", lastModifiedDate, TYPE);
-
+    String attachementURl = Utils.buildAttachmentUrl("0", lastModifiedDate, TYPE, false);
     assertNull(attachementURl);
-    attachementURl = Utils.buildAttachmentUrl("1", 0l, TYPE);
+    attachementURl = Utils.buildAttachmentUrl("1", 0l, TYPE, true);
     assertNotNull(attachementURl);
     assertTrue(attachementURl.contains(DEFAULT_IMAGE_REMOTE_ID));
-
-    attachementURl = Utils.buildAttachmentUrl("1", lastModifiedDate, TYPE);
+    attachementURl = Utils.buildAttachmentUrl("1", lastModifiedDate, TYPE, false);
     assertNotNull(attachementURl);
+    assertFalse(attachementURl.contains(DEFAULT_IMAGE_REMOTE_ID));
   }
 
   @Test

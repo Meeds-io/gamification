@@ -18,26 +18,59 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div>
     <v-card
       id="engagementCenterProgramCard"
-      class="mx-auto card"
+      class="mx-auto card engagement-center-card"
       height="240"
       max-height="240"
       outlined>
       <div class="contentCard">
-        <div class="d-flex flex-grow-1 pa-0">
-          <v-img
-            id="engagementCenterProgramCardImg"
-            :src="programCover"
-            :alt="$t('programs.cover.default')"
-            aspect-ratio="1"
-            min-height="70px"
-            min-width="70px"
-            height="100%"
-            width="100%"
-            max-height="160px"
-            class="primary--text" />
-        </div>
+        <v-row
+          color="transparent"
+          flat
+          class="edit px-0 py-0"
+          height="35px">
+          <v-spacer />
+          <v-menu
+            v-if="showActionsMenu"
+            v-model="showMenu"
+            :left="!$vuetify.rtl"
+            :right="$vuetify.rtl"
+            bottom
+            offset-y
+            attach>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                icon
+                small
+                class="my-1 me-3"
+                v-bind="attrs"
+                v-on="on">
+                <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
+              </v-btn>
+            </template>
+            <v-list dense class="pa-0">
+              <v-list-item
+                class="editList"
+                dense
+                @click="editProgram">
+                <v-icon small class="me-2 mb-1"> fas fa-edit </v-icon>
+                <v-list-item-title class="editLabel">{{ $t('programs.button.editProgram') }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-row>
       </div>
-      <div class="mt-2">
+      <div class="d-flex flex-grow-1 pa-0">
+        <v-img
+          :src="programCover"
+          :alt="$t('programs.cover.default')"
+          aspect-ratio="1"
+          min-height="70px"
+          min-width="70px"
+          width="100%"
+          max-height="140px"
+          class="primary--text" />
+      </div>
+      <div class="mt-1">
         <div class="center">
           <span class="text-header-title dark-grey-color text-truncate">  {{ program.title }} </span>
         </div>
@@ -54,15 +87,39 @@ export default {
     program: {
       type: Object,
       default: null
+    },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
     }
   },
+  data: () => ({
+    showMenu: false,
+  }),
   computed: {
     programCover(){
       return this.program?.coverUrl || '';
     },
     programBudget(){
       return this.$t('programs.budget', {0: this.program?.budget || 0});
-    }
+    },
+    showActionsMenu(){
+      return this.isAdministrator || this.program?.userInfo?.domainOwner;
+    },
+  },
+  created() {
+    $(document).mousedown(() => {
+      if (this.showMenu) {
+        window.setTimeout(() => {
+          this.showMenu = false;
+        }, 200);
+      }
+    });
+  },
+  methods: {
+    editProgram() {
+      this.$root.$emit('edit-program-details', this.program);
+    },
   }
 };
 </script>
