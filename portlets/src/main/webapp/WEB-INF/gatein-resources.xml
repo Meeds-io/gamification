@@ -68,6 +68,67 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <css-priority>1</css-priority>
   </portlet-skin>
 
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
+    <portlet-name>Challenges</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/challenges.css</css-path>
+  </portlet-skin>
+
+  <portlet>
+    <name>Challenges</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/engagementCenter.bundle.js</path>
+      </script>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>realizationComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>ChallengesExtensions</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/challengesExtensions.bundle.js</path>
+      </script>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+    </module>
+  </portlet>
+
   <portlet>
     <name>GamificationInformationsboard</name>
     <module>
