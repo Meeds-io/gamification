@@ -18,9 +18,9 @@
 package org.exoplatform.addons.gamification.storage;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 
 import org.junit.Test;
 
