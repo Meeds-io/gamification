@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -16,184 +16,317 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_COVER_LAST_MODIFIED;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.rest.model.DomainList;
+import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.IOUtil;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.rest.api.RestUtils;
 
-@Path("/gamification")
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+@Path("/gamification/domains")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed("administrators")
 public class ManageDomainsEndpoint implements ResourceContainer {
 
-  private static final Log   LOG           = ExoLogger.getLogger(ManageDomainsEndpoint.class);
+  private static final String       DEFAULT_COVER_PATH          =
+                                                       System.getProperty("meeds.engagementCenter.program.defaultCoverPath",
+                                                                          "/skin/images/program_default_cover_back.png");
 
-  private final CacheControl cacheControl;
+  private static final String       DOMAIN_NOT_FOUND_MESSAGE    = "The domain doesn't exit";
 
-  protected DomainService    domainService = null;
+  private static final Log          LOG                         = ExoLogger.getLogger(ManageDomainsEndpoint.class);
 
-  protected IdentityManager identityManager                = null;
+  // 7 days
+  private static final int          CACHE_IN_SECONDS            = 604800;
 
-  public ManageDomainsEndpoint() {
+  private static final int          CACHE_IN_MILLI_SECONDS      = CACHE_IN_SECONDS * 1000;
 
-    this.cacheControl = new CacheControl();
+  private static final CacheControl CACHECONTROL                = new CacheControl();
 
-    cacheControl.setNoCache(true);
+  static {
+    CACHECONTROL.setMaxAge(CACHE_IN_SECONDS);
+    CACHECONTROL.setPrivate(false);
+  }
 
-    cacheControl.setNoStore(true);
+  protected PortalContainer portalContainer;
 
-    domainService = CommonsUtils.getService(DomainService.class);
+  protected DomainService   domainService;
 
-    identityManager = CommonsUtils.getService(IdentityManager.class);
+  protected IdentityManager identityManager;
 
+  public byte[]             defaultProgramCover = null; // NOSONAR
+
+  public ManageDomainsEndpoint(PortalContainer portalContainer, DomainService domainService, IdentityManager identityManager) {
+    this.portalContainer = portalContainer;
+    this.domainService = domainService;
+    this.identityManager = identityManager;
   }
 
   @GET
-  @RolesAllowed("administrators")
-  @Path("/domains")
-  public Response getAllDomains(@Context UriInfo uriInfo, @Context HttpServletRequest request) {
-
-    ConversationState conversationState = ConversationState.getCurrent();
-
-    if (conversationState != null) {
-      try {
-        List<DomainDTO> allDomains = domainService.getAllDomains();
-
-        return Response.ok().cacheControl(cacheControl).entity(allDomains).build();
-
-      } catch (Exception e) {
-
-        LOG.error("Error listing all domains ", e);
-
-        return Response.serverError().cacheControl(cacheControl).entity("Error listing all domains").build();
-      }
-
-    } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Operation(summary = "Retrieves the list of available domains", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response getDomains(@Parameter(description = "Offset of results to retrieve", required = false)
+                             @QueryParam("offset")
+                             @DefaultValue("0")
+                             int offset,
+                             @Parameter(description = "Limit of results to retrieve", required = false)
+                             @QueryParam("limit")
+                             @DefaultValue("0")
+                             int limit,
+                             @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
+                             @QueryParam("type")
+                             @DefaultValue("AUTOMATIC")
+                             String type,
+                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false)
+                             @QueryParam("status")
+                             @DefaultValue("ENABLED")
+                             String status,
+                             @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
+                             @QueryParam("returnSize")
+                             @DefaultValue("false")
+                             boolean returnSize) {
+    if (offset < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
-
+    if (limit < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    }
+    DomainFilter domainFilter = new DomainFilter();
+    EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.AUTOMATIC : EntityFilterType.valueOf(type);
+    domainFilter.setEntityFilterType(filterType);
+    EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
+    domainFilter.setEntityStatusType(statusType);
+    String currentUser = Utils.getCurrentUser();
+    DomainList domainList = new DomainList();
+    List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
+    if (returnSize) {
+      int domainsSize = domainService.countDomains(domainFilter);
+      domainList.setDomainsSize(domainsSize);
+    }
+    domainList.setDomains(domains);
+    domainList.setDomainsOffset(offset);
+    domainList.setDomainsLimit(limit);
+    return Response.ok(domainList).build();
   }
 
   @POST
-  @Consumes({ MediaType.APPLICATION_JSON })
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
-  @Path("/domains")
-  public Response addDomain(@Context SecurityContext securityContext, @Context UriInfo uriInfo, DomainDTO domainDTO) {
-
-    ConversationState conversationState = ConversationState.getCurrent();
-
-    if (conversationState != null) {
-
-      String currentUserName = conversationState.getIdentity().getUserId();
-
-      try {
-        // Compute domain's data
-        domainDTO.setId(null);
-        domainDTO.setCreatedBy(currentUserName);
-        domainDTO.setLastModifiedBy(currentUserName);
-
-        // --- Add domain
-        domainDTO = domainService.addDomain(domainDTO);
-
-        return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
-
-      } catch (Exception e) {
-
-        LOG.error("Error adding new domain {} by {} ", domainDTO.getTitle(), currentUserName, e);
-
-        return Response.serverError().cacheControl(cacheControl).entity("Error adding new domain").build();
-
-      }
-
-    } else {
-
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+  @Operation(summary = "Creates a domain", method = "POST")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response createDomain(@Parameter(description = "Domain object to create", required = true)
+                               DomainDTO domainDTO) {
+    if (domainDTO == null) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Domain object is mandatory").build();
     }
-
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    try {
+      domainDTO = domainService.createDomain(domainDTO, identity);
+      return Response.ok(EntityBuilder.toRestEntity(domainDTO, identity.getUserId())).build();
+    } catch (IllegalAccessException e) {
+      LOG.warn("Unauthorized user {} attempts to create a domain", identity.getUserId(), domainDTO.getId(), e);
+      return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
+    }
   }
 
   @PUT
+  @Path("{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
-  @Path("/domains/{id}")
-  public Response updateDomain(@Context UriInfo uriInfo,
-                               @Context HttpServletRequest request,
-                               @PathParam("id") Long id,
+  @Operation(summary = "updates created domain", method = "PUT")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response updateDomain(@Parameter(description = "domain id", required = true)
+                               @PathParam("id")
+                               long domainId,
+                               @Parameter(description = "domain object to update", required = true)
                                DomainDTO domainDTO) {
-
-    ConversationState conversationState = ConversationState.getCurrent();
-
-    if (conversationState != null) {
-
-      String currentUserName = conversationState.getIdentity().getUserId();
-      try {
-        domainDTO.setLastModifiedBy(currentUserName);
-
-        // --- Update domain
-        domainDTO = domainService.updateDomain(domainDTO);
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
-        LOG.info("service=gamification operation=edit-domain parameters=\"user_social_id:{},domain_id:{},domain_title:{},domain_description:{}\"", actorId, domainDTO.getId(), domainDTO.getTitle(), domainDTO.getDescription());
-
-
-        return Response.ok().cacheControl(cacheControl).entity(domainDTO).build();
-
-      } catch (Exception e) {
-
-        LOG.error("Error updating domain {} by {} ", domainDTO.getTitle(), currentUserName, e);
-
-        return Response.serverError().cacheControl(cacheControl).entity("Error updating a domain").build();
-      }
-
-    } else {
-
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+    if (domainDTO == null) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("domain object is mandatory").build();
     }
-
+    if (domainId <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("domain technical identifier must be positive").build();
+    }
+    domainDTO.setId(domainId);
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    try {
+      domainDTO = domainService.updateDomain(domainDTO, identity);
+      return Response.ok(EntityBuilder.toRestEntity(domainDTO, identity.getUserId())).build();
+    } catch (IllegalAccessException e) {
+      LOG.warn("Unauthorized user {} attempts to update the domain", identity.getUserId(), domainDTO.getId(), e);
+      return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+    }
   }
 
   @DELETE
   @RolesAllowed("administrators")
-  @Path("/domains/{id}")
-  public Response deleteRule(@Context UriInfo uriInfo, @PathParam("id") Long id) {
+  @Path("{id}")
+  @Operation(summary = "Deletes an existing domain identified by its id", method = "DELETE")
+  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response deleteDomain(@Parameter(description = "domain id to be deleted", required = true)
+                               @PathParam("id")
+                               long id) {
+    if (id <= 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("The parameter 'id' must be positive integer").build();
+    }
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    try {
+      domainService.deleteDomain(id, identity);
+      return Response.noContent().build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+    } catch (IllegalAccessException e) {
+      LOG.warn("unauthorized user {} trying to delete a domain", identity.getUserId(), e);
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+  }
 
-    ConversationState conversationState = ConversationState.getCurrent();
+  @GET
+  @Path("canAddProgram")
+  @Produces(MediaType.TEXT_PLAIN)
+  @RolesAllowed("users")
+  @Operation(summary = "check if the current user can add a program", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "User ability to add a program is returned"),
+      @ApiResponse(responseCode = "500", description = "Internal server error") })
+  public Response canAddProgram() {
+    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
+    return Response.ok(String.valueOf(domainService.canAddDomain(identity))).build();
+  }
 
-    if (conversationState != null) {
-
-      String currentUserName = conversationState.getIdentity().getUserId();
-
-      try {
-        // --- Remove the rule
-        domainService.deleteDomain(id);
-
-        return Response.ok().cacheControl(cacheControl).entity("Domain " + id + " has been removed successfully ").build();
-
-      } catch (Exception e) {
-
-        LOG.error("Error deleting Domain {} by {} ", id, currentUserName, e);
-
-        return Response.serverError().cacheControl(cacheControl).entity("Error deleting a Domain").build();
-
-      }
-
+  @GET
+  @Path("{id}/cover")
+  @Produces("image/png")
+  @Operation(summary = "Gets a domain cover", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "403", description = "Forbidden request"),
+      @ApiResponse(responseCode = "404", description = "Resource not found") })
+  public Response getDomainCoverById(@Context
+                                     Request request,
+                                     @Parameter(description = "The value of lastModified parameter will determine whether the query should be cached by browser or not. If not set, no 'expires HTTP Header will be sent'")
+                                     @QueryParam("lastModified")
+                                     Long lastModified,
+                                     @Parameter(description = "domain id", required = true)
+                                     @PathParam("id")
+                                     String domainId,
+                                     @Parameter(description = "A mandatory valid token that is used to authorize anonymous request", required = true)
+                                     @QueryParam("r")
+                                     String token) throws IOException {
+    boolean isDefault = StringUtils.equals(Utils.DEFAULT_IMAGE_REMOTE_ID, domainId);
+    String lastUpdated = null;
+    DomainDTO domain = null;
+    if (isDefault) {
+      lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_COVER_LAST_MODIFIED));
     } else {
-
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+      domain = domainService.getDomainById(Long.valueOf(domainId));
+      if (domain == null) {
+        return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+      }
+      isDefault = domain.getCoverFileId() == 0 ;
+      lastUpdated = domain.getLastModifiedDate();
     }
 
+    try {
+      if (!isDefault && RestUtils.isAnonymous() && !Utils.isAttachmentTokenValid(token, domainId, Utils.TYPE, lastModified)) {
+        LOG.warn("An anonymous user attempts to access avatar of space {} without a valid access token", domainId);
+        return Response.status(Response.Status.FORBIDDEN).build();
+      }
+      EntityTag eTag = new EntityTag(lastUpdated);
+      Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
+      if (builder == null) {
+        InputStream stream = isDefault ? getDefaultCoverInputStream()
+                                       : domainService.getFileDetailAsStream(Long.valueOf(domainId));
+        builder = Response.ok(stream, "image/png");
+        builder.tag(eTag);
+      }
+      if (lastModified != null) {
+        builder.cacheControl(CACHECONTROL);
+        builder.lastModified(Utils.parseRFC3339Date(lastUpdated));
+        builder.expires(new Date(System.currentTimeMillis() + CACHE_IN_MILLI_SECONDS));
+      }
+      return builder.build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+    }
   }
+
+  private List<DomainRestEntity> getDomainsRestEntitiesByFilter(DomainFilter filter, int offset, int limit, String currentUser) {
+    List<DomainDTO> domains = domainService.getAllDomains(filter, offset, limit);
+    return EntityBuilder.toRestEntities(domains, currentUser);
+  }
+
+  public InputStream getDefaultCoverInputStream() throws IOException {
+    if (defaultProgramCover == null) {
+      InputStream is = portalContainer.getPortalContext().getResourceAsStream(DEFAULT_COVER_PATH);
+      if (is == null) {
+        defaultProgramCover = new byte[] {};
+      } else {
+        defaultProgramCover = IOUtil.getStreamContentAsBytes(is);
+      }
+    }
+    return new ByteArrayInputStream(defaultProgramCover);
+  }
+
 }

@@ -164,6 +164,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                                 <include>usersLeaderboard.less</include>
                                 <include>badgesOverview.less</include>
                                 <include>gamification.less</include>
+                                <include>challenges.less</include>
                             </includes>
                         </configuration>
                         <goals>

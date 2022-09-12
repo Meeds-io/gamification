@@ -142,7 +142,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     Challenge challenge = challengeStorage.getChallengeById(challengeId);
     if (challenge == null) {
-      throw new ObjectNotFoundException("challenge is not exist");
+      throw new ObjectNotFoundException("challenge doesn't exist");
     }
     if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
       throw new IllegalAccessException("User is not allowed to delete challenge with id " + challenge.getId());
