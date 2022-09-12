@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <exo-drawer
-    ref="ProgramDrawer"
+    ref="programDrawer"
     class="EngagementCenterDrawer"
     v-model="drawer"
     :right="!$vuetify.rtl"
@@ -57,9 +57,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div class="py-2">
             <span class="subtitle-1"> {{ $t('programs.label.programCover') }}</span>
             <engagement-center-image-selector
-              id="EngagementCenterProgramDrawerImageSelector"
+              id="engagementCenterProgramDrawerImageSelector"
               ref="programCover"
-              v-model="program.cover"
+              v-model="program.coverUrl"
               :max-uploads-size-in-mb="5"
               class="mb-2"
               @updated="addCover" />
@@ -69,7 +69,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
           <div class="py-2">
             <engagement-center-description-editor
-              id="EngagementCenterProgramDrawerDescriptionEditor"
+              id="engagementCenterProgramDrawerDescriptionEditor"
               ref="programDescription"
               v-model="program.description"
               :label="$t('programs.label.describeProgram')"
@@ -102,7 +102,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div class="my-2">
             <span class="subtitle-1"> {{ $t('programs.label.programOwners') }} *</span>
             <engagement-center-assignment
-              id="EngagementCenterProgramDrawerAssignee"
+              id="engagementCenterProgramDrawerAssignee"
               ref="programAssignment"
               class="my-2"
               :audience="audience"
@@ -120,7 +120,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-list-item-content>
                 <v-list-item-content class="flex flex-grow-0 flex-shrink-0 overflow-visible me-7">
                   <v-switch
-                    id="EngagementCenterProgramDrawerSwitch"
+                    id="engagementCenterProgramDrawerSwitch"
                     v-model="program.enabled" />
                 </v-list-item-content>
               </v-list-item>
@@ -132,17 +132,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <template slot="footer">
       <div class="d-flex mr-2">
         <v-spacer />
-        <button
-          class="ignore-vuetify-classes btn mx-1"
+        <v-btn
+          :disabled="loading"
+          class="btn mx-1"
           @click="close">
           {{ $t('engagementCenter.button.cancel') }}
-        </button>
-        <button
+        </v-btn>
+        <v-btn
           :disabled="!disabledSave"
-          class="ignore-vuetify-classes btn btn-primary"
+          :loading="loading"
+          class="btn btn-primary"
           @click="save">
           {{ buttonName }}
-        </button>
+        </v-btn>
       </div>
     </template>
   </exo-drawer>
@@ -173,11 +175,29 @@ export default {
       validDescription: true,
       isValidTitle: true,
       drawer: false,
+      showMenu: false,
+      loading: false,
     };
+  },
+  watch: {
+    loading() {
+      if (this.loading) {
+        this.$refs.programDrawer.startLoading();
+      } else {
+        this.$refs.programDrawer.endLoading();
+      }
+    },
   },
   created() {
     this.$root.$on('edit-program-details', this.open);
     this.$root.$on('open-program-drawer', this.open);
+    $(document).mousedown(() => {
+      if (this.showMenu) {
+        window.setTimeout(() => {
+          this.showMenu = false;
+        }, 200);
+      }
+    });
   },
   methods: {
     open(program) {
@@ -186,10 +206,14 @@ export default {
         enabled: true,
         owners: []
       };
-      this.$refs.ProgramDrawer.open();
+      this.$refs.programDrawer.open();
       this.$nextTick()
         .then(() => {
-          this.$refs.programAssignment.assignToMe();
+          if (this.program.id) {
+            this.$refs.programAssignment.setUp(this.program.owners);
+          } else {
+            this.$refs.programAssignment.assignToMe();
+          }
           this.$refs.programDescription.initCKEditor();
         });
     },
@@ -198,7 +222,7 @@ export default {
       this.$refs.programDescription.destroyCKEditor();
       this.$refs.programCover.reset();
       this.$refs.programAssignment.reset();
-      this.$refs.ProgramDrawer.close();
+      this.$refs.programDrawer.close();
     },
     addDescription(value) {
       if (value) {
@@ -236,24 +260,47 @@ export default {
     },
     save() {
       this.program.type = 'MANUAL';
-      this.$refs.ProgramDrawer.startLoading();
-      this.$programsServices.saveProgram(this.program)
-        .then((program) =>{
-          this.$root.$emit('program-added', program);
-          this.$challengeUtils.displayAlert({
-            type: 'success',
-            message: this.$t('programs.programCreateSuccess'),
-          });
-          this.close();
-          this.challenge = {};
-        })
-        .catch(() => {
-          this.$challengeUtils.displayAlert({
-            type: 'error',
-            message: this.$t('programs.programCreateError'),
-          });
-        })
-        .finally(() => this.$refs.ProgramDrawer.endLoading());
+      this.loading = true;
+      if ( this.program?.id) {
+        if ( this.program.owners && this.program.owners[0].id){
+          this.program.owners = this.program.owners.map(owner => owner.id);
+        }
+        this.$programsServices.updateProgram(this.program)
+          .then((program) =>{
+            this.$root.$emit('program-added', program);
+            this.$challengeUtils.displayAlert({
+              type: 'success',
+              message: this.$t('programs.programUpdateSuccess'),
+            });
+            this.close();
+            this.program = {};
+          })
+          .catch(() => {
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('programs.programUpdateError'),
+            });
+          })
+          .finally(() => this.loading = false);
+      } else {
+        this.$programsServices.saveProgram(this.program)
+          .then((program) =>{
+            this.$root.$emit('program-added', program);
+            this.$challengeUtils.displayAlert({
+              type: 'success',
+              message: this.$t('programs.programCreateSuccess'),
+            });
+            this.close();
+            this.program = {};
+          })
+          .catch(() => {
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('programs.programCreateError'),
+            });
+          })
+          .finally(() => this.loading = false);
+      }
     },
   }
 };
