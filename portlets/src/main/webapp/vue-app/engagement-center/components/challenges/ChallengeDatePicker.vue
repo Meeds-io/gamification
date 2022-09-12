@@ -23,9 +23,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           id="engagementCenterChallengeStartDate"
           :value="startDate" />
       </div>
-      <div v-else>
+      <div id="engagementCenterChallengeStartDatePicker" v-else>
         <date-picker
-          id="engagementCenterChallengeStartDatePicker"
           ref="challengeStartDate"
           v-model="startDate"
           :default-value="false"
@@ -49,9 +48,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           id="engagementCenterChallengeEndDatePicker"
           :value="endDate" />
       </div>
-      <div v-else>
+      <div id="engagementCenterChallengeEndDatePicker" v-else>
         <date-picker
-          id="engagementCenterChallengeEndDatePicker"
           ref="challengeEndDate"
           v-model="endDate"
           :default-value="false"

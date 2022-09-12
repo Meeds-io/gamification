@@ -32,7 +32,7 @@ export function updateRealization( id, status, actionLabel, domain, points) {
 }
 
 export function getAllDomains() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?type=ALL`, {
     headers: {
       'Content-Type': 'application/json'
     },
