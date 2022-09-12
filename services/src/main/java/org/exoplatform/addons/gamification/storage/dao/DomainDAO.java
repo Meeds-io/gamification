@@ -159,7 +159,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
 
   private String getQueryFilterContent(List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(d) FROM GamificationDomain d "
-                               : "SELECT d FROM GamificationDomain d LEFT JOIN FETCH d.owners ";
+                               : "SELECT DISTINCT d FROM GamificationDomain d LEFT JOIN FETCH d.owners ";
     String orderBy = " ORDER BY d.createdDate DESC";
 
     String queryContent;
