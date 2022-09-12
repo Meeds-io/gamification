@@ -59,7 +59,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
         <init-param>
             <name>portlet-view-dispatched-file-path</name>
-            <value>/jsp/rule/index.jsp</value>
+            <value>/WEB-INF/jsp/rule/index.jsp</value>
         </init-param>
         <supports>
             <mime-type>text/html</mime-type>
@@ -113,7 +113,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
         <init-param>
             <name>portlet-view-dispatched-file-path</name>
-            <value>/jsp/realizations/index.jsp</value>
+            <value>/WEB-INF/jsp/realizations/index.jsp</value>
         </init-param>
         <expiration-cache>-1</expiration-cache>
         <cache-scope>PUBLIC</cache-scope>
@@ -172,7 +172,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
-        <value>/jsp/profileStats/index.jsp</value>
+        <value>/WEB-INF/jsp/profileStats/index.jsp</value>
       </init-param>
       <init-param>
         <description>List of profiles that can be used to enable this portlet</description>
@@ -192,7 +192,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
         <init-param>
             <name>portlet-view-dispatched-file-path</name>
-            <value>/jsp/popularSpaces/index.jsp</value>
+            <value>/WEB-INF/jsp/popularSpaces/index.jsp</value>
         </init-param>
         <init-param>
           <name>use-js-manager</name>
@@ -220,7 +220,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
-        <value>/jsp/usersLeaderboard/index.jsp</value>
+        <value>/WEB-INF/jsp/usersLeaderboard/index.jsp</value>
       </init-param>
       <init-param>
         <name>use-js-manager</name>
@@ -252,7 +252,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
-        <value>/jsp/badgesOverview/index.jsp</value>
+        <value>/WEB-INF/jsp/badgesOverview/index.jsp</value>
       </init-param>
       <init-param>
         <name>prefetch.resource.rest</name>
@@ -268,6 +268,46 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </supports>
       <portlet-info>
         <title>Badges overview</title>
+      </portlet-info>
+    </portlet>
+  
+    <portlet>
+      <portlet-name>Challenges</portlet-name>
+      <display-name xml:lang="EN">Challenges Application</display-name>
+      <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+      <init-param>
+        <name>portlet-view-dispatched-file-path</name>
+        <value>/WEB-INF/jsp/challenges.jsp</value>
+      </init-param>
+      <supports>
+        <mime-type>text/html</mime-type>
+      </supports>
+      <supported-locale>en</supported-locale>
+      <resource-bundle>locale.portlet.Challenges</resource-bundle>
+      <portlet-info>
+        <title>Challenges Application</title>
+        <keywords>Challenges Application</keywords>
+      </portlet-info>
+    </portlet>
+  
+    <portlet>
+      <portlet-name>ChallengesExtensions</portlet-name>
+      <display-name xml:lang="EN">Challenges Application</display-name>
+      <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+      <init-param>
+        <name>portlet-view-dispatched-file-path</name>
+        <value>/html/challengesExtensions.html</value>
+      </init-param>
+      <expiration-cache>-1</expiration-cache>
+      <cache-scope>PUBLIC</cache-scope>
+      <supports>
+        <mime-type>text/html</mime-type>
+      </supports>
+      <supported-locale>en</supported-locale>
+      <resource-bundle>locale.portlet.Challenges</resource-bundle>
+      <portlet-info>
+        <title>Challenges UI Extensions</title>
+        <keywords>Challenges UI Extensions</keywords>
       </portlet-info>
     </portlet>
 
