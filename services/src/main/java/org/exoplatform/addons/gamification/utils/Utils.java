@@ -398,12 +398,12 @@ public class Utils {
     return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
   }
 
-  public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type) {
+  public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type, boolean isDefault) {
     if (Long.valueOf(domainId) == 0) {
       return null;
     }
 
-    if (lastModifiedDate == null || lastModifiedDate <= 0) {
+    if (isDefault) {
       domainId = DEFAULT_IMAGE_REMOTE_ID;
       lastModifiedDate = DEFAULT_COVER_LAST_MODIFIED;
     }
