@@ -252,7 +252,7 @@ public class ChallengeRest implements ResourceContainer {
         LOG.info("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
-        DomainFilter domainFilter = new DomainFilter(EntityFilterType.AUTOMATIC, EntityStatusType.ENABLED);
+        DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ENABLED);
         List<DomainDTO> domains = domainService.getAllDomains(domainFilter, 0, -1);
         List<DomainWithChallengesRestEntity> domainsWithChallenges = new ArrayList<>();
         for (DomainDTO domain : domains) {
