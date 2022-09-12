@@ -16,8 +16,9 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import java.util.List;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 
 public interface RuleService {
 
@@ -33,7 +34,7 @@ public interface RuleService {
      * @param id : rule's id param
      * @return an instance of RuleDTO
      */
-    RuleDTO findRuleById (Long id);
+    RuleDTO findRuleById (long id);
 
     /**
      * Find enable RuleEntity by title
