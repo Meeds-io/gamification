@@ -1,5 +1,29 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2022 Meeds Association
+ * contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class UserInfo implements Cloneable {
 
   private String  id;
@@ -20,103 +44,11 @@ public class UserInfo implements Cloneable {
 
   private boolean isManager;
 
+  private boolean isDomainOwner;
+
   @Override
   protected UserInfo clone() {
-    return new UserInfo(id, remoteId, fullName, avatarUrl, canEdit, canAnnounce, isMember, isRedactor, isManager);
+    return new UserInfo(id, remoteId, fullName, avatarUrl, canEdit, canAnnounce, isMember, isRedactor, isManager, isDomainOwner);
   }
 
-  public UserInfo(String id,
-                  String remoteId,
-                  String fullName,
-                  String avatarUrl,
-                  boolean canEdit,
-                  boolean canAnnounce,
-                  boolean isMember,
-                  boolean isRedactor,
-                  boolean isManager) {
-    this.id = id;
-    this.remoteId = remoteId;
-    this.fullName = fullName;
-    this.avatarUrl = avatarUrl;
-    this.canEdit = canEdit;
-    this.canAnnounce = canAnnounce;
-    this.isMember = isMember;
-    this.isRedactor = isRedactor;
-    this.isManager = isManager;
-  }
-
-  public UserInfo() {
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getRemoteId() {
-    return remoteId;
-  }
-
-  public void setRemoteId(String remoteId) {
-    this.remoteId = remoteId;
-  }
-
-  public String getFullName() {
-    return fullName;
-  }
-
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
-  }
-
-  public String getAvatarUrl() {
-    return avatarUrl;
-  }
-
-  public void setAvatarUrl(String avatarUrl) {
-    this.avatarUrl = avatarUrl;
-  }
-
-  public boolean isCanEdit() {
-    return canEdit;
-  }
-
-  public void setCanEdit(boolean canEdit) {
-    this.canEdit = canEdit;
-  }
-
-  public boolean isCanAnnounce() {
-    return canAnnounce;
-  }
-
-  public void setCanAnnounce(boolean canAnnounce) {
-    this.canAnnounce = canAnnounce;
-  }
-
-  public boolean isMember() {
-    return isMember;
-  }
-
-  public void setMember(boolean member) {
-    isMember = member;
-  }
-
-  public boolean isRedactor() {
-    return isRedactor;
-  }
-
-  public void setRedactor(boolean redactor) {
-    isRedactor = redactor;
-  }
-
-  public boolean isManager() {
-    return isManager;
-  }
-
-  public void setManager(boolean manager) {
-    isManager = manager;
-  }
 }
