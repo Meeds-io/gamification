@@ -19,7 +19,7 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 import java.io.Serializable;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -62,7 +62,7 @@ public class RuleDTO implements Serializable {
 
   private String            endDate;
 
-  private TypeRule          type;
+  private EntityType        type;
 
   private List<Long>        managers;
 
@@ -82,11 +82,11 @@ public class RuleDTO implements Serializable {
     this.id = id;
   }
 
-  public TypeRule getType() {
+  public EntityType getType() {
     return type;
   }
 
-  public void setType(TypeRule type) {
+  public void setType(EntityType type) {
     this.type = type;
   }
 

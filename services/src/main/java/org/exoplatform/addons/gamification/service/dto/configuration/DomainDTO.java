@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -17,18 +17,26 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class DomainDTO implements Serializable, Cloneable {
 
   private static final long serialVersionUID = -8857818632949907592L;
 
-  protected Long            id;
+  private long              id;
 
-  protected String          title;
+  private String            title;
 
-  protected String          description;
+  private String            description;
 
-  protected int             priority;
+  private int               priority;
 
   private String            createdBy;
 
@@ -38,14 +46,23 @@ public class DomainDTO implements Serializable, Cloneable {
 
   private String            lastModifiedDate;
 
-  protected boolean         deleted;
+  private boolean           deleted;
 
-  protected boolean         enabled;
+  private boolean           enabled;
 
-  public DomainDTO() {
-  }
+  private long              budget;
 
-  public DomainDTO(Long id, // NOSONAR
+  private String            type;
+
+  private String            coverUploadId;
+
+  private long              coverFileId;
+
+  private String            coverUrl;
+
+  private Set<Long>         owners;
+
+  public DomainDTO(long id, // NOSONAR
                    String title,
                    String description,
                    int priority,
@@ -54,7 +71,12 @@ public class DomainDTO implements Serializable, Cloneable {
                    String lastModifiedBy,
                    String lastModifiedDate,
                    boolean deleted,
-                   boolean enabled) {
+                   boolean enabled,
+                   long budget,
+                   String type,
+                   long coverFileId,
+                   String coverUrl,
+                   Set<Long> owners) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -65,10 +87,15 @@ public class DomainDTO implements Serializable, Cloneable {
     this.lastModifiedDate = lastModifiedDate;
     this.deleted = deleted;
     this.enabled = enabled;
+    this.budget = budget;
+    this.type = type;
+    this.coverFileId = coverFileId;
+    this.coverUrl = coverUrl;
+    this.owners = owners;
   }
 
   @Override
-  protected DomainDTO clone() { // NOSONAR
+  public DomainDTO clone() { // NOSONAR
     return new DomainDTO(id,
                          title,
                          description,
@@ -78,87 +105,13 @@ public class DomainDTO implements Serializable, Cloneable {
                          lastModifiedBy,
                          lastModifiedDate,
                          deleted,
-                         enabled);
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public int getPriority() {
-    return priority;
-  }
-
-  public void setPriority(int priority) {
-    this.priority = priority;
-  }
-
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public String getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(String createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public String getLastModifiedBy() {
-    return lastModifiedBy;
-  }
-
-  public void setLastModifiedBy(String lastModifiedBy) {
-    this.lastModifiedBy = lastModifiedBy;
-  }
-
-  public String getLastModifiedDate() {
-    return lastModifiedDate;
-  }
-
-  public void setLastModifiedDate(String lastModifiedDate) {
-    this.lastModifiedDate = lastModifiedDate;
-  }
-
-  public boolean isDeleted() {
-    return deleted;
-  }
-
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+                         enabled,
+                         budget,
+                         type,
+                         coverUploadId,
+                         coverFileId,
+                         coverUrl,
+                         owners);
   }
 
 }

@@ -58,12 +58,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
-    assertEquals(401, response.getStatus());
     startSessionAs("root1");
-    response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
+    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertEquals(200, response.getStatus());
     ConversationState.setCurrent(null);
   }
@@ -80,11 +76,9 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
     assertEquals(401, response.getStatus());
     startSessionAs("root1");
     response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
     assertEquals(200, response.getStatus());
     ConversationState.setCurrent(null);
   }
@@ -119,18 +113,13 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
-    assertNotNull(response);
-    assertEquals(401, response.getStatus());
     startSessionAs("root1");
-    response = launcher.service("POST", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("description", entity.getDescription());
     assertEquals("eventName_areaName", entity.getTitle());
     response = launcher.service("POST", restPath, "", h, data, envctx);
-    assertNotNull(response);
     assertEquals(409, response.getStatus());
   }
 
@@ -161,12 +150,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
-    assertEquals(401, response.getStatus());
     startSessionAs("root1");
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
     assertEquals(200, response.getStatus());
     ConversationState.setCurrent(null);
   }
@@ -208,10 +193,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
     ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
     startSessionAs("root1");
     response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("Description_test", entity.getDescription());

@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -16,70 +16,136 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-
-import javax.persistence.EntityNotFoundException;
+import java.io.InputStream;
 import java.util.List;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.security.Identity;
 
 public interface DomainService {
 
   /**
-   * Return all domains within the DB
-   * 
-   * @return a list of DomainDTO
+   * Retrieves all domains by user.
+   *
+   * @param domainFilter {@link DomainFilter} used to filter results
+   * @param offset index of the search
+   * @param limit limit of results to return
+   * @return A {@link List <DomainDTO>} object
    */
-   List<DomainDTO> getAllDomains() ;
+  List<DomainDTO> getAllDomains(DomainFilter domainFilter, int offset, int limit);
 
   /**
    * Return enabled domains within the DB
-   * 
-   * @return a list of enabled DomainDTO
+   *
+   * @return A {@link List <DomainDTO>} object
    */
-   List<DomainDTO> getEnabledDomains() ;
+  List<DomainDTO> getEnabledDomains();
 
   /**
-   * Find an enabled DomainEntity by title
+   * Find an enabled domain by title
    * 
    * @param domainTitle : domain title
-   * @return an instance DomainDTO
+   * @return found {@link DomainDTO}
    */
-   DomainDTO findEnabledDomainByTitle(String domainTitle);
-
-   /**
-    * Find a DomainEntity by title
-    * 
-    * @param domainTitle : domain title
-    * @return an instance DomainDTO
-    */
-   DomainDTO getDomainByTitle(String domainTitle);
+  DomainDTO findEnabledDomainByTitle(String domainTitle);
 
   /**
-     * Add Domain to DB
-     * @param domainDTO : an object of type DomainDTO
-     * @return BadgeDTO object
-     */
-     DomainDTO addDomain(DomainDTO domainDTO) ;
+   * Find a domain by title
+   * 
+   * @param domainTitle : domain title
+   * @return found {@link DomainDTO}
+   */
+  DomainDTO getDomainByTitle(String domainTitle);
 
   /**
-   * Update Domain
+   * Creates a new domain
+   * 
+   * @param domainDTO : an object of type DomainDTO
+   * @param aclIdentity Security identity of user attempting to create a
+   *          program/domain
+   * @return created {@link DomainDTO}
+   * @throws IllegalAccessException when user is not authorized to create a
+   *           domain for the designated owner defined in object
+   */
+  DomainDTO createDomain(DomainDTO domainDTO, Identity aclIdentity) throws IllegalAccessException;
+
+  /**
+   * Creates a new domain
+   * 
+   * @param domainDTO : an object of type DomainDTO
+   * @return created {@link DomainDTO}
+   */
+  DomainDTO createDomain(DomainDTO domainDTO);
+
+  /**
+   * Update an existing Domain
    * 
    * @param domainDTO : an instance of type DomainDTO
-   * @return DomainDTO object
+   * @param aclIdentity Security identity of user attempting to update a
+   *          program/domain
+   * @return updated object {@link DomainDTO}
+   * @throws IllegalArgumentException when user is not authorized to update the
+   *           domain
+   * @throws ObjectNotFoundException when the domain identified by its technical
+   *           identifier is not found
+   * @throws IllegalAccessException when user is not authorized to create a
+   *           domain for the designated owner defined in object
    */
-  DomainDTO updateDomain(DomainDTO domainDTO) throws ObjectNotFoundException;
+  DomainDTO updateDomain(DomainDTO domainDTO, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
-     * Delete a DomainEntity using the id
-     * @param id : domain id
-     */
-    void deleteDomain (Long id) throws EntityNotFoundException;
-
-  /**
-     * Delete a DomainEntity using the id
+   * Delete a DomainEntity using the id
+   * 
    * @param id : domain id
-   * @return
+   * @param aclIdentity Security identity of user attempting to update a
+   *          program/domain
+   * @throws IllegalAccessException when user is not authorized to delete domain
+   * @throws ObjectNotFoundException domain not found
    */
-  DomainDTO getDomainById(Long id);
+  void deleteDomain(long id, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
+
+  /**
+   * Retrieves a domain identified by its technical identifier.
+   * 
+   * @param id : domain id
+   * @return found {@link DomainDTO}
+   */
+  DomainDTO getDomainById(long id);
+
+  /**
+   * Count all domains by filter
+   *
+   * @param domainFilter {@link DomainFilter} used to filter domains
+   * @return domains count
+   */
+  int countDomains(DomainFilter domainFilter);
+
+  /**
+   * Retrieves a cover identified by domain technical identifier.
+   *
+   * @param domainId domain unique identifier
+   * @return found {@link InputStream}
+   * @throws ObjectNotFoundException domain not found
+   */
+  InputStream getFileDetailAsStream(long domainId) throws ObjectNotFoundException;
+
+  /**
+   * Check whether user can add programs or not
+   * 
+   * @param aclIdentity Security identity of user
+   * @return true if user has enough privileges to create a program, else false
+   */
+  boolean canAddDomain(Identity aclIdentity);
+
+  /**
+   * Check whether user can add programs or not
+   * 
+   * @param domainId technical identifier of domain/program
+   * @param aclIdentity Security identity of user
+   * @return true if user has enough privileges to create a program, else false
+   */
+  boolean canUpdateDomain(long domainId, Identity aclIdentity);
 
 }
