@@ -180,9 +180,7 @@ export default {
       this.$refs.editRealizationDrawer.close();
     },
     getAllDomains() {
-      this.$realizationsServices.getAllDomains().then(domains => {
-        this.domains = domains.slice().filter(domain => domain.enabled);
-      });
+      this.$realizationsServices.getAllDomains().then(response => this.domains = response.domains);
     },
     updateRealization() {
       this.$realizationsServices.updateRealization(this.realizationId, this.status, this.actionLabel, this.program.title, this.points)
