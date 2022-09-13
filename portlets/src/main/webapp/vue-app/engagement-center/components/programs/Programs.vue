@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     role="main"
     flat>
     <v-toolbar
-      v-if="canAddProgram"
+      v-if="isAdministrator"
       color="transparent"
       flat
       class="pa-4">
@@ -37,6 +37,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
       <v-spacer />
+      <div class="pt-1">
+        <select
+          id="EngagementCenterApplicationCProgramsQuickFilter"
+          v-model="status"
+          class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter mb-3 width-auto"
+          @change="refreshPrograms">
+          <option
+            v-for="stat in programStatus"
+            :key="stat.value"
+            :value="stat.value">
+            <span class="d-none d-lg-inline">
+              {{ stat.text }}
+            </span>
+          </option>
+        </select>
+      </div>
     </v-toolbar>
 
     <engagement-center-programs-list
@@ -44,6 +60,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :programs-list="programsList"
       :is-administrator="isAdministrator"
       class="py-10" />
+    <engagement-center-no-results
+      v-if="displayNoSearchResult"
+      :info="$t('program.filter.noResults')" />
     <engagement-center-program-drawer ref="programDrawer" />
   </div>
 </template>
@@ -72,6 +91,21 @@ export default {
       } else {
         return 6;
       }
+    },
+    programStatus() {
+      return [{
+        text: this.$t('programs.status.allPrograms'),
+        value: 'ALL',
+      },{
+        text: this.$t('programs.status.enabledPrograms'),
+        value: 'ENABLED',
+      },{
+        text: this.$t('programs.status.disabledPrograms'),
+        value: 'DISABLED',
+      }];
+    },
+    displayNoSearchResult() {
+      return !this.loading && this.programsList?.domainsSize === 0;
     },
   },
   watch: {
