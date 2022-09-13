@@ -73,7 +73,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <challenge-welcome-message
       v-if="displayWelcomeMessage"
       :can-add-challenge="canAddChallenge" />
-    <challenge-no-results v-else-if="displayNoSearchResult" />
+    <engagement-center-no-results
+      v-else-if="displayNoSearchResult"
+      :info="$t('challenges.search.noResults')"
+      :info-message="$t('challenges.search.noResultsMessage')" />
     <challenges-list
       v-else-if="displayChallengesList"
       :domains="domainsHavingChallenges"
