@@ -78,27 +78,27 @@ export default {
   watch: {
     tab() {
       if (this.tab === 0) {
-        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
       } else if (this.tab === 1) {
-        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`);
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
       } else if (this.tab === 2) {
-        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`);
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
       }
     },
   },
   created() {
     const urlPath = document.location.search || document.location.pathname;
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
-    if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`) > -1) {
+    if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {
       this.tab = 0;
-    } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`) > -1 || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`) > -1) {
+    } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1 || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`) > -1) {
       this.challengeId = challengeId;
       this.tab = 1;
-    } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/achievements`) > -1) {
+    } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
       this.tab = 2;
     } else {
       this.tab = 0;
-      window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/programs`);
+      window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
     }
     this.initialized = true;
   }

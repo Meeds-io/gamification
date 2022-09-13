@@ -31,10 +31,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <page-reference>portal::global::challenges</page-reference>
         </node>
         <node>
-            <name>engagement</name>
-            <label>#{portal.global.engagement}</label>
+            <name>contributions</name>
+            <label>#{portal.global.contributions}</label>
             <visibility>SYSTEM</visibility>
-            <page-reference>portal::global::engagement</page-reference>
+            <page-reference>portal::global::contributions</page-reference>
         </node>
     </page-nodes>
 </node-navigation>

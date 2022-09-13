@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <properties-param>
           <name>programEngagementFeatureProperties</name>
           <description>New program engagement Feature enablement flag</description>
-          <property name="exo.feature.engagementCenter.enabled" value="${exo.feature.engagementCenter.enabled:false}" />
+          <property name="exo.feature.engagementCenter.enabled" value="${exo.feature.engagementCenter.enabled:true}" />
         </properties-param>
       </init-params>
     </component>
@@ -59,7 +59,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                             <string>Challenges</string>
                         </field>
                         <field name="url">
-                            <string>./engagement</string>
+                            <string>./contributions</string>
                         </field>
                         <field name="description">
                             <string>challenges application</string>
