@@ -54,11 +54,9 @@ export default {
       type: String,
       default: '/gamification-portlets/skin/images/program_default_cover_back.png'
     },
-    maxUploadsSizeInMb: {
+    maxUploadsSize: {
       type: Number,
-      default: function() {
-        return 0;
-      },
+      default: 100000
     },
   },
   data() {
@@ -81,11 +79,17 @@ export default {
     uploadCover(file) {
       if (file && file.size) {
         if (file.type && file.type.indexOf('image/') !== 0) {
-          this.$emit('error', this.$t('engagementCenter.error.uploadUnsupportedFileType'));
+          this.$challengeUtils.displayAlert({
+            type: 'error',
+            message: this.$t('engagementCenter.error.uploadUnsupportedFileType\''),
+          });
           return;
         }
-        if (file.size > this.maxUploadsSizeInMb * 1024) {
-          this.$emit('error', this.$uploadService.avatarExcceedsLimitError);
+        if (file.size > this.maxUploadsSize) {
+          this.$challengeUtils.displayAlert({
+            type: 'error',
+            message: this.$t('programs.imageSize.errorMessage'),
+          });
           return;
         }
         const thiss = this;
@@ -99,7 +103,12 @@ export default {
             reader.readAsDataURL(file);
             this.$emit('updated', uploadId);
           })
-          .catch(error => this.$emit('error', error));
+          .catch(() =>
+            this.$challengeUtils.displayAlert({
+              type: 'error',
+              message: this.$t('programs.cover.uploadErrorMessage'),
+            })
+          );
       }
     },
     reset() {
