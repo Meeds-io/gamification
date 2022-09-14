@@ -30,7 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </span> 
     </td>
     <td class="text-truncate align-center">
-      {{ domainDescription }}
+      <span v-sanitized-html="domainDescription"></span>
     </td>
     <td class="align-center actionTitle px-0">
       <a
