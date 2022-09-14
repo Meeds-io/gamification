@@ -158,20 +158,6 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateDescending",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " ORDER BY g.id DESC"
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAscending",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
-        + " WHERE g.earnerType = :type"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " ORDER BY g.id ASC"
-)
-@NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAndRules",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
@@ -179,22 +165,6 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
         + " ORDER BY g.id DESC"
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateDescending",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
-        + " AND g.earnerId = :earnerId"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " ORDER BY g.id DESC"
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAscending",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
-        + " WHERE g.earnerType = :type"
-        + " AND g.earnerId = :earnerId"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " ORDER BY g.id ASC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",

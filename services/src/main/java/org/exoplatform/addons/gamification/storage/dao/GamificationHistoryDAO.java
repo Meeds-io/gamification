@@ -473,24 +473,22 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
     if (StringUtils.equals(sortField, "actionType")) {
       return findAllRealizationsOrderedByRuleType(fromDate, toDate, sortDescending, offset, limit);
-    } else if (StringUtils.equals(sortField, "status")) {
-      return findRealizationsByFilter(realizationFilter, offset, limit);
     } else {
-      return findAllRealizationsOrderedByDate(fromDate, toDate, sortDescending, offset, limit);
-    }
+      return findRealizationsDynamicallyByFilter(realizationFilter, offset, limit, true);
+    } 
   }
   
-  public List<GamificationActionsHistory> findRealizationsByFilter(RealizationsFilter filter, int offset, int limit) {
-    TypedQuery<GamificationActionsHistory> query = buildQueryFromFilter(filter, GamificationActionsHistory.class, false);
+  public List<GamificationActionsHistory> findRealizationsDynamicallyByFilter(RealizationsFilter filter, int offset, int limit,boolean isAdmin) {
+    TypedQuery<GamificationActionsHistory> query = buildQueryFromFilter(filter, GamificationActionsHistory.class, false, isAdmin);
     query.setFirstResult(offset);
     query.setMaxResults(limit);
     return query.getResultList();
   }
 
-  private <T> TypedQuery<T> buildQueryFromFilter(RealizationsFilter filter, Class<T> clazz, boolean count) {
+  private <T> TypedQuery<T> buildQueryFromFilter(RealizationsFilter filter, Class<T> clazz, boolean count, boolean isAdmin) {
     List<String> suffixes = new ArrayList<>();
     List<String> predicates = new ArrayList<>();
-    buildPredicates(filter, suffixes, predicates);
+    buildPredicates(filter, suffixes, predicates, isAdmin);
 
     TypedQuery<T> query;
     String queryName = getQueryFilterName(suffixes, count);
@@ -502,26 +500,29 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       getEntityManager().getEntityManagerFactory().addNamedQuery(queryName, query);
       filterNamedQueries.put(queryName, true);
     }
-
-    addQueryFilterParameters(filter, query);
+    addQueryFilterParameters(filter, query, isAdmin);
     return query;
   }
 
-  private <T> void addQueryFilterParameters(RealizationsFilter filter, TypedQuery<T> query) {
+  private <T> void addQueryFilterParameters(RealizationsFilter filter, TypedQuery<T> query, boolean isAdmin) {
     query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
     query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
     query.setParameter("type", IdentityType.USER);
-    if (filter.getEarnerId() > 0) {
-      query.setParameter("earnerId", filter.getEarnerId());
+    if (!isAdmin) {
+      query.setParameter("earnerId", Long.toString(filter.getEarnerId()));
     }
   }
 
-  private void buildPredicates(RealizationsFilter filter, List<String> suffixes, List<String> predicates) {
+  private List<String> buildPredicates(RealizationsFilter filter, List<String> suffixes, List<String> predicates, boolean isAdmin) {
     predicates.add("g.earnerType = :type");
+    suffixes.add(filter.getSortField());
+    suffixes.add(filter.isSortDescending() ? "Descending" : "Ascending");
     predicates.add("g.date BETWEEN :fromDate AND :toDate");
-    if (filter.getEarnerId() > 0) {
+    if (!isAdmin) {
+      suffixes.add("Earner");
       predicates.add("g.earnerId = :earnerId");
     }
+    return suffixes;
   }
 
   private String getQueryFilterName(List<String> suffixes, boolean count) {
@@ -535,11 +536,20 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   private String getQueryFilterContent(RealizationsFilter filter, List<String> predicates, boolean count) {
-    String querySelect = count ? "SELECT COUNT(g) FROM GamificationActionsHistory g " : "SELECT DISTINCT g FROM GamificationActionsHistory g ";
-    String orderBy = " ORDER BY g." +filter.getSortField() + (filter.isSortDescending() ? " DESC" : " ASC") + " ,g.date" + (filter.isSortDescending() ? " DESC" : " ASC") ;
+    String querySelect = count ? "SELECT COUNT(g) FROM GamificationActionsHistory g "
+                               : "SELECT DISTINCT g FROM GamificationActionsHistory g ";
+    String orderBy = null;
+    String sortDirection = filter.isSortDescending() ? " DESC" : " ASC";
+    if (StringUtils.equals(filter.getSortField(), "date")) {
+      orderBy = " ORDER BY g.id" + sortDirection;
+    } else if (StringUtils.equals(filter.getSortField(), "actionLabel")) {
+      orderBy = " ORDER BY g.actionTitle" + sortDirection + " , g.id" + sortDirection;
+    } else {
+      orderBy = " ORDER BY g." + filter.getSortField() + sortDirection + " ,g.id" + sortDirection;
+    }
     String queryContent;
     if (predicates.isEmpty()) {
-      queryContent = querySelect ;
+      queryContent = querySelect;
     } else {
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
@@ -547,32 +557,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       queryContent = queryContent + orderBy;
     }
     return queryContent;
-  }
-
-  private List<GamificationActionsHistory> findAllRealizationsOrderedByDate(Date fromDate,
-                                                                            Date toDate,
-                                                                            boolean sortDescending,
-                                                                            int offset,
-                                                                            int limit) {
-    TypedQuery<GamificationActionsHistory> query;
-    if (sortDescending) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateDescending",
-                                                  GamificationActionsHistory.class);
-    } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAscending",
-                                                  GamificationActionsHistory.class);
-    }
-    query.setParameter(FROM_DATE_PARAM_NAME, fromDate);
-    query.setParameter(TO_DATE_PARAM_NAME, toDate);
-    query.setParameter("type", IdentityType.USER);
-    if (limit > 0) {
-      query.setMaxResults(limit);
-    }
-    if (offset > 0) {
-      query.setFirstResult(offset);
-    }
-    List<GamificationActionsHistory> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
   }
 
   private List<GamificationActionsHistory> findAllRealizationsOrderedByRuleType(Date fromDate,
@@ -654,37 +638,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
        if (StringUtils.equals(sortField, "actionType")) {
          return findUsersRealizationsOrderedByRuleType(fromDate, toDate, sortDescending, earnerId, offset, limit);
        } else {
-         return findUsersRealizationsOrderedByDate(fromDate, toDate, sortDescending, earnerId, offset, limit);
-       }
-     }
-
-     private List<GamificationActionsHistory> findUsersRealizationsOrderedByDate(Date fromDate,
-                                                                                 Date toDate,
-                                                                                 boolean sortDescending,
-                                                                                 Long earnerId,
-                                                                                 int offset,
-                                                                                 int limit) {
-       TypedQuery<GamificationActionsHistory> query;
-       if (sortDescending) {
-         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateDescending",
-                                                     GamificationActionsHistory.class);
-       } else {
-         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateAscending",
-                                                     GamificationActionsHistory.class);
-       }
-       String earnerIdentifier = earnerId.toString();
-       query.setParameter("earnerId", earnerIdentifier);
-       query.setParameter("fromDate", fromDate);
-       query.setParameter("toDate", toDate);
-       query.setParameter("type", IdentityType.USER);
-       if (limit > 0) {
-         query.setMaxResults(limit);
-       }
-       if (offset > 0) {
-         query.setFirstResult(offset);
-       }
-       List<GamificationActionsHistory> resultList = query.getResultList();
-       return resultList == null ? Collections.emptyList() : resultList;
+         return findRealizationsDynamicallyByFilter(realizationFilter, offset, limit, false);
+       } 
      }
 
      private List<GamificationActionsHistory> findUsersRealizationsOrderedByRuleType(Date fromDate,
