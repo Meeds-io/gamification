@@ -370,6 +370,7 @@ public class Utils {
     if (message == null) {
       return null;
     }
+    message = message.replaceAll("<[^>]+>", "");
     message = StringEscapeUtils.unescapeHtml(message);
     for (char c : ILLEGAL_MESSAGE_CHARACTERS) {
       message = message.replace(c, ' ');
