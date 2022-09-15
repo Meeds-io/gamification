@@ -16,7 +16,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="engagementCenterEnabled">
+    <main v-if="!initialized && engagementCenterEnabled">
+      <v-toolbar color="transparent" flat>
+        <v-spacer />
+        <v-progress-circular
+          color="primary"
+          class="mb-2"
+          indeterminate />
+        <v-spacer />
+      </v-toolbar>
+    </main>
+    <main v-if="initialized && engagementCenterEnabled">
       <v-tabs
         id="engagementCenterTabs"
         v-model="tab"
@@ -33,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
-          <challenges />
+          <challenges :challenge-id="challengeId" />
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -60,8 +70,37 @@ export default {
   },
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
+    initialized: false,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
+    challengeId: null,
   }),
+  watch: {
+    tab() {
+      if (this.tab === 0) {
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
+      } else if (this.tab === 1) {
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
+      } else if (this.tab === 2) {
+        window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
+      }
+    },
+  },
+  created() {
+    const urlPath = document.location.search || document.location.pathname;
+    const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+    if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {
+      this.tab = 0;
+    } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1 || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`) > -1) {
+      this.challengeId = challengeId;
+      this.tab = 1;
+    } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
+      this.tab = 2;
+    } else {
+      this.tab = 0;
+      window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
+    }
+    this.initialized = true;
+  }
 };
 </script>
