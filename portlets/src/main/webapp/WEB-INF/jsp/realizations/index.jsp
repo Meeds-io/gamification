@@ -14,10 +14,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
+<%@page import="org.exoplatform.services.security.ConversationState"%>
+
+<%
+    boolean isAdministrator = ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
+%>
 <div class="VuetifyApp">
     <div  id="Realizations" class="v-application border-box-sizing v-application--is-ltr theme--light">
         <script type="text/javascript">
-            require(['PORTLET/gamification-portlets/Realizations'], app => app.init());
+            require(['PORTLET/gamification-portlets/Realizations'], app => app.init(<%=isAdministrator%>));
         </script>
     </div>
 </div>
