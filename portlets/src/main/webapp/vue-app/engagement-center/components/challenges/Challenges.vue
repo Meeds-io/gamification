@@ -219,9 +219,9 @@ export default {
           .then(challenge => {
             if (challenge && challenge.id) {
               this.$root.$emit('open-challenge-details', challenge);
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges/${this.providedId}`);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.providedId}`);
             } else {
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/engagement/challenges`);
+              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
               this.showAlert('error', this.$t('challenges.viewChallengeError'));
             }
           });
