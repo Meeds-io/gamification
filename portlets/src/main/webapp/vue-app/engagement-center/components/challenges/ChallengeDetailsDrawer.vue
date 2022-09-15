@@ -179,7 +179,7 @@ export default {
   methods: {
     open(challenge) {
       this.challenge = challenge;
-      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges/${this.challenge.id}`);
+      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.challenge.id}`);
 
       this.$refs.challengeDetails.open();
       this.$refs.challengeDetails.startLoading();
@@ -195,7 +195,7 @@ export default {
         }).finally(() => this.$refs.challengeDetails.endLoading());
     },
     close() {
-      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`);
+      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
       this.$refs.challengeDetails.close();
     },
     getFromDate(date) {
