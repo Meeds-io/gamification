@@ -107,7 +107,7 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList.add(gHistory1);
     gamificationActionsHistoryDTOList.add(gHistory2);
     gamificationActionsHistoryDTOList.add(gHistory3);
-    when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
+    when(realizationsStorage.getRealizationsByFilter(filter, offset, limit, true)).thenReturn(gamificationActionsHistoryDTOList);
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
 
     // When
@@ -141,7 +141,7 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList1.add(gHistory4);
     gamificationActionsHistoryDTOList1.add(gHistory5);
     gamificationActionsHistoryDTOList1.add(gHistory6);
-    when(realizationsStorage.getAllRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
+    when(realizationsStorage.getRealizationsByFilter(filter, offset, limit, true)).thenReturn(gamificationActionsHistoryDTOList);
     when(identityManager.getOrCreateUserIdentity("2L")).thenReturn(identity);
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, null, offset, limit));
 

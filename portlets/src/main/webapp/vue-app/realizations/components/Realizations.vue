@@ -143,7 +143,7 @@ export default {
         {
           text: this.$t('realization.label.actionLabel'),
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'actionLabel',
           class: 'actionHeader'
         },

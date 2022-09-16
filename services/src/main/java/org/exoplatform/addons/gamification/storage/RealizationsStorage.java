@@ -16,23 +16,15 @@ public class RealizationsStorage {
     this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
 
-  public List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter realizationFilter,
-                                                                        int offset,
-                                                                        int limit) {
+  public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter realizationFilter,
+                                                                     int offset,
+                                                                     int limit,
+                                                                     boolean isAdmin) {
     List<GamificationActionsHistory> gamificationActionsHistoryList =
-                                                                    gamificationHistoryDAO.findAllRealizationsByFilter(realizationFilter,
+                                                                    gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
                                                                                                                        offset,
-                                                                                                                       limit);
-    return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
-  }
-
-  public List<GamificationActionsHistoryDTO> getUsersRealizationsByFilter(RealizationsFilter realizationFilter,
-                                                                          int offset,
-                                                                          int limit) {
-    List<GamificationActionsHistory> gamificationActionsHistoryList =
-                                                                    gamificationHistoryDAO.findUsersRealizationsByFilter(realizationFilter,
-                                                                                                                         offset,
-                                                                                                                         limit);
+                                                                                                                       limit,
+                                                                                                                       isAdmin);
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
 
