@@ -87,7 +87,7 @@ public class RealizationsRest implements ResourceContainer {
                                      @QueryParam("offset")
                                      int offset,
                                      @Parameter(description = "Limit of result")
-                                     @DefaultValue("10")
+                                     @DefaultValue("25")
                                      @QueryParam("limit")
                                      int limit,
                                      @Parameter(description = "Response Type")
