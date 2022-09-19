@@ -90,8 +90,8 @@ export default {
   data: () => ({
     realizations: [],
     offset: 0,
-    limit: 10,
-    pageSize: 10,
+    limit: 25,
+    pageSize: 25,
     loading: true,
     sortBy: 'date',
     sortDescending: true,
