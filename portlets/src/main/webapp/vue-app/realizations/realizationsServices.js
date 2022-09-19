@@ -1,5 +1,5 @@
 export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 10}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 25}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
