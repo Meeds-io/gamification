@@ -149,10 +149,10 @@ export default {
       ];
     },
     fromDate() {
-      return this.value && new Date(this.value.min);
+      return this.value && new Date(this.value.min - (new Date().getTimezoneOffset() * 60000));
     },
     toDate() {
-      return this.value && new Date(this.value.max);
+      return this.value && new Date(this.value.max + (new Date().getTimezoneOffset() * 60000));
     },
     maxDate() {
       return new Date().toLocaleDateString('sv-SV');
@@ -291,8 +291,8 @@ export default {
           this.dates[0] = this.dates[1];
           this.dates[1] = value;
         }
-        selectedPeriod.min = new Date(`${this.dates[0]}T${this.fromTime}`).getTime();
-        selectedPeriod.max = new Date(`${this.dates[1]}T${this.toTime}`).getTime();
+        selectedPeriod.min = new Date(`${this.dates[0]}T${this.fromTime}`).getTime() - (new Date().getTimezoneOffset() * 60000);
+        selectedPeriod.max = new Date(`${this.dates[1]}T${this.toTime}`).getTime() - (new Date().getTimezoneOffset() * 60000);
         this.$emit('input', selectedPeriod);
         return true;
       }
