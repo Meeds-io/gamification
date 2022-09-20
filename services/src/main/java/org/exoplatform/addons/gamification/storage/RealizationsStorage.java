@@ -18,13 +18,11 @@ public class RealizationsStorage {
 
   public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter realizationFilter,
                                                                      int offset,
-                                                                     int limit,
-                                                                     boolean isAdmin) {
+                                                                     int limit) {
     List<GamificationActionsHistory> gamificationActionsHistoryList =
                                                                     gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
-                                                                                                                       offset,
-                                                                                                                       limit,
-                                                                                                                       isAdmin);
+                                                                                                                    offset,
+                                                                                                                    limit);
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
 

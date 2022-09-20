@@ -78,10 +78,9 @@ public class RealizationsServiceImpl implements RealizationsService {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
     String username = identity.getUserId();
-    boolean isAdmin = filter.getEarnerId() > 0 ;
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
-      return realizationsStorage.getRealizationsByFilter(filter, offset, limit, !isAdmin);
+      return realizationsStorage.getRealizationsByFilter(filter, offset, limit);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
           + filter.getEarnerId());

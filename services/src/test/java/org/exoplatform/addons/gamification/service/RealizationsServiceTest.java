@@ -75,7 +75,7 @@ public class RealizationsServiceTest {
     gHistory.setStatus(HistoryStatus.ACCEPTED.name());
     gHistory.setDomain("gamification");
     gHistory.setReceiver("1");
-    gHistory.setEarnerId("1");
+    gHistory.setEarnerId("1L");
     gHistory.setEarnerType(IdentityType.USER.name());
     gHistory.setActionTitle("gamification title");
     gHistory.setActionScore(10);
@@ -88,7 +88,6 @@ public class RealizationsServiceTest {
   @SuppressWarnings("deprecation")
   @Test
   public void testGetRealizationsByFilter() throws IllegalAccessException {
-    // Testing getAllRealizations when membership is /platform/administrators
     // Given
     RealizationsFilter filter = new RealizationsFilter();
     filter.setFromDate(toDate);
@@ -107,7 +106,7 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList.add(gHistory1);
     gamificationActionsHistoryDTOList.add(gHistory2);
     gamificationActionsHistoryDTOList.add(gHistory3);
-    when(realizationsStorage.getRealizationsByFilter(filter, offset, limit, true)).thenReturn(gamificationActionsHistoryDTOList);
+    when(realizationsStorage.getRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
 
     // When
@@ -121,41 +120,6 @@ public class RealizationsServiceTest {
     // Then
     assertNotNull(createdGamificationActionsHistoryDTOList);
     assertEquals(3, createdGamificationActionsHistoryDTOList.size());
-    
-    
-    // Testing getAllRealizations when membership is NOT /platform/administrators
-    Identity userIdentity = new Identity("2L");
-    org.exoplatform.social.core.identity.model.Identity identity = new org.exoplatform.social.core.identity.model.Identity("2", "2");
-    identity.setId("2");
-    identityManager.saveIdentity(identity);
-    ConversationState.setCurrent(new ConversationState(userIdentity));
-    MembershipEntry userMembershipEntry = new MembershipEntry("", "*");
-    List<MembershipEntry> userMemberships = new ArrayList<MembershipEntry>();
-    userMemberships.add(userMembershipEntry);
-    userIdentity.setMemberships(userMemberships);
-    filter.setEarnerId(2L);
-    GamificationActionsHistoryDTO gHistory4 = newGamificationActionsHistory();
-    GamificationActionsHistoryDTO gHistory5 = newGamificationActionsHistory();
-    GamificationActionsHistoryDTO gHistory6 = newGamificationActionsHistory();
-    List<GamificationActionsHistoryDTO> gamificationActionsHistoryDTOList1 = new ArrayList<>();
-    gamificationActionsHistoryDTOList1.add(gHistory4);
-    gamificationActionsHistoryDTOList1.add(gHistory5);
-    gamificationActionsHistoryDTOList1.add(gHistory6);
-    when(realizationsStorage.getRealizationsByFilter(filter, offset, limit, true)).thenReturn(gamificationActionsHistoryDTOList);
-    when(identityManager.getOrCreateUserIdentity("2L")).thenReturn(identity);
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, null, offset, limit));
-
-    // When
-    filter.setFromDate(fromDate);
-    filter.setToDate(toDate);
-    List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList1 =
-                                                                                 realizationsService.getRealizationsByFilter(filter,
-                                                                                                                             userIdentity,
-                                                                                                                              offset,
-                                                                                                                              limit);
-    // Then
-    assertNotNull(createdGamificationActionsHistoryDTOList1);
-    assertEquals(0, createdGamificationActionsHistoryDTOList1.size());
   }
 
   @Test
