@@ -96,6 +96,8 @@ export default {
       this.tab = 1;
     } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
       this.tab = 2;
+    } else if (!this.engagementCenterEnabled) {
+      window.history.pushState('Engagement Center', this.$t('engagementCenter.label.contributions'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions`);
     } else {
       this.tab = 0;
       window.history.pushState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
