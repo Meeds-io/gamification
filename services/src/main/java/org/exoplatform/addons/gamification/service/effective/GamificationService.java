@@ -75,7 +75,6 @@ public class GamificationService {
 
   public int getLeaderboardRank(String earnerId, Date date, String domain) {
     List<StandardLeaderboard> leaderboard = null;
-    @SuppressWarnings("deprecation")
     Identity identity = identityManager.getIdentity(earnerId); // NOSONAR :
                                                                // profile load
                                                                // is always true
@@ -126,9 +125,10 @@ public class GamificationService {
    * Save a GamificationActionsHistory in DB
    * 
    * @param history history entru to save
+   * @return {@link GamificationActionsHistory}
    */
-  public void saveActionHistory(GamificationActionsHistory history) {
-    gamificationHistoryDAO.create(history);
+  public GamificationActionsHistory saveActionHistory(GamificationActionsHistory history) {
+    return gamificationHistoryDAO.create(history);
   }
 
   public void createHistory(String event, String sender, String receiver, String object) {
@@ -142,7 +142,7 @@ public class GamificationService {
       for (RuleDTO ruleDto : ruleDtos) {
         aHistory = build(ruleDto, sender, receiver, object);
         if (aHistory != null) {
-          saveActionHistory(aHistory);
+          aHistory = saveActionHistory(aHistory);
           // Gamification simple audit logger
           LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
                    LocalDate.now(),
@@ -289,7 +289,6 @@ public class GamificationService {
       aHistory = new GamificationActionsHistory();
       aHistory.setActionScore(ruleDto.getScore());
       aHistory.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
-      aHistory.setDate(new Date());
       aHistory.setEarnerId(actor);
       aHistory.setEarnerType(IdentityType.getType(actorIdentity.getProviderId()));
       aHistory.setActionTitle(ruleDto.getEvent());
