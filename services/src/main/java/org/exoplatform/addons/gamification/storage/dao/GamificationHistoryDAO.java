@@ -583,7 +583,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("type", filter.getIdentityType());
     query.setParameter("ruleIds", ruleIds);
     query.setParameter("ruleEventNames", ruleEventNames);
-
     if (limit > 0) {
       query.setMaxResults(limit);
     }

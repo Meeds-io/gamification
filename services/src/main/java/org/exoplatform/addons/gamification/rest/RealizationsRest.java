@@ -67,6 +67,9 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   @RolesAllowed("users")
   public Response getAllRealizations(@Context HttpServletRequest httpRequest,
+                                     @Parameter(description = "searching key. Possible target columns: grantee or program")
+                                     @QueryParam("searchingKey")
+                                     String searchingKey,
                                      @Parameter(description = "result fromDate", required = true)
                                      @QueryParam("fromDate")
                                      String fromDate,

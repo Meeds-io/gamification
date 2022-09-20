@@ -129,6 +129,10 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
+    search: '',
+    startSearchAfterInMilliseconds: 600,
+    endTypingKeywordTimeout: 50,
+    startTypingKeywordTimeout: 0,
   }),
   computed: {
     hasMore() {
@@ -225,6 +229,13 @@ export default {
         this.sortUpdated();
       }
     },
+    search()  {
+      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
+      }
+    },
   },
   methods: {
     sortUpdated() {
@@ -246,7 +257,11 @@ export default {
         });
     },
     getRealizations() {
+<<<<<<< HEAD
       return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
+=======
+      return this.$realizationsServices.getAllRealizations(this.search, this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+>>>>>>> adbf32ac (MEED-139: adding textual filter)
         .then(realizations => {
           this.realizations = realizations || [];
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
@@ -260,12 +275,25 @@ export default {
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
     },
+<<<<<<< HEAD
     openRealizationsFilterDrawer() {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(value) {
       this.searchList = value.length > 0 ? value : [];
     },
+=======
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() > this.startTypingKeywordTimeout) {
+          this.typing = false;
+          this.getRealizations();
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
+    }
+>>>>>>> adbf32ac (MEED-139: adding textual filter)
   }
 };
 </script>
