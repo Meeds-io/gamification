@@ -176,6 +176,17 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
         + " ORDER BY g.id DESC"
 )
+@NamedQuery(
+    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRulesSearchByPrograms",
+    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
+        + " WHERE g.earnerType = :type"
+        + " AND g.earnerId = :earnerId"
+        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
+        + " AND (UPPER(g.domain) LIKE UPPER(:searchingKey)) \n"
+        + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
+        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
+        + " ORDER BY g.id DESC"
+)
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 

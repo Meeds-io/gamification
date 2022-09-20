@@ -31,6 +31,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="selected-period-menu mt-6 px-3">
         <select-period v-model="selectedPeriod" class="mx-2" />
       </div>
+      <div class="challengeFilter text-center ml-auto  align-center justify-space-around pt-1">
+        <v-text-field
+          id="EngagementCenterApplicationSearchFilter"
+          v-model="search"
+          :placeholder="$t('realization.label.search')"
+          prepend-inner-icon="fa-filter"
+          single-line
+          hide-details
+          class="pa-0 mx-3" />
+      </div>
     </v-toolbar>
     <v-data-table
       :headers="realizationsHeaders"
@@ -106,6 +116,10 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
+    search: '',
+    startSearchAfterInMilliseconds: 600,
+    endTypingKeywordTimeout: 50,
+    startTypingKeywordTimeout: 0,
   }),
   computed: {
     hasMore() {
@@ -202,6 +216,13 @@ export default {
         this.sortUpdated();
       }
     },
+    search()  {
+      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
+      }
+    },
   },
   methods: {
     sortUpdated() {
@@ -223,7 +244,7 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.search, this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
@@ -235,6 +256,16 @@ export default {
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
+    },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() > this.startTypingKeywordTimeout) {
+          this.typing = false;
+          this.getRealizations();
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
     }
   }
 };

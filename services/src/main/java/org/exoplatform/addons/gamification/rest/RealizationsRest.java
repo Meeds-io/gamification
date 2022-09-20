@@ -66,6 +66,9 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   @RolesAllowed("users")
   public Response getAllRealizations(@Context HttpServletRequest httpRequest,
+                                     @Parameter(description = "searching key. Possible target columns: grantee or program")
+                                     @QueryParam("searchingKey")
+                                     String searchingKey,
                                      @Parameter(description = "result fromDate", required = true)
                                      @QueryParam("fromDate")
                                      String fromDate,
@@ -111,6 +114,7 @@ public class RealizationsRest implements ResourceContainer {
     filter.setToDate(dateTo);
     filter.setSortDescending(sortDescending);
     filter.setSortField(sortField);
+    filter.setSearchingKey(searchingKey);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {

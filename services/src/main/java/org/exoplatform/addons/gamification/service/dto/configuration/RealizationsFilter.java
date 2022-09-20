@@ -44,4 +44,6 @@ public class RealizationsFilter implements Serializable {
   
   private IdentityType      identityType;
 
+  private String            searchingKey;
+  
 }
