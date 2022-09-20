@@ -17,6 +17,8 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -56,15 +58,15 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     return RealizationsRest.class;
   }
 
-  protected static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                                                         // NOSONAR
+  protected static final long   MILLIS_IN_A_DAY   = 1000 * 60 * 60 * 24;                                                        // NOSONAR
 
-  protected static final String FROM_DATE       = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
+  protected static final String FROM_DATE         = URLEncoder.encode(Utils.toRFC3339Date(new Date(System.currentTimeMillis())), StandardCharsets.UTF_8);
 
-  protected static final String TO_DATE         = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
+  protected static final String TO_DATE           = URLEncoder.encode(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)), StandardCharsets.UTF_8);
 
-  protected static final String JSON_TYPE       = "json";
+  protected static final String JSON_TYPE         = "json";
 
-  protected static final String XLSX_TYPE        = "xlsx";
+  protected static final String XLSX_TYPE         = "xlsx";
 
   @Before
   @Override

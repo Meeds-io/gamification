@@ -81,7 +81,7 @@ public class RealizationsServiceTest {
     gHistory.setActionScore(10);
     gHistory.setGlobalScore(10);
     gHistory.setRuleId(1L);
-    gHistory.setDate(Utils.toRFC3339Date(fromDate));
+    gHistory.setCreatedDate(Utils.toRFC3339Date(fromDate));
     return gHistory;
   }
 
