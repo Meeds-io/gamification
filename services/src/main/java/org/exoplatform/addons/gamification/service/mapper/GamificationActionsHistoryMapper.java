@@ -35,7 +35,6 @@ public class GamificationActionsHistoryMapper {
       objectId = gamificationActionsHistoryEntity.getObjectId();
     }
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
-                                             Utils.toRFC3339Date(new Date(gamificationActionsHistoryEntity.getDate().getTime())),
                                              gamificationActionsHistoryEntity.getEarnerId(),
                                              gamificationActionsHistoryEntity.getEarnerType().toString(),
                                              gamificationActionsHistoryEntity.getGlobalScore(),
@@ -84,7 +83,6 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setEarnerId(gamificationActionsHistoryDTO.getEarnerId());
     gHistoryEntity.setEarnerType(IdentityType.getType(gamificationActionsHistoryDTO.getEarnerType()));
     gHistoryEntity.setContext(gamificationActionsHistoryDTO.getContext());
-    gHistoryEntity.setDate(Utils.parseRFC3339Date(gamificationActionsHistoryDTO.getDate()));
     gHistoryEntity.setComment(gamificationActionsHistoryDTO.getComment());
     gHistoryEntity.setRuleId(gamificationActionsHistoryDTO.getRuleId());
     gHistoryEntity.setCreator(gamificationActionsHistoryDTO.getCreator());
