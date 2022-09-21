@@ -18,7 +18,9 @@ package org.exoplatform.addons.gamification.service.effective;
 
 import static java.util.Date.from;
 
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +34,6 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -78,7 +79,6 @@ public class GamificationService {
 
   public int getLeaderboardRank(String earnerId, Date date, String domain) {
     List<StandardLeaderboard> leaderboard = null;
-    @SuppressWarnings("deprecation")
     Identity identity = identityManager.getIdentity(earnerId); // NOSONAR :
                                                                // profile load
                                                                // is always true
@@ -129,9 +129,10 @@ public class GamificationService {
    * Save a GamificationActionsHistory in DB
    * 
    * @param history history entru to save
+   * @return {@link GamificationActionsHistory}
    */
-  public void saveActionHistory(GamificationActionsHistory history) {
-    gamificationHistoryDAO.create(history);
+  public GamificationActionsHistory saveActionHistory(GamificationActionsHistory history) {
+    return gamificationHistoryDAO.create(history);
   }
 
   public void createHistory(String event, String sender, String receiver, String object) {
@@ -145,10 +146,9 @@ public class GamificationService {
       for (RuleDTO ruleDto : ruleDtos) {
         aHistory = build(ruleDto, sender, receiver, object);
         if (aHistory != null) {
-          saveActionHistory(aHistory);
+          aHistory = saveActionHistory(aHistory);
           // Gamification simple audit logger
           LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
-                   LocalDate.now(),
                    aHistory.getEarnerId(),
                    aHistory.getGlobalScore(),
                    ruleDto.getArea(),
@@ -292,7 +292,6 @@ public class GamificationService {
       GamificationActionsHistoryDTO actionsHistoryDTO = new GamificationActionsHistoryDTO();
       actionsHistoryDTO.setActionScore(ruleDto.getScore());
       actionsHistoryDTO.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
-      actionsHistoryDTO.setDate(Utils.toRFC3339Date(new Date()));
       actionsHistoryDTO.setEarnerId(actor);
       actionsHistoryDTO.setEarnerType(actorIdentity.getProviderId());
       actionsHistoryDTO.setActionTitle(ruleDto.getEvent());

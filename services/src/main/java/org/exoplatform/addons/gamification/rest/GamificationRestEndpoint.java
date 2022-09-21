@@ -111,7 +111,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
                                         .toInstant());
           break;
         }
-        Date toDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date toDate = Date.from(Instant.now());
         earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), fromDate, toDate);
       }
       return Response.ok(new GamificationPoints().userId(userId)

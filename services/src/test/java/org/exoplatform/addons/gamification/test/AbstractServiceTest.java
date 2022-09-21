@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.ws.rs.core.SecurityContext;
 
@@ -127,11 +128,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final long            MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;                               // NOSONAR
 
-  protected static final Date            fromDate            = new Date(System.currentTimeMillis());
-
-  protected static final Date            toDate              = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
-
-  protected static final Date            OutOfRangeDate      = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
+  protected static final TimeZone        DEFAULT_TIMEZONE     = TimeZone.getDefault();
 
   protected static final int             offset              = 0;
 
@@ -197,6 +194,12 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   Identity                               userIdentity        = new Identity(TEST_USER_SENDER);
 
+  protected Date                         fromDate;
+
+  protected Date                         toDate;
+
+  protected Date                         OutOfRangeDate;
+
   @Override
   @Before
   public void setUp() throws Exception {
@@ -235,6 +238,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ProviderBinder.setInstance(new ProviderBinder());
     providers = ProviderBinder.getInstance();
 
+    fromDate = new Date(System.currentTimeMillis());
+    toDate = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+    OutOfRangeDate = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
+
     binder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
     launcher = new ResourceLauncher(requestHandler);
@@ -244,6 +251,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   @After
   public void tearDown() {
+    TimeZone.setDefault(DEFAULT_TIMEZONE);
     restartTransaction();
     gamificationHistoryDAO.deleteAll();
     badgeStorage.deleteAll();
@@ -523,8 +531,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
     return gHistory;
   }
 
@@ -544,7 +553,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
@@ -565,7 +574,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
@@ -586,7 +595,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(createdDate);
     gHistory.setCreatedDate(createdDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
