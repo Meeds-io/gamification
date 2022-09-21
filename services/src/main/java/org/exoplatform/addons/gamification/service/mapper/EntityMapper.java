@@ -124,8 +124,7 @@ public class EntityMapper {
     announcementEntity.setCreatedDate(createDate);
     announcementEntity.setRuleId(announcement.getChallengeId());
     announcementEntity.setCreator(announcement.getCreator());
-    announcementEntity.setDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
-    announcementEntity.setCreatedDate( createDate != null ? createDate : new Date(System.currentTimeMillis()));
+    announcementEntity.setCreatedDate(createDate != null ? createDate : new Date(System.currentTimeMillis()));
     announcementEntity.setReceiver(String.valueOf(announcement.getCreator()));
     announcementEntity.setStatus(HistoryStatus.ACCEPTED);
     if (createDate != null) {

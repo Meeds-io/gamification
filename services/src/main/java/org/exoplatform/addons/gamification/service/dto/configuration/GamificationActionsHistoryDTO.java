@@ -4,8 +4,6 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private Long   id;
 
-  private String date;
-
   private String earnerId;
 
   private String earnerType;
@@ -44,7 +42,6 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
 
   public GamificationActionsHistoryDTO(Long id,
-                                       String date,
                                        String earnerId,
                                        String earnerType,
                                        long globalScore,
@@ -64,7 +61,6 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                        String lastModifiedDate,
                                        String status) { // NOSONAR
     this.id = id;
-    this.date = date;
     this.earnerId = earnerId;
     this.earnerType = earnerType;
     this.globalScore = globalScore;
@@ -91,7 +87,6 @@ public class GamificationActionsHistoryDTO implements Cloneable {
   @Override
   public GamificationActionsHistoryDTO clone() { // NOSONAR
     return new GamificationActionsHistoryDTO(id,
-                                             date,
                                              earnerId,
                                              earnerType,
                                              globalScore,
@@ -118,14 +113,6 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getDate() {
-    return date;
-  }
-
-  public void setDate(String date) {
-    this.date = date;
   }
 
   public String getEarnerId() {
