@@ -19,8 +19,11 @@ package org.exoplatform.addons.gamification.test;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.ws.rs.core.SecurityContext;
+
+import org.junit.After;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
@@ -32,7 +35,10 @@ import org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.*;
+import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
@@ -47,6 +53,7 @@ import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -54,7 +61,6 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.rest.impl.ApplicationContextImpl;
 import org.exoplatform.services.rest.impl.ProviderBinder;
 import org.exoplatform.services.rest.impl.RequestHandlerImpl;
@@ -103,15 +109,13 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final String           TEST__SCORE         = "50";
 
-  protected static final long                MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  protected static final long             MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;                   // NOSONAR
 
-  protected static final Date fromDate      = new Date(System.currentTimeMillis());
+  protected static final int              offset              = 0;
 
-  protected static final Date toDate        = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+  protected static final int              limit               = 3;
 
-  protected static final int  offset        = 0;
-
-  protected static final int  limit         = 3;
+  protected static final TimeZone         DEFAULT_TIMEZONE    = TimeZone.getDefault();
 
   protected IdentityManager               identityManager;
   protected RelationshipManager           relationshipManager;
@@ -140,6 +144,12 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RealizationsStorage           realizationsStorage;
   Identity                                testUserReceiver    = new Identity(TEST_USER_RECEIVER);
   Identity                                testUserSender      = new Identity(TEST_USER_SENDER);
+
+  protected Date                         fromDate;
+
+  protected Date                         toDate;
+
+  protected Date                         OutOfRangeDate;
 
   @Override
   protected void setUp() throws Exception {
@@ -173,15 +183,20 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ProviderBinder.setInstance(new ProviderBinder());
     providers = ProviderBinder.getInstance();
 
+    fromDate = new Date(System.currentTimeMillis());
+    toDate = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+    OutOfRangeDate = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
+
     binder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
     launcher = new ResourceLauncher(requestHandler);
   }
 
   @Override
-  protected void tearDown() throws Exception {
-    end();
-    RequestLifeCycle.begin(getContainer());
+  @After
+  public void tearDown() {
+    TimeZone.setDefault(DEFAULT_TIMEZONE);
+    restartTransaction();
     gamificationHistoryDAO.deleteAll();
     ruleDAO.deleteAll();
     badgeStorage.deleteAll();
@@ -243,7 +258,38 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return rule;
   }
 
+  protected RuleEntity newRule(String name, String domain, Long audience) {
+    RuleEntity challenge = ruleDAO.findRuleByTitle(name + "_" + domain);
+    if (challenge == null) {
+      challenge = new RuleEntity();
+      challenge.setScore(Integer.parseInt(TEST__SCORE));
+      challenge.setTitle(name + "_" + domain);
+      challenge.setDescription("Description");
+      challenge.setArea(domain);
+      challenge.setEnabled(true);
+      challenge.setDeleted(false);
+      challenge.setEvent(name);
+      challenge.setCreatedBy(TEST_USER_SENDER);
+      challenge.setLastModifiedBy(TEST_USER_SENDER);
+      challenge.setLastModifiedDate(new Date());
+      challenge.setDomainEntity(newDomain(domain));
+      challenge.setType(TypeRule.MANUAL);
+      challenge.setAudience(audience);
+      challenge.setManagers(Collections.singletonList(1l));
+      challenge.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+          + 2 * MILLIS_IN_A_DAY))));
+      challenge.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+          - 2 * MILLIS_IN_A_DAY))));
+      challenge = ruleDAO.create(challenge);
+    }
+    return challenge;
+  }
+
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled) {
+    return newRule(name, domain, isEnabled, TypeRule.AUTOMATIC);
+  }
+
+  protected RuleEntity newRule(String name, String domain, Boolean isEnabled, TypeRule ruleType) {
 
     RuleEntity rule = ruleDAO.findRuleByTitle(name+"_"+domain);
     if (rule == null) {
@@ -352,23 +398,88 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
+    return gHistory;
+  }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryToBeSorted(String actionTitle, Long ruleId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(TEST_USER_SENDER);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(actionTitle);
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(ruleId);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
-  protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO(){
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryByEarnerId(String earnerId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
+  }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(Date createdDate, String actionTitle, Long ruleId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(TEST_USER_SENDER);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(actionTitle);
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(ruleId);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(createdDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
+  }
+
+  protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO() {
     return GamificationActionsHistoryMapper.fromEntity(newGamificationActionsHistory());
   }
 
   protected RuleDTO newRuleDTO() {
-    return ruleMapper.ruleToRuleDTO(newRule());
+    return RuleMapper.ruleToRuleDTO(newRule());
   }
 
   protected DomainDTO newDomainDTO() {
-    return domainMapper.domainToDomainDTO(newDomain());
+    return DomainMapper.domainToDomainDTO(newDomain());
   }
   protected DomainDTO newDomainDTO(String name ) {
-    return domainMapper.domainToDomainDTO(newDomain(name));
+    return DomainMapper.domainToDomainDTO(newDomain(name));
   }
 
   protected BadgeDTO newBadgeDTO() {

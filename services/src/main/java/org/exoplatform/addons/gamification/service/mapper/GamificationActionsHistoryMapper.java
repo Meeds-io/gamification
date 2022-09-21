@@ -12,7 +12,6 @@ import org.exoplatform.services.log.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +24,6 @@ public class GamificationActionsHistoryMapper {
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
-                                             Utils.toRFC3339Date(new Date(gamificationActionsHistoryEntity.getDate().getTime())),
                                              gamificationActionsHistoryEntity.getEarnerId(),
                                              gamificationActionsHistoryEntity.getEarnerType().toString(),
                                              gamificationActionsHistoryEntity.getGlobalScore(),
@@ -74,7 +72,6 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setEarnerId(gamificationActionsHistoryDTO.getEarnerId());
     gHistoryEntity.setEarnerType(IdentityType.getType(gamificationActionsHistoryDTO.getEarnerType()));
     gHistoryEntity.setContext(gamificationActionsHistoryDTO.getContext());
-    gHistoryEntity.setDate(Utils.parseRFC3339Date(gamificationActionsHistoryDTO.getDate()));
     gHistoryEntity.setComment(gamificationActionsHistoryDTO.getComment());
     gHistoryEntity.setRuleId(gamificationActionsHistoryDTO.getRuleId());
     gHistoryEntity.setCreator(gamificationActionsHistoryDTO.getCreator());

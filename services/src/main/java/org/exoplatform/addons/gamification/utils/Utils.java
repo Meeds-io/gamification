@@ -1,9 +1,18 @@
 package org.exoplatform.addons.gamification.utils;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.LocaleUtils;
@@ -34,8 +43,6 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class Utils {
 
@@ -113,7 +120,7 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault());
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
 
