@@ -16,6 +16,8 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +27,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
@@ -38,8 +43,6 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.junit.Before;
-import org.junit.Test;
 
 public class TestRealizationsRest extends AbstractServiceTest {
 
@@ -47,11 +50,11 @@ public class TestRealizationsRest extends AbstractServiceTest {
     return RealizationsRest.class;
   }
 
-  protected static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  protected static final long   MILLIS_IN_A_DAY   = 1000 * 60 * 60 * 24;                                                        // NOSONAR
 
-  protected static final String fromDate        = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
+  protected static final String FROM_DATE         = URLEncoder.encode(Utils.toRFC3339Date(new Date(System.currentTimeMillis())), StandardCharsets.UTF_8);
 
-  protected static final String toDate          = Utils.toRFC3339Date(new Date(System.currentTimeMillis() + +MILLIS_IN_A_DAY));
+  protected static final String TO_DATE           = URLEncoder.encode(Utils.toRFC3339Date(new Date(System.currentTimeMillis() + MILLIS_IN_A_DAY)), StandardCharsets.UTF_8);
 
   @Before
   @Override
@@ -63,7 +66,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRealizationsDefaultSort() throws Exception {
-    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=-1&limit=10";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -74,7 +77,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=-10";
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -83,7 +86,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
     assertEquals(400, response.getStatus());
 
     restPath =
-             "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate + "&offset=0&limit=10";
+             "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&offset=0&limit=10";
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     response = launcher.service("GET", restPath, "", h, null, envctx);
@@ -103,7 +106,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   @SuppressWarnings("unchecked")
   @Test
   public void testGetAllRealizationsSortByDateDescending() throws Exception {
-    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -140,7 +143,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   @SuppressWarnings("unchecked")
   @Test
   public void testGetAllRealizationsSortByDateAscending() throws Exception {
-    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=false";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -188,7 +191,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
       createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
 
-    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -208,7 +211,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
                              .map(GamificationActionsHistoryRestEntity::getId)
                              .collect(Collectors.toList()));
 
-    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
@@ -238,7 +241,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
       createdActionHistories.add(0, newGamificationActionsHistoryToBeSorted(rule2Manual.getEvent(), rule2Manual.getId()));
     }
 
-    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    String restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=" + limit + "&sortBy=date&sortDescending=true";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
@@ -258,7 +261,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
                              .map(GamificationActionsHistoryRestEntity::getId)
                              .collect(Collectors.toList()));
 
-    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + fromDate + "&toDate=" + toDate
+    restPath = "/gamification/realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE
         + "&offset=0&limit=" + createdActionHistories.size() + "&sortBy=date&sortDescending=true";
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
@@ -277,7 +280,7 @@ public class TestRealizationsRest extends AbstractServiceTest {
   public void testGetReport() throws Exception {
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    String restPath = "/gamification/realizations/api/getExport?fromDate=" + fromDate + "&toDate=" + toDate;
+    String restPath = "/gamification/realizations/api/getExport?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE;
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
