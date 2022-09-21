@@ -19,12 +19,18 @@ package org.exoplatform.addons.gamification.test;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.ws.rs.core.SecurityContext;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
-import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnectorTest;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -75,11 +81,6 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 @ConfiguredBy(
   { @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
@@ -120,16 +121,12 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final String    TEST__SCORE         = "50";
 
   protected static final long      MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;                           // NOSONAR
-
-  protected static final Date      fromDate            = new Date(System.currentTimeMillis());
-
-  protected static final Date      toDate              = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
-  
-  protected static final Date      OutOfRangeDate      = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
   
   protected static final int       offset              = 0;
 
   protected static final int       limit               = 3;
+
+  protected static final TimeZone        DEFAULT_TIMEZONE     = TimeZone.getDefault();
 
   protected IdentityManager        identityManager;
 
@@ -185,6 +182,12 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   Identity                         userIdentity        = new Identity(TEST_USER_SENDER);
 
+  protected Date                         fromDate;
+
+  protected Date                         toDate;
+
+  protected Date                         OutOfRangeDate;
+
   @Override
   @Before
   public void setUp() throws Exception {
@@ -219,6 +222,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     ProviderBinder.setInstance(new ProviderBinder());
     providers = ProviderBinder.getInstance();
 
+    fromDate = new Date(System.currentTimeMillis());
+    toDate = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+    OutOfRangeDate = new Date(fromDate.getTime() - 2 * MILLIS_IN_A_DAY);
+
     binder.clear();
     ApplicationContextImpl.setCurrent(new ApplicationContextImpl(null, null, providers, null));
     launcher = new ResourceLauncher(requestHandler);
@@ -227,6 +234,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   @After
   public void tearDown() {
+    TimeZone.setDefault(DEFAULT_TIMEZONE);
     restartTransaction();
     gamificationHistoryDAO.deleteAll();
     ruleDAO.deleteAll();
@@ -453,8 +461,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
     return gHistory;
   }
   
@@ -474,7 +483,28 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    return gHistory;
+  }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryByEarnerId(String earnerId) {
+    RuleEntity rule = newRule();
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(TEST_USER_SENDER);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
@@ -495,7 +525,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(createdDate);
     gHistory.setCreatedDate(createdDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;

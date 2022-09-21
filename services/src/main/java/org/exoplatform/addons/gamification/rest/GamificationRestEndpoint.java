@@ -104,12 +104,14 @@ public class GamificationRestEndpoint implements ResourceContainer {
                                               .toInstant());
                 break;
               }
-              Date toDate = Date.from(LocalDate.now()
-                                               .atStartOfDay(ZoneId.systemDefault())
-                                               .toInstant());
+              Date toDate = Date.from(Instant.now());
               earnedXP = gamificationService.findUserReputationScoreBetweenDate(identity.getId(), fromDate, toDate);
             }
-            return Response.ok(new GamificationPoints().userId(userId).points(earnedXP).code("0").message("Gamification API is called successfully")).build();
+            return Response.ok(new GamificationPoints().userId(userId)
+                                                       .points(earnedXP)
+                                                       .code("0")
+                                                       .message("Gamification API is called successfully"))
+                           .build();
         } catch (Exception e) {
             LOG.error("Error while fetching earned points for user {} - Gamification public API", userId, e);
             return Response.ok(new GamificationPoints().userId(userId).points(0L).code("2").message("Error while fetching all earned points")).build();
