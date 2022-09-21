@@ -34,8 +34,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import liquibase.pro.packaged.L;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
