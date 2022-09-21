@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
@@ -147,7 +146,7 @@ public class Utils {
     if (dateTime == null) {
       return null;
     }
-    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneOffset.UTC);
+    ZonedDateTime zonedDateTime = dateTime.toInstant().atZone(ZoneId.systemDefault());
     return zonedDateTime.format(RFC_3339_FORMATTER);
   }
 
