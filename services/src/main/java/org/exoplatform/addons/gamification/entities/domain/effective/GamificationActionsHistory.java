@@ -17,9 +17,19 @@
 package org.exoplatform.addons.gamification.entities.domain.effective;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
@@ -38,13 +48,13 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionsHistoryByEarnerIdSortedByDate",
-    query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status <> :status ORDER BY g.date DESC"
+    query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status <> :status ORDER BY g.createdDate DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.date >= :date  AND g.domain = :domain AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId"
+        + " FROM GamificationActionsHistory g WHERE g.createdDate >= :date  AND g.domain = :domain AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId"
         + "     ORDER BY total DESC"
 )
 @NamedQuery(
@@ -61,20 +71,20 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findActionHistoryByDateByEarnerId",
     query = "SELECT a"
-        + " FROM GamificationActionsHistory a" + " WHERE a.date = :date" + "     AND a.earnerId = :earnerId"
+        + " FROM GamificationActionsHistory a" + " WHERE a.createdDate = :date" + "     AND a.earnerId = :earnerId"
         + "     ORDER BY a.globalScore DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionsHistoryByDate",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g  WHERE g.date >= :date  AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
+        + " FROM GamificationActionsHistory g  WHERE g.createdDate >= :date  AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g" + " WHERE g.date >= :date" + "     AND g.domain = :domain"
+        + " FROM GamificationActionsHistory g" + " WHERE g.createdDate >= :date" + "     AND g.domain = :domain"
         + "     AND g.earnerType = :earnerType" + "     GROUP BY  g.earnerId" + "     ORDER BY total DESC"
 )
 @NamedQuery(
@@ -87,9 +97,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findStatsByUserByDates",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard(g.domainEntity.title,SUM(g.actionScore))"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.date BETWEEN :fromDate"
-        + "     AND :toDate" + "     GROUP BY  g.domainEntity.title"
-)
+        + " FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
+        + " GROUP BY  g.domainEntity.title")
 @NamedQuery(
     name = "GamificationActionsHistory.findDomainScoreByUserId",
     query = "SELECT"
@@ -99,25 +108,26 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreBetweenDate",
     query = "SELECT SUM(g.actionScore) as total"
-        + " FROM GamificationActionsHistory g  WHERE g.earnerId = :earnerId AND g.status <> :status AND g.date BETWEEN :fromDate AND :toDate"
+        + " FROM GamificationActionsHistory g  WHERE g.earnerId = :earnerId AND g.status <> :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreByMonth",
     query = "SELECT SUM(g.actionScore) as total"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.date >= :currentMonth"
+        + " FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.createdDate >= :currentMonth"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate",
     query = "SELECT SUM(g.actionScore) as total"
         + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.domain = :domain"
-        + "     AND g.date BETWEEN :fromDate" + "     AND :toDate"
+        + "     AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllLeaderboardBetweenDate",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g" + " WHERE g.date BETWEEN :fromDate" + "     AND :toDate"
-        + "     AND g.earnerType = :earnerType" + "     GROUP BY  g.earnerId" + "     ORDER BY total DESC"
+        + " FROM GamificationActionsHistory g WHERE g.createdDate >= :fromDate AND g.createdDate < :toDate AND g.earnerType = :earnerType"
+        + " GROUP BY  g.earnerId"
+        + " ORDER BY total DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.computeTotalScore",
@@ -151,21 +161,21 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findRealizationsByDateDescending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
+        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
         + " ORDER BY g.id DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAscending",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
         + " WHERE g.earnerType = :type"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
+        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
         + " ORDER BY g.id ASC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByDateAndRules",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
-        + " AND g.date BETWEEN :fromDate AND :toDate"
+        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
         + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
         + " ORDER BY g.id DESC"
@@ -178,10 +188,6 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_SCORE_HISTORY_ID")
   @Column(name = "ID")
   protected Long            id;
-
-  @Temporal(TemporalType.DATE)
-  @Column(name = "ACTION_DATE")
-  private Date              date;
 
   @Column(name = "EARNER_ID", nullable = false)
   private String            earnerId;
@@ -236,14 +242,6 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Date getDate() {
-    return date;
-  }
-
-  public void setDate(Date date) {
-    this.date = date;
   }
 
   public String getEarnerId() {
