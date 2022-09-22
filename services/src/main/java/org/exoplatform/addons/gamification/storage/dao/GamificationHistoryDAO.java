@@ -454,8 +454,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   /**
-   * Find All the Realizations for Admin view by realizationFilter and offset
-   * and limit
+   * Find realizations by filter with offset, limit.
    * 
    * @param realizationFilter : data Transfert Object {@link RealizationsFilter}
    * @param offset : the starting index, when supplied. Starts at 0.
@@ -474,11 +473,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (StringUtils.equals(sortField, "actionType")) {
       return findRealizationsOrderedByRuleType(fromDate, toDate, sortDescending, earnerId, offset, limit);
     } else {
-      return findRealizationsDynamicallyByFilter(realizationFilter, offset, limit);
+      return findRealizationsPredicatedByFilter(realizationFilter, offset, limit);
     }
   }
 
-  public List<GamificationActionsHistory> findRealizationsDynamicallyByFilter(RealizationsFilter filter,
+  public List<GamificationActionsHistory> findRealizationsPredicatedByFilter(RealizationsFilter filter,
                                                                               int offset,
                                                                               int limit) {
     TypedQuery<GamificationActionsHistory> query = buildQueryFromFilter(filter, GamificationActionsHistory.class, false);
@@ -510,18 +509,17 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return query;
   }
 
-  private List<String> buildPredicates(RealizationsFilter filter,
-                                       List<String> suffixes,
-                                       List<String> predicates) {
-    predicates.add("g.earnerType = :type");
+  private void buildPredicates(RealizationsFilter filter, List<String> suffixes, List<String> predicates) {
     suffixes.add(filter.getSortField());
     suffixes.add(filter.isSortDescending() ? "Descending" : "Ascending");
-    predicates.add("g.date BETWEEN :fromDate AND :toDate");
+    if (filter.getFromDate() != null && filter.getToDate() != null) {
+      suffixes.add("Interval");
+      predicates.add("g.createdDate >= :fromDate AND g.createdDate < :toDate");
+    }
     if (filter.getEarnerId() > 0) {
       suffixes.add("Earner");
       predicates.add("g.earnerId = :earnerId");
     }
-    return suffixes;
   }
 
   private String getQueryFilterName(List<String> suffixes, boolean count) {
@@ -560,7 +558,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   private <T> void addQueryFilterParameters(RealizationsFilter filter, TypedQuery<T> query) {
     query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
     query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
-    query.setParameter("type", IdentityType.USER);
     if (filter.getEarnerId() > 0) {
       query.setParameter(EARNER_ID_PARAM_NAME, Long.toString(filter.getEarnerId()));
     }

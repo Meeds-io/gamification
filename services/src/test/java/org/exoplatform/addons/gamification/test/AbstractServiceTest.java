@@ -574,7 +574,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
-    gHistory.setDate(fromDate);
+    gHistory.setCreatedDate(fromDate);
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
