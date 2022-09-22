@@ -556,8 +556,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   private <T> void addQueryFilterParameters(RealizationsFilter filter, TypedQuery<T> query) {
-    query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
-    query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
+    if (filter.getFromDate() != null && filter.getToDate() != null) {
+      query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
+      query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
+    }
     if (filter.getEarnerId() > 0) {
       query.setParameter(EARNER_ID_PARAM_NAME, Long.toString(filter.getEarnerId()));
     }
