@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <external-component-plugins>
         <target-component>org.exoplatform.appcenter.service.ApplicationCenterService</target-component>
         <component-plugin>
-            <name>Challenges</name>
+            <name>Contributions</name>
             <set-method>addApplicationPlugin</set-method>
             <type>org.exoplatform.appcenter.plugin.ApplicationPlugin</type>
             <init-params>
@@ -56,13 +56,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <description>description</description>
                     <object type="org.exoplatform.appcenter.dto.Application">
                         <field name="title">
-                            <string>Challenges</string>
+                            <string>Contributions</string>
                         </field>
                         <field name="url">
                             <string>./contributions</string>
                         </field>
                         <field name="description">
-                            <string>challenges application</string>
+                            <string>Contributions application</string>
                         </field>
                         <field name="active">
                             <boolean>true</boolean>
