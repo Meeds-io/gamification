@@ -437,19 +437,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           tableName="GAMIFICATION_ACTIONS_HISTORY"/>
     </changeSet>
 
-    <changeSet id="1.0.0-38" author="exo-gamification">
-        <sql
-                dbms="mysql"
-                endDelimiter=";"
-                splitStatements="true"
-                stripComments="true">
-            SET @sql = CONCAT('ALTER TABLE GAMIFICATION_RULE AUTO_INCREMENT = ', (SELECT MAX(id)+1 FROM GAMIFICATION_RULE ) );
-            PREPARE st FROM @sql;
-            EXECUTE st;
-        </sql>
-    </changeSet>
-
     <changeSet author="exo-gamification" id="1.0.0-45">
         <dropColumn tableName="GAMIFICATION_ACTIONS_HISTORY" columnName="ACTION_DATE" />
+    </changeSet>
+
+    <changeSet author="exo-gamification" id="1.0.0-46" dbms="mysql">
+        <customChange class="org.exoplatform.addons.gamification.liquibase.ResetMySQLAutoIncrement">
+            <param name="tableName">GAMIFICATION_RULE</param>
+        </customChange>
+    </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-47" dbms="mysql">
+        <customChange class="org.exoplatform.addons.gamification.liquibase.ResetMySQLAutoIncrement">
+            <param name="tableName">GAMIFICATION_DOMAIN</param>
+        </customChange>
     </changeSet>
 </databaseChangeLog>
