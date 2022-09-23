@@ -63,11 +63,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-img
         :src="programCover"
         :alt="$t('programs.cover.default')"
-        aspect-ratio="1"
-        min-height="70px"
-        min-width="70px"
         width="100%"
-        max-height="140px"
+        aspect-ratio="1"
+        min-height="70"
+        min-width="70"
+        max-height="140"
         class="primary--text" />
     </div>
     <div class="mt-1">

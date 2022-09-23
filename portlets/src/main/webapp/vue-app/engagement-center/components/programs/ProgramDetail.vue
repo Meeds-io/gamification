@@ -32,10 +32,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :src="programCover"
         :alt="$t('programs.cover.default')"
         aspect-ratio="1"
-        min-height="70px"
-        min-width="70px"
         width="100%"
-        max-height="140px"
+        min-height="70"
+        min-width="70"
+        max-height="140"
         class="primary--text border-color" />
     </div>
     <div class="pt-5">
@@ -66,9 +66,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :items="programRules"
               :options.sync="options"
               :server-items-length="totalSize"
-              hide-default-footer
               :no-data-text="$t('programs.details.rules.noRules')"
               :loading="loadingRules"
+              hide-default-footer
               disable-sort>
               <template slot="item" slot-scope="props">
                 <tr>
