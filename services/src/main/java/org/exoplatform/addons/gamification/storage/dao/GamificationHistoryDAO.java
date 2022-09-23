@@ -619,7 +619,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                     GamificationActionsHistory.class);
       query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentifier);
     } else if (earnerId <= 0 && StringUtils.isNotEmpty(searchingKey)) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulessSearchByPrograms",
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesSearchByPrograms",
                                                   GamificationActionsHistory.class);
     } else {
       query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
@@ -631,7 +631,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("ruleIds", ruleIds);
     query.setParameter("ruleEventNames", ruleEventNames);
     if (StringUtils.isNotEmpty(searchingKey)) {
-      query.setParameter("searchingKey", searchingKey);
+      query.setParameter("searchingKey", "%" + searchingKey + "%");
     }
     if (limit > 0) {
       query.setMaxResults(limit);
