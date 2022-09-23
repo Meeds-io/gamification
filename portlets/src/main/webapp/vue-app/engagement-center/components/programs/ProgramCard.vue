@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card
     id="engagementCenterProgramCard"
-    class="card engagement-center-card"
+    class="mx-auto card engagement-center-card"
     height="240"
     max-height="240"
     outlined
