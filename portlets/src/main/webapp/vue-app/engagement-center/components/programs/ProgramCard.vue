@@ -15,71 +15,70 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <v-card
-      id="engagementCenterProgramCard"
-      class="mx-auto card engagement-center-card"
-      height="240"
-      max-height="240"
-      outlined>
-      <div class="contentCard">
-        <v-row
-          color="transparent"
-          flat
-          class="edit px-0 py-0"
-          height="35px">
-          <v-spacer />
-          <v-menu
-            v-if="showActionsMenu"
-            v-model="showMenu"
-            :left="!$vuetify.rtl"
-            :right="$vuetify.rtl"
-            bottom
-            offset-y
-            attach>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                icon
-                small
-                class="my-1 me-3"
-                v-bind="attrs"
-                v-on="on">
-                <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
-              </v-btn>
-            </template>
-            <v-list dense class="pa-0">
-              <v-list-item
-                class="editList"
-                dense
-                @click="editProgram">
-                <v-icon small class="me-2 mb-1"> fas fa-edit </v-icon>
-                <v-list-item-title class="editLabel">{{ $t('programs.button.editProgram') }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-row>
+  <v-card
+    id="engagementCenterProgramCard"
+    class="mx-auto card engagement-center-card"
+    height="240"
+    max-height="240"
+    @click="openProgramDetail"
+    outlined>
+    <div class="contentCard">
+      <v-row
+        color="transparent"
+        flat
+        class="edit px-0 py-0"
+        height="35px">
+        <v-spacer />
+        <v-menu
+          v-if="showActionsMenu"
+          v-model="showMenu"
+          :left="!$vuetify.rtl"
+          :right="$vuetify.rtl"
+          bottom
+          offset-y
+          attach>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              small
+              class="my-1 me-3"
+              v-bind="attrs"
+              v-on="on">
+              <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense class="pa-0">
+            <v-list-item
+              class="editList"
+              dense
+              @click="editProgram">
+              <v-icon small class="me-2 mb-1"> fas fa-edit </v-icon>
+              <v-list-item-title class="editLabel">{{ $t('programs.button.editProgram') }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-row>
+    </div>
+    <div class="d-flex flex-grow-1 pa-0">
+      <v-img
+        :src="programCover"
+        :alt="$t('programs.cover.default')"
+        width="100%"
+        aspect-ratio="1"
+        min-height="70"
+        min-width="70"
+        max-height="140"
+        class="primary--text" />
+    </div>
+    <div class="mt-1">
+      <div class="center">
+        <span class="text-header-title dark-grey-color text-truncate">  {{ program.title }} </span>
       </div>
-      <div class="d-flex flex-grow-1 pa-0">
-        <v-img
-          :src="programCover"
-          :alt="$t('programs.cover.default')"
-          aspect-ratio="1"
-          min-height="70px"
-          min-width="70px"
-          width="100%"
-          max-height="140px"
-          class="primary--text" />
+      <div class="center">
+        <span> <v-icon class="fas fa-trophy trophy small" /> {{ programBudget }} </span>
       </div>
-      <div class="mt-1">
-        <div class="center">
-          <span class="text-header-title dark-grey-color text-truncate">  {{ program.title }} </span>
-        </div>
-        <div class="center">
-          <span> <v-icon class="fas fa-trophy trophy small" /> {{ programBudget }} </span>
-        </div>
-      </div>
-    </v-card>
-  </div>
+    </div>
+  </v-card>
 </template>
 <script>
 export default {
@@ -117,8 +116,15 @@ export default {
     });
   },
   methods: {
-    editProgram() {
+    editProgram(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       this.$root.$emit('edit-program-details', this.program);
+    },
+    openProgramDetail() {
+      this.$root.$emit('open-program-detail', this.program);
     },
   }
 };
