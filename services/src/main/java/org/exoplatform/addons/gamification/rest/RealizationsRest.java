@@ -50,7 +50,7 @@ public class RealizationsRest implements ResourceContainer {
 
   // File header
   private static final String HEADER    =
-                                     "Date,Grantee,Action label,Action type,Program label,Points,Status,Spaces";
+                                     "Date,Grantee,Action label,Action type,Program label,Points,Status";
 
   public RealizationsRest(RealizationsService realizationsService) {
     this.realizationsService = realizationsService;
