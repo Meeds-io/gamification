@@ -153,7 +153,8 @@ export default {
       realizationId: null,
       actionLabel: null,
       points: null,
-      maxLength: 1300
+      maxLength: 1300,
+      status: null,
     };
   },
   computed: {
@@ -172,6 +173,7 @@ export default {
       this.actionLabel = actionLabel || this.realization.actionLabel;
       this.program = realization.domain;
       this.realizationId = realization.id;
+      this.status = realization.status;
       this.$refs.editRealizationDrawer.open();
     },
     close() {
@@ -181,7 +183,7 @@ export default {
       this.$realizationsServices.getAllDomains().then(response => this.domains = response.domains);
     },
     updateRealization() {
-      this.$realizationsServices.updateRealization(this.realizationId, 'EDITED', this.actionLabel, this.program.title, this.points)
+      this.$realizationsServices.updateRealization(this.realizationId, this.status, this.actionLabel, this.program.title, this.points)
         .then((realization) => {
           this.$emit('updated',realization);
           this.close();
