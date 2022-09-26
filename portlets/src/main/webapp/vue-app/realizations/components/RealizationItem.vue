@@ -29,8 +29,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         {{ actionTypeLabel }}
       </span> 
     </td>
-    <td class="text-truncate align-center">
-      <span v-sanitized-html="domainDescription"></span>
+    <td class="wrap align-center">
+      <span v-sanitized-html="domainTitle"></span>
     </td>
     <td class="align-center actionTitle px-0">
       <a
@@ -140,8 +140,8 @@ export default {
       }
       return this.realization.actionLabel;
     },
-    domainDescription() {
-      return this.realization?.domain?.description || '-';
+    domainTitle() {
+      return this.realization?.domain?.title || '-';
     },
     score() {
       return this.realization?.score || '-';
