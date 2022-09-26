@@ -537,6 +537,48 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return gHistory;
   }
 
+  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByEarnerId(RuleEntity rule, String earnerId) {
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(earnerId);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
+    return gHistory;
+  }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByStatus(RuleEntity rule, HistoryStatus status, String earnerId) {
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(status);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(earnerId);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
+    return gHistory;
+  }
+  
   protected GamificationActionsHistory newGamificationActionsHistoryWithRuleId(String actionTitle, Long ruleId) {
     RuleEntity rule = newRule();
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
