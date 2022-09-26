@@ -157,7 +157,7 @@ export default {
         {
           text: this.$t('realization.label.status'),
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'status',
           class: 'actionHeader'
         },
