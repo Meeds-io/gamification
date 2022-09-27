@@ -9,7 +9,7 @@ export function getRules(term, domainId, status, type, offset, limit) {
   if (status) {
     formData.append('status', status);
   }
-  if (status) {
+  if (type) {
     formData.append('type', type);
   }
   if (offset) {
