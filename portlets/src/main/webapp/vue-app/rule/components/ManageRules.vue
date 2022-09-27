@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     getRules() {
-      this.$ruleServices.getRules(null, null, 'ALL')
+      this.$ruleServices.getRules(null, null, 'ALL', 'AUTOMATIC', 0, 50)
         .then(data => {
           this.rules = data.rules;
         })

@@ -1,4 +1,4 @@
-export function getRules(term, domainId, status, offset, limit) {
+export function getRules(term, domainId, status, type, offset, limit) {
   const formData = new FormData();
   if (term) {
     formData.append('term', term);
@@ -8,6 +8,9 @@ export function getRules(term, domainId, status, offset, limit) {
   }
   if (status) {
     formData.append('status', status);
+  }
+  if (status) {
+    formData.append('type', type);
   }
   if (offset) {
     formData.append('offset', offset);

@@ -301,7 +301,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private String getQueryFilterContent(List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(r) FROM Rule r " : "SELECT r FROM Rule r ";
-    String orderBy = " ORDER BY r.endDate DESC";
+    String orderBy = " ORDER BY r.score DESC";
 
     String queryContent;
     if (predicates.isEmpty()) {

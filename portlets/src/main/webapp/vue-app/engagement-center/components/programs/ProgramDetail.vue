@@ -63,7 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item-subtitle class="text-color pt-4">
             <v-data-table
               :headers="rulesHeaders"
-              :items="programRules"
+              :items="programRulesToDisplay"
               :options.sync="options"
               :server-items-length="totalSize"
               :no-data-text="$t('programs.details.rules.noRules')"
@@ -126,6 +126,9 @@ export default {
     };
   },
   computed: {
+    programRulesToDisplay() {
+      return this.programRules.filter(rule => !rule.deleted);
+    },
     programTitle() {
       return this.program?.title;
     },
@@ -168,7 +171,7 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, 'ENABLED', offset, itemsPerPage)
+      return this.$ruleServices.getRules(null, this.programId, 'ENABLED', 'ALL', offset, itemsPerPage)
         .then((data) => {
 
           this.programRules = data.rules;
