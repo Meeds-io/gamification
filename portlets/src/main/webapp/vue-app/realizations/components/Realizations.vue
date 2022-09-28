@@ -43,6 +43,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-btn>
       </div>
+      <div>
+        <v-btn
+          class="btn px-2 btn-primary filterTasksSetting"
+          outlined
+          @click="openRealizationsFilterDrawer">
+          <v-icon size="15" class="pe-3">fas fa-filter</v-icon>
+          <span class="d-none font-weight-regular caption d-sm-inline">
+            {{ $t('profile.label.search.openSearch') }}
+          </span>
+        </v-btn>
+      </div>
     </v-toolbar>
     <engagement-center-no-results
       v-if="!displaySearchResult"
@@ -257,11 +268,7 @@ export default {
         });
     },
     getRealizations() {
-<<<<<<< HEAD
       return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
-=======
-      return this.$realizationsServices.getAllRealizations(this.search, this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
->>>>>>> adbf32ac (MEED-139: adding textual filter)
         .then(realizations => {
           this.realizations = realizations || [];
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
@@ -275,25 +282,12 @@ export default {
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
     },
-<<<<<<< HEAD
     openRealizationsFilterDrawer() {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(value) {
       this.searchList = value.length > 0 ? value : [];
     },
-=======
-    waitForEndTyping() {
-      window.setTimeout(() => {
-        if (Date.now() > this.startTypingKeywordTimeout) {
-          this.typing = false;
-          this.getRealizations();
-        } else {
-          this.waitForEndTyping();
-        }
-      }, this.endTypingKeywordTimeout);
-    }
->>>>>>> adbf32ac (MEED-139: adding textual filter)
   }
 };
 </script>
