@@ -41,6 +41,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           hide-details
           class="pa-0 mx-3" />
       </div>
+      <div>
+        <v-btn
+          class="btn px-2 btn-primary filterTasksSetting"
+          outlined
+          @click="openRealizationsFilterDrawer">
+          <v-icon size="15" class="pe-3">fas fa-filter</v-icon>
+          <span class="d-none font-weight-regular caption d-sm-inline">
+            {{ $t('profile.label.search.openSearch') }}
+          </span>
+        </v-btn>
+      </div>
     </v-toolbar>
     <v-data-table
       :headers="realizationsHeaders"
@@ -79,6 +90,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <edit-realization-drawer
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
+    <filter-realizations-drawer
+      @reset-filter-realizations="resetFilterRealizations" />
   </v-app>
 </template>
 <script>
@@ -266,6 +279,12 @@ export default {
           this.waitForEndTyping();
         }
       }, this.endTypingKeywordTimeout);
+    },
+    openRealizationsFilterDrawer() {
+      this.$root.$emit('realization-open-filter-drawer');
+    },
+    resetFilterAchievements() {
+      this.$emit('reset-filter-realizations-dashboard');
     }
   }
 };

@@ -1,0 +1,126 @@
+<!--
+  This file is part of the Meeds project (https://meeds.io/).
+  Copyright (C) 2022 Meeds Association
+  contact@meeds.io
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 3 of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program; if not, write to the Free Software Foundation,
+  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<template>
+  <exo-drawer
+    ref="RealizationsFilterDrawer"
+    class="RealizationsFilterDrawer"
+    :right="!$vuetify.rtl"
+    @closed="close"
+    eager>
+    <v-progress-circular
+      v-if="loading"
+      indeterminate
+      size="32" />
+    <template slot="title">
+      <span class="pb-2"> {{ $t('profile.label.search.filters') }} </span>
+    </template>
+    <template slot="content">
+      <div class="VuetifyApp">
+        <template>
+          <v-tabs v-model="tab">
+            <v-tab class="text-capitalize">{{ $t('realization.label.programLabel') }}</v-tab>
+            <v-tab class="text-capitalize">{{ $t('realization.label.grantee') }}</v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="tab">
+            <v-tab-item>
+              <realizations-filter-program-list v-if="!loading" :programs-list="programsList" />
+            </v-tab-item>
+            <v-tab-item />
+          </v-tabs-items>
+        </template>
+      </div>
+    </template>
+    <template slot="footer">
+      <div class="VuetifyApp flex d-flex">
+        <v-btn
+          class="btn"
+          @click="reset">
+          <template>
+            <i class="fas fa-redo"></i>
+            {{ $t('exoplatform.gamification.gamificationinformation.domain.reset') }}
+          </template>
+        </v-btn>
+        <v-spacer />
+        <div class="d-btn">
+          <v-btn
+            class="btn me-2"
+            @click="cancel">
+            <template>
+              {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
+            </template>
+          </v-btn>
+          <v-btn
+            :loading="postProject"
+            class="btn btn-primary"
+            @click="filterTasks">
+            <template>
+              {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
+            </template>
+          </v-btn>
+        </div>
+      </div>
+    </template>
+  </exo-drawer>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      tab: null,
+      loading: true,
+      programsList: [],
+    };
+  },
+  created() { 
+    this.retrievePrograms(false);     
+    this.$root.$on('realization-open-filter-drawer', this.open);
+  },
+  watch: {
+    loading() {
+      if (this.loading) {
+        document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+      } else {
+        document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
+      }
+    },
+  },
+  methods: {
+    open() {
+      this.$refs.RealizationsFilterDrawer.open();
+    },
+    cancel() {
+      this.$refs.RealizationsFilterDrawer.close();
+    },
+    retrievePrograms(append) {
+      this.loading = true;
+      const offset = append && this.programsList?.domains?.length || 0;
+      const returnSize = append ?  false : true;
+      this.$programsServices
+        .retrievePrograms(offset, this.programsPerPage, this.type, this.status, returnSize)
+        .then((programsList) => {
+          if (append) {
+            this.programsList = this.programsList?.concat(programsList.domains.map(program => program.title));
+          } else {
+            this.programsList = programsList.domains.map(program => program.title);
+          }
+        })
+        .finally(() => this.loading = false);
+    },
+  }
+};
+</script>
