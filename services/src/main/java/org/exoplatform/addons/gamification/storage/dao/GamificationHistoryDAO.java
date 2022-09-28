@@ -510,6 +510,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   private void buildPredicates(RealizationsFilter filter, List<String> suffixes, List<String> predicates) {
+    predicates.add("g.earnerType = :type");
     suffixes.add(filter.getSortField());
     suffixes.add(filter.isSortDescending() ? "Descending" : "Ascending");
     if (filter.getFromDate() != null && filter.getToDate() != null) {
@@ -559,6 +560,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (filter.getFromDate() != null && filter.getToDate() != null) {
       query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
       query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
+      query.setParameter("type", IdentityType.USER);
     }
     if (filter.getEarnerId() > 0) {
       query.setParameter(EARNER_ID_PARAM_NAME, Long.toString(filter.getEarnerId()));
