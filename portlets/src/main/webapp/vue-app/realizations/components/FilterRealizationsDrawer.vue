@@ -112,6 +112,9 @@ export default {
     loadMore() {
       return this.retrievePrograms(true);
     },
+    loadMore() {
+      return this.retrievePrograms(true);
+    },
   }
 };
 </script>
