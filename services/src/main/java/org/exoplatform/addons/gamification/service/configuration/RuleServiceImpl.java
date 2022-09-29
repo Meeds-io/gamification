@@ -28,6 +28,7 @@ import javax.persistence.EntityExistsException;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -91,11 +92,16 @@ public class RuleServiceImpl implements RuleService {
   @Override
   public List<RuleDTO> findAllRules(int offset, int limit) {
     return ruleStorage.findAllRules(offset, limit);
+  } 
+  
+  @Override
+  public List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    return ruleStorage.findRulesByFilter(ruleFilter, offset, limit);
   }
 
   @Override
-  public int countAllRules() {
-    return ruleStorage.countRulesByFilter(null);
+  public int countAllRules(RuleFilter ruleFilter) {
+    return ruleStorage.countRulesByFilter(ruleFilter);
   }
 
   public List<RuleDTO> getActiveRules() {
