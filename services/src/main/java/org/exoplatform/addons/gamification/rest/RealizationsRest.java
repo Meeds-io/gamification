@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -92,15 +93,21 @@ public class RealizationsRest implements ResourceContainer {
                                      @Parameter(description = "Response Type")
                                      @DefaultValue("")
                                      @QueryParam("returnType")
-                                     String returnType) {
+                                     String returnType,
+                                     @Parameter(description = "Identity Type")
+                                     @DefaultValue("")
+                                     @QueryParam("identityType")
+                                     String identityType) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
     RealizationsFilter filter = new RealizationsFilter();
     Identity identity = ConversationState.getCurrent().getIdentity();
-    filter.setEarnerId(earnerId);
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
+    
+    filter.setIdentityType(IdentityType.getType(identityType));
+    filter.setEarnerId(earnerId);
     filter.setFromDate(dateFrom);
     filter.setToDate(dateTo);
     filter.setSortDescending(sortDescending);

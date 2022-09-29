@@ -351,6 +351,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("actionType");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerId(0);
+    dateFilter.setIdentityType(IdentityType.getType(""));
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -400,6 +401,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("date");
     dateFilter.setEarnerId(0);
+    dateFilter.setIdentityType(IdentityType.getType(""));
     // Test default Sort field = 'date' with sort descending = false
     List<GamificationActionsHistory> filteredRealizations = gamificationHistoryDAO.findRealizationsByFilter(dateFilter,
                                                                                                             offset,
@@ -470,6 +472,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("actionType");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerId(0);
+    dateFilter.setIdentityType(IdentityType.getType(""));
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -528,6 +531,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setSortField("status");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerId(0);
+    dateFilter.setIdentityType(IdentityType.getType(""));
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
     assertEquals(2, result.size());
@@ -586,7 +590,8 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("actionType");
     dateFilter.setSortDescending(true);
-
+    dateFilter.setIdentityType(IdentityType.getType(""));
+    
     List<GamificationActionsHistory> result1 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result1);
     assertEquals(6, result1.size());

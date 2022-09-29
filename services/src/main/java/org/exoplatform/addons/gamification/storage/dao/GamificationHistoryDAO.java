@@ -471,7 +471,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     String sortField = realizationFilter.getSortField();
 
     if (StringUtils.equals(sortField, "actionType")) {
-      return findRealizationsOrderedByRuleType(fromDate, toDate, sortDescending, earnerId, offset, limit);
+      return findRealizationsOrderedByRuleType(realizationFilter, fromDate, toDate, sortDescending, earnerId, offset, limit);
     } else {
       return findRealizationsPredicatedByFilter(realizationFilter, offset, limit);
     }
@@ -560,14 +560,15 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (filter.getFromDate() != null && filter.getToDate() != null) {
       query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
       query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
-      query.setParameter("type", IdentityType.USER);
+      query.setParameter("type", filter.getIdentityType());
     }
     if (filter.getEarnerId() > 0) {
       query.setParameter(EARNER_ID_PARAM_NAME, Long.toString(filter.getEarnerId()));
     }
   }
 
-  private List<GamificationActionsHistory> findRealizationsOrderedByRuleType(Date fromDate,
+  private List<GamificationActionsHistory> findRealizationsOrderedByRuleType(RealizationsFilter filter,
+                                                                             Date fromDate,
                                                                              Date toDate,
                                                                              boolean sortDescending,
                                                                              Long earnerId,
@@ -582,7 +583,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     Iterator<EntityType> typesIterator = types.iterator();
     while (typesIterator.hasNext() && CollectionUtils.size(resultList) < limitToRetrieve) {
       EntityType ruleType = typesIterator.next();
-      List<GamificationActionsHistory> actions = getActionsHistoriesByRuleType(ruleType,
+      List<GamificationActionsHistory> actions = getActionsHistoriesByRuleType(filter,
+                                                                               ruleType,
                                                                                fromDate,
                                                                                toDate,
                                                                                earnerId,
@@ -601,7 +603,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
-  private List<GamificationActionsHistory> getActionsHistoriesByRuleType(EntityType ruleType,
+  private List<GamificationActionsHistory> getActionsHistoriesByRuleType(RealizationsFilter filter,
+                                                                         EntityType ruleType,
                                                                          Date fromDate,
                                                                          Date toDate,
                                                                          Long earnerId,
@@ -622,7 +625,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
     query.setParameter(FROM_DATE_PARAM_NAME, fromDate);
     query.setParameter(TO_DATE_PARAM_NAME, toDate);
-    query.setParameter("type", IdentityType.USER);
+    query.setParameter("type", filter.getIdentityType());
     query.setParameter("ruleIds", ruleIds);
     query.setParameter("ruleEventNames", ruleEventNames);
     if (limit > 0) {
