@@ -24,6 +24,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Da
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 
 @Data
 @NoArgsConstructor
@@ -41,5 +43,9 @@ public class RuleFilter implements Serializable {
   private List<Long>        spaceIds;
 
   private DateFilterType    dateFilterType;
+
+  private EntityFilterType  entityFilterType;
+
+  private EntityStatusType  entityStatusType;
 
 }
