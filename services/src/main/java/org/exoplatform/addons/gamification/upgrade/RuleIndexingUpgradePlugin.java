@@ -71,7 +71,7 @@ public class RuleIndexingUpgradePlugin extends UpgradeProductPlugin {
 
   @Override
   public void processUpgrade(String oldVersion, String newVersion) { // NOSONAR
-    rulesCount = ruleService.countAllRules();
+    rulesCount = ruleService.countAllRules(null);
     LOG.info("START::Index '{}' Gamification rules", rulesCount);
 
     long startTime = System.currentTimeMillis();
