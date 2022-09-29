@@ -39,8 +39,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <engagement-center-programs
+            v-show="!displayProgramDetail"
             id="engagementCenterProgramsTab"
             :is-administrator="isAdministrator" />
+          <engagement-center-program-detail v-if="displayProgramDetail" :program="program" />
         </v-tab-item>
         <v-tab-item>
           <challenges :challenge-id="challengeId" />
@@ -74,6 +76,8 @@ export default {
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,
     challengeId: null,
+    program: null,
+    displayProgramDetail: false,
   }),
   watch: {
     tab() {
@@ -84,9 +88,15 @@ export default {
       } else if (this.tab === 2) {
         window.history.pushState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
       }
+      this.displayProgramDetail = false;
     },
   },
   created() {
+    this.$root.$on('open-program-detail', program => {
+      this.program = program;
+      this.displayProgramDetail = true;
+    });
+    this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
     const urlPath = document.location.search || document.location.pathname;
     const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {

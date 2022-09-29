@@ -27,6 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
@@ -216,6 +218,24 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
       query.setParameter("date", Calendar.getInstance().getTime());
     }
+    EntityFilterType entityFilterType = filter.getEntityFilterType();
+    if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
+      query.setParameter("filterType", EntityType.valueOf(filter.getEntityFilterType().name()));
+    }
+    EntityStatusType entityStatusType = filter.getEntityStatusType();
+    if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
+      switch (filter.getEntityStatusType()) {
+      case ENABLED:
+      case DISABLED:
+        query.setParameter("enabled", entityStatusType == EntityStatusType.ENABLED);
+        break;
+      case DELETED:
+        query.setParameter("deleted", true);
+        break;
+      default:
+        break;
+      }
+    }
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) {
@@ -246,6 +266,27 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
         break;
       }
     }
+    EntityFilterType entityFilterType = filter.getEntityFilterType();
+    if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
+      suffixes.add("FilterType");
+      predicates.add("r.type = :filterType");
+    }
+    EntityStatusType entityStatusType = filter.getEntityStatusType();
+    if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
+      switch (filter.getEntityStatusType()) {
+      case ENABLED:
+      case DISABLED:
+        suffixes.add("FilterByEnabled");
+        predicates.add("r.isEnabled = :enabled");
+        break;
+      case DELETED:
+        suffixes.add("FilterByDeleted");
+        predicates.add("r.isDeleted < :deleted");
+        break;
+      default:
+        break;
+      }
+    }
   }
 
   private String getQueryFilterName(List<String> suffixes, boolean count) {
@@ -260,7 +301,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private String getQueryFilterContent(List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(r) FROM Rule r " : "SELECT r FROM Rule r ";
-    String orderBy = " ORDER BY r.endDate DESC";
+    String orderBy = " ORDER BY r.score DESC";
 
     String queryContent;
     if (predicates.isEmpty()) {
