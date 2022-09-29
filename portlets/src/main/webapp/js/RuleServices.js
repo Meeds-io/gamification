@@ -1,5 +1,25 @@
-export function getRules() {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/all`, {
+export function getRules(term, domainId, status, type, offset, limit) {
+  const formData = new FormData();
+  if (term) {
+    formData.append('term', term);
+  }
+  if (domainId) {
+    formData.append('domainId', domainId);
+  }
+  if (status) {
+    formData.append('status', status);
+  }
+  if (type) {
+    formData.append('type', type);
+  }
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+  const params = new URLSearchParams(formData).toString();
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?returnSize=true&${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

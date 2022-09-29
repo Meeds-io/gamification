@@ -33,10 +33,12 @@ import Programs from './components/programs/Programs.vue';
 import ProgramsList from './components/programs/ProgramsList.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
 import ProgramDrawer from './components/programs/ProgramDrawer.vue';
+import ProgramDetail from './components/programs/ProgramDetail.vue';
 
 import Assignment from './components/common/Assignment.vue';
 import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
+import RuleTitle from './components/common/RuleTitle.vue';
 
 
 const components = {
@@ -57,9 +59,11 @@ const components = {
   'engagement-center-programs-list': ProgramsList,
   'engagement-center-program-card': ProgramCard,
   'engagement-center-program-drawer': ProgramDrawer,
+  'engagement-center-program-detail': ProgramDetail,
   'engagement-center-assignment': Assignment,
   'engagement-center-description-editor': DescriptionEditor,
   'engagement-center-image-selector': ImageSelector,
+  'engagement-center-rule-title': RuleTitle,
 };
 
 for (const key in components) {
@@ -81,9 +85,16 @@ if (!Vue.prototype.$challengeUtils) {
 }
 
 import  * as programsServices  from './js/programsServices';
+import  * as ruleServices  from '../../js/RuleServices.js';
 
 if (!Vue.prototype.$programsServices) {
   window.Object.defineProperty(Vue.prototype, '$programsServices', {
     value: programsServices,
+  });
+}
+
+if (!Vue.prototype.$ruleServices) {
+  window.Object.defineProperty(Vue.prototype, '$ruleServices', {
+    value: ruleServices,
   });
 }
