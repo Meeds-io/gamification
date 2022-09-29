@@ -12,10 +12,10 @@ for (const key in components) {
   Vue.component(key, components[key]);
 }
 
-import  * as ruleServices  from './RuleServices';
+import  * as ruleServices  from '../../js/RuleServices.js';
 
-if (!Vue.prototype.$RuleServices) {
-  window.Object.defineProperty(Vue.prototype, '$RuleServices', {
+if (!Vue.prototype.$ruleServices) {
+  window.Object.defineProperty(Vue.prototype, '$ruleServices', {
     value: ruleServices,
   });
 }
