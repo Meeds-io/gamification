@@ -70,6 +70,7 @@ export default {
   },
   created() {
     this.selected = this.programsList;
+    console.log(this.programsList);
   },
   data: () => ({
     selectionType: 'all',
@@ -80,10 +81,26 @@ export default {
     totalSize: 0,
     partiallySelected: false,
     selected: [],
+    numberOfPrograms: 5,
   }),
   watch: {
     selected() {
       this.partiallySelected = this.selected.length !== this.programsList.length;
+    },
+    selectAll(newVal) {
+      return newVal ? this.selected = this.programsList : this.selected = [];
+    },
+  },
+  computed: {
+    hasMore() {
+      console.log(this.programsList.length);
+      console.log(this.numberOfPrograms);
+      return this.programsList.length >= this.numberOfPrograms ;  
+    },
+  },
+  methods: {
+    loadMore() {
+      this.$root.$emit('program-load-more');
     }
   },
 };

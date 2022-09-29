@@ -84,11 +84,13 @@ export default {
       tab: null,
       loading: true,
       programsList: [],
+      numberOfPrograms: 5,
     };
   },
   created() { 
     this.retrievePrograms(false);     
     this.$root.$on('realization-open-filter-drawer', this.open);
+    this.$root.$on('program-load-more', this.loadMore);
   },
   watch: {
     loading() {
@@ -111,7 +113,7 @@ export default {
       const offset = append && this.programsList?.domains?.length || 0;
       const returnSize = append ?  false : true;
       this.$programsServices
-        .retrievePrograms(offset, this.programsPerPage, this.type, this.status, returnSize)
+        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, returnSize)
         .then((programsList) => {
           if (append) {
             this.programsList = this.programsList?.concat(programsList.domains.map(program => program.title));
@@ -120,6 +122,9 @@ export default {
           }
         })
         .finally(() => this.loading = false);
+    },
+    loadMore() {
+      return this.retrievePrograms(true);
     },
   }
 };
