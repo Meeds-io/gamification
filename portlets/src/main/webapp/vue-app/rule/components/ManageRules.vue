@@ -85,9 +85,9 @@ export default {
   },
   methods: {
     getRules() {
-      this.$RuleServices.getRules()
-        .then(rules => {
-          this.rules = rules;
+      this.$ruleServices.getRules(null, null, 'ALL', 'AUTOMATIC', 0, 50)
+        .then(data => {
+          this.rules = data.rules;
         })
         .catch(() => {
           this.addError = true;
@@ -95,13 +95,13 @@ export default {
         });
     },
     getDomains() {
-      this.$RuleServices.getDomains()
+      this.$ruleServices.getDomains()
         .then(domains => {
           this.domains = domains;
         });
     },
     getEvents() {
-      this.$RuleServices.getEvents()
+      this.$ruleServices.getEvents()
         .then(events => {
           this.events = events;
         });
@@ -143,7 +143,7 @@ export default {
 
     onRemoveClicked(ruleId) {
       const index = this.rules.findIndex((p) => p.id === ruleId);
-      this.$RuleServices.deleteRule(ruleId)
+      this.$ruleServices.deleteRule(ruleId)
         .then(() => {
           this.rules.splice(index, 1);
         })
@@ -156,7 +156,7 @@ export default {
       }
     },
     updateRule(ruleDTO) {
-      this.$RuleServices.updateRule(ruleDTO)
+      this.$ruleServices.updateRule(ruleDTO)
         .then(() => {
           this.addSuccess = true;
           this.updateMessage = 'updated';
