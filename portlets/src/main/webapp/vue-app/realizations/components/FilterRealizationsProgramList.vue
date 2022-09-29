@@ -46,13 +46,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-list-item-content>
     </v-list-item>
 
-    <v-flex v-if="hasMore" class="agendaLoadMoreParent d-flex my-4 border-box-sizing">
+    <v-flex v-if="hasMore" class=" d-flex my-4 border-box-sizing">
       <v-btn
         :loading="loading"
         :disabled="loading"
         class="btn mx-auto"
         @click="loadMore">
-        {{ $t('agenda.button.loadMore') }}
+        {{ $t('realization.button.loadMore') }}
       </v-btn>
     </v-flex>
   </v-list>
@@ -68,6 +68,9 @@ export default {
       },
     },
   },
+  created() {
+    this.selected = this.programsList;
+  },
   data: () => ({
     selectionType: 'all',
     selectAll: true,
@@ -75,10 +78,12 @@ export default {
     limit: 20,
     pageSize: 20,
     totalSize: 0,
+    partiallySelected: false,
+    selected: [],
   }),
-  computed: {
+  watch: {
     selected() {
-      return this.programsList;
+      this.partiallySelected = this.selected.length !== this.programsList.length;
     }
   },
 };
