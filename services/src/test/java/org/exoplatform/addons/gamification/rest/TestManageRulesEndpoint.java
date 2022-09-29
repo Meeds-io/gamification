@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
@@ -31,6 +32,9 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.exoplatform.social.core.manager.ActivityManagerImpl;
+import org.exoplatform.social.rest.entity.ActivityEntity;
+import org.exoplatform.social.rest.entity.CollectionEntity;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +56,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
 
   @Test
   public void testGetAllRules() throws Exception {
-    String restPath = "/gamification/rules/all";
+    String restPath = "/gamification/rules";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
