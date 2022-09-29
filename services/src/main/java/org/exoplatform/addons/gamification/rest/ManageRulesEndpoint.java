@@ -16,26 +16,19 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.persistence.EntityExistsException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.rest.model.RuleList;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -43,9 +36,16 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.annotation.security.RolesAllowed;
+import javax.persistence.EntityExistsException;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
 
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
@@ -69,11 +69,43 @@ public class ManageRulesEndpoint implements ResourceContainer {
   }
 
   @GET
-  @Path("/all")
+  @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  public Response getAllRules() {
-    List<RuleDTO> allRules = ruleService.findAllRules();
-    return Response.ok().cacheControl(cacheControl).entity(allRules).build();
+  @Operation(summary = "Retrieves the list of available rules", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response getRules(@Parameter(description = "Offset of results to retrieve", required = false) @QueryParam("offset") @DefaultValue("0") int offset,
+                           @Parameter(description = "Limit of results to retrieve", required = false) @QueryParam("limit") @DefaultValue("20") int limit,
+                           @Parameter(description = "Used to filter rules by domain", required = false) @QueryParam("domainId") long domainId,                           
+                           @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false) @QueryParam("type") @DefaultValue("ALL") String type,
+                           @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
+                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
+    if (offset < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
+    }
+    if (limit < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    }
+    RuleFilter ruleFilter = new RuleFilter();
+    EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
+    ruleFilter.setEntityFilterType(filterType);
+    EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
+    ruleFilter.setEntityStatusType(statusType);
+    if (domainId > 0) {
+      ruleFilter.setDomainId(domainId);
+    }
+    RuleList ruleList = new RuleList();
+    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
+    if (returnSize) {
+      int rulesSize = ruleService.countAllRules(ruleFilter);
+      ruleList.setSize(rulesSize);
+    }
+    ruleList.setRules(rules);
+    ruleList.setOffset(offset);
+    ruleList.setLimit(limit);
+    return Response.ok(ruleList).build();
   }
 
   @GET

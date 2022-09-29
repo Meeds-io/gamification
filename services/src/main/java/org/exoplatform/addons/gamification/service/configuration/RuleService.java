@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 
 public interface RuleService {
 
@@ -78,9 +79,19 @@ public interface RuleService {
     List<RuleDTO> findAllRules(int offset, int limit) ;
 
     /**
-     * @return count of all existing rules
+     * Get Rules by filter using offset and limit.
+     *
+     * @param ruleFilter {@link RuleFilter} used to filter rules
+     * @param offset Offset of result
+     * @param limit Limit of result
+     * @return {@link List} of {@link RuleDTO}
      */
-    int countAllRules();
+    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) ;
+
+    /**
+     * @return count rules by filter
+     */
+    int countAllRules(RuleFilter ruleFilter);
 
     /**
      * Get all active Rules from DB
