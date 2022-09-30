@@ -37,7 +37,7 @@
           </v-tabs>
           <v-tabs-items v-model="tab">
             <v-tab-item>
-              <realizations-filter-program-list v-if="!loading" :programs-list="programsList" />
+              <realizations-filter-program-list v-on="$listeners" />
             </v-tab-item>
             <v-tab-item />
           </v-tabs-items>
@@ -64,9 +64,8 @@
             </template>
           </v-btn>
           <v-btn
-            :loading="postProject"
             class="btn btn-primary"
-            @click="filterTasks">
+            @click="cancel">
             <template>
               {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
             </template>
@@ -82,13 +81,9 @@ export default {
   data() {
     return {
       tab: null,
-      loading: true,
-      programsList: [],
-      numberOfPrograms: 5,
     };
   },
-  created() { 
-    this.retrievePrograms(false);     
+  created() {    
     this.$root.$on('realization-open-filter-drawer', this.open);
     this.$root.$on('program-load-more', this.loadMore);
   },
@@ -108,20 +103,8 @@ export default {
     cancel() {
       this.$refs.RealizationsFilterDrawer.close();
     },
-    retrievePrograms(append) {
-      this.loading = true;
-      const offset = append && this.programsList?.domains?.length || 0;
-      const returnSize = append ?  false : true;
-      this.$programsServices
-        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, returnSize)
-        .then((programsList) => {
-          if (append) {
-            this.programsList = this.programsList?.concat(programsList.domains.map(program => program.title));
-          } else {
-            this.programsList = programsList.domains.map(program => program.title);
-          }
-        })
-        .finally(() => this.loading = false);
+    reset() {
+      this.$root.$emit('reset-selection');
     },
     loadMore() {
       return this.retrievePrograms(true);

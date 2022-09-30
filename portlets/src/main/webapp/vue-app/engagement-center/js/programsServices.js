@@ -15,7 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function retrievePrograms(offset, limit, type, status, returnSize) {
+export function retrievePrograms(offset, limit, type, status, returnSize, searchingKey) {
   const formData = new FormData();
   if (offset) {
     formData.append('offset', offset);
@@ -32,6 +32,9 @@ export function retrievePrograms(offset, limit, type, status, returnSize) {
   }
   if (returnSize) {
     formData.append('returnSize', returnSize);
+  }
+  if (searchingKey) {
+    formData.append('searchingKey', searchingKey);
   }
 
   const params = new URLSearchParams(formData).toString();

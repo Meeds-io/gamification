@@ -37,12 +37,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-list-item>
       <v-list-item-content class="flex-column d-flex align-start">
         <v-checkbox   
-          v-for="(program, index) in programsList"
+          v-for="(program, index) in programs"
           v-model="selected"
           class="pt-2 pb-2 justify-content-start"
           :key="index"
-          :label="program"
-          :value="program" />
+          :label="Object.values(program)"  
+          :value="Object.keys(program)"
+          v-bind="$attrs"
+          @click="filterByProgram" />
       </v-list-item-content>
     </v-list-item>
 
@@ -52,7 +54,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :disabled="loading"
         class="btn mx-auto"
         @click="loadMore">
-        {{ $t('realization.button.loadMore') }}
+        {{ $t('realization.label.loadMore') }}
       </v-btn>
     </v-flex>
   </v-list>
@@ -60,18 +62,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
-  props: {
-    programsList: {
-      type: Array,
-      default: function() {
-        return [];
-      },
-    },
-  },
-  created() {
-    this.selected = this.programsList;
-    console.log(this.programsList);
-  },
   data: () => ({
     selectionType: 'all',
     selectAll: true,
@@ -82,26 +72,73 @@ export default {
     partiallySelected: false,
     selected: [],
     numberOfPrograms: 5,
+    search: '',
+    startSearchAfterInMilliseconds: 600,
+    endTypingKeywordTimeout: 50,
+    startTypingKeywordTimeout: 0,
+    typing: false,
+    programsList: [[],[]],
+    status: 'ALL',
+    ssearchingKey: '',
+    size: 0,
   }),
+  created() {
+    this.retrievePrograms(false, '');
+    this.$root.$on('reset-selection', this.reset);
+  },
   watch: {
     selected() {
       this.partiallySelected = this.selected.length !== this.programsList.length;
+      this.$emit('selected-programs', this.selected);
     },
     selectAll(newVal) {
       return newVal ? this.selected = this.programsList : this.selected = [];
+    },    
+    search()  {
+      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
+      }
     },
   },
   computed: {
+    programs() {
+      return this.programsList;
+    },
     hasMore() {
-      console.log(this.programsList.length);
-      console.log(this.numberOfPrograms);
-      return this.programsList.length >= this.numberOfPrograms ;  
+      return this.size > this.programsList?.length ;
     },
   },
   methods: {
     loadMore() {
-      this.$root.$emit('program-load-more');
-    }
+      this.retrievePrograms(true , this.search);
+    },
+    reset() {
+      this.selected = this.programsList;
+    },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() > this.startTypingKeywordTimeout) {
+          this.typing = false;
+          this.retrievePrograms(false, this.search);
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
+    },
+    retrievePrograms(append, searchingKey) {
+      this.loading = true;
+      const offset = append && this.programsList?.domains?.length || 0;
+      const returnSize = append ?  false : true;
+      this.$programsServices
+        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, returnSize, searchingKey)
+        .then((programsList) => {
+          this.size = programsList.domainsSize;
+          this.numberOfPrograms += 5;
+          this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));}
+        )
+        .finally(() => this.loading = false);},
   },
 };
 </script>
