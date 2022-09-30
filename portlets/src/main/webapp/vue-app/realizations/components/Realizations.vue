@@ -140,10 +140,6 @@ export default {
       hour: 'numeric',
       minute: 'numeric',
     },
-    search: '',
-    startSearchAfterInMilliseconds: 600,
-    endTypingKeywordTimeout: 50,
-    startTypingKeywordTimeout: 0,
   }),
   computed: {
     hasMore() {
@@ -240,12 +236,9 @@ export default {
         this.sortUpdated();
       }
     },
-    search()  {
-      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
-      if (!this.typing) {
-        this.typing = true;
-        this.waitForEndTyping();
-      }
+    search() {
+      console.log(this.search);
+      this.getRealizations();
     },
   },
   methods: {
