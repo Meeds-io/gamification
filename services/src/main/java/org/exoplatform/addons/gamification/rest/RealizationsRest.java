@@ -94,6 +94,7 @@ public class RealizationsRest implements ResourceContainer {
                                      @DefaultValue("")
                                      @QueryParam("returnType")
                                      String returnType,
+                                     @Parameter(description = "identity Type")
                                      @QueryParam("identityType")
                                      String identityType) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
