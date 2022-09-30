@@ -125,6 +125,13 @@ public interface RuleService {
      List<String> getDomainListFromRules() ;
 
     /**
+     *
+     * @param domainId domain id
+     * @return rules total scores that can be earned
+     */
+     long getRulesTotalScoreByDomain(long domainId);
+
+    /**
      * delete rule with specific id
      */
      void deleteRule (Long id)  throws Exception;
