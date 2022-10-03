@@ -516,9 +516,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       suffixes.add("Earner");
       predicates.add("g.earnerId = :earnerId");
     } 
-    if (StringUtils.isNotEmpty(filter.getSearchingKey())) {
-      suffixes.add("searchByProgramIds" + filter.getSearchingKey());
-      predicates.add("UPPER(g.domain) LIKE UPPER(:searchingKey)");
+    if (!filter.getProgramIds().isEmpty()) {
+      suffixes.add("searchByProgramIds" + filter.getProgramIds());
+      predicates.add("( g.domainEntity.id IN (:selectedIds) ) ");
     }
   }
 
@@ -561,8 +561,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (filter.getEarnerId() > 0) {
       query.setParameter(EARNER_ID_PARAM_NAME, Long.toString(filter.getEarnerId()));
     } 
-    if (StringUtils.isNotEmpty(filter.getSearchingKey())) {
-      query.setParameter("searchingKey", "%" + filter.getSearchingKey() + "%");
+    if (!filter.getProgramIds().isEmpty()) {
+      query.setParameter("selectedIds", filter.getProgramIds());
     }
     query.setParameter("type", filter.getIdentityType());
   }
@@ -609,7 +609,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",
                                                     GamificationActionsHistory.class);
       query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentifier);
-    } else if (filter.getEarnerId() <= 0 && StringUtils.isNotEmpty(filter.getSearchingKey())) {
+    } else if (filter.getEarnerId() <= 0 && !filter.getProgramIds().isEmpty()) {
       query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesSearchByPrograms",
                                                   GamificationActionsHistory.class);
     } else {
@@ -621,9 +621,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("type", filter.getIdentityType());
     query.setParameter("ruleIds", ruleIds);
     query.setParameter("ruleEventNames", ruleEventNames);
-    if (StringUtils.isNotEmpty(filter.getSearchingKey())) {
-      query.setParameter("searchingKey", "%" + filter.getSearchingKey() + "%");
-    }
+
     if (limit > 0) {
       query.setMaxResults(limit);
     }

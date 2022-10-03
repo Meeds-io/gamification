@@ -660,7 +660,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setEarnerId(1L);
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setSearchingKey("domain2");
+    //dateFilter.setSearchingKey("domain2");
     dateFilter.setEarnerId(0);
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
@@ -705,7 +705,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setEarnerId(2L);
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setSearchingKey("domain2");
+    //dateFilter.setSearchingKey("domain2");
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
 
     assertNotNull(result);
@@ -728,7 +728,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("status");
-    dateFilter.setSearchingKey("domain2");
+    //dateFilter.setSearchingKey("domain2");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerId(1L);
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
@@ -765,7 +765,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("status");
-    dateFilter.setSearchingKey("domain2");
+    //dateFilter.setSearchingKey("domain2");
     dateFilter.setSortDescending(true);
     dateFilter.setEarnerId(2L);
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);

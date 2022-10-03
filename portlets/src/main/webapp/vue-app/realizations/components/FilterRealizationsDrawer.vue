@@ -65,7 +65,7 @@
           </v-btn>
           <v-btn
             class="btn btn-primary"
-            @click="cancel">
+            @click="confirm">
             <template>
               {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
             </template>
@@ -102,6 +102,10 @@ export default {
     },
     cancel() {
       this.$refs.RealizationsFilterDrawer.close();
+    },
+    confirm() {
+      this.$emit('selectionConfirmed');
+      this.cancel();
     },
     reset() {
       this.$root.$emit('reset-selection');

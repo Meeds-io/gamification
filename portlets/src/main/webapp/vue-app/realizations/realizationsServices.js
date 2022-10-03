@@ -1,5 +1,36 @@
 export function getAllRealizations(searchingKey, fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?searchingKey=${searchingKey}&fromDate=${fromDate}&toDate=${toDate}&earnerId=${earnerId}&sortBy=${sortBy}&sortDescending=${sortDescending}&offset=${offset || 0}&limit=${limit|| 25}`, {
+  const formData = new FormData();
+  if (searchingKey?.length > 0) {
+    for (let index = 0; index < searchingKey.length; index++) {
+      formData.append('searchingKey', searchingKey[index]);
+    }
+
+  }
+  if (fromDate) {
+    formData.append('fromDate', fromDate);
+  }
+
+  if (toDate) {
+    formData.append('toDate', toDate);
+  }
+  if (earnerId) {
+    formData.append('earnerId', earnerId);
+  }
+  if (sortBy) {
+    formData.append('sortBy', sortBy);
+  }
+  if (sortDescending) {
+    formData.append('sortDescending', sortDescending);
+  }
+  if (offset) {
+    formData.append('offset', offset);
+  }
+  if (limit) {
+    formData.append('limit', limit);
+  }
+
+  const params = new URLSearchParams(formData).toString();
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

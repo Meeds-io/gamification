@@ -37,10 +37,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-list-item>
       <v-list-item-content class="flex-column d-flex align-start">
         <v-checkbox   
-          v-for="(program, index) in programs"
+          v-for="program in programs"
           v-model="selected"
           class="pt-2 pb-2 justify-content-start"
-          :key="index"
+          :key="Object.keys(program)"
           :label="Object.values(program)"  
           :value="Object.keys(program)"
           v-bind="$attrs"
@@ -79,7 +79,7 @@ export default {
     typing: false,
     programsList: [[],[]],
     status: 'ALL',
-    ssearchingKey: '',
+    searchingKey: '',
     size: 0,
   }),
   created() {
@@ -89,10 +89,10 @@ export default {
   watch: {
     selected() {
       this.partiallySelected = this.selected.length !== this.programsList.length;
-      this.$emit('selected-programs', this.selected);
+      this.$emit('selected-programs', this.selectedPrograms);
     },
     selectAll(newVal) {
-      return newVal ? this.selected = this.programsList : this.selected = [];
+      return newVal ? this.selected = this.programsList.map( Object.keys ) : this.selected = [];
     },    
     search()  {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
@@ -109,10 +109,13 @@ export default {
     hasMore() {
       return this.size > this.programsList?.length ;
     },
+    selectedPrograms() {
+      return  (this.selectAll && !this.partiallySelected && this.search === '') ? [] : this.selected ;
+    },
   },
   methods: {
     loadMore() {
-      this.retrievePrograms(true , this.search);
+      this.retrievePrograms(true ,this.search);
     },
     reset() {
       this.selected = this.programsList;
@@ -122,6 +125,7 @@ export default {
         if (Date.now() > this.startTypingKeywordTimeout) {
           this.typing = false;
           this.retrievePrograms(false, this.search);
+          this.selected = [];
         } else {
           this.waitForEndTyping();
         }
@@ -136,7 +140,8 @@ export default {
         .then((programsList) => {
           this.size = programsList.domainsSize;
           this.numberOfPrograms += 5;
-          this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));}
+          this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));
+          this.selected = this.programsList.map( Object.keys );}
         )
         .finally(() => this.loading = false);},
   },

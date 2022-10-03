@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -66,9 +67,9 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   @RolesAllowed("users")
   public Response getAllRealizations(@Context HttpServletRequest httpRequest,
-                                     @Parameter(description = "searching key. Possible target columns: grantee or program")
+                                     @Parameter(description = "searching key. Possible target columns: grantee or program", required = false)
                                      @QueryParam("searchingKey")
-                                     String searchingKey,
+                                     List<Long> searchingKey,
                                      @Parameter(description = "result fromDate", required = true)
                                      @QueryParam("fromDate")
                                      String fromDate,
@@ -114,7 +115,9 @@ public class RealizationsRest implements ResourceContainer {
     filter.setToDate(dateTo);
     filter.setSortDescending(sortDescending);
     filter.setSortField(sortField);
-    filter.setSearchingKey(searchingKey);
+    if (searchingKey == null) {
+        searchingKey = new ArrayList<Long>();
+    } filter.setProgramIds(searchingKey);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {

@@ -82,8 +82,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
     <filter-realizations-drawer
-      @filterByPrograms="filterByProgram"
-      @selected-programs="filterByPrograms" />
+      @selected-programs="filterByPrograms"
+      @selectionConfirmed="loadRealizations" />
   </v-app>
 </template>
 <script>
@@ -104,7 +104,7 @@ export default {
   },
   data: () => ({
     realizations: [],
-    search: [],
+    searchList: null,
     offset: 0,
     limit: 25,
     pageSize: 25,
@@ -218,10 +218,6 @@ export default {
         this.sortUpdated();
       }
     },
-    search() {
-      console.log(this.search);
-      this.getRealizations();
-    },
   },
   methods: {
     sortUpdated() {
@@ -243,7 +239,7 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.search, this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.searchList, this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
         .then(realizations => {
           this.realizations = realizations || [];
         });
@@ -260,7 +256,7 @@ export default {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(value) {
-      this.search = value;
+      return value.length > 0 ? this.searchList = value : this.searchList = null;
     }
   }
 };
