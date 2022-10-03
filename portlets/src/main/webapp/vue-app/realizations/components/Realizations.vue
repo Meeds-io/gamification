@@ -236,10 +236,6 @@ export default {
         this.sortUpdated();
       }
     },
-    search() {
-      console.log(this.search);
-      this.getRealizations();
-    },
   },
   methods: {
     sortUpdated() {
