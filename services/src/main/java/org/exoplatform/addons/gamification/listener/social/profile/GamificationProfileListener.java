@@ -27,11 +27,13 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
+    private static final String PROFILE = "/profile/";
 
     protected RuleService ruleService;
     protected IdentityManager identityManager;
@@ -51,8 +53,9 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
         Long lastUpdate = event.getProfile().getAvatarLastUpdated();
         // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
         if (lastUpdate != null) return;
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR, event.getProfile().getId(),event.getProfile().getId(),"/portal/intranet/profile/");
-
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR, event.getProfile().getId(),
+                event.getProfile().getId(),
+                "/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + PROFILE);
     }
 
     @Override
@@ -64,8 +67,9 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
         // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
         if (lastUpdate != null) return;
-        String receiver =event.getProfile().getId();
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER, receiver,receiver,"/portal/intranet/profile/");
+        String receiver = event.getProfile().getId();
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER, receiver, receiver,
+                "/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + PROFILE);
     }
 
     @Override
@@ -94,11 +98,11 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
     }
 
-
     @Override
     public void aboutMeUpdated(ProfileLifeCycleEvent event) {
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,event.getProfile().getId(),event.getProfile().getIdentity().getId(),"/portal/intranet/profile/"+event.getProfile().getIdentity().getId());
-
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME, event.getProfile().getId(),
+                event.getProfile().getIdentity().getId(), "/" + LinkProvider.getPortalName("") + "/"
+                        + LinkProvider.getPortalOwner("") + PROFILE + event.getProfile().getIdentity().getId());
     }
 
 
