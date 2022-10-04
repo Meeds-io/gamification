@@ -44,33 +44,35 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     public void avatarUpdated(ProfileLifeCycleEvent event) {
 
         Long lastUpdate = event.getProfile().getAvatarLastUpdated();
-        String receiver = event.getProfile().getIdentity().getId();
-        String profilUrl = event.getProfile().getUrl();
-        // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
+        String identityId = event.getProfile().getIdentity().getId();
+        
+        // Do not reward a user when he update his avatar, reward user only when he add
+        // an avatar for the first time
         if (lastUpdate != null) {
             return;
         }
         gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
-                receiver,
-                receiver,
-                profilUrl);
+                identityId,
+                identityId,
+                event.getProfile().getUrl());
     }
 
     @Override
     public void bannerUpdated(ProfileLifeCycleEvent event) {
 
         Long lastUpdate = event.getProfile().getBannerLastUpdated();
+        String identityId = event.getProfile().getIdentity().getId();
 
-        // Do not reward a user when he update his banner, reward user only when he add a banner for the first time
+        // Do not reward a user when he update his banner, reward user only when he add
+        // a banner for the first time
         if (lastUpdate != null) {
             return;
         }
-        String receiver = event.getProfile().getId();
-        String profilUrl = event.getProfile().getUrl();
+
         gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
-                receiver,
-                receiver,
-                profilUrl);
+                identityId,
+                identityId,
+                event.getProfile().getUrl());
     }
 
     @Override
@@ -102,14 +104,12 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     @Override
     public void aboutMeUpdated(ProfileLifeCycleEvent event) {
         
-        String sender = event.getProfile().getId();
-        String receiver = event.getProfile().getIdentity().getId();
-        String profilUrl = event.getProfile().getUrl();
-
+        String identityId = event.getProfile().getIdentity().getId();
+        
         gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
-                sender,
-                receiver,
-                profilUrl);
+                identityId,
+                identityId,
+                event.getProfile().getUrl());
     }
 
 
