@@ -20,46 +20,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="card engagement-center-card"
     height="240"
     max-height="240"
-    @click="openProgramDetail"
-    outlined>
-    <div class="contentCard">
-      <v-row
-        color="transparent"
-        flat
-        class="edit px-0 py-0"
-        height="35px">
-        <v-spacer />
-        <v-menu
-          v-if="showActionsMenu"
-          v-model="showMenu"
-          :left="!$vuetify.rtl"
-          :right="$vuetify.rtl"
-          bottom
-          offset-y
-          attach>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              small
-              class="my-1 me-3"
-              v-bind="attrs"
-              v-on="on">
-              <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense class="pa-0">
-            <v-list-item
-              class="editList"
-              dense
-              @click="editProgram">
-              <v-icon small class="me-2 mb-1"> fas fa-edit </v-icon>
-              <v-list-item-title class="editLabel">{{ $t('programs.button.editProgram') }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-row>
-    </div>
-    <div class="d-flex flex-grow-1 pa-0">
+    outlined
+    hover>
+    <div @click="openProgramDetail">
       <v-img
         :src="programCover"
         :alt="$t('programs.cover.default')"
@@ -68,15 +31,73 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         min-height="70"
         min-width="70"
         max-height="140"
-        class="primary--text" />
-    </div>
-    <div class="mt-1">
-      <div class="center">
-        <span class="text-header-title dark-grey-color text-truncate">  {{ program.title }} </span>
+        class="primary--text">
+        <v-toolbar
+          color="transparent"
+          flat>
+          <v-spacer />
+          <v-menu
+            v-if="showActionsMenu"
+            v-model="showMenu"
+            :left="!$vuetify.rtl"
+            :right="$vuetify.rtl"
+            bottom
+            offset-y
+            attach>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                icon
+                small
+                class="headerProgramCard mr-0"
+                v-bind="attrs"
+                v-on="on">
+                <v-icon size="16" color="white">fas fa-ellipsis-v</v-icon>
+              </v-btn>
+            </template>
+            <v-list dense class="pa-0">
+              <v-list-item
+                class="editList"
+                dense
+                @click="editProgram">
+                <v-icon small class="me-2 mb-1"> fas fa-edit </v-icon>
+                <v-list-item-title class="editLabel">{{ $t('programs.button.editProgram') }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-toolbar>
+      </v-img>
+      <div class="mt-1">
+        <div class="center">
+          <span class="text-header-title programTitle text-truncate">  {{ program.title }} </span>
+        </div>
+        <div class="center">
+          <v-icon size="16" class="pe-2 triumphProgramlayout">fas fa-trophy</v-icon>
+          <span class="text-light-color" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+        </div>
       </div>
-      <div class="center">
-        <v-icon size="18" class="pe-2">fas fa-trophy</v-icon>
-        <span v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+    </div>
+    
+    <div class="d-flex mt-2 mx-2">
+      <div class="pa-1">
+        <span class=" my-auto hostsLayout"> {{ this.$t('programs.details.label.hosts') }} </span>
+      </div>
+      <v-spacer />
+      <div class="d-flex">
+        <div class="d-flex">
+          <exo-user-avatar
+            v-for="owner in ownersToDisplay"
+            :key="owner.id"
+            :profile-id="owner.remoteId"
+            :size="25"
+            popover
+            avatar 
+            extra-class="me-1" />
+        </div>
+        <div
+          v-if="seeMoreOwnerToDisplay"
+          class="seeMoreOwnersIconLayout">
+          <span class="seeMoreOwnersTextLayout" @click="openDrawer">+{{ showMoreOwnersNumber }}</span>
+        </div>
       </div>
     </div>
   </v-card>
@@ -95,19 +116,35 @@ export default {
   },
   data: () => ({
     showMenu: false,
+    maxOwnersToShow: 4,
   }),
   computed: {
-    programCover(){
+    programCover() {
       return this.program?.coverUrl || '';
     },
     programBudgetLabel() {
-      return {0: `<span class="font-weight-bold success-color">${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
+      return {0: `<span>${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
     },
     programBudget() {
       return this.program?.rulesTotalScore || 0;
     },
-    showActionsMenu(){
+    showActionsMenu() {
       return this.isAdministrator || this.program?.userInfo?.domainOwner;
+    },
+    owners() {
+      return this.program?.owners;
+    },
+    ownersToDisplay() {
+      return this.owners.slice(0, this.maxOwnersToShow - 1);
+    },
+    ownersCount() {
+      return this.program?.owners.length;
+    },
+    seeMoreOwnerToDisplay () {
+      return this.ownersCount >= this.maxOwnersToShow && this.owners[this.maxOwnersToShow - 1] || null;
+    },
+    showMoreOwnersNumber() {
+      return this.ownersCount - this.maxOwnersToShow + 1;
     },
   },
   created() {
@@ -129,6 +166,9 @@ export default {
     },
     openProgramDetail() {
       this.$root.$emit('open-program-detail', this.program);
+    },
+    openDrawer() {
+      this.$root.$emit('open-owners-drawer', this.program);
     },
   }
 };
