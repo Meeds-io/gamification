@@ -18,22 +18,15 @@ package org.exoplatform.addons.gamification.listener.social.profile;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
-import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
-
-    private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
-    private static final String PROFILE = "/profile/";
 
     protected RuleService ruleService;
     protected IdentityManager identityManager;
@@ -51,25 +44,33 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     public void avatarUpdated(ProfileLifeCycleEvent event) {
 
         Long lastUpdate = event.getProfile().getAvatarLastUpdated();
+        String receiver = event.getProfile().getIdentity().getId();
+        String profilUrl = event.getProfile().getUrl();
         // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
-        if (lastUpdate != null) return;
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR, event.getProfile().getId(),
-                event.getProfile().getId(),
-                "/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + PROFILE);
+        if (lastUpdate != null) {
+            return;
+        }
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
+                receiver,
+                receiver,
+                profilUrl);
     }
 
     @Override
     public void bannerUpdated(ProfileLifeCycleEvent event) {
 
-        GamificationActionsHistory aHistory = null;
-
         Long lastUpdate = event.getProfile().getBannerLastUpdated();
 
-        // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
-        if (lastUpdate != null) return;
+        // Do not reward a user when he update his banner, reward user only when he add a banner for the first time
+        if (lastUpdate != null) {
+            return;
+        }
         String receiver = event.getProfile().getId();
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER, receiver, receiver,
-                "/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + PROFILE);
+        String profilUrl = event.getProfile().getUrl();
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
+                receiver,
+                receiver,
+                profilUrl);
     }
 
     @Override
@@ -100,9 +101,15 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
     @Override
     public void aboutMeUpdated(ProfileLifeCycleEvent event) {
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME, event.getProfile().getId(),
-                event.getProfile().getIdentity().getId(), "/" + LinkProvider.getPortalName("") + "/"
-                        + LinkProvider.getPortalOwner("") + PROFILE + event.getProfile().getIdentity().getId());
+        
+        String sender = event.getProfile().getId();
+        String receiver = event.getProfile().getIdentity().getId();
+        String profilUrl = event.getProfile().getUrl();
+
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
+                sender,
+                receiver,
+                profilUrl);
     }
 
 
