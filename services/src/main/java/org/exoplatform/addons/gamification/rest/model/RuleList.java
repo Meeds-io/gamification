@@ -25,7 +25,6 @@ import lombok.Setter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 
 @NoArgsConstructor
-@Getter
 @Setter
 public class RuleList {
 

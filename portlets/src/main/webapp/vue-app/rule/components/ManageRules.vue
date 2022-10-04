@@ -16,41 +16,46 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <section>
-    <div
-      v-show="isadded || addSuccess"
-      class="alert alert-success"
-      v-on:="closeAlert()">
-      <i class="uiIconSuccess"></i>
-      {{ this.$t('exoplatform.gamification.rule') }} {{ updateMessage }}
-      {{ this.$t('exoplatform.gamification.successfully') }}
-    </div>
-
-    <div
-      v-show="addError"
-      class="alert alert-error"
-      v-on:="closeAlert()">
-      <i class="uiIconError"></i>
-      {{ this.$t(`exoplatform.gamification.${errorType}`) }}
-    </div>
-
-    <gamification-save-rule
-      :rule="ruleInForm"
-      :domains="domains"
-      :events="events"
-      :error-type="errorType"
-      @sucessAdd="onRuleCreated"
-      @failAdd="onRuleFail"
-      @cancel="resetRuleInForm" />
-    <gamification-rule-list
-      :domain="domain"
-      :domains="domains"
-      :events="events"
-      :rule="ruleInForm"
-      :rules="rules"
-      @remove="onRemoveClicked"
-      @save="onSaveClicked" />
-  </section>
+    <section>
+      <div
+          v-show="isadded || addSuccess"
+          class="alert alert-success"
+          v-on:="closeAlert()">
+        <i class="uiIconSuccess"></i>
+        {{ this.$t('exoplatform.gamification.rule') }} {{ updateMessage }}
+        {{ this.$t('exoplatform.gamification.successfully') }}
+      </div>
+      <div
+          v-show="addError"
+          class="alert alert-error"
+          v-on:="closeAlert()">
+        <i class="uiIconError"></i>
+        {{ this.$t(`exoplatform.gamification.${errorType}`) }}
+      </div>
+      <gamification-save-rule
+          :rule="ruleInForm"
+          :domains="domains"
+          :events="events"
+          :error-type="errorType"
+          @sucessAdd="onRuleCreated"
+          @failAdd="onRuleFail"
+          @cancel="resetRuleInForm" />
+      <gamification-rule-list
+          :domain="domain"
+          :domains="domains"
+          :events="events"
+          :rule="ruleInForm"
+          :rules="rules"
+          @remove="onRemoveClicked"
+          @save="onSaveClicked" />
+      <v-flex v-if="hasMore" class="pb-5 align-center">
+        <v-btn
+            class="btn mx-auto"
+            @click="loadMore">
+          {{ $t('homepage.loadMore') }}
+        </v-btn>
+      </v-flex>
+    </section>
 </template>
 <script>
 
@@ -76,16 +81,54 @@ export default {
     events: [],
     isadded: false,
     isShown: false,
-    errorType: 'errorrule'
+    errorType: 'errorrule',
+    filter: 'ALL',
+    limit: 20,
+    pageSize: 20,
+    totalSize: 0,
+    query: null,
   }),
+  computed: {
+    hasMore() {
+      return this.limit < this.totalSize;
+    },
+  },
   created() {
-    this.getRules(); 
+    this.$root.$on('rules-filter-applied', (filter) => this.filter = filter);
+    this.$root.$on('rules-search-applied', (query) => this.query = query);
+    this.retrieveRules();
     this.getDomains(); 
     this.getEvents();
   },
+  watch: {
+    filter() {
+      this.retrieveRules();
+    },
+    limit() {
+      this.retrieveRules();
+    },
+    query() {
+      this.retrieveRules();
+    },
+    loading() {
+      if (this.loading) {
+        this.$emit('start-loading');
+      } else {
+        this.$emit('end-loading');
+      }
+    },
+  },
   methods: {
+    retrieveRules() {
+      this.loading = true;
+      this.$ruleServices.getRules(this.query, null, this.filter, null, 0, this.limit).then(data => {
+        this.rules = data.rules;
+        this.totalSize = data.size || this.totalSize;
+        return this.$nextTick();
+      }).finally(() => this.loading = false);
+    },
     getRules() {
-      this.$ruleServices.getRules(null, null, 'ALL', 'AUTOMATIC', 0, 50)
+      this.$ruleServices.getRules(null, null, this.filter, 'AUTOMATIC', 0, 50)
         .then(data => {
           this.rules = data.rules;
         })
@@ -96,8 +139,8 @@ export default {
     },
     getDomains() {
       this.$ruleServices.getDomains()
-        .then(domains => {
-          this.domains = domains;
+        .then(data => {
+          this.domains = data.domains;
         });
     },
     getEvents() {
@@ -171,7 +214,12 @@ export default {
           this.addError = true;
           this.getRules();
         });
-    }
+    },
+    loadMore() {
+      if (this.hasMore) {
+        this.limit += this.pageSize;
+      }
+    },
   }
 };
 </script>
