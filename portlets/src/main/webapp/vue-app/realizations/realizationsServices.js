@@ -1,11 +1,5 @@
-export function getAllRealizations(searchingKey, fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit) {
+export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit, searchingKey) {
   const formData = new FormData();
-  if (searchingKey?.length > 0) {
-    for (let index = 0; index < searchingKey.length; index++) {
-      formData.append('searchingKey', searchingKey[index]);
-    }
-
-  }
   if (fromDate) {
     formData.append('fromDate', fromDate);
   }
@@ -19,7 +13,7 @@ export function getAllRealizations(searchingKey, fromDate, toDate, earnerId, sor
   if (sortBy) {
     formData.append('sortBy', sortBy);
   }
-  if (sortDescending) {
+  if (sortDescending != null) {
     formData.append('sortDescending', sortDescending);
   }
   if (offset) {
@@ -27,6 +21,11 @@ export function getAllRealizations(searchingKey, fromDate, toDate, earnerId, sor
   }
   if (limit) {
     formData.append('limit', limit);
+  }
+  if (searchingKey?.length > 0) {
+    for (let index = 0; index < searchingKey.length; index++) {
+      formData.append('searchingKey', searchingKey[index]);
+    }
   }
 
   const params = new URLSearchParams(formData).toString();

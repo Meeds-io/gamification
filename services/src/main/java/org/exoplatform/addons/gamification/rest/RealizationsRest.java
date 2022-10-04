@@ -67,9 +67,6 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   @RolesAllowed("users")
   public Response getAllRealizations(@Context HttpServletRequest httpRequest,
-                                     @Parameter(description = "searching key. Possible target columns: grantee or program", required = false)
-                                     @QueryParam("searchingKey")
-                                     List<Long> searchingKey,
                                      @Parameter(description = "result fromDate", required = true)
                                      @QueryParam("fromDate")
                                      String fromDate,
@@ -100,7 +97,10 @@ public class RealizationsRest implements ResourceContainer {
                                      String returnType,
                                      @Parameter(description = "identity Type")
                                      @QueryParam("identityType")
-                                     String identityType) {
+                                     String identityType,
+                                     @Parameter(description = "searching key. Possible target columns: grantee or program", required = false)
+                                     @QueryParam("searchingKey")
+                                     List<Long> searchingKey) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
