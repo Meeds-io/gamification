@@ -48,7 +48,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-btn
                 icon
                 small
-                class="mr-0"
+                class="mr-0 primary"
                 v-bind="attrs"
                 v-on="on">
                 <v-icon size="16" color="white">fas fa-ellipsis-v</v-icon>
@@ -79,12 +79,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     
     <div class="d-flex mt-2 mx-2">
       <div class="pa-1">
-        <span class=" my-auto"> {{ this.$t('programs.details.label.hosts') }} </span>
+        <span class="my-auto caption text-light-color"> {{ this.$t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
       <engagement-center-avatars-list
         :avatars="owners"
-        :program="program" />
+        :program="program" 
+        :maxAvatarsToShow="4"/>
     </div>
   </v-card>
 </template>

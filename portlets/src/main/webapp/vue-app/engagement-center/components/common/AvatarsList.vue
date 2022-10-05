@@ -28,8 +28,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </div>
     <v-avatar
       v-if="seeMoreAvatarsToDisplay"
-      size="25">
-      <span class="white--text font-weight-bold" @click="openDrawer">+{{ showMoreAvatarsNumber }}</span>
+      size="25"
+      class="light-black-background">
+      <span class="white--text font-weight-bold icon-mini-size" @click="openDrawer">+{{ showMoreAvatarsNumber }}</span>
     </v-avatar>
   </div>
 </template>
@@ -40,15 +41,10 @@ export default {
       type: Array,
       default: () => [],
     },
-    program: {
-      type: Object,
+    maxAvatarsToShow: {
+      type: Number,
       default: null
-    },
-  },
-  data() {
-    return {
-      maxAvatarsToShow: 4,
-    };
+    }
   },
   computed: {
     avatarsCount () {
@@ -66,9 +62,7 @@ export default {
   },
   methods: {
     openDrawer() {
-      if (this.program.id) {
-        this.$root.$emit('open-owners-drawer', this.program);
-      }
+      this.$root.$emit('open-drawer', this.avatars);
     },
   }
 };

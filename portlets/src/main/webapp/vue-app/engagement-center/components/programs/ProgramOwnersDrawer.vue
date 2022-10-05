@@ -55,16 +55,15 @@ export default {
     };
   },
   created() {
-    this.$root.$on('open-owners-drawer', this.open);
+    this.$root.$on('open-drawer', this.open);
   },
   methods: {
     close() {
       this.$refs.ownersDetails.close();
     },
-    open(program, displayBackIcon) {
-      this.program = program ;
+    open(avatars, displayBackIcon) {
       this.displayBackIcon = displayBackIcon;
-      this.listOwners = this.program.owners;
+      this.listOwners = avatars;
       this.$refs.ownersDetails.open();
     },
   }
