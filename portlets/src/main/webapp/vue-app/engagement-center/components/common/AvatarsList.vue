@@ -26,11 +26,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         avatar 
         extra-class="me-1" />
     </div>
-    <div
+    <v-avatar
       v-if="seeMoreAvatarsToDisplay"
-      class="seeMoreAvatarsIconLayout">
-      <span class="seeMoreAvatarsTextLayout" @click="openDrawer">+{{ showMoreAvatarsNumber }}</span>
-    </div>
+      size="25">
+      <span class="white--text font-weight-bold" @click="openDrawer">+{{ showMoreAvatarsNumber }}</span>
+    </v-avatar>
   </div>
 </template>
 <script>
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     avatarsCount () {
-      return this.avatars.length;
+      return this.avatars?.length;
     },
     avatarsTodisplay() {
       return this.avatars.slice(0, this.maxAvatarsToShow - 1);

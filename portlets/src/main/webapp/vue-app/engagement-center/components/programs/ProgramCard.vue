@@ -48,7 +48,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-btn
                 icon
                 small
-                class="headerProgramCard mr-0"
+                class="mr-0"
                 v-bind="attrs"
                 v-on="on">
                 <v-icon size="16" color="white">fas fa-ellipsis-v</v-icon>
@@ -68,10 +68,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-img>
       <div class="mt-1">
         <div class="center">
-          <span class="text-header-title programTitle text-truncate">  {{ program.title }} </span>
+          <span class="font-weight-bold text--secondary">  {{ program.title }} </span>
         </div>
         <div class="center">
-          <v-icon size="16" class="pe-2 triumphProgramlayout">fas fa-trophy</v-icon>
+          <v-icon size="16" class="pe-2 primary--text">fas fa-trophy</v-icon>
           <span class="text-light-color" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
         </div>
       </div>
@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     
     <div class="d-flex mt-2 mx-2">
       <div class="pa-1">
-        <span class=" my-auto hostsLayout"> {{ this.$t('programs.details.label.hosts') }} </span>
+        <span class=" my-auto"> {{ this.$t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
       <engagement-center-avatars-list
