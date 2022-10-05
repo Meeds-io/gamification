@@ -310,8 +310,8 @@ public class ChallengeServiceTest {
                                         Collections.emptyList(),
                                         10L,
                                         "gamification");
-    List<Challenge> challenges = new ArrayList<>();
-    challenges.add(challenge);
+    List<Long> challengesIds = new ArrayList<>();
+    challengesIds.add(challenge.getId());
     RuleFilter filter = new RuleFilter();
 
     List<String> userSpaceIds = Collections.singletonList("1");
@@ -320,7 +320,7 @@ public class ChallengeServiceTest {
     List<Challenge> savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
     assertEquals(0, savedChallenges.size());
     when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(userSpaceIds);
-    when(challengeStorage.findChallengesByFilter(filter, 0, 10)).thenReturn(challenges);
+    when(challengeStorage.findChallengesIdsByFilter(filter, 0, 10)).thenReturn(challengesIds);
 
     savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
 

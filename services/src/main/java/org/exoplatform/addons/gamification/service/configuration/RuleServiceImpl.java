@@ -20,6 +20,7 @@ import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICAT
 import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
 import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -91,12 +92,32 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public List<RuleDTO> findAllRules(int offset, int limit) {
-    return ruleStorage.findAllRules(offset, limit);
-  } 
-  
+    List<Long> rulesIds = ruleStorage.findAllRulesIds(offset, limit);
+    List<RuleDTO> rules = new ArrayList<>();
+    for (Long ruleId : rulesIds) {
+      RuleDTO rule = findRuleById(ruleId);
+      if (rule.isDeleted()) {
+        continue;
+      }
+      rules.add(rule);
+    }
+    return rules;
+  }
+
   @Override
   public List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    return ruleStorage.findRulesByFilter(ruleFilter, offset, limit);
+    List<Long> rulesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
+    List<RuleDTO> rules = new ArrayList<>();
+    ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
+
+    for (Long ruleId : rulesIds) {
+      RuleDTO rule = findRuleById(ruleId);
+      if (rule.isDeleted()) {
+        continue;
+      }
+      rules.add(rule);
+    }
+    return rules;
   }
 
   @Override
