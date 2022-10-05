@@ -37,6 +37,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -302,7 +303,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     String activityId = activity.getParentId() == null ? activity.getId() : activity.getParentId();
     String commentId = activity.getParentId() == null ? null : activity.getId();
 
-    String activityUrl = "/portal/intranet/activity?id=" + activityId;
+    String activityUrl = "/" +  LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + "/activity?id=" + activityId;
     if (commentId != null) {
       activityUrl += "&commentId=" + commentId;
     }
