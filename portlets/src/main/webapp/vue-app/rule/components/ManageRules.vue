@@ -130,7 +130,7 @@ export default {
     getRules() {
       this.$ruleServices.getRules(null, null, this.filter, 'AUTOMATIC', 0, 50)
         .then(data => {
-          this.rules = data.rules;
+          this.rules = data.rules || [];
         })
         .catch(() => {
           this.addError = true;
@@ -140,7 +140,7 @@ export default {
     getDomains() {
       this.$ruleServices.getDomains()
         .then(data => {
-          this.domains = data.domains;
+          this.domains = data.domains || [];
         });
     },
     getEvents() {
