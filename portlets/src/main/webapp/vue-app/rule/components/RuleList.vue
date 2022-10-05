@@ -388,10 +388,9 @@ export default {
       showMenu: false,
     };
   },
-
   computed: {
     filteredRules() {
-      return this.rules.filter(item => !item.deleted);
+      return this.rules && this.rules.filter(item => !item.deleted);
     },
     rulesFilters() {
       return [{
