@@ -6,6 +6,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_E
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -171,7 +173,14 @@ public class ChallengeServiceImpl implements ChallengeService {
       return Collections.emptyList();
     }
     setFilterAudience(challengeFilter, spaceIds);
-    return challengeStorage.findChallengesByFilter(challengeFilter, offset, limit);
+    List<Long> challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
+    List<Challenge> challenges = new ArrayList<>();
+
+    for (Long challengeId : challengesIds) {
+      Challenge challenge = getChallengeById(challengeId);
+      challenges.add(challenge);
+    }
+    return challenges;
   }
 
   @Override
