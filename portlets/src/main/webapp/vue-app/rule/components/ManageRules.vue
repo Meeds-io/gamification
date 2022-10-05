@@ -122,20 +122,10 @@ export default {
     retrieveRules() {
       this.loading = true;
       this.$ruleServices.getRules(this.query, null, this.filter, null, 0, this.limit).then(data => {
-        this.rules = data.rules;
+        this.rules = data.rules || [];
         this.totalSize = data.size || this.totalSize;
         return this.$nextTick();
       }).finally(() => this.loading = false);
-    },
-    getRules() {
-      this.$ruleServices.getRules(null, null, this.filter, 'AUTOMATIC', 0, 50)
-        .then(data => {
-          this.rules = data.rules || [];
-        })
-        .catch(() => {
-          this.addError = true;
-          this.errorType='getRulesError';
-        });
     },
     getDomains() {
       this.$ruleServices.getDomains()
@@ -191,7 +181,7 @@ export default {
           this.rules.splice(index, 1);
         })
         .catch(() => {
-          this.getRules();
+          this.retrieveRules();
           this.errorType='deleteRuleError';
         });
       if (ruleId === this.ruleInForm.id) {
@@ -212,7 +202,7 @@ export default {
             this.errorType='updateRuleError';
           }
           this.addError = true;
-          this.getRules();
+          this.retrieveRules();
         });
     },
     loadMore() {
