@@ -17,6 +17,7 @@
 
 package org.exoplatform.addons.gamification.storage;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
@@ -32,6 +33,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(0);
+    filter.setIdentityType(IdentityType.getType(""));
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
@@ -45,6 +47,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(1L);
+    filter.setIdentityType(IdentityType.getType(""));
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
@@ -58,6 +61,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(0);
+    filter.setIdentityType(IdentityType.getType(""));
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     GamificationActionsHistoryDTO newGHistory = realizationsStorage.getRealizationById(gHistory.getId());
@@ -71,6 +75,8 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(0);
+    filter.setIdentityType(IdentityType.getType(""));
+    filter.setIdentityType(IdentityType.getType(""));
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
