@@ -45,17 +45,16 @@ public class ChallengeStorageTest extends AbstractServiceTest {
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
-    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 1);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
     assertEquals("new challenge", challenge.getTitle());
     challenge.setDescription("challenge description updated");
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
     assertEquals("challenge description updated", challenge.getDescription());
-    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 1);
-
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
   }
 
   @Test
@@ -103,7 +102,7 @@ public class ChallengeStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindChallengesByFilter() {
+  public void testFindChallengesIdsByFilter() {
     DomainEntity domain = newDomain();
     Challenge challenge = new Challenge(0,
                                         "new challenge",
@@ -117,13 +116,13 @@ public class ChallengeStorageTest extends AbstractServiceTest {
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 1);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 2);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 2);
     filter.setDomainId(100l);
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
 
   }
   @Test
