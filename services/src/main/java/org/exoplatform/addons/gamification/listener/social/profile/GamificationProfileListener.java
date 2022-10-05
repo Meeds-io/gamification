@@ -18,20 +18,15 @@ package org.exoplatform.addons.gamification.listener.social.profile;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
-
-    private static final Log LOG = ExoLogger.getLogger(GamificationProfileListener.class);
 
     protected RuleService ruleService;
     protected IdentityManager identityManager;
@@ -49,23 +44,35 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     public void avatarUpdated(ProfileLifeCycleEvent event) {
 
         Long lastUpdate = event.getProfile().getAvatarLastUpdated();
-        // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
-        if (lastUpdate != null) return;
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR, event.getProfile().getId(),event.getProfile().getId(),"/portal/intranet/profile/");
-
+        String identityId = event.getProfile().getIdentity().getId();
+        
+        // Do not reward a user when he update his avatar, reward user only when he add
+        // an avatar for the first time
+        if (lastUpdate != null) {
+            return;
+        }
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
+                identityId,
+                identityId,
+                event.getProfile().getUrl());
     }
 
     @Override
     public void bannerUpdated(ProfileLifeCycleEvent event) {
 
-        GamificationActionsHistory aHistory = null;
-
         Long lastUpdate = event.getProfile().getBannerLastUpdated();
+        String identityId = event.getProfile().getIdentity().getId();
 
-        // Do not reward a user when he update his avatar, reward user only when he add an avatar for the first time
-        if (lastUpdate != null) return;
-        String receiver =event.getProfile().getId();
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER, receiver,receiver,"/portal/intranet/profile/");
+        // Do not reward a user when he update his banner, reward user only when he add
+        // a banner for the first time
+        if (lastUpdate != null) {
+            return;
+        }
+
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
+                identityId,
+                identityId,
+                event.getProfile().getUrl());
     }
 
     @Override
@@ -94,11 +101,15 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
     }
 
-
     @Override
     public void aboutMeUpdated(ProfileLifeCycleEvent event) {
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,event.getProfile().getId(),event.getProfile().getIdentity().getId(),"/portal/intranet/profile/"+event.getProfile().getIdentity().getId());
-
+        
+        String identityId = event.getProfile().getIdentity().getId();
+        
+        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
+                identityId,
+                identityId,
+                event.getProfile().getUrl());
     }
 
 
