@@ -82,23 +82,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span class=" my-auto hostsLayout"> {{ this.$t('programs.details.label.hosts') }} </span>
       </div>
       <v-spacer />
-      <div class="d-flex">
-        <div class="d-flex">
-          <exo-user-avatar
-            v-for="owner in ownersToDisplay"
-            :key="owner.id"
-            :profile-id="owner.remoteId"
-            :size="25"
-            popover
-            avatar 
-            extra-class="me-1" />
-        </div>
-        <div
-          v-if="seeMoreOwnerToDisplay"
-          class="seeMoreOwnersIconLayout">
-          <span class="seeMoreOwnersTextLayout" @click="openDrawer">+{{ showMoreOwnersNumber }}</span>
-        </div>
-      </div>
+      <engagement-center-avatars-list
+        :avatars="owners"
+        :program="program" />
     </div>
   </v-card>
 </template>
@@ -116,7 +102,6 @@ export default {
   },
   data: () => ({
     showMenu: false,
-    maxOwnersToShow: 4,
   }),
   computed: {
     programCover() {
@@ -133,18 +118,6 @@ export default {
     },
     owners() {
       return this.program?.owners;
-    },
-    ownersToDisplay() {
-      return this.owners.slice(0, this.maxOwnersToShow - 1);
-    },
-    ownersCount() {
-      return this.program?.owners.length;
-    },
-    seeMoreOwnerToDisplay () {
-      return this.ownersCount >= this.maxOwnersToShow && this.owners[this.maxOwnersToShow - 1] || null;
-    },
-    showMoreOwnersNumber() {
-      return this.ownersCount - this.maxOwnersToShow + 1;
     },
   },
   created() {
@@ -166,9 +139,6 @@ export default {
     },
     openProgramDetail() {
       this.$root.$emit('open-program-detail', this.program);
-    },
-    openDrawer() {
-      this.$root.$emit('open-owners-drawer', this.program);
     },
   }
 };
