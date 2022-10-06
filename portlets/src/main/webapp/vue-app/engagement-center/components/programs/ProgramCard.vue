@@ -75,7 +75,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <span class="text-header-title dark-grey-color text-truncate">  {{ program.title }} </span>
       </div>
       <div class="center">
-        <span> <v-icon class="fas fa-trophy trophy small" /> {{ programBudget }} </span>
+        <v-icon size="18" class="pe-2">fas fa-trophy</v-icon>
+        <span v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
       </div>
     </div>
   </v-card>
@@ -99,8 +100,11 @@ export default {
     programCover(){
       return this.program?.coverUrl || '';
     },
-    programBudget(){
-      return this.$t('programs.budget', {0: this.program?.budget || 0});
+    programBudgetLabel() {
+      return {0: `<span class="font-weight-bold success-color">${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
+    },
+    programBudget() {
+      return this.program?.rulesTotalScore || 0;
     },
     showActionsMenu(){
       return this.isAdministrator || this.program?.userInfo?.domainOwner;
