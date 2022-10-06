@@ -89,16 +89,10 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     newDomainDTO();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
-    List<Long> listIdSpaceEmpty = Collections.emptyList();
-
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter,-1, 10));
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, -10));
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
     filter.setTerm("test");
-    filter.setSpaceIds(listIdSpaceEmpty);
-    assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
-    filter.setSpaceIds(listIdSpaceEmpty);
-    assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter, 0, 10));
     filter.setSpaceIds(listIdSpace);
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "10");
     String unexpectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", "test").replaceAll("@offset@", "0").replaceAll("@limit@", "10");
@@ -122,12 +116,9 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     newDomainDTO();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
-    List<Long> listIdSpaceEmpty = Collections.emptyList();
 
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.count(filter));
     filter.setTerm("test");
-    filter.setSpaceIds(listIdSpaceEmpty);
-    assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.count(filter));
     filter.setSpaceIds(listIdSpace);
 
     String expectedESQuery = FAKE_ES_QUERY.replaceAll("@term_query@", term).replaceAll("@offset@", "0").replaceAll("@limit@", "0");
