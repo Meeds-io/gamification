@@ -33,9 +33,11 @@ import Programs from './components/programs/Programs.vue';
 import ProgramsList from './components/programs/ProgramsList.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
 import ProgramDrawer from './components/programs/ProgramDrawer.vue';
+import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 
 import Assignment from './components/common/Assignment.vue';
+import AvatarsList from './components/common/AvatarsList.vue';
 import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
 import RuleTitle from './components/common/RuleTitle.vue';
@@ -59,8 +61,10 @@ const components = {
   'engagement-center-programs-list': ProgramsList,
   'engagement-center-program-card': ProgramCard,
   'engagement-center-program-drawer': ProgramDrawer,
+  'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-assignment': Assignment,
+  'engagement-center-avatars-list': AvatarsList,
   'engagement-center-description-editor': DescriptionEditor,
   'engagement-center-image-selector': ImageSelector,
   'engagement-center-rule-title': RuleTitle,
