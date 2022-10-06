@@ -209,6 +209,14 @@ public class Utils {
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
     return DomainMapper.domainDTOToDomainEntity(domainService.getDomainById(domainId));
+  }  
+  
+  public static long getRulesTotalScoreByDomain(long domainId) {
+    if (domainId <= 0) {
+      return 0;
+    }
+    RuleService ruleService = CommonsUtils.getService(RuleService.class);
+    return ruleService.getRulesTotalScoreByDomain(domainId);
   }
 
   public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
