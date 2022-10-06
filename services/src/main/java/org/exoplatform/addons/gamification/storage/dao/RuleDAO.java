@@ -153,6 +153,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   }
 
+  public long getRulesTotalScoreByDomain(long domainId) throws PersistenceException {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRulesTotalScoreByDomain", Long.class)
+                                               .setParameter("domainId", domainId);
+    Long score = query.getSingleResult();
+    return score == null ? 0 : score.intValue();
+  }
+
   public List<String> getAllEvents() throws PersistenceException {
     TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
     query.setParameter("type", EntityType.AUTOMATIC);

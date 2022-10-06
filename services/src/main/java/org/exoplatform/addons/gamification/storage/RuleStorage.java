@@ -106,6 +106,10 @@ public class RuleStorage {
     return ruleDAO.getDomainList();
   }
 
+  public long getRulesTotalScoreByDomain(long domainId) {
+    return ruleDAO.getRulesTotalScoreByDomain(domainId);
+  }
+
   public void deleteRule(long ruleId) throws ObjectNotFoundException {
     deleteRule(ruleId, false);
   }
