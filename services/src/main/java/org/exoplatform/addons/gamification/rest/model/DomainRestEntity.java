@@ -58,6 +58,8 @@ public class DomainRestEntity {
 
   private String         coverUploadId;
 
+  private Long           rulesTotalScore;
+
   private List<UserInfo> owners;
 
   private UserInfo       userInfo;
@@ -74,6 +76,7 @@ public class DomainRestEntity {
                           Long budget,
                           String type,
                           String coverUrl,
+                          Long rulesTotalScore,
                           List<UserInfo> owners,
                           UserInfo userInfo) {
     this.id = id;
@@ -88,6 +91,7 @@ public class DomainRestEntity {
     this.budget = budget;
     this.type = type;
     this.coverUrl = coverUrl;
+    this.rulesTotalScore = rulesTotalScore;
     this.owners = owners;
     this.userInfo = userInfo;
   }
