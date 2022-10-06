@@ -21,7 +21,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="mx-auto card cardOfChallenge"
       height="230"
       max-height="230"
-      outlined>
+      outlined
+      hover>
       <div class="contentCard">
         <v-list-item class="pa-0" three-line>
           <v-list-item-content class="title pl-4 pr-4 pt-3">
@@ -72,7 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
             <div class="points title mb-1">
               <span>
-                <i class="fas fa-trophy trophy"></i>
+                <v-icon size="16" class="mb-1 primary--text">fas fa-trophy</v-icon>
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </span>
             </div>
@@ -91,19 +92,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-else
           :class="showAllAvatarList && 'AllUsersAvatar'"
           class="winners winnersAvatarsList d-flex flex-nowrap my-2">
-          <exo-user-avatars-list
-            ref="announcementsUsersAvatar"
-            :users="winnerAvatars"
-            :max="2"
-            :default-length="announcementCount"
-            :icon-size="28"
-            retrieve-extra-information
-            @open-detail="$root.$emit('open-winners-drawer', challenge.id)" />
-          <p
-            class="announcesNumber my-auto pl-2 align-self-end caption text-no-wrap pt-1"
-            @click="$root.$emit('open-winners-drawer', challenge.id)">
-            {{ challenge && challenge.announcementsCount }} {{ $t('challenges.label.announces') }}
-          </p>
+          <engagement-center-avatars-list
+            :avatars="winnerAvatars"
+            :max-avatars-to-show="3"
+            :avatars-count="announcementCount"
+            :size="27"
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', challenge.id)" />
         </div>
         <div class="addAnnounce">
           <v-btn
