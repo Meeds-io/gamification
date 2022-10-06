@@ -181,14 +181,14 @@ public class RuleStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindRulesByFilter() {
+  public void testFindRulesIdsByFilter() {
     DomainDTO domain1 = newDomainDTO("domain1");
     DomainDTO domain2 = newDomainDTO("domain2");
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain1.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
 
-    assertEquals(ruleStorage.findRulesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(ruleStorage.findRulesIdsByFilter(filter, 0, 10).size(), 0);
 
     RuleDTO rule1 = new RuleDTO();
     rule1.setScore(Integer.parseInt(TEST__SCORE));
@@ -242,11 +242,11 @@ public class RuleStorageTest extends AbstractServiceTest {
     ruleStorage.saveRule(rule2);
     ruleStorage.saveRule(rule3);
 
-    assertEquals(ruleStorage.findRulesByFilter(filter, 0, 10).size(), 2);
+    assertEquals(ruleStorage.findRulesIdsByFilter(filter, 0, 10).size(), 2);
 
     filter.setDomainId(domain2.getId());
     filter.setSpaceIds(Collections.singletonList(2l));
-    assertEquals(ruleStorage.findRulesByFilter(filter, 0, 10).size(), 1);
+    assertEquals(ruleStorage.findRulesIdsByFilter(filter, 0, 10).size(), 1);
   }
 
   @Test

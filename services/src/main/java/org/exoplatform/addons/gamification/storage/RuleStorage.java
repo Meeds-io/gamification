@@ -57,15 +57,15 @@ public class RuleStorage {
     return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByEventAndDomain(event, domain));
   }
 
-  public List<RuleDTO> findRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    List<RuleEntity> ruleEntities = null;
+  public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    List<Long> rulesIds;
     if (StringUtils.isBlank(ruleFilter.getTerm())) {
-      ruleEntities = ruleDAO.findRulesByFilter(ruleFilter, offset, limit);
+      rulesIds = ruleDAO.findRulesIdsByFilter(ruleFilter, offset, limit);
     } else {
-      ruleEntities = ruleSearchConnector.search(ruleFilter, offset, limit);
+      rulesIds =
+               ruleSearchConnector.search(ruleFilter, offset, limit).stream().map(RuleEntity::getId).collect(Collectors.toList());
     }
-    return ruleEntities.stream().map(RuleMapper::ruleToRuleDTO).collect(Collectors.toList());
-
+    return rulesIds;
   }
 
   public int countRulesByFilter(RuleFilter ruleFilter) {
@@ -81,9 +81,9 @@ public class RuleStorage {
   public List<RuleDTO> findAllRules() {
     return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRules());
   }
-  public List<RuleDTO> findAllRules(int offset, int limit) {
-    List<RuleEntity> ruleEntities = ruleDAO.findRulesByFilter(new RuleFilter(), offset, limit);
-    return RuleMapper.rulesToRuleDTOs(ruleEntities);
+
+  public List<Long> findAllRulesIds(int offset, int limit) {
+    return ruleDAO.findRulesIdsByFilter(new RuleFilter(), offset, limit);
   }
 
   public List<RuleDTO> getActiveRules() {
