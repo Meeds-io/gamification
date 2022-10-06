@@ -116,7 +116,7 @@ public class RealizationsRest implements ResourceContainer {
     filter.setSortDescending(sortDescending);
     filter.setSortField(sortField);
     if (domainIds == null) {
-        domainIds = new ArrayList<Long>();
+        domainIds = new ArrayList<>();
     } filter.setDomainIds(domainIds);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");

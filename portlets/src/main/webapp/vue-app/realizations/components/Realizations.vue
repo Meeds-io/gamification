@@ -256,7 +256,7 @@ export default {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(value) {
-      return value.length > 0 ? this.searchList = value : this.searchList = null;
+      return this.searchList = value.length > 0 ? value :  null;
     }
   }
 };

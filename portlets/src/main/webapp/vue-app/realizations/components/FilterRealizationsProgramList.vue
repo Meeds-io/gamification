@@ -71,16 +71,18 @@ export default {
     totalSize: 0,
     partiallySelected: false,
     selected: [],
-    numberOfPrograms: 5,
+    numberOfPrograms: 7,
     search: '',
     startSearchAfterInMilliseconds: 600,
     endTypingKeywordTimeout: 50,
     startTypingKeywordTimeout: 0,
     typing: false,
-    programsList: [[],[]],
-    status: 'ALL',
+    programsList: [],
+    type: 'ALL',
+    status: 'ENABLED',
     searchingKey: '',
     size: 0,
+    noProgramsFound: false,
   }),
   created() {
     this.retrievePrograms(false, '');
@@ -92,7 +94,7 @@ export default {
       this.$emit('selected-programs', this.selectedPrograms);
     },
     selectAll(newVal) {
-      return newVal ? this.selected = this.programsList.map( Object.keys ) : this.selected = [];
+      return this.selected =  newVal ? this.programsList.map( Object.keys ) : [];
     },    
     search()  {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
@@ -125,6 +127,7 @@ export default {
         if (Date.now() > this.startTypingKeywordTimeout) {
           this.typing = false;
           this.retrievePrograms(false, this.search);
+          this.noProgramsFound = true;
           this.selected = [];
         } else {
           this.waitForEndTyping();
@@ -133,14 +136,15 @@ export default {
     },
     retrievePrograms(append, searchingKey) {
       this.loading = true;
-      const offset = append && this.programsList?.domains?.length || 0;
-      const returnSize = append ?  false : true;
+      const offset = append && this.programsList?.length || 0;
       this.$programsServices
-        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, returnSize, searchingKey)
+        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, true, searchingKey)
         .then((programsList) => {
           this.size = programsList.domainsSize;
-          this.numberOfPrograms += 5;
-          this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));
+          if (append) {
+            this.programsList = this.programsList?.concat(programsList?.domains.map( program => ({ [program.id]: program.title })));
+          } else {
+            this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));}
           if (this.selectAll || !append) {
             this.selected = this.programsList.map( Object.keys );}
         }
