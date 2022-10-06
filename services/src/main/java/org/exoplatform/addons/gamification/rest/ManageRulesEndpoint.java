@@ -81,6 +81,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "Used to filter rules by domain", required = false) @QueryParam("domainId") long domainId,                           
                            @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false) @QueryParam("type") @DefaultValue("ALL") String type,
                            @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
+                           @Parameter(description = "term to search rules with") @QueryParam("term") String term,
                            @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
@@ -93,6 +94,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
     ruleFilter.setEntityFilterType(filterType);
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
     ruleFilter.setEntityStatusType(statusType);
+    ruleFilter.setTerm(term);
     if (domainId > 0) {
       ruleFilter.setDomainId(domainId);
     }

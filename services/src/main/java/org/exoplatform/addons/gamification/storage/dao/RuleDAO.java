@@ -181,9 +181,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     query.setParameter("type", ruleType);
     return query.getResultList();
   }
-
-  public List<RuleEntity> findRulesByFilter(RuleFilter filter, int offset, int limit) {
-    TypedQuery<RuleEntity> query = buildQueryFromFilter(filter, RuleEntity.class, false);
+  
+  public List<Long> findRulesIdsByFilter(RuleFilter filter, int offset, int limit) {
+    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
     query.setFirstResult(offset);
     query.setMaxResults(limit);
     return query.getResultList();
@@ -307,7 +307,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private String getQueryFilterContent(List<String> predicates, boolean count) {
-    String querySelect = count ? "SELECT COUNT(r) FROM Rule r " : "SELECT r FROM Rule r ";
+    String querySelect = count ? "SELECT COUNT(r) FROM Rule r " : "SELECT r.id FROM Rule r ";
     String orderBy = " ORDER BY r.score DESC";
 
     String queryContent;
