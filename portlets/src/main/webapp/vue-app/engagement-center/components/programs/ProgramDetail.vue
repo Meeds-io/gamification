@@ -24,8 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           fas fa-arrow-left
         </v-icon>
       </v-btn>
-      <span class="text-header-title ps-1"> {{ programTitle }} :</span> <span class="font-weight-bold success-color"> {{ programBudget }} {{ $t('programs.details.label.points') }}</span>
-      <span>{{ $t('programs.details.label.perUser') }}</span>
+      <span class="text-header-title ps-1"> {{ programTitle }} : </span><span v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
     </div>
     <div class="d-flex flex-grow-1">
       <v-img
@@ -133,7 +132,10 @@ export default {
       return this.program?.title;
     },
     programBudget() {
-      return this.program?.budget || 0;
+      return this.program?.rulesTotalScore || 0;
+    },
+    programBudgetLabel() {
+      return {0: `<span class="font-weight-bold success-color">${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
     },
     programCover() {
       return this.program?.coverUrl || '';

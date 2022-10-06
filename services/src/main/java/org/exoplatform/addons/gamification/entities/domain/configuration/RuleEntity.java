@@ -42,6 +42,7 @@ import java.util.Objects;
 @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) ")
 @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ")
 @NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
+@NamedQuery(name = "Rule.getRulesTotalScoreByDomain", query = "SELECT SUM(rule.score) FROM Rule rule where rule.domainEntity.id = :domainId AND rule.isEnabled = true AND rule.isDeleted = false")
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
