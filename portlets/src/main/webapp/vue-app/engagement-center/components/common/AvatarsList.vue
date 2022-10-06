@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     openDrawer() {
-      this.$root.$emit('open-drawer', this.avatars);
+      this.$root.$emit('open-avatars-drawer', this.avatars);
     },
   }
 };

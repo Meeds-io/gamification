@@ -49,20 +49,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
-      displayBackIcon: false,
       listOwners: [],
       program: null
     };
   },
   created() {
-    this.$root.$on('open-drawer', this.open);
+    this.$root.$on('open-avatars-drawer', this.open);
   },
   methods: {
     close() {
       this.$refs.ownersDetails.close();
     },
-    open(avatars, displayBackIcon) {
-      this.displayBackIcon = displayBackIcon;
+    open(avatars) {
       this.listOwners = avatars;
       this.$refs.ownersDetails.open();
     },
