@@ -17,14 +17,10 @@ package org.exoplatform.addons.gamification.search;
 
 import java.io.InputStream;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -75,6 +71,15 @@ public class RuleSearchConnector {
       + "            \"domainId\": {\n"
       + "              \"value\": \"@domainId@\"\n"
       + "            }\n"
+      + "          }\n"
+      + "        }\n";  
+  
+  private static final String          AUDIENCE_FILTERING_QUERY     = ",\n"
+      + "        {\n"
+      + "          \"term\": {\n"
+      + "            \"audience\": [\n"
+      + "              \"@spaceList@\"\n"
+      + "            ]\n"
       + "          }\n"
       + "        }\n";
 
@@ -133,9 +138,6 @@ public class RuleSearchConnector {
     if (StringUtils.isBlank(filter.getTerm())) {
       throw new IllegalArgumentException("Filter term is mandatory");
     }
-    if (filter.getSpaceIds().isEmpty()) {
-      throw new IllegalArgumentException("Filter spaceIds is mandatory");
-    }
     String esQuery = buildQueryStatement(filter, offset, limit);
     if (StringUtils.isBlank(esQuery)) {
       return Collections.emptyList();
@@ -148,9 +150,6 @@ public class RuleSearchConnector {
     if (StringUtils.isBlank(filter.getTerm())) {
       throw new IllegalArgumentException("Filter term is mandatory");
     }
-    if (filter.getSpaceIds().isEmpty()) {
-      throw new IllegalArgumentException("Filter spaceIds is mandatory");
-    }
     String esQuery = buildQueryStatement(filter, 0, 0);
     if (StringUtils.isBlank(esQuery)) {
       return 0;
@@ -161,6 +160,9 @@ public class RuleSearchConnector {
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
     String term = removeSpecialCharacters(filter.getTerm());
+    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
+            .map(HashSet::new)
+            .orElse(new HashSet<>());
     term = escapeIllegalCharacterInQuery(term);
     if (StringUtils.isBlank(term)) {
       return null;
@@ -179,6 +181,11 @@ public class RuleSearchConnector {
       query = query.replace("@domain_filtering@", DOMAIN_FILTERING_QUERY);
     } else {
       query = query.replace("@domain_filtering@", "");
+    }
+    if (!CollectionUtils.isEmpty(filter.getSpaceIds())) {
+      query = query.replace("@audience_filtering@", AUDIENCE_FILTERING_QUERY);
+    } else {
+      query = query.replace("@audience_filtering@", "");
     }
     DateFilterType dateFilterType = filter.getDateFilterType();
     if (dateFilterType != null) {
@@ -221,7 +228,7 @@ public class RuleSearchConnector {
     return query.replace("@domainId@", String.valueOf(filter.getDomainId()))
                 .replace("@term@", term)
                 .replace("@term_query@", termQuery)
-                .replace("@spaceList@", StringUtils.join(filter.getSpaceIds(), ","))
+                .replace("@spaceList@", StringUtils.join(spaceList, ","))
                 .replace("@offset@", String.valueOf(offset))
                 .replace("@limit@", String.valueOf(limit));
   }
