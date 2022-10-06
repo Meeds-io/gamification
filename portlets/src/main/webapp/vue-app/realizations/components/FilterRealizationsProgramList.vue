@@ -118,7 +118,7 @@ export default {
       this.retrievePrograms(true ,this.search);
     },
     reset() {
-      this.selected = this.programsList;
+      this.selected = [];
     },
     waitForEndTyping() {
       window.setTimeout(() => {
@@ -141,7 +141,9 @@ export default {
           this.size = programsList.domainsSize;
           this.numberOfPrograms += 5;
           this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));
-          this.selected = this.programsList.map( Object.keys );}
+          if (this.selectAll || !append) {
+            this.selected = this.programsList.map( Object.keys );}
+        }
         )
         .finally(() => this.loading = false);},
   },

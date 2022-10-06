@@ -516,9 +516,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       suffixes.add("Earner");
       predicates.add("g.earnerId = :earnerId");
     } 
-    if (!filter.getProgramIds().isEmpty()) {
-      suffixes.add("searchByProgramIds" + filter.getProgramIds());
-      predicates.add("( g.domainEntity.id IN (:selectedIds) ) ");
+    if (!filter.getDomainIds().isEmpty()) {
+      suffixes.add("searchByProgramIds" + filter.getDomainIds());
+      predicates.add("( g.domainEntity.id IN (:domainIds) ) ");
     }
   }
 
@@ -561,8 +561,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (filter.getEarnerId() > 0) {
       query.setParameter(EARNER_ID_PARAM_NAME, Long.toString(filter.getEarnerId()));
     } 
-    if (!filter.getProgramIds().isEmpty()) {
-      query.setParameter("selectedIds", filter.getProgramIds());
+    if (!filter.getDomainIds().isEmpty()) {
+      query.setParameter("domainIds", filter.getDomainIds());
     }
     query.setParameter("type", filter.getIdentityType());
   }
@@ -606,24 +606,29 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     String earnerIdentifier = Long.toString(filter.getEarnerId());
     TypedQuery<GamificationActionsHistory> query;
     if (filter.getEarnerId() > 0) {
-        if (!filter.getProgramIds().isEmpty()) {
-            query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateAndRulesSearchByDomainIds",
+        if (!filter.getDomainIds().isEmpty()) {
+            query = getEntityManager().createNamedQuery(
+                    "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRulesSearchByDomainIds",
+                    GamificationActionsHistory.class);
+        } else {
+            query = getEntityManager().createNamedQuery(
+                    "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",
                     GamificationActionsHistory.class);
         }
-        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",
-                                                    GamificationActionsHistory.class);
-      query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentifier);
-    } else  {
-        if (!filter.getProgramIds().isEmpty()) {
-            query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRulesSearchByDomainIds",
-                    GamificationActionsHistory.class); 
+        query.setParameter(EARNER_ID_PARAM_NAME, earnerIdentifier);
+    } else {
+        if (!filter.getDomainIds().isEmpty()) {
+            query = getEntityManager().createNamedQuery(
+                    "GamificationActionsHistory.findRealizationsByDateAndRulesSearchByDomainIds",
+                    GamificationActionsHistory.class);
+        } else {
+            query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
+                    GamificationActionsHistory.class);
         }
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findRealizationsByDateAndRules",
-                                                  GamificationActionsHistory.class);
-    } 
-    if (!filter.getProgramIds().isEmpty()) {
-        query.setParameter("selectedIds", filter.getProgramIds());
-      }
+    }
+    if (!filter.getDomainIds().isEmpty()) {
+        query.setParameter("domainIds", filter.getDomainIds());
+    }
     query.setParameter(FROM_DATE_PARAM_NAME, filter.getFromDate());
     query.setParameter(TO_DATE_PARAM_NAME, filter.getToDate());
     query.setParameter("type", filter.getIdentityType());

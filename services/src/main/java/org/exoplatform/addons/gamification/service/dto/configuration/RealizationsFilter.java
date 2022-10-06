@@ -45,6 +45,6 @@ public class RealizationsFilter implements Serializable {
   
   private IdentityType      identityType;
   
-  private List<Long>     programIds;
+  private List<Long>        domainIds;
   
 }
