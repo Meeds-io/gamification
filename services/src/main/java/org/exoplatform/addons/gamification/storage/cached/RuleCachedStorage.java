@@ -62,7 +62,7 @@ public class RuleCachedStorage extends RuleStorage {
         } else if (context.getContext() == ALL_RULE_CONTEXT) {
           return RuleCachedStorage.super.findAllRules();
         } else if (context.getContext() == RULES_BY_FILTER_CONTEXT) {
-          return RuleCachedStorage.super.findRulesByFilter(context.getRuleFilter(), context.getOffset(), context.getLimit());
+          return RuleCachedStorage.super.findRulesIdsByFilter(context.getRuleFilter(), context.getOffset(), context.getLimit());
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
@@ -103,16 +103,6 @@ public class RuleCachedStorage extends RuleStorage {
   public List<RuleDTO> findAllRules() {
     CacheKey key = new CacheKey(ALL_RULE_CONTEXT, 0L);
     return (List<RuleDTO>) this.ruleFutureCache.get(key, key.hashCode());
-  }
-
-  @Override
-  public List<RuleDTO> findRulesByFilter(RuleFilter filter, int offset, int limit) {
-    if (StringUtils.isBlank(filter.getTerm())) {
-      CacheKey key = new CacheKey(RULES_BY_FILTER_CONTEXT, filter, offset, limit);
-      return (List<RuleDTO>) this.ruleFutureCache.get(key, key.hashCode());
-    } else {
-      return super.findRulesByFilter(filter, offset, limit);
-    }
   }
 
   @Override
