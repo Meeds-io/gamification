@@ -17,7 +17,6 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
@@ -32,9 +31,6 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.exoplatform.social.core.manager.ActivityManagerImpl;
-import org.exoplatform.social.rest.entity.ActivityEntity;
-import org.exoplatform.social.rest.entity.CollectionEntity;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
