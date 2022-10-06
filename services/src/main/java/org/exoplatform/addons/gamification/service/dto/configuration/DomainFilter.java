@@ -35,6 +35,6 @@ public class DomainFilter implements Serializable {
 
   private EntityStatusType entityStatusType;
   
-  private String           searchingKey;
+  private String           domainTitle;
 
 }

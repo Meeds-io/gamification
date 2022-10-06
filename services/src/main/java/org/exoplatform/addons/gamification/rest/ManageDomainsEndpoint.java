@@ -148,7 +148,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
     domainFilter.setEntityStatusType(statusType);
     if(StringUtils.isNotEmpty(searchingKey)) {
-      domainFilter.setSearchingKey(searchingKey);
+      domainFilter.setDomainTitle(searchingKey);
     }
     String currentUser = Utils.getCurrentUser();
     DomainList domainList = new DomainList();

@@ -119,8 +119,8 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("type", EntityType.valueOf(entityFilterType.name()));
     }
-    if (StringUtils.isNotEmpty(filter.getSearchingKey())) {
-      query.setParameter("searchingKey", "%" + filter.getSearchingKey() + "%");
+    if (StringUtils.isNotEmpty(filter.getDomainTitle())) {
+      query.setParameter("searchingKey", "%" + filter.getDomainTitle() + "%");
     }
   }
 
@@ -129,7 +129,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
       suffixes.add("Type");
       predicates.add("d.type = :type");
     }
-    if (StringUtils.isNotEmpty(filter.getSearchingKey())) {
+    if (StringUtils.isNotEmpty(filter.getDomainTitle())) {
       suffixes.add("SearchBy");
       predicates.add(" UPPER(d.title) like UPPER(:searchingKey) ");
     }
