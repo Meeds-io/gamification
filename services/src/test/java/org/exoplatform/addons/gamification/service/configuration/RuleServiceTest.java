@@ -22,6 +22,9 @@ import java.util.Date;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -144,9 +147,9 @@ public class RuleServiceTest extends AbstractServiceTest {
   public void testDeleteRule() throws Exception {
 
     RuleEntity ruleEntity = newRule();
-    assertEquals(ruleEntity.isDeleted(), false);
+    assertFalse(ruleEntity.isDeleted());
     ruleService.deleteRule(ruleEntity.getId());
-    assertEquals(ruleEntity.isDeleted(), true);
+    assertTrue(ruleEntity.isDeleted());
     assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRule(null));
   }
 
@@ -190,7 +193,32 @@ public class RuleServiceTest extends AbstractServiceTest {
     newRuleDTO();
     assertEquals(2, ruleService.findAllRules(0, 2).size());
     assertEquals(3, ruleService.findAllRules(0, 3).size());
+  }
 
+  @Test
+  public void testGetRulesByFilter() throws Exception {
+    newRuleDTO();
+    RuleDTO ruleDTO1 = newRuleDTO();
+    ruleDTO1.setEnabled(false);
+    ruleService.updateRule(ruleDTO1);
+    RuleDTO ruleDTO2 = newRuleDTO();
+    ruleDTO2.setEnabled(false);
+    ruleService.updateRule(ruleDTO2);
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(2, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    ruleFilter.setEntityStatusType(EntityStatusType.ALL);
+    DomainDTO domain = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
+    long domainId = domain.getId();
+    ruleFilter.setDomainId(domainId);
+    assertEquals(3, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(3, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(3, ruleService.findAllRules(0, 3).size());
   }
 
   @Test
