@@ -32,8 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <i class="uiIconSuccess"></i>
           {{ this.$t('exoplatform.gamification.successdelete') }}
         </div>
-        <v-div
-            class="pa-4 mb-4">
+        <v-div>
           <v-spacer />
           <div class="uiSearchForm uiSearchInput searchWithIcon">
             <input
@@ -53,10 +52,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
 
           <div class="filter-bar">
-            <select v-model="enabledFilter" class="mb-4">
-              <option :value="null">{{ $t(`exoplatform.gamification.all`,"All") }}</option>
-              <option :value="true">{{ $t(`exoplatform.gamification.enabled`,"Enabled") }}</option>
-              <option :value="false">{{ $t(`exoplatform.gamification.disabled`,"Disabled") }}</option>
+            <select
+                v-model="filter"
+                class="width-auto my-auto ignore-vuetify-classes d-none d-sm-inline"
+                @change="applyFilter">
+              <option
+                  v-for="filter in rulesFilters"
+                  :key="filter.value"
+                  :value="filter.value">
+                {{ filter.text }}
+              </option>
             </select>
           </div>
         </v-div>
@@ -147,7 +152,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <label class="col-form-label pt-0">{{ $t(`exoplatform.gamification.gamificationinformation.Domain`) }}:</label>
                   <select v-model="editedrule.domainDTO" required>
                     <option disabled value="null">
-                      {{ $t(`exoplatform.gamification.selectdM`) }}
+                      {{ $t(` exoplatform.gamification.selectdM`) }}
                     </option>
                     <option v-for="option in domains" :value="option">
                       {{ domainTitle(option.title) }}
@@ -379,32 +384,40 @@ export default {
       isEnabled: false,
       editedEnabled: null,
       enabledMessage: '',
-      filerlabel: 'all',
+      filter: 'ALL',
       showMenu: false,
     };
   },
-
   computed: {
     filteredRules() {
-      return this.rules.filter(item => {
-        return (( item.title && item.description && item.event &&
-          this.description(item.description,item.event ,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1 || item.event && item.title &&
-          this.eventTitle(item.event ,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1 || item.domainDTO && item.domainDTO.title &&
-                    this.domainTitle(item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1||
-                    item.score.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1)
-                    && (this.enabledFilter === null || ( item.enabled === this.enabledFilter && item.type === 'AUTOMATIC' ) ||
-                    ( this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) === 'STARTED') ||
-                    ( !this.enabledFilter && item.type === 'MANUAL' && this.getRuleStatus(item.startDate ,item.endDate) !== 'STARTED'))
-        );
-      });
+      return this.rules && this.rules.filter(item => !item.deleted);
+    },
+    rulesFilters() {
+      return [{
+        text: this.$t('exoplatform.gamification.all'),
+        value: 'ALL',
+      },{
+        text: this.$t('exoplatform.gamification.enabled'),
+        value: 'ENABLED',
+      },{
+        text: this.$t('exoplatform.gamification.disabled'),
+        value: 'DISABLED',
+      }];
     },
     isBottonDisabled(){
       return !(this.isNotEmpty(this.editedrule.event)&&this.isNotEmpty(this.editedrule.score)&&this.editedrule.domainDTO!=null);
     },
   },
-
+  watch: {
+    search() {
+      this.$root.$emit('rules-search-applied', this.search);
+    },
+  },
 
   methods: {
+    applyFilter() {
+      this.$root.$emit('rules-filter-applied', this.filter);
+    },
     onEdit(rule) {
       this.rule = rule;
       this.editedrule = rule;
