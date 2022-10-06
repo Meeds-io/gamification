@@ -127,6 +127,10 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.getDomainListFromRules();
   }
 
+  public long getRulesTotalScoreByDomain(long domainId) {
+    return ruleStorage.getRulesTotalScoreByDomain(domainId);
+  }
+
   public void deleteRule(Long id) throws IllegalArgumentException, ObjectNotFoundException {
     if (id == null) {
       throw new IllegalArgumentException("rule id is mandatory");
