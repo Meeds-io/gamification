@@ -92,14 +92,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-else
           :class="showAllAvatarList && 'AllUsersAvatar'"
           class="winners winnersAvatarsList d-flex flex-nowrap my-2">
-          <exo-user-avatars-list
-            ref="announcementsUsersAvatar"
-            :users="winnerAvatars"
-            :max="2"
-            :default-length="announcementCount"
-            :icon-size="28"
-            retrieve-extra-information
-            @open-detail="$root.$emit('open-winners-drawer', challenge.id)" />
+          <engagement-center-avatars-list
+            :avatars="winnerAvatars"
+            :max-avatars-to-show="3"
+            :avatars-count="announcementCount"
+            :size="27"
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', challenge.id)" />
         </div>
         <div class="addAnnounce">
           <v-btn

@@ -84,7 +84,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-spacer />
       <engagement-center-avatars-list
         :avatars="owners"
-        :max-avatars-to-show="4" />
+        :max-avatars-to-show="4"
+        :avatars-count="ownersCount"
+        :size="25"
+        @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
     </div>
   </v-card>
 </template>
@@ -117,8 +120,13 @@ export default {
       return this.isAdministrator || this.program?.userInfo?.domainOwner;
     },
     owners() {
-      return this.program?.owners;
+      return (this.program?.owners || []).map(owner => ({
+        userName: owner.remoteId
+      }));
     },
+    ownersCount() {
+      return this.owners?.length;
+    }
   },
   created() {
     $(document).mousedown(() => {
