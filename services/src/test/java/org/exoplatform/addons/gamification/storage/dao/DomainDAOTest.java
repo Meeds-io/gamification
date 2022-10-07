@@ -89,6 +89,40 @@ public class DomainDAOTest extends AbstractServiceTest {
     filter.setEntityFilterType(EntityFilterType.MANUAL);
     assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
   }
+  
+  @Test
+  public void testGetDomainsByTextualFilter() {
+    DomainFilter filter = new DomainFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, domainDAO.getAllDomains(offset, 10, filter).size());
+    newDomain(EntityType.MANUAL, "domain1", true, null);
+    newDomain(EntityType.MANUAL, "domain2", true, null);
+    newDomain(EntityType.AUTOMATIC, "domain3", true, null);
+    newDomain(EntityType.AUTOMATIC, "domain4", true, null);
+    filter.setDomainTitle("domain1");
+    assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
+
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, domainDAO.getAllDomains(offset, 10, filter).size());
+    newDomain(EntityType.AUTOMATIC, "domain5", false, null);
+    assertEquals(0, domainDAO.getAllDomains(offset, 10, filter).size());
+
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
+    newDomain(EntityType.AUTOMATIC, "domain1", true, null);
+    assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
+
+    filter.setEntityStatusType(EntityStatusType.ALL);
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    assertEquals(1, domainDAO.getAllDomains(offset, 10, filter).size());
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(0, domainDAO.getAllDomains(offset, 10, filter).size());
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, domainDAO.getAllDomains(offset, 10, filter).size());
+    filter.setEntityFilterType(EntityFilterType.MANUAL);
+    assertEquals(0, domainDAO.getAllDomains(offset, 10, filter).size());
+  }
 
   @Test
   public void testCountAllDomains() {
