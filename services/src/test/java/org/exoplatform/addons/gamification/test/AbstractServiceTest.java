@@ -363,11 +363,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled, EntityType ruleType) {
 
-    RuleEntity rule = ruleDAO.findRuleByTitle(name + "_" + domain);
+    RuleEntity rule = ruleDAO.findRuleByTitle(name);
     if (rule == null) {
       rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));
-      rule.setTitle(name + "_" + domain);
+      rule.setTitle(name);
       rule.setDescription("Description");
       rule.setArea(domain);
       rule.setEnabled(isEnabled);
@@ -376,7 +376,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setCreatedBy(TEST_USER_SENDER);
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
-      rule.setDomainEntity(newDomain(domain));
+      rule.setDomainEntity(domainDAO.getDomainByTitle(domain));
       rule.setType(ruleType);
       rule.setManagers(Collections.emptyList());
       rule = ruleDAO.create(rule);
@@ -537,6 +537,47 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return gHistory;
   }
 
+  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByEarnerId(RuleEntity rule, String earnerId) {
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(HistoryStatus.ACCEPTED);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(earnerId);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
+    return gHistory;
+  }
+  
+  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByStatus(RuleEntity rule, HistoryStatus status, String earnerId) {
+    GamificationActionsHistory gHistory = new GamificationActionsHistory();
+    gHistory.setStatus(status);
+    gHistory.setDomain(rule.getArea());
+    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setReceiver(earnerId);
+    gHistory.setEarnerId(earnerId);
+    gHistory.setEarnerType(IdentityType.USER);
+    gHistory.setActionTitle(rule.getTitle());
+    gHistory.setActionScore(rule.getScore());
+    gHistory.setGlobalScore(rule.getScore());
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedBy("gamification");
+    gHistory.setDomainEntity(newDomain());
+    gHistory.setObjectId("objectId");
+    gHistory.setCreatedDate(fromDate);
+    gHistory = gamificationHistoryDAO.create(gHistory);
+    restartTransaction();
+    return gHistory;
+  }
+  
   protected GamificationActionsHistory newGamificationActionsHistoryWithRuleId(String actionTitle, Long ruleId) {
     RuleEntity rule = newRule();
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
