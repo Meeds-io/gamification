@@ -97,11 +97,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                               StandardLeaderboard.class);
     query.setParameter("date", date).setParameter(DOMAIN_PARAM_NAME, domain).setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
   }
 
   /**
@@ -118,11 +114,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(DOMAIN_PARAM_NAME, domain);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+
   }
 
   /**
@@ -140,11 +133,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(DOMAIN_PARAM_NAME, domain);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setMaxResults(limit);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return Collections.emptyList();
+
   }
 
   /**
@@ -161,11 +151,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter("date", date);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
   }
 
   /**
@@ -184,11 +170,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
     query.setMaxResults(limit);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
   }
 
   /**
@@ -204,11 +186,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                                      GamificationActionsHistory.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setMaxResults(limit);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+
   }
 
   /**
@@ -225,11 +204,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
     query.setMaxResults(limit);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
   }
 
   /**
@@ -246,11 +221,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                    .setParameter("date", date)
                                                                    .setParameter(EARNER_ID_PARAM_NAME, earnerId);
 
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+
+    return query.getResultList();
+
 
   }
 
@@ -272,11 +245,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                               StandardLeaderboard.class);
     query.setParameter("date", date).setParameter(EARNER_TYPE_PARAM_NAME, earnerType).setParameter(DOMAIN_PARAM_NAME, domain);
     query.setMaxResults(limit);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+    
   }
 
   /**
@@ -299,11 +269,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       query = getEntityManager().createNamedQuery("GamificationActionsHistory.findStatsByUser", PiechartLeaderboard.class);
       query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     }
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+    
   }
 
   /**
@@ -317,11 +284,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                         getEntityManager().createNamedQuery("GamificationActionsHistory.findDomainScoreByUserId",
                                                                             ProfileReputation.class);
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+    
   }
 
   public long findUserReputationScoreBetweenDate(String earnerId, Date fromDate, Date toDate) {
@@ -362,11 +326,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(FROM_DATE_PARAM_NAME, fromDate)
          .setParameter(TO_DATE_PARAM_NAME, toDate)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+    
   }
 
   /**
@@ -383,11 +344,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setMaxResults(limit);
     query.setParameter(STATUS, HistoryStatus.REJECTED);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+
   }
 
   public long getTotalScore(String earnerId) {
@@ -402,32 +360,23 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                  getEntityManager().createNamedQuery("GamificationActionsHistory.getAllPointsByDomain",
                                                                                      GamificationActionsHistory.class);
     query.setParameter(DOMAIN_PARAM_NAME, domain);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+
+    return query.getResultList();
   }
 
   public List<GamificationActionsHistory> getAllPointsWithNullDomain() {
     TypedQuery<GamificationActionsHistory> query =
                                                  getEntityManager().createNamedQuery("GamificationActionsHistory.getAllPointsWithNullDomain",
                                                                                      GamificationActionsHistory.class);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+     
   }
 
   public List<String> getDomainList() {
     TypedQuery<String> query = getEntityManager().createNamedQuery("GamificationActionsHistory.getDomainList", String.class);
 
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
+    return query.getResultList();
+
   }
 
   public Long countAnnouncementsByChallenge(Long challengeId) {

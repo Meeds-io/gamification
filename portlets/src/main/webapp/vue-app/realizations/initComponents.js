@@ -1,6 +1,7 @@
 import Realizations from './components/Realizations.vue';
 import RealizationItem from './components/RealizationItem.vue';
 import SelectPeriod from './components/SelectPeriod.vue';
+import NoResultFound from '../engagement-center/components/common/NoResultFound.vue';
 import EditRealizationDrawer  from './components/EditRealizationDrawer.vue';
 import FilterRealizationsDrawer from './components/FilterRealizationsDrawer.vue';
 import FilterRealizationsProgramList from './components/FilterRealizationsProgramList.vue';
@@ -12,6 +13,7 @@ const components = {
   'edit-realization-drawer': EditRealizationDrawer,
   'filter-realizations-drawer': FilterRealizationsDrawer,
   'realizations-filter-program-list': FilterRealizationsProgramList,
+  'engagement-center-no-results': NoResultFound,
 };
 
 for (const key in components) {

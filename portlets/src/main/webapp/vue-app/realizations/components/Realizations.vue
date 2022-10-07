@@ -44,7 +44,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
     </v-toolbar>
+    <engagement-center-no-results
+      v-if="!displaySearchResult"
+      :info="$t('exoplatform.gamification.gamificationinformation.domain.search.noResults')"
+      :info-message="$t('exoplatform.gamification.gamificationinformation.domain.search.noResultsMessage')" />
     <v-data-table
+      v-if="displaySearchResult"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
       :loading="loading"
@@ -63,6 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </template>
     </v-data-table>
     <v-toolbar
+      v-if="!displaySearchResult"
       color="transparent"
       flat
       class="pa-2 mb-4">
@@ -83,7 +89,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @updated="realizationUpdated" />
     <filter-realizations-drawer
       @selected-programs="filterByPrograms"
-      @selectionConfirmed="loadRealizations" />
+      @selectionConfirmed="loadRealizations"/>
   </v-app>
 </template>
 <script>
@@ -103,8 +109,9 @@ export default {
     },
   },
   data: () => ({
+    displaySearchResult: false,
     realizations: [],
-    searchList: null,
+    searchList: [],
     offset: 0,
     limit: 25,
     pageSize: 25,
@@ -242,6 +249,7 @@ export default {
       return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
         .then(realizations => {
           this.realizations = realizations || [];
+          this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
     },
     exportFile() {
@@ -256,8 +264,8 @@ export default {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(value) {
-      return this.searchList = value.length > 0 ? value :  null;
-    }
+      return this.searchList = value.length > 0 ? value : [];
+    },
   }
 };
 </script>

@@ -700,7 +700,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
       List<Long> domainIds = new ArrayList<Long>();
       domainIds.add(rule1Automatic.getDomainEntity().getId());
       dateFilter.setDomainIds(domainIds);
-      dateFilter.setEarnerId(1L);
+      dateFilter.setEarnerId(0);
       dateFilter.setFromDate(fromDate);
       dateFilter.setToDate(toDate);
       dateFilter.setIdentityType(IdentityType.getType(""));
@@ -713,8 +713,9 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
               result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
   }
   
-  public void testFindAllRealizationsByDomainIdSortByStatus() {
-
+  @Test
+  public void testFindAllRealizationsByDomainIdByActionType() {
+      
       Date createDate = new Date(System.currentTimeMillis());
       Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
       DomainDTO domain1 = new DomainDTO();
@@ -738,44 +739,41 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
       domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
       domainService.createDomain(domain2);
 
-      List<GamificationActionsHistory> histories = new ArrayList<>();
-      RuleEntity rule1Automatic = newRule("domain1", "domain1", true, EntityType.AUTOMATIC);
+      RuleEntity rule1Automatic = newRule("domain1", "domain1", true, EntityType.MANUAL);
       RuleEntity rule2Automatic = newRule("domain2", "domain2", true, EntityType.AUTOMATIC);
+      RuleEntity rule3Manual = newRule("domain2", "domain1", true, EntityType.MANUAL);
 
-      histories.add(newGamificationActionsHistoryByRuleByStatus(rule1Automatic, HistoryStatus.ACCEPTED, "1L"));
-      histories.add(newGamificationActionsHistoryByRuleByStatus(rule2Automatic, HistoryStatus.ACCEPTED, "1L"));
-      histories.add(newGamificationActionsHistoryByRuleByStatus(rule2Automatic, HistoryStatus.REJECTED, "1L"));
+      List<GamificationActionsHistory> histories = new ArrayList<>();
+
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule1Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule1Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule1Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule2Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule2Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule2Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule3Manual, "1"));
 
       RealizationsFilter dateFilter = new RealizationsFilter();
       List<Long> domainIds = new ArrayList<Long>();
       domainIds.add(rule1Automatic.getDomainEntity().getId());
+      dateFilter.setDomainIds(domainIds);
+      dateFilter.setEarnerId(0);
       dateFilter.setFromDate(fromDate);
       dateFilter.setToDate(toDate);
-      dateFilter.setSortField("status");
+      dateFilter.setIdentityType(IdentityType.getType(""));
+      dateFilter.setSortField("actionType");
       dateFilter.setSortDescending(true);
-      dateFilter.setEarnerId(1L);
-      List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
-      result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
+      List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
       assertNotNull(result);
-      assertEquals(2, result.size());
-      assertEquals(Arrays.asList(histories.get(1).getId(),
-              histories.get(2).getId()),
-              result.stream()
-                      .map(GamificationActionsHistory::getId)
-                      .collect(Collectors.toList()));
-
-      dateFilter.setSortDescending(false);
-      result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
-      assertNotNull(result);
-      assertEquals(2, result.size());
+      assertEquals(3, result.size());
       assertEquals(Arrays.asList(histories.get(2).getId(),
-              histories.get(1).getId()),
-              result.stream()
-                      .map(GamificationActionsHistory::getId)
-                      .collect(Collectors.toList()));
+              histories.get(1).getId(),
+              histories.get(0).getId()),
+              result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
   }
   
-  public void testFindRealizationsByDomainIdByEarnerId() {
+  @Test
+  public void testFindAllRealizationsByDomainIdByEarnerId() {
       
       Date createDate = new Date(System.currentTimeMillis());
       Date lastModifiedDate = new Date(System.currentTimeMillis() + 10);
@@ -799,41 +797,37 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
       domain2.setEnabled(true);
       domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
       domainService.createDomain(domain2);
-      
-      List<GamificationActionsHistory> histories = new ArrayList<>();
+
       RuleEntity rule1Automatic = newRule("domain1", "domain1", true, EntityType.AUTOMATIC);
       RuleEntity rule2Automatic = newRule("domain2", "domain2", true, EntityType.AUTOMATIC);
       RuleEntity rule3Manual = newRule("domain2", "domain2", true, EntityType.MANUAL);
-      histories.add(newGamificationActionsHistoryByRuleByStatus(rule1Automatic, HistoryStatus.ACCEPTED, "1"));
-      histories.add(newGamificationActionsHistoryByRuleByStatus(rule2Automatic, HistoryStatus.ACCEPTED, "2"));
-      histories.add(newGamificationActionsHistoryByRuleByStatus(rule3Manual, HistoryStatus.REJECTED, "2"));
+
+      List<GamificationActionsHistory> histories = new ArrayList<>();
+
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule1Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule1Automatic, "2"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule1Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule2Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule2Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule2Automatic, "1"));
+      histories.add(newGamificationActionsHistoryByRuleByEarnerId(rule3Manual, "1"));
 
       RealizationsFilter dateFilter = new RealizationsFilter();
       List<Long> domainIds = new ArrayList<Long>();
-      domainIds.add(rule2Automatic.getDomainEntity().getId());
-      domainIds.add(rule3Manual.getDomainEntity().getId());
+      domainIds.add(rule1Automatic.getDomainEntity().getId());
+      dateFilter.setDomainIds(domainIds);
+      dateFilter.setEarnerId(1L);
       dateFilter.setFromDate(fromDate);
       dateFilter.setToDate(toDate);
-      dateFilter.setSortField("status");
-      dateFilter.setSortDescending(true);
-      dateFilter.setEarnerId(2L);
-      List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
-      result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
-      assertNotNull(result);
-      assertEquals(1, result.size());
-      assertEquals(Arrays.asList(histories.get(2).getId()),
-              result.stream()
-                      .map(GamificationActionsHistory::getId)
-                      .collect(Collectors.toList()));
-
-      dateFilter.setSortDescending(false);
-      result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
+      dateFilter.setIdentityType(IdentityType.getType(""));
+      List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
       assertNotNull(result);
       assertEquals(2, result.size());
-      assertEquals(Arrays.asList(histories.get(2).getId()),
-              result.stream()
-                      .map(GamificationActionsHistory::getId)
-                      .collect(Collectors.toList()));
+      assertEquals(Arrays.asList(histories.get(0).getId(),
+              histories.get(2).getId()),
+              result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
   }
+  
+
   
 }
