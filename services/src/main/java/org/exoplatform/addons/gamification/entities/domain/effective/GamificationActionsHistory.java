@@ -167,11 +167,32 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " ORDER BY g.id DESC"
 )
 @NamedQuery(
+    name = "GamificationActionsHistory.findRealizationsByDateAndRulesSearchByDomainIds",
+    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
+        + " WHERE g.earnerType = :type"
+        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
+        + " AND ( g.domainEntity.id IN (:domainIds) )"
+        + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
+        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
+        + " ORDER BY g.id DESC"
+)
+@NamedQuery(
     name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRules",
     query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
         + " WHERE g.earnerType = :type"
         + " AND g.earnerId = :earnerId"
         + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
+        + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
+        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
+        + " ORDER BY g.id DESC"
+)
+@NamedQuery(
+    name = "GamificationActionsHistory.findRealizationsByEarnerAndDateAndRulesSearchByDomainIds",
+    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
+        + " WHERE g.earnerType = :type"
+        + " AND g.earnerId = :earnerId"
+        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
+        + " AND ( g.domainEntity.id IN (:domainIds) )"
         + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
         + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
         + " ORDER BY g.id DESC"
