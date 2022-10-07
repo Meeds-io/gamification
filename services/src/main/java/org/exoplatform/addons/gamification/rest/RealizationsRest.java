@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -96,21 +97,29 @@ public class RealizationsRest implements ResourceContainer {
                                      String returnType,
                                      @Parameter(description = "identity Type")
                                      @QueryParam("identityType")
-                                     String identityType) {
+                                     String identityType,
+                                     @Parameter(description = "domainIds. that will be used to filter achievements", required = false)
+                                     @QueryParam("domainIds")
+                                     List<Long> domainIds) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
-    RealizationsFilter filter = new RealizationsFilter();
+
     Identity identity = ConversationState.getCurrent().getIdentity();
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
     
-    filter.setIdentityType(IdentityType.getType(identityType));
-    filter.setEarnerId(earnerId);
-    filter.setFromDate(dateFrom);
-    filter.setToDate(dateTo);
-    filter.setSortDescending(sortDescending);
-    filter.setSortField(sortField);
+    if (domainIds == null) {
+        domainIds = new ArrayList<>();
+    } 
+    
+    RealizationsFilter filter = new RealizationsFilter(earnerId,
+            sortField,
+            sortDescending,
+            dateFrom,
+            dateTo,
+            IdentityType.getType(identityType),
+            domainIds);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {
