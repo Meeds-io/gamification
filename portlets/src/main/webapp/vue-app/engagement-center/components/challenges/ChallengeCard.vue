@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       hover>
       <div class="contentCard">
         <v-list-item class="pa-0" three-line>
-          <v-list-item-content class="title pl-4 pr-4 pt-3">
+          <v-list-item-content class="title px-4 pt-3">
             <div class="d-flex">
               <div class="status">
                 <i class="uiIconStatus iconStatus" :class="classStatus"></i> <span class="date">{{ getStatus() }}</span>
@@ -67,13 +67,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </div>
             <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
-              <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
+              <v-list-item-subtitle class="px-5 py-2 ma-5 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
             </div>
-            <div class="points title mb-1">
-              <span>
-                <v-icon size="16" class="mb-1 primary--text">fas fa-trophy</v-icon>
+            <div class="points title">
+              <span class="text-font-size">
+                <v-icon size="16" class="primary--text">fas fa-trophy</v-icon>
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </span>
             </div>
@@ -99,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :size="27"
             @open-avatars-drawer="$root.$emit('open-winners-drawer', challenge.id)" />
         </div>
-        <div class="addAnnounce">
+        <div class="addAnnounce mt-1">
           <v-btn
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
