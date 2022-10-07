@@ -100,7 +100,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @updated="realizationUpdated" />
     <filter-realizations-drawer
       @selected-programs="filterByPrograms"
-      @selectionConfirmed="loadRealizations" />
+      @selectionConfirmed="loadRealizations"/>
   </v-app>
 </template>
 <script>
