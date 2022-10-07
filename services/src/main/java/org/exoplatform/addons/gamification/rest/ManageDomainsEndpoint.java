@@ -133,9 +133,9 @@ public class ManageDomainsEndpoint implements ResourceContainer {
                              @QueryParam("returnSize")
                              @DefaultValue("false")
                              boolean returnSize,
-                             @Parameter(description = "the used key in finding find programs.", required = false)
-                             @QueryParam("searchingKey")
-                             String searchingKey) {
+                             @Parameter(description = "Term to search.", required = false)
+                             @QueryParam("query")
+                             String query) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -147,8 +147,8 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     domainFilter.setEntityFilterType(filterType);
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
     domainFilter.setEntityStatusType(statusType);
-    if(StringUtils.isNotEmpty(searchingKey)) {
-      domainFilter.setDomainTitle(searchingKey);
+    if(StringUtils.isNotEmpty(query)) {
+      domainFilter.setDomainTitle(query);
     }
     String currentUser = Utils.getCurrentUser();
     DomainList domainList = new DomainList();

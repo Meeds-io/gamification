@@ -94,7 +94,7 @@ export default {
       this.$emit('selected-programs', this.selectedPrograms);
     },
     selectAll(newVal) {
-      return this.selected =  newVal ? this.programsList.map( Object.keys ) : [];
+      this.selected =  newVal ? this.programsList.map( Object.keys ) : [];
     },    
     search()  {
       this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;

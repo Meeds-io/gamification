@@ -33,7 +33,6 @@
         <template>
           <v-tabs v-model="tab">
             <v-tab class="text-capitalize">{{ $t('realization.label.programLabel') }}</v-tab>
-            <v-tab class="text-capitalize">{{ $t('realization.label.grantee') }}</v-tab>
           </v-tabs>
           <v-tabs-items v-model="tab">
             <v-tab-item>
@@ -49,8 +48,8 @@
         <v-btn
           class="btn"
           @click="reset">
+          <v-icon x-small class="pr-1">fas fa-redo</v-icon>
           <template>
-            <i class="fas fa-redo"></i>
             {{ $t('exoplatform.gamification.gamificationinformation.domain.reset') }}
           </template>
         </v-btn>

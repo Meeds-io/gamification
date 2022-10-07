@@ -89,7 +89,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @updated="realizationUpdated" />
     <filter-realizations-drawer
       @selected-programs="filterByPrograms"
-      @selectionConfirmed="loadRealizations"/>
+      @selectionConfirmed="loadRealizations" />
   </v-app>
 </template>
 <script>
@@ -264,7 +264,7 @@ export default {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(value) {
-      return this.searchList = value.length > 0 ? value : [];
+      this.searchList = value.length > 0 ? value : [];
     },
   }
 };
