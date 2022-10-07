@@ -132,7 +132,10 @@ public class ManageDomainsEndpoint implements ResourceContainer {
                              @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
                              @QueryParam("returnSize")
                              @DefaultValue("false")
-                             boolean returnSize) {
+                             boolean returnSize,
+                             @Parameter(description = "Term to search.", required = false)
+                             @QueryParam("query")
+                             String query) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -144,6 +147,9 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     domainFilter.setEntityFilterType(filterType);
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
     domainFilter.setEntityStatusType(statusType);
+    if(StringUtils.isNotEmpty(query)) {
+      domainFilter.setDomainTitle(query);
+    }
     String currentUser = Utils.getCurrentUser();
     DomainList domainList = new DomainList();
     List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);

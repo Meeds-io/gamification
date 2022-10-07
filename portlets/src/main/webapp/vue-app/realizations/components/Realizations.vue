@@ -31,8 +31,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="selected-period-menu mt-6 px-3">
         <select-period v-model="selectedPeriod" class="mx-2" />
       </div>
+      <v-spacer />
+      <div>
+        <v-btn
+          class="btn px-2 btn-primary filterTasksSetting"
+          outlined
+          @click="openRealizationsFilterDrawer">
+          <v-icon size="15" class="pe-3">fas fa-filter</v-icon>
+          <span class="d-none font-weight-regular caption d-sm-inline">
+            {{ $t('profile.label.search.openSearch') }}
+          </span>
+        </v-btn>
+      </div>
     </v-toolbar>
+    <engagement-center-no-results
+      v-if="!displaySearchResult"
+      :info="$t('exoplatform.gamification.gamificationinformation.domain.search.noResults')"
+      :info-message="$t('exoplatform.gamification.gamificationinformation.domain.search.noResultsMessage')" />
     <v-data-table
+      v-if="displaySearchResult"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
       :loading="loading"
@@ -51,6 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </template>
     </v-data-table>
     <v-toolbar
+      v-if="!displaySearchResult"
       color="transparent"
       flat
       class="pa-2 mb-4">
@@ -69,6 +87,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <edit-realization-drawer
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
+    <filter-realizations-drawer
+      @selected-programs="filterByPrograms"
+      @selectionConfirmed="loadRealizations" />
   </v-app>
 </template>
 <script>
@@ -88,7 +109,9 @@ export default {
     },
   },
   data: () => ({
+    displaySearchResult: false,
     realizations: [],
+    searchList: [],
     offset: 0,
     limit: 25,
     pageSize: 25,
@@ -223,9 +246,10 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1)
+      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
         .then(realizations => {
           this.realizations = realizations || [];
+          this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
     },
     exportFile() {
@@ -235,7 +259,13 @@ export default {
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
       this.realizations[index] = updatedRealization;
       this.$set(this.realizations,index,updatedRealization);
-    }
+    },
+    openRealizationsFilterDrawer() {
+      this.$root.$emit('realization-open-filter-drawer');
+    },
+    filterByPrograms(value) {
+      this.searchList = value.length > 0 ? value : [];
+    },
   }
 };
 </script>
