@@ -75,7 +75,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               @addDescription="addDescription($event)"
               @validity-updated=" validDescription = $event" />
           </div>
-          <div class="mt-4">
+          <div 
+            v-if="showBudget"
+            class="mt-4">
             <span class="subtitle-1"> {{ $t('programs.label.budget') }}</span>
             <template>
               <v-list-item
@@ -176,6 +178,7 @@ export default {
       drawer: false,
       showMenu: false,
       loading: false,
+      showBudget: false,
     };
   },
   watch: {
