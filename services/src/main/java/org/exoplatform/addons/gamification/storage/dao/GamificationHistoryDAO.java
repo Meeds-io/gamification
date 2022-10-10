@@ -17,8 +17,10 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -307,6 +309,19 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(STATUS, HistoryStatus.REJECTED);
     Long count = query.getSingleResult();
     return count == null ? 0 : count.longValue();
+  }
+
+  public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
+    TypedQuery<Tuple> query =
+                            getEntityManager().createNamedQuery("GamificationActionsHistory.findUsersReputationScoreBetweenDate",
+                                                                Tuple.class);
+    query.setParameter("earnersId", earnersId).setParameter("fromDate", fromDate).setParameter("toDate", toDate);
+    query.setParameter(STATUS, HistoryStatus.REJECTED);
+
+    return query.getResultList()
+                .stream()
+                .collect(Collectors.toMap(tuple -> Long.valueOf((String) tuple.get(0)), tuple -> (Long) tuple.get(1)));
+
   }
 
   public long findUserReputationScoreByMonth(String earnerId, Date currentMonth) {
