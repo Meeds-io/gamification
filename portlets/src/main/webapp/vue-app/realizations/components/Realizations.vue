@@ -28,27 +28,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-btn>
       </div>
+      <v-spacer />
       <div class="selected-period-menu mt-6 px-3">
         <select-period v-model="selectedPeriod" class="mx-2" />
       </div>
-      <v-spacer />
       <div>
         <v-btn
-          class="btn px-2 btn-primary filterTasksSetting"
+          class="btn px-2 mt-1 btn-primary filterTasksSetting"
           outlined
           @click="openRealizationsFilterDrawer">
-          <v-icon size="15" class="pe-3">fas fa-filter</v-icon>
-          <span class="d-none font-weight-regular caption d-sm-inline">
-            {{ $t('profile.label.search.openSearch') }}
-          </span>
-        </v-btn>
-      </div>
-      <div>
-        <v-btn
-          class="btn px-2 btn-primary filterTasksSetting"
-          outlined
-          @click="openRealizationsFilterDrawer">
-          <v-icon size="15" class="pe-3">fas fa-filter</v-icon>
+          <i class="uiIcon uiIcon24x24 settingsIcon primary--text mr-1"></i>
           <span class="d-none font-weight-regular caption d-sm-inline">
             {{ $t('profile.label.search.openSearch') }}
           </span>

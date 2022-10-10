@@ -114,12 +114,12 @@ public class RealizationsRest implements ResourceContainer {
     } 
     
     RealizationsFilter filter = new RealizationsFilter(earnerId,
-            sortField,
-            sortDescending,
-            dateFrom,
-            dateTo,
-            IdentityType.getType(identityType),
-            domainIds);
+                                                       sortField,
+                                                       sortDescending,
+                                                       dateFrom,
+                                                       dateTo,
+                                                       IdentityType.getType(identityType),
+                                                       domainIds);
 
     boolean isXlsx = StringUtils.isNotBlank(returnType) && returnType.equals("xlsx");
     if (StringUtils.isNotBlank(returnType) && !returnType.equals("json") && !isXlsx) {

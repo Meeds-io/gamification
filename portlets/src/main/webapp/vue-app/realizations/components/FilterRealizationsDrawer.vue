@@ -36,7 +36,7 @@
           </v-tabs>
           <v-tabs-items v-model="tab">
             <v-tab-item>
-              <realizations-filter-program-list v-on="$listeners" />
+              <realizations-filter-program-list v-on="$listeners" @empty-list="verifySelection" />
             </v-tab-item>
             <v-tab-item />
           </v-tabs-items>
@@ -63,6 +63,7 @@
             </template>
           </v-btn>
           <v-btn
+            :disabled="disabled"
             class="btn btn-primary"
             @click="confirm">
             <template>
@@ -80,6 +81,7 @@ export default {
   data() {
     return {
       tab: null,
+      disabled: false,
     };
   },
   created() {    
@@ -108,9 +110,6 @@ export default {
     },
     reset() {
       this.$root.$emit('reset-selection');
-    },
-    loadMore() {
-      return this.retrievePrograms(true);
     },
     loadMore() {
       return this.retrievePrograms(true);
