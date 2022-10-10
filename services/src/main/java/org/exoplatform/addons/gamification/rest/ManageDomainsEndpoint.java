@@ -318,6 +318,29 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     }
   }
 
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("{domainId}")
+  @RolesAllowed("users")
+  @Operation(summary = "Retrieves a domain by its id", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "404", description = "Not found"), })
+  public Response getDomainById(@Parameter(description = "domain id", required = true)
+                                @PathParam("domainId")
+                                long domainId) {
+    if (domainId == 0) {
+      LOG.warn("Bad request sent to server with empty domainId");
+      return Response.status(400).build();
+    }
+    String currentUser = Utils.getCurrentUser();
+    DomainDTO domain = domainService.getDomainById(Long.valueOf(domainId));
+    if (domain == null) {
+      return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
+    }
+    return Response.ok(EntityBuilder.toRestEntity(domain, currentUser)).build();
+  }
+
   private List<DomainRestEntity> getDomainsRestEntitiesByFilter(DomainFilter filter, int offset, int limit, String currentUser) {
     List<DomainDTO> domains = domainService.getAllDomains(filter, offset, limit);
     return EntityBuilder.toRestEntities(domains, currentUser);

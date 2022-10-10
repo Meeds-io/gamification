@@ -98,11 +98,20 @@ export default {
     });
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
     const urlPath = document.location.search || document.location.pathname;
-    const challengeId = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+    const id = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {
+      if(id) {
+        this.$programsServices.getProgramById(id)
+          .then(program => {
+            if (program && program.id) {
+              this.$root.$emit('open-program-detail', program);
+              window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${program.id}`);
+            } 
+          });
+      }
       this.tab = 0;
     } else if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1 || urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/challenges`) > -1) {
-      this.challengeId = challengeId;
+      this.id = id;
       this.tab = 1;
     } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
       this.tab = 2;
