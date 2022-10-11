@@ -330,8 +330,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
                                 @PathParam("domainId")
                                 long domainId) {
     if (domainId == 0) {
-      LOG.warn("Bad request sent to server with empty domainId");
-      return Response.status(400).build();
+      return Response.status(Response.Status.BAD_REQUEST).entity("DomainId must be not null").build();
     }
     String currentUser = Utils.getCurrentUser();
     DomainDTO domain = domainService.getDomainById(Long.valueOf(domainId));
