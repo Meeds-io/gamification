@@ -118,7 +118,7 @@ export default {
       programRules: [],
       options: {
         page: 1,
-        itemsPerPage: 5,
+        itemsPerPage: 10,
       },
       totalSize: 0,
       loadingRules: false,
@@ -169,7 +169,7 @@ export default {
       const page = this.options && this.options.page;
       let itemsPerPage = this.options && this.options.itemsPerPage;
       if (itemsPerPage <= 0) {
-        itemsPerPage = this.totalSize || 5;
+        itemsPerPage = this.totalSize || 10;
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
@@ -186,7 +186,7 @@ export default {
     },
     backToProgramList() {
       this.options.page = 1;
-      this.options.itemsPerPage = 5;
+      this.options.itemsPerPage = 10;
       this.$root.$emit('close-program-detail');
     },
   }
