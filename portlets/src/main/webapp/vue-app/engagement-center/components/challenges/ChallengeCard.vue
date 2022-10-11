@@ -21,10 +21,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="mx-auto card cardOfChallenge"
       height="230"
       max-height="230"
-      outlined>
+      outlined
+      hover>
       <div class="contentCard">
         <v-list-item class="pa-0" three-line>
-          <v-list-item-content class="title pl-4 pr-4 pt-3">
+          <v-list-item-content class="title px-4 pt-3">
             <div class="d-flex">
               <div class="status">
                 <i class="uiIconStatus iconStatus" :class="classStatus"></i> <span class="date">{{ getStatus() }}</span>
@@ -66,13 +67,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </div>
             <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
-              <v-list-item-subtitle class="px-5 mb-2 mt-1 subtitleChallenge">
+              <v-list-item-subtitle class="px-5 py-2 ma-5 subtitleChallenge">
                 {{ challenge && challenge.title }}
               </v-list-item-subtitle>
             </div>
-            <div class="points title mb-1">
-              <span>
-                <i class="fas fa-trophy trophy"></i>
+            <div class="points title">
+              <span class="text-font-size">
+                <v-icon size="16" class="primary--text">fas fa-trophy</v-icon>
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </span>
             </div>
@@ -91,21 +92,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-else
           :class="showAllAvatarList && 'AllUsersAvatar'"
           class="winners winnersAvatarsList d-flex flex-nowrap my-2">
-          <exo-user-avatars-list
-            ref="announcementsUsersAvatar"
-            :users="winnerAvatars"
-            :max="2"
-            :default-length="announcementCount"
-            :icon-size="28"
-            retrieve-extra-information
-            @open-detail="$root.$emit('open-winners-drawer', challenge.id)" />
-          <p
-            class="announcesNumber my-auto pl-2 align-self-end caption text-no-wrap pt-1"
-            @click="$root.$emit('open-winners-drawer', challenge.id)">
-            {{ challenge && challenge.announcementsCount }} {{ $t('challenges.label.announces') }}
-          </p>
+          <engagement-center-avatars-list
+            :avatars="winnerAvatars"
+            :max-avatars-to-show="3"
+            :avatars-count="announcementCount"
+            :size="27"
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', challenge.id)" />
         </div>
-        <div class="addAnnounce">
+        <div class="addAnnounce mt-1">
           <v-btn
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
