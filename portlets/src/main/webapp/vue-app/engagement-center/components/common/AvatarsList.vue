@@ -20,17 +20,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <exo-user-avatar
         v-for="avatarToDisplay in avatarsTodisplay"
         :key="avatarToDisplay.id"
-        :profile-id="avatarToDisplay.remoteId"
-        :size="25"
+        :profile-id="avatarToDisplay.userName"
+        :size="size"
         popover
         avatar 
         extra-class="me-1" />
     </div>
     <v-avatar
       v-if="seeMoreAvatarsToDisplay"
-      size="25"
-      class="light-black-background">
-      <span class="white--text font-weight-bold icon-mini-size" @click="openDrawer">+{{ showMoreAvatarsNumber }}</span>
+      class="light-black-background"
+      :size="size">
+      <span class="white--text font-weight-bold icon-mini-size" @click="$emit('open-avatars-drawer')">+{{ showMoreAvatarsNumber }}</span>
     </v-avatar>
   </div>
 </template>
@@ -44,17 +44,22 @@ export default {
     maxAvatarsToShow: {
       type: Number,
       default: null
-    }
+    },
+    avatarsCount: {
+      type: Number,
+      default: null
+    },
+    size: {
+      type: Number,
+      default: null
+    },
   },
   computed: {
-    avatarsCount () {
-      return this.avatars?.length;
-    },
     avatarsTodisplay() {
       return this.avatars.slice(0, this.maxAvatarsToShow - 1);
     },
     seeMoreAvatarsToDisplay () {
-      return this.avatarsCount >= this.maxAvatarsToShow && this.avatars[this.maxAvatarsToShow - 1] || null;
+      return this.avatarsCount >= this.maxAvatarsToShow || null;
     },
     showMoreAvatarsNumber() {
       return this.avatarsCount - this.maxAvatarsToShow + 1;
