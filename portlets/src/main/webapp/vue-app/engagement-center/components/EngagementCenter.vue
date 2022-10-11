@@ -100,7 +100,7 @@ export default {
     const urlPath = document.location.search || document.location.pathname;
     const id = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
     if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {
-      if(id) {
+      if (id) {
         this.$programsServices.getProgramById(id)
           .then(program => {
             if (program && program.id) {
