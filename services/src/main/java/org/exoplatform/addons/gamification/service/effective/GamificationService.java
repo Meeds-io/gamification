@@ -24,6 +24,7 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -244,6 +245,10 @@ public class GamificationService {
 
   public long findUserReputationScoreBetweenDate(String earnerId, Date fromDate, Date toDate) {
     return gamificationHistoryDAO.findUserReputationScoreBetweenDate(earnerId, fromDate, toDate);
+  }
+
+  public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
+    return gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
   }
 
   public long findUserReputationScoreByMonth(String earnerId, Date currentMonth) {

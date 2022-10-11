@@ -110,6 +110,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT SUM(g.actionScore) as total"
         + " FROM GamificationActionsHistory g  WHERE g.earnerId = :earnerId AND g.status <> :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
 )
+@NamedQuery(name = "GamificationActionsHistory.findUsersReputationScoreBetweenDate", query = "SELECT g.earnerId,SUM(g.actionScore) as total"
+    + " FROM GamificationActionsHistory g  WHERE g.earnerId IN :earnersId AND g.status <> :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate GROUP BY g.earnerId")
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreByMonth",
     query = "SELECT SUM(g.actionScore) as total"
