@@ -87,8 +87,10 @@ export default {
     this.$root.$on('reset-selection', this.reset);
   },
   watch: {
-    selected() {
-      this.$emit('empty-list', this.emptyList);
+    selected(oldVal, newVal) {
+      if ( newVal.length === 0 || (oldVal.length === 0 && newVal.length !== 0)) {
+        this.$emit('empty-list', newVal.length === 0);
+      }
       this.$emit('selected-programs', this.selectedPrograms);
     },
     selectAll(newVal) {
@@ -111,9 +113,6 @@ export default {
     },
     selectedPrograms() {
       return  (this.selectAll && !this.partiallySelected && this.search === '') ? [] : this.selected ;
-    },
-    emptyList() {
-      return this.selected.length === 0;
     },
     partiallySelected () {
       return this.programsList && this.programsList.length && (this.hasMore || this.selected.length !== this.programsList.length);

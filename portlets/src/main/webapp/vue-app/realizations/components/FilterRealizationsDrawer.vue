@@ -26,7 +26,7 @@
       indeterminate
       size="32" />
     <template slot="title">
-      <span class="pb-2"> {{ $t('profile.label.search.filters') }} </span>
+      <span class="pb-2"> {{ $t('realization.label.search.filtersAchievements') }} </span>
     </template>
     <template slot="content">
       <div class="VuetifyApp">
@@ -113,6 +113,9 @@ export default {
     },
     loadMore() {
       return this.retrievePrograms(true);
+    },
+    verifySelection(value) {
+      this.disabled = !value;
     },
   }
 };
