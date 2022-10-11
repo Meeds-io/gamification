@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.exoplatform.addons.gamification.IdentityType;
@@ -242,6 +243,28 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     gamificationHistoryDAO.update(gHistory);
     assertEquals(gamificationHistoryDAO.findUserReputationScoreBetweenDate(TEST_USER_SENDER, fromDate, toDate),
                  Integer.parseInt(TEST__SCORE) * 2);
+  }
+
+  @Test
+  public void testFindUsersReputationScoreBetweenDate() {
+
+    List<String> earnersId = new ArrayList<>();
+    earnersId.add(TEST_USER_SENDER);
+    Map<Long, Long> scores = gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+    assertEquals(Long.valueOf(0), java.util.Optional.ofNullable(scores.get(Long.parseLong(TEST_USER_SENDER))).orElse(0L));
+    GamificationActionsHistory gHistory = newGamificationActionsHistory();
+    newGamificationActionsHistory();
+    newGamificationActionsHistory();
+
+    scores = gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+    Long expected = Integer.parseInt(TEST__SCORE) * 3L;
+    assertEquals(expected, java.util.Optional.ofNullable(scores.get(Long.parseLong(TEST_USER_SENDER))).orElse(0L));
+
+    gHistory.setStatus(HistoryStatus.REJECTED);
+    gamificationHistoryDAO.update(gHistory);
+    expected = Integer.parseInt(TEST__SCORE) * 2L;
+    scores = gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+    assertEquals(expected, java.util.Optional.ofNullable(scores.get(Long.parseLong(TEST_USER_SENDER))).orElse(0L));
   }
 
   @Test
