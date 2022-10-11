@@ -188,6 +188,7 @@ export default {
       this.options.page = 1;
       this.options.itemsPerPage = 10;
       this.$root.$emit('close-program-detail');
+      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/`);
     },
   }
 };
