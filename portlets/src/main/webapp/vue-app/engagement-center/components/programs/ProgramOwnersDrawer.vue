@@ -34,7 +34,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <exo-user-avatar
           v-for="owner in listOwners" 
           :key="owner.id"
-          :profile-id="owner.remoteId"
+          :profile-id="owner.userName"
           :size="44"
           extra-class="px-4 py-3 border-bottom-color"
           bold-title
@@ -54,7 +54,7 @@ export default {
     };
   },
   created() {
-    this.$root.$on('open-avatars-drawer', this.open);
+    this.$root.$on('open-owners-drawer', this.open);
   },
   methods: {
     close() {
