@@ -26,7 +26,7 @@
       indeterminate
       size="32" />
     <template slot="title">
-      <span class="pb-2"> {{ $t('profile.label.search.filters') }} </span>
+      <span class="pb-2"> {{ $t('realization.label.search.filtersAchievements') }} </span>
     </template>
     <template slot="content">
       <div class="VuetifyApp">
@@ -36,7 +36,7 @@
           </v-tabs>
           <v-tabs-items v-model="tab">
             <v-tab-item>
-              <realizations-filter-program-list v-on="$listeners" />
+              <realizations-filter-program-list v-on="$listeners" @empty-list="verifySelection" />
             </v-tab-item>
             <v-tab-item />
           </v-tabs-items>
@@ -63,6 +63,7 @@
             </template>
           </v-btn>
           <v-btn
+            :disabled="disabled"
             class="btn btn-primary"
             @click="confirm">
             <template>
@@ -80,6 +81,7 @@ export default {
   data() {
     return {
       tab: null,
+      disabled: false,
     };
   },
   created() {    
@@ -111,6 +113,9 @@ export default {
     },
     loadMore() {
       return this.retrievePrograms(true);
+    },
+    verifySelection(value) {
+      this.disabled = !value;
     },
   }
 };
