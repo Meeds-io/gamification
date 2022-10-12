@@ -97,3 +97,16 @@ export function updateProgram(program) {
     }
   });
 }
+
+export function getProgramById(id) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      return null;
+    }
+  });
+}
