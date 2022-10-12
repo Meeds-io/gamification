@@ -319,7 +319,8 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   @Operation(summary = "Retrieves a domain by its id", method = "GET")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "404", description = "Not found"), })
+      @ApiResponse(responseCode = "404", description = "Not found"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
   public Response getDomainById(@Parameter(description = "domain id", required = true)
                                 @PathParam("domainId")
                                 long domainId) {
