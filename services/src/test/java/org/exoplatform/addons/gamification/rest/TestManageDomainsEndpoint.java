@@ -268,6 +268,29 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
     assertEquals(403, response.getStatus());
   }
 
+  @Test
+  public void testGetDomainById() throws Exception {
+    EnvironmentContext envctx = new EnvironmentContext();
+    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH, null, 0, "GET", null);
+    envctx.put(HttpServletRequest.class, httpRequest);
+    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
+
+    ContainerResponse response = launcher.service("GET", REST_PATH + "/0", "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    response = launcher.service("GET", REST_PATH + "/7580", "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(404, response.getStatus());
+
+    response = launcher.service("GET", REST_PATH + "/" + autoDomain.getId(), "", null, null, envctx);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    DomainRestEntity savedDomain = (DomainRestEntity) response.getEntity();
+    assertNotNull(savedDomain);
+    assertEquals((long) autoDomain.getId(), (long) savedDomain.getId());
+  }
+
   private String toJsonString(DomainDTO domain) throws JsonException {
     return new JsonGeneratorImpl().createJsonObject(domain).toString();
   }
