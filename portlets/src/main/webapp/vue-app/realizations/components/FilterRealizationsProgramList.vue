@@ -22,8 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-model="selectAll"
           :indeterminate="partiallySelected"
           color="primary"
-          class="pt-2"
-          @click="changeAllSelection" />
+          class="pt-2" />
         <v-text-field
           id="EngagementCenterApplicationSearchFilter"
           v-model="search"
@@ -69,7 +68,6 @@ export default {
     limit: 20,
     pageSize: 20,
     totalSize: 0,
-    partiallySelected: false,
     selected: [],
     numberOfPrograms: 7,
     search: '',
@@ -89,8 +87,10 @@ export default {
     this.$root.$on('reset-selection', this.reset);
   },
   watch: {
-    selected() {
-      this.partiallySelected = this.selected.length !== this.programsList.length;
+    selected(oldVal, newVal) {
+      if ( newVal.length === 0 || (oldVal.length === 0 && newVal.length !== 0)) {
+        this.$emit('empty-list', newVal.length === 0);
+      }
       this.$emit('selected-programs', this.selectedPrograms);
     },
     selectAll(newVal) {
@@ -114,13 +114,17 @@ export default {
     selectedPrograms() {
       return  (this.selectAll && !this.partiallySelected && this.search === '') ? [] : this.selected ;
     },
+    partiallySelected () {
+      return this.programsList && this.programsList.length && (this.hasMore || this.selected.length !== this.programsList.length);
+    },
   },
   methods: {
     loadMore() {
-      this.retrievePrograms(true ,this.search);
+      this.retrievePrograms(true, this.search);
     },
     reset() {
-      this.selected = [];
+      this.selectAll = true;
+      this.selected = this.programsList.map(Object.keys);
     },
     waitForEndTyping() {
       window.setTimeout(() => {
@@ -142,11 +146,11 @@ export default {
         .then((programsList) => {
           this.size = programsList.domainsSize;
           if (append) {
-            this.programsList = this.programsList?.concat(programsList?.domains.map( program => ({ [program.id]: program.title })));
+            this.programsList = this.programsList?.concat(programsList?.domains.map(program => ({[program.id]: program.title})));
           } else {
-            this.programsList = programsList?.domains.map( program => ({ [program.id]: program.title }));}
+            this.programsList = programsList?.domains.map( program => ({[program.id]: program.title}));}
           if (this.selectAll || !append) {
-            this.selected = this.programsList.map( Object.keys );}
+            this.selected = this.programsList.map(Object.keys);}
         }
         )
         .finally(() => this.loading = false);},
