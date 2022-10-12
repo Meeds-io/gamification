@@ -28,9 +28,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </div>
     <v-avatar
       v-if="seeMoreAvatarsToDisplay"
-      class="light-black-background"
-      :size="size">
-      <span class="white--text font-weight-bold icon-mini-size" @click="$emit('open-avatars-drawer')">+{{ showMoreAvatarsNumber }}</span>
+      class="light-black-background icon-mini-size white--text font-weight-bold"
+      :size="size"
+      @click="$emit('open-avatars-drawer')">
+      +{{ showMoreAvatarsNumber }}
     </v-avatar>
   </div>
 </template>
