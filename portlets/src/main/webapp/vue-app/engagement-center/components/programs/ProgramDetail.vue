@@ -164,6 +164,11 @@ export default {
       this.retrieveProgramRules();
     },
   },
+  created() {
+    window.addEventListener('popstate', () => {
+      this.backToProgramList();
+    });
+  },
   methods: {
     retrieveProgramRules() {
       const page = this.options && this.options.page;
