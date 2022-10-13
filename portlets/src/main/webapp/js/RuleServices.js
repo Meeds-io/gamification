@@ -82,7 +82,7 @@ export function updateRule(rule) {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when updating rule');
+      throw new Error(resp.status);
     }
   });
 }
