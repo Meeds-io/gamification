@@ -66,7 +66,7 @@ export function deleteRule(ruleId) {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when removing rule');
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }
