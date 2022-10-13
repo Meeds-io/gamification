@@ -59,6 +59,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item-title class="text-color font-weight-bold">
             {{ $t('programs.details.label.rulesOfProgram') }}
           </v-list-item-title>
+          <div v-if="canManageRule" class="text-no-wrap mt-5">
+            <div
+              class="d-inline-block">
+              <v-btn
+                class="btn btn-primary"
+                @click="openNewRuleForm">
+                <v-icon dark>
+                  mdi-plus
+                </v-icon>
+                <span class="ms-2 d-none d-lg-inline">
+                  {{ $t('programs.details.rule.button.addRule') }}
+                </span>
+              </v-btn>
+            </div>
+          </div>
           <v-list-item-subtitle class="text-color pt-4">
             <v-data-table
               :headers="rulesHeaders"
@@ -70,18 +85,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               hide-default-footer
               disable-sort>
               <template slot="item" slot-scope="props">
-                <tr>
-                  <td>
-                    <div class="align-start text-truncate">
-                      <engagement-center-rule-title :rule="props.item" />
-                    </div>
-                  </td>
-                  <td>
-                    <div class="align-center">
-                      {{ $t(props.item.score) }}
-                    </div>
-                  </td>
-                </tr>
+                <engagement-center-rule-item
+                  :rule="props.item"
+                  :can-manage-rule="canManageRule"
+                  @delete-rule="confirmDelete" />
               </template>
               <template v-if="displayFooter" #footer="{props}">
                 <v-divider />
@@ -99,6 +106,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
+      <engagement-center-rule-form-drawer
+        :events="events"
+        :program="program" />
+      <exo-confirm-dialog
+        v-if="confirmDelete"
+        ref="deleteRuleConfirmDialog"
+        :message="$t('programs.details.message.confirmDeleteRule')"
+        :title="$t('programs.details.title.confirmDeleteRule')"
+        :ok-label="$t('programs.details.ok.button')"
+        :cancel-label="$t('programs.details.cancel.button')"
+        @ok="deleteRule" />
     </div>
   </div>
 </template>
@@ -110,6 +128,14 @@ export default {
     program: {
       type: Object,
       default: null
+    },
+    events: {
+      type: Array,
+      default: () => [],
+    },
+    canManageRule: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -149,8 +175,10 @@ export default {
     rulesHeaders() {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start'},
+        {text: this.$t('programs.details.rules.type'), align: 'center'},
         {text: this.$t('programs.details.rules.points'), align: 'center'},
-      ];
+        {text: '', align: 'center', enabled: this.canManageRule},
+      ].filter(filter => filter.enabled == null || filter.enabled === true);
     },
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;
@@ -165,6 +193,8 @@ export default {
     },
   },
   created() {
+    this.$root.$on('challenge-delete-confirm', this.confirmDelete);
+    this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
@@ -194,6 +224,29 @@ export default {
       this.options.itemsPerPage = 10;
       this.$root.$emit('close-program-detail');
       window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/`);
+    },
+    openNewRuleForm(){
+      this.$root.$emit('rule-form-drawer', null);
+    },
+    confirmDelete(rule) {
+      this.selectedRule = rule;
+      this.$refs.deleteRuleConfirmDialog.open();
+    },
+    deleteRule() {
+      this.loading = true;
+      this.$ruleServices.deleteRule(this.selectedRule.id)
+        .then((deletedRule) => {
+          this.$root.$emit('program-rule-deleted', deletedRule);
+          this.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));
+          this.retrieveProgramRules();
+        })
+        .finally(() => this.loading = false);
+    },
+    displayAlert(message, type) {
+      document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
+        message,
+        type: type || 'success',
+      }}));
     },
   }
 };

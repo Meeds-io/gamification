@@ -29,11 +29,12 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import javax.annotation.security.RolesAllowed;
@@ -124,66 +125,80 @@ public class ManageRulesEndpoint implements ResourceContainer {
   }
 
   @POST
-  @Consumes({ MediaType.APPLICATION_JSON })
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
-  @Path("/add")
-  public Response addRule(@RequestBody(description = "rule object to save", required = true)
-                          RuleDTO ruleDTO) throws Exception {
-    ConversationState conversationState = ConversationState.getCurrent();
-    String currentUserName = conversationState.getIdentity().getUserId();
+  @Operation(summary = "Creates a rule", method = "POST")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response createRule(@RequestBody(description = "rule object to save", required = true) RuleDTO ruleDTO) {
+    if (ruleDTO == null) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
+    }
+    String username = Utils.getCurrentUser();
     try {
-      // Compute rule's data
-      ruleDTO.setId(null);
-      ruleDTO.setTitle(ruleDTO.getEvent() + "_" + ruleDTO.getArea());
-      ruleDTO.setCreatedBy(currentUserName);
-      ruleDTO.setLastModifiedBy(currentUserName);
-
-      // --- Add rule
-      ruleDTO = ruleService.addRule(ruleDTO);
-
+      ruleDTO = ruleService.createRule(ruleDTO, username);
       return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
-
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to create rule").build();
     } catch (EntityExistsException e) {
-      return Response.status(Status.CONFLICT).entity("Rule already exists").build();
+      return Response.status(Response.Status.CONFLICT).entity("Rule already exists").build();
     }
   }
 
   @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
-  @Path("/update")
-  public Response updateRule(@Context
-                             HttpServletRequest request,
-                             @RequestBody(description = "rule object to update", required = true)
-                             RuleDTO ruleDTO) throws Exception {
-   String currentUserName = ConversationState.getCurrent().getIdentity().getUserId();
+  @Operation(summary = "Updates a rule", method = "PUT")
+  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response updateRule(@Context HttpServletRequest request,
+                             @RequestBody(description = "rule object to update", required = true) RuleDTO ruleDTO) {
+    String username = Utils.getCurrentUser();
 
-   // Compute rule's data
-   ruleDTO.setCreatedBy(currentUserName);
-   ruleDTO.setLastModifiedBy(currentUserName);
+    if (ruleDTO == null) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
+    }
+    try {
+      ruleDTO = ruleService.updateRule(ruleDTO, username);
+      return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to update rule").build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
+    } catch (EntityExistsException e) {
+      return Response.status(Response.Status.CONFLICT).entity("Rule already exists").build();
+    }
+  }
 
-   // --- Add rule
-   ruleDTO = ruleService.updateRule(ruleDTO);
-
-   // Compute user id
-   String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-                                                        currentUserName)
-                                   .getId();
-   LOG.info("service=gamification operation=edit-rule parameters=\"user_social_id:{},rule_id:{},rule_title:{},rule_description:{}\"",
-            actorId,
-            ruleDTO.getId(),
-            ruleDTO.getTitle(),
-            ruleDTO.getDescription());
-
-   return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
- }
-
-  @PUT
+  @DELETE
+  @Path("{ruleId}")
+  @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("administrators")
-  @Path("/delete/{id}")
-  public Response deleteRule(@Parameter(description = "id of the rule", required = true)
-                             @PathParam("id")
-                             Long id) throws Exception {
-    ruleService.deleteRule(id);
-    return Response.ok().cacheControl(cacheControl).entity("Rule " + id + " has been removed successfully ").build();
+  @Operation(summary = "Deletes a rule", method = "DELETE")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response deleteRule(@Parameter(description = "Rule technical identifier", required = true) @PathParam("ruleId") long ruleId) {
+    if (ruleId <= 0) {
+      return Response.status(Status.BAD_REQUEST).entity("Rule technical identifier must be positive").build();
+    }
+    String username = Utils.getCurrentUser();
+    try {
+      RuleDTO ruleDTO = ruleService.deleteRuleById(ruleId, username);
+      return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to delete rule").build();
+    }
   }
 }
