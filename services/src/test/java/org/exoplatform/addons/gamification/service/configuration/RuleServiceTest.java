@@ -27,7 +27,12 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.IdentityRegistry;
+import org.exoplatform.services.security.MembershipEntry;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -36,6 +41,13 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import static org.junit.Assert.assertThrows;
 
 public class RuleServiceTest extends AbstractServiceTest {
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    Identity adminAclIdentity = new Identity("root", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
+    identityRegistry.register(adminAclIdentity);
+  }
 
   @Test
   public void testFindEnableRuleByTitle() throws Exception {
@@ -56,10 +68,10 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setDomainDTO(domain);
     rule.setType(EntityType.AUTOMATIC);
     rule.setManagers(Collections.emptyList());
-    rule = ruleService.addRule(rule);
+    rule = ruleService.createRule(rule, "root");
     assertNotNull(ruleService.findEnableRuleByTitle(rule.getTitle()));
     rule.setEnabled(false);
-    ruleService.updateRule(rule);
+    ruleService.updateRule(rule, "root");
     assertNull(ruleService.findEnableRuleByTitle(rule.getTitle()));
   }
 
@@ -148,15 +160,15 @@ public class RuleServiceTest extends AbstractServiceTest {
 
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
-    ruleService.deleteRule(ruleEntity.getId());
+    ruleService.deleteRuleById(ruleEntity.getId(), "root");
     assertTrue(ruleEntity.isDeleted());
-    assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRule(null));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRuleById(null, "root"));
   }
 
   @Test
   public void testAddRule() throws Exception {
     assertEquals(ruleDAO.findAll().size(), 0);
-    assertThrows(IllegalArgumentException.class, () -> ruleService.addRule(null));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.createRule(null, "root"));
     RuleEntity rule = new RuleEntity();
     rule.setScore(Integer.parseInt(TEST__SCORE));
     rule.setTitle(RULE_NAME);
@@ -171,17 +183,17 @@ public class RuleServiceTest extends AbstractServiceTest {
     rule.setLastModifiedDate(new Date());
     rule.setDomainEntity(newDomain());
     rule.setType(EntityType.AUTOMATIC);
-    ruleService.addRule(RuleMapper.ruleToRuleDTO(rule));
+    ruleService.createRule(RuleMapper.ruleToRuleDTO(rule), "root");
     assertEquals(ruleDAO.findAll().size(), 1);
   }
 
   @Test
   public void testUpdateRule() throws Exception {
     assertEquals(ruleDAO.findAll().size(), 0);
-    assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(new RuleDTO()));
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(new RuleDTO(), "root"));
     RuleEntity ruleEntity = newRule();
     ruleEntity.setDescription("new_description");
-    ruleService.updateRule(RuleMapper.ruleToRuleDTO(ruleEntity));
+    ruleService.updateRule(RuleMapper.ruleToRuleDTO(ruleEntity), "root");
     RuleDTO ruleDTO = ruleService.findRuleById(ruleEntity.getId());
     assertEquals(ruleEntity.getDescription(), ruleDTO.getDescription());
   }
@@ -198,12 +210,12 @@ public class RuleServiceTest extends AbstractServiceTest {
   @Test
   public void testGetRulesByFilter() throws Exception {
     newRuleDTO();
-    RuleDTO ruleDTO1 = newRuleDTO();
+    RuleDTO ruleDTO1 = newRuleDTO("rule1", "domain1");
     ruleDTO1.setEnabled(false);
-    ruleService.updateRule(ruleDTO1);
-    RuleDTO ruleDTO2 = newRuleDTO();
+    ruleService.updateRule(ruleDTO1, "root");
+    RuleDTO ruleDTO2 = newRuleDTO("rule2", "domain2");
     ruleDTO2.setEnabled(false);
-    ruleService.updateRule(ruleDTO2);
+    ruleService.updateRule(ruleDTO2, "root");
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
     assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
@@ -213,9 +225,10 @@ public class RuleServiceTest extends AbstractServiceTest {
     DomainDTO domain = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
     ruleFilter.setDomainId(domainId);
-    assertEquals(3, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
     ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
     assertEquals(0, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    ruleFilter = new RuleFilter();
     ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
     assertEquals(3, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
     assertEquals(3, ruleService.findAllRules(0, 3).size());
@@ -233,4 +246,6 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(ruleTitle, ruleDTO.getTitle());
     assertEquals(domainTitle, newDomainTitle);
   }
+
+
 }

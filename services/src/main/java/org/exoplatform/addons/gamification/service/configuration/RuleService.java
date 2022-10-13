@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface RuleService {
 
@@ -131,23 +132,48 @@ public interface RuleService {
      */
      long getRulesTotalScoreByDomain(long domainId);
 
-    /**
-     * delete rule with specific id
-     */
-     void deleteRule (Long id)  throws Exception;
+     /**
+      * Deletes an existing rule
+      *
+      * @param ruleId Rule technical identifier to delete
+      * @param username User name of user attempting to delete a rule
+      * @return deleted {@link RuleDTO}
+      * @throws IllegalAccessException when user is not authorized to delete the
+      *           rule
+      * @throws ObjectNotFoundException when the rule identified by its technical
+      *           identifier is not found
+      */
+     RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
     /**
      * Add Rule to DB
-     * @param ruleDTO : an object of type RuleDTO
-     * @return RuleDTO object
+     * @param ruleDTO {@link RuleDTO} to create
+     * @param username User name of user attempting to create a rule
+     * @return created {@link RuleDTO}
+     * @throws IllegalAccessException when user is not authorized to create a rule
      */
-     RuleDTO addRule (RuleDTO ruleDTO)  throws Exception;
+     RuleDTO createRule (RuleDTO ruleDTO, String username) throws IllegalAccessException;
+
+     /**
+     * Add Rule to DB
+     * @param ruleDTO {@link RuleDTO} to create
+     * @return created {@link RuleDTO}
+     */
+     RuleDTO createRule (RuleDTO ruleDTO);
 
     /**
      * Update Rule to DB
-     * @param ruleDTO : an object of type RuleDTO
-     * @return RuleDTO object
+     * @param ruleDTO {@link RuleDTO} to update
+     * @param username User name of user attempting to update a rule
+     * @return updated {@link RuleDTO}
      */
-     RuleDTO updateRule (RuleDTO ruleDTO) throws Exception;
+     RuleDTO updateRule (RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
 
+    /**
+     * Check whether user can manage rules or not.
+     *
+     * @param username User name
+     * @return true if the user is a member of platform/rewarding, else return false.
+     */
+    boolean canManageRule(String username);
 }
