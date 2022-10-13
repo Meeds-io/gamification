@@ -158,7 +158,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (endDate.after(currentDate) || endDate.equals(currentDate)) {
       throw new IllegalArgumentException("Challenge does not ended yet");
     }
-    challengeStorage.deleteChallenge(challengeId);
+    challengeStorage.deleteChallenge(challengeId, username);
     try {
       listenerService.broadcast(POST_DELETE_RULE_EVENT, this, challengeId);
     } catch (Exception e) {

@@ -36,11 +36,14 @@ import ProgramDrawer from './components/programs/ProgramDrawer.vue';
 import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 
+import RuleTitle from './components/rules/RuleTitle.vue';
+import RuleItem from './components/rules/RuleItem.vue';
+import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
+
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
 import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
-import RuleTitle from './components/common/RuleTitle.vue';
 
 
 const components = {
@@ -63,11 +66,13 @@ const components = {
   'engagement-center-program-drawer': ProgramDrawer,
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,
+  'engagement-center-rule-title': RuleTitle,
+  'engagement-center-rule-item': RuleItem,
+  'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-description-editor': DescriptionEditor,
-  'engagement-center-image-selector': ImageSelector,
-  'engagement-center-rule-title': RuleTitle,
+  'engagement-center-image-selector': ImageSelector
 };
 
 for (const key in components) {

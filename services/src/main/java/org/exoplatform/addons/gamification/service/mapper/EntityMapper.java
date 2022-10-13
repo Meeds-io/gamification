@@ -187,6 +187,7 @@ public class EntityMapper {
       return null;
     }
     RuleDTO rule = new RuleDTO();
+    rule.setEnabled(true);
     if (challenge.getId() > 0) {
       rule.setId(challenge.getId());
     }
@@ -194,7 +195,6 @@ public class EntityMapper {
     rule.setTitle(challenge.getTitle());
     rule.setDescription(challenge.getDescription());
     rule.setArea(challenge.getProgram());
-    rule.setEnabled(false);
     rule.setDeleted(false);
     rule.setDomainDTO(Utils.getDomainByTitle(challenge.getProgram()));
     if (challenge.getAudience() > 0) {

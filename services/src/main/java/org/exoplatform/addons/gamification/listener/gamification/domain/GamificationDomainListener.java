@@ -23,6 +23,7 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -53,7 +54,7 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
         rule.setDomainDTO(null);
         rule.setArea("");
         rule.setEnabled(false);
-        ruleService.updateRule(rule);
+        ruleService.updateRule(rule, Utils.getCurrentUser());
       }
       for (BadgeDTO badge : badges) {
         badge.setDomainDTO(null);
@@ -65,7 +66,7 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
     if (action.equals("disable")) {
       for (RuleDTO rule : rules) {
         rule.setEnabled(false);
-        ruleService.updateRule(rule);
+        ruleService.updateRule(rule, Utils.getCurrentUser());
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(false);
@@ -75,7 +76,7 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
     if (action.equals("enable")) {
       for (RuleDTO rule : rules) {
         rule.setEnabled(true);
-        ruleService.updateRule(rule);
+        ruleService.updateRule(rule, Utils.getCurrentUser());
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(true);
