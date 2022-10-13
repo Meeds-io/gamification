@@ -219,7 +219,7 @@ export default {
         setTimeout(() => {
           const retrieveChallengePromise = this.$challengesServices.getChallengeById(this.providedId)
             .then(challenge => {
-              if (challenge && challenge.id) {
+              if (challenge?.id) {
                 this.$root.$emit('open-challenge-details', challenge);
                 window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.providedId}`);
               } else {

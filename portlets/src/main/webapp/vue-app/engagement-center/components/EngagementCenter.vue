@@ -125,7 +125,7 @@ export default {
     }
     this.$ruleServices.getEvents()
       .then(events => {
-        this.events = events;
+        this.events = events || [];
       });
     this.$challengesServices.canAddChallenge()
       .then(canAddChallenge => this.canAddChallenge = canAddChallenge);

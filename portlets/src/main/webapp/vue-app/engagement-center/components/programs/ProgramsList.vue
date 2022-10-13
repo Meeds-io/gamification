@@ -63,9 +63,7 @@ export default {
     },
     events: {
       type: Array,
-      default: function() {
-        return [];
-      },
+      default: () => [],
     },
   },
   computed: {
