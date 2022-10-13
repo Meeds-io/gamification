@@ -84,7 +84,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :loading="loading"
       class="pl-2 pt-8" />
 
-    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
     <challenge-details-drawer ref="challengeDetails" />
     <challenge-winners-details ref="winnersDetails" />
     <exo-confirm-dialog
@@ -105,11 +104,14 @@ export default {
     challengeId: {
       type: Number,
       default: null
+    },
+    canAddChallenge: {
+      type: Boolean,
+      default: false,
     }
   },
   data: () => ({
     selectedChallenge: null,
-    canAddChallenge: false,
     loading: true,
     domainsWithChallenges: [],
     announcementsPerChallenge: 2,
@@ -204,7 +206,6 @@ export default {
   },
   created() {
     const promises = [];
-    promises.push(this.computeCanAddChallenge());    
     promises.push(this.getChallenges(false));
     this.$root.$on('challenge-added', this.pushChallenge);
     this.$root.$on('challenge-updated', this.refreshChallenges);
@@ -212,22 +213,25 @@ export default {
     this.$root.$on('challenge-load-more', this.loadMore);
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     const urlPath = document.location.pathname;
-    this.challengeIdFromUrl = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
-    if (this.providedId) {
-      setTimeout(() => {
-        const retrieveChallengePromise = this.$challengesServices.getChallengeById(this.providedId)
-          .then(challenge => {
-            if (challenge && challenge.id) {
-              this.$root.$emit('open-challenge-details', challenge);
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.providedId}`);
-            } else {
-              window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
-              this.showAlert('error', this.$t('challenges.viewChallengeError'));
-            }
-          });
-        promises.push(retrieveChallengePromise);
-      }, 10);
+    if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1) {
+      this.challengeIdFromUrl = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
+      if (this.providedId) {
+        setTimeout(() => {
+          const retrieveChallengePromise = this.$challengesServices.getChallengeById(this.providedId)
+            .then(challenge => {
+              if (challenge && challenge.id) {
+                this.$root.$emit('open-challenge-details', challenge);
+                window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.providedId}`);
+              } else {
+                window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
+                this.showAlert('error', this.$t('challenges.viewChallengeError'));
+              }
+            });
+          promises.push(retrieveChallengePromise);
+        }, 10);
+      }
     }
+
     Promise.all(promises)
       .finally(() => this.$root.$applicationLoaded());
   },
@@ -237,18 +241,14 @@ export default {
         this.challengesByDomainId[challenge.program.id].push(challenge);
       }
     },
-    computeCanAddChallenge() {
-      return this.$challengesServices.canAddChallenge()
-        .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
-    },
     refreshChallenges() {
       return this.getChallenges(false);
     },
     loadMore(domainId) {
       return this.getChallenges(true, domainId);
     },
-    openChallengeDrawer(){
-      this.$refs.challengeDrawer.open();
+    openChallengeDrawer() {
+      this.$root.$emit('edit-challenge-details');
     },
     getChallenges(append, domainId) {
       this.loading = true;

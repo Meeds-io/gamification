@@ -173,11 +173,11 @@ public class RuleStorageTest extends AbstractServiceTest {
     assertEquals(ruleStorage.findRuleById(rule.getId()).getTitle(), rule.getTitle());
     assertFalse(rule.isDeleted());
     rule.setDeleted(true);
-    ruleStorage.deleteRule(rule.getId(), false);
+    ruleStorage.deleteRuleById(rule.getId(), "root", false);
     rule = ruleStorage.findRuleById(rule.getId());
     assertTrue(rule.isDeleted());
 
-    assertThrows(ObjectNotFoundException.class, () ->  ruleStorage.deleteRule(154l, false));
+    assertThrows(ObjectNotFoundException.class, () ->  ruleStorage.deleteRuleById(154l, "root", false));
   }
 
   @Test

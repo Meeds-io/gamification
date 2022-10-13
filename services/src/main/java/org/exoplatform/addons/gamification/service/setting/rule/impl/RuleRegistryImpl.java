@@ -21,13 +21,12 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
 import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.api.settings.SettingValue;
 import org.exoplatform.commons.api.settings.data.Context;
 import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.container.PortalContainer;
-import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
@@ -99,14 +98,13 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
     private void store(RuleConfig ruleConfig,RuleDTO ruleDTO) {
 
         domainService = CommonsUtils.getService(DomainService.class);
-
         try {
 
             if (ruleDTO != null) {
                 ruleDTO.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+ruleConfig.getTitle());
                 ruleDTO.setDescription(ruleConfig.getDescription());
                 ruleDTO.setEvent(ruleConfig.getEvent());
-                CommonsUtils.getService(RuleService.class).updateRule(ruleDTO);
+                CommonsUtils.getService(RuleService.class).updateRule(ruleDTO, Utils.getCurrentUser());
             }else{
                 RuleDTO ruleDto = new RuleDTO();
                 ruleDto.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX+ruleConfig.getTitle());
@@ -123,7 +121,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                     ruleDto.setEnabled(false);
                 }
                 ruleDto.setDescription(ruleConfig.getDescription());
-                CommonsUtils.getService(RuleService.class).addRule(ruleDto);
+                CommonsUtils.getService(RuleService.class).createRule(ruleDto);
             }
 
         } catch (Exception e) {

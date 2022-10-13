@@ -27,6 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <engagement-center-program-card
           :program="program"
           :is-administrator="isAdministrator"
+          :events="events"
           class="mx-2" />
       </v-col>
     </v-row>
@@ -59,7 +60,13 @@ export default {
     isAdministrator: {
       type: Boolean,
       default: false,
-    }
+    },
+    events: {
+      type: Array,
+      default: function() {
+        return [];
+      },
+    },
   },
   computed: {
     programs() {

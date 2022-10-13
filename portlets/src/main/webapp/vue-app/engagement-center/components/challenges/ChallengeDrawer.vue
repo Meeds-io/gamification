@@ -213,6 +213,7 @@ export default {
   },
   created() {
     this.$root.$on('edit-challenge-details', this.open);
+    this.$root.$on('edit-manuel-rule', this.editManuelRule);
   },
   methods: {
     setUp() {
@@ -281,6 +282,12 @@ export default {
         .then(() => {
           this.$refs.challengeDescription.initCKEditor();
           this.setUp();
+        });
+    },
+    editManuelRule(rule) {
+      this.$challengesServices.getChallengeById(rule.id)
+        .then(challenge => {
+          this.open(challenge);
         });
     },
     close() {
@@ -375,6 +382,7 @@ export default {
               message: this.$t('challenges.challengeUpdateSuccess'),
             });
             this.$root.$emit('challenge-updated', challenge);
+            this.$root.$emit('program-rules-refresh');
             this.close();
             this.challenge = {};
           })

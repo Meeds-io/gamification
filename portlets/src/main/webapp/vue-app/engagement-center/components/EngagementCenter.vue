@@ -42,10 +42,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-show="!displayProgramDetail"
             id="engagementCenterProgramsTab"
             :is-administrator="isAdministrator" />
-          <engagement-center-program-detail v-if="displayProgramDetail" :program="program" />
+          <engagement-center-program-detail
+            v-if="displayProgramDetail"
+            :program="program"
+            :events="events"
+            :can-manage-rule="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
-          <challenges :challenge-id="challengeId" />
+          <challenges :challenge-id="challengeId" :can-add-challenge="canAddChallenge" />
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -56,6 +60,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tab-item>
       </v-tabs-items>
     </main>
+    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
     <main v-else>
       <challenges />
     </main>
@@ -77,7 +82,9 @@ export default {
     earnerId: eXo.env.portal.userIdentityId,
     challengeId: null,
     program: null,
+    canAddChallenge: false,
     displayProgramDetail: false,
+    events: []
   }),
   watch: {
     tab() {
@@ -115,7 +122,13 @@ export default {
       this.tab = 1;
     } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
       this.tab = 2;
-    } 
+    }
+    this.$ruleServices.getEvents()
+      .then(events => {
+        this.events = events;
+      });
+    this.$challengesServices.canAddChallenge()
+      .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
     this.initialized = true;
   }
 };

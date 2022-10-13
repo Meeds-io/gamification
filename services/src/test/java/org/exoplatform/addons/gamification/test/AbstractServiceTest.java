@@ -26,6 +26,7 @@ import java.util.TimeZone;
 
 import javax.ws.rs.core.SecurityContext;
 
+import org.exoplatform.services.security.IdentityRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -191,6 +192,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RuleIndexingServiceConnector ruleIndexingServiceConnector;
 
   protected SpaceService                 spaceService;
+  
+  protected IdentityRegistry             identityRegistry;
 
   Identity                               userIdentity        = new Identity(TEST_USER_SENDER);
 
@@ -232,6 +235,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     realizationsStorage = ExoContainerContext.getService(RealizationsStorage.class);
     ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
+    identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     binder = ExoContainerContext.getService(ResourceBinder.class);
     RequestHandlerImpl requestHandler = ExoContainerContext.getService(RequestHandlerImpl.class);
     // reset default providers to be sure it is clean.
@@ -668,6 +672,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleDTO newRuleDTO() {
     return RuleMapper.ruleToRuleDTO(newRule());
+  }  
+  
+  protected RuleDTO newRuleDTO(String name, String domain) {
+    return RuleMapper.ruleToRuleDTO(newRule(name, domain));
   }
 
   protected DomainDTO newDomainDTO() {
