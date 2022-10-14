@@ -89,7 +89,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-card-text>
         <div class="d-flex flex-row pa-4">
           <label class="text-subtitle-1 mt-1 pe-3">{{ $t('rule.form.label.program') }}</label>
-          <v-chip>
+          <v-chip color="primary">
             <v-avatar left>
               <v-img :src="programCover" />
             </v-avatar>
@@ -296,6 +296,8 @@ export default {
     },
     updateForm(rule) {
       this.$set(this.rule,'id',rule.id);
+      this.$set(this.rule,'title',rule.title);
+      this.$set(this.rule,'description',rule.description);
       this.$set(this.rule,'enabled',rule.enabled);
       this.$set(this.rule,'score',rule.score);
       this.$set(this.rule,'event',rule.event);
