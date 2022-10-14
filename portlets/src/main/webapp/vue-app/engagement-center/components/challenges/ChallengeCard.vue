@@ -68,7 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
             <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 py-2 ma-5 subtitleChallenge">
-                {{ challenge && challenge.title }}
+                <span class="text-truncate-2"> {{ challenge && challenge.title }} </span>
               </v-list-item-subtitle>
             </div>
             <div class="points title">
