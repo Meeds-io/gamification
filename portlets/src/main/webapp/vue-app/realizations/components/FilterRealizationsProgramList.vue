@@ -151,7 +151,8 @@ export default {
             this.programsList = this.programsList?.concat(this.loadedMoreProgramsList);
           } else {
             this.programsList = programsList?.domains.map( program => ({[program.id]: program.title}));
-            this.loadedMoreProgramsList = this.programsList;}
+            this.loadedMoreProgramsList = this.programsList;
+          }
           if (this.selectAll) {
             this.selected = this.selected.concat(this.loadedMoreProgramsList.map(Object.keys));}
         }
