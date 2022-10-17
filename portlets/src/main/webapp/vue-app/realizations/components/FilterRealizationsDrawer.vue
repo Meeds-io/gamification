@@ -103,6 +103,7 @@ export default {
     },
     cancel() {
       this.$refs.RealizationsFilterDrawer.close();
+      this.reset();
     },
     confirm() {
       this.$emit('selectionConfirmed');
