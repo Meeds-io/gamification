@@ -76,6 +76,7 @@ export default {
     startTypingKeywordTimeout: 0,
     typing: false,
     programsList: [],
+    loadedMoreProgramsList: [],
     type: 'ALL',
     status: 'ENABLED',
     searchingKey: '',
@@ -123,6 +124,7 @@ export default {
       this.retrievePrograms(true, this.search);
     },
     reset() {
+      this.search = '';
       this.selectAll = true;
       this.selected = this.programsList.map(Object.keys);
     },
@@ -146,11 +148,15 @@ export default {
         .then((programsList) => {
           this.size = programsList.domainsSize;
           if (append) {
-            this.programsList = this.programsList?.concat(programsList?.domains.map(program => ({[program.id]: program.title})));
+            this.loadedMoreProgramsList = programsList?.domains.map(program => ({[program.id]: program.title}));
+            this.programsList = this.programsList?.concat(this.loadedMoreProgramsList);
           } else {
-            this.programsList = programsList?.domains.map( program => ({[program.id]: program.title}));}
-          if (this.selectAll || !append) {
-            this.selected = this.programsList.map(Object.keys);}
+            this.programsList = programsList?.domains.map( program => ({[program.id]: program.title}));
+            this.loadedMoreProgramsList = this.programsList;
+          }
+          if (this.selectAll) {
+            this.selected = this.selected.concat(this.loadedMoreProgramsList.map(Object.keys));
+          }
         }
         )
         .finally(() => this.loading = false);},
