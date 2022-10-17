@@ -68,9 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
             <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 py-2 ma-5 subtitleChallenge">
-                <v-tooltip  
-                  :open-on-hover="displayTitleToolTip"
-                  bottom>
+                <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
                     <span
                       class="d-flex-inline position-relative text-truncate-2"
@@ -188,9 +186,6 @@ export default {
     challengeTitle() {
       return this.challenge?.title;
     },
-    displayTitleToolTip() {
-      return this.challengeTitle.length > 50;
-    }
   },
   created() {
     this.$root.$on('announcement-added', this.announcementAdded);
