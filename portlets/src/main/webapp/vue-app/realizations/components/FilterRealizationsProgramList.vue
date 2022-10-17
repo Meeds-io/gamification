@@ -154,7 +154,8 @@ export default {
             this.loadedMoreProgramsList = this.programsList;
           }
           if (this.selectAll) {
-            this.selected = this.selected.concat(this.loadedMoreProgramsList.map(Object.keys));}
+            this.selected = this.selected.concat(this.loadedMoreProgramsList.map(Object.keys));
+          }
         }
         )
         .finally(() => this.loading = false);},
