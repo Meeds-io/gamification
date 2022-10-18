@@ -124,6 +124,7 @@ export default {
       this.retrievePrograms(true, this.search);
     },
     reset() {
+      this.search = '';
       this.selectAll = true;
       this.selected = this.programsList.map(Object.keys);
     },

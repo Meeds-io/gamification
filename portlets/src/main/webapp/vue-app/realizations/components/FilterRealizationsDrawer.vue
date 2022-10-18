@@ -107,7 +107,7 @@ export default {
     },
     confirm() {
       this.$emit('selectionConfirmed');
-      this.cancel();
+      this.$refs.RealizationsFilterDrawer.close();
     },
     reset() {
       this.$root.$emit('reset-selection');
