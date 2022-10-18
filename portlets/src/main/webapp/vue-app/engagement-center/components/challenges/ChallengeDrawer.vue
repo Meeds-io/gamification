@@ -165,7 +165,7 @@ export default {
   data() {
     return {
       rules: {
-        length: (v) => (v && v.length < 250) || this.$t('challenges.label.challengeTitleLengthExceed') ,
+        length: (v) => (v && v.length < 50) || this.$t('challenges.label.challengeTitleLengthExceed') ,
         value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
       },
       drawer: false,

@@ -68,7 +68,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
             <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
               <v-list-item-subtitle class="px-5 py-2 ma-5 subtitleChallenge">
-                {{ challenge && challenge.title }}
+                <v-tooltip bottom>
+                  <template #activator="{ on, attrs }">
+                    <span
+                      class="d-flex-inline position-relative text-truncate-2"
+                      v-bind="attrs"
+                      v-on="on">
+                      {{ challengeTitle }}
+                    </span>
+                  </template>
+                  {{ challengeTitle }}
+                </v-tooltip>
               </v-list-item-subtitle>
             </div>
             <div class="points title">
@@ -80,7 +90,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item-content>
         </v-list-item>
       </div>
-
       <div class="footer assigneeAvatars d-flex">
         <div v-if="challenge && challenge.announcementsCount === 0" class="winners pa-2">
           <p
@@ -173,7 +182,10 @@ export default {
     },
     challengeProgramEnabled() {
       return this.domain && (!this.domain.enabled || this.domain.deleted);
-    }
+    },
+    challengeTitle() {
+      return this.challenge?.title;
+    },
   },
   created() {
     this.$root.$on('announcement-added', this.announcementAdded);
