@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.exoplatform.addons.gamification.IdentityType;
 
@@ -43,5 +44,7 @@ public class RealizationsFilter implements Serializable {
   private Date              toDate;
   
   private IdentityType      identityType;
-
+  
+  private List<Long>        domainIds;
+  
 }
