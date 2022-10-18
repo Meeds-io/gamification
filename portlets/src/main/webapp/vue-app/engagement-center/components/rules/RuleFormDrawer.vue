@@ -55,8 +55,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="pa-0"
             filled
             persistent-hint
-            dense
-            @change="selectEvent">
+            dense>
             <template #selection="data">
               <v-chip
                 v-bind="data.attrs"
@@ -74,18 +73,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-card-text v-if="eventExist" class="error--text py-0">
           {{ $t('rule.form.error.sameEventExist') }}
         </v-card-text>
-
-        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
-          {{ $t('rule.form.label.description') }}
-        </v-card-text>
-        <v-card-text class="py-0">
-          <extended-textarea
-            id="ruleDescription"
-            ref="ruleDescription"
-            v-model="rule.description"
-            :placeholder="$t('rule.form.label.description.placeholder')"
-            :max-length="ruleDescriptionTextLength"
-            class="pt-0" />
+        <v-card-text>
+          <div class="py-2">
+            <engagement-center-description-editor
+              id="ruleDescription"
+              ref="ruleDescription"
+              v-model="rule.description"
+              :label="$t('rule.form.label.description')"
+              :placeholder="$t('rule.form.label.description.placeholder')"
+              @addDescription="addDescription($event)"
+              @validity-updated=" validDescription = $event" />
+          </div>
         </v-card-text>
         <div class="d-flex flex-row pa-4">
           <label class="text-subtitle-1 mt-1 pe-3">{{ $t('rule.form.label.program') }}</label>
@@ -111,8 +109,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             style="max-width: 185px" />
           <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
         </div>
-        <div class="d-flex flex-row pa-4">
-          <label class="text-subtitle-1 mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
+        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+          {{ $t('rule.form.label.status') }}
+        </v-card-text>
+        <div class="d-flex flex-row px-4">
+          <label class="subtitle-1 text-light-color mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
           <v-switch
             id="allowAttendeeToUpdateRef"
             ref="allowAttendeeToUpdateRef"
@@ -125,7 +126,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="d-flex">
         <v-spacer />
         <v-btn
-          class="btn me-2">
+          class="btn me-2"
+          @click="close">
           {{ $t('rule.form.label.button.cancel') }}
         </v-btn>
         <v-btn
@@ -159,9 +161,10 @@ export default {
     saving: false,
     eventMapping: [],
     drawer: false,
-    value: null,
-    ruleDescriptionTextLength: 1300,
-    eventExist: false
+    value: '',
+    eventExist: false,
+    validDescription: false,
+    validEvent: false,
   }),
   computed: {
     eventNames() {
@@ -191,23 +194,11 @@ export default {
     ruleId() {
       return this.rule?.id;
     },
-    ruleDescription() {
-      return this.rule?.description;
-    },
-    ruleEvent() {
-      return this.rule?.event || this.value;
-    },
     ruleTitleValid() {
       return this.ruleTitle?.length > 0;
     },
-    ruleDescriptionValid() {
-      return this.ruleDescription?.length > 0 && this.ruleDescription?.length < 1301;
-    },
-    ruleEventValid() {
-      return this.ruleEvent !== null;
-    },
     disableSaveButton() {
-      return this.saving || !this.ruleTitleValid || !this.ruleDescriptionValid || !this.ruleEventValid ;
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.validEvent ;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -216,47 +207,65 @@ export default {
       return this.ruleId ? this.$t('rule.form.label.button.update') : this.$t('rule.form.label.button.add');
     }
   },
+  watch: {
+    value: {
+      immediate: true,
+      handler() {
+        this.emitSelectedValue(this.value);
+        this.validEvent = this.value && this.value !== '';
+      }
+    },
+  },
   created() {
     this.$root.$on('rule-form-drawer', (rule) => {
-      this.$nextTick().then(() => {
-        if (rule === null) {
-          this.resetFrom();
-        } else {
-          this.updateForm(rule);
-        }
-        this.open();
-        this.$nextTick().then(() => this.$root.$emit('rule-form-drawer-opened', this.rule));
-      });
-    });
-  },
-  methods: {
-    close() {
-      this.$refs.ruleFormDrawer.close();
-    },
-    open() {
+      this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
+        score: 20,
+        enabled: true,
+        area: this.programTitle
+      };
+      this.eventExist = false;
       this.$refs.ruleFormDrawer.open();
       window.setTimeout(() => {
         if (this.$refs.ruleTitle) {
           this.$refs.ruleTitle.focus();
         }
       }, 200);
+      this.$nextTick().then(() => {
+        this.$refs.ruleDescription.initCKEditor();
+        this.$root.$emit('rule-form-drawer-opened', this.rule);
+        this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
+      });
+    });
+  },
+  methods: {
+    close() {
+      this.$refs.ruleDescription.destroyCKEditor();
+      this.$refs.ruleFormDrawer.close();
+      this.rule.enabled = true;
+      this.rule.event = null;
+      this.$set(this.rule,'title','');
+      this.rule.description = '';
+      this.value = {};
     },
-    selectEvent(value) {
-      this.$set(this.rule,'event', this.eventMapping.find(event => event.label === value).name);
-      if (this.eventExist) {
-        this.eventExist = false;
+    emitSelectedValue(value) {
+      const eventObject = this.eventMapping.find(event => event.label === value);
+      if (eventObject) {
+        this.$set(this.rule,'event', eventObject.name);
+        if (this.eventExist) {
+          this.eventExist = false;
+        }
+      }
+    },
+    addDescription(value) {
+      if (value) {
+        this.$set(this.rule,'description', value);
       }
     },
     updateRule() {
       this.saving = true;
       this.$refs.ruleFormDrawer.startLoading();
       if (this.rule.id) {
-        this.ruleToUpdate.title = this.rule.title;
-        this.ruleToUpdate.description = this.rule.description;
-        this.ruleToUpdate.event = this.rule.event;
-        this.ruleToUpdate.score = this.rule.score;
-        this.ruleToUpdate.enabled = this.rule.enabled;
-        this.$ruleServices.updateRule(this.ruleToUpdate)
+        this.$ruleServices.updateRule(this.rule)
           .then(rule => {
             this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
             this.$root.$emit('program-rules-refresh', rule);
@@ -282,28 +291,6 @@ export default {
             this.$refs.ruleFormDrawer.endLoading();
           });
       }
-    },
-    resetFrom() {
-      this.rule.enabled = true;
-      this.rule.event = null;
-      this.$set(this.rule,'title','');
-      this.$set(this.rule,'description','');
-      this.value = {};
-      this.rule.score = 20;
-      this.rule.area = this.programTitle;
-      this.$forceUpdate();
-      this.eventExist = false;
-    },
-    updateForm(rule) {
-      this.$set(this.rule,'id',rule.id);
-      this.$set(this.rule,'title',rule.title);
-      this.$set(this.rule,'description',rule.description);
-      this.$set(this.rule,'enabled',rule.enabled);
-      this.$set(this.rule,'score',rule.score);
-      this.$set(this.rule,'event',rule.event);
-      this.rule.area = this.programTitle;
-      this.value = this.eventMapping.find(event => event.name === rule.event);
-      this.ruleToUpdate = rule;
     },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {

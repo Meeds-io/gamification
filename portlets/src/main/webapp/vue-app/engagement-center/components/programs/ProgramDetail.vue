@@ -68,7 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <v-icon dark>
                   mdi-plus
                 </v-icon>
-                <span class="ms-2 d-none d-lg-inline">
+                <span class="ms-2 d-none d-lg-inline subtitle-1">
                   {{ $t('programs.details.rule.button.addRule') }}
                 </span>
               </v-btn>
@@ -112,7 +112,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <exo-confirm-dialog
         v-if="confirmDelete"
         ref="deleteRuleConfirmDialog"
-        :message="$t('programs.details.message.confirmDeleteRule')"
+        :message="deleteConfirmMessage"
         :title="$t('programs.details.title.confirmDeleteRule')"
         :ok-label="$t('programs.details.ok.button')"
         :cancel-label="$t('programs.details.cancel.button')"
@@ -148,6 +148,7 @@ export default {
       },
       totalSize: 0,
       loadingRules: false,
+      deleteConfirmMessage: ''
     };
   },
   computed: {
@@ -230,6 +231,7 @@ export default {
     },
     confirmDelete(rule) {
       this.selectedRule = rule;
+      this.deleteConfirmMessage = this.$t('programs.details.message.confirmDeleteRule', {0: this.ruleTitle(this.selectedRule)});
       this.$refs.deleteRuleConfirmDialog.open();
     },
     deleteRule() {
@@ -248,6 +250,15 @@ export default {
         type: type || 'success',
       }}));
     },
+    ruleTitle(rule) {
+      let fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.${rule?.title}`;
+      let fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
+      if (fieldLabelI18NValue === fieldLabelI18NKey) {
+        fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.def_${rule?.title}`;
+        fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
+      }
+      return fieldLabelI18NValue === fieldLabelI18NKey ? rule?.title : fieldLabelI18NValue;
+    }
   }
 };
 </script>

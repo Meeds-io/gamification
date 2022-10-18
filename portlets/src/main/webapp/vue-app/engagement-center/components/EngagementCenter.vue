@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="!initialized && engagementCenterEnabled">
+    <main v-if="!initialized">
       <v-toolbar color="transparent" flat>
         <v-spacer />
         <v-progress-circular
@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-spacer />
       </v-toolbar>
     </main>
-    <main v-if="initialized && engagementCenterEnabled">
+    <main v-if="engagementCenterEnabled">
       <v-tabs
         id="engagementCenterTabs"
         v-model="tab"
@@ -60,10 +60,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tab-item>
       </v-tabs-items>
     </main>
-    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
     <main v-else>
-      <challenges />
+      <challenges :can-add-challenge="canAddChallenge" />
     </main>
+    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
   </v-app>
 </template>
 
