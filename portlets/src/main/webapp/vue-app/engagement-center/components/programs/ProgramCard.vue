@@ -30,7 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         aspect-ratio="1"
         min-height="70"
         min-width="70"
-        max-height="140"
+        max-height="120"
         class="primary--text">
         <v-toolbar
           color="transparent"
@@ -66,17 +66,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-menu>
         </v-toolbar>
       </v-img>
-      <div class="mt-1">
-        <div class="center">
-          <span class="font-weight-bold text--secondary">  {{ program.title }} </span>
-        </div>
-        <div class="center">
-          <v-icon size="16" class="pe-2 primary--text">fas fa-trophy</v-icon>
-          <span class="text-light-color" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-        </div>
-      </div>
+      <v-list class="pb-0 pt-1" dense>
+        <v-list-item class="px-3">
+          <v-list-item-content class="align-center py-0">
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <span
+                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text--secondary" 
+                  v-bind="attrs"
+                  v-on="on">
+                  {{ program.title }}
+                </span>
+              </template>
+              {{ program.title }}
+            </v-tooltip>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content class="py-0">
+            <div class="d-flex justify-center">
+              <v-icon size="16" class="pe-2 primary--text">fas fa-trophy</v-icon>
+              <span class="text-light-color" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+            </div>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </div>    
-    <div class="d-flex mt-2 mx-2">
+    <div class="d-flex mx-2">
       <div class="pa-1">
         <span class="my-auto caption text-light-color"> {{ this.$t('programs.details.label.hosts') }} </span>
       </div>
