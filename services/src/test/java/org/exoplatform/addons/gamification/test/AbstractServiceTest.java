@@ -363,11 +363,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleEntity newRule(String name, String domain, Boolean isEnabled, EntityType ruleType) {
 
-    RuleEntity rule = ruleDAO.findRuleByTitle(name + "_" + domain);
+    RuleEntity rule = ruleDAO.findRuleByTitle(name);
     if (rule == null) {
       rule = new RuleEntity();
       rule.setScore(Integer.parseInt(TEST__SCORE));
-      rule.setTitle(name + "_" + domain);
+      rule.setTitle(name);
       rule.setDescription("Description");
       rule.setArea(domain);
       rule.setEnabled(isEnabled);
@@ -376,7 +376,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setCreatedBy(TEST_USER_SENDER);
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
-      rule.setDomainEntity(newDomain(domain));
+      rule.setDomainEntity(domainDAO.getDomainByTitle(domain));
       rule.setType(ruleType);
       rule.setManagers(Collections.emptyList());
       rule = ruleDAO.create(rule);
