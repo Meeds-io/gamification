@@ -223,14 +223,11 @@ public class RuleServiceImpl implements RuleService {
       throw new ObjectNotFoundException("Rule does not exist");
     }
     RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
-    if (!existRule.getId().equals(oldRule.getId())) {
+    if (existRule != null && !existRule.getId().equals(oldRule.getId())) {
       throw new EntityExistsException("Rule with same event and domain already exist");
     }
     if (!canManageRule(username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
-    }
-    if (!ruleDTO.getTitle().startsWith(GAMIFICATION_DEFAULT_DATA_PREFIX)) {
-      ruleDTO.setTitle(ruleDTO.getEvent() + "_" + ruleDTO.getArea());
     }
     ruleDTO.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     ruleDTO.setCreatedBy(username);
