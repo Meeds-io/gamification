@@ -167,7 +167,7 @@ export default {
   data() {
     return {
       rules: {
-        length: (v) => (v && v.length < 30) || this.$t('programs.label.TitleLengthExceed'),
+        length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
         value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
       },
       program: null,
