@@ -23,6 +23,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Realization
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+import java.util.*;
+
 import org.junit.Test;
 
 public class RealizationsStorageTest extends AbstractServiceTest {
@@ -30,10 +32,12 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   @Test
   public void testFindAllRealizationsByFilter() {
     RealizationsFilter filter = new RealizationsFilter();
+    List<Long> domainIds = Collections.emptyList();
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(0);
     filter.setIdentityType(IdentityType.getType(""));
+    filter.setDomainIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
@@ -44,10 +48,12 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   @Test
   public void testFindUsersRealizationsByFilter() {
     RealizationsFilter filter = new RealizationsFilter();
+    List<Long> domainIds = Collections.emptyList();
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(1L);
     filter.setIdentityType(IdentityType.getType(""));
+    filter.setDomainIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
@@ -58,10 +64,12 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   @Test
   public void testGetRealizationById() {
     RealizationsFilter filter = new RealizationsFilter();
+    List<Long> domainIds = Collections.emptyList();
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(0);
     filter.setIdentityType(IdentityType.getType(""));
+    filter.setDomainIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     GamificationActionsHistoryDTO newGHistory = realizationsStorage.getRealizationById(gHistory.getId());
@@ -72,11 +80,13 @@ public class RealizationsStorageTest extends AbstractServiceTest {
   @Test
   public void testUpdateRealizationStatus() {
     RealizationsFilter filter = new RealizationsFilter();
+    List<Long> domainIds = Collections.emptyList();
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
     filter.setEarnerId(0);
     filter.setIdentityType(IdentityType.getType(""));
     filter.setIdentityType(IdentityType.getType(""));
+    filter.setDomainIds(domainIds);
     assertEquals(realizationsStorage.getRealizationsByFilter(filter, offset, limit).size(), 0);
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
