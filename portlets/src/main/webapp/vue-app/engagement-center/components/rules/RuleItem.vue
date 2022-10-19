@@ -55,16 +55,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             dense
             @mousedown="$event.preventDefault()"
             @click="editRule">
-            <v-icon size="13" class="dark-grey-color">fas fa-edit</v-icon>
-            <v-list-item-title class="ps-3 d-flex">{{ $t('programs.details.rule.button.edit') }}</v-list-item-title>
+            <v-layout class="me-3">
+              <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
+            </v-layout>
+            <v-list-item-title class="d-flex">{{ $t('programs.details.rule.button.edit') }}</v-list-item-title>
           </v-list-item>
           <v-list-item
             v-if="automaticRule"
             dense
             @mousedown="$event.preventDefault()"
             @click="deleteRule">
-            <v-icon size="13" class="dark-grey-color">fas fa-trash-alt</v-icon>
-            <v-list-item-title class="ps-3 d-flex">
+            <v-layout class="me-3">
+              <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
+            </v-layout>
+            <v-list-item-title class="d-flex">
               {{ $t('programs.details.rule.button.delete') }}
             </v-list-item-title>
           </v-list-item>
