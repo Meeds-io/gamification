@@ -21,6 +21,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="py-1 subtitle-1">
       {{ label }}
     </div>
+    <div
+      v-if="displayPlaceholder"
+      @click="hidePlaceholder()"
+      class="caption text-sub-title position-absolute pa-5 ma-1px full-width">
+      {{ placeholder }}
+    </div>
     <textarea
       id="descriptionContent"
       ref="editor"
@@ -48,6 +54,10 @@ export default {
       type: String,
       default: ''
     },
+    placeholder: {
+      type: String,
+      default: ''
+    },
   },
   data() {
     return {
@@ -55,6 +65,8 @@ export default {
       maxLength: 1300,
       minLength: 1,
       disabled: false,
+      displayPlaceholder: true,
+      editor: null,
     };
   },
   computed: {
@@ -64,14 +76,48 @@ export default {
     validLength() {
       return this.minLength <= this.charsCount && this.charsCount <= this.maxLength;
     },
+    editorReady() {
+      return this.editor && this.editor.status === 'ready';
+    },
   },
   watch: {
-    inputVal() {
-      this.$emit('input', this.inputVal);
+    inputVal: {
+      immediate: true,
+      handler(val) {
+        if (val!== '') {
+          if (this.displayPlaceholder) {
+            this.displayPlaceholder = false;
+          }
+        } else {
+          this.displayPlaceholder = true;
+        }
+        this.$emit('input', val);
+      }
     },
     validLength() {
       this.$emit('validity-updated', this.validLength);
     },
+    editorReady() {
+      if (this.editorReady) {
+        this.$emit('ready');
+      } else {
+        this.$emit('unloaded');
+      }
+    },
+    value(val) {
+      if (!this.editor) {
+        this.initCKEditor();
+      }
+      let editorData = null;
+      try {
+        editorData = this.editor.getData();
+      } catch (e) {
+        // When CKEditor not initialized yet
+      }
+      if (val !== editorData) {
+        this.initCKEditorData(val || '');
+      }
+    }
   },
   created() {
     CKEDITOR.basePath = '/commons-extension/ckeditor/';
@@ -83,6 +129,7 @@ export default {
   methods: {
     initCKEditor() {
       this.inputVal = this.value || '';
+      this.editor = CKEDITOR.instances['descriptionContent'];
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
         extraPlugins: 'simpleLink,widget',
@@ -98,9 +145,26 @@ export default {
         }
       });
     },
-    destroyCKEditor() {
-      if (CKEDITOR.instances['descriptionContent']) {
-        CKEDITOR.instances['descriptionContent'].destroy();
+    destroyCKEditor: function () {
+      if (this.editor) {
+        this.editor.destroy(true);
+      }
+    },
+    hidePlaceholder() {
+      this.displayPlaceholder = false;
+      this.setFocus();
+    },
+    initCKEditorData: function (message) {
+      this.inputVal = message || '';
+      if (this.editor) {
+        this.editor.setData(this.inputVal);
+      }
+    },
+    setFocus: function() {
+      if (this.editorReady) {
+        window.setTimeout(() => {
+          this.$nextTick().then(() => this.editor.focus());
+        }, 200);
       }
     },
   }
