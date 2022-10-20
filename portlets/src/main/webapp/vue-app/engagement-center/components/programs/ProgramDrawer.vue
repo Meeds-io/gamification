@@ -72,8 +72,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               ref="programDescription"
               v-model="program.description"
               :label="$t('programs.label.describeProgram')"
-              @addDescription="addDescription($event)"
-              @validity-updated=" validDescription = $event" />
+              @addDescription="addDescription($event)" />
           </div>
           <div 
             v-if="showBudget"

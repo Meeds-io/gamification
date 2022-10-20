@@ -284,11 +284,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       case ENABLED:
       case DISABLED:
         suffixes.add("FilterByEnabled");
-        predicates.add("r.isEnabled = :enabled");
+        predicates.add("r.isDeleted = false AND r.isEnabled = :enabled");
         break;
       case DELETED:
         suffixes.add("FilterByDeleted");
-        predicates.add("r.isDeleted < :deleted");
+        predicates.add("r.isDeleted = :deleted");
         break;
       default:
         break;
