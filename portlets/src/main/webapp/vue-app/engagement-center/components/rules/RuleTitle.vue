@@ -33,7 +33,7 @@ export default {
   computed: {
     ruleTitle() {
       return !this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${this.rule?.title}`).includes('exoplatform.gamification.gamificationinformation.rule.title') ?
-        this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${this.rule?.title}`) : this.rule?.event;
+        this.$t(`exoplatform.gamification.gamificationinformation.rule.title.${this.rule?.title}`) : this.rule?.title;
     }
   },
 };

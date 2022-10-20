@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.io.StringWriter;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
@@ -30,6 +31,8 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
 import org.json.JSONWriter;
 import org.junit.Before;
@@ -46,6 +49,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
+    Identity adminAclIdentity = new Identity("root", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
+    identityRegistry.register(adminAclIdentity);
     registry(getComponentClass());
     ConversationState.setCurrent(null);
   }
@@ -88,7 +93,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
    **/
   @Test
   public void testAddRule() throws Exception {
-    String restPath = "/gamification/rules/add";
+    String restPath = "/gamification/rules";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -113,12 +118,12 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
-    startSessionAs("root1");
+    startSessionAsAdministrator("root");
     ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("description", entity.getDescription());
-    assertEquals("eventName_areaName", entity.getTitle());
+    assertEquals("foo", entity.getTitle());
     response = launcher.service("POST", restPath, "", h, data, envctx);
     assertEquals(409, response.getStatus());
   }
@@ -129,9 +134,9 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Test
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
-    String restPath = "/gamification/rules/delete/" + ruleEntity.getId();
+    String restPath = "/gamification/rules/" + ruleEntity.getId();
     EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
+    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "DELETE", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
@@ -150,8 +155,8 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     MultivaluedMap<String, String> h = new MultivaluedMapImpl();
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
-    startSessionAs("root1");
-    ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
+    startSessionAsAdministrator("root");
+    ContainerResponse response = launcher.service("DELETE", restPath, "", h, data, envctx);
     assertEquals(200, response.getStatus());
     ConversationState.setCurrent(null);
   }
@@ -163,7 +168,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Test
   public void testUpdateRule() throws Exception {
     RuleDTO ruleDTO = newRuleDTO();
-    String restPath = "/gamification/rules/update";
+    String restPath = "/gamification/rules";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -193,7 +198,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     h.putSingle("content-type", "application/json");
     h.putSingle("content-length", "" + data.length);
     ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
-    startSessionAs("root1");
+    startSessionAsAdministrator("root");
     response = launcher.service("PUT", restPath, "", h, data, envctx);
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
