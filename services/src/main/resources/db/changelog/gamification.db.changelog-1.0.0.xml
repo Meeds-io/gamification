@@ -508,4 +508,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <param name="tableName">GAMIFICATION_DOMAIN</param>
         </customChange>
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-48" dbms="mysql">
+        <update tableName="GAMIFICATION_RULE">
+            <column name="ENABLED" valueBoolean="true"/>
+            <where>TYPE = 1 AND ENABLED = FALSE</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>
