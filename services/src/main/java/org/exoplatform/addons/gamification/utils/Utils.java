@@ -7,16 +7,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +25,13 @@ import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -80,6 +75,10 @@ public class Utils {
   public static final String            DEFAULT_IMAGE_REMOTE_ID     = "default-cover";
 
   public static final String            TYPE                        = "cover";
+
+  public static final String            REWARDING_GROUP             = "/platform/rewarding";
+  
+  public static final String            ADMINS_GROUP             = "/platform/administrators";
 
   private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
 
@@ -471,4 +470,22 @@ public class Utils {
         + BASE_URL_DOMAINS_REST_API;
   }
 
+  public static boolean isAdministrator(String username) {
+    if (StringUtils.isBlank(username)) {
+      throw new IllegalArgumentException("Username is mandatory");
+    }
+    org.exoplatform.services.security.Identity identity = CommonsUtils.getService(IdentityRegistry.class).getIdentity(username);
+    if (identity != null) {
+      return identity.isMemberOf(REWARDING_GROUP) || identity.isMemberOf(ADMINS_GROUP);
+    }
+    return false;
+  }
+
+  public static void broadcastEvent(ListenerService listenerService, String eventName, Object source, Object data) {
+    try {
+      listenerService.broadcast(eventName, source, data);
+    } catch (Exception e) {
+      LOG.warn("Error broadcasting event '" + eventName + "' using source '" + source + "' and data " + data, e);
+    }
+  }
 }
