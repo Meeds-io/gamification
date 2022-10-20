@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.search.RuleSearchConnector;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class RuleStorage {
@@ -27,6 +30,11 @@ public class RuleStorage {
   public RuleDTO saveRule(RuleDTO ruleDTO) {
     RuleEntity ruleEntity = RuleMapper.ruleDTOToRule(ruleDTO);
     ruleEntity.setLastModifiedDate(new Date());
+    DomainDTO domainDTO = ruleDTO.getDomainDTO();
+    if (domainDTO != null) {
+      DomainEntity domainEntity = Utils.getDomainById(domainDTO.getId());
+      ruleEntity.setDomainEntity(domainEntity);
+    }
     if (ruleEntity.getId() == null) {
       ruleEntity.setCreatedDate(new Date());
       ruleEntity = ruleDAO.create(ruleEntity);
@@ -110,11 +118,11 @@ public class RuleStorage {
     return ruleDAO.getRulesTotalScoreByDomain(domainId);
   }
 
-  public void deleteRule(long ruleId) throws ObjectNotFoundException {
-    deleteRule(ruleId, false);
+  public RuleDTO deleteRuleById(long ruleId, String userId) throws ObjectNotFoundException {
+    return deleteRuleById(ruleId, userId, false);
   }
 
-  public RuleDTO deleteRule(long ruleId, boolean force) throws ObjectNotFoundException {
+  public RuleDTO deleteRuleById(long ruleId, String userId, boolean force) throws ObjectNotFoundException {
     RuleEntity ruleEntity = ruleDAO.find(ruleId);
     if (ruleEntity == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " does not exist");
@@ -122,6 +130,8 @@ public class RuleStorage {
     if (force) {
       ruleDAO.delete(ruleEntity);
     } else {
+      ruleEntity.setLastModifiedBy(userId);
+      ruleEntity.setLastModifiedDate(new Date());
       ruleEntity.setDeleted(true);
       ruleDAO.update(ruleEntity);
     }

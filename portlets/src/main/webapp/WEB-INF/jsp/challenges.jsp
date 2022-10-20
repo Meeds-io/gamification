@@ -14,12 +14,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-<%@page import="org.exoplatform.services.security.ConversationState"%>
-<%@page import="org.exoplatform.services.security.Identity"%>
+<%@ page import="org.exoplatform.addons.gamification.utils.Utils" %>
+<%@ page import="org.exoplatform.services.security.ConversationState" %>
 
 <%
-    boolean isAdministrator = ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
+  boolean isAdministrator = Utils.isAdministrator(ConversationState.getCurrent().getIdentity().getUserId());
 %>
+
 <div class="VuetifyApp singlePageApplication">
   <div id="EngagementCenterApplication">
     <script type="text/javascript">
