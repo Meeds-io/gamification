@@ -48,8 +48,8 @@ public class ChallengeStorage {
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }
 
-  public Challenge deleteChallenge(long challengeId) throws ObjectNotFoundException {
-    RuleDTO ruleDTO = ruleStorage.deleteRule(challengeId, true);
+  public Challenge deleteChallenge(long challengeId, String username) throws ObjectNotFoundException {
+    RuleDTO ruleDTO = ruleStorage.deleteRuleById(challengeId, username, true);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }
 

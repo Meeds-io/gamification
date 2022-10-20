@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app>
-    <main v-if="!initialized && engagementCenterEnabled">
+    <main v-if="!initialized">
       <v-toolbar color="transparent" flat>
         <v-spacer />
         <v-progress-circular
@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-spacer />
       </v-toolbar>
     </main>
-    <main v-if="initialized && engagementCenterEnabled">
+    <main v-if="engagementCenterEnabled">
       <v-tabs
         id="engagementCenterTabs"
         v-model="tab"
@@ -42,10 +42,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-show="!displayProgramDetail"
             id="engagementCenterProgramsTab"
             :is-administrator="isAdministrator" />
-          <engagement-center-program-detail v-if="displayProgramDetail" :program="program" />
+          <engagement-center-program-detail
+            v-if="displayProgramDetail"
+            :program="program"
+            :events="events"
+            :can-manage-rule="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
-          <challenges :challenge-id="challengeId" />
+          <challenges :challenge-id="challengeId" :can-add-challenge="canAddChallenge" />
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -57,8 +61,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-tabs-items>
     </main>
     <main v-else>
-      <challenges />
+      <challenges :can-add-challenge="canAddChallenge" />
     </main>
+    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
   </v-app>
 </template>
 
@@ -77,6 +82,7 @@ export default {
     earnerId: eXo.env.portal.userIdentityId,
     challengeId: null,
     program: null,
+    canAddChallenge: false,
     displayProgramDetail: false,
     events: [],
     avoidAddToHistory: false,

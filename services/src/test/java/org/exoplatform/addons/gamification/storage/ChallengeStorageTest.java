@@ -76,7 +76,7 @@ public class ChallengeStorageTest extends AbstractServiceTest {
     Challenge savedChallenge = challengeStorage.getChallengeById(challenge.getId());
     assertNotNull(savedChallenge);
 
-    challengeStorage.deleteChallenge(challenge.getId());
+    challengeStorage.deleteChallenge(challenge.getId(), "root");
     savedChallenge = challengeStorage.getChallengeById(challenge.getId());
     assertNull(savedChallenge);
   }
