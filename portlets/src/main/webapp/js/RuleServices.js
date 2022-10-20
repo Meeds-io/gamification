@@ -59,19 +59,19 @@ export function getEvents() {
 
 
 export function deleteRule(ruleId) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/delete/${ruleId}`, {
-    method: 'PUT',
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/${ruleId}`, {
+    method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when removing rule');
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }
 export function updateRule(rule) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/update`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'PUT',
     credentials: 'include',
     headers: {
@@ -82,12 +82,12 @@ export function updateRule(rule) {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when updating rule');
+      throw new Error(resp.status);
     }
   });
 }
 export function createRule(rule) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules/add`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -98,7 +98,7 @@ export function createRule(rule) {
     if (resp && resp.ok) {
       return resp.json();
     } else {
-      throw new Error('Error when updating rule');
+      throw new Error(resp.status);
     }
   });
 }
