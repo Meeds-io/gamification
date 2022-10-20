@@ -233,8 +233,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
       switch (filter.getEntityStatusType()) {
       case ENABLED:
+        query.setParameter("enabled", true);
+        query.setParameter("date", Calendar.getInstance().getTime());
+        break;
       case DISABLED:
-        query.setParameter("enabled", entityStatusType == EntityStatusType.ENABLED);
+        query.setParameter("enabled", false);
         break;
       case DELETED:
         query.setParameter("deleted", true);
@@ -282,8 +285,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
       switch (filter.getEntityStatusType()) {
       case ENABLED:
-      case DISABLED:
         suffixes.add("FilterByEnabled");
+        predicates.add("r.isDeleted = false AND r.isEnabled = :enabled AND (r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        break;
+      case DISABLED:
+        suffixes.add("FilterByDisabled");
         predicates.add("r.isDeleted = false AND r.isEnabled = :enabled");
         break;
       case DELETED:
