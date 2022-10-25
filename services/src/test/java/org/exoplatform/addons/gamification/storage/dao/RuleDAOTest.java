@@ -65,7 +65,8 @@ public class RuleDAOTest extends AbstractServiceTest {
   public void testFindRuleByEventAndDomain() {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
-    assertNotNull(ruleDAO.findRuleByEventAndDomain(ruleEntity.getEvent(), ruleEntity.getArea()));
+    long domainId = ruleEntity.getDomainEntity().getId();
+    assertNotNull(ruleDAO.findRuleByEventAndDomain(ruleEntity.getEvent(), domainId));
   }
 
   @Test

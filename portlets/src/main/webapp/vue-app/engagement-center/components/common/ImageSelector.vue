@@ -79,17 +79,11 @@ export default {
     uploadCover(file) {
       if (file && file.size) {
         if (file.type && file.type.indexOf('image/') !== 0) {
-          this.$challengeUtils.displayAlert({
-            type: 'error',
-            message: this.$t('engagementCenter.error.uploadUnsupportedFileType\''),
-          });
+          this.$engagementCenterUtils.displayAlert(this.$t('engagementCenter.error.uploadUnsupportedFileType'), 'error');
           return;
         }
         if (file.size > this.maxUploadsSize) {
-          this.$challengeUtils.displayAlert({
-            type: 'error',
-            message: this.$t('programs.imageSize.errorMessage'),
-          });
+          this.$engagementCenterUtils.displayAlert(this.$t('programs.imageSize.errorMessage'), 'error');
           return;
         }
         const thiss = this;
@@ -104,10 +98,7 @@ export default {
             this.$emit('updated', uploadId);
           })
           .catch(() =>
-            this.$challengeUtils.displayAlert({
-              type: 'error',
-              message: this.$t('programs.cover.uploadErrorMessage'),
-            })
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.cover.uploadErrorMessage'), 'error')
           );
       }
     },

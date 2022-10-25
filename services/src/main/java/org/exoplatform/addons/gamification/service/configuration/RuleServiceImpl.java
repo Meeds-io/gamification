@@ -16,7 +16,6 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
 import static org.exoplatform.addons.gamification.utils.Utils.*;
 
 import java.util.ArrayList;
@@ -72,14 +71,14 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.findRuleByTitle(ruleTitle);
   }
 
-  public RuleDTO findRuleByEventAndDomain(String ruleTitle, String domain) throws IllegalArgumentException {
+  public RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId) throws IllegalArgumentException {
     if (StringUtils.isBlank(ruleTitle)) {
       throw new IllegalArgumentException("Rule title is mandatory");
     }
-    if (StringUtils.isBlank(domain)) {
-      throw new IllegalArgumentException("Rule domain is mandatory");
+    if (domainId < 0) {
+      throw new IllegalArgumentException("Domain id must be positive");
     }
-    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domain);
+    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domainId);
   }
 
   public List<RuleDTO> findAllRules() {// NOSONAR
@@ -201,7 +200,8 @@ public class RuleServiceImpl implements RuleService {
    */
   @Override
   public RuleDTO createRule(RuleDTO ruleDTO) {
-    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
+    long domainId = ruleDTO.getDomainDTO().getId();
+    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
     if (oldRule != null) {
       throw new EntityExistsException("Rule with same event and domain already exist");
     }
@@ -222,9 +222,13 @@ public class RuleServiceImpl implements RuleService {
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule does not exist");
     }
-    RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
-    if (existRule != null && !existRule.getId().equals(oldRule.getId())) {
-      throw new EntityExistsException("Rule with same event and domain already exist");
+    DomainDTO domainDTO = ruleDTO.getDomainDTO();
+    if (domainDTO != null) {
+      long domainId = ruleDTO.getDomainDTO().getId();
+      RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
+      if (existRule != null && !existRule.getId().equals(oldRule.getId())) {
+        throw new EntityExistsException("Rule with same event and domain already exist");
+      }
     }
     if (!canManageRule(username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");

@@ -125,10 +125,13 @@ public class ManageDomainsEndpoint implements ResourceContainer {
                              @QueryParam("type")
                              @DefaultValue("AUTOMATIC")
                              String type,
-                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false)
+                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
                              @QueryParam("status")
                              @DefaultValue("ENABLED")
                              String status,
+                             @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false)
+                             @QueryParam("includeDeleted")
+                             @DefaultValue("false") boolean includeDeleted,
                              @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
                              @QueryParam("returnSize")
                              @DefaultValue("false")
@@ -143,6 +146,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
     DomainFilter domainFilter = new DomainFilter();
+    domainFilter.setIncludeDeleted(includeDeleted);
     EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.AUTOMATIC : EntityFilterType.valueOf(type);
     domainFilter.setEntityFilterType(filterType);
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
@@ -223,7 +227,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
 
   @DELETE
   @RolesAllowed("administrators")
-  @Path("{id}")
+  @Path("{domainId}")
   @Operation(summary = "Deletes an existing domain identified by its id", method = "DELETE")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
@@ -231,15 +235,15 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       @ApiResponse(responseCode = "404", description = "Object not found"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   public Response deleteDomain(@Parameter(description = "domain id to be deleted", required = true)
-                               @PathParam("id")
-                               long id) {
-    if (id <= 0) {
+                               @PathParam("domainId")
+                               long domainId) {
+    if (domainId <= 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("The parameter 'id' must be positive integer").build();
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      domainService.deleteDomain(id, identity);
-      return Response.noContent().build();
+      DomainDTO domainDTO = domainService.deleteDomainById(domainId, identity);
+      return Response.ok().entity(domainDTO).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
     } catch (IllegalAccessException e) {
@@ -334,7 +338,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("DomainId must be not null").build();
     }
     String currentUser = Utils.getCurrentUser();
-    DomainDTO domain = domainService.getDomainById(Long.valueOf(domainId));
+    DomainDTO domain = domainService.getDomainById(domainId);
     if (domain == null) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
     }
@@ -342,7 +346,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   private List<DomainRestEntity> getDomainsRestEntitiesByFilter(DomainFilter filter, int offset, int limit, String currentUser) {
-    List<DomainDTO> domains = domainService.getAllDomains(filter, offset, limit);
+    List<DomainDTO> domains = domainService.getDomainsByFilter(filter, offset, limit);
     return EntityBuilder.toRestEntities(domains, currentUser);
   }
 
