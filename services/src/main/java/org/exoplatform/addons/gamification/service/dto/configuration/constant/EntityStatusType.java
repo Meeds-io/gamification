@@ -18,5 +18,5 @@
 package org.exoplatform.addons.gamification.service.dto.configuration.constant;
 
 public enum EntityStatusType {
-  ENABLED, DISABLED, DELETED, ALL
+  ENABLED, DISABLED, ALL
 }

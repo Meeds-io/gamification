@@ -15,7 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function retrievePrograms(offset, limit, type, status, returnSize, query) {
+export function retrievePrograms(offset, limit, type, status, query, includeDeleted) {
   const formData = new FormData();
   if (offset) {
     formData.append('offset', offset);
@@ -30,16 +30,16 @@ export function retrievePrograms(offset, limit, type, status, returnSize, query)
   if (status) {
     formData.append('status', status);
   }
-  if (returnSize) {
-    formData.append('returnSize', returnSize);
-  }
   if (query) {
     formData.append('query', query);
+  }
+  if (includeDeleted) {
+    formData.append('includeDeleted', includeDeleted);
   }
 
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?returnSize=true&${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
@@ -110,6 +110,19 @@ export function getProgramById(id) {
       return resp.json();
     } else {
       return null;
+    }
+  });
+}
+
+export function deleteProgram(programId) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains/${programId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Response code indicates a server error', resp);
     }
   });
 }
