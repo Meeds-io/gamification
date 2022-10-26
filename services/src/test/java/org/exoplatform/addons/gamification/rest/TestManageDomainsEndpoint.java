@@ -201,7 +201,7 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
     restPath = REST_PATH + PATH_SEPARATOR + autoDomain.getId(); // NOSONAR
     response = launcher.service(HTTPMethods.DELETE.name(), restPath, "", null, null, envctx);
     assertNotNull(response);
-    assertEquals(204, response.getStatus());
+    assertEquals(200, response.getStatus());
     ConversationState.setCurrent(null);
   }
 

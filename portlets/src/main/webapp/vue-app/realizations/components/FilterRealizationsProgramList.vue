@@ -78,7 +78,7 @@ export default {
     programsList: [],
     loadedMoreProgramsList: [],
     type: 'ALL',
-    status: 'ENABLED',
+    status: 'ALL',
     searchingKey: '',
     size: 0,
     noProgramsFound: false,
@@ -144,7 +144,7 @@ export default {
       this.loading = true;
       const offset = append && this.programsList?.length || 0;
       this.$programsServices
-        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, true, searchingKey)
+        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, searchingKey, true)
         .then((programsList) => {
           this.size = programsList.domainsSize;
           if (append) {

@@ -57,32 +57,32 @@ public class DomainServiceTest extends AbstractServiceTest {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(0, domainService.getDomainsByFilter(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
-    assertEquals(4, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(4, domainService.getDomainsByFilter(filter, offset, 10).size());
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(2, domainService.getDomainsByFilter(filter, offset, 10).size());
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
-    assertEquals(2, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(2, domainService.getDomainsByFilter(filter, offset, 10).size());
 
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(2, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(2, domainService.getDomainsByFilter(filter, offset, 10).size());
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(2, domainService.getDomainsByFilter(filter, offset, 10).size());
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(6, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(6, domainService.getDomainsByFilter(filter, offset, 10).size());
     filter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(2, domainService.getDomainsByFilter(filter, offset, 10).size());
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(1, domainService.getDomainsByFilter(filter, offset, 10).size());
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(1, domainService.getAllDomains(filter, offset, 10).size());
+    assertEquals(1, domainService.getDomainsByFilter(filter, offset, 10).size());
   }
 
   @Test
@@ -219,7 +219,7 @@ public class DomainServiceTest extends AbstractServiceTest {
     assertEquals(newOwners, storedDomain.getOwners());
     assertTrue(storedDomain.isEnabled());
 
-    domainService.deleteDomain(storedDomain.getId(), adminAclIdentity);
+    domainService.deleteDomainById(storedDomain.getId(), adminAclIdentity);
     assertThrows(IllegalAccessException.class, () -> domainService.updateDomain(updatedDomain, regularAclIdentity));
   }
 
@@ -229,10 +229,10 @@ public class DomainServiceTest extends AbstractServiceTest {
     assertFalse(domain.isDeleted());
     domain.setDeleted(true);
 
-    assertThrows(ObjectNotFoundException.class, () -> domainService.deleteDomain(20000l, adminAclIdentity));
-    assertThrows(IllegalAccessException.class, () -> domainService.deleteDomain(domain.getId(), regularAclIdentity));
+    assertThrows(ObjectNotFoundException.class, () -> domainService.deleteDomainById(20000l, adminAclIdentity));
+    assertThrows(IllegalAccessException.class, () -> domainService.deleteDomainById(domain.getId(), regularAclIdentity));
 
-    domainService.deleteDomain(domain.getId(), adminAclIdentity);
+    domainService.deleteDomainById(domain.getId(), adminAclIdentity);
     DomainEntity domainEntity = domainDAO.find(domain.getId());
     assertTrue(domainEntity.isDeleted());
   }
