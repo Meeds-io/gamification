@@ -357,14 +357,11 @@ export default {
       }
     },
     getFromDate(date) {
-      return this.$challengeUtils.getFromDate(date);
+      return this.$engagementCenterUtils.getFromDate(date);
     },
     SaveChallenge() {
       if (this.challenge.startDate > this.challenge.endDate){
-        this.$challengeUtils.displayAlert({
-          type: 'error',
-          message: this.$t('challenges.challengeDateError'),
-        });
+        this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeDateError'), 'error');
         return;
       }
       if (this.challenge && this.challenge.id){
@@ -377,20 +374,14 @@ export default {
         this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.updateChallenge(this.challenge)
           .then(challenge =>{
-            this.$challengeUtils.displayAlert({
-              type: 'success',
-              message: this.$t('challenges.challengeUpdateSuccess'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeUpdateSuccess'));
             this.$root.$emit('challenge-updated', challenge);
             this.$root.$emit('program-rules-refresh');
             this.close();
             this.challenge = {};
           })
           .catch(() => {
-            this.$challengeUtils.displayAlert({
-              type: 'error',
-              message: this.$t('challenges.challengeCreateError'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeCreateError'), 'error');
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       } else {
@@ -398,18 +389,12 @@ export default {
         this.$challengesServices.saveChallenge(this.challenge)
           .then((challenge) =>{
             this.$root.$emit('challenge-added', challenge);
-            this.$challengeUtils.displayAlert({
-              type: 'success',
-              message: this.$t('challenges.challengeCreateSuccess'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeCreateSuccess'));
             this.close();
             this.challenge = {};
           })
           .catch(() => {
-            this.$challengeUtils.displayAlert({
-              type: 'error',
-              message: this.$t('challenges.challengeCreateError'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeCreateError'), 'error');
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       }

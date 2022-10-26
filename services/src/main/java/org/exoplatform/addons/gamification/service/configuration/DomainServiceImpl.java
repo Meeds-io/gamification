@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,8 +63,14 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  public List<DomainDTO> getAllDomains(DomainFilter filter, int offset, int limit) {
-    return domainStorage.getAllDomains(filter, offset, limit);
+  public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, int offset, int limit) {
+    List<DomainDTO> domains = new ArrayList<>();
+    List<Long> domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
+    for (Long domainId : domainIds) {
+      DomainDTO domainDTO = getDomainById(domainId);
+      domains.add(domainDTO);
+    }
+    return domains;
   }
 
   @Override
@@ -146,12 +153,12 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  public void deleteDomain(long id, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!canUpdateDomain(id, aclIdentity)) {
+  public DomainDTO deleteDomainById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
+    if (!canUpdateDomain(domainId, aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to create a domain");
     }
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
-    DomainDTO domain = domainStorage.getDomainById(id);
+    DomainDTO domain = domainStorage.getDomainById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
     }
@@ -159,6 +166,7 @@ public class DomainServiceImpl implements DomainService {
     domain.setLastModifiedDate(date);
     domain = domainStorage.saveDomain(domain);
     broadcast(domain, "delete");
+    return domain;
   }
 
   @Override

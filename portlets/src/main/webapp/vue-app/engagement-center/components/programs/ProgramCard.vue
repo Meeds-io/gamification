@@ -32,39 +32,49 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         min-width="70"
         max-height="120"
         class="primary--text">
-        <v-toolbar
-          color="transparent"
-          flat>
-          <v-spacer />
-          <v-menu
-            v-if="showActionsMenu"
-            v-model="showMenu"
-            :left="!$vuetify.rtl"
-            :right="$vuetify.rtl"
-            bottom
-            offset-y
-            attach>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                icon
-                small
-                class="mr-0 primary"
-                v-bind="attrs"
-                v-on="on">
-                <v-icon size="16" color="white">fas fa-ellipsis-v</v-icon>
-              </v-btn>
-            </template>
-            <v-list dense class="pa-0">
-              <v-list-item
-                class="editList"
-                dense
-                @click="editProgram">
-                <v-icon small class="me-2 mb-1"> fas fa-edit </v-icon>
-                <v-list-item-title class="editLabel">{{ $t('programs.button.editProgram') }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-toolbar>
+        <v-menu
+          v-if="showActionsMenu"
+          v-model="showMenu"
+          :left="!$vuetify.rtl"
+          :right="$vuetify.rtl"
+          bottom
+          offset-y
+          attach>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              width="26"
+              height="26"
+              class="pull-right primary ma-2"
+              v-bind="attrs"
+              v-on="on"
+              @blur="closeMenu">
+              <v-icon size="15" color="white">fas fa-ellipsis-v</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense class="pa-0">
+            <v-list-item
+              dense
+              @mousedown="$event.preventDefault()"
+              @click="editProgram">
+              <v-layout class="me-3">
+                <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
+              </v-layout>
+              <v-list-item-title class="d-flex">{{ $t('programs.button.editProgram') }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              dense
+              @mousedown="$event.preventDefault()"
+              @click="deleteProgram">
+              <v-layout class="me-3">
+                <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
+              </v-layout>
+              <v-list-item-title class="d-flex">
+                {{ $t('programs.button.deleteProgram') }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-img>
       <v-list class="pb-0 pt-1" dense>
         <v-list-item class="px-3">
@@ -91,7 +101,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </div>    
+    </div>
     <div class="d-flex mx-2">
       <div class="pa-1">
         <span class="my-auto caption text-light-color"> {{ this.$t('programs.details.label.hosts') }} </span>
@@ -160,9 +170,19 @@ export default {
       }
       this.$root.$emit('edit-program-details', this.program);
     },
+    deleteProgram(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      this.$emit('delete-program', this.program);
+    },
     openProgramDetail() {
       this.$root.$emit('open-program-detail', this.program);
       window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
+    },
+    closeMenu() {
+      this.showMenu = false;
     },
   }
 };
