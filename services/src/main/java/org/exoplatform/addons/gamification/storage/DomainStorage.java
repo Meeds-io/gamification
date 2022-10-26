@@ -41,15 +41,15 @@ import org.exoplatform.upload.UploadService;
 
 public class DomainStorage {
 
-  private static final String FILE_API_NAME_SPACE = "gamification";
+  private static final String  FILE_API_NAME_SPACE = "gamification";
 
-  private DomainDAO           domainDAO;
+  private final DomainDAO      domainDAO;
 
-  private DomainOwnerDAO      domainOwnerDAO;
+  private final DomainOwnerDAO domainOwnerDAO;
 
-  private FileService         fileService;
+  private final FileService    fileService;
 
-  private UploadService       uploadService;
+  private final UploadService  uploadService;
 
   public DomainStorage(DomainDAO domainDAO, DomainOwnerDAO domainOwnerDAO, FileService fileService, UploadService uploadService) {
     this.domainDAO = domainDAO;
@@ -83,8 +83,8 @@ public class DomainStorage {
     return DomainMapper.domainEntityToDomainDTO(domainDAO.getDomainByTitle(domainTitle), domainOwnerDAO);
   }
 
-  public List<DomainDTO> getAllDomains(DomainFilter filter, int offset, int limit) {
-    return DomainMapper.domainsToDomainDTOs(domainDAO.getAllDomains(offset, limit, filter), domainOwnerDAO);
+  public List<Long> getDomainsByFilter(DomainFilter filter, int offset, int limit) {
+    return domainDAO.getDomainsByFilter(offset, limit, filter);
   }
 
   public int countDomains(DomainFilter domainFilter) {

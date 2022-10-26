@@ -31,8 +31,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -52,8 +50,6 @@ import java.util.List;
 @Tag(name = "/gamification/rules", description = "Manages rules")
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
-
-  private static final Log   LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
 
   private final CacheControl cacheControl;
 
@@ -81,7 +77,8 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "Limit of results to retrieve", required = false) @QueryParam("limit") @DefaultValue("20") int limit,
                            @Parameter(description = "Used to filter rules by domain", required = false) @QueryParam("domainId") long domainId,                           
                            @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false) @QueryParam("type") @DefaultValue("ALL") String type,
-                           @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED, DELETED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
+                           @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
+                           @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
                            @Parameter(description = "term to search rules with") @QueryParam("term") String term,
                            @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
     if (offset < 0) {
@@ -91,6 +88,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
     RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setIncludeDeleted(includeDeleted);
     EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
     ruleFilter.setEntityFilterType(filterType);
     EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
