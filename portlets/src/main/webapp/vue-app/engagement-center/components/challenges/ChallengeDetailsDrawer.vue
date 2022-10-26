@@ -198,7 +198,7 @@ export default {
       this.$refs.challengeDetails.close();
     },
     getFromDate(date) {
-      return this.$challengeUtils.getFromDate(date);
+      return this.$engagementCenterUtils.getFromDate(date);
     },
     openDetails() {
       this.$root.$emit('open-winners-drawer', this.challenge?.id, true);
