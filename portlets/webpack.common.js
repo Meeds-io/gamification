@@ -30,6 +30,7 @@ module.exports = {
         earnpoints: './src/main/webapp/vue-app/Eagamificationearnpoints/earnpoints.js',
         spaceleaderboard: './src/main/webapp/vue-app/space/spaceleaderboard.js',
         profileStats: './src/main/webapp/vue-app/profileStats/main.js',
+        myContributions: './src/main/webapp/vue-app/myContributions/main.js',
         popularSpaces: './src/main/webapp/vue-app/popularSpaces/main.js',
         usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
         badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',

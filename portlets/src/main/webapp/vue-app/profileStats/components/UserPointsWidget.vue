@@ -24,6 +24,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       xs12
       my-4>
       <v-layout
+        v-if="overviewDisplay"
+        row
+        wrap
+        mx-2
+        align-start
+        px-2>
+        <v-flex
+          d-flex>
+          <div>
+            <span class="pe-6 subtitle-2 profile-card-header">{{ $t('overview.myContributions.points') }}</span>
+          </div>
+        </v-flex>
+      </v-layout>
+      <v-layout
+        v-else
         row
         wrap
         mx-2
@@ -58,7 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-layout>
     </v-flex>
     <div style="margin:auto;">
-      <div id="echartUserPoints" style="width:320px; height:220px; "></div>
+      <div id="echartUserPoints" :style="pieChartDimensions"></div>
     </div>
   </v-layout>
 </template>
@@ -66,7 +81,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI';
 export default {
-
+  props: {
+    overviewDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       userPoints: 0,
@@ -79,16 +99,16 @@ export default {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'normal',
-            fontSize: '16',
+            fontSize: this.overviewDisplay ? '14' : '16',
           },
           subtext: '',
           subtextStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'bold',
-            fontSize: '18',
+            fontSize: this.overviewDisplay ? '14' : '18',
           },
-          top: '40%',
+          top: this.overviewDisplay ? '35%' : '40%',
           textAlign: 'center'
         }],
         tooltip: { 
@@ -111,10 +131,19 @@ export default {
               },
 
             },
+            color: ['#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
+              '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
+              '#c9a227', '#ffccd5', '#134d9b', '#E66CDC', '#58D68B', '#5CE6D3', '#f16a27', '#ac1c1e', '#eda3ff', '#1a7431',
+              '#a47e1b', '#ff4d6d', '#62b0de', '#FF97D0', '#92e03a', '#f44336', '#3d6d8a', '#E0A5FF', '#FF9DB8', '#808080']
           }, 
         ]
       }
     };
+  },
+  computed: {
+    pieChartDimensions() {
+      return this.overviewDisplay ? 'width:280px; height:182px;' : 'width:320px; height:220px;';
+    }
   },
   created() {
     this.getGamificationPointsStats();
