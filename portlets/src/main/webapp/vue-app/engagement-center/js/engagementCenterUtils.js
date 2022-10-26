@@ -69,8 +69,13 @@ export function getFromDate(date) {
   return `${date.toLocaleDateString(lang || 'en', options)} ${day}, ${year}` ;
 }
 
-export function displayAlert(alert) {
-  document.dispatchEvent(new CustomEvent('notification-alert', {detail: alert}));
+export function displayAlert(message, type) {
+  document.dispatchEvent(new CustomEvent('notification-alert', {
+    detail: {
+      message,
+      type: type || 'success',
+    }
+  }));
 }
 
 export const getIsoDate = (date) => {

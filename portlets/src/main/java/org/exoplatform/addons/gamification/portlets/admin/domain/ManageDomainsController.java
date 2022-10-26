@@ -70,9 +70,9 @@ public class ManageDomainsController extends BaseController {
 
     }
 
-    DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ALL, "");
+    DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ALL, "", false);
     // ----Load categories by context
-    List<DomainDTO> domains = domainService.getAllDomains(domainFilter, 0, 0);
+    List<DomainDTO> domains = domainService.getDomainsByFilter(domainFilter, 0, 0);
 
     JSONArray domainsJson = new JSONArray();
     // --- Build json response
