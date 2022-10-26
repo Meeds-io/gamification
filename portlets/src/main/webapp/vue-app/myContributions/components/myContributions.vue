@@ -14,23 +14,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-<template class="VuetifyApp">
-  <div class="v-application v-application--is-ltr">
-    <div class="v-application--wrap">
-      <v-card
-        height="280"
-        width="370">
-        <div class="d-flex flex-row">
-          <h4 class="hidden-space align-self-start ms-4"> {{ $t('overview.myContributions.title') }} </h4>
-          <v-spacer />
-          <a :href="achievementsURL"> <h5 class="text-font-size align-self-end me-7 primary--text"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
-        </div>
-        <div class="mt-n2">
-          <user-points-widget :overview-display="true" />
-        </div>
-      </v-card>
+<template>
+  <v-card
+    height="280"
+    width="410"
+    flat>
+    <div class="d-flex flex-row">
+      <h4 class="hidden-space align-self-start ms-4"> {{ $t('overview.myContributions.title') }} </h4>
+      <v-spacer />
+      <a :href="achievementsURL"> <h5 class="text-font-size align-self-end me-7 primary--text"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </div>
-  </div>
+    <div class="mt-n2">
+      <user-points-widget :overview-display="true" />
+    </div>
+  </v-card>
 </template>
 <script>
 export default {

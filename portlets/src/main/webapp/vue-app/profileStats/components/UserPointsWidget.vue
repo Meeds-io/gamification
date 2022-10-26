@@ -94,7 +94,7 @@ export default {
       option: {
         title: [{
           text: 'Total',
-          left: '63%',
+          left: '73%',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
@@ -108,7 +108,7 @@ export default {
             fontWeight: 'bold',
             fontSize: this.overviewDisplay ? '14' : '18',
           },
-          top: this.overviewDisplay ? '35%' : '40%',
+          top: '40%',
           textAlign: 'center'
         }],
         tooltip: { 
@@ -117,14 +117,20 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          left: 5,
-          top: 12,
+          left: 1,
+          top: 20,
+          formatter: (name) => {
+            if (name.length > 20) {
+              return `${name.substring(0, 20)  }...`;
+            }
+      		  return name ;
+          },
         },
         series: [
           {
             type: 'pie',
             radius: ['45%', '88%'],
-            center: ['65%', '50%'],
+            center: ['75%', '50%'],
             label: {
               normal: {
                 show: false
@@ -142,7 +148,7 @@ export default {
   },
   computed: {
     pieChartDimensions() {
-      return this.overviewDisplay ? 'width:280px; height:182px;' : 'width:320px; height:220px;';
+      return this.overviewDisplay ? 'width:370px; height:182px;' : 'width:400px; height:220px;';
     }
   },
   created() {
