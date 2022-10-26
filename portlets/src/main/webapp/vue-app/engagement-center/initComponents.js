@@ -30,7 +30,6 @@ import EngagementCenter from './components/EngagementCenter.vue';
 import NoResultFound from './components/common/NoResultFound.vue';
 
 import Programs from './components/programs/Programs.vue';
-import ProgramsList from './components/programs/ProgramsList.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
 import ProgramDrawer from './components/programs/ProgramDrawer.vue';
 import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
@@ -61,7 +60,6 @@ const components = {
   'engagement-center-no-results': NoResultFound,
   'engagement-center': EngagementCenter,
   'engagement-center-programs': Programs,
-  'engagement-center-programs-list': ProgramsList,
   'engagement-center-program-card': ProgramCard,
   'engagement-center-program-drawer': ProgramDrawer,
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
@@ -85,11 +83,11 @@ if (!Vue.prototype.$challengesServices) {
     value: challengesServices,
   });
 }
-import  * as challengeUtils  from './js/challengesUtils';
+import  * as engagementCenterUtils  from './js/engagementCenterUtils';
 
-if (!Vue.prototype.$challengeUtils) {
-  window.Object.defineProperty(Vue.prototype, '$challengeUtils', {
-    value: challengeUtils,
+if (!Vue.prototype.$engagementCenterUtils) {
+  window.Object.defineProperty(Vue.prototype, '$engagementCenterUtils', {
+    value: engagementCenterUtils,
   });
 }
 

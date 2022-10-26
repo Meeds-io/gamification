@@ -114,13 +114,13 @@ export default {
     emitStartDate(value) {
       if (value) {
         const date = new Date(value);
-        this.$emit('startDateChanged', this.$challengeUtils.getIsoDate(date));
+        this.$emit('startDateChanged', this.$engagementCenterUtils.getIsoDate(date));
       }
     },
     emitEndDate(value) {
       if (value) {
         const date = new Date(value);
-        this.$emit('endDateChanged', this.$challengeUtils.getIsoDate(date));
+        this.$emit('endDateChanged', this.$engagementCenterUtils.getIsoDate(date));
       }
     },
   },

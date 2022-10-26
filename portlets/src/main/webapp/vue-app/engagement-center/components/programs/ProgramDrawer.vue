@@ -269,36 +269,24 @@ export default {
         this.$programsServices.updateProgram(this.program)
           .then((program) =>{
             this.$root.$emit('program-added', program);
-            this.$challengeUtils.displayAlert({
-              type: 'success',
-              message: this.$t('programs.programUpdateSuccess'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateSuccess'));
             this.close();
             this.program = {};
           })
           .catch(() => {
-            this.$challengeUtils.displayAlert({
-              type: 'error',
-              message: this.$t('programs.programUpdateError'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateError'), 'error');
           })
           .finally(() => this.loading = false);
       } else {
         this.$programsServices.saveProgram(this.program)
           .then((program) =>{
             this.$root.$emit('program-added', program);
-            this.$challengeUtils.displayAlert({
-              type: 'success',
-              message: this.$t('programs.programCreateSuccess'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateSuccess'));
             this.close();
             this.program = {};
           })
           .catch(() => {
-            this.$challengeUtils.displayAlert({
-              type: 'error',
-              message: this.$t('programs.programCreateError'),
-            });
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateError'),'error');
           })
           .finally(() => this.loading = false);
       }
