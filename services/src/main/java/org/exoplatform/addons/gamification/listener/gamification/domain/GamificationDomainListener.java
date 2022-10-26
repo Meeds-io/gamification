@@ -18,11 +18,13 @@ package org.exoplatform.addons.gamification.listener.gamification.domain;
 
 import java.util.List;
 
+import liquibase.pro.packaged.R;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -47,7 +49,9 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
     LOG.info("Update Rules related to the edited domain");
     DomainDTO domain = event.getSource();
     String action = (String) event.getData();
-    List<RuleDTO> rules = ruleService.getAllRulesByDomain(domain.getTitle());
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setDomainId(domain.getId());
+    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, 0, -1);
     List<BadgeDTO> badges = badgeService.findBadgesByDomain(domain.getTitle());
     if (action.equals("delete")) {
       for (RuleDTO rule : rules) {

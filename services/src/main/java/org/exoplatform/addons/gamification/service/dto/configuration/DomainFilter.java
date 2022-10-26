@@ -31,10 +31,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class DomainFilter implements Serializable {
 
+  private static final long serialVersionUID = -610860313235738916L;
+
   private EntityFilterType entityFilterType;
 
   private EntityStatusType entityStatusType;
   
   private String           domainTitle;
+
+  private boolean          includeDeleted;
 
 }

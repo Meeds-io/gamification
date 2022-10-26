@@ -23,8 +23,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-toolbar
       v-if="isAdministrator"
       color="transparent"
+      max-height="64"
       flat
-      class="pa-4">
+      class="px-4 mt-4">
       <div class="border-box-sizing clickable">
         <v-btn
           v-if="canAddProgram"
@@ -37,29 +38,56 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
       <v-spacer />
-      <div class="pt-1">
-        <select
-          id="EngagementCenterApplicationCProgramsQuickFilter"
-          v-model="status"
-          class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter mb-3 width-auto"
-          @change="refreshPrograms">
-          <option
-            v-for="stat in programStatus"
-            :key="stat.value"
-            :value="stat.value">
-            <span class="d-none d-lg-inline">
-              {{ stat.text }}
-            </span>
-          </option>
-        </select>
-      </div>
+      <select
+        id="EngagementCenterApplicationCProgramsQuickFilter"
+        v-model="status"
+        class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter width-auto"
+        @change="filter">
+        <option
+          v-for="stat in programStatus"
+          :key="stat.value"
+          :value="stat.value">
+          <span class="d-none d-lg-inline">
+            {{ stat.text }}
+          </span>
+        </option>
+      </select>
     </v-toolbar>
-
-    <engagement-center-programs-list
-      :loading="loading"
-      :programs-list="programsList"
-      :is-administrator="isAdministrator"
-      class="py-10" />
+    <v-layout class="pa-3">
+      <v-row no-gutters>
+        <v-col
+          v-for="program in programs"
+          :key="program.id"
+          class="mb-4"
+          cols="12"
+          sm="6"
+          lg="4">
+          <engagement-center-program-card
+            :program="program"
+            :is-administrator="isAdministrator"
+            @delete-program="confirmDelete"
+            class="mx-2" />
+        </v-col>
+      </v-row>
+    </v-layout>
+    <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
+      <v-btn
+        :loading="loading"
+        :disabled="loading"
+        class="loadMoreButton ma-auto mt-4 btn"
+        block
+        @click="$root.$emit('program-load-more')">
+        {{ $t('engagementCenter.button.ShowMore') }}
+      </v-btn>
+    </v-row>
+    <exo-confirm-dialog
+      v-if="confirmDelete"
+      ref="deleteProgramConfirmDialog"
+      :message="deleteConfirmMessage"
+      :title="$t('programs.label.title.confirmDeleteRule')"
+      :ok-label="$t('programs.label.ok.button')"
+      :cancel-label="$t('programs.label.cancel.button')"
+      @ok="deleteProgram" />
     <engagement-center-no-results
       v-if="displayNoSearchResult"
       :info="$t('program.filter.noResults')" />
@@ -78,21 +106,24 @@ export default {
   },
   data() {
     return {
-      programsList: null,
+      programs: [],
+      totalSize: 0,
+      pageSize: 6,
       loading: false,
       canAddProgram: false,
       type: 'ALL',
       status: 'ENABLED',
+      deleteConfirmMessage: '',
+      selectedProgram: {},
+      initialized: false,
+      offset: 0,
+      limit: 6,
+      users: [],
+      limitToFetch: 0,
+      originalLimitToFetch: 0,
     };
   },
   computed: {
-    programsPerPage() {
-      if (this.$vuetify.breakpoint.width <= 768) {
-        return 5;
-      } else {
-        return 6;
-      }
-    },
     programStatus() {
       return [{
         text: this.$t('programs.status.allPrograms'),
@@ -108,6 +139,10 @@ export default {
     displayNoSearchResult() {
       return !this.loading && this.programsList?.domainsSize === 0;
     },
+    hasMore() {
+      return this.loading || this.limitToFetch < this.totalSize;
+
+    },
   },
   watch: {
     loading() {
@@ -119,9 +154,10 @@ export default {
     },
   },
   created() {
+    this.limitToFetch = this.originalLimitToFetch = this.limit;
     const promises = [];
     promises.push(this.computeCanAddProgram());
-    promises.push(this.retrievePrograms(false));
+    promises.push(this.retrievePrograms());
     this.$root.$on('program-load-more', this.loadMore);
     this.$root.$on('program-added', this.refreshPrograms);
     Promise.all(promises)
@@ -132,26 +168,54 @@ export default {
       return this.$programsServices.canAddProgram()
         .then(canAddProgram => this.canAddProgram = canAddProgram);
     },
-    retrievePrograms(append) {
+    retrievePrograms() {
       this.loading = true;
-      const offset = append && this.programsList?.domains?.length || 0;
-      const returnSize = append ?  false : true;
-      this.$programsServices
-        .retrievePrograms(offset, this.programsPerPage, this.type, this.status, returnSize)
-        .then((programsList) => {
-          if (append) {
-            this.programsList.domains = this.programsList?.domains.concat(programsList.domains);
-          } else {
-            this.programsList = programsList;
+      return this.$programsServices
+        .retrievePrograms(this.offset, this.limitToFetch, this.type, this.status)
+        .then((data) => {
+          this.programs = data.domains;
+          this.totalSize = data.domainsSize || 0;
+        })
+        .finally(() => {
+          if (!this.initialized) {
+            this.$root.$applicationLoaded();
           }
+          this.loading = false;
+          this.initialized = true;
+        });
+    },
+    loadMore() {
+      if (this.hasMore) {
+        this.limitToFetch += this.pageSize;
+      }
+      return this.retrievePrograms();
+    },
+    refreshPrograms() {
+      return this.retrievePrograms();
+    },
+    filter() {
+      this.resetSearch();
+      return this.retrievePrograms();
+    },
+    resetSearch() {
+      if (this.limitToFetch !== this.originalLimitToFetch) {
+        this.limitToFetch = this.originalLimitToFetch;
+      }
+    },
+    deleteProgram() {
+      this.loading = true;
+      this.$programsServices.deleteProgram(this.selectedProgram.id)
+        .then((deletedProgram) => {
+          this.$root.$emit('program-deleted', deletedProgram);
+          this.$engagementCenterUtils.displayAlert(this.$t('programs.programDeleteSuccess'));
+          this.retrievePrograms();
         })
         .finally(() => this.loading = false);
     },
-    loadMore() {
-      return this.retrievePrograms(true);
-    },
-    refreshPrograms() {
-      return this.retrievePrograms(false);
+    confirmDelete(program) {
+      this.selectedProgram = program;
+      this.deleteConfirmMessage = this.$t('programs.label.message.confirmDeleteRule', {0: program.title});
+      this.$refs.deleteProgramConfirmDialog.open();
     },
   },
 };
