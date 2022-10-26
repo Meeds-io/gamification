@@ -37,13 +37,13 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements GenericDAO<DomainEntity, Long> {
 
-  private static final String  QUERY_FILTER_FIND_PREFIX  = "GamificationDomain.findAllDomains";
+  private static final String        QUERY_FILTER_FIND_PREFIX  = "GamificationDomain.findAllDomains";
 
-  private static final String  QUERY_FILTER_COUNT_PREFIX = "GamificationDomain.countAllDomains";
+  private static final String        QUERY_FILTER_COUNT_PREFIX = "GamificationDomain.countAllDomains";
 
-  public static final String   DOMAIN_TITLE              = "domainTitle";
+  public static final String         DOMAIN_TITLE              = "domainTitle";
 
-  private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
+  private final Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
   public DomainEntity findByIdWithOwners(Long id) {
     TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findByIdWithOwners",
@@ -72,8 +72,8 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     return !domainEntities.isEmpty() ? domainEntities.get(0) : null;
   }
 
-  public List<DomainEntity> getAllDomains(int offset, int limit, DomainFilter filter) {
-    TypedQuery<DomainEntity> query = buildQueryFromFilter(filter, DomainEntity.class, false);
+  public List<Long> getDomainsByFilter(int offset, int limit, DomainFilter filter) {
+    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
     if (offset > 0) {
       query.setFirstResult(offset);
     }
@@ -133,20 +133,20 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
       suffixes.add("SearchBy");
       predicates.add(" UPPER(d.title) like UPPER(:searchingKey) ");
     }
+    if (!filter.isIncludeDeleted()) {
+      suffixes.add("ExcludeDeleted");
+      predicates.add("d.isDeleted = false");
+    }
     EntityStatusType entityStatusType = filter.getEntityStatusType();
     if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
       switch (entityStatusType) {
       case ENABLED:
         suffixes.add("EnabledStatus");
-        predicates.add("d.isDeleted = false AND d.isEnabled = true");
+        predicates.add("d.isEnabled = true");
         break;
       case DISABLED:
         suffixes.add("DisabledStatus");
-        predicates.add("d.isDeleted = false AND d.isEnabled = false");
-        break;
-      case DELETED:
-        suffixes.add("DeletedStatus");
-        predicates.add("d.isDeleted = true AND d.isEnabled = false");
+        predicates.add("d.isEnabled = false");
         break;
       default:
         break;
@@ -166,7 +166,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
 
   private String getQueryFilterContent(List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(d) FROM GamificationDomain d "
-                               : "SELECT DISTINCT d FROM GamificationDomain d LEFT JOIN FETCH d.owners ";
+                               : "SELECT d.id FROM GamificationDomain d ";
     String orderBy = " ORDER BY d.createdDate DESC";
 
     String queryContent;

@@ -39,7 +39,7 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getEarnerType().toString(),
                                              gamificationActionsHistoryEntity.getGlobalScore(),
                                              gamificationActionsHistoryEntity.getActionTitle(),
-                                             gamificationActionsHistoryEntity.getDomainEntity().getTitle(),
+                                             gamificationActionsHistoryEntity.getDomain(),
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),

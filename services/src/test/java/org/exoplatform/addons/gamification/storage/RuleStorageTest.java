@@ -89,7 +89,8 @@ public class RuleStorageTest extends AbstractServiceTest {
   public void testFindRuleByEventAndDomain() {
     assertEquals(ruleStorage.findAllRules().size(), 0);
     RuleDTO rule = newRuleDTO();
-    assertEquals(ruleStorage.findRuleByEventAndDomain(rule.getEvent(), rule.getArea()).getTitle(), rule.getTitle());
+    long domainId = rule.getDomainDTO().getId();
+    assertEquals(ruleStorage.findRuleByEventAndDomain(rule.getEvent(), domainId).getTitle(), rule.getTitle());
   }
 
   @Test
