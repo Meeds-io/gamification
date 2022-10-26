@@ -239,9 +239,10 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleDTO rule = newRuleDTO();
     String ruleTitle = rule.getTitle();
     String domainTitle = rule.getDomainDTO() != null ? rule.getDomainDTO().getTitle() : " ";
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", domainTitle));
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(ruleTitle, ""));
-    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(ruleTitle, domainTitle);
+    long domainId = rule.getDomainDTO() != null ? rule.getDomainDTO().getId() : null;
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", domainId));
+    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(ruleTitle, -1));
+    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(ruleTitle, domainId);
     String newDomainTitle = ruleDTO.getDomainDTO() != null ? ruleDTO.getDomainDTO().getTitle() : "";
     assertEquals(ruleTitle, ruleDTO.getTitle());
     assertEquals(domainTitle, newDomainTitle);

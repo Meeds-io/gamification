@@ -239,16 +239,10 @@ export default {
       this.$ruleServices.deleteRule(this.selectedRule.id)
         .then((deletedRule) => {
           this.$root.$emit('program-rule-deleted', deletedRule);
-          this.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));
+          this.$engagementCenterUtils.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));
           this.retrieveProgramRules();
         })
         .finally(() => this.loading = false);
-    },
-    displayAlert(message, type) {
-      document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
-        message,
-        type: type || 'success',
-      }}));
     },
     ruleTitle(rule) {
       let fieldLabelI18NKey = `exoplatform.gamification.gamificationinformation.rule.title.${rule?.title}`;
