@@ -27,14 +27,14 @@ import org.exoplatform.services.security.Identity;
 public interface DomainService {
 
   /**
-   * Retrieves all domains by user.
+   * Gets domains by filter.
    *
    * @param domainFilter {@link DomainFilter} used to filter results
    * @param offset index of the search
    * @param limit limit of results to return
    * @return A {@link List <DomainDTO>} object
    */
-  List<DomainDTO> getAllDomains(DomainFilter domainFilter, int offset, int limit);
+  List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, int offset, int limit);
 
   /**
    * Return enabled domains within the DB
@@ -96,15 +96,17 @@ public interface DomainService {
   DomainDTO updateDomain(DomainDTO domainDTO, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
-   * Delete a DomainEntity using the id
-   * 
-   * @param id : domain id
-   * @param aclIdentity Security identity of user attempting to update a
-   *          program/domain
+   * Deletes an existing domain by id
+   *
+   * @param domainId Domain technical identifier to delete
+   * @param aclIdentity Security identity of user attempting to delete a domain
+   *
+   * @return deleted {@link DomainDTO}
+   *
    * @throws IllegalAccessException when user is not authorized to delete domain
    * @throws ObjectNotFoundException domain not found
    */
-  void deleteDomain(long id, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
+  DomainDTO deleteDomainById(long domainId, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException; // NOSONAR
 
   /**
    * Retrieves a domain identified by its technical identifier.

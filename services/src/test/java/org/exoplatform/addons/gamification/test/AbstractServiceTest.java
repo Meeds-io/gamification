@@ -24,8 +24,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.services.rest.impl.*;
 import org.exoplatform.services.security.IdentityRegistry;
 import org.junit.After;
 import org.junit.Before;
@@ -75,10 +78,6 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.services.rest.impl.ApplicationContextImpl;
-import org.exoplatform.services.rest.impl.ProviderBinder;
-import org.exoplatform.services.rest.impl.RequestHandlerImpl;
-import org.exoplatform.services.rest.impl.ResourceBinder;
 import org.exoplatform.services.rest.tools.ResourceLauncher;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.MembershipEntry;
@@ -730,4 +729,14 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     }
   }
 
+  protected ContainerResponse getResponse(String method, String restPath, String input) throws Exception {
+    byte[] jsonData = (StringUtils.isBlank(input) ? "" : input).getBytes("UTF-8");
+    MultivaluedMap<String, String> headers = new MultivaluedMapImpl();
+    headers.putSingle("content-type", "application/json");
+    headers.putSingle("content-length", "" + jsonData.length);
+    return launcher.service(method, restPath, "", headers, jsonData, null);
+  }
+  public String getURLResource(String resourceURL) {
+    return "/gamification/" + resourceURL;
+  }
 }
