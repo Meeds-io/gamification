@@ -61,8 +61,8 @@ public class RuleStorage {
     return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByTitle(ruleTitle));
   }
 
-  public RuleDTO findRuleByEventAndDomain(String event, String domain) {
-    return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByEventAndDomain(event, domain));
+  public RuleDTO findRuleByEventAndDomain(String event, long domainId) {
+    return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByEventAndDomain(event, domainId));
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {

@@ -303,10 +303,7 @@ export default {
       this.$refs.deleteChallengeConfirmDialog.open();
     },
     showAlert(alertType, alertMessage){
-      this.$challengeUtils.displayAlert({
-        type: alertType,
-        message: alertMessage,
-      });
+      this.$engagementCenterUtils.displayAlert(alertMessage, alertType);
     },
     waitForEndTyping() {
       window.setTimeout(() => {

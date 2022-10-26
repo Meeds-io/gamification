@@ -40,6 +40,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
 
   private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
+  
+  private static final String  DOMAIN_ID                 = "domainId";
 
   private static final Log     LOG                       = ExoLogger.getLogger(RuleDAO.class);
 
@@ -82,10 +84,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   }
 
-  public RuleEntity findRuleByEventAndDomain(String event, String domain) throws PersistenceException {
+  public RuleEntity findRuleByEventAndDomain(String event, long domainId) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
                                                      .setParameter("event", event)
-                                                     .setParameter("domain", domain);
+                                                     .setParameter(DOMAIN_ID, domainId);
     query.setParameter("type", EntityType.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
@@ -155,7 +157,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public long getRulesTotalScoreByDomain(long domainId) throws PersistenceException {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRulesTotalScoreByDomain", Long.class)
-                                               .setParameter("domainId", domainId);
+                                               .setParameter(DOMAIN_ID, domainId);
     Long score = query.getSingleResult();
     return score == null ? 0 : score.intValue();
   }
@@ -184,8 +186,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   
   public List<Long> findRulesIdsByFilter(RuleFilter filter, int offset, int limit) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
+    if (offset > 0) {
+      query.setFirstResult(offset);
+    }
+    if (limit > 0) {
+      query.setMaxResults(limit);
+    }
     return query.getResultList();
   }
 
@@ -216,7 +222,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private <T> void addQueryFilterParameters(RuleFilter filter, TypedQuery<T> query) {
     if (filter.getDomainId() > 0) {
-      query.setParameter("domainId", filter.getDomainId());
+      query.setParameter(DOMAIN_ID, filter.getDomainId());
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
@@ -238,9 +244,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
         break;
       case DISABLED:
         query.setParameter("enabled", false);
-        break;
-      case DELETED:
-        query.setParameter("deleted", true);
         break;
       default:
         break;
@@ -281,20 +284,20 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       suffixes.add("FilterType");
       predicates.add("r.type = :filterType");
     }
+    if (!filter.isIncludeDeleted()) {
+      suffixes.add("ExcludeDeleted");
+      predicates.add("r.isDeleted = false");
+    }
     EntityStatusType entityStatusType = filter.getEntityStatusType();
     if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
       switch (filter.getEntityStatusType()) {
       case ENABLED:
         suffixes.add("FilterByEnabled");
-        predicates.add("r.isDeleted = false AND r.isEnabled = :enabled AND (r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("r.isEnabled = :enabled AND (r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
         break;
       case DISABLED:
         suffixes.add("FilterByDisabled");
-        predicates.add("r.isDeleted = false AND r.isEnabled = :enabled");
-        break;
-      case DELETED:
-        suffixes.add("FilterByDeleted");
-        predicates.add("r.isDeleted = :deleted");
+        predicates.add("r.isEnabled = :enabled");
         break;
       default:
         break;
