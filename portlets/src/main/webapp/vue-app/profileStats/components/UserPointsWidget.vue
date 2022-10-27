@@ -120,10 +120,7 @@ export default {
           left: 1,
           top: 20,
           formatter: (name) => {
-            if (name.length > 20) {
-              return `${name.substring(0, 20)  }...`;
-            }
-      		  return name ;
+            return name.length > 20 ? `${name.substring(0, 20)  }...` : name;
           },
         },
         series: [
@@ -149,7 +146,7 @@ export default {
   computed: {
     pieChartDimensions() {
       return this.overviewDisplay ? 'width:370px; height:182px;' : 'width:400px; height:220px;';
-    }
+    },
   },
   created() {
     this.getGamificationPointsStats();
