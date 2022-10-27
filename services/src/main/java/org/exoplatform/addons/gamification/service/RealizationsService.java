@@ -15,7 +15,7 @@ public interface RealizationsService {
    * @param filter used to filter realizations using {@link RealizationsFilter}
    * @param offset Offset
    * @param limit Limit
-   * @return A {@link List <GamificationActionsHistoryDTO>} object
+   * @return A {@link List &lt;GamificationActionsHistoryDTO&gt;} object
    */
   List<GamificationActionsHistoryDTO> getAllRealizationsByFilter(RealizationsFilter filter,
                                                                  int offset,
