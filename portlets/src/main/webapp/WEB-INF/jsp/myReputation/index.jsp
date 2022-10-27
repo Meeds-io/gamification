@@ -16,11 +16,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <div class="VuetifyApp">
     <div id="my-reputation-portlet">
-      <div class="container"></div>
+      <script type="text/javascript">
+              require(['SHARED/myReputationBundle'], app => app.init());
+      </script>
     </div>
-    <script type="text/javascript">
-      require(['SHARED/myReputationBundle'], app => app.init());
-    </script>
 </div>
 
 
