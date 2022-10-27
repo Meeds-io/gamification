@@ -13,7 +13,7 @@ public interface AnnouncementService {
    *
    * @param offset Offset
    * @param limit Limit
-   * @return A {@link List <Announcement>} object
+   * @return A {@link List &lt;Announcement&gt;} object
    * @throws IllegalAccessException when user is not authorized to access
    *           announcement
    * @throws ObjectNotFoundException when the challenge identified by its
@@ -51,8 +51,7 @@ public interface AnnouncementService {
    *
    * @param announcementId technical identifier of a challenge
    * @return A {@link Announcement} object
-   * @throws ObjectNotFoundException when the announcement identified by its
-   *           technical identifier is not found
+   *
    */
 
   Announcement getAnnouncementById(Long announcementId) ;

@@ -205,6 +205,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED  --add-opens=java.base/java.time.format=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.jcabi</groupId>
                 <artifactId>jcabi-maven-plugin</artifactId>
             </plugin>
