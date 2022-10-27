@@ -92,7 +92,7 @@ public interface ChallengeService {
    * @param offset index of the search
    * @param limit limit of results to return
    * @param username User name accessing challenges
-   * @return A {@link List <Challenge>} object
+   * @return A {@link List &lt;Challenge&gt;} object
    */
   List<Challenge> getChallengesByFilterAndUser(RuleFilter challengeFilter, int offset, int limit, String username);
 
