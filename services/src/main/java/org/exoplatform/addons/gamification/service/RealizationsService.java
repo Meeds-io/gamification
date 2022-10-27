@@ -19,7 +19,7 @@ public interface RealizationsService {
    * @param identity current {@link Identity}
    * @param offset Offset
    * @param limit Limit
-   * @return A {@link List <GamificationActionsHistoryDTO>} object
+   * @return A {@link List &lt;GamificationActionsHistoryDTO&gt;} object
    * @throws IllegalAccessException when User doesn't have enough privileges to access achievements of user
    */
   List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter filter,
