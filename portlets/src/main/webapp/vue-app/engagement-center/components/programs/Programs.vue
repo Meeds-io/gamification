@@ -28,6 +28,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="px-4 mt-4">
       <div class="border-box-sizing clickable">
         <v-btn
+          id="engagementCenterAddProgramBtn"
           v-if="canAddProgram"
           class="btn btn-primary"
           @click="$root.$emit('open-program-drawer')">
