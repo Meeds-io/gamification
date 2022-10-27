@@ -25,7 +25,7 @@ const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en'
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
-const appId = 'my-contributions-portlet';
+const appId = 'myContributions';
 
 export function init() {
   //getting locale ressources

@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-flex
       d-flex
       xs12
-      my-4>
+      my-2>
       <v-layout
         v-if="overviewDisplay"
         row
@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-flex
           d-flex>
           <div>
-            <span class="pe-6 subtitle-2 profile-card-header">{{ $t('overview.myContributions.points') }}</span>
+            <span class="subtitle-2 profile-card-header">{{ $t('overview.myContributions.points') }}</span>
           </div>
         </v-flex>
       </v-layout>
@@ -72,8 +72,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-flex>
       </v-layout>
     </v-flex>
-    <div style="margin:auto;">
-      <div id="echartUserPoints" :style="pieChartDimensions"></div>
+    <div :style="overviewDisplay ? 'margin-left: auto; margin-right: auto;' : 'margin: auto;'">
+    <div class="mb-2" id="echartUserPoints" :style="pieChartDimensions"></div>
     </div>
   </v-layout>
 </template>
@@ -94,7 +94,7 @@ export default {
       option: {
         title: [{
           text: 'Total',
-          left: '73%',
+          left: this.overviewDisplay ? '70%' : '63%',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
@@ -117,17 +117,17 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          left: 1,
-          top: 20,
+          left: this.overviewDisplay ? 1 : 5,
+          top: this.overviewDisplay ? 20 : 12,
           formatter: (name) => {
-            return name.length > 20 ? `${name.substring(0, 20)  }...` : name;
+            return name.length > 12 ? `${name.substring(0, 12)  }...` : name;
           },
         },
         series: [
           {
             type: 'pie',
             radius: ['45%', '88%'],
-            center: ['75%', '50%'],
+            center: this.overviewDisplay ? ['72%', '50%'] : ['65%', '50%'],
             label: {
               normal: {
                 show: false
@@ -145,7 +145,7 @@ export default {
   },
   computed: {
     pieChartDimensions() {
-      return this.overviewDisplay ? 'width:370px; height:182px;' : 'width:400px; height:220px;';
+      return this.overviewDisplay ? 'width:320px; height:182px;' : 'width:320px; height:220px;';
     },
   },
   created() {

@@ -1,8 +1,7 @@
 <div class="VuetifyApp">
-    <div id="my-contributions-portlet">
-      <div class="container"></div>
+    <div id="myContributions">
+      <script type="text/javascript">
+        require(['PORTLET/gamification-portlets/myContributions'], app => app.init());
+      </script>
     </div>
-    <script type="text/javascript">
-      require(['SHARED/myContributionsBundle'], app => app.init());
-    </script>
   </div>

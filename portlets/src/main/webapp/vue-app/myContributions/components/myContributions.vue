@@ -17,12 +17,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card
     height="280"
-    width="410"
+    width="390"
     flat>
-    <div class="d-flex flex-row">
-      <h4 class="hidden-space align-self-start ms-4"> {{ $t('overview.myContributions.title') }} </h4>
+    <div class="d-flex flex-row pa-4">
+      <h4 class="hidden-space my-0"> {{ $t('overview.myContributions.title') }} </h4>
       <v-spacer />
-      <a :href="achievementsURL"> <h5 class="text-font-size align-self-end me-7 primary--text"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
+      <a :href="achievementsURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </div>
     <div class="mt-n2">
       <user-points-widget :overview-display="true" />
