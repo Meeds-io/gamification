@@ -22,8 +22,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-flex
       d-flex
       xs12
-      my-4>
+      my-2>
       <v-layout
+        v-if="overviewDisplay"
+        row
+        wrap
+        mx-2
+        align-start
+        px-2>
+        <v-flex
+          d-flex>
+          <div>
+            <span class="subtitle-2 profile-card-header">{{ $t('overview.myContributions.points') }}</span>
+          </div>
+        </v-flex>
+      </v-layout>
+      <v-layout
+        v-else
         row
         wrap
         mx-2
@@ -57,8 +72,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-flex>
       </v-layout>
     </v-flex>
-    <div style="margin:auto;">
-      <div id="echartUserPoints" style="width:320px; height:220px; "></div>
+    <div :style="overviewDisplay ? 'margin-left: auto; margin-right: auto;' : 'margin: auto;'">
+    <div class="mb-2" id="echartUserPoints" :style="pieChartDimensions"></div>
     </div>
   </v-layout>
 </template>
@@ -66,7 +81,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI';
 export default {
-
+  props: {
+    overviewDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       userPoints: 0,
@@ -74,19 +94,19 @@ export default {
       option: {
         title: [{
           text: 'Total',
-          left: '63%',
+          left: this.overviewDisplay ? '70%' : '63%',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'normal',
-            fontSize: '16',
+            fontSize: this.overviewDisplay ? '14' : '16',
           },
           subtext: '',
           subtextStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'bold',
-            fontSize: '18',
+            fontSize: this.overviewDisplay ? '14' : '18',
           },
           top: '40%',
           textAlign: 'center'
@@ -97,24 +117,36 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          left: 5,
-          top: 12,
+          left: this.overviewDisplay ? 1 : 5,
+          top: this.overviewDisplay ? 20 : 12,
+          formatter: (name) => {
+            return name.length > 12 ? `${name.substring(0, 12)  }...` : name;
+          },
         },
         series: [
           {
             type: 'pie',
             radius: ['45%', '88%'],
-            center: ['65%', '50%'],
+            center: this.overviewDisplay ? ['72%', '50%'] : ['65%', '50%'],
             label: {
               normal: {
                 show: false
               },
 
             },
+            color: ['#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
+              '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
+              '#c9a227', '#ffccd5', '#134d9b', '#E66CDC', '#58D68B', '#5CE6D3', '#f16a27', '#ac1c1e', '#eda3ff', '#1a7431',
+              '#a47e1b', '#ff4d6d', '#62b0de', '#FF97D0', '#92e03a', '#f44336', '#3d6d8a', '#E0A5FF', '#FF9DB8', '#808080']
           }, 
         ]
       }
     };
+  },
+  computed: {
+    pieChartDimensions() {
+      return this.overviewDisplay ? 'width:320px; height:182px;' : 'width:320px; height:220px;';
+    },
   },
   created() {
     this.getGamificationPointsStats();
