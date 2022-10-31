@@ -22,19 +22,31 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="d-flex flex-row pa-4">
       <h4 class="hidden-space my-0"> {{ $t('overview.myContributions.title') }} </h4>
       <v-spacer />
-      <a :href="achievementsURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
+      <a v-if="seeAllDisplay" :href="achievementsURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </div>
     <div class="mt-n2">
-      <user-points-widget :overview-display="true" />
+      <user-points-widget
+        :overview-display="true"
+        @noSeeAll="updateDisplaySeeAll($event)" />
     </div>
   </v-card>
 </template>
 <script>
 export default {
+  data() {
+    return {
+      seeAllDisplay: true,
+    };
+  },
   computed: {
     achievementsURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`;
     }
   },
+  methods: {
+    updateDisplaySeeAll(value) {
+      this.seeAllDisplay = value;
+    },
+  }
 };
 </script>
