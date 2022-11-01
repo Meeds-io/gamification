@@ -91,7 +91,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-list>
     <div v-else :class="overviewDisplay ? 'mx-auto' : 'ma-auto'">
       <div
-        class="mb-2"
+        class="mt-6"
         id="echartUserPoints"
         :style="pieChartDimensions"></div>
     </div>
