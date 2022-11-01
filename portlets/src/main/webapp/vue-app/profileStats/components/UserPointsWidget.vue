@@ -15,37 +15,18 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list
-    v-if="userPoints === 0"
-    height="180"
-    class="d-flex align-center">
-    <v-list-item>
-      <v-list-item-icon>
-        <v-icon size="65" class="v-tab--active me-1">fas fa-chart-pie</v-icon>
-      </v-list-item-icon>
-      <v-list-item-content>
-        <div class="d-flex flex-grow-0 flex-shrink-1">
-          <span
-            class="align-self-center text-wrap text-left text-break"
-            v-sanitized-html="$t('overview.myContributions.zeroPoints.description', {0: `<a href='${challengesURL}' class='primary--text' rel='nofollow noreferrer noopener'>${$t('overview.myContributions.zeroPoints.description.this')}</a>`})"></span>
-        </div>
-      </v-list-item-content>
-    </v-list-item>
-  </v-list>
   <v-layout
-    v-else
     row
     wrap
     mx-0>
     <v-flex
       d-flex
-      xs12
-      my-2>
+      xs12>
       <v-layout
-        v-if="overviewDisplay"
+        v-if="overviewDisplay && !hasZeroPoints"
         row
         wrap
-        mx-2
+        ma-2
         align-start
         px-2>
         <v-flex
@@ -56,10 +37,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-flex>
       </v-layout>
       <v-layout
-        v-else
+        v-else-if="!overviewDisplay"
         row
         wrap
-        mx-2
+        ma-2
         align-start
         px-2>
         <v-flex
@@ -81,6 +62,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-flex>
         <v-flex
+          v-if="!hasZeroPoints"
           class="text-right"
           d-flex
           xs1>
@@ -90,7 +72,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-flex>
       </v-layout>
     </v-flex>
-    <div :style="overviewDisplay ? 'margin-left: auto; margin-right: auto;' : 'margin: auto;'">
+    <v-list
+      v-if="hasZeroPoints"
+      height="180"
+      class="d-flex align-center">
+      <v-list-item>
+        <v-list-item-icon>
+          <v-icon size="65" class="v-tab--active me-1">fas fa-chart-pie</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <div class="d-flex flex-grow-0 flex-shrink-1">
+            <span
+              class="align-self-center text-wrap text-left text-break"
+              v-sanitized-html="$t('overview.myContributions.zeroPoints.description', {0: `<a href='${challengesURL}' class='primary--text' rel='nofollow noreferrer noopener'>${$t('overview.myContributions.zeroPoints.description.this')}</a>`})"></span>
+          </div>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <div v-else :style="overviewDisplay ? 'margin-left: auto; margin-right: auto;' : 'margin: auto;'">
       <div
         class="mb-2"
         id="echartUserPoints"
@@ -170,6 +169,9 @@ export default {
     },
     challengesURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
+    },
+    hasZeroPoints() {
+      return this.userPoints === 0;
     }
   },
   created() {
@@ -181,11 +183,11 @@ export default {
       getGamificationPoints(this.period).then(
         (data) => {
           this.userPoints = data.points;
-          if (data.points === 0) {
-            this.$emit('noSeeAll', false);
+          if (data.points !== 0) {
+            this.$emit('seeAll', true);
           }
           this.option.title[0].subtext = data.points;
-        }      
+        }
       );
     },
     getGamificationPointsStats() {
@@ -202,6 +204,7 @@ export default {
           }
           this.option.legend.data = this.option.series[0].data.name;
           this.initChart(this.option);
+          this.$emit('loadingData', false);  
         }
       );
     },
