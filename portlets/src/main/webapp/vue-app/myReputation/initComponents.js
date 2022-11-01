@@ -15,9 +15,18 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import myReputation from './components/myReputation.vue';
+import BadgesOverview from '../badgesOverview/components/BadgesOverview.vue';
+import BadgesOverviewItem from '../badgesOverview/components/BadgesOverviewItem.vue';
+import BadgesOverviewDrawer from '../badgesOverview/components/BadgesOverviewDrawer.vue';
+import BadgesOverviewDrawerItem from '../badgesOverview/components/BadgesOverviewDrawerItem.vue';
+
 
 const components = {
   'my-reputation': myReputation,
+  'badges-overview': BadgesOverview,
+  'badges-overview-item': BadgesOverviewItem,
+  'badges-overview-drawer': BadgesOverviewDrawer,
+  'badges-overview-drawer-item': BadgesOverviewDrawerItem,
 };
 
 for (const key in components) {

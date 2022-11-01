@@ -16,15 +16,31 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-card
-    height="280"
-    width="410"
+    height="338"
     flat>
-    <div class="d-flex flex-row">
-      <h4 class="hidden-space align-self-start ms-4"> {{ $t('overview.myReputation.title') }} </h4>
+    <div class="d-flex flex-row px-4 pt-4">
+      <h4 class="hidden-space my-0"> {{ $t('gamification.myReputation.title') }} </h4>
+    </div>
+    <div>
+      <div class="d-flex flex-row px-4 pt-4">
+        <h4 class="subtitle-2 align-self-start my-0 black--text"> {{ $t('gamification.myReputation.KudosTitle') }} </h4>
+      </div>
+      <extension-registry-components
+        :params="params"
+        name="my-reputation-overview"
+        type="my-reputation-item"
+        class="d-flex flex-column" />
     </div>
   </v-card>
 </template>
 <script>
 export default {
+  computed: {
+    params() {
+      return {
+        isOverviewDisplay: true,
+      };
+    }
+  }
 };
 </script>

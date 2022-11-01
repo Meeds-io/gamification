@@ -20,6 +20,12 @@ Vue.use(Vuetify);
 
 const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
 
+extensionRegistry.registerComponent('my-reputation-overview', 'my-reputation-item', {
+  id: 'badges-reputation-overview',
+  vueComponent: Vue.options.components['badges-overview'],
+  rank: 20,
+}); 
+
 // getting language of user
 const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
 
