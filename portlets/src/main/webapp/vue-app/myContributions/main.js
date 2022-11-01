@@ -15,7 +15,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
-import MyContributionsApp from './components/myContributions.vue';
 
 Vue.use(Vuetify);
 
@@ -26,16 +25,17 @@ const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en'
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+const appId = 'myContributions';
 
 export function init() {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       // init Vue app when locale ressources are ready
-      new Vue({
-        render: (h) => h(MyContributionsApp),
+      Vue.createApp({
+        template: `<my-contributions id="${appId}" />`,
         i18n,
         vuetify,
-      }).$mount('#myContributions');
+      }, `#${appId}`, 'My Contributions');
     });
 }
