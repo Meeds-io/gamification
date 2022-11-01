@@ -38,6 +38,7 @@ module.exports = {
         realizations: './src/main/webapp/vue-app/realizations/main.js',
         engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
         challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
+        myReputation: './src/main/webapp/vue-app/myReputation/main.js',
     },
     plugins: [
       new ESLintPlugin({
