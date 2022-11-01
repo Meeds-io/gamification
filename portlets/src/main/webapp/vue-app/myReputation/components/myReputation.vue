@@ -17,6 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card
     height="338"
+    min-width="350"
     flat>
     <div class="d-flex flex-row px-4 pt-4">
       <h4 class="hidden-space my-0"> {{ $t('gamification.myReputation.title') }} </h4>
