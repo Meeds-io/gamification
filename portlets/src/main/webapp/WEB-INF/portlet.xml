@@ -339,4 +339,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </portlet-info>
     </portlet>
 
+    <portlet>
+      <portlet-name>myReputation</portlet-name>
+      <display-name xml:lang="EN">My Reputation</display-name>
+      <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+      <init-param>
+        <name>portlet-view-dispatched-file-path</name>
+        <value>/WEB-INF/jsp/myReputation/index.jsp</value>
+      </init-param>
+      <supports>
+        <mime-type>text/html</mime-type>
+      </supports>
+      <supported-locale>en</supported-locale>
+      <portlet-info>
+        <title>my Reputation</title>
+        <keywords>my Reputation</keywords>
+      </portlet-info>
+    </portlet>
+
 </portlet-app>
