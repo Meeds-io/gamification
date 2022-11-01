@@ -46,16 +46,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           @click="filterByProgram" />
       </v-list-item-content>
     </v-list-item>
-
-    <v-flex v-if="hasMore" class=" d-flex my-4 border-box-sizing">
-      <v-btn
-        :loading="loading"
-        :disabled="loading"
-        class="btn mx-auto"
-        @click="loadMore">
-        {{ $t('realization.label.loadMore') }}
-      </v-btn>
-    </v-flex>
   </v-list>
 </template>
 
@@ -120,9 +110,6 @@ export default {
     },
   },
   methods: {
-    loadMore() {
-      this.retrievePrograms(true, this.search);
-    },
     reset() {
       this.search = '';
       this.selectAll = true;
@@ -142,9 +129,8 @@ export default {
     },
     retrievePrograms(append, searchingKey) {
       this.loading = true;
-      const offset = append && this.programsList?.length || 0;
       this.$programsServices
-        .retrievePrograms(offset, this.numberOfPrograms, this.type, this.status, searchingKey, true)
+        .retrievePrograms(null, null, this.type, this.status, searchingKey, true)
         .then((programsList) => {
           this.size = programsList.domainsSize;
           if (append) {
