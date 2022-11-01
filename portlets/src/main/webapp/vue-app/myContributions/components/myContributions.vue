@@ -17,7 +17,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card
     height="280"
-    width="390"
+    width="30%"
+    min-width="350"
     flat>
     <div class="d-flex flex-row pa-4">
       <h4 class="hidden-space my-0"> {{ $t('overview.myContributions.title') }} </h4>
