@@ -16,6 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-card
+    :loading="loading"
     height="280"
     width="30%"
     min-width="350"
@@ -28,7 +29,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="mt-n2">
       <user-points-widget
         :overview-display="true"
-        @noSeeAll="updateDisplaySeeAll($event)" />
+        @seeAll="updateDisplaySeeAll($event)"
+        @loadingData="updateLoading($event)" />
     </div>
   </v-card>
 </template>
@@ -36,7 +38,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
-      seeAllDisplay: true,
+      seeAllDisplay: false,
+      loading: true
     };
   },
   computed: {
@@ -47,6 +50,9 @@ export default {
   methods: {
     updateDisplaySeeAll(value) {
       this.seeAllDisplay = value;
+    },
+    updateLoading(value) {
+      this.loading = value;
     },
   }
 };
