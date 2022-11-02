@@ -88,7 +88,8 @@ public class EntityBuilder {
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    fromAnnouncementList(challengeAnnouncements),
                                    challenge.getPoints(),
-                                   noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
+                                   noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()),
+                                   challenge.isEnabled());
   }
 
   public static DomainRestEntity toRestEntity(DomainDTO domain, String username) {
