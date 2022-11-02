@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
+import org.exoplatform.addons.gamification.rest.model.RealizationList;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
@@ -100,7 +101,9 @@ public class RealizationsRest implements ResourceContainer {
                                      String identityType,
                                      @Parameter(description = "domainIds. that will be used to filter achievements", required = false)
                                      @QueryParam("domainIds")
-                                     List<Long> domainIds) {
+                                     List<Long> domainIds,
+                                     @Parameter(description = "If true, this will return the total count of filtered realizations. Possible values = true or false. Default value = false.", required = false)
+                                     @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
@@ -146,7 +149,15 @@ public class RealizationsRest implements ResourceContainer {
                                                                                                               limit);
         List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
                                                                                           GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
-        return Response.ok(gamificationActionsHistoryRestEntities).header("Content-Type", MediaType.APPLICATION_JSON).build();
+        RealizationList realizationList = new RealizationList();
+        if (returnSize) {
+          int realizationsSize = realizationsService.countRealizationsByFilter(filter, identity);
+          realizationList.setSize(realizationsSize);
+        }
+        realizationList.setRealizations(gamificationActionsHistoryRestEntities);
+        realizationList.setOffset(offset);
+        realizationList.setLimit(limit);
+        return Response.ok(realizationList).build();
       }
     } catch (IllegalAccessException e) {
       LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}",
