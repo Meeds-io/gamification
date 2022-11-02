@@ -363,6 +363,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </module>
   </portlet>
 
+  <portlet>
+    <name>myContributions</name>
+    <module>
+    <script>
+      <minify>false</minify>
+      <path>/js/myContributions.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>jquery</module>
+      <as>$</as>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+  </module>
+  </portlet>
+
   <module>
     <name>profileStatsBundle</name>
     <script>
