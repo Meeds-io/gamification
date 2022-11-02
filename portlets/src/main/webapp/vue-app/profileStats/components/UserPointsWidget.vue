@@ -72,8 +72,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-flex>
       </v-layout>
     </v-flex>
-    <div :style="overviewDisplay ? 'margin-left: auto; margin-right: auto;' : 'margin: auto;'">
-    <div class="mb-2" id="echartUserPoints" :style="pieChartDimensions"></div>
+    <div :class="overviewDisplay ? 'mx-auto' : 'ma-auto'">
+      <div
+        class="mb-2"
+        id="echartUserPoints"
+        :style="pieChartDimensions"></div>
     </div>
   </v-layout>
 </template>
