@@ -68,7 +68,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </template>
     </v-data-table>
     <v-toolbar
-      v-if="!displaySearchResult"
       color="transparent"
       flat
       class="pa-2 mb-4">
@@ -115,6 +114,7 @@ export default {
     offset: 0,
     limit: 25,
     pageSize: 25,
+    totalSize: 0,
     loading: true,
     sortBy: 'date',
     sortDescending: true,
@@ -132,7 +132,7 @@ export default {
   }),
   computed: {
     hasMore() {
-      return this.limit <= this.realizations.length;
+      return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
       return this.retrieveAll ? 0 : this.earnerId;
@@ -248,7 +248,8 @@ export default {
     getRealizations() {
       return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
         .then(realizations => {
-          this.realizations = realizations || [];
+          this.realizations = realizations?.realizations || [];
+          this.totalSize = realizations?.size || this.totalSize;
           this.displaySearchResult = this.searchList?.length >= 0 && this.realizations.length > 0;
         });
     },

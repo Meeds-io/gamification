@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -447,6 +448,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       query.setFirstResult(offset);
     }
     return query.getResultList();
+  }
+
+  public int countRealizationsByFilter(RealizationsFilter filter) {
+    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, true);
+    return query.getSingleResult().intValue();
   }
 
   private <T> TypedQuery<T> buildQueryFromFilter(RealizationsFilter filter, Class<T> clazz, boolean count) {
