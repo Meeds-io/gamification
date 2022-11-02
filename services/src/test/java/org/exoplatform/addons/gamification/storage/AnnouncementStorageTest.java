@@ -80,7 +80,8 @@ public class AnnouncementStorageTest {
                 endDate.toString(),
                 Collections.emptyList(),
                 10L,
-                "gamification");
+                "gamification",
+                true);
 
         RuleEntity challengeEntity = new RuleEntity();
         challengeEntity.setDescription(challenge.getDescription());
