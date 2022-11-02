@@ -188,6 +188,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </portlet>
 
     <portlet>
+      <portlet-name>myContributions</portlet-name>
+      <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+      <init-param>
+        <name>portlet-view-dispatched-file-path</name>
+        <value>/WEB-INF/jsp/myContributions/index.jsp</value>
+      </init-param>
+      <init-param>
+       <name>preload.resource.bundles</name>
+       <value>locale.addon.Gamification</value>
+     </init-param>
+     <init-param>
+       <name>preload.resource.rest</name>
+       <value><![CDATA[/portal/rest/gamification/api/v1/points?userId={username}&period=WEEK,/portal/rest/gamification/leaderboard/stats?username={username}&period=WEEK]]></value>
+     </init-param>
+      <init-param>
+        <description>List of profiles that can be used to enable this portlet</description>
+        <name>exo.profiles</name>
+        <value>gamification,social</value>
+      </init-param>
+      <supports>
+        <mime-type>text/html</mime-type>
+      </supports>
+      <portlet-info>
+        <title>My Contributions</title>
+      </portlet-info>
+    </portlet>
+
+    <portlet>
         <portlet-name>PopularSpaces</portlet-name>
         <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
         <init-param>
