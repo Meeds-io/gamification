@@ -76,7 +76,7 @@ public class RuleSearchConnector {
   
   private static final String          AUDIENCE_FILTERING_QUERY     = ",\n"
       + "        {\n"
-      + "          \"term\": {\n"
+      + "          \"terms\": {\n"
       + "            \"audience\": [\n"
       + "              \"@spaceList@\"\n"
       + "            ]\n"
