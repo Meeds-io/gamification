@@ -28,6 +28,17 @@ public interface RealizationsService {
                                                               int limit) throws IllegalAccessException;
 
   /**
+   * Count realizations by filter
+   *
+   * @param filter used to filter realizations using {@link RealizationsFilter}
+   * @param identity current {@link Identity}
+   * @return realizations count
+   * @throws IllegalAccessException when User doesn't have enough privileges to
+   *           access achievements of user
+   */
+  int countRealizationsByFilter(RealizationsFilter filter, Identity identity) throws IllegalAccessException;
+
+  /**
    * Export realizations found switch filter into an {@link InputStream}
    * containing a file of format XLS
    * 
