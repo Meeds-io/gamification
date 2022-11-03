@@ -17,20 +17,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app
     class="Realizations border-box-sizing">
-    <v-toolbar
-      color="transparent"
-      flat
-      class="pa-4 mb-4">
-      <div class="border-box-sizing clickable">
-        <v-btn class="btn btn-primary export" @click="exportFile()">
-          <span class="ms-2 d-none d-lg-inline">
-            {{ $t("realization.label.export") }}
-          </span>
-        </v-btn>
-      </div>
+    <div class="d-flex px-7 pt-5" flat>
+      <v-toolbar-title class="d-flex">
+          <v-btn class="btn btn-primary export" @click="exportFile()">
+            <span class="ms-2 d-none d-lg-inline">
+              {{ $t("realization.label.export") }}
+            </span>
+          </v-btn>
+      </v-toolbar-title>
       <v-spacer />
-      <div class="selected-period-menu mt-6 px-3">
-        <select-period v-model="selectedPeriod" class="mx-2" />
+      <div class="selected-period-menu mt-1 px-3">
+        <select-period v-model="selectedPeriod" left="true" class="mx-2" />
       </div>
       <div>
         <v-btn
@@ -43,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </span>
         </v-btn>
       </div>
-    </v-toolbar>
+    </div>
     <engagement-center-no-results
       v-if="!displaySearchResult"
       :info="$t('exoplatform.gamification.gamificationinformation.domain.search.noResults')"
