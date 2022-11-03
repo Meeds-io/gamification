@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.exoplatform.addons.gamification.rest.model.RealizationList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -107,15 +108,29 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    RealizationList realizationList = (RealizationList) response.getEntity();
+    List<GamificationActionsHistoryRestEntity> realizations = realizationList.getRealizations();
     assertEquals(0, realizations.size());
     // add new realization
     newGamificationActionsHistory();
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    realizationList = (RealizationList) response.getEntity();
+    realizations = realizationList.getRealizations();
     assertEquals(1, realizations.size());
+
+    restPath = getURLResource("realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerId=" + 1L
+            + "&offset=0&limit=10" + "&returnType=" + JSON_TYPE +"&returnSize=true");
+
+    response = getResponse("GET", restPath, null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    realizationList = (RealizationList) response.getEntity();
+    int realizationCount = realizationList.getSize();
+    realizations = realizationList.getRealizations();
+    assertNotNull(realizations);
+    assertEquals(1, realizationCount);
   }
 
   @SuppressWarnings("unchecked")
@@ -134,8 +149,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
-    assertEquals(0, realizations.size());
+    RealizationList realizationList = (RealizationList) response.getEntity();
+    assertEquals(0, realizationList.getRealizations().size());
 
     // add new realization
     List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
@@ -147,13 +162,16 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
-    assertEquals(limit, realizations.size());
+    realizationList = (RealizationList) response.getEntity();
+    assertEquals(limit, realizationList.getRealizations().size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
                                        .map(GamificationActionsHistory::getId)
                                        .collect(Collectors.toList()),
-                 realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
+                 realizationList.getRealizations()
+                                .stream()
+                                .map(GamificationActionsHistoryRestEntity::getId)
+                                .collect(Collectors.toList()));
   }
 
   @SuppressWarnings("unchecked")
@@ -169,7 +187,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    RealizationList realizationList = (RealizationList) response.getEntity();
+    List<GamificationActionsHistoryRestEntity> realizations = realizationList.getRealizations();
     assertEquals(0, realizations.size());
 
     // add new realization
@@ -181,7 +200,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    realizationList = (RealizationList) response.getEntity();
+    realizations = realizationList.getRealizations();
     assertEquals(limit, realizations.size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
@@ -218,7 +238,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    RealizationList realizationList = (RealizationList) response.getEntity();
+    List<GamificationActionsHistoryRestEntity> realizations = realizationList.getRealizations();
     assertEquals(limit, realizations.size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
@@ -231,8 +252,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
-    assertEquals(createdActionHistories.size(), realizations.size());
+    realizationList = (RealizationList) response.getEntity();
+    realizations = realizationList.getRealizations();    assertEquals(createdActionHistories.size(), realizations.size());
     assertEquals(createdActionHistories.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
   }
@@ -262,7 +283,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    List<GamificationActionsHistoryRestEntity> realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    RealizationList realizationList = (RealizationList) response.getEntity();
+    List<GamificationActionsHistoryRestEntity> realizations = realizationList.getRealizations();
     assertEquals(limit, realizations.size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
@@ -275,7 +297,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    realizations = (List<GamificationActionsHistoryRestEntity>) response.getEntity();
+    realizationList = (RealizationList) response.getEntity();
+    realizations = realizationList.getRealizations();
     assertEquals(createdActionHistories.size(), realizations.size());
     assertEquals(createdActionHistories.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));

@@ -26,6 +26,10 @@ public class RealizationsStorage {
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
 
+  public int countRealizationsByFilter(RealizationsFilter realizationFilter) {
+    return gamificationHistoryDAO.countRealizationsByFilter(realizationFilter);
+  }
+
   public GamificationActionsHistoryDTO getRealizationById(Long id) {
     GamificationActionsHistory gamificationActionsHistory = gamificationHistoryDAO.find(id);
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);

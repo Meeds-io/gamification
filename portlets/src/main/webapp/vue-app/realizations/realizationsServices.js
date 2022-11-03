@@ -29,7 +29,7 @@ export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDesce
   }
 
   const params = new URLSearchParams(formData).toString();
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?${params}`, {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?returnSize=true&${params}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

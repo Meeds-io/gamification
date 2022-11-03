@@ -88,6 +88,35 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
+  public int countRealizationsByFilter(RealizationsFilter filter, Identity identity) throws IllegalAccessException {
+    if (filter == null) {
+      throw new IllegalArgumentException("filter is mandatory");
+    }
+    if (identity == null) {
+      throw new IllegalArgumentException("identity is mandatory");
+    }
+    Date fromDate = filter.getFromDate();
+    Date toDate = filter.getToDate();
+    if (fromDate == null) {
+      throw new IllegalArgumentException("fromDate is mandatory");
+    }
+    if (toDate == null) {
+      throw new IllegalArgumentException("toDate is mandatory");
+    }
+    if (fromDate.after(toDate)) {
+      throw new IllegalArgumentException("Dates parameters are not set correctly");
+    }
+    String username = identity.getUserId();
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
+      return realizationsStorage.countRealizationsByFilter(filter);
+    } else {
+      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
+          + filter.getEarnerId());
+    }
+  }
+
+  @Override
   public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
                                                                HistoryStatus status,
                                                                String actionLabel,
