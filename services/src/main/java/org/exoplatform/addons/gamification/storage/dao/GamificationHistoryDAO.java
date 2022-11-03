@@ -449,6 +449,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return query.getResultList();
   }
 
+  public int countRealizationsByFilter(RealizationsFilter filter) {
+    TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, true);
+    return query.getSingleResult().intValue();
+  }
+
   private <T> TypedQuery<T> buildQueryFromFilter(RealizationsFilter filter, Class<T> clazz, boolean count) {
     List<String> suffixes = new ArrayList<>();
     List<String> predicates = new ArrayList<>();
