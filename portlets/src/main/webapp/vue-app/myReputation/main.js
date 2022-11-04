@@ -16,10 +16,6 @@
  */
 import './initComponents.js';
 
-Vue.use(Vuetify);
-
-const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
-
 extensionRegistry.registerComponent('my-reputation-overview', 'my-reputation-item', {
   id: 'badges-reputation-overview',
   vueComponent: Vue.options.components['badges-overview'],
@@ -31,7 +27,7 @@ const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en'
 
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
-const appId = 'my-reputation-portlet';
+const appId = 'myReputation';
 
 export function init() {
   //getting locale ressources
@@ -41,7 +37,7 @@ export function init() {
       Vue.createApp({
         template: `<my-reputation id="${appId}" />`,
         i18n,
-        vuetify,
+        vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'My Reputation');
     });
 }

@@ -14,22 +14,22 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import MyReputation from './components/MyReputation.vue';
-import BadgesOverview from '../badgesOverview/components/BadgesOverview.vue';
-import BadgesOverviewItem from '../badgesOverview/components/BadgesOverviewItem.vue';
-import BadgesOverviewDrawer from '../badgesOverview/components/BadgesOverviewDrawer.vue';
-import BadgesOverviewDrawerItem from '../badgesOverview/components/BadgesOverviewDrawerItem.vue';
+import './initComponents.js';
 
+const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const urls = [
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`
+];
+const appId = 'topContributors';
 
-const components = {
-  'my-reputation': MyReputation,
-  'badges-overview': BadgesOverview,
-  'badges-overview-item': BadgesOverviewItem,
-  'badges-overview-drawer': BadgesOverviewDrawer,
-  'badges-overview-drawer-item': BadgesOverviewDrawerItem,
-};
-
-for (const key in components) {
-  Vue.component(key, components[key]);
+export function init() {
+  exoi18n.loadLanguageAsync(lang, urls)
+    .then(i18n => {
+      Vue.createApp({
+        template: `<gamification-overview-top-contributors id="${appId}" />`,
+        i18n,
+        vuetify: Vue.prototype.vuetifyOptions,
+      }, `#${appId}`, 'Top Contributors');
+    });
 }
-

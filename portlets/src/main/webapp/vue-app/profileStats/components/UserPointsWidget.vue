@@ -26,13 +26,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-if="overviewDisplay && !hasZeroPoints"
         row
         wrap
-        ma-2
         align-start
-        px-2>
+        mx-0>
         <v-flex
           d-flex>
           <div>
-            <span class="subtitle-2 profile-card-header">{{ $t('overview.myContributions.points') }}</span>
+            <span class="subtitle-2 profile-card-header text-color">{{ $t('overview.myContributions.points') }}</span>
           </div>
         </v-flex>
       </v-layout>
@@ -40,9 +39,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-else-if="!overviewDisplay"
         row
         wrap
-        ma-2
         align-start
-        px-2>
+        mx-0>
         <v-flex
           d-flex
           xs1>
@@ -58,7 +56,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs10
           justify-center>
           <div>
-            <span class="pe-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
+            <span class="pe-6 text-uppercase subtitle-2 profile-card-header text-color">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
           </div>
         </v-flex>
         <v-flex
