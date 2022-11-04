@@ -15,24 +15,25 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    height="338"
-    min-width="350"
-    flat>
-    <div class="d-flex flex-row px-4 pt-4">
-      <h4 class="hidden-space my-0"> {{ $t('gamification.myReputation.title') }} </h4>
-    </div>
-    <div>
-      <div class="d-flex flex-row px-4 pt-4">
-        <h4 class="subtitle-2 align-self-start my-0 black--text"> {{ $t('gamification.myReputation.KudosTitle') }} </h4>
-      </div>
-      <extension-registry-components
-        :params="params"
-        name="my-reputation-overview"
-        type="my-reputation-item"
-        class="d-flex flex-column" />
-    </div>
-  </v-card>
+  <gamification-overview-widget>
+    <template #title>
+      {{ $t('gamification.myReputation.title') }}
+    </template>
+    <template #content>
+      <gamification-overview-widget-row>
+        <template #title>
+          {{ $t('gamification.myReputation.KudosTitle') }}
+        </template>
+        <template #content>
+          <extension-registry-components
+            :params="params"
+            name="my-reputation-overview"
+            type="my-reputation-item"
+            class="d-flex flex-column mx-n4 mt-n4" />
+        </template>
+      </gamification-overview-widget-row>
+    </template>
+  </gamification-overview-widget>
 </template>
 <script>
 export default {

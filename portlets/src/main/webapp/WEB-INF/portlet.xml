@@ -192,7 +192,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
-        <value>/WEB-INF/jsp/myContributions/index.jsp</value>
+        <value>/html/myContributions/index.html</value>
       </init-param>
       <init-param>
        <name>preload.resource.bundles</name>
@@ -207,6 +207,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <name>exo.profiles</name>
         <value>gamification,social</value>
       </init-param>
+      <expiration-cache>-1</expiration-cache>
+      <cache-scope>PUBLIC</cache-scope>
       <supports>
         <mime-type>text/html</mime-type>
       </supports>
@@ -339,22 +341,104 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </portlet-info>
     </portlet>
 
-    <portlet>
-      <portlet-name>myReputation</portlet-name>
-      <display-name xml:lang="EN">My Reputation</display-name>
-      <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
-      <init-param>
-        <name>portlet-view-dispatched-file-path</name>
-        <value>/WEB-INF/jsp/myReputation/index.jsp</value>
-      </init-param>
-      <supports>
-        <mime-type>text/html</mime-type>
-      </supports>
-      <supported-locale>en</supported-locale>
-      <portlet-info>
-        <title>my Reputation</title>
-        <keywords>my Reputation</keywords>
-      </portlet-info>
-    </portlet>
+  <portlet>
+    <portlet-name>myReputation</portlet-name>
+    <display-name xml:lang="EN">My Reputation</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/myReputation/index.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>my Reputation</title>
+      <keywords>my Reputation</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>myRewards</portlet-name>
+    <display-name xml:lang="EN">My Reputation</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/myRewards/index.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>My Rewards</title>
+      <keywords>My Rewards</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>topContributors</portlet-name>
+    <display-name xml:lang="EN">My Reputation</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/topContributors/index.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Top contributors</title>
+      <keywords>Top contributors</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>challengesOverview</portlet-name>
+    <display-name xml:lang="EN">My Reputation</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/challengesOverview/index.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Challenges Overview</title>
+      <keywords>Challenges Overview</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <portlet-name>programsOverview</portlet-name>
+    <display-name xml:lang="EN">My Reputation</display-name>
+    <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
+    <init-param>
+      <name>portlet-view-dispatched-file-path</name>
+      <value>/html/programsOverview/index.html</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <cache-scope>PUBLIC</cache-scope>
+    <supports>
+      <mime-type>text/html</mime-type>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Programs Overview</title>
+      <keywords>Programs Overview</keywords>
+    </portlet-info>
+  </portlet>
 
 </portlet-app>

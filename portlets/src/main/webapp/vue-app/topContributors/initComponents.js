@@ -14,22 +14,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import MyReputation from './components/MyReputation.vue';
-import BadgesOverview from '../badgesOverview/components/BadgesOverview.vue';
-import BadgesOverviewItem from '../badgesOverview/components/BadgesOverviewItem.vue';
-import BadgesOverviewDrawer from '../badgesOverview/components/BadgesOverviewDrawer.vue';
-import BadgesOverviewDrawerItem from '../badgesOverview/components/BadgesOverviewDrawerItem.vue';
-
+import TopContributors from './components/TopContributors.vue';
 
 const components = {
-  'my-reputation': MyReputation,
-  'badges-overview': BadgesOverview,
-  'badges-overview-item': BadgesOverviewItem,
-  'badges-overview-drawer': BadgesOverviewDrawer,
-  'badges-overview-drawer-item': BadgesOverviewDrawerItem,
+  'gamification-overview-top-contributors': TopContributors,
 };
 
 for (const key in components) {
   Vue.component(key, components[key]);
 }
-

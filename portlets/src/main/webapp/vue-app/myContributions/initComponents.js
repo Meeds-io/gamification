@@ -15,11 +15,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import UserPointsWidget from '../profileStats/components/UserPointsWidget.vue';
-import MyContributions from './components/myContributions.vue';
+import MyContributions from './components/MyContributions.vue';
 
 const components = {
-  'user-points-widget': UserPointsWidget,
   'my-contributions': MyContributions,
+  'user-points-widget': UserPointsWidget,
 };
 
 for (const key in components) {

@@ -21,6 +21,7 @@ const { VueLoaderPlugin } = require('vue-loader')
 module.exports = {
     context: path.resolve(__dirname, '.'),
     entry: {
+        gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
         rule: './src/main/webapp/vue-app/rule/rule.js',
         badge: './src/main/webapp/vue-app/badge/badge.js',
         domain: './src/main/webapp/vue-app/domain/domain.js',
@@ -39,6 +40,10 @@ module.exports = {
         engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
         challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
         myReputation: './src/main/webapp/vue-app/myReputation/main.js',
+        myRewards: './src/main/webapp/vue-app/myRewards/main.js',
+        topContributors: './src/main/webapp/vue-app/topContributors/main.js',
+        challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
+        programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
     },
     plugins: [
       new ESLintPlugin({
