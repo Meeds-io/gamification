@@ -17,7 +17,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
-    class="white">
+    class="white"
+    id="badgesOverview">
     <div v-if="isOverviewDisplay" class="subtitle-2 align-self-start my-0 ps-4">
       {{ $t('gamification.myReputation.badgesTitle') }}
     </div>
@@ -32,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
     </v-toolbar>
-    <v-card flat>
+    <v-card flat :class="isOverviewDisplay ? 'pt-4' : ''">
       <v-card-text
         :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
         class="mx-auto d-flex flex-wrap justify-center">
