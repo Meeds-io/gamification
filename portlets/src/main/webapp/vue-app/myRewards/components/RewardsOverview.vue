@@ -18,21 +18,23 @@
     <gamification-overview-widget>
       <template #title>
         {{ $t('gamification.overview.rewardsTitle') }}
+        <v-spacer />
+        <a :href="walletURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
       </template>
       <template #content>
-        <gamification-overview-widget-row>
-          <template #title>
-            <div class="mb-4">
-              {{ $t('gamification.overview.rewardsWalletSubtitle') }}
-            </div>
-          </template>
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-wallet</v-icon>
-          </template>
-          <template #content>
-            <span v-html="emptyWalletSummaryText"></span>
-          </template>
-        </gamification-overview-widget-row>
+        <div class="d-flex">
+          <gamification-overview-widget-row>
+            <template #title>
+              {{ $t('gamification.overview.rewards.earningsTitle') }}
+            </template>
+            <template #content>
+              <extension-registry-components
+                :params="params"
+                name="my-rewards-overview"
+                type="my-rewards-item" />
+            </template>
+          </gamification-overview-widget-row>
+        </div>
         <gamification-overview-widget-row class="my-auto">
           <template #title>
             <div class="mb-4">
@@ -69,6 +71,14 @@ export default {
         1: '</a>',
       });
     },
+    params() {
+      return {
+        isOverviewDisplay: true,
+      };
+    },
+    walletURL() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet`;
+    }
   },
   created() {
     document.addEventListener(this.emptyWalletActionName, this.clickOnWalletEmptyActionLink);
