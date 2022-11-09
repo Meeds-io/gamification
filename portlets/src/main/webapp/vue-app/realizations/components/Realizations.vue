@@ -19,15 +19,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="Realizations border-box-sizing">
     <div class="d-flex px-7 pt-5" flat>
       <v-toolbar-title class="d-flex">
-          <v-btn class="btn btn-primary export" @click="exportFile()">
-            <span class="ms-2 d-none d-lg-inline">
-              {{ $t("realization.label.export") }}
-            </span>
-          </v-btn>
+        <v-btn class="btn btn-primary export" @click="exportFile()">
+          <span class="ms-2 d-none d-lg-inline">
+            {{ $t("realization.label.export") }}
+          </span>
+        </v-btn>
       </v-toolbar-title>
       <v-spacer />
       <div class="selected-period-menu mt-1 px-3">
-        <select-period v-model="selectedPeriod" left="true" class="mx-2" />
+        <select-period
+          v-model="selectedPeriod"
+          left="true"
+          class="mx-2" />
       </div>
       <div>
         <v-btn
