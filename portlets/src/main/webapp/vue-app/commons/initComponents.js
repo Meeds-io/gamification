@@ -14,24 +14,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import './initComponents.js';
+import Widget from './components/Widget.vue';
+import WidgetRow from './components/WidgetRow.vue';
 
-// getting language of user
-const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
-const resourceBundleName = 'locale.addon.Gamification';
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
+const components = {
+  'gamification-overview-widget': Widget,
+  'gamification-overview-widget-row': WidgetRow,
+};
 
-const appId = 'myContributions';
-
-export function init() {
-  //getting locale ressources
-  exoi18n.loadLanguageAsync(lang, url)
-    .then(i18n => {
-      // init Vue app when locale ressources are ready
-      new Vue({
-        template: `<my-contributions id="${appId}" />`,
-        i18n,
-        vuetify: Vue.prototype.vuetifyOptions,
-      }).$mount(`#${appId}`);
-    });
+for (const key in components) {
+  Vue.component(key, components[key]);
 }

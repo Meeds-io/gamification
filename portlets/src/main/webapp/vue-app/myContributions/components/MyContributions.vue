@@ -15,24 +15,19 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    :loading="loading"
-    height="280"
-    width="30%"
-    min-width="350"
-    flat>
-    <div class="d-flex flex-row pa-4">
-      <h4 class="hidden-space my-0"> {{ $t('overview.myContributions.title') }} </h4>
+  <gamification-overview-widget>
+    <template #title>
+      {{ $t('overview.myContributions.title') }}
       <v-spacer />
       <a v-if="seeAllDisplay" :href="achievementsURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
-    </div>
-    <div class="mt-n2">
+    </template>
+    <template #content>
       <user-points-widget
-        :overview-display="true"
+        overview-display
         @seeAll="updateDisplaySeeAll($event)"
         @loadingData="updateLoading($event)" />
-    </div>
-  </v-card>
+    </template>
+  </gamification-overview-widget>
 </template>
 <script>
 export default {
