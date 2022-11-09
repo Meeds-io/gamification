@@ -17,25 +17,37 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
-    class="white">
+    class="white"
+    id="badgesOverview">
+    <div v-if="isOverviewDisplay" class="subtitle-2 align-self-start mt-n4 ps-4">
+      {{ $t('gamification.myReputation.badgesTitle') }}
+    </div>
     <v-toolbar
+      v-else
+      id="badgesOverviewHeader"
       color="white"
       flat
-      class="border-box-sizing">
+      class="border-box-sizing"
+      :height="isOverviewDisplay ? '50px' : 'auto'">
       <div class="text-header-title text-sub-title">
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
     </v-toolbar>
-    <v-card flat>
-      <v-card-text class="mx-auto d-flex flex-wrap justify-center pt-0">
+    <v-card flat :class="isOverviewDisplay ? 'pt-4' : ''">
+      <v-card-text
+        :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
+        class="mx-auto d-flex flex-wrap justify-center">
         <template v-if="badges && badges.length">
           <badges-overview-item
             v-for="badge in badges"
             :key="badge.id"
             :badge="badge" />
         </template>
-        <div v-else class="d-flex justify-center py-10">
-          <span class="emptyBadgesIcon mb-2">
+        <div
+          v-else
+          class="d-flex justify-center"
+          :class="isOverviewDisplay && 'my-auto' || 'py-10'">
+          <span class="emptyBadgesIcon display-3 my-1">
             Ø
           </span>
         </div>
@@ -47,6 +59,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
+  props: {
+    isOverviewDisplay: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
   data: () => ({
     badges: [],
   }),
