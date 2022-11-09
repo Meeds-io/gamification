@@ -16,7 +16,7 @@
  */
 import './initComponents.js';
 
-extensionRegistry.registerComponent('my-reputation-overview', 'my-reputation-item', {
+extensionRegistry.registerComponent('my-reputation-overview-badges', 'my-reputation-item', {
   id: 'badges-reputation-overview',
   vueComponent: Vue.options.components['badges-overview'],
   rank: 20,
@@ -29,13 +29,13 @@ const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
 const appId = 'myReputation';
 
-export function init() {
+export function init(sentKudos, receivedKudos) {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       // init Vue app when locale ressources are ready
       Vue.createApp({
-        template: `<my-reputation id="${appId}" />`,
+        template: `<my-reputation id="${appId}" :sent-kudos-size="${sentKudos}" :received-kudos-size="${receivedKudos}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'My Reputation');

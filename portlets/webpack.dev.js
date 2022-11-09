@@ -21,7 +21,8 @@ const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
   output: {
-      path: `/exo-server/webapps/gamification-portlets/`,
+      path: `/home/exo/work/binaries/meeds-1.4/meeds/webapps/gamification-portlets/`,
   },
   mode: 'development',
+  devtool: 'eval-source-map',
 });
