@@ -41,9 +41,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <extension-registry-components
             :params="params"
             name="my-reputation-overview-kudos"
+            type="my-reputation-item"/>
+        </template>
+      </gamification-overview-widget-row>
+      <gamification-overview-widget-row class="mt-n1">
+        <template #title>
+          {{ $t('gamification.myReputation.badgesTitle') }}
+        </template>
+        <template #content>
+          <extension-registry-components
+            :params="params"
+            name="my-reputation-overview-badges"
             type="my-reputation-item"
-            id="kudos-reputation-overview"
-            class="d-flex flex-column mx-n4 mt-n4" />
+            class="mt-n2"/>
         </template>
       </gamification-overview-widget-row>
     </template>
