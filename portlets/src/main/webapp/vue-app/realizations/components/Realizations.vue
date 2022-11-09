@@ -18,21 +18,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app
     class="Realizations border-box-sizing">
     <div class="d-flex px-7 pt-5" flat>
-      <v-toolbar-title class="d-flex" v-if="!isMobile">
+      <v-toolbar-title class="d-flex">
         <v-btn class="btn btn-primary export" @click="exportFile()">
           <span class="ms-2 d-none d-lg-inline">
             {{ $t("realization.label.export") }}
           </span>
         </v-btn>
       </v-toolbar-title>
-      <v-spacer v-if="!isMobile" />
-      <div class="mt-1 ml-n4 pe-3">
+      <v-spacer />
+      <div class="selected-period-menu mt-1 px-3">
         <select-period
           v-model="selectedPeriod"
-          :left="!isMobile"
+          left="true"
           class="mx-2" />
       </div>
-      <v-spacer v-if="isMobile" />
       <div>
         <v-btn
           class="btn px-2 mt-1 btn-primary filterTasksSetting"
@@ -50,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :info="$t('exoplatform.gamification.gamificationinformation.domain.search.noResults')"
       :info-message="$t('exoplatform.gamification.gamificationinformation.domain.search.noResultsMessage')" />
     <v-data-table
-      v-if="displaySearchResult && !isMobile"
+      v-if="displaySearchResult"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
       :loading="loading"
@@ -65,32 +64,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :realization="props.item"
           :date-format="dateFormat"
           :is-administrator="isAdministrator"
-          :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
-    <v-card
-      v-if="displaySearchResult && isMobile"
-      flat
-      width="auto"
-      class="ms-3 me-7 mb-4">
-      <v-select
-        ref="select"
-        class="pt-0"
-        v-model="selected"
-        :items="availableSortBy"
-        :label="$t('realization.label.sortBy')" />
-    </v-card>
-    <template v-for="item in realizationsToDisplay">
-      <realization-item-mobile
-        :key="item.id"
-        v-if="displaySearchResult && isMobile"
-        :headers="realizationsHeaders"
-        :realization="item"
-        :is-administrator="isAdministrator" 
-        :date-format="mobileDateFormat"
-        :action-value-extensions="actionValueExtensions" />
-    </template>
     <v-toolbar
       color="transparent"
       flat
@@ -102,7 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :disabled="loading"
         @click="loadMore"
         block>
-        <span class="ms-2 d-inline">
+        <span class="ms-2 d-none d-lg-inline">
           {{ $t("realization.label.loadMore") }}
         </span>
       </v-btn>
@@ -111,8 +87,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
     <filter-realizations-drawer
-      :is-administrator="isAdministrator"
-      @selectionConfirmed="filterByPrograms" />
+      @selected-programs="filterByPrograms"
+      @selectionConfirmed="loadRealizations" />
   </v-app>
 </template>
 <script>
@@ -126,19 +102,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    actionValueExtensions: {
-      type: Object,
-      default: function() {
-        return null;
-      },
+    retrieveAll: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
     displaySearchResult: false,
     realizations: [],
-    availableSortBy: [],
     searchList: [],
-    earnerIds: [],
     offset: 0,
     limit: 25,
     pageSize: 25,
@@ -152,44 +124,18 @@ export default {
     selectedPeriod: null,
     dateFormat: {
       year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    },
-    mobileDateFormat: {
-      year: 'numeric',
-      month: 'short',
+      month: 'long',
       day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
     },
-    isMobile: false,
-    selected: 'Date',
   }),
-  beforeDestroy () {
-    if (typeof window === 'undefined') {return;}
-    window.removeEventListener('resize', this.onResize, { passive: true });
-  },
-  mounted () {
-    this.onResize();
-    window.addEventListener('resize', this.onResize, { passive: true });
-  },
-  created() {
-    this.realizationsHeaders.map((header) => {if (header.sortable && header.value !== 'type') {this.availableSortBy.push(header);}});
-    // Workaround to fix closing menu when clicking outside
-    $(document).mousedown(() => {
-      if (this.$refs.select) {
-        window.setTimeout(() => {
-          this.$refs.select.blur();
-        }, 200);
-      }
-    });
-  },
   computed: {
     hasMore() {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
-      return this.isAdministrator ?  this.earnerIds : [this.earnerId];
+      return this.retrieveAll ? 0 : this.earnerId;
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -197,72 +143,63 @@ export default {
     realizationsHeaders() {
       const realizationsHeaders = [
         {
-          text: this.$t('realization.label.actionLabel'),
-          sortable: false,
-          value: 'actionLabel',
-          class: 'actionHeader',
-          width: '188'
-        },
-        {
-          text: this.$t('realization.label.programLabel'),
-          sortable: false,
-          value: 'programLabel',
-          class: 'actionHeader',
-          width: '110'
-        },
-        {
           text: this.$t('realization.label.date'),
+          align: 'center',
           sortable: true,
           value: 'date',
           class: 'actionHeader',
-          width: '120'
         },
         {
           text: this.$t('realization.label.actionType'),
-          sortable: true,
           align: 'center',
-          value: 'type',
-          class: 'actionHeader',
-          width: '85',
+          sortable: true,
+          value: 'actionType',
+          class: 'actionHeader'
+        },
+        {
+          text: this.$t('realization.label.programLabel'),
+          align: 'center',
+          sortable: false,
+          value: 'programLabel',
+          class: 'actionHeader'
+        },
+        {
+          text: this.$t('realization.label.actionLabel'),
+          align: 'center',
+          sortable: false,
+          value: 'actionLabel',
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.points'),
-          sortable: false,
           align: 'center',
+          sortable: false,
           value: 'points',
-          class: 'actionHeader',
-          width: '80',
+          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.status'),
-          sortable: true,
           align: 'center',
+          sortable: true,
           value: 'status',
-          class: 'actionHeader',
-          width: '95',
+          class: 'actionHeader'
         },
       ];
       if (this.isAdministrator) {
         realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
+          align: 'center',
           sortable: false,
-          class: 'actionHeader',
-          width: '80',
+          class: 'actionHeader'
         });
-        realizationsHeaders.splice(3, 0,         
+        realizationsHeaders.splice(1, 0,         
           {
             text: this.$t('realization.label.grantee'),
-            sortable: false,
             align: 'center',
+            sortable: false,
             value: 'grantee',
-            class: 'actionHeader',
-            width: '70',
+            class: 'actionHeader'
           },);
-      }
-      if (this.isMobile) {
-        realizationsHeaders.splice(1, 1);
-        realizationsHeaders.splice(0, 1);
-        realizationsHeaders.splice(5, 1); 
       }
       return realizationsHeaders;
     },
@@ -288,20 +225,6 @@ export default {
         this.sortUpdated();
       }
     },
-    selected(oldVal, newVal) {
-      if (newVal !== oldVal) {
-        this.sortBy = newVal;
-      }
-    },
-    isMobile(newVal) {
-      if (newVal) {
-        this.limit = 9;
-        this.pageSize = 9;
-      } else {
-        this.limit = 25;
-        this.pageSize = 25;
-      }
-    }
   },
   methods: {
     sortUpdated() {
@@ -341,13 +264,8 @@ export default {
     openRealizationsFilterDrawer() {
       this.$root.$emit('realization-open-filter-drawer');
     },
-    filterByPrograms(programs, grantees) {
-      this.searchList = programs.map(program => program.id);
-      this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
-      this.loadRealizations();
-    },
-    onResize () {
-      this.isMobile = window.innerWidth < 1020;
+    filterByPrograms(value) {
+      this.searchList = value.length > 0 ? value : [];
     },
   }
 };
