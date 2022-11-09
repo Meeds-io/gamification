@@ -307,6 +307,7 @@ public class GamificationService {
       actionsHistoryDTO.setReceiver(receiver);
       actionsHistoryDTO.setObjectId(objectId);
       actionsHistoryDTO.setStatus(HistoryStatus.ACCEPTED.name());
+      actionsHistoryDTO.setType(ruleDto.getType());
       return GamificationActionsHistoryMapper.toEntity(actionsHistoryDTO);
     }
     return aHistory;

@@ -1,4 +1,4 @@
-export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDescending, offset, limit, domainIds) {
+export function getAllRealizations(fromDate, toDate, earnerIds, sortBy, sortDescending, offset, limit, domainIds) {
   const formData = new FormData();
   if (fromDate) {
     formData.append('fromDate', fromDate);
@@ -7,8 +7,10 @@ export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDesce
   if (toDate) {
     formData.append('toDate', toDate);
   }
-  if (earnerId) {
-    formData.append('earnerId', earnerId);
+  if (earnerIds?.length > 0) {
+    for (const earnerId of earnerIds) {
+      formData.append('earnerIds', earnerId);
+    }
   }
   if (sortBy) {
     formData.append('sortBy', sortBy);
@@ -23,8 +25,8 @@ export function getAllRealizations(fromDate, toDate, earnerId, sortBy, sortDesce
     formData.append('limit', limit);
   }
   if (domainIds?.length > 0) {
-    for (let index = 0; index < domainIds.length; index++) {
-      formData.append('domainIds', domainIds[index]);
+    for (const element of domainIds) {
+      formData.append('domainIds', element);
     }
   }
 
