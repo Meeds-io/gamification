@@ -54,6 +54,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
+    <portlet-name>myReputation</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/badgesOverview.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
     <portlet-name>Realizations</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/gamification.css</css-path>
@@ -366,24 +374,145 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>myContributions</name>
     <module>
-    <script>
-      <minify>false</minify>
-      <path>/js/myContributions.bundle.js</path>
-    </script>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>vuetify</module>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-  </module>
+      <script>
+        <minify>false</minify>
+        <path>/js/myContributions.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>myRewards</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/myRewards.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>topContributors</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/topContributors.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>challengesOverview</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/challengesOverview.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+
+  <portlet>
+    <name>programsOverview</name>
+    <module>
+      <script>
+        <minify>false</minify>
+        <path>/js/programsOverview.bundle.js</path>
+      </script>
+      <depends>
+        <module>vue</module>
+      </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
   </portlet>
 
   <module>
@@ -564,6 +693,38 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
   </module>
 
+  <portlet>
+    <name>myReputation</name>
+    <module>
+      <script>
+          <minify>false</minify>
+          <path>/js/myReputation.bundle.js</path>
+        </script>
+       <depends>
+         <module>vue</module>
+       </depends>
+      <depends>
+        <module>vuetify</module>
+      </depends>
+      <depends>
+        <module>commonVueComponents</module>
+      </depends>
+      <depends>
+        <module>jquery</module>
+        <as>$</as>
+      </depends>
+      <depends>
+        <module>eXoVueI18n</module>
+      </depends>
+      <depends>
+        <module>extensionRegistry</module>
+      </depends>
+      <depends>
+        <module>gamificationCommon</module>
+      </depends>
+    </module>
+  </portlet>
+  
   <module>
     <name>realizationComponents</name>
     <script>
@@ -622,5 +783,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
     </module>
   </portlet>
+
+  <module>
+    <name>gamificationCommon</name>
+    <script>
+      <minify>false</minify>
+      <path>/js/gamificationCommon.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+  </module>
 
 </gatein-resources>
