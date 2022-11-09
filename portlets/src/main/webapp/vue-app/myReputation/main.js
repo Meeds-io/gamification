@@ -16,22 +16,28 @@
  */
 import './initComponents.js';
 
+extensionRegistry.registerComponent('my-reputation-overview', 'my-reputation-item', {
+  id: 'badges-reputation-overview',
+  vueComponent: Vue.options.components['badges-overview'],
+  rank: 20,
+}); 
+
 // getting language of user
 const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+
 const resourceBundleName = 'locale.addon.Gamification';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${resourceBundleName}-${lang}.json`;
-
-const appId = 'myContributions';
+const appId = 'myReputation';
 
 export function init() {
   //getting locale ressources
   exoi18n.loadLanguageAsync(lang, url)
     .then(i18n => {
       // init Vue app when locale ressources are ready
-      new Vue({
-        template: `<my-contributions id="${appId}" />`,
+      Vue.createApp({
+        template: `<my-reputation id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
-      }).$mount(`#${appId}`);
+      }, `#${appId}`, 'My Reputation');
     });
 }
