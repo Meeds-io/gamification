@@ -15,9 +15,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import TopContributors from './components/TopContributors.vue';
+import  gamificationRank  from '../profileStats/components/GamificationRank.vue';
 
 const components = {
   'gamification-overview-top-contributors': TopContributors,
+  'gamification-rank': gamificationRank,
 };
 
 for (const key in components) {

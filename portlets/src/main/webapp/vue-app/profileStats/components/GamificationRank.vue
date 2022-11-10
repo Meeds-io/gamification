@@ -16,6 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-layout
+    :class="isOverviewDisplay && 'mt-n8 mb-5' || ''"
     row
     wrap
     mx-0>
@@ -30,6 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         align-start
         px12>
         <v-flex
+          v-if="!isOverviewDisplay"
           d-flex
           xs12
           mt-n2
@@ -39,6 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-flex>
         <v-flex
+          v-if="!isOverviewDisplay"
           d-flex
           xs12
           mt-n6>
@@ -60,6 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         mx-0
         class="podium-layout">
         <v-flex
+          :class="isOverviewDisplay && 'mb-7' || ''"
           d-flex
           justify-center
           align-end>
@@ -139,6 +143,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 import {getUsersByGamificationRank} from '../profilStatsAPI';
 export default {
+  props: {
+    isOverviewDisplay: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
   data() {
     return {
       leaderBoardArray: [],

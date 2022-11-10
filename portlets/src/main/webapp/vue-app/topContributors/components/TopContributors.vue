@@ -18,9 +18,11 @@
     <gamification-overview-widget>
       <template #title>
         {{ $t('gamification.overview.topContributorsTitle') }}
+        <v-spacer />
+        <a :href="peopleURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
       </template>
       <template #content>
-        <gamification-overview-widget-row class="my-auto">
+        <gamification-overview-widget-row class="my-auto" v-if="false">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>
@@ -28,7 +30,22 @@
             <span v-html="$t('gamification.overview.topContributorsSummary')"></span>
           </template>
         </gamification-overview-widget-row>
+        <gamification-overview-widget-row class="my-auto">
+          <template #content>
+            <gamification-rank :is-overview-display="true"></gamification-rank>
+          </template>
+        </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
   </v-app>
 </template>
+<script>
+export default {
+  computed: {
+    peopleURL() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
+    }
+  },
+};
+</script>
+
