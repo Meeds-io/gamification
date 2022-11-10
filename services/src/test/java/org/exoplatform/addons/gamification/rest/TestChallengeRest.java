@@ -379,6 +379,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value("10")
               .key("program")
               .value(domain.getTitle())
+              .key("enabled")
+              .value(true)
               .key("audience")
               .value("1")
               .endObject();

@@ -290,7 +290,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <td>
                   <label class="switch">
                     <input
-                      :checked= "rule.enabled || (!rule.enabled && getRuleStatus(rule.startDate ,rule.endDate) === 'STARTED')"
+                      :checked= "rule.enabled"
                       disabled
                       type="checkbox">
                     <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
@@ -484,23 +484,6 @@ export default {
         return this.$t(`exoplatform.gamification.gamificationinformation.rule.description.${title}`) ;
       } else {
         return description;
-      }
-    },
-    getRuleStatus(startDate, endDate){
-      const status = {
-        NOTSTARTED: 'NOTSTARTED',
-        STARTED: 'STARTED',
-        ENDED: 'ENDED'
-      };
-      const currentDate = new Date();
-      startDate = new Date(startDate);
-      endDate = new Date(endDate);
-      if (startDate.getTime() > currentDate.getTime() && endDate.getTime() > currentDate.getTime()) {
-        return status.NOTSTARTED;
-      } else if ((startDate.getTime() < currentDate.getTime() && endDate.getTime() > currentDate.getTime()) || (this.getFromDate(endDate) ===  this.getFromDate(currentDate))) {
-        return status.STARTED;
-      } else if (endDate.getTime() < currentDate.getTime() && startDate.getTime() < currentDate.getTime()) {
-        return status.ENDED;
       }
     },
     getFromDate(date) {
