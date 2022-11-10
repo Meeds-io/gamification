@@ -50,7 +50,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     return AnnouncementRest.class;
   }
 
-  private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                                                            // NOSONAR
 
   private static final String startDate       = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
 
@@ -80,7 +80,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         endDate,
                                         Collections.singletonList(identityId),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
     challenge = challengeService.createChallenge(challenge);
     String restPath = "/gamification/announcement/api/addAnnouncement";
     EnvironmentContext envctx = new EnvironmentContext();
@@ -198,7 +199,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         endDate,
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
     challenge = challengeService.createChallenge(challenge);
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),

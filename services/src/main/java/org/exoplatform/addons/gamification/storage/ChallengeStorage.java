@@ -43,6 +43,7 @@ public class ChallengeStorage {
       ruleDTO.setCreatedBy(storedRuleDTO.getCreatedBy());
       ruleDTO.setEvent(storedRuleDTO.getEvent());
     }
+    ruleDTO.setEnabled(challenge.isEnabled());
     ruleDTO.setLastModifiedBy(username);
     ruleDTO = ruleStorage.saveRule(ruleDTO);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
