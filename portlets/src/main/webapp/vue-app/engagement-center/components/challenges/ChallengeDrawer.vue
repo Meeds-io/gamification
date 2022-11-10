@@ -120,6 +120,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               @validity-updated=" validInput = $event"
               @addDescription="addDescription($event)" />
           </div>
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('challenges.label.status') }}</span>
+            <div class="d-flex flex-row px-4">
+              <label class="subtitle-1 text-light-color">{{ $t('challenges.label.enabled') }}</label>
+              <v-switch
+                v-if="drawer"
+                id="engagementCenterChallengeDrawerSwitch"
+                v-model="challenge.enabled"
+                class="mt-0 ms-4" />
+            </div>
+          </div>
         </v-form>
       </v-card-text>
     </template>
@@ -276,12 +287,18 @@ export default {
     open(challenge) {
       this.challenge = challenge && JSON.parse(JSON.stringify(challenge)) || {
         points: 20,
+        enabled: true,
       };
-      this.$refs.challengeDrawer.open();
       this.$nextTick()
         .then(() => {
-          this.$refs.challengeDescription.initCKEditor();
-          this.setUp();
+          this.$refs.challengeDrawer.open();
+          this.$nextTick()
+            .then(() => {
+              this.$refs.challengeDescription.initCKEditor();
+              if (this.challenge?.id) {
+                this.setUp();
+              }
+            });
         });
     },
     editManuelRule(rule) {
