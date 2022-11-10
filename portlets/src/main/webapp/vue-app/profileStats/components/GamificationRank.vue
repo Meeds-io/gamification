@@ -163,6 +163,7 @@ export default {
     getUsersByGamificationRank() {
       getUsersByGamificationRank('WEEK').then(
         (data) => {
+          document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: data.length}));
           const currentUser = eXo.env.portal.profileOwner;
           const index = data.findIndex(item => item.remoteId === currentUser) + 1;
           for (let i = 0; i < data.length; i++) {
