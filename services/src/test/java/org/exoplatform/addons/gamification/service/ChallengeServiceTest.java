@@ -97,7 +97,8 @@ public class ChallengeServiceTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Challenge challengeCreated = new Challenge(1l,
                                                "new challenge",
                                                "challenge description",
@@ -106,7 +107,8 @@ public class ChallengeServiceTest {
                                                new Date(System.currentTimeMillis() + 1).toString(),
                                                Collections.emptyList(),
                                                10L,
-                                               "gamification"); // Given
+                                               "gamification",
+                                               true); // Given
     Challenge challengeSystem = new Challenge(0,
                                               "new system challenge",
                                               "system challenge description",
@@ -115,7 +117,8 @@ public class ChallengeServiceTest {
                                               new Date(System.currentTimeMillis() + 1).toString(),
                                               Collections.emptyList(),
                                               10L,
-                                              "gamification");
+                                              "gamification",
+                                              true);
     Challenge challengeCreatedSystem = new Challenge(2l,
                                                      "new challenge",
                                                      "challenge description",
@@ -124,7 +127,8 @@ public class ChallengeServiceTest {
                                                      new Date(System.currentTimeMillis() + 1).toString(),
                                                      Collections.emptyList(),
                                                      10L,
-                                                     "gamification");
+                                                     "gamification",
+                                                     true);
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
@@ -164,7 +168,8 @@ public class ChallengeServiceTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Challenge challenge1 = new Challenge(1l,
                                          "new challenge",
                                          "challenge description",
@@ -173,7 +178,8 @@ public class ChallengeServiceTest {
                                          new Date(System.currentTimeMillis() + 1).toString(),
                                          Collections.emptyList(),
                                          10L,
-                                         "gamification");
+                                         "gamification",
+                                         true);
 
     Challenge challenge2 = new Challenge(1l,
                                          "update challenge",
@@ -183,7 +189,8 @@ public class ChallengeServiceTest {
                                          new Date(System.currentTimeMillis() + 1).toString(),
                                          Collections.emptyList(),
                                          10L,
-                                         "gamification");
+                                         "gamification",
+                                         true);
     Space space = new Space();
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challenge2);
@@ -213,7 +220,8 @@ public class ChallengeServiceTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
 
     Space space = new Space();
     when(spaceService.getSpaceById("1")).thenReturn(space);
@@ -276,7 +284,8 @@ public class ChallengeServiceTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Space space = new Space();
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(false);
@@ -307,7 +316,8 @@ public class ChallengeServiceTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     List<Long> challengesIds = new ArrayList<>();
     challengesIds.add(challenge.getId());
     RuleFilter filter = new RuleFilter();
@@ -335,7 +345,8 @@ public class ChallengeServiceTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     List<Challenge> challenges = new ArrayList<>();
     challenges.add(challenge);
     RuleFilter filter = new RuleFilter();

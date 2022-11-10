@@ -83,7 +83,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
 
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),
@@ -179,7 +180,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),
                                                  challenge.getTitle(),
@@ -268,7 +270,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Announcement announcement1 = new Announcement(0,
                                                   challenge.getId(),
                                                   challenge.getTitle(),
@@ -318,7 +321,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
 
     when(announcementStorage.countAnnouncementsByChallenge(challenge.getId())).thenReturn(10l);
 

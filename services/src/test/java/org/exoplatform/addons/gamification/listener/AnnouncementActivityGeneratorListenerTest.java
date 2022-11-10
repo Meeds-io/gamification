@@ -89,7 +89,8 @@ public class AnnouncementActivityGeneratorListenerTest {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
 
     Announcement announcement = new Announcement(1,
                                                  challenge.getId(),
