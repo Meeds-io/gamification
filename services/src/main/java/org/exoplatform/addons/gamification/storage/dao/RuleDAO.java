@@ -262,6 +262,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     if (filter.getDateFilterType() != null) {
       DateFilterType dateFilterType = filter.getDateFilterType();
+      suffixes.add("Enabled");
+      predicates.add("r.isEnabled = true");
       switch (dateFilterType) {
       case STARTED:
         suffixes.add("StartDateAndEndDate");
