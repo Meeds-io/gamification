@@ -16,7 +16,7 @@
  */
 import './initComponents.js';
 
-extensionRegistry.registerComponent('my-reputation-overview', 'my-reputation-item', {
+extensionRegistry.registerComponent('my-reputation-overview-badges', 'my-reputation-item', {
   id: 'badges-reputation-overview',
   vueComponent: Vue.options.components['badges-overview'],
   rank: 20,

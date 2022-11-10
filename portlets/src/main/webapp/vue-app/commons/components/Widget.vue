@@ -15,6 +15,7 @@
 -->
 <template>
   <v-card
+    :loading="loading"
     height="338px"
     min-width="290px"
     class="white overflow-hidden d-flex flex-column"
@@ -27,3 +28,13 @@
     </v-card-text>
   </v-card>
 </template>
+<script>
+export default {
+  props: {
+    loading: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
+};
+</script>
