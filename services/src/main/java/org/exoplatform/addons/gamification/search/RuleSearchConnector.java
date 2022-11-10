@@ -76,13 +76,12 @@ public class RuleSearchConnector {
   
   private static final String          AUDIENCE_FILTERING_QUERY     = ",\n"
       + "        {\n"
-      + "          \"term\": {\n"
+      + "          \"terms\": {\n"
       + "            \"audience\": [\n"
-      + "              \"@spaceList@\"\n"
+      + "              @spaceList@\n"
       + "            ]\n"
       + "          }\n"
       + "        }\n";
-
 
   private static final String          DATE_FILTERING_QUERY         = ", \n @startDateQuery@ @endDateQuery@ \n";
 
