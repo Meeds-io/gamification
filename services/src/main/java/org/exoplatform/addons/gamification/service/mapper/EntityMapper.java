@@ -227,7 +227,8 @@ public class EntityMapper {
                          ruleDTO.getEndDate(),
                          ruleDTO.getManagers(),
                          (long) ruleDTO.getScore(),
-                         ruleDTO.getDomainDTO() == null ? null : ruleDTO.getDomainDTO().getTitle());
+                         ruleDTO.getDomainDTO() == null ? null : ruleDTO.getDomainDTO().getTitle(),
+                         ruleDTO.isEnabled());
   }
 
 }
