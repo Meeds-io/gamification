@@ -82,20 +82,15 @@ export default {
   },
   created() {
     document.addEventListener(this.emptyWalletActionName, this.clickOnWalletEmptyActionLink);
-    document.addEventListener(this.emptyPerkstoreActionName, this.clickOnPerkstoreEmptyActionLink);
+    document.addEventListener(this.emptyPerkstoreActionName, this.clickOnWalletEmptyActionLink);
   },
   beforeDestroy() {
     document.removeEventListener(this.emptyWalletActionName, this.clickOnWalletEmptyActionLink);
-    document.removeEventListener(this.emptyPerkstoreActionName, this.clickOnPerkstoreEmptyActionLink);
+    document.removeEventListener(this.emptyPerkstoreActionName, this.clickOnWalletEmptyActionLink);
   },
   methods: {
     clickOnWalletEmptyActionLink() {
-      // TODO
-      console.warn('clickOnWalletEmptyActionLink');//eslint-disable-line no-console
-    },
-    clickOnPerkstoreEmptyActionLink() {
-      // TODO
-      console.warn('clickOnPerkstoreEmptyActionLink');//eslint-disable-line no-console
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet`;
     },
   },
 };
