@@ -14,14 +14,22 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import TopContributors from './components/TopContributors.vue';
-import  gamificationRank  from '../profileStats/components/GamificationRank.vue';
+import './initComponents.js';
 
-const components = {
-  'gamification-overview-top-contributors': TopContributors,
-  'gamification-rank': gamificationRank,
-};
+const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
+const urls = [
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`
+];
+const appId = 'topChallengers';
 
-for (const key in components) {
-  Vue.component(key, components[key]);
+export function init() {
+  exoi18n.loadLanguageAsync(lang, urls)
+    .then(i18n => {
+      Vue.createApp({
+        template: `<gamification-overview-top-challengers id="${appId}" />`,
+        i18n,
+        vuetify: Vue.prototype.vuetifyOptions,
+      }, `#${appId}`, 'Top Challengers');
+    });
 }

@@ -15,7 +15,10 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :loading="loading" :display-see-all="true" :see-all-url="peopleURL">
+    <gamification-overview-widget
+      :loading="loading"
+      :display-see-all="true"
+      :see-all-url="peopleURL">
       <template #title>
         {{ $t('gamification.overview.topChallengersTitle') }}
       </template>
@@ -27,7 +30,7 @@
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>
           <template #content>
-            <span v-html="$t('gamification.overview.topContributorsSummary')"></span>
+            <span v-html="$t('gamification.overview.topChallengersSummary')"></span>
           </template>
         </gamification-overview-widget-row>
         <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed">
