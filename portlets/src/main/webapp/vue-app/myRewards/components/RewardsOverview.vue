@@ -90,13 +90,13 @@ export default {
   computed: {
     emptyWalletSummaryText() {
       return this.$t('gamification.overview.rewardsWalletSummary', {
-        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyWalletActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyWalletActionName}'))">`,
         1: '</a>',
       });
     },
     emptyPerkstoreSummaryText() {
       return this.$t('gamification.overview.rewardsPerkstoreSummary', {
-        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyPerkstoreActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyPerkstoreActionName}'))">`,
         1: '</a>',
       });
     },
