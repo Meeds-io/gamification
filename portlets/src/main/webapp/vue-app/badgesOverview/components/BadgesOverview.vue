@@ -86,6 +86,7 @@ export default {
         })
         .then(data => {
           this.badges = data || [];
+          document.dispatchEvent(new CustomEvent('badgesCount', {detail: this.badges.length}));
           this.badges.forEach(badge => {
             badge.avatar = badge.url;
             badge.domainLabel = this.getLabel('exoplatform.gamification.gamificationinformation.domain', badge.zone);
