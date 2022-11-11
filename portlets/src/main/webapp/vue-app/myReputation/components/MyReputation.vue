@@ -20,36 +20,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ $t('gamification.myReputation.title') }}
     </template>
     <template #content>
-      <v-card flat height="94">
-        <gamification-overview-widget-row v-show="kudosDisplayed">
-          <template #title>
-            {{ $t('gamification.myReputation.KudosTitle') }}
-          </template>
-          <template #content>
-            <extension-registry-components
-              :params="params"
-              name="my-reputation-overview-kudos"
-              type="my-reputation-item"
-              class="d-flex flex-column mx-n4" />
-          </template>
-        </gamification-overview-widget-row>
-        <gamification-overview-widget-row v-show="!kudosDisplayed">
-          <template #title>
-            <div class="mb-4">
-              {{ $t('gamification.myReputation.KudosTitleNoData') }}
-            </div>
-          </template>
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-award</v-icon>
-          </template>
-          <template #content>
-            <span v-html="emptyKudosSummaryText"></span>
-          </template>
-        </gamification-overview-widget-row>
-      </v-card>
-      <gamification-overview-widget-row
-        class="my-auto"
-        v-show="badgesDisplayed">
+      <gamification-overview-widget-row v-show="kudosDisplayed">
+        <template #title>
+          {{ $t('gamification.myReputation.KudosTitle') }}
+        </template>
+        <template #content>
+          <extension-registry-components
+            :params="params"
+            name="my-reputation-overview-kudos"
+            type="my-reputation-item"
+            class="d-flex flex-column mx-n4 mt-n4" />
+        </template>
+      </gamification-overview-widget-row>
+      <gamification-overview-widget-row v-show="!kudosDisplayed">
+        <template #title>
+          <div class="mb-4">
+            {{ $t('gamification.myReputation.KudosTitleNoData') }}
+          </div>
+        </template>
+        <template #icon>
+          <v-icon color="secondary" size="55px">fas fa-award</v-icon>
+        </template>
+        <template #content>
+          <span v-html="emptyKudosSummaryText"></span>
+        </template>
+      </gamification-overview-widget-row>
+      <gamification-overview-widget-row class="mt-n3" v-show="badgesDisplayed">
         <template #title>
           <div class="subtitle-2 align-self-start mt-10">
             {{ $t('gamification.myReputation.badgesTitle') }}
@@ -67,8 +63,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="my-auto"
         v-show="!badgesDisplayed">
         <template #title>
-          <div class="mb-3">
-            {{ $t('gamification.myReputation.badgesTitle') }}
+          <div class="mb-3 mt-11">
+         {{ $t('gamification.myReputation.badgesTitle') }}
           </div>
         </template>
         <template #icon>
@@ -98,7 +94,7 @@ export default {
     },
     emptyKudosSummaryText() {
       return this.$t('gamification.overview.reputationKudosSummary', {
-        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">`,
         1: '</a>',
       });
     },
@@ -112,13 +108,13 @@ export default {
   created() {
     document.addEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
     document.addEventListener('kudosCount', (event) => {
-      if (event && event.detail) {
+      if (event) {
         this.kudosDisplayed = event.detail > 0;
         this.loading = false;
       }
     });
     document.addEventListener('badgesCount', (event) => {
-      if (event && event.detail) {
+      if (event) {
         this.badgesDisplayed = event.detail > 0;
         this.loading = false;
       }
