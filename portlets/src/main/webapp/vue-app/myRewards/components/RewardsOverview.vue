@@ -15,7 +15,7 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :display-see-all="true" :see-all-url="walletURL">
+    <gamification-overview-widget :see-all-url="walletURL">
       <template #title>
         {{ $t('gamification.overview.rewardsTitle') }}
       </template>

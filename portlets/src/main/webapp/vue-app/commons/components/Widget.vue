@@ -22,7 +22,7 @@
     <v-card-title class="subtitle-1 text-sub-title">
       <slot name="title"></slot>
       <v-spacer />
-      <a v-if="displaySeeAll" :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
+      <a v-if="seeAllUrl" :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </v-card-title>
     <v-card-text class="d-flex flex-column flex-grow-1">
       <slot name="content"></slot>
@@ -33,10 +33,6 @@
 export default {
   props: {
     loading: {
-      type: Boolean,
-      default: () => false,
-    },
-    displaySeeAll: {
       type: Boolean,
       default: () => false,
     },
