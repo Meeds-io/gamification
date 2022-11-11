@@ -101,10 +101,7 @@ export default {
       });
     },
     emptyBadgesSummaryText() {
-      return this.$t('gamification.overview.reputationBadgesSummary', {
-        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyBadgesActionName}'))">`,
-        1: '</a>',
-      });
+      return this.$t('gamification.overview.reputationBadgesSummary');
     },
     kudosData() {
       return (this.sentKudosSize + this.receivedKudosSize) > 0;
@@ -112,7 +109,6 @@ export default {
   },
   created() {
     document.addEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
-    document.addEventListener(this.emptyBadgesActionName, this.clickOnBadgesEmptyActionLink);
     document.addEventListener('kudosCount', (event) => {
       if (event) {
         this.kudosDisplayed = event.detail > 0;
@@ -132,9 +128,6 @@ export default {
   },
   methods: {
     clickOnKudosEmptyActionLink() {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
-    },
-    clickOnBadgesEmptyActionLink() {
       window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
     },
   },
