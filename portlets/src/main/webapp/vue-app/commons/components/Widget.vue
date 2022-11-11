@@ -21,9 +21,29 @@
     flat>
     <v-card-title class="subtitle-1 text-sub-title">
       <slot name="title"></slot>
+      <v-spacer />
+      <a v-if="displaySeeAll" :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </v-card-title>
     <v-card-text class="d-flex flex-column flex-grow-1">
       <slot name="content"></slot>
     </v-card-text>
   </v-card>
 </template>
+<script>
+export default {
+  props: {
+    loading: {
+      type: Boolean,
+      default: () => false,
+    },
+    displaySeeAll: {
+      type: Boolean,
+      default: () => false,
+    },
+    seeAllUrl: {
+      type: String,
+      default: () => '',
+    }
+  },
+};
+</script>
