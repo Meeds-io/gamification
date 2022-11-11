@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget :display-see-all="seeAllDisplay" :see-all-url="achievementsURL">
+  <gamification-overview-widget :see-all-url="achievementsURL">
     <template #title>
       {{ $t('overview.myContributions.title') }}
     </template>
