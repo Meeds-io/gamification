@@ -15,14 +15,14 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :loading="loading">
+    <gamification-overview-widget :loading="loading" :display-see-all="true" :see-all-url="peopleURL">
       <template #title>
-        {{ $t('gamification.overview.topContributorsTitle') }}
-        <v-spacer />
-        <a :href="peopleURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
+        {{ $t('gamification.overview.topChallengersTitle') }}
       </template>
       <template #content>
-        <gamification-overview-widget-row class="my-auto" v-show="!rankDisplayed">
+        <gamification-overview-widget-row
+          class="my-auto"
+          v-show="!rankDisplayed">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>
