@@ -45,7 +45,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span v-html="emptyKudosSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row class="mt-n1" v-show="badgesDisplayed">
+      <gamification-overview-widget-row class="mt-n3" v-show="badgesDisplayed">
         <template #title>
           {{ $t('gamification.myReputation.badgesTitle') }}
         </template>
@@ -59,8 +59,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </gamification-overview-widget-row>
       <gamification-overview-widget-row v-show="!badgesDisplayed">
         <template #title>
-          <div class="mb-4">
-            {{ $t('gamification.overview.badgesTitle') }}
+          <div class="mb-3 mt-11">
+         {{ $t('gamification.myReputation.badgesTitle') }}
           </div>
         </template>
         <template #icon>
@@ -95,7 +95,10 @@ export default {
       });
     },
     emptyBadgesSummaryText() {
-      return this.$t('gamification.overview.reputationBadgesSummary');
+      return this.$t('gamification.overview.reputationBadgesSummary', {
+        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyBadgesActionName}'))">`,
+        1: '</a>',
+      });
     },
     kudosData() {
       return (this.sentKudosSize + this.receivedKudosSize) > 0;
@@ -103,14 +106,15 @@ export default {
   },
   created() {
     document.addEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
+    document.addEventListener(this.emptyBadgesActionName, this.clickOnBadgesEmptyActionLink);
     document.addEventListener('kudosCount', (event) => {
-      if (event && event.detail) {
+      if (event) {
         this.kudosDisplayed = event.detail > 0;
         this.loading = false;
       }
     });
     document.addEventListener('badgesCount', (event) => {
-      if (event && event.detail) {
+      if (event) {
         this.badgesDisplayed = event.detail > 0;
         this.loading = false;
       }
@@ -122,6 +126,9 @@ export default {
   },
   methods: {
     clickOnKudosEmptyActionLink() {
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
+    },
+    clickOnBadgesEmptyActionLink() {
       window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
     },
   },
