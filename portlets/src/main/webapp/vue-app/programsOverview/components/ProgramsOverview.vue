@@ -40,7 +40,7 @@ export default {
   computed: {
     emptySummaryText() {
       return this.$t('gamification.overview.programsOverviewSummary', {
-        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyActionName}'))">`,
         1: '</a>',
       });
     },
