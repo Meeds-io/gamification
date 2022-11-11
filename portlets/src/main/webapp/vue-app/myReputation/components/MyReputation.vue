@@ -74,6 +74,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span v-html="emptyBadgesSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
+      <gamification-overview-widget-row v-show="!badgesDisplayed">
+        <template #title>
+          <div class="mb-4">
+            {{ $t('gamification.overview.badgesTitle') }}
+          </div>
+        </template>
+        <template #icon>
+          <v-icon color="secondary" size="55px">fas fa-graduation-cap</v-icon>
+        </template>
+        <template #content>
+          <span v-html="emptyBadgesSummaryText"></span>
+        </template>
+      </gamification-overview-widget-row>
     </template>
   </gamification-overview-widget>
 </template>
