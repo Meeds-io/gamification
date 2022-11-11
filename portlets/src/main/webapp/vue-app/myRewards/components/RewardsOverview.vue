@@ -55,8 +55,8 @@
 <script>
 export default {
   data: () => ({
-    emptyWalletActionName: 'gamification-topContributors-wallet-check-actions',
-    emptyPerkstoreActionName: 'gamification-topContributors-perk-store-check-actions',
+    emptyWalletActionName: 'gamification-wallet-check-actions',
+    emptyPerkstoreActionName: 'gamification-perk-store-check-actions',
   }),
   computed: {
     emptyWalletSummaryText() {
