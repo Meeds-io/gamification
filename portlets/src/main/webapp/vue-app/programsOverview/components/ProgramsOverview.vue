@@ -53,8 +53,7 @@ export default {
   },
   methods: {
     clickOnEmptyActionLink() {
-      // TODO
-      console.warn('clickOnEmptyActionLink');//eslint-disable-line no-console
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
   },
 };
