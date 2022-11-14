@@ -54,7 +54,7 @@ export default {
   },
   created() {
     document.addEventListener('listOfRankedConnections', (event) => {
-      if (event && event.detail) {
+      if (event) {
         this.rankDisplayed = event.detail > 0;
         this.loading = false;
       }
