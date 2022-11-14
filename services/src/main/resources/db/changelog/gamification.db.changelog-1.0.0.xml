@@ -523,4 +523,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <sql>UPDATE GAMIFICATION_ACTIONS_HISTORY
             SET TYPE=(SELECT TYPE FROM GAMIFICATION_RULE WHERE GAMIFICATION_ACTIONS_HISTORY.RULE_ID = GAMIFICATION_RULE.ID)</sql>
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-50">
+        <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
+                        columnName="DOMAIN"
+                        newDataType="NVARCHAR(50)"
+        />
+        <modifyDataType tableName="GAMIFICATION_BADGES"
+                        columnName="DOMAIN"
+                        newDataType="NVARCHAR(50)"
+        />
+    </changeSet>
 </databaseChangeLog>
