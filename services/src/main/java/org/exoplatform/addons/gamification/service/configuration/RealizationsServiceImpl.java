@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -79,11 +80,12 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
+    if (isAdministrator(identity) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
+        && filter.getEarnerIds().contains(userIdentity.getId()))) {
       return realizationsStorage.getRealizationsByFilter(filter, offset, limit);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
-          + filter.getEarnerId());
+          + filter.getEarnerIds());
     }
   }
 
@@ -108,11 +110,12 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (isAdministrator(identity) || filter.getEarnerId() == Long.parseLong(userIdentity.getId())) {
+    if (isAdministrator(identity) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
+            && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
       return realizationsStorage.countRealizationsByFilter(filter);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
-          + filter.getEarnerId());
+          + filter.getEarnerIds());
     }
   }
 

@@ -33,7 +33,7 @@ public class RealizationsFilter implements Serializable {
 
   private static final long serialVersionUID = 7863115218512008696L;
 
-  private long              earnerId;
+  private List<String>      earnerIds;
 
   private String            sortField;
 
