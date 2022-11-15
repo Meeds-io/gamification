@@ -87,8 +87,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
     <filter-realizations-drawer
-      @selected-programs="filterByPrograms"
-      @selectionConfirmed="loadRealizations" />
+      :is-administrator="isAdministrator"
+      @selectionConfirmed="filterByPrograms" />
   </v-app>
 </template>
 <script>
@@ -102,15 +102,12 @@ export default {
       type: Boolean,
       default: false,
     },
-    retrieveAll: {
-      type: Boolean,
-      default: false,
-    },
   },
   data: () => ({
     displaySearchResult: false,
     realizations: [],
     searchList: [],
+    earnerIds: [],
     offset: 0,
     limit: 25,
     pageSize: 25,
@@ -135,7 +132,7 @@ export default {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
-      return this.retrieveAll ? 0 : this.earnerId;
+      return this.isAdministrator ?  this.earnerIds : [this.earnerId];
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -153,7 +150,7 @@ export default {
           text: this.$t('realization.label.actionType'),
           align: 'center',
           sortable: true,
-          value: 'actionType',
+          value: 'type',
           class: 'actionHeader'
         },
         {
@@ -264,8 +261,10 @@ export default {
     openRealizationsFilterDrawer() {
       this.$root.$emit('realization-open-filter-drawer');
     },
-    filterByPrograms(value) {
-      this.searchList = value.length > 0 ? value : [];
+    filterByPrograms(programs, grantees) {
+      this.searchList = programs.map(program => program.id);
+      this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
+      this.loadRealizations();
     },
   }
 };
