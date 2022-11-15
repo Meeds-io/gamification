@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
@@ -112,10 +113,10 @@ public class BadgeService {
     public List<BadgeDTO> getAllBadges() {
       // --- load all Rules
       List<BadgeEntity> badges = badgeStorage.getAllBadges();
-      if (badges == null) {
-        return Collections.emptyList();
-      } else {
+      if (CollectionUtils.isNotEmpty(badges)) {
         return BadgeMapper.badgesToBadgeDTOs(badges);
+      } else {
+        return Collections.emptyList();
       }
     }
 

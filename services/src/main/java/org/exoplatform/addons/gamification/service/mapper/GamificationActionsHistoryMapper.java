@@ -29,7 +29,7 @@ public class GamificationActionsHistoryMapper {
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
     String objectId = "";
     if (gamificationActionsHistoryEntity.getActivityId() != null && gamificationActionsHistoryEntity.getActivityId() != 0) {
-      objectId = "/" +  LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + "/activity?id="
+      objectId = "/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + "/activity?id="
           + gamificationActionsHistoryEntity.getActivityId();
     } else {
       objectId = gamificationActionsHistoryEntity.getObjectId();
@@ -52,7 +52,8 @@ public class GamificationActionsHistoryMapper {
                                              Utils.toRFC3339Date(gamificationActionsHistoryEntity.getCreatedDate()),
                                              gamificationActionsHistoryEntity.getLastModifiedBy(),
                                              Utils.toRFC3339Date(gamificationActionsHistoryEntity.getLastModifiedDate()),
-                                             gamificationActionsHistoryEntity.getStatus().name());
+                                             gamificationActionsHistoryEntity.getStatus().name(),
+                                             gamificationActionsHistoryEntity.getType());
   }
 
   public static List<GamificationActionsHistoryDTO> fromEntities(List<GamificationActionsHistory> gamificationActionsHistoryEntities) {
@@ -87,6 +88,7 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setRuleId(gamificationActionsHistoryDTO.getRuleId());
     gHistoryEntity.setCreator(gamificationActionsHistoryDTO.getCreator());
     gHistoryEntity.setStatus(HistoryStatus.valueOf(gamificationActionsHistoryDTO.getStatus()));
+    gHistoryEntity.setType(gamificationActionsHistoryDTO.getType());
     if (gamificationActionsHistoryDTO.getCreatedDate() != null) {
       gHistoryEntity.setCreatedDate(Utils.parseRFC3339Date(gamificationActionsHistoryDTO.getCreatedDate()));
     } else {

@@ -147,6 +147,7 @@ public class EntityMapper {
     announcementEntity.setDomainEntity(domainEntity);
     announcementEntity.setDomain(domainEntity.getTitle());
     announcementEntity.setObjectId("");
+    announcementEntity.setType(ruleEntity.getType());
     return announcementEntity;
   }
 
