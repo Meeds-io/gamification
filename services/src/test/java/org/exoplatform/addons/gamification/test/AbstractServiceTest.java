@@ -126,9 +126,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected static final String          TEST__SCORE         = "50";
 
-  protected static final long            MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;                               // NOSONAR
+  protected static final long            MILLIS_IN_A_DAY     = 1000 * 60 * 60 * 24;                   // NOSONAR
 
-  protected static final TimeZone        DEFAULT_TIMEZONE     = TimeZone.getDefault();
+  protected static final TimeZone        DEFAULT_TIMEZONE    = TimeZone.getDefault();
 
   protected static final int             offset              = 0;
 
@@ -191,7 +191,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected RuleIndexingServiceConnector ruleIndexingServiceConnector;
 
   protected SpaceService                 spaceService;
-  
+
   protected IdentityRegistry             identityRegistry;
 
   Identity                               userIdentity        = new Identity(TEST_USER_SENDER);
@@ -535,6 +535,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     restartTransaction();
     return gHistory;
@@ -555,12 +556,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setCreatedBy("gamification");
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setType(EntityType.AUTOMATIC);
     gHistory = gamificationHistoryDAO.create(gHistory);
     restartTransaction();
     return gHistory;
   }
-  
-  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByStatus(RuleEntity rule, HistoryStatus status, String earnerId) {
+
+  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByStatus(RuleEntity rule,
+                                                                                   HistoryStatus status,
+                                                                                   String earnerId) {
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(status);
     gHistory.setDomain(rule.getArea());
@@ -576,13 +580,14 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     restartTransaction();
     return gHistory;
   }
   
   protected GamificationActionsHistory newGamificationActionsHistoryWithRuleId(String actionTitle, Long ruleId) {
-    RuleEntity rule = newRule();
+    RuleEntity rule = ruleDAO.find(ruleId);
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomain(rule.getArea());
@@ -593,15 +598,16 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(actionTitle);
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(ruleId);
+    gHistory.setRuleId(rule.getId());
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
-  
+
   protected GamificationActionsHistory newGamificationActionsHistoryByStatus(HistoryStatus status) {
     RuleEntity rule = newRule();
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
@@ -619,10 +625,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
-  
+
   protected GamificationActionsHistory newGamificationActionsHistoryByEarnerId(String earnerId) {
     RuleEntity rule = newRule();
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
@@ -640,12 +647,15 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
-  
-  protected GamificationActionsHistory newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(Date createdDate, String actionTitle, Long ruleId) {
-    RuleEntity rule = newRule();
+
+  protected GamificationActionsHistory newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(Date createdDate,
+                                                                                                      String actionTitle,
+                                                                                                      Long ruleId) {
+    RuleEntity rule = ruleDAO.find(ruleId);
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomain(rule.getArea());
@@ -661,6 +671,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(createdDate);
+    gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
   }
@@ -671,8 +682,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected RuleDTO newRuleDTO() {
     return RuleMapper.ruleToRuleDTO(newRule());
-  }  
-  
+  }
+
   protected RuleDTO newRuleDTO(String name, String domain) {
     return RuleMapper.ruleToRuleDTO(newRule(name, domain));
   }
@@ -736,6 +747,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     headers.putSingle("content-length", "" + jsonData.length);
     return launcher.service(method, restPath, "", headers, jsonData, null);
   }
+
   public String getURLResource(String resourceURL) {
     return "/gamification/" + resourceURL;
   }
