@@ -70,9 +70,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             only-manager />
 
           <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
-          <challenge-program
+          <program-suggester
             id="EngagementCenterChallengeDrawerProgramSuggester"
             ref="challengeProgram"
+            :labels="programSuggesterLabels"
             @addProgram="addProgram($event)"
             @removeProgram="removeProgram($event)" />
 
@@ -172,6 +173,13 @@ export default {
     buttonName() {
       return this.challenge && this.challenge.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create') ;
     },
+    programSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('challenges.programSuggester.searchPlaceholder'),
+        placeholder: this.$t('challenges.programSuggester.placeholder'),
+        noDataLabel: this.$t('challenges.programSuggester.noDataLabel'),
+      };
+    }
   },
   data() {
     return {
@@ -254,7 +262,7 @@ export default {
       }
       if (this.challenge.program) {
         this.$refs.challengeProgram.broadcast = false;
-        this.$refs.challengeProgram.program = this.challenge.program;
+        this.$refs.challengeProgram.value = this.challenge.program;
       }
       const data = {
         managers: this.challenge.managers,
@@ -282,7 +290,7 @@ export default {
       this.$refs.challengeAssignment.disabledUnAssign = false;
       this.$refs.challengeDescription.disabled = false;
       this.warning = null;
-      this.$refs.challengeProgram.program = null;
+      this.$refs.challengeProgram.value = null;
     },
     open(challenge) {
       this.challenge = challenge && JSON.parse(JSON.stringify(challenge)) || {
