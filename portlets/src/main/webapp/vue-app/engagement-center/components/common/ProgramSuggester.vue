@@ -18,13 +18,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-flex :id="id">
     <v-autocomplete
       ref="selectAutoComplete"
-      v-model="program"
+      v-model="value"
       :label="labels.label"
       :placeholder="labels.placeholder"
-      :rules="rules"
       :items="domains"
       :loading="loadingSuggestions"
-      :prepend-inner-icon="prependInnerIcon"
+      :multiple="multiple"
       hide-no-data
       append-icon=""
       menu-props="closeOnClick, closeOnContentClick, maxHeight = 100"
@@ -73,47 +72,64 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </v-flex>
 </template>
 <script>
+
 export default {
+  props: {
+    multiple: {
+      type: Boolean,
+      default: function() {
+        return false;
+      },
+    },
+    value: {
+      type: Object,
+      default: null,
+    },
+    labels: {
+      type: Object,
+      default: () => ({
+        label: '',
+        placeholder: '',
+        searchPlaceholder: '',
+        noDataLabel: '',
+      }),
+    },
+    includeDeleted: {
+      type: Boolean,
+      default: function() {
+        return false;
+      },
+    },
+  },
   data() {
     return {
       id: `AutoComplete${parseInt(Math.random() * 10000)}`,
       domains: [],
       searchTerm: null,
-      program: null,
       loadingSuggestions: false,
       broadcast: true,
+      startSearchAfterInMilliseconds: 300,
+      endTypingKeywordTimeout: 50,
+      startTypingKeywordTimeout: 0,
+      typing: false,
     };
   },
-  computed: {
-    labels() {
-      return {
-        searchPlaceholder: this.$t('challenges.programSuggester.searchPlaceholder'),
-        placeholder: this.$t('challenges.programSuggester.placeholder'),
-        noDataLabel: this.$t('challenges.programSuggester.noDataLabel'),
-      };
-    },
-  },
   watch: {
-    searchTerm(value) {
-      this.loadingSuggestions = true;
-      let domains = this.domains.slice();
-      if (value && value.trim().length) {
-        const searchTerm = value.trim().toLowerCase();
-        domains = domains.slice().filter(domain => (domain.title && domain.title.toLowerCase().indexOf(searchTerm) >= 0 || domain.description.toLowerCase().indexOf(searchTerm)) >= 0 );
+    searchTerm() {
+      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
       }
-      this.loadingSuggestions = false;
-      return domains;
     },
-    program() {
-      if (this.program && this.broadcast){
-        this.$emit('addProgram',this.program.title);
+    value() {
+      if (this.value && this.broadcast){
+        this.$emit('addProgram',this.value.title);
       } else if (!this.broadcast) {
         this.broadcast = true;
       }
+      this.$emit('input', this.value);
     },
-  },
-  created() {
-    this.getAllDomains();
   },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {
@@ -121,14 +137,36 @@ export default {
     });
   },
   methods: {
-    getAllDomains() {
-      this.$challengesServices.getAllDomains()
-        .then(response => this.domains = response.domains);
-    },
     remove(item) {
-      this.program = null;
+      this.value = null;
       this.$emit('removeProgram', item.title);
     },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() > this.startTypingKeywordTimeout) {
+          this.typing = false;
+          this.searchPrograms();
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
+    },
+    focus() {
+      this.$refs.selectAutoComplete.focus();
+    },
+    searchPrograms() {
+      if (this.searchTerm && this.searchTerm.length) {
+        this.focus();
+        if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
+          this.loadingSuggestions = 0;
+          this.domains = [];
+          this.$programsServices.retrievePrograms(0, 10, 'ALL', null, this.searchTerm, this.includeDeleted).then(response => this.domains = response.domains);
+        }
+        this.previousSearchTerm = this.searchTerm;
+      } else {
+        this.domains = [];
+      }
+    }
   },
 };
 </script>

@@ -29,19 +29,45 @@
       <span class="pb-2"> {{ $t('realization.label.search.filtersAchievements') }} </span>
     </template>
     <template slot="content">
-      <div class="VuetifyApp">
-        <template>
-          <v-tabs v-model="tab">
-            <v-tab class="text-capitalize">{{ $t('realization.label.programLabel') }}</v-tab>
-          </v-tabs>
-          <v-tabs-items v-model="tab">
-            <v-tab-item>
-              <realizations-filter-program-list v-on="$listeners" @empty-list="verifySelection" />
-            </v-tab-item>
-            <v-tab-item />
-          </v-tabs-items>
-        </template>
-      </div>
+      <form
+        ref="realizationFilter"
+        id="realizationFilter">
+        <v-card-text v-if="isAdministrator">
+          <span class="subtitle-1">{{ $t('realization.label.filter.grantee') }}</span>
+
+          <v-flex class="user-suggester text-truncate">
+            <exo-identity-suggester
+              ref="granteeAttendeeAutoComplete"
+              name="granteeAttendee"
+              v-model="granteeAttendee"
+              :search-options="searchOptions"
+              :labels="granteeSuggesterLabels"
+              include-users />
+            <div v-if="grantees" class="identitySuggester no-border mt-0">
+              <grantee-attendee-item
+                v-for="grantee in grantees"
+                :key="grantee.identity.id"
+                :attendee="grantee"
+                @remove-attendee="removeGranteeAttendee" />
+            </div>
+          </v-flex>
+        </v-card-text>
+        <v-card-text>
+          <span class="subtitle-1">{{ $t('realization.label.filter.program') }}</span>
+          <program-suggester
+            ref="programAttendeeAutoComplete"
+            v-model="programAttendee"
+            :labels="programSuggesterLabels"
+            include-deleted/>
+          <div v-if="programs" class="identitySuggester no-border mt-0">
+            <program-attendee-item
+              v-for="program in programs"
+              :key="program.id"
+              :program="program"
+              @remove-attendee="removeProgramAttendee" />
+          </div>
+        </v-card-text>
+      </form>
     </template>
     <template slot="footer">
       <div class="VuetifyApp flex d-flex">
@@ -78,11 +104,41 @@
 
 <script>
 export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       tab: null,
       disabled: false,
+      granteeAttendee: null,
+      grantees: [],
+      granteesIds: [],
+      programAttendee: null,
+      programs: [],
+      searchOptions: {
+        currentUser: '',
+      },
     };
+  },
+  computed: {
+    granteeSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('realization.label.filter.grantee.searchPlaceholder'),
+        placeholder: this.$t('realization.label.filter.grantee.placeholder'),
+        noDataLabel: this.$t('realization.label.filter.grantee.noDataLabel'),
+      };
+    },
+    programSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('realization.label.filter.program.searchPlaceholder'),
+        placeholder: this.$t('realization.label.filter.program.placeholder'),
+        noDataLabel: this.$t('realization.label.filter.program.noDataLabel'),
+      };
+    },
   },
   created() {    
     this.$root.$on('realization-open-filter-drawer', this.open);
@@ -96,6 +152,43 @@ export default {
         document.dispatchEvent(new CustomEvent('hideTopBarLoading'));
       }
     },
+    granteeAttendee() {
+      if (!this.granteeAttendee) {
+        this.$nextTick(this.$refs.granteeAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        return;
+      }
+      if (!this.grantees) {
+        this.grantees = [];
+      }
+
+      const found = this.grantees?.find(grantee => {
+        return grantee.identity.remoteId === this.granteeAttendee.remoteId
+            && grantee.identity.providerId === this.granteeAttendee.providerId;
+      });
+      if (!found) {
+        this.grantees.push({
+          identity: this.granteeAttendee,
+        });
+      }
+      this.granteeAttendee = null;
+    },
+    programAttendee() {
+      if (!this.programAttendee) {
+        this.$nextTick(this.$refs.programAttendeeAutoComplete.$refs.selectAutoComplete.deleteCurrentItem);
+        return;
+      }
+      if (!this.programs) {
+        this.programs = [];
+      }
+
+      const found = this.programs?.find(program => {
+        return program.id === this.programAttendee.id;
+      });
+      if (!found) {
+        this.programs.push(this.programAttendee);
+      }
+      this.programAttendee = null;
+    },
   },
   methods: {
     open() {
@@ -106,17 +199,30 @@ export default {
       this.reset();
     },
     confirm() {
-      this.$emit('selectionConfirmed');
+      this.$emit('selectionConfirmed', this.programs, this.grantees);
       this.$refs.RealizationsFilterDrawer.close();
     },
     reset() {
-      this.$root.$emit('reset-selection');
+      this.programs = [];
+      this.grantees = [];
     },
-    loadMore() {
-      return this.retrievePrograms(true);
+    removeGranteeAttendee(attendee) {
+      const index = this.grantees.findIndex(addedAttendee => {
+        return attendee.identity.remoteId === addedAttendee.identity.remoteId
+            && attendee.identity.providerId === addedAttendee.identity.providerId;
+      });
+      if (index >= 0) {
+        this.grantees.splice(index, 1);
+        this.granteesIds.splice(index, 1);
+      }
     },
-    verifySelection(value) {
-      this.disabled = !value;
+    removeProgramAttendee(attendee) {
+      const index = this.programs.findIndex(addedAttendee => {
+        return attendee.id === addedAttendee.id;
+      });
+      if (index >= 0) {
+        this.programs.splice(index, 1);
+      }
     },
   }
 };
