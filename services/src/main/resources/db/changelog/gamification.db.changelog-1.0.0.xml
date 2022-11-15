@@ -533,4 +533,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         newDataType="NVARCHAR(50)"
         />
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-51">
+        <modifyDataType tableName="GAMIFICATION_RULE"
+                        columnName="AREA"
+                        newDataType="VARCHAR(255)"
+        />
+    </changeSet>
 </databaseChangeLog>
