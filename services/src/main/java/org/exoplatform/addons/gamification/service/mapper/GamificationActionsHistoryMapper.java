@@ -10,6 +10,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.service.LinkProvider;
 
@@ -126,8 +128,9 @@ public class GamificationActionsHistoryMapper {
       RuleDTO rule = gHistory.getRuleId() != null && gHistory.getRuleId() != 0 ? Utils.getRuleById(gHistory.getRuleId())
                                                                                : Utils.getRuleByTitle(gHistory.getActionTitle());
 
+      Identity earnerIdentity = Utils.getIdentity(gHistory.getEarnerId());
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                      Utils.getUserFullName(gHistory.getEarnerId()),
+                                                      earnerIdentity != null ? earnerIdentity.getRemoteId() : null,
                                                       rule,
                                                       Utils.getDomainByTitle(gHistory.getDomain()),
                                                       gHistory.getActionTitle() != null ? gHistory.getActionTitle()

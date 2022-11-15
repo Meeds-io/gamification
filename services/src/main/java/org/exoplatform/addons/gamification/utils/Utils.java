@@ -97,9 +97,16 @@ public class Utils {
   }
 
   public static String getUserFullName(String id) {
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getIdentity(id);
+    Identity identity = getIdentity(id);
     return identity != null && identity.getProfile() != null ? identity.getProfile().getFullName() : null;
+  }
+
+  public static Identity getIdentity(String identityId) {
+    if (StringUtils.isBlank(identityId)) {
+      return null;
+    }
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    return identityManager.getIdentity(identityId);
   }
 
   public static final String getCurrentUser() {
