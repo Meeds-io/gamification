@@ -24,6 +24,10 @@ import org.junit.Test;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+import javax.persistence.EntityExistsException;
+
+import static org.junit.Assert.assertThrows;
+
 public class BadgeServiceTest extends AbstractServiceTest {
 
   @Test
@@ -47,18 +51,36 @@ public class BadgeServiceTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testFindBadge() {
+    BadgeEntity badgeEntity = newBadge("badge1", "domain1");
+    assertNotNull(badgeService.findBadgeById(badgeEntity.getId()));
+    assertNotNull(badgeService.findBadgeByTitleAndDomain("badge1", "domain1"));
+  }
+
+  @Test
   public void testAddBadge() {
     assertNull(badgeService.findBadgeByTitle(BADGE_NAME));
     BadgeDTO badge = new BadgeDTO();
     badge.setTitle(BADGE_NAME);
     badge.setDescription("Description");
     badge.setNeededScore(Integer.parseInt(TEST_GLOBAL_SCORE));
-    badge.setDomain(GAMIFICATION_DOMAIN);
+    badge.setDomainDTO(newDomainDTO(GAMIFICATION_DOMAIN));
     badge.setIconFileId(10245);
     badge.setEnabled(true);
     badge.setDeleted(false);
     badge.setCreatedBy(TEST_USER_SENDER);
     badge.setLastModifiedBy(TEST_USER_SENDER);
+    badge = badgeService.addBadge(badge);
+    assertNotNull(badge);
+    assertNotNull(badgeService.findBadgeByTitle(BADGE_NAME));
+
+    //
+    BadgeDTO finalBadge = badge;
+    assertThrows(EntityExistsException.class, () -> badgeService.addBadge(finalBadge));
+
+    //
+    badge.setDeleted(true);
+    badgeService.updateBadge(badge);
     badge = badgeService.addBadge(badge);
     assertNotNull(badge);
     assertNotNull(badgeService.findBadgeByTitle(BADGE_NAME));
