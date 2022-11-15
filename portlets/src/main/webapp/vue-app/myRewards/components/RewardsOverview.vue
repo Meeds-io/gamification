@@ -27,13 +27,13 @@
             </div>
           </template>
           <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-wallet</v-icon>
+            <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
           </template>
           <template #content>
             <span v-html="emptyWalletSummaryText"></span>
           </template>
         </gamification-overview-widget-row>
-        <div class="d-flex" >
+        <div class="d-flex">
           <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
             <template #title>
               {{ $t('gamification.overview.rewards.earningsTitle') }}
@@ -46,13 +46,12 @@
                 class="d-flex flex-row mt-5" />
             </template>
           </gamification-overview-widget-row>
-          <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6" >
+          <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
             <template #title>
               {{ $t('gamification.overview.rewards.walletTitle') }}
             </template>
             <template #content>
               <extension-registry-components
-                :params="params"
                 name="my-rewards-wallet-overview"
                 type="my-rewards-wallet-item"
                 class="d-flex flex-row mt-5" />
