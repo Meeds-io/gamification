@@ -77,13 +77,13 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                                                                                                            GAMIFICATION_DOMAIN);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_SENDER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3L);
     gHistory.setStatus(HistoryStatus.REJECTED);
     gamificationHistoryDAO.update(gHistory);
     leaderboardList = gamificationHistoryDAO.findAllActionsHistoryAgnostic(IdentityType.USER);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_SENDER);
-    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 2);
+    assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 2L);
   }
 
   @Test
@@ -364,21 +364,21 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, EntityType.MANUAL);
 
     List<GamificationActionsHistory> histories = new ArrayList<>();
-    histories.add(newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     histories.add(newGamificationActionsHistoryWithRuleId("", rule3Manual.getId()));
     histories.add(newGamificationActionsHistoryWithRuleId("", rule1Automatic.getId()));
-    histories.add(newGamificationActionsHistoryWithRuleId(rule3Manual.getEvent(), null));
+    histories.add(newGamificationActionsHistoryWithRuleId(rule3Manual.getEvent(), rule3Manual.getId()));
     histories.add(newGamificationActionsHistoryWithRuleId("", rule2Automatic.getId()));
-    histories.add(newGamificationActionsHistoryWithRuleId(rule2Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryWithRuleId(rule2Automatic.getEvent(), rule2Automatic.getId()));
     histories.add(newGamificationActionsHistoryWithRuleId("", rule3Manual.getId()));
 
     RealizationsFilter dateFilter = new RealizationsFilter();
     List<Long> domainIds = Collections.emptyList();
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setSortField("actionType");
+    dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
-    dateFilter.setEarnerId(0);
+    dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setIdentityType(IdentityType.getType(""));
     dateFilter.setDomainIds(domainIds);
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
@@ -430,7 +430,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("date");
-    dateFilter.setEarnerId(0);
+    dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setIdentityType(IdentityType.getType(""));
     dateFilter.setDomainIds(domainIds);
     // Test default Sort field = 'date' with sort descending = false
@@ -489,12 +489,12 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     RuleEntity rule3Manual = newRule("testFindRealizationsByFilterSortByActionType3", "domain3", true, EntityType.MANUAL);
 
     List<GamificationActionsHistory> histories = new ArrayList<>();
-    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule1Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule1Automatic.getEvent(), rule1Automatic.getId()));
     histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, "", rule3Manual.getId()));
     histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, "", rule1Automatic.getId()));
-    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule3Manual.getEvent(), null));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule3Manual.getEvent(), rule3Manual.getId()));
     histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, "", rule2Automatic.getId()));
-    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule2Automatic.getEvent(), null));
+    histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(fromDate, rule2Automatic.getEvent(), rule2Automatic.getId()));
     histories.add(newGamificationActionsHistoryToBeSortedByActionTypeInDateRange(OutOfRangeDate, rule3Manual.getEvent(), rule3Manual.getId()));
 
     RealizationsFilter dateFilter = new RealizationsFilter();
@@ -502,9 +502,9 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setDomainIds(domainIds);
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setSortField("actionType");
+    dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
-    dateFilter.setEarnerId(0);
+    dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setIdentityType(IdentityType.getType(""));
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
@@ -513,7 +513,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                .map(GamificationActionsHistory::getCreatedDate)
-               .map(date -> isThisDateWithinThisRange(date))
+               .map(this::isThisDateWithinThisRange)
                .reduce(true, Boolean::logicalAnd));
 
     result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 3);
@@ -523,7 +523,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                .map(GamificationActionsHistory::getCreatedDate)
-               .map(date -> isThisDateWithinThisRange(date))
+               .map(this::isThisDateWithinThisRange)
                .reduce(true, Boolean::logicalAnd));
 
     dateFilter.setSortDescending(false);
@@ -534,7 +534,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                .map(GamificationActionsHistory::getCreatedDate)
-               .map(date -> isThisDateWithinThisRange(date))
+               .map(this::isThisDateWithinThisRange)
                .reduce(true, Boolean::logicalAnd));
 
     result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 2, 6);
@@ -547,7 +547,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
                  result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
     assertTrue(result.stream()
                      .map(GamificationActionsHistory::getCreatedDate)
-                     .map(date -> isThisDateWithinThisRange(date))
+                     .map(this::isThisDateWithinThisRange)
                      .reduce(true, Boolean::logicalAnd));
   }
   
@@ -565,7 +565,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     dateFilter.setToDate(toDate);
     dateFilter.setSortField("status");
     dateFilter.setSortDescending(true);
-    dateFilter.setEarnerId(0);
+    dateFilter.setEarnerIds(new ArrayList<>());
     dateFilter.setIdentityType(IdentityType.getType(""));
     List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 2);
     assertNotNull(result);
@@ -622,10 +622,10 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
     List<Long> domainIds = Collections.emptyList();
     dateFilter.setDomainIds(domainIds);
-    dateFilter.setEarnerId(1L);
+    dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
     dateFilter.setFromDate(fromDate);
     dateFilter.setToDate(toDate);
-    dateFilter.setSortField("actionType");
+    dateFilter.setSortField("type");
     dateFilter.setSortDescending(true);
     dateFilter.setIdentityType(IdentityType.getType(""));
     
@@ -635,7 +635,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     
     
     // Test get All Realizations when a simple user calls, Sort field = 'actionType' with sort descending = false
-    dateFilter.setEarnerId(2L);
+    dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("2")));
     List<GamificationActionsHistory> result3 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result3);
     assertEquals(1, result3.size());
@@ -650,7 +650,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     // Test get All Realizations when a simple user calls, Sort field = 'date' with sort descending = false
     dateFilter.setSortField("date");
     dateFilter.setSortDescending(false);
-    dateFilter.setEarnerId(2L);
+    dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("2")));
     List<GamificationActionsHistory> result7 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result7);
     assertEquals(1, result7.size());
@@ -665,7 +665,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     // Test get All Realizations when a simple user calls, Sort field = 'status' with sort descending = false
     dateFilter.setSortField("status");
     dateFilter.setSortDescending(false);
-    dateFilter.setEarnerId(2L);
+    dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("2")));
     List<GamificationActionsHistory> result9 = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
     assertNotNull(result9);
     assertEquals(1, result9.size());
@@ -722,7 +722,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
       List<Long> domainIds = new ArrayList<Long>();
       domainIds.add(rule1Automatic.getDomainEntity().getId());
       dateFilter.setDomainIds(domainIds);
-      dateFilter.setEarnerId(0);
+      dateFilter.setEarnerIds(new ArrayList<>());
       dateFilter.setFromDate(fromDate);
       dateFilter.setToDate(toDate);
       dateFilter.setIdentityType(IdentityType.getType(""));
@@ -779,11 +779,11 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
       List<Long> domainIds = new ArrayList<Long>();
       domainIds.add(rule1Automatic.getDomainEntity().getId());
       dateFilter.setDomainIds(domainIds);
-      dateFilter.setEarnerId(0);
+      dateFilter.setEarnerIds(new ArrayList<>());
       dateFilter.setFromDate(fromDate);
       dateFilter.setToDate(toDate);
       dateFilter.setIdentityType(IdentityType.getType(""));
-      dateFilter.setSortField("actionType");
+      dateFilter.setSortField("type");
       dateFilter.setSortDescending(true);
       List<GamificationActionsHistory> result = gamificationHistoryDAO.findRealizationsByFilter(dateFilter, 0, 6);
       assertNotNull(result);
@@ -838,7 +838,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
       List<Long> domainIds = new ArrayList<Long>();
       domainIds.add(rule1Automatic.getDomainEntity().getId());
       dateFilter.setDomainIds(domainIds);
-      dateFilter.setEarnerId(1L);
+      dateFilter.setEarnerIds(new ArrayList<>(Collections.singleton("1")));
       dateFilter.setFromDate(fromDate);
       dateFilter.setToDate(toDate);
       dateFilter.setIdentityType(IdentityType.getType(""));

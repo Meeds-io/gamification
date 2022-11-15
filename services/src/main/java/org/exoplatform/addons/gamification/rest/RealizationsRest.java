@@ -82,9 +82,9 @@ public class RealizationsRest implements ResourceContainer {
                                      @QueryParam("sortDescending")
                                      @DefaultValue("true")
                                      boolean sortDescending,
-                                     @Parameter(description = "Identifier of the user that will be used to filter achievements", required = false)
-                                     @QueryParam("earnerId")
-                                     long earnerId,
+                                     @Parameter(description = "earnerIds, that will be used to filter achievements", required = false)
+                                     @QueryParam("earnerIds")
+                                     List<String> earnerIds,
                                      @Parameter(description = "Offset of result")
                                      @DefaultValue("0")
                                      @QueryParam("offset")
@@ -116,7 +116,7 @@ public class RealizationsRest implements ResourceContainer {
         domainIds = new ArrayList<>();
     } 
     
-    RealizationsFilter filter = new RealizationsFilter(earnerId,
+    RealizationsFilter filter = new RealizationsFilter(earnerIds,
                                                        sortField,
                                                        sortDescending,
                                                        dateFrom,
@@ -162,7 +162,7 @@ public class RealizationsRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       LOG.debug("User '{}' isn't authorized to access achievements with parameter : earnerId = {}",
                 identity.getUserId(),
-                earnerId,
+                earnerIds,
                 e);
       return Response.status(Response.Status.FORBIDDEN).build();
     }

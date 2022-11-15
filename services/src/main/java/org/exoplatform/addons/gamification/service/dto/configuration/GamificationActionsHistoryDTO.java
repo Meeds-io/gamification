@@ -1,45 +1,52 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+
+@Getter
+@Setter
 public class GamificationActionsHistoryDTO implements Cloneable {
 
-  private Long   id;
+  private Long       id;
 
-  private String earnerId;
+  private String     earnerId;
 
-  private String earnerType;
+  private String     earnerType;
 
-  protected long globalScore;
+  protected long     globalScore;
 
-  private String actionTitle;
+  private String     actionTitle;
 
-  private String domain;
+  private String     domain;
 
-  private String context;
+  private String     context;
 
-  private long   actionScore;
+  private long       actionScore;
 
-  private String receiver;
+  private String     receiver;
 
-  private String objectId;
+  private String     objectId;
 
-  private Long   ruleId;
+  private Long       ruleId;
 
-  private Long   activityId;
+  private Long       activityId;
 
-  private String comment;
+  private String     comment;
 
-  private Long   creator;
+  private Long       creator;
 
-  private String createdBy;
+  private String     createdBy;
 
-  private String createdDate;
+  private String     createdDate;
 
-  private String lastModifiedBy;
+  private String     lastModifiedBy;
 
-  private String lastModifiedDate;
+  private String     lastModifiedDate;
 
-  private String status;
+  private String     status;
 
+  private EntityType type;
 
   public GamificationActionsHistoryDTO(Long id,
                                        String earnerId,
@@ -59,7 +66,8 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                        String createdDate,
                                        String lastModifiedBy,
                                        String lastModifiedDate,
-                                       String status) { // NOSONAR
+                                       String status,
+                                       EntityType type) { // NOSONAR
     this.id = id;
     this.earnerId = earnerId;
     this.earnerType = earnerType;
@@ -79,6 +87,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
     this.lastModifiedBy = lastModifiedBy;
     this.lastModifiedDate = lastModifiedDate;
     this.status = status;
+    this.type = type;
   }
 
   public GamificationActionsHistoryDTO() {
@@ -104,159 +113,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                              createdDate,
                                              lastModifiedBy,
                                              lastModifiedDate,
-                                             status);
+                                             status,
+                                             type);
   }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getEarnerId() {
-    return earnerId;
-  }
-
-  public void setEarnerId(String earnerId) {
-    this.earnerId = earnerId;
-  }
-
-  public String getEarnerType() {
-    return earnerType;
-  }
-
-  public void setEarnerType(String earnerType) {
-    this.earnerType = earnerType;
-  }
-
-  public long getGlobalScore() {
-    return globalScore;
-  }
-
-  public void setGlobalScore(long globalScore) {
-    this.globalScore = globalScore;
-  }
-
-  public String getActionTitle() {
-    return actionTitle;
-  }
-
-  public void setActionTitle(String actionTitle) {
-    this.actionTitle = actionTitle;
-  }
-
-  public String getDomain() {
-    return domain;
-  }
-
-  public void setDomain(String domain) {
-    this.domain = domain;
-  }
-
-  public String getContext() {
-    return context;
-  }
-
-  public void setContext(String context) {
-    this.context = context;
-  }
-
-  public long getActionScore() {
-    return actionScore;
-  }
-
-  public void setActionScore(long actionScore) {
-    this.actionScore = actionScore;
-  }
-
-  public String getReceiver() {
-    return receiver;
-  }
-
-  public void setReceiver(String receiver) {
-    this.receiver = receiver;
-  }
-
-  public String getObjectId() {
-    return objectId;
-  }
-
-  public void setObjectId(String objectId) {
-    this.objectId = objectId;
-  }
-
-  public Long getRuleId() {
-    return ruleId;
-  }
-
-  public void setRuleId(Long ruleId) {
-    this.ruleId = ruleId;
-  }
-
-  public Long getActivityId() {
-    return activityId;
-  }
-
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public Long getCreator() {
-    return creator;
-  }
-
-  public void setCreator(Long creator) {
-    this.creator = creator;
-  }
-
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public String getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(String createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public String getLastModifiedBy() {
-    return lastModifiedBy;
-  }
-
-  public void setLastModifiedBy(String lastModifiedBy) {
-    this.lastModifiedBy = lastModifiedBy;
-  }
-
-  public String getLastModifiedDate() {
-    return lastModifiedDate;
-  }
-
-  public void setLastModifiedDate(String lastModifiedDate) {
-    this.lastModifiedDate = lastModifiedDate;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
 }
