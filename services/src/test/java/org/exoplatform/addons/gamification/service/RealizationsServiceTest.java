@@ -90,15 +90,12 @@ public class RealizationsServiceTest {
   public void testGetRealizationsByFilter() throws IllegalAccessException {
     // Given
     RealizationsFilter filter = new RealizationsFilter();
-    filter.setFromDate(toDate);
-    filter.setToDate(fromDate);
     Identity rootIdentity = new Identity("root1");
     ConversationState.setCurrent(new ConversationState(rootIdentity));
     MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
     memberships.add(membershipentry);
     rootIdentity.setMemberships(memberships);
-    filter.setEarnerId(-1L);
     GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
@@ -107,7 +104,19 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList.add(gHistory2);
     gamificationActionsHistoryDTOList.add(gHistory3);
     when(realizationsStorage.getRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(null, rootIdentity, offset, limit));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, null, offset, limit));
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
+
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(null, rootIdentity));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, null));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, rootIdentity));
+
+    // When
+    filter.setFromDate(toDate);
+    filter.setToDate(fromDate);
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, rootIdentity));
 
     // When
     filter.setFromDate(fromDate);
