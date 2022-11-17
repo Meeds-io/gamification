@@ -14,10 +14,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import TopContributors from './components/TopContributors.vue';
+import TopChallengers from './components/TopChallengers.vue';
+import  gamificationRank  from '../profileStats/components/GamificationRank.vue';
 
 const components = {
-  'gamification-overview-top-contributors': TopContributors,
+  'gamification-overview-top-challengers': TopChallengers,
+  'gamification-rank': gamificationRank,
 };
 
 for (const key in components) {
