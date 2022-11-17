@@ -21,15 +21,15 @@ const urls = [
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`,
   `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`
 ];
-const appId = 'topContributors';
+const appId = 'topChallengers';
 
 export function init() {
   exoi18n.loadLanguageAsync(lang, urls)
     .then(i18n => {
       Vue.createApp({
-        template: `<gamification-overview-top-contributors id="${appId}" />`,
+        template: `<gamification-overview-top-challengers id="${appId}" />`,
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
-      }, `#${appId}`, 'Top Contributors');
+      }, `#${appId}`, 'Top Challengers');
     });
 }
