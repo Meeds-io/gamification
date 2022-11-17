@@ -15,9 +15,9 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget>
+    <gamification-overview-widget v-if="!displayChallenges" :loading="loading">
       <template #title>
-        {{ $t('gamification.overview.challengesOverviewTitle') }}
+        {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
       </template>
       <template #content>
         <gamification-overview-widget-row class="my-auto">
@@ -30,12 +30,56 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
+    <gamification-overview-widget v-else :see-all-url="challengesURL">
+      <template #title>
+        {{ $t('gamification.overview.challengesOverviewTitle') }}
+      </template>
+      <template #content>
+        <gamification-overview-widget-row
+          class="py-auto"                   
+          v-for="(item, index) in listChallenges" 
+          :key="index">
+          <template #icon>
+            <v-icon color="yellow darken-2" size="30px">fas fa-trophy</v-icon>
+          </template>
+          <template #content>
+            <span>
+              <v-list
+                subheader
+                two-line>
+                <v-list-item
+                  two-line>
+                  <v-list-item-content>
+                    <v-list-item-title class="">
+                      {{ item.challengeTitle }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle> 
+                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participants') }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-list-item-action-text v-text="item.challengePoints + ' ' + $t('challenges.label.points') " class="mt-5" />
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list>
+            </span>
+          </template>
+        </gamification-overview-widget-row>
+      </template>
+    </gamification-overview-widget>
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
     emptyActionName: 'gamification-challengesOverview-check-action',
+    search: '',
+    challengePerPage: 3,
+    announcementsPerChallenge: 2,
+    filter: 'STARTED',
+    loading: true,
+    displayChallenges: false,
+    listChallenges: [],
   }),
   computed: {
     emptySummaryText() {
@@ -44,9 +88,13 @@ export default {
         1: '</a>',
       });
     },
+    challengesURL() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
+    },
   },
   created() {
     document.addEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
+    this.getChallenges();
   },
   beforeDestroy() {
     document.removeEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
@@ -54,6 +102,23 @@ export default {
   methods: {
     clickOnEmptyActionLink() {
       window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+    },
+    getChallenges() {
+      this.loading = true;
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter)
+        .then(result => {
+          if (!result) {
+            return;
+          }
+          result.forEach(data => {
+            const challenge = {};
+            challenge.challengeTitle = data.title;
+            challenge.challengePoints =  data.points;
+            challenge.challengesAnnouncementsCount =  data.announcements.length;
+            this.listChallenges.push(challenge);
+          });
+          this.displayChallenges = this.listChallenges.length > 0;
+        }).finally(() => this.loading = false);
     },
   },
 };

@@ -15,10 +15,17 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import ChallengesOverview from './components/ChallengesOverview.vue';
+import * as challengesServices from '../engagement-center/js/challengesServices.js';
 
 const components = {
   'gamification-overview-challenges': ChallengesOverview,
 };
+
+if (!Vue.prototype.$challengesServices) {
+  window.Object.defineProperty(Vue.prototype, '$challengesServices', {
+    value: challengesServices,
+  });
+}
 
 for (const key in components) {
   Vue.component(key, components[key]);
