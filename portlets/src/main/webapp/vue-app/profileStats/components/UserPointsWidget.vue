@@ -87,11 +87,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-list-item-content>
       </v-list-item>
     </v-list>
-    <div v-else :class="overviewDisplay ? 'mx-auto' : 'ma-auto'">
+    <div
+      v-else
+      :style="parentPieChartDimensions"
+      :class="overviewDisplay ? 'flex' : 'ma-auto'">
       <div
-        class="mt-6"
-        id="echartUserPoints"
-        :style="pieChartDimensions"></div>
+        :style="pieChartDimensions"
+        :class="!overviewDisplay && 'mt-6'"
+        class="flex"
+        id="echartUserPoints"></div>
     </div>
   </v-layout>
 </template>
@@ -112,7 +116,6 @@ export default {
       option: {
         title: [{
           text: 'Total',
-          left: this.overviewDisplay ? '70%' : '63%',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
@@ -126,12 +129,13 @@ export default {
             fontWeight: 'bold',
             fontSize: this.overviewDisplay ? '14' : '18',
           },
-          top: '40%',
+          left: this.overviewDisplay ? '69%' : '63%',
+          top: this.overviewDisplay && '42%' || '40%',
           textAlign: 'center'
         }],
         tooltip: { 
           trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
+          formatter: '{b} : {c} ({d}%)',
         },
         legend: {
           orient: 'vertical',
@@ -144,8 +148,8 @@ export default {
         series: [
           {
             type: 'pie',
-            radius: ['45%', '88%'],
-            center: this.overviewDisplay ? ['72%', '50%'] : ['65%', '50%'],
+            radius: this.overviewDisplay && ['40%', '70%'] || ['45%', '88%'],
+            center: this.overviewDisplay ? ['70%', '50%'] : ['65%', '50%'],
             label: {
               normal: {
                 show: false
@@ -162,8 +166,11 @@ export default {
     };
   },
   computed: {
+    parentPieChartDimensions() {
+      return this.overviewDisplay ? 'width:100%; height:calc(100% - 34px);' : '';
+    },
     pieChartDimensions() {
-      return this.overviewDisplay ? 'width:320px; height:182px;' : 'width:320px; height:220px;';
+      return this.overviewDisplay ? 'width:100%; height:100%;' : 'width:320px; height:220px;';
     },
     challengesURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
