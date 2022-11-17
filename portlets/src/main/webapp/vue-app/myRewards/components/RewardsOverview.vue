@@ -102,7 +102,7 @@ export default {
       };
     },
     walletURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet`;
+      return this.rewardDisplayed ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet` : '';
     }
   },
   created() {
