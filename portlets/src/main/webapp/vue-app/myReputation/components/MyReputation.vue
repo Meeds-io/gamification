@@ -29,7 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :params="params"
             name="my-reputation-overview-kudos"
             type="my-reputation-item"
-            class="d-flex flex-column mx-n4 mt-n4" />
+            class="d-flex flex-column mx-n4" />
         </template>
       </gamification-overview-widget-row>
       <gamification-overview-widget-row v-show="!kudosDisplayed">
@@ -45,7 +45,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span v-html="emptyKudosSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row :class="kudosDisplayed &&  'mt-n3' || 'mt-11'" v-show="badgesDisplayed">
+      <gamification-overview-widget-row :class="kudosDisplayed && 'mt-n3' || ''" class="my-auto" v-show="badgesDisplayed">
         <template #title>
           <div class="subtitle-2 align-self-start mt-10">
             {{ $t('gamification.myReputation.badgesTitle') }}
@@ -74,7 +74,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span v-html="emptyBadgesSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row :class="kudosDisplayed &&  'mt-n3' || 'mt-11'" v-show="!badgesDisplayed">
+      <gamification-overview-widget-row :class="kudosDisplayed && 'mt-n3' || ''"  class="my-auto" v-show="!badgesDisplayed">
         <template #title>
           <div class="mb-3">
             {{ $t('gamification.myReputation.badgesTitle') }}
