@@ -34,7 +34,7 @@
           </template>
         </gamification-overview-widget-row>
         <div class="d-flex">
-          <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
+          <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6 ps-0">
             <template #title>
               {{ $t('gamification.overview.rewards.earningsTitle') }}
             </template>
