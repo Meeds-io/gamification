@@ -2,6 +2,7 @@ package org.exoplatform.addons.gamification.service.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -10,13 +11,11 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.service.LinkProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GamificationActionsHistoryMapper {
@@ -34,12 +33,14 @@ public class GamificationActionsHistoryMapper {
     } else {
       objectId = gamificationActionsHistoryEntity.getObjectId();
     }
+    DomainEntity domainEntity = gamificationActionsHistoryEntity.getDomainEntity();
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
                                              gamificationActionsHistoryEntity.getEarnerId(),
                                              gamificationActionsHistoryEntity.getEarnerType().toString(),
                                              gamificationActionsHistoryEntity.getGlobalScore(),
                                              gamificationActionsHistoryEntity.getActionTitle(),
-                                             gamificationActionsHistoryEntity.getDomain(),
+                                             domainEntity != null ? domainEntity.getTitle()
+                                                                  : gamificationActionsHistoryEntity.getDomain(),
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
@@ -106,7 +107,7 @@ public class GamificationActionsHistoryMapper {
     return gHistoryEntity;
   }
 
-  public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory) { // NOSONAR
+  public static GamificationActionsHistoryRestEntity toRestEntity(GamificationActionsHistoryDTO gHistory, IdentityManager identityManager) { // NOSONAR
     try {
       String spaceName = "";
       if (gHistory.getRuleId() != null && gHistory.getRuleId() != 0) {
@@ -127,11 +128,11 @@ public class GamificationActionsHistoryMapper {
                                                                                : Utils.getRuleByTitle(gHistory.getActionTitle());
 
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
-                                                      Utils.getUserFullName(gHistory.getEarnerId()),
+                                                      Utils.getIdentityEntity(identityManager, Long.parseLong(gHistory.getEarnerId())),
                                                       rule,
                                                       Utils.getDomainByTitle(gHistory.getDomain()),
                                                       gHistory.getActionTitle() != null ? gHistory.getActionTitle()
-                                                                                        : rule.getTitle(),
+                                                                                        : Objects.requireNonNull(rule).getTitle(),
                                                       gHistory.getActionScore(),
                                                       Utils.getUserFullName(gHistory.getCreator() != null ? String.valueOf(gHistory.getCreator())
                                                                                                           : gHistory.getReceiver()),
@@ -146,15 +147,16 @@ public class GamificationActionsHistoryMapper {
     }
   }
 
-  public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories) {
+  public static List<GamificationActionsHistoryRestEntity> toRestEntities(List<GamificationActionsHistoryDTO> gamificationActionsHistories,
+                                                                          IdentityManager identityManager) {
     if (CollectionUtils.isEmpty(gamificationActionsHistories)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
 
       return gamificationActionsHistories.stream()
-                                         .map(GamificationActionsHistoryMapper::toRestEntity)
+                                         .map(gamificationActionsHistoryDTO -> toRestEntity(gamificationActionsHistoryDTO,
+                                                                                            identityManager))
                                          .collect(Collectors.toList());
     }
   }
-
 }
