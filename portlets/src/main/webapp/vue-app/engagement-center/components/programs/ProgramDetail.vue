@@ -133,6 +133,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    tab: {
+      type: Number,
+      default: () => 0,
+    },
     canManageRule: {
       type: Boolean,
       default: false,
@@ -224,7 +228,11 @@ export default {
       this.options.page = 1;
       this.options.itemsPerPage = 10;
       this.$root.$emit('close-program-detail');
-      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/`);
+      if (this.tab === 0) {
+        window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`);
+      } else if (this.tab === 2) {
+        window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
+      }
     },
     openNewRuleForm(){
       this.$root.$emit('rule-form-drawer', null);
