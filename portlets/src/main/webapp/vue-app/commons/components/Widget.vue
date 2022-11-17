@@ -18,7 +18,7 @@
     :loading="loading"
     height="338px"
     min-width="290px"
-    class="white overflow-hidden d-flex flex-column"
+    class="white d-flex flex-column"
     flat>
     <v-card-title class="subtitle-1 text-sub-title">
       <slot name="title"></slot>
