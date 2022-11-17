@@ -15,20 +15,51 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget>
+    <gamification-overview-widget
+      :loading="loading"
+      :see-all-url="peopleURL">
       <template #title>
-        {{ $t('gamification.overview.topContributorsTitle') }}
+        {{ $t('gamification.overview.topChallengersTitle') }}
       </template>
       <template #content>
-        <gamification-overview-widget-row class="my-auto">
+        <gamification-overview-widget-row
+          class="my-auto"
+          v-show="!rankDisplayed">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>
           <template #content>
-            <span v-html="$t('gamification.overview.topContributorsSummary')"></span>
+            <span v-html="$t('gamification.overview.topChallengersSummary')"></span>
+          </template>
+        </gamification-overview-widget-row>
+        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed">
+          <template #content>
+            <gamification-rank :is-overview-display="true" />
           </template>
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
   </v-app>
 </template>
+<script>
+export default {
+  data: () => ({
+    rankDisplayed: false,
+    loading: true,
+  }),
+  computed: {
+    peopleURL() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
+    }
+  },
+  created() {
+    document.addEventListener('listOfRankedConnections', (event) => {
+      if (event) {
+        this.rankDisplayed = event.detail > 0;
+        this.loading = false;
+      }
+    });
+  },
+};
+</script>
+

@@ -432,11 +432,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <name>topContributors</name>
+    <name>topChallengers</name>
     <module>
       <script>
         <minify>false</minify>
-        <path>/js/topContributors.bundle.js</path>
+        <path>/js/topChallengers.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>

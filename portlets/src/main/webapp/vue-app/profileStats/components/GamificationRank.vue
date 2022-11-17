@@ -16,6 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-layout
+    :class="isOverviewDisplay && 'mt-n8 mb-5' || ''"
     row
     wrap
     mx-0>
@@ -30,6 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         align-start
         px12>
         <v-flex
+          v-if="!isOverviewDisplay"
           d-flex
           xs12
           mt-n2
@@ -39,6 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </div>
         </v-flex>
         <v-flex
+          v-if="!isOverviewDisplay"
           d-flex
           xs12
           mt-n6>
@@ -60,6 +63,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         mx-0
         class="podium-layout">
         <v-flex
+          :class="isOverviewDisplay && 'mb-7' || ''"
           d-flex
           justify-center
           align-end>
@@ -122,7 +126,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <exo-user-avatar
               :profile-id="item.remoteId"
               :size="25"
-              extra-class="me-0 pa-0 my-0"
+              :bold-title="item.socialId === identityId"
+              extra-class="me-0 pa-0 my-0 text-truncate-2"
               popover-left-position
               offset-x
               popover />
@@ -139,10 +144,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 import {getUsersByGamificationRank} from '../profilStatsAPI';
 export default {
+  props: {
+    isOverviewDisplay: {
+      type: Boolean,
+      default: () => false,
+    },
+  },
   data() {
     return {
       leaderBoardArray: [],
-      listBelowPoduim: []
+      listBelowPoduim: [],
+      identityId: eXo.env.portal.profileOwnerIdentityId,
     };
   },
   created() {
@@ -153,6 +165,7 @@ export default {
     getUsersByGamificationRank() {
       getUsersByGamificationRank('WEEK').then(
         (data) => {
+          document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: data.length}));
           const currentUser = eXo.env.portal.profileOwner;
           const index = data.findIndex(item => item.remoteId === currentUser) + 1;
           for (let i = 0; i < data.length; i++) {

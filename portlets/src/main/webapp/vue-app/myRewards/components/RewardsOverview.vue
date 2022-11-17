@@ -15,11 +15,9 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget>
+    <gamification-overview-widget :see-all-url="walletURL">
       <template #title>
         {{ $t('gamification.overview.rewardsTitle') }}
-        <v-spacer />
-        <a :href="walletURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
       </template>
       <template #content>
         <div class="d-flex">
@@ -55,8 +53,8 @@
 <script>
 export default {
   data: () => ({
-    emptyWalletActionName: 'gamification-topContributors-wallet-check-actions',
-    emptyPerkstoreActionName: 'gamification-topContributors-perk-store-check-actions',
+    emptyWalletActionName: 'gamification-wallet-check-actions',
+    emptyPerkstoreActionName: 'gamification-perk-store-check-actions',
   }),
   computed: {
     emptyWalletSummaryText() {
