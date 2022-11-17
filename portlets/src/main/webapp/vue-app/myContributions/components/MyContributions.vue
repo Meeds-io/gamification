@@ -15,11 +15,9 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget>
+  <gamification-overview-widget :see-all-url="achievementsURL">
     <template #title>
       {{ $t('overview.myContributions.title') }}
-      <v-spacer />
-      <a v-if="seeAllDisplay" :href="achievementsURL"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </template>
     <template #content>
       <user-points-widget
