@@ -41,7 +41,7 @@ module.exports = {
         challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
         myReputation: './src/main/webapp/vue-app/myReputation/main.js',
         myRewards: './src/main/webapp/vue-app/myRewards/main.js',
-        topContributors: './src/main/webapp/vue-app/topContributors/main.js',
+        topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
         challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
         programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
     },
