@@ -382,12 +382,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <portlet-name>topContributors</portlet-name>
+    <portlet-name>topChallengers</portlet-name>
     <display-name xml:lang="EN">My Reputation</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
-      <value>/html/topContributors/index.html</value>
+      <value>/html/topChallengers/index.html</value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
