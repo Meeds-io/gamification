@@ -54,11 +54,11 @@
                       {{ item.challengeTitle }}
                     </v-list-item-title>
                     <v-list-item-subtitle> 
-                      {{ item.challengesAnnouncementsCount }} + {{$t(' gamification.overview.label.participants') }}
+                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participants') }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-list-item-action-text v-text="item.challengePoints + $t('challenges.label.points') " class="mt-4" />
+                    <v-list-item-action-text v-text="item.challengePoints + ' ' + $t('challenges.label.points') " class="mt-5" />
                   </v-list-item-action>
                 </v-list-item>
               </v-list>
@@ -70,7 +70,6 @@
   </v-app>
 </template>
 <script>
-import * as $challengesServices from '../../engagement-center/js/challengesServices.js';
 export default {
   data: () => ({
     emptyActionName: 'gamification-challengesOverview-check-action',
@@ -106,7 +105,7 @@ export default {
     },
     getChallenges() {
       this.loading = true;
-      return $challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter)
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter)
         .then(result => {
           if (!result) {
             return;
