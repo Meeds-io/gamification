@@ -44,6 +44,11 @@ import AvatarsList from './components/common/AvatarsList.vue';
 import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
 
+import StreamActionValue from './components/actionValues/StreamActionValue.vue';
+import ProfileActionValue from './components/actionValues/ProfileActionValue.vue';
+import SpaceActionValue from './components/actionValues/SpaceActionValue.vue';
+import ChallengeActionValue from './components/actionValues/ChallengeActionValue.vue';
+
 
 const components = {
   'challenges': Challenges,
@@ -70,7 +75,11 @@ const components = {
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-description-editor': DescriptionEditor,
-  'engagement-center-image-selector': ImageSelector
+  'engagement-center-image-selector': ImageSelector,
+  'stream-action-value': StreamActionValue,
+  'profile-action-value': ProfileActionValue,
+  'space-action-value': SpaceActionValue,
+  'challenge-action-value': ChallengeActionValue
 };
 
 for (const key in components) {
