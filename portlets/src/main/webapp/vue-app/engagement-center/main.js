@@ -17,6 +17,7 @@
 import './initComponents.js';
 import './extensions.js';
 
+
 // get overridden components if exists
 if (extensionRegistry) {
   const components = extensionRegistry.loadComponents('Challenges');
