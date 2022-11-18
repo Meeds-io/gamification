@@ -58,7 +58,7 @@
             ref="programAttendeeAutoComplete"
             v-model="programAttendee"
             :labels="programSuggesterLabels"
-            include-deleted/>
+            include-deleted />
           <div v-if="programs" class="identitySuggester no-border mt-0">
             <program-attendee-item
               v-for="program in programs"
