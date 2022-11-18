@@ -2,6 +2,7 @@ package org.exoplatform.addons.gamification.service.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -36,12 +37,14 @@ public class GamificationActionsHistoryMapper {
     } else {
       objectId = gamificationActionsHistoryEntity.getObjectId();
     }
+    DomainEntity domainEntity = gamificationActionsHistoryEntity.getDomainEntity();
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
                                              gamificationActionsHistoryEntity.getEarnerId(),
                                              gamificationActionsHistoryEntity.getEarnerType().toString(),
                                              gamificationActionsHistoryEntity.getGlobalScore(),
                                              gamificationActionsHistoryEntity.getActionTitle(),
-                                             gamificationActionsHistoryEntity.getDomain(),
+                                             domainEntity != null ? domainEntity.getTitle()
+                                                                  : gamificationActionsHistoryEntity.getDomain(),
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
