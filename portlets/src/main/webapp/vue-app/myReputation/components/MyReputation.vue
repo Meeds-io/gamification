@@ -20,32 +20,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ $t('gamification.myReputation.title') }}
     </template>
     <template #content>
-      <gamification-overview-widget-row v-show="kudosDisplayed">
-        <template #title>
-          {{ $t('gamification.myReputation.KudosTitle') }}
-        </template>
-        <template #content>
-          <extension-registry-components
-            :params="params"
-            name="my-reputation-overview-kudos"
-            type="my-reputation-item"
-            class="d-flex flex-column mx-n4" />
-        </template>
-      </gamification-overview-widget-row>
-      <gamification-overview-widget-row v-show="!kudosDisplayed">
-        <template #title>
-          <div class="mb-4">
-            {{ $t('gamification.myReputation.KudosTitleNoData') }}
-          </div>
-        </template>
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-award</v-icon>
-        </template>
-        <template #content>
-          <span v-html="emptyKudosSummaryText"></span>
-        </template>
-      </gamification-overview-widget-row>
-      <gamification-overview-widget-row :class="kudosDisplayed && 'mt-n3' || ''" class="my-auto" v-show="badgesDisplayed">
+      <v-card flat height="94">
+        <gamification-overview-widget-row v-show="kudosDisplayed">
+          <template #title>
+            {{ $t('gamification.myReputation.KudosTitle') }}
+          </template>
+          <template #content>
+            <extension-registry-components
+              :params="params"
+              name="my-reputation-overview-kudos"
+              type="my-reputation-item"
+              class="d-flex flex-column mx-n4" />
+          </template>
+        </gamification-overview-widget-row>
+        <gamification-overview-widget-row v-show="!kudosDisplayed">
+          <template #title>
+            <div class="mb-4">
+              {{ $t('gamification.myReputation.KudosTitleNoData') }}
+            </div>
+          </template>
+          <template #icon>
+            <v-icon color="secondary" size="55px">fas fa-award</v-icon>
+          </template>
+          <template #content>
+            <span v-html="emptyKudosSummaryText"></span>
+          </template>
+        </gamification-overview-widget-row>
+      </v-card>
+      <gamification-overview-widget-row
+        class="my-auto"
+        v-show="badgesDisplayed">
         <template #title>
           {{ $t('gamification.myReputation.badgesTitle') }}
         </template>
@@ -57,7 +61,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="d-flex flex-column mx-n4" />
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row :class="kudosDisplayed && 'mt-n3' || ''"  class="my-auto" v-show="!badgesDisplayed">
+      <gamification-overview-widget-row
+        class="my-auto"
+        v-show="!badgesDisplayed">
         <template #title>
           <div class="mb-3">
             {{ $t('gamification.myReputation.badgesTitle') }}
