@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <gamification-overview-widget :see-all-url="achievementsURL">
+  <gamification-overview-widget :see-all-url="achievementsURL" :loading="loading">
     <template #title>
       {{ $t('overview.myContributions.title') }}
     </template>
@@ -37,7 +37,7 @@ export default {
   },
   computed: {
     achievementsURL() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`;
+      return this.seeAllDisplay ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements` : '';
     }
   },
   methods: {
