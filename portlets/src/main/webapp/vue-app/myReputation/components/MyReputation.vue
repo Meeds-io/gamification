@@ -67,20 +67,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="my-auto"
         v-show="!badgesDisplayed">
         <template #title>
-          <div class="mb-3 mt-11">
-         {{ $t('gamification.myReputation.badgesTitle') }}
-          </div>
-        </template>
-        <template #icon>
-          <v-icon color="secondary" size="55px">fas fa-graduation-cap</v-icon>
-        </template>
-        <template #content>
-          <span v-html="emptyBadgesSummaryText"></span>
-        </template>
-      </gamification-overview-widget-row>
-      <gamification-overview-widget-row :class="kudosDisplayed && 'mt-n3' || ''"  class="my-auto" v-show="!badgesDisplayed">
-        <template #title>
-          <div class="mb-3">
+          <div class="mb-3 mt-1">
             {{ $t('gamification.myReputation.badgesTitle') }}
           </div>
         </template>
