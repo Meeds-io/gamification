@@ -4,35 +4,36 @@ import lombok.Getter;
 import lombok.Setter;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.social.rest.entity.IdentityEntity;
 
 @Getter
 @Setter
 public class GamificationActionsHistoryRestEntity implements Cloneable {
 
-  private Long      id;
+  private Long           id;
 
-  private String    earner;
+  private IdentityEntity earner;
 
-  private RuleDTO   action;
+  private RuleDTO        action;
 
-  private DomainDTO domain;
+  private DomainDTO      domain;
 
-  private String    actionLabel;
+  private String         actionLabel;
 
-  private Long      score;
+  private Long           score;
 
-  private String    creator;
+  private String         creator;
 
-  private String    createdDate;
+  private String         createdDate;
 
-  private String    status;
+  private String         status;
 
-  private String    space;
+  private String         space;
 
-  private String    url;
+  private String         url;
 
   public GamificationActionsHistoryRestEntity(Long id, // NOSONAR
-                                              String earner,
+                                              IdentityEntity earner,
                                               RuleDTO action,
                                               DomainDTO domain,
                                               String actionLabel,

@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </td>
     <td v-if="isAdministrator" class="text-truncate align-center">
       <exo-user-avatar
-        :profile-id="earner"
+        :identity="earner"
         :size="28"
         extra-class="d-inline-block"
         link-style
@@ -161,7 +161,7 @@ export default {
   }),
   computed: {
     earner() {
-      return this.realization.earner || '';
+      return this.realization?.earner?.profile;
     },
     actionURL() {
       return this.realization?.url;

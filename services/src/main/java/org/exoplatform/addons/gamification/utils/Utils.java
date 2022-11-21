@@ -28,7 +28,6 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
@@ -38,6 +37,8 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.rest.api.EntityBuilder;
+import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
 
@@ -78,7 +79,11 @@ public class Utils {
 
   public static final String            REWARDING_GROUP             = "/platform/rewarding";
   
-  public static final String            ADMINS_GROUP             = "/platform/administrators";
+  public static final String            ADMINS_GROUP                = "/platform/administrators";
+
+  private static final String           IDENTITIES_REST_PATH        = "/v1/social/identities";                                   // NOSONAR
+
+  private static final String           IDENTITIES_EXPAND           = "all";
 
   private static final Log              LOG                         = ExoLogger.getLogger(Utils.class);
 
@@ -97,16 +102,17 @@ public class Utils {
   }
 
   public static String getUserFullName(String id) {
-    Identity identity = getIdentity(id);
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    Identity identity = identityManager.getIdentity(id);
     return identity != null && identity.getProfile() != null ? identity.getProfile().getFullName() : null;
   }
 
-  public static Identity getIdentity(String identityId) {
-    if (StringUtils.isBlank(identityId)) {
+  public static IdentityEntity getIdentityEntity(IdentityManager identityManager, long identityId) {
+    Identity identity = identityManager.getIdentity(String.valueOf(identityId));
+    if (identity == null) {
       return null;
     }
-    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    return identityManager.getIdentity(identityId);
+    return EntityBuilder.buildEntityIdentity(identity, IDENTITIES_REST_PATH, IDENTITIES_EXPAND);
   }
 
   public static final String getCurrentUser() {
