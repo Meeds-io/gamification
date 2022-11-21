@@ -19,11 +19,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :class="owner && 'profileBadge' || 'profileBadgeOther'"
     class="white"
     id="badgesOverview">
-    <div v-if="isOverviewDisplay" class="subtitle-2 align-self-start ps-4 mt-6">
-      {{ $t('gamification.myReputation.badgesTitle') }}
-    </div>
     <v-toolbar
-      v-else
+      v-if="!isOverviewDisplay"
       id="badgesOverviewHeader"
       color="white"
       flat

@@ -60,7 +60,7 @@
             </gamification-overview-widget-row>
           </div>
         </v-card>
-        <gamification-overview-widget-row class="mt-7">
+        <gamification-overview-widget-row class="mt-8">
           <template #title>
             <div class="mb-4">
               {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
