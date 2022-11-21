@@ -38,9 +38,14 @@
         <gamification-overview-widget-row
           class="py-auto"                   
           v-for="(item, index) in listChallenges" 
-          :key="index">
+          :key="index"
+          :redirection-url="`${challengesURL}/${item.challengeId}`">
           <template #icon>
-            <v-icon color="yellow darken-2" size="30px" @click="selectChallenge(item.challengeId)">fas fa-trophy</v-icon>
+            <v-icon
+              color="yellow darken-2"
+              size="30px">
+              fas fa-trophy
+            </v-icon>
           </template>
           <template #content>
             <span>
@@ -48,8 +53,7 @@
                 subheader
                 two-line>
                 <v-list-item
-                  two-line
-                  @click="selectChallenge(item.challengeId)">
+                  two-line>
                   <v-list-item-content>
                     <v-list-item-title class="">
                       {{ item.challengeTitle }}
@@ -122,9 +126,6 @@ export default {
           this.displayChallenges = this.listChallenges.length > 0;
         }).finally(() => this.loading = false);
     },
-    selectChallenge(id) {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${id}`;
-    }
   },
 };
 </script>
