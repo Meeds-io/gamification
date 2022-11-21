@@ -40,7 +40,7 @@
           v-for="(item, index) in listChallenges" 
           :key="index">
           <template #icon>
-            <v-icon color="yellow darken-2" size="30px">fas fa-trophy</v-icon>
+            <v-icon color="yellow darken-2" size="30px" @click="selectChallenge(item.challengeId)">fas fa-trophy</v-icon>
           </template>
           <template #content>
             <span>
@@ -48,7 +48,8 @@
                 subheader
                 two-line>
                 <v-list-item
-                  two-line>
+                  two-line
+                  @click="selectChallenge(item.challengeId)">
                   <v-list-item-content>
                     <v-list-item-title class="">
                       {{ item.challengeTitle }}
@@ -112,6 +113,7 @@ export default {
           }
           result.forEach(data => {
             const challenge = {};
+            challenge.challengeId = data.id;
             challenge.challengeTitle = data.title;
             challenge.challengePoints =  data.points;
             challenge.challengesAnnouncementsCount =  data.announcements.length;
@@ -120,6 +122,9 @@ export default {
           this.displayChallenges = this.listChallenges.length > 0;
         }).finally(() => this.loading = false);
     },
+    selectChallenge(id) {
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${id}`;
+    }
   },
 };
 </script>
