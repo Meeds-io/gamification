@@ -38,9 +38,14 @@
         <gamification-overview-widget-row
           class="py-auto"                   
           v-for="(item, index) in listChallenges" 
-          :key="index">
+          :key="index"
+          :redirection-url="`${challengesURL}/${item.challengeId}`">
           <template #icon>
-            <v-icon color="yellow darken-2" size="30px">fas fa-trophy</v-icon>
+            <v-icon
+              color="yellow darken-2"
+              size="30px">
+              fas fa-trophy
+            </v-icon>
           </template>
           <template #content>
             <span>
@@ -112,6 +117,7 @@ export default {
           }
           result.forEach(data => {
             const challenge = {};
+            challenge.challengeId = data.id;
             challenge.challengeTitle = data.title;
             challenge.challengePoints =  data.points;
             challenge.challengesAnnouncementsCount =  data.announcements.length;
