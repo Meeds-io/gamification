@@ -525,4 +525,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             WHERE RULE_ID IS NOT NULL
         </sql>
     </changeSet>
+    <changeSet author="exo-gamification" id="1.0.0-50">
+        <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
+                        columnName="DOMAIN"
+                        newDataType="VARCHAR(255)"
+        />
+        <modifyDataType tableName="GAMIFICATION_BADGES"
+                        columnName="DOMAIN"
+                        newDataType="VARCHAR(255)"
+        />
+        <modifyDataType tableName="GAMIFICATION_RULE"
+                        columnName="AREA"
+                        newDataType="VARCHAR(255)"
+        />
+    </changeSet>
 </databaseChangeLog>
