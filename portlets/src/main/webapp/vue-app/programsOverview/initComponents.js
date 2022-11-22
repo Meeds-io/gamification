@@ -23,3 +23,11 @@ const components = {
 for (const key in components) {
   Vue.component(key, components[key]);
 }
+
+import  * as programsServices  from '../engagement-center/js/programsServices';
+
+if (!Vue.prototype.$programsServices) {
+  window.Object.defineProperty(Vue.prototype, '$programsServices', {
+    value: programsServices,
+  });
+}
