@@ -104,7 +104,7 @@ export default {
         .retrievePrograms(0, 3, this.type, this.status)
         .then((data) => {
           this.programs = data.domains;
-          this.programsDisplayed = data.domains.length > 0;
+          this.programsDisplayed = data.domainsSize > 0;
           this.loading = false;
         });
     },
