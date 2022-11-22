@@ -15,6 +15,7 @@
 -->
 <template>
   <v-card
+    :loading="loading"
     height="338px"
     min-width="290px"
     class="white d-flex flex-column"
