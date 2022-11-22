@@ -86,6 +86,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <portlet>
     <name>Challenges</name>
     <module>
+      <load-group>engagement-center-user-actions</load-group>
       <script>
         <minify>false</minify>
         <path>/js/engagementCenter.bundle.js</path>

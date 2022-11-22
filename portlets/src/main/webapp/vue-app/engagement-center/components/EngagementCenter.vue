@@ -53,9 +53,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tab-item>
         <v-tab-item>
           <realizations
+            v-show="!displayProgramDetail"
             id="Realizations"
             :earner-id="earnerId"
-            :is-administrator="isAdministrator" />
+            :is-administrator="isAdministrator"
+            :action-value-extensions="actionValueExtensions" />
+          <engagement-center-program-detail
+            v-if="displayProgramDetail"
+            :program="program"
+            :events="events"
+            :can-manage-rule="isAdministrator"
+            :tab="2" />
         </v-tab-item>
       </v-tabs-items>
     </main>
@@ -85,6 +93,9 @@ export default {
     displayProgramDetail: false,
     events: [],
     avoidAddToHistory: false,
+    extensionApp: 'engagementCenterActions',
+    actionValueExtensionType: 'user-actions',
+    actionValueExtensions: {},
   }),
   watch: {
     tab() {
@@ -116,6 +127,8 @@ export default {
       .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
     this.initialized = true;
     window.addEventListener('popstate', (event) => this.initTabs(event));
+    document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
+    this.refreshActionValueExtensions();
   },
   methods: {
     initTabs(event) {
@@ -144,7 +157,21 @@ export default {
       } else if  (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`) > -1) {
         this.tab = 2;
       }
-    }
+    },
+    refreshActionValueExtensions() {
+      const extensions = extensionRegistry.loadExtensions(this.extensionApp, this.actionValueExtensionType);
+      let changed = false;
+      extensions.forEach(extension => {
+        if (extension.type && extension.options && (!this.actionValueExtensions[extension.type] || this.actionValueExtensions[extension.type] !== extension.options)) {
+          this.actionValueExtensions[extension.type] = extension.options;
+          changed = true;
+        }
+      });
+      // force update of attribute to re-render switch new extension type
+      if (changed) {
+        this.actionValueExtensions = Object.assign({}, this.actionValueExtensions);
+      }
+    },
   }
 };
 </script>
