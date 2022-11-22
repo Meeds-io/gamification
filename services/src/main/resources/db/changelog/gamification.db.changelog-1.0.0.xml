@@ -515,13 +515,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </update>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-49">
-    <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
-        <column name="TYPE" type="INT" defaultValueNumeric="0" >
-            <constraints nullable="false" />
-        </column>
-    </addColumn>
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="TYPE" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
         <sql>UPDATE GAMIFICATION_ACTIONS_HISTORY
-            SET TYPE=(SELECT TYPE FROM GAMIFICATION_RULE WHERE GAMIFICATION_ACTIONS_HISTORY.RULE_ID = GAMIFICATION_RULE.ID)</sql>
+            SET TYPE=(SELECT TYPE FROM GAMIFICATION_RULE WHERE GAMIFICATION_ACTIONS_HISTORY.RULE_ID = GAMIFICATION_RULE.ID)
+            WHERE RULE_ID IS NOT NULL
+        </sql>
     </changeSet>
     <changeSet author="exo-gamification" id="1.0.0-50">
         <modifyDataType tableName="GAMIFICATION_ACTIONS_HISTORY"
