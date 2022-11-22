@@ -20,7 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ $t('gamification.myReputation.title') }}
     </template>
     <template #content>
-      <gamification-overview-widget-row v-show="displayed">
+      <gamification-overview-widget-row v-show="kudosDisplayed">
         <template #title>
           {{ $t('gamification.myReputation.KudosTitle') }}
         </template>
@@ -32,10 +32,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="d-flex flex-column mx-n4 mt-n4" />
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row v-show="!displayed">
+      <gamification-overview-widget-row v-show="!kudosDisplayed">
         <template #title>
           <div class="mb-4">
-            {{ $t('gamification.myReputation.KudosTitle') }}
+            {{ $t('gamification.myReputation.KudosTitleNoData') }}
           </div>
         </template>
         <template #icon>
@@ -45,16 +45,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <span v-html="emptyKudosSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
-      <gamification-overview-widget-row class="mt-n1">
+      <gamification-overview-widget-row class="mt-n3" v-show="badgesDisplayed">
         <template #title>
-          {{ $t('gamification.myReputation.badgesTitle') }}
+          <div class="subtitle-2 align-self-start mt-10">
+            {{ $t('gamification.myReputation.badgesTitle') }}
+          </div>
         </template>
         <template #content>
           <extension-registry-components
             :params="params"
             name="my-reputation-overview-badges"
             type="my-reputation-item"
-            class="d-flex flex-column mx-n4 mt-n4" />
+            class="d-flex flex-column mx-n4" />
+        </template>
+      </gamification-overview-widget-row>
+      <gamification-overview-widget-row
+        class="my-auto"
+        v-show="!badgesDisplayed">
+        <template #title>
+          <div class="mb-3 mt-11">
+         {{ $t('gamification.myReputation.badgesTitle') }}
+          </div>
+        </template>
+        <template #icon>
+          <v-icon color="secondary" size="55px">fas fa-graduation-cap</v-icon>
+        </template>
+        <template #content>
+          <span v-html="emptyBadgesSummaryText"></span>
         </template>
       </gamification-overview-widget-row>
     </template>
@@ -65,7 +82,8 @@ export default {
   data: () => ({
     emptyKudosActionName: 'gamification-myReputation-kudos-check-actions',
     receivedKudosCount: 0,
-    displayed: false,
+    kudosDisplayed: false,
+    badgesDisplayed: false,
     loading: true,
   }),
   computed: {
@@ -76,9 +94,12 @@ export default {
     },
     emptyKudosSummaryText() {
       return this.$t('gamification.overview.reputationKudosSummary', {
-        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">`,
         1: '</a>',
       });
+    },
+    emptyBadgesSummaryText() {
+      return this.$t('gamification.overview.reputationBadgesSummary');
     },
     kudosData() {
       return (this.sentKudosSize + this.receivedKudosSize) > 0;
@@ -86,20 +107,22 @@ export default {
   },
   created() {
     document.addEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
-    document.addEventListener('availableKudosSentOrReceived', event => {
-      if (event?.detail) {
-        this.noData = event.detail === 0;
-      }});
     document.addEventListener('kudosCount', (event) => {
-      if (event && event.detail) {
-        this.displayed = event.detail > 0;
+      if (event) {
+        this.kudosDisplayed = event.detail > 0;
+        this.loading = false;
+      }
+    });
+    document.addEventListener('badgesCount', (event) => {
+      if (event) {
+        this.badgesDisplayed = event.detail > 0;
         this.loading = false;
       }
     });
     this.$root.$applicationLoaded();
   },
   beforeDestroy() {
-    document.removeEventListener(this.emptyWalletActionName, this.clickOnKudosEmptyActionLink);
+    document.removeEventListener(this.emptyKudosActionName, this.clickOnKudosEmptyActionLink);
   },
   methods: {
     clickOnKudosEmptyActionLink() {
