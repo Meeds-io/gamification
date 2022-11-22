@@ -41,6 +41,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 
 @Path("/gamification/realizations/api")
@@ -52,8 +53,11 @@ public class RealizationsRest implements ResourceContainer {
 
   private RealizationsService realizationsService;
 
-  public RealizationsRest(RealizationsService realizationsService) {
+  private IdentityManager     identityManager;
+
+  public RealizationsRest(RealizationsService realizationsService, IdentityManager identityManager) {
     this.realizationsService = realizationsService;
+    this.identityManager = identityManager;
   }
 
   @GET
@@ -148,7 +152,7 @@ public class RealizationsRest implements ResourceContainer {
                                                                                                               offset,
                                                                                                               limit);
         List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-                                                                                          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList);
+                                                                                          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList, identityManager);
         RealizationList realizationList = new RealizationList();
         if (returnSize) {
           int realizationsSize = realizationsService.countRealizationsByFilter(filter, identity);
@@ -203,7 +207,7 @@ public class RealizationsRest implements ResourceContainer {
                                                       actionLabel,
                                                       points,
                                                       domain);
-      return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO)).build();
+      return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO, identityManager)).build();
     } catch (ObjectNotFoundException e) {
       LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
       return Response.status(Response.Status.NOT_FOUND).entity("realization not found").build();
