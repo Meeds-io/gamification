@@ -64,6 +64,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :realization="props.item"
           :date-format="dateFormat"
           :is-administrator="isAdministrator"
+          :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
@@ -102,6 +103,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
+    },
   },
   data: () => ({
     displaySearchResult: false,
@@ -121,10 +128,8 @@ export default {
     selectedPeriod: null,
     dateFormat: {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
     },
   }),
   computed: {
@@ -141,61 +146,63 @@ export default {
       const realizationsHeaders = [
         {
           text: this.$t('realization.label.date'),
-          align: 'center',
           sortable: true,
           value: 'date',
           class: 'actionHeader',
+          width: '150'
         },
         {
           text: this.$t('realization.label.actionType'),
-          align: 'center',
           sortable: true,
+          align: 'center',
           value: 'type',
-          class: 'actionHeader'
+          class: 'actionHeader',
+          width: '100',
         },
         {
           text: this.$t('realization.label.programLabel'),
-          align: 'center',
           sortable: false,
           value: 'programLabel',
           class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.actionLabel'),
-          align: 'center',
           sortable: false,
           value: 'actionLabel',
           class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.points'),
-          align: 'center',
           sortable: false,
+          align: 'center',
           value: 'points',
-          class: 'actionHeader'
+          class: 'actionHeader',
+          width: '90',
         },
         {
           text: this.$t('realization.label.status'),
-          align: 'center',
           sortable: true,
+          align: 'center',
           value: 'status',
-          class: 'actionHeader'
+          class: 'actionHeader',
+          width: '95',
         },
       ];
       if (this.isAdministrator) {
         realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
-          align: 'center',
           sortable: false,
-          class: 'actionHeader'
+          class: 'actionHeader',
+          width: '90',
         });
         realizationsHeaders.splice(1, 0,         
           {
             text: this.$t('realization.label.grantee'),
-            align: 'center',
             sortable: false,
+            align: 'center',
             value: 'grantee',
-            class: 'actionHeader'
+            class: 'actionHeader',
+            width: '90',
           },);
       }
       return realizationsHeaders;
