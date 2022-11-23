@@ -236,7 +236,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       query.setParameter("filterType", EntityType.valueOf(filter.getEntityFilterType().name()));
     }
     EntityStatusType entityStatusType = filter.getEntityStatusType();
-    if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
+    if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
+      if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
+        query.setParameter("date", Calendar.getInstance().getTime());
+      }
+    } else {
       switch (filter.getEntityStatusType()) {
       case ENABLED:
         query.setParameter("enabled", true);
@@ -244,6 +248,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
         break;
       case DISABLED:
         query.setParameter("enabled", false);
+        query.setParameter("date", Calendar.getInstance().getTime());
         break;
       default:
         break;
@@ -291,7 +296,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       predicates.add("r.isDeleted = false");
     }
     EntityStatusType entityStatusType = filter.getEntityStatusType();
-    if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
+    if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
+      if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
+        suffixes.add("FilterByALL");
+        predicates.add("(r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+      }
+    } else {
       switch (filter.getEntityStatusType()) {
       case ENABLED:
         suffixes.add("FilterByEnabled");
@@ -299,7 +309,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
         break;
       case DISABLED:
         suffixes.add("FilterByDisabled");
-        predicates.add("r.isEnabled = :enabled");
+        predicates.add("r.isEnabled = :enabled AND (r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
         break;
       default:
         break;
