@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
@@ -55,6 +56,7 @@ public class ChallengeStorage {
   }
 
   public List<Long> findChallengesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
     List<Long> challengesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
     if (challengesIds.isEmpty()) {
       return Collections.emptyList();
@@ -63,6 +65,7 @@ public class ChallengeStorage {
   }
 
   public int countChallengesByFilter(RuleFilter challengeFilter) {
+    challengeFilter.setEntityFilterType(EntityFilterType.MANUAL);
     return ruleStorage.countRulesByFilter(challengeFilter);
   }
 
