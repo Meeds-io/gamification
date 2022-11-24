@@ -82,6 +82,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :domains="domainsHavingChallenges"
       :challenges-by-domain-id="challengesByDomainId"
       :loading="loading"
+      :can-edit-challenge="canAddChallenge"
       class="pl-2 pt-8" />
 
     <challenge-details-drawer ref="challengeDetails" />
