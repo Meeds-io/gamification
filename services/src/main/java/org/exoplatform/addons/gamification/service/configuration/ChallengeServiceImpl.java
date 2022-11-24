@@ -16,7 +16,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -131,8 +130,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   @Override
   public boolean canAddChallenge(org.exoplatform.services.security.Identity identity) {
-    if (groupOfCreators != null) {
-      return identity.isMemberOf(groupOfCreators);
+    if (identity != null) {
+      if (StringUtils.isNotBlank(groupOfCreators)) {
+        List<String> permissions = Utils.getPermissions(groupOfCreators);
+        return permissions.stream().anyMatch(identity::isMemberOf);
+      }
+      return true;
     }
     return false;
   }

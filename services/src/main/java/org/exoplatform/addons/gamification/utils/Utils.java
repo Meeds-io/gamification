@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
@@ -122,7 +123,12 @@ public class Utils {
     return null;
   }
 
-  public static final boolean isChallengeManager(List<Long> managersId, long spaceId, String username) {
+  public static boolean isChallengeManager(List<Long> managersId, long spaceId, String username) {
+    org.exoplatform.services.security.Identity currentUser = ConversationState.getCurrent().getIdentity();
+    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+    if (currentUser != null && challengeService.canAddChallenge(currentUser)) {
+      return true;
+    }
     Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
     if (identity != null) {
       if (managersId.stream().noneMatch(id -> id == Long.parseLong(identity.getId()))) {
@@ -500,5 +506,20 @@ public class Utils {
     } catch (Exception e) {
       LOG.warn("Error broadcasting event '" + eventName + "' using source '" + source + "' and data " + data, e);
     }
+  }
+
+  public static List<String> getPermissions(String permission) {
+    List<String> result = new ArrayList<>();
+    if (permission != null) {
+      if (permission.contains(",")) {
+        String[] groups = permission.split(",");
+        for (String group : groups) {
+          result.add(group.trim());
+        }
+      } else {
+        result.add(permission);
+      }
+    }
+    return result;
   }
 }
