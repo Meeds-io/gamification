@@ -38,6 +38,7 @@ import ProgramDetail from './components/programs/ProgramDetail.vue';
 import RuleTitle from './components/rules/RuleTitle.vue';
 import RuleItem from './components/rules/RuleItem.vue';
 import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
+import RuleFilter from './components/rules/RuleFilter.vue';
 
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
@@ -72,6 +73,7 @@ const components = {
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-form-drawer': RuleFormDrawer,
+  'engagement-center-rule-filter': RuleFilter,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-description-editor': DescriptionEditor,
