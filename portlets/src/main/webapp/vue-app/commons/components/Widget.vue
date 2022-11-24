@@ -46,5 +46,8 @@ export default {
       default: () => '',
     },
   },
+  created() {
+    console.log(this.noPadding);
+  }
 };
 </script>

@@ -176,9 +176,13 @@ public class ChallengeServiceImpl implements ChallengeService {
       return Collections.emptyList();
     }
     setFilterAudience(challengeFilter, spaceIds);
-    List<Long> challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
+    List<Long> challengesIds = null;
+    if (challengeFilter.isPopular()) {
+       challengesIds = challengeStorage.getPopularChallengesIds(challengeFilter, offset, limit);
+    } else {
+      challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
+    }
     List<Challenge> challenges = new ArrayList<>();
-
     for (Long challengeId : challengesIds) {
       Challenge challenge = getChallengeById(challengeId);
       challenges.add(challenge);

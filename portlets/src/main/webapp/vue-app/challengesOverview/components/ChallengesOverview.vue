@@ -15,7 +15,9 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget v-if="!displayChallenges" :loading="loading">
+    <gamification-overview-widget
+      v-if="!displayChallenges"
+      :loading="loading">
       <template #title>
         {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
       </template>
@@ -30,7 +32,10 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
-    <gamification-overview-widget v-else :see-all-url="challengesURL">
+    <gamification-overview-widget
+      v-else
+      :see-all-url="challengesURL"
+      :no-padding="true">
       <template #title>
         {{ $t('gamification.overview.challengesOverviewTitle') }}
       </template>
@@ -43,7 +48,8 @@
           <template #icon>
             <v-icon
               color="yellow darken-2"
-              size="30px">
+              size="30px"
+              class="ps-4">
               fas fa-trophy
             </v-icon>
           </template>
@@ -58,7 +64,13 @@
                     <v-list-item-title class="">
                       {{ item.challengeTitle }}
                     </v-list-item-title>
-                    <v-list-item-subtitle> 
+                    <v-list-item-subtitle v-if="item.challengesAnnouncementsCount === 0"> 
+                      {{ $t('gamification.overview.label.firstAnnounecement') }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle v-else-if="item.challengesAnnouncementsCount === 1"> 
+                      {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participant') }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle v-else> 
                       {{ item.challengesAnnouncementsCount }}  {{ $t('gamification.overview.label.participants') }}
                     </v-list-item-subtitle>
                   </v-list-item-content>
@@ -79,6 +91,7 @@ export default {
   data: () => ({
     emptyActionName: 'gamification-challengesOverview-check-action',
     search: '',
+    isPopular: true,
     challengePerPage: 3,
     announcementsPerChallenge: 2,
     filter: 'STARTED',
@@ -96,6 +109,14 @@ export default {
     challengesURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
+    fromDate() {
+      const today = new Date();
+      return new Date(today.setDate(today.getDate() - today.getDay())).toISOString();
+    },
+    toDate() {
+      const today = new Date();
+      return new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString();
+    }
   },
   created() {
     document.addEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
@@ -110,7 +131,7 @@ export default {
     },
     getChallenges() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter)
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.isPopular, this.fromDate, this.toDate)
         .then(result => {
           if (!result) {
             return;

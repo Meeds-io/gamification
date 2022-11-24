@@ -17,21 +17,24 @@ package org.exoplatform.addons.gamification.storage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class ChallengeStorage {
 
   private RuleStorage ruleStorage;
 
-  public ChallengeStorage(RuleStorage ruleStorage) {
+  private GamificationHistoryDAO gamificationHistoryDAO;
+
+  public ChallengeStorage(RuleStorage ruleStorage, GamificationHistoryDAO gamificationHistoryDAO) {
     this.ruleStorage = ruleStorage;
+    this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
 
   public Challenge saveChallenge(Challenge challenge, String username) {
@@ -72,6 +75,10 @@ public class ChallengeStorage {
   public Challenge getChallengeById(Long challengeId) {
     RuleDTO ruleDTO = ruleStorage.findRuleById(challengeId);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
+  }
+
+  public List<Long> getPopularChallengesIds(RuleFilter filter, int offset, int limit) {
+    return  gamificationHistoryDAO.findPopularChallengesByDate(filter, offset, limit);
   }
 
   public void clearCache() {

@@ -160,6 +160,15 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findAllAnnouncementByChallenge",
     query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )
+@NamedQuery(
+    name = "GamificationActionsHistory.findAllRealizationsIdsByRuleId",
+    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type='1' group by a.ruleId order by count(*) DESC"
+)
+@NamedQuery(
+    name = "GamificationActionsHistory.findAllRealizationsIdsByRuleIdByDate",
+    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type='1' AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
+            "group by a.ruleId order by count(*) DESC"
+)
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 

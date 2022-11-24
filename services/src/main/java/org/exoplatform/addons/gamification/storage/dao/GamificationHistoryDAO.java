@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
@@ -411,6 +412,22 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setFirstResult(offset);
     query.setMaxResults(limit);
     List<GamificationActionsHistory> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  public List<Long> findPopularChallengesByDate(RuleFilter ruleFilter, int offset, int limit) {
+    TypedQuery<Long> query = null;
+    if (StringUtils.isNotEmpty(ruleFilter.getFromDate().toString())
+        && StringUtils.isNotEmpty(ruleFilter.getToDate().toString())) {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllRealizationsIdsByRuleIdByDate", Long.class);
+      query.setParameter(FROM_DATE_PARAM_NAME, ruleFilter.getFromDate())
+           .setParameter(TO_DATE_PARAM_NAME, ruleFilter.getToDate());
+    } else {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllRealizationsIdsByRuleId", Long.class);
+    }
+    query.setFirstResult(offset);
+    query.setMaxResults(limit);
+    List<Long> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
