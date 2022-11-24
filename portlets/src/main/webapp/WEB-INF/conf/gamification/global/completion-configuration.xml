@@ -100,8 +100,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <init-params>
       <value-param>
         <name>challenge.creator.group</name>
-        <description>challenge creator group</description>
-        <value>${exo.challenges.creators.group:/platform/administrators}</value>
+        <description>groups with membership type have permission to manage challenges</description>
+        <value>${exo.challenges.creators.group:/platform/administrators,/platform/rewarding}</value>
       </value-param>
     </init-params>
   </component>
