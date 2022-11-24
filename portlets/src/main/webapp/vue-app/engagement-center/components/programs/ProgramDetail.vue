@@ -59,21 +59,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item-title class="text-color font-weight-bold">
             {{ $t('programs.details.label.rulesOfProgram') }}
           </v-list-item-title>
-          <div v-if="canManageRule" class="text-no-wrap mt-5">
-            <div
-              class="d-inline-block">
-              <v-btn
-                class="btn btn-primary"
-                @click="openNewRuleForm">
-                <v-icon dark>
-                  mdi-plus
-                </v-icon>
-                <span class="ms-2 d-none d-lg-inline subtitle-1">
-                  {{ $t('programs.details.rule.button.addRule') }}
-                </span>
-              </v-btn>
+          <v-flex v-if="canManageRule" class="d-flex">
+            <div class="text-no-wrap mt-5">
+              <div
+                class="d-inline-block">
+                <v-btn
+                  class="btn btn-primary"
+                  @click="openNewRuleForm">
+                  <v-icon dark>
+                    mdi-plus
+                  </v-icon>
+                  <span class="ms-2 d-none d-lg-inline subtitle-1">
+                    {{ $t('programs.details.rule.button.addRule') }}
+                  </span>
+                </v-btn>
+              </div>
             </div>
-          </div>
+            <div
+              class="ms-auto my-auto">
+              <engagement-center-rule-filter @filter-applied="applyFilter" />
+            </div>
+          </v-flex>
           <v-list-item-subtitle class="text-color pt-4">
             <v-data-table
               :headers="rulesHeaders"
@@ -152,7 +158,8 @@ export default {
       },
       totalSize: 0,
       loadingRules: false,
-      deleteConfirmMessage: ''
+      deleteConfirmMessage: '',
+      filter: 'ENABLED',
     };
   },
   computed: {
@@ -205,6 +212,10 @@ export default {
     });
   },
   methods: {
+    applyFilter(filter) {
+      this.filter = filter;
+      this.retrieveProgramRules();
+    },
     retrieveProgramRules() {
       const page = this.options && this.options.page;
       let itemsPerPage = this.options && this.options.itemsPerPage;
@@ -213,7 +224,7 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, 'ENABLED', 'ALL', offset, itemsPerPage)
+      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage)
         .then((data) => {
 
           this.programRules = data.rules;
