@@ -20,47 +20,45 @@
         {{ $t('gamification.overview.rewardsTitle') }}
       </template>
       <template #content>
-        <v-card flat height="100">
-          <gamification-overview-widget-row v-show="!rewardDisplayed">
+        <gamification-overview-widget-row v-show="!myRewardsDisplayed">
+          <template #title>
+            <div class="mb-4">
+              {{ $t('gamification.overview.rewards.walletTitle') }}
+            </div>
+          </template>
+          <template #icon>
+            <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
+          </template>
+          <template #content>
+            <span v-html="emptyWalletSummaryText"></span>
+          </template>
+        </gamification-overview-widget-row>
+        <div class="d-flex">
+          <gamification-overview-widget-row v-show="myRewardsDisplayed" class="col col-6 ps-0">
             <template #title>
-              <div class="mb-4">
-                {{ $t('gamification.overview.rewards.walletTitle') }}
-              </div>
-            </template>
-            <template #icon>
-              <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
+              {{ $t('gamification.overview.rewards.earningsTitle') }}
             </template>
             <template #content>
-              <span v-html="emptyWalletSummaryText"></span>
+              <extension-registry-components
+                :params="params"
+                name="my-rewards-overview"
+                type="my-rewards-item"
+                class="d-flex flex-row mt-5" />
             </template>
           </gamification-overview-widget-row>
-          <div class="d-flex">
-            <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
-              <template #title>
-                {{ $t('gamification.overview.rewards.earningsTitle') }}
-              </template>
-              <template #content>
-                <extension-registry-components
-                  :params="params"
-                  name="my-rewards-overview"
-                  type="my-rewards-item"
-                  class="d-flex flex-row mt-5" />
-              </template>
-            </gamification-overview-widget-row>
-            <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
-              <template #title>
-                {{ $t('gamification.overview.rewards.walletTitle') }}
-              </template>
-              <template #content>
-                <extension-registry-components
-                  name="my-rewards-wallet-overview"
-                  type="my-rewards-wallet-item"
-                  class="d-flex flex-row mt-5" />
-              </template>
-            </gamification-overview-widget-row>
-          </div>
-        </v-card>
-        <gamification-overview-widget-row class="mt-8">
+          <gamification-overview-widget-row v-show="myRewardsDisplayed" class="col col-6">
+            <template #title>
+              {{ $t('gamification.overview.rewards.walletTitle') }}
+            </template>
+            <template #content>
+              <extension-registry-components
+                name="my-rewards-wallet-overview"
+                type="my-rewards-wallet-item"
+                class="d-flex flex-row mt-5" />
+            </template>
+          </gamification-overview-widget-row>
+        </div>
+        <gamification-overview-widget-row class="my-auto">
           <template #title>
             <div class="mb-4">
               {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
@@ -82,19 +80,21 @@ export default {
   data: () => ({
     emptyWalletActionName: 'gamification-wallet-check-actions',
     emptyPerkstoreActionName: 'gamification-perk-store-check-actions',
-    loading: true,
-    rewardDisplayed: false,
+    rewardDisplay: false,
+    walletDisplay: false,
+    loadingReward: true,
+    loadingWallet: true,
   }),
   computed: {
     emptyWalletSummaryText() {
       return this.$t('gamification.overview.rewardsWalletSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyWalletActionName}'))">`,
+        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyWalletActionName}'))">`,
         1: '</a>',
       });
     },
     emptyPerkstoreSummaryText() {
       return this.$t('gamification.overview.rewardsPerkstoreSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyPerkstoreActionName}'))">`,
+        0: `<a href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyPerkstoreActionName}'))">`,
         1: '</a>',
       });
     },
@@ -104,17 +104,30 @@ export default {
       };
     },
     walletURL() {
-      return this.rewardDisplayed ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet` : '';
+      return this.myRewardsDisplayed ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet` : '';
+    },
+    myRewardsDisplayed() {
+      return this.rewardDisplay || this.walletDisplay;
+    },
+    loading() {
+      return this.loadingReward && this.loadingWallet;
     }
   },
   created() {
     document.addEventListener(this.emptyWalletActionName, this.clickOnWalletEmptyActionLink);
     document.addEventListener('countReward', (event) => {
       if (event) {
-        this.rewardDisplayed = event.detail > 0;
-        this.loading = false;
+        this.rewardDisplay = event.detail > 0;
+        this.loadingReward = false;
       }
     });
+    document.addEventListener('balanceAmount', (event) => {
+      if (event) {
+        this.walletDisplay = event.detail > 0;
+        this.loadingWallet = false;
+      }
+    });
+    
     document.addEventListener(this.emptyPerkstoreActionName, this.clickOnWalletEmptyActionLink);
   },
   beforeDestroy() {
