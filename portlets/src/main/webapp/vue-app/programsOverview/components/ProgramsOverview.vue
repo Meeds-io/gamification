@@ -102,7 +102,7 @@ export default {
     },
     retrievePrograms() {
       return this.$programsServices
-        .retrievePrograms(0, 3, this.type, this.status)
+        .retrievePrograms(0, 3, this.type, this.status, null, false, true)
         .then((data) => {
           this.programs = data.domains;
           this.programsDisplayed = data.domainsSize > 0;

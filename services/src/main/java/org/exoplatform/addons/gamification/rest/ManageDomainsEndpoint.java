@@ -129,6 +129,9 @@ public class ManageDomainsEndpoint implements ResourceContainer {
                              @QueryParam("status")
                              @DefaultValue("ENABLED")
                              String status,
+                             @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false)
+                             @QueryParam("sortByBudget")
+                             @DefaultValue("false") boolean sortByBudget,
                              @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false)
                              @QueryParam("includeDeleted")
                              @DefaultValue("false") boolean includeDeleted,
@@ -146,6 +149,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
     DomainFilter domainFilter = new DomainFilter();
+    domainFilter.setSortByBudget(sortByBudget);
     domainFilter.setIncludeDeleted(includeDeleted);
     EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.AUTOMATIC : EntityFilterType.valueOf(type);
     domainFilter.setEntityFilterType(filterType);
