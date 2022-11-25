@@ -15,7 +15,10 @@
 -->
 <template>
   <v-app>
-    <gamification-overview-widget :see-all-url="programURL" :loading="loading">
+    <gamification-overview-widget
+      :see-all-url="programURL"
+      :loading="loading"
+      extraClass="px-0">
       <template #title>
         {{ $t('gamification.overview.programsOverviewTitle') }}
       </template>
@@ -32,35 +35,33 @@
           v-show="programsDisplayed"
           class="py-auto"                   
           v-for="(item, index) in programs" 
-          :key="index">
+          :key="index"
+          :redirection-url="`${programURL}/${item.id}`">
           <template #content>
-            <a :href="programDetailLink(item.id)">
-              <span>
-                <v-list
-                  class="pb-0"
-                  subheader
+            <span>
+              <v-list
+                class="pb-0"
+                subheader
+                two-line>
+                <v-list-item
                   two-line>
-                  <v-list-item
-                    class="ps-0"
-                    two-line>
-                    <v-list-item-icon class="mx-2">
-                      <v-img
-                        :src="item.coverUrl"
-                        height="40"
-                        width="55" />
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ item.title }}
-                      </v-list-item-title>
-                      <v-list-item-subtitle> 
-                        <span class="text-light-color" v-sanitized-html="$t('programs.budget', {0: `<span>${item.rulesTotalScore} ${$t('programs.details.label.points')}</span>`})"></span>
-                      </v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
-              </span>
-            </a>
+                  <v-list-item-icon class="mx-2">
+                    <v-img
+                      :src="item.coverUrl"
+                      height="40"
+                      width="55" />
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ item.title }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle> 
+                      <span class="text-light-color" v-sanitized-html="$t('programs.budget', {0: `<span>${item.rulesTotalScore} ${$t('programs.details.label.points')}</span>`})"></span>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </span>
           </template>
         </gamification-overview-widget-row>
       </template>
@@ -108,9 +109,6 @@ export default {
           this.loading = false;
         });
     },
-    programDetailLink(programId) {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${programId}`;
-    }
   },
 };
 </script>
