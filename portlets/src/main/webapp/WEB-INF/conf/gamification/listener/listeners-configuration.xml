@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of the Meeds project (https://meeds.io/).
+Copyright (C) 2020 Meeds Association
+contact@meeds.io
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+-->
+
+<configuration
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
+        xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
+    <!-- Domain Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.gamification.domain.action</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Generic Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.gamification.generic.action</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Rule Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.gamification.rule.action</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.gamification.rule.GamificationRuleListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- User Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.core.security.ConversationRegistry.register</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.user.GamificationUserLoginListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Social listeners -->
+    <!-- Relationship -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.manager.RelationshipManager</target-component>
+        <component-plugin>
+            <name>GamificationRelationshipTracker</name>
+            <set-method>addListenerPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Activities -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+        <component-plugin>
+            <name>GamificationActivityTracker</name>
+            <set-method>addActivityEventListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.social.activity.GamificationActivityListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Spaces -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
+        <component-plugin>
+            <name>GamificationSpaceTracker</name>
+            <set-method>registerSpaceListenerPlugin</set-method>
+            <type>org.exoplatform.addons.gamification.listener.social.space.GamificationSpaceListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Identity -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.manager.IdentityManager</target-component>
+        <component-plugin>
+            <name>GamificationProfileTracker</name>
+            <set-method>registerProfileListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener</type>
+        </component-plugin>
+    </external-component-plugins>
+</configuration>

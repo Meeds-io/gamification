@@ -40,6 +40,8 @@ public class RuleServiceImpl implements RuleService {
 
   private final ListenerService  listenerService;
 
+  public static final String      GAMIFICATION_RULE_LISTENER = "exo.gamification.rule.action";
+
   public RuleServiceImpl(RuleStorage ruleStorage,  ListenerService listenerService) {
     this.ruleStorage = ruleStorage;
     this.listenerService = listenerService;
@@ -167,6 +169,7 @@ public class RuleServiceImpl implements RuleService {
     }
     ruleDTO = ruleStorage.deleteRuleById(ruleId, username);
     Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, this, ruleDTO);
+    Utils.broadcastEvent(listenerService, GAMIFICATION_RULE_LISTENER, ruleDTO, "delete");
     return ruleDTO;
   }
 
@@ -207,6 +210,7 @@ public class RuleServiceImpl implements RuleService {
     }
     ruleDTO = ruleStorage.saveRule(ruleDTO);
     Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
+    Utils.broadcastEvent(listenerService, GAMIFICATION_RULE_LISTENER, ruleDTO, "create");
     return ruleDTO;
   }
 
@@ -239,6 +243,12 @@ public class RuleServiceImpl implements RuleService {
     ruleDTO = ruleStorage.saveRule(ruleDTO);
 
     Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());
+    if (oldRule.isEnabled() && !ruleDTO.isEnabled()) {
+      Utils.broadcastEvent(listenerService, GAMIFICATION_RULE_LISTENER, ruleDTO, "disable");
+    }
+    if (!oldRule.isEnabled() && ruleDTO.isEnabled()) {
+      Utils.broadcastEvent(listenerService, GAMIFICATION_RULE_LISTENER, ruleDTO, "enable");
+    }
 
     return ruleDTO;
   }
