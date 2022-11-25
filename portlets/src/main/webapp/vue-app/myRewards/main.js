@@ -32,4 +32,9 @@ export function init() {
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'My Rewards');
     });
+  Object.keys(window.requirejs.s.contexts._.registry)
+    .filter(definedMofule => definedMofule.includes('wallet-api'))
+    .forEach(module => {
+      window.require([module], app => app.init());
+    });
 }
