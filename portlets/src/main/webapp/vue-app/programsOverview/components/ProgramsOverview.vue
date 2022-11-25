@@ -18,7 +18,7 @@
     <gamification-overview-widget
       :see-all-url="programURL"
       :loading="loading"
-      no-x-padding="true">
+      extraClass="px-0">
       <template #title>
         {{ $t('gamification.overview.programsOverviewTitle') }}
       </template>

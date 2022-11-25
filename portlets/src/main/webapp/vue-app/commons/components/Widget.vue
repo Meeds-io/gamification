@@ -25,7 +25,7 @@
       <v-spacer />
       <a v-if="seeAllUrl" :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </v-card-title>
-    <v-card-text class="d-flex flex-column flex-grow-1" :class="noXPadding && 'px-0'">
+    <v-card-text class="d-flex flex-column flex-grow-1" :class="extraClass">
       <slot name="content"></slot>
     </v-card-text>
   </v-card>
@@ -41,9 +41,9 @@ export default {
       type: String,
       default: () => '',
     },
-    noXPadding: {
-      type: Boolean,
-      default: false,
+    extraClass: {
+      type: String,
+      default: () => '',
     },
   },
 };
