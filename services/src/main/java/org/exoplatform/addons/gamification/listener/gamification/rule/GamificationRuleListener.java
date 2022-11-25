@@ -16,17 +16,10 @@
  */
 package org.exoplatform.addons.gamification.listener.gamification.rule;
 
-import java.util.List;
-
-import liquibase.pro.packaged.R;
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -49,7 +42,7 @@ public class GamificationRuleListener extends Listener<RuleDTO, String> {
   public void onEvent(Event<RuleDTO, String> event) throws Exception {
     LOG.info("Update domain related to the edited rule");
     RuleDTO rule = event.getSource();
-    String action = (String) event.getData();
+    String action = event.getData();
   
     if (action.equals("delete") || action.equals("disable")) {
       DomainDTO domain = domainService.getDomainById(rule.getDomainDTO().getId());
