@@ -89,7 +89,7 @@ export function getAllChallengesByUser(term , offset, limit, announcements, doma
     formData.append('filter', filter);
   }
   if (orderByRealizations != null) {
-    formData.append('isMostRealized', orderByRealizations);
+    formData.append('orderByRealizations', orderByRealizations);
   }
   const params = new URLSearchParams(formData).toString();
 
