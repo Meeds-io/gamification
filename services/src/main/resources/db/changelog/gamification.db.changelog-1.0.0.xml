@@ -539,9 +539,4 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                         newDataType="VARCHAR(255)"
         />
     </changeSet>
-    <changeSet author="exo-gamification" id="1.0.0-51">
-        <sql>UPDATE GAMIFICATION_DOMAIN
-            SET BUDGET=(SELECT SUM(GAMIFICATION_RULE.SCORE) FROM GAMIFICATION_RULE GROUP BY GAMIFICATION_RULE.DOMAIN_ID)
-        </sql>
-    </changeSet>
 </databaseChangeLog>

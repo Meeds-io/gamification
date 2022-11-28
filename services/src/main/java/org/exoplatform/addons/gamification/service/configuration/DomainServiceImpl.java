@@ -153,11 +153,6 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  public DomainDTO updateDomain(DomainDTO domain) {
-    return domainStorage.saveDomain(domain);
-  }
-
-  @Override
   public DomainDTO deleteDomainById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
     if (!canUpdateDomain(domainId, aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to create a domain");

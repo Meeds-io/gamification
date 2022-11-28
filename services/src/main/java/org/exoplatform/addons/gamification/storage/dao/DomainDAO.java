@@ -104,7 +104,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     if (filterNamedQueries.containsKey(queryName)) {
       query = getEntityManager().createNamedQuery(queryName, clazz);
     } else {
-      String queryContent = getQueryFilterContent(predicates, count, filter.isSortByBudget());
+      String queryContent = getQueryFilterContent(predicates, count);
       query = getEntityManager().createQuery(queryContent, clazz);
       getEntityManager().getEntityManagerFactory().addNamedQuery(queryName, query);
       filterNamedQueries.put(queryName, true);
@@ -137,9 +137,6 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
       suffixes.add("ExcludeDeleted");
       predicates.add("d.isDeleted = false");
     }
-    if (filter.isSortByBudget()) {
-      suffixes.add("SortByBudget");
-    }
     EntityStatusType entityStatusType = filter.getEntityStatusType();
     if (entityStatusType != null && entityStatusType != EntityStatusType.ALL) {
       switch (entityStatusType) {
@@ -167,10 +164,10 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     return queryName;
   }
 
-  private String getQueryFilterContent(List<String> predicates, boolean count, boolean isSortByBudget) {
+  private String getQueryFilterContent(List<String> predicates, boolean count) {
     String querySelect = count ? "SELECT COUNT(d) FROM GamificationDomain d "
                                : "SELECT d.id FROM GamificationDomain d ";
-    String orderBy = isSortByBudget ? " ORDER BY d.budget DESC" : " ORDER BY d.createdDate DESC";
+    String orderBy = " ORDER BY d.createdDate DESC";
 
     String queryContent;
     if (predicates.isEmpty()) {

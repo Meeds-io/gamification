@@ -96,14 +96,6 @@ public interface DomainService {
   DomainDTO updateDomain(DomainDTO domainDTO, Identity aclIdentity) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
-   * Update an existing Domain
-   *
-   * @param domainDTO : an instance of type DomainDTO
-   *
-   * @return updated object {@link DomainDTO}
-   */
-  DomainDTO updateDomain(DomainDTO domainDTO);
-  /**
    * Deletes an existing domain by id
    *
    * @param domainId Domain technical identifier to delete

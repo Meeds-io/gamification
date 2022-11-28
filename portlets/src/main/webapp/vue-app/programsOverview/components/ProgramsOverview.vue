@@ -56,7 +56,7 @@
                       {{ item.title }}
                     </v-list-item-title>
                     <v-list-item-subtitle> 
-                      <span class="text-light-color" v-sanitized-html="$t('programs.budget', {0: `<span>${item.budget} ${$t('programs.details.label.points')}</span>`})"></span>
+                      <span class="text-light-color" v-sanitized-html="$t('programs.budget', {0: `<span>${item.rulesTotalScore} ${$t('programs.details.label.points')}</span>`})"></span>
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
