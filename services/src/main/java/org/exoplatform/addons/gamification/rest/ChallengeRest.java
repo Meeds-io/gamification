@@ -48,7 +48,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-
 @Path("/gamification/challenges")
 @Tag(name = "/challenge/api", description = "Manages challenge associated to users")
 @RolesAllowed("users")
@@ -227,7 +226,13 @@ public class ChallengeRest implements ResourceContainer {
                                          @Schema(defaultValue = "ALL")
                                          @DefaultValue("ALL")
                                          @QueryParam("filter")
-                                         String dateFilterType) {
+                                         String dateFilterType,
+                                         @Parameter(
+                                             description = "is popular challenges"
+                                         )
+                                         @DefaultValue("false")
+                                         @QueryParam("orderByRealizations")
+                                         boolean orderByRealizations) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -239,6 +244,7 @@ public class ChallengeRest implements ResourceContainer {
     filter.setTerm(term);
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
+    filter.setOrderByRealizations(orderByRealizations);
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {

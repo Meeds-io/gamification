@@ -37,6 +37,7 @@ import java.util.List;
 import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -333,6 +334,13 @@ public class ChallengeServiceTest {
     savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
 
     assertEquals(1, savedChallenges.size());
+
+    //Test get most realized challenges
+    filter.setOrderByRealizations(true);
+    when(challengeStorage.findMostRealizedChallengesIds(0, 10)).thenReturn(challengesIds);
+    when(challengeStorage.getChallengeById(challengesIds.get(0))).thenReturn(challenge);
+    List<Challenge> popularChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
+    assertEquals(popularChallenges.get(0).getId(), challenge.getId());
   }
 
   @Test
