@@ -231,8 +231,8 @@ public class ChallengeRest implements ResourceContainer {
                                              description = "is popular challenges"
                                          )
                                          @DefaultValue("false")
-                                         @QueryParam("isMostRealized")
-                                         boolean isMostRealized) {
+                                         @QueryParam("orderByRealizations")
+                                         boolean orderByRealizations) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -244,7 +244,7 @@ public class ChallengeRest implements ResourceContainer {
     filter.setTerm(term);
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
-    filter.setMostRealized(isMostRealized);
+    filter.setOrderByRealizations(orderByRealizations);
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {

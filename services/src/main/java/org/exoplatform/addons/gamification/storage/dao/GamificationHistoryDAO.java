@@ -417,9 +417,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<Long> findPopularRuleIdsByDate(int offset, int limit, EntityType type) {
+  public List<Long> findMostRealizedRuleIds(int offset, int limit, EntityType type) {
     TypedQuery<Long> query;
-    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRulesIdsByDate", Long.class);
+    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRuleIds", Long.class);
     LocalDate now = new LocalDate();
     LocalDate monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
     LocalDate sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);

@@ -851,7 +851,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindPopularChallengesByDate() {
+  public void testFindMostRealizedRuleIds() {
 
     RuleEntity rule1Automatic = newRule("domain0", "domain0", true, EntityType.AUTOMATIC);
     RuleEntity rule1Manual = newRule("domain1", "domain1", true, EntityType.MANUAL);
@@ -864,7 +864,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule2Manual.getId()));
     histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule2Manual.getId()));
 
-    List<Long> result = gamificationHistoryDAO.findPopularRuleIdsByDate(0, 6, EntityType.MANUAL);
+    List<Long> result = gamificationHistoryDAO.findMostRealizedRuleIds(0, 6, EntityType.MANUAL);
 
     assertNotNull(result);
     assertEquals(2, result.size());

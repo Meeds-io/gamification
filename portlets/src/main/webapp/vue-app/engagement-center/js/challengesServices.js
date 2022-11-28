@@ -65,7 +65,7 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain, filter, isMostRealized) {
+export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain, filter, orderByRealizations) {
   const formData = new FormData();
   if (term) {
     formData.append('term', term);
@@ -88,8 +88,8 @@ export function getAllChallengesByUser(term , offset, limit, announcements, doma
   if (filter) {
     formData.append('filter', filter);
   }
-  if (isMostRealized != null) {
-    formData.append('isMostRealized', isMostRealized);
+  if (orderByRealizations != null) {
+    formData.append('isMostRealized', orderByRealizations);
   }
   const params = new URLSearchParams(formData).toString();
 

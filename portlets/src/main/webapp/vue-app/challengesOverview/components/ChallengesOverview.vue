@@ -91,7 +91,6 @@ export default {
   data: () => ({
     emptyActionName: 'gamification-challengesOverview-check-action',
     search: '',
-    isMostRealized: true,
     challengePerPage: 3,
     announcementsPerChallenge: 2,
     filter: 'STARTED',
@@ -123,7 +122,7 @@ export default {
     },
     getChallenges() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.isMostRealized)
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, true)
         .then(result => {
           if (!result) {
             return;

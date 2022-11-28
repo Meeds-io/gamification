@@ -180,8 +180,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     setFilterAudience(challengeFilter, spaceIds);
     List<Long> challengesIds = null;
-    if (challengeFilter.isMostRealized()) {
-       challengesIds = challengeStorage.findPopularRuleIdsByDate(offset, limit, EntityType.MANUAL);
+    if (challengeFilter.isOrderByRealizations()) {
+       challengesIds = challengeStorage.findMostRealizedChallengesIds(offset, limit);
     } else {
       challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
     }

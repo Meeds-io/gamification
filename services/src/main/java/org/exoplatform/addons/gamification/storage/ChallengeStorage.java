@@ -74,8 +74,8 @@ public class ChallengeStorage {
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }
 
-  public List<Long> findPopularRuleIdsByDate(int offset, int limit, EntityType type) {
-    return  ruleStorage.findPopularRuleIdsByDate(offset, limit, type);
+  public List<Long> findMostRealizedChallengesIds(int offset, int limit) {
+    return  ruleStorage.findMostRealizedRuleIds(offset, limit, EntityType.MANUAL);
   }
 
   public void clearCache() {

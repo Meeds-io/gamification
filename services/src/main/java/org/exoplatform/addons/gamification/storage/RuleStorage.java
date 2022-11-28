@@ -142,8 +142,8 @@ public class RuleStorage {
     return RuleMapper.ruleToRuleDTO(ruleEntity);
   }
 
-  public List<Long> findPopularRuleIdsByDate(int offset, int limit, EntityType type) {
-    return gamificationHistoryDAO.findPopularRuleIdsByDate(offset, limit, type);
+  public List<Long> findMostRealizedRuleIds(int offset, int limit, EntityType type) {
+    return gamificationHistoryDAO.findMostRealizedRuleIds(offset, limit, type);
   }
 
   public void clearCache() { // NOSONAR

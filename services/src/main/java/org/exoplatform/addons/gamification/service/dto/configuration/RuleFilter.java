@@ -50,5 +50,5 @@ public class RuleFilter implements Serializable {
 
   private boolean           includeDeleted;
 
-  private boolean           isMostRealized;
+  private boolean           orderByRealizations;
 }
