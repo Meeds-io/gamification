@@ -35,7 +35,7 @@
     <gamification-overview-widget
       v-else
       :see-all-url="challengesURL"
-      :no-padding="true">
+      :extra-class="'px-0'">
       <template #title>
         {{ $t('gamification.overview.challengesOverviewTitle') }}
       </template>
@@ -91,7 +91,7 @@ export default {
   data: () => ({
     emptyActionName: 'gamification-challengesOverview-check-action',
     search: '',
-    isPopular: true,
+    isMostRealized: true,
     challengePerPage: 3,
     announcementsPerChallenge: 2,
     filter: 'STARTED',
@@ -109,14 +109,6 @@ export default {
     challengesURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
-    fromDate() {
-      const today = new Date();
-      return new Date(today.setDate(today.getDate() - today.getDay())).toISOString();
-    },
-    toDate() {
-      const today = new Date();
-      return new Date(today.setDate(today.getDate() - today.getDay() + 6)).toISOString();
-    }
   },
   created() {
     document.addEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
@@ -131,7 +123,7 @@ export default {
     },
     getChallenges() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.isPopular, this.fromDate, this.toDate)
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.isMostRealized)
         .then(result => {
           if (!result) {
             return;
@@ -144,6 +136,7 @@ export default {
             challenge.challengesAnnouncementsCount =  data.announcements.length;
             this.listChallenges.push(challenge);
           });
+          this.listChallenges = this.listChallenges.sort((challenge1, challenge2) => challenge2.challengePoints - challenge1.challengePoints);
           this.displayChallenges = this.listChallenges.length > 0;
         }).finally(() => this.loading = false);
     },

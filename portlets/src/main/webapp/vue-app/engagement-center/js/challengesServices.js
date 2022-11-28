@@ -65,7 +65,7 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain, filter, isPopular, fromDate, toDate) {
+export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain, filter, isMostRealized) {
   const formData = new FormData();
   if (term) {
     formData.append('term', term);
@@ -88,14 +88,8 @@ export function getAllChallengesByUser(term , offset, limit, announcements, doma
   if (filter) {
     formData.append('filter', filter);
   }
-  if (isPopular != null) {
-    formData.append('isPopular', isPopular);
-  }
-  if (fromDate) {
-    formData.append('fromDate', fromDate);
-  }
-  if (toDate) {
-    formData.append('toDate', toDate);
+  if (isMostRealized != null) {
+    formData.append('isMostRealized', isMostRealized);
   }
   const params = new URLSearchParams(formData).toString();
 

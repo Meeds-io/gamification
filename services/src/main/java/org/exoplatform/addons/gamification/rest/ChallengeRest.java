@@ -231,14 +231,8 @@ public class ChallengeRest implements ResourceContainer {
                                              description = "is popular challenges"
                                          )
                                          @DefaultValue("false")
-                                         @QueryParam("isPopular")
-                                         boolean isPopular,
-                                         @Parameter(description = "result fromDate")
-                                         @QueryParam("fromDate")
-                                         String fromDate,
-                                         @Parameter(description = "result toDate")
-                                         @QueryParam("toDate")
-                                         String toDate) {
+                                         @QueryParam("isMostRealized")
+                                         boolean isMostRealized) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -250,13 +244,7 @@ public class ChallengeRest implements ResourceContainer {
     filter.setTerm(term);
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
-    filter.setPopular(isPopular);
-    if (StringUtils.isNotBlank(fromDate)) {
-      filter.setFromDate(Utils.parseRFC3339Date(fromDate));
-    }
-    if (StringUtils.isNotBlank(toDate)) {
-      filter.setToDate(Utils.parseRFC3339Date(toDate));
-    }
+    filter.setMostRealized(isMostRealized);
     try {
       LOG.info("start getting challenges");
       if (domainId > 0) {

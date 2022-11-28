@@ -64,7 +64,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-show="!badgesDisplayed">
         <template #title>
           <div class="mb-3 mt-11">
-         {{ $t('gamification.myReputation.badgesTitle') }}
+            {{ $t('gamification.myReputation.badgesTitle') }}
           </div>
         </template>
         <template #icon>

@@ -77,8 +77,8 @@ public class ChallengeStorage {
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }
 
-  public List<Long> getPopularChallengesIds(RuleFilter filter, int offset, int limit) {
-    return  gamificationHistoryDAO.findPopularChallengesByDate(filter, offset, limit);
+  public List<Long> getPopularChallengesIds(int offset, int limit) {
+    return  gamificationHistoryDAO.findPopularChallengesByDate(offset, limit);
   }
 
   public void clearCache() {

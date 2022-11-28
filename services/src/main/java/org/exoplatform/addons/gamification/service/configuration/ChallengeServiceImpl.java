@@ -177,8 +177,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     setFilterAudience(challengeFilter, spaceIds);
     List<Long> challengesIds = null;
-    if (challengeFilter.isPopular()) {
-       challengesIds = challengeStorage.getPopularChallengesIds(challengeFilter, offset, limit);
+    if (challengeFilter.isMostRealized()) {
+       challengesIds = challengeStorage.getPopularChallengesIds(offset, limit);
     } else {
       challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
     }

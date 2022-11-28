@@ -17,7 +17,6 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
@@ -51,9 +50,5 @@ public class RuleFilter implements Serializable {
 
   private boolean           includeDeleted;
 
-  private boolean           isPopular;
-
-  private Date              fromDate;
-
-  private Date              toDate;
+  private boolean           isMostRealized;
 }
