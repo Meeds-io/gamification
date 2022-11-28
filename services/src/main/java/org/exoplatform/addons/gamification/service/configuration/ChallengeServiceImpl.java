@@ -12,11 +12,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.language.bm.RuleType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -178,7 +181,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     setFilterAudience(challengeFilter, spaceIds);
     List<Long> challengesIds = null;
     if (challengeFilter.isMostRealized()) {
-       challengesIds = challengeStorage.getPopularChallengesIds(offset, limit);
+       challengesIds = challengeStorage.findPopularRuleIdsByDate(offset, limit, EntityType.MANUAL);
     } else {
       challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
     }

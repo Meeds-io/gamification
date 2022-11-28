@@ -16,9 +16,6 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -37,7 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -421,9 +417,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<Long> findPopularChallengesByDate(int offset, int limit) {
-    TypedQuery<Long> query = null;
-    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedChallengesIdsByDate", Long.class);
+  public List<Long> findPopularRuleIdsByDate(int offset, int limit, EntityType type) {
+    TypedQuery<Long> query;
+    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRulesIdsByDate", Long.class);
     LocalDate now = new LocalDate();
     LocalDate monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
     LocalDate sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
@@ -431,7 +427,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     Date utilToDate = Date.from(sunday.toDate().toInstant());
     query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
          .setParameter(TO_DATE_PARAM_NAME, utilToDate)
-        .setParameter(TYPE, EntityType.MANUAL);
+        .setParameter(TYPE, type);
     query.setFirstResult(offset);
     query.setMaxResults(limit);
     List<Long> resultList = query.getResultList();

@@ -161,7 +161,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findMostRealizedChallengesIdsByDate",
+    name = "GamificationActionsHistory.findMostRealizedRulesIdsByDate",
     query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type= :type AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
             "group by a.ruleId order by count(*) DESC"
 )
