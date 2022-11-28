@@ -170,7 +170,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
   private String getQueryFilterContent(List<String> predicates, boolean count, boolean isSortByBudget) {
     String querySelect = count ? "SELECT COUNT(d) FROM GamificationDomain d "
                                : "SELECT d.id FROM GamificationDomain d ";
-    String orderBy = isSortByBudget ? "ORDER BY d.budget DESC" : "ORDER BY d.createdDate DESC";
+    String orderBy = isSortByBudget ? " ORDER BY d.budget DESC" : " ORDER BY d.createdDate DESC";
 
     String queryContent;
     if (predicates.isEmpty()) {

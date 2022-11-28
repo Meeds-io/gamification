@@ -100,7 +100,7 @@ public class DomainCachedStorage extends DomainStorage {
   @Override
   @SuppressWarnings("unchecked")
   public List<DomainDTO> getEnabledDomains() {
-    CacheKey key = new CacheKey(ALL_DOMAIN_CONTEXT, new DomainFilter(EntityFilterType.ALL, EntityStatusType.ENABLED, "", false));
+    CacheKey key = new CacheKey(ALL_DOMAIN_CONTEXT, new DomainFilter(EntityFilterType.ALL, EntityStatusType.ENABLED, "", false, false));
 
     return (List<DomainDTO>) this.domainFutureCache.get(key, key.hashCode());
   }
