@@ -65,7 +65,7 @@ export function updateChallenge(challenge) {
   });
 }
 
-export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain, filter) {
+export function getAllChallengesByUser(term , offset, limit, announcements, domainId, groupByDomain, filter, orderByRealizations) {
   const formData = new FormData();
   if (term) {
     formData.append('term', term);
@@ -87,6 +87,9 @@ export function getAllChallengesByUser(term , offset, limit, announcements, doma
   }
   if (filter) {
     formData.append('filter', filter);
+  }
+  if (orderByRealizations != null) {
+    formData.append('orderByRealizations', orderByRealizations);
   }
   const params = new URLSearchParams(formData).toString();
 
