@@ -11,20 +11,25 @@ import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class RuleStorage {
 
-  private RuleSearchConnector ruleSearchConnector;
+  private RuleSearchConnector    ruleSearchConnector;
 
-  private RuleDAO             ruleDAO;
+  private RuleDAO                ruleDAO;
 
-  public RuleStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector) {
+  private GamificationHistoryDAO gamificationHistoryDAO;
+
+  public RuleStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, GamificationHistoryDAO gamificationHistoryDAO) {
     this.ruleSearchConnector = ruleSearchConnector;
     this.ruleDAO = ruleDAO;
+    this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
@@ -136,6 +141,10 @@ public class RuleStorage {
       ruleDAO.update(ruleEntity);
     }
     return RuleMapper.ruleToRuleDTO(ruleEntity);
+  }
+
+  public List<Long> findMostRealizedRuleIds(int offset, int limit, EntityType type) {
+    return gamificationHistoryDAO.findMostRealizedRuleIds(offset, limit, type);
   }
 
   public void clearCache() { // NOSONAR

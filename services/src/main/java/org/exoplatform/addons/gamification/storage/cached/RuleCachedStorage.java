@@ -20,13 +20,12 @@ package org.exoplatform.addons.gamification.storage.cached;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
+import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
@@ -49,8 +48,8 @@ public class RuleCachedStorage extends RuleStorage {
 
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
 
-  public RuleCachedStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, CacheService cacheService) {
-    super(ruleDAO, ruleSearchConnector);
+  public RuleCachedStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, CacheService cacheService, GamificationHistoryDAO gamificationHistoryDAO) {
+    super(ruleDAO, ruleSearchConnector, gamificationHistoryDAO);
     ExoCache<Serializable, Object> ruleCache = cacheService.getCacheInstance(RULE_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> ruleLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override
