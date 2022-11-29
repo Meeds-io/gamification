@@ -49,4 +49,6 @@ public class RuleFilter implements Serializable {
   private EntityStatusType  entityStatusType;
 
   private boolean           includeDeleted;
+
+  private boolean           orderByRealizations;
 }
