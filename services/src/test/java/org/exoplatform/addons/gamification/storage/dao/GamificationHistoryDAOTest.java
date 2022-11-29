@@ -849,6 +849,28 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
               histories.get(2).getId()),
               result.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()));
   }
+
+  @Test
+  public void testFindMostRealizedRuleIds() {
+
+    RuleEntity rule1Automatic = newRule("domain0", "domain0", true, EntityType.AUTOMATIC);
+    RuleEntity rule1Manual = newRule("domain1", "domain1", true, EntityType.MANUAL);
+    RuleEntity rule2Manual = newRule("domain2", "domain2", true, EntityType.MANUAL);
+
+    List<GamificationActionsHistory> histories = new ArrayList<>();
+
+    histories.add(newGamificationActionsHistoryWithRuleId("automatic action", rule1Automatic.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule1Manual.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule2Manual.getId()));
+    histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule2Manual.getId()));
+
+    List<Long> result = gamificationHistoryDAO.findMostRealizedRuleIds(0, 6, EntityType.MANUAL);
+
+    assertNotNull(result);
+    assertEquals(2, result.size());
+    assertEquals(Arrays.asList(histories.get(2).getRuleId(), histories.get(1).getRuleId()),
+                 result.stream().collect(Collectors.toList()));
+  }
   
 
   
