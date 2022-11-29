@@ -429,6 +429,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>portlet-view-dispatched-file-path</name>
       <value>/html/programsOverview/index.html</value>
     </init-param>
+    <init-param>
+       <name>preload.resource.bundles</name>
+       <value>locale.addon.Gamification</value>
+     </init-param>
+     <init-param>
+       <name>preload.resource.rest</name>
+       <value><![CDATA[/portal/rest/gamification/domains?returnSize=true&limit=3&type=ALL&status=ENABLED]]></value>
+     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
     <supports>
