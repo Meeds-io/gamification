@@ -34,9 +34,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <modules>
         <module>gamification-api</module>
-        <module>services</module>
-        <module>portlets</module>
-        <module>packaging</module>
+        <module>gamification-services</module>
+        <module>gamification-portlets</module>
+        <module>gamification-packaging</module>
     </modules>
 
     <scm>
