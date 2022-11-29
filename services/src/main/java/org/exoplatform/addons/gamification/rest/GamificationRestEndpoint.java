@@ -19,12 +19,12 @@ package org.exoplatform.addons.gamification.rest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
-import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
-import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
+import org.exoplatform.addons.gamification.constant.IdentityType;
+import org.exoplatform.addons.gamification.model.LeaderboardFilter;
+import org.exoplatform.addons.gamification.service.DomainService;
+import org.exoplatform.addons.gamification.service.GamificationService;
+import org.exoplatform.addons.gamification.service.RuleService;
+import org.exoplatform.addons.gamification.service.StandardLeaderboard;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -94,7 +94,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
       }
       Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userId);
       Long earnedXP = 0L;
-      if (period == null || StringUtils.equalsIgnoreCase(Period.ALL.name(), period)) {
+      if (period == null || StringUtils.equalsIgnoreCase(LeaderboardFilter.Period.ALL.name(), period)) {
         earnedXP = gamificationService.findReputationByEarnerId(identity.getId());
       } else {
         period = period.toUpperCase();

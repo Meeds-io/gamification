@@ -16,15 +16,15 @@
  */
 package org.exoplatform.addons.gamification.listener;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.GamificationService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.relationship.RelationshipEvent;
 import org.exoplatform.social.core.relationship.RelationshipEvent.Type;

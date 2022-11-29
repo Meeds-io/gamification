@@ -19,21 +19,17 @@ package org.exoplatform.addons.gamification.storage;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainOwnerEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
-import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
-import org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.dao.DomainDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.DomainFilter;
+import org.exoplatform.addons.gamification.utils.DomainMapper;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.services.security.IdentityConstants;
@@ -42,21 +38,18 @@ import org.exoplatform.upload.UploadService;
 
 public class DomainStorage {
 
-  private static final String  FILE_API_NAME_SPACE = "gamification";
+  private static final String FILE_API_NAME_SPACE = "gamification";
 
-  private final DomainDAO      domainDAO;
+  private final DomainDAO     domainDAO;
 
   private final RuleDAO ruleDAO;
 
-  private final DomainOwnerDAO domainOwnerDAO;
+  private final FileService   fileService;
 
-  private final FileService    fileService;
+  private final UploadService uploadService;
 
-  private final UploadService  uploadService;
-
-  public DomainStorage(DomainDAO domainDAO, DomainOwnerDAO domainOwnerDAO, FileService fileService, UploadService uploadService, RuleDAO ruleDAO) {
+  public DomainStorage(DomainDAO domainDAO, FileService fileService, UploadService uploadService, RuleDAO ruleDAO) {
     this.domainDAO = domainDAO;
-    this.domainOwnerDAO = domainOwnerDAO;
     this.fileService = fileService;
     this.uploadService = uploadService;
     this.ruleDAO = ruleDAO;
@@ -71,20 +64,18 @@ public class DomainStorage {
     if (domainEntity.getId() == null || domainEntity.getId() == 0) {
       domainEntity.setId(null);
       domainEntity = domainDAO.create(domainEntity);
-      saveDomainOwnerEntities(domainEntity, domainDTO.getOwners(), true);
     } else {
       domainEntity = domainDAO.update(domainEntity);
-      saveDomainOwnerEntities(domainEntity, domainDTO.getOwners(), false);
     }
-    return DomainMapper.domainEntityToDomainDTO(domainEntity, domainOwnerDAO);
+    return DomainMapper.domainEntityToDomainDTO(domainEntity);
   }
 
   public DomainDTO findEnabledDomainByTitle(String domainTitle) {
-    return DomainMapper.domainEntityToDomainDTO(domainDAO.findEnabledDomainByTitle(domainTitle), domainOwnerDAO);
+    return DomainMapper.domainEntityToDomainDTO(domainDAO.findEnabledDomainByTitle(domainTitle));
   }
 
   public DomainDTO getDomainByTitle(String domainTitle) {
-    return DomainMapper.domainEntityToDomainDTO(domainDAO.getDomainByTitle(domainTitle), domainOwnerDAO);
+    return DomainMapper.domainEntityToDomainDTO(domainDAO.getDomainByTitle(domainTitle));
   }
 
   public List<Long> getDomainsByFilter(DomainFilter filter, int offset, int limit) {
@@ -99,12 +90,12 @@ public class DomainStorage {
   }
 
   public List<DomainDTO> getEnabledDomains() {
-    return DomainMapper.domainsToDomainDTOs(domainDAO.getEnabledDomains(), domainOwnerDAO);
+    return DomainMapper.domainsToDomainDTOs(domainDAO.getEnabledDomains());
   }
 
   public DomainDTO getDomainById(Long id) {
-    DomainEntity domainEntity = domainDAO.findByIdWithOwners(id);
-    return DomainMapper.domainEntityToDomainDTO(domainEntity, domainOwnerDAO);
+    DomainEntity domainEntity = domainDAO.find(id);
+    return DomainMapper.domainEntityToDomainDTO(domainEntity);
   }
 
   public void clearCache() {// NOSONAR
@@ -138,34 +129,4 @@ public class DomainStorage {
       uploadService.removeUploadResource(uploadResource.getUploadId());
     }
   }
-
-  private void saveDomainOwnerEntities(DomainEntity domainEntity, Set<Long> owners, boolean isNew) {
-    if (!isNew) {
-      List<DomainOwnerEntity> storedOwners = domainOwnerDAO.getDomainOwners(domainEntity.getId());
-      List<DomainOwnerEntity> domainOwnerEntities = new ArrayList<>(storedOwners);
-      storedOwners.stream()
-                  .filter(entity -> owners.stream().noneMatch(identityId -> identityId == entity.getIdentityId()))
-                  .forEach(entity -> {
-                    domainOwnerDAO.delete(entity);
-                    domainOwnerEntities.remove(entity);
-                  });
-      if (owners != null) {
-        owners.stream()
-              .filter(identityId -> storedOwners.stream().noneMatch(otherEntity -> otherEntity.getIdentityId() == identityId))
-              .forEach(identityId -> {
-                DomainOwnerEntity entity = domainOwnerDAO.create(new DomainOwnerEntity(domainEntity, identityId));
-                domainOwnerEntities.add(entity);
-              });
-      }
-      domainEntity.setOwners(domainOwnerEntities);
-    } else if (owners != null) {
-      List<DomainOwnerEntity> domainOwnerEntities = new ArrayList<>();
-      owners.stream().forEach(identityId -> {
-        DomainOwnerEntity entity = domainOwnerDAO.create(new DomainOwnerEntity(domainEntity, identityId));
-        domainOwnerEntities.add(entity);
-      });
-      domainEntity.setOwners(domainOwnerEntities);
-    }
-  }
-
 }

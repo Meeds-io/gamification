@@ -20,14 +20,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.constant.IdentityType;
+import org.exoplatform.addons.gamification.model.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.model.RealizationsFilter;
 import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
 import org.exoplatform.addons.gamification.rest.model.RealizationList;
 import org.exoplatform.addons.gamification.service.RealizationsService;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
+import org.exoplatform.addons.gamification.utils.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
@@ -46,14 +46,14 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 @Path("/gamification/realizations/api")
 @Tag(name = "/gamification/realizations/api", description = "Manages users realizations")
-@RolesAllowed("administrators")
+@RolesAllowed("rewarding")
 public class RealizationsRest implements ResourceContainer {
 
   private static final Log    LOG = ExoLogger.getLogger(RealizationsRest.class);
 
-  private RealizationsService realizationsService;
+  private final RealizationsService realizationsService;
 
-  private IdentityManager     identityManager;
+  private final IdentityManager     identityManager;
 
   public RealizationsRest(RealizationsService realizationsService, IdentityManager identityManager) {
     this.realizationsService = realizationsService;
@@ -175,7 +175,7 @@ public class RealizationsRest implements ResourceContainer {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @RolesAllowed("rewarding")
   @Path("updateRealizations")
   @Operation(summary = "Updates an existing realization", method = "PUT", description = "Updates an existing realization")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),

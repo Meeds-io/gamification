@@ -33,18 +33,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.model.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.rest.model.RealizationList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.entity.GamificationActionsHistoryEntity;
 import org.exoplatform.addons.gamification.rest.model.GamificationActionsHistoryRestEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -145,7 +145,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(0, realizationList.getRealizations().size());
 
     // add new realization
-    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    List<GamificationActionsHistoryEntity> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < limit * 2; i++) {
       createdActionHistories.add(newGamificationActionsHistory());
     }
@@ -158,7 +158,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(limit, realizationList.getRealizations().size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
-                                       .map(GamificationActionsHistory::getId)
+                                       .map(GamificationActionsHistoryEntity::getId)
                                        .collect(Collectors.toList()),
                  realizationList.getRealizations()
                                 .stream()
@@ -179,7 +179,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(0, realizations.size());
 
     // add new realization
-    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    List<GamificationActionsHistoryEntity> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < limit * 2; i++) {
       createdActionHistories.add(newGamificationActionsHistory());
     }
@@ -192,7 +192,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(limit, realizations.size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
-                                       .map(GamificationActionsHistory::getId)
+                                       .map(GamificationActionsHistoryEntity::getId)
                                        .collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
   }
@@ -203,7 +203,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, EntityType.MANUAL);
 
     // add new realization
-    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    List<GamificationActionsHistoryEntity> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < limit; i++) {
       createdActionHistories.add(0, newGamificationActionsHistoryWithRuleId(rule2Manual.getEvent(), rule2Manual.getId()));
     }
@@ -225,7 +225,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(limit, realizations.size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
-                                       .map(GamificationActionsHistory::getId)
+                                       .map(GamificationActionsHistoryEntity::getId)
                                        .collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
 
@@ -237,7 +237,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     realizationList = (RealizationList) response.getEntity();
     realizations = realizationList.getRealizations();
     assertEquals(createdActionHistories.size(), realizations.size());
-    assertEquals(createdActionHistories.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()),
+    assertEquals(createdActionHistories.stream().map(GamificationActionsHistoryEntity::getId).collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
   }
 
@@ -247,7 +247,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     RuleEntity rule2Manual = newRule("testGetAllRealizationsSortByActionTypeDescending2", "domain2", true, EntityType.MANUAL);
 
     // add new realization
-    List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    List<GamificationActionsHistoryEntity> createdActionHistories = new ArrayList<>();
     for (int i = 0; i < limit; i++) {
       createdActionHistories.add(0, newGamificationActionsHistoryWithRuleId(rule1Automatic.getEvent(), rule1Automatic.getId()));
     }
@@ -268,7 +268,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(limit, realizations.size());
     assertEquals(createdActionHistories.subList(0, limit)
                                        .stream()
-                                       .map(GamificationActionsHistory::getId)
+                                       .map(GamificationActionsHistoryEntity::getId)
                                        .collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
 
@@ -280,7 +280,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     realizationList = (RealizationList) response.getEntity();
     realizations = realizationList.getRealizations();
     assertEquals(createdActionHistories.size(), realizations.size());
-    assertEquals(createdActionHistories.stream().map(GamificationActionsHistory::getId).collect(Collectors.toList()),
+    assertEquals(createdActionHistories.stream().map(GamificationActionsHistoryEntity::getId).collect(Collectors.toList()),
                  realizations.stream().map(GamificationActionsHistoryRestEntity::getId).collect(Collectors.toList()));
   }
 
@@ -288,8 +288,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
   public void testGetReport() throws Exception {
     startSessionAs("root1");
 
-    GamificationActionsHistory history1 = newGamificationActionsHistory();
-    GamificationActionsHistory history2 = newGamificationActionsHistory();
+    GamificationActionsHistoryEntity history1 = newGamificationActionsHistory();
+    GamificationActionsHistoryEntity history2 = newGamificationActionsHistory();
     String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&returnType=" + XLSX_TYPE;
 

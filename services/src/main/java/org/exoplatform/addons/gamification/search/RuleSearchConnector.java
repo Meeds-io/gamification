@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.model.DateFilterType;
+import org.exoplatform.addons.gamification.model.RuleFilter;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
@@ -62,37 +62,22 @@ public class RuleSearchConnector {
   private static final String          DATE_CONDITION               = "@condition@";
 
   private static final String          DATE                         = "@date@";
-  
+
   private static final String          DATE_FILTERING               = "@date_filtering@";
 
-  private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
-      + "        {\n"
-      + "          \"term\": {\n"
-      + "            \"domainId\": {\n"
-      + "              \"value\": \"@domainId@\"\n"
-      + "            }\n"
-      + "          }\n"
-      + "        }\n";  
-  
-  private static final String          AUDIENCE_FILTERING_QUERY     = ",\n"
-      + "        {\n"
-      + "          \"terms\": {\n"
-      + "            \"audience\": [\n"
-      + "              @spaceList@\n"
-      + "            ]\n"
-      + "          }\n"
+  private static final String          DOMAIN_FILTERING_QUERY       = ",\n" + "        {\n" + "          \"term\": {\n"
+      + "            \"domainId\": {\n" + "              \"value\": \"@domainId@\"\n" + "            }\n" + "          }\n"
       + "        }\n";
+
+  private static final String          AUDIENCE_FILTERING_QUERY     = ",\n" + "        {\n" + "          \"terms\": {\n"
+      + "            \"audience\": [\n" + "              @spaceList@\n" + "            ]\n" + "          }\n" + "        }\n";
 
   private static final String          DATE_FILTERING_QUERY         = ", \n @startDateQuery@ @endDateQuery@ \n";
 
-  private static final String          DATE_FIELD_FILTERING_QUERY   = " {\n"
-      + "       \"range\": {\n"
-      +"          \"@dateField@\": {\n"
-      +"            \"@condition@\": \"@date@\"\n"
-      +"           }\n"
-      +"        }\n"
-      +"      }\n";
-  
+  private static final String          DATE_FIELD_FILTERING_QUERY   = " {\n" + "       \"range\": {\n"
+      + "          \"@dateField@\": {\n" + "            \"@condition@\": \"@date@\"\n" + "           }\n" + "        }\n"
+      + "      }\n";
+
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
   private final ConfigurationManager   configurationManager;
@@ -159,9 +144,7 @@ public class RuleSearchConnector {
 
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
     String term = removeSpecialCharacters(filter.getTerm());
-    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
-            .map(HashSet::new)
-            .orElse(new HashSet<>());
+    Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds()).map(HashSet::new).orElse(new HashSet<>());
     term = escapeIllegalCharacterInQuery(term);
     if (StringUtils.isBlank(term)) {
       return null;

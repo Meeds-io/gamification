@@ -20,19 +20,15 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.model.*;
 import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
 import org.exoplatform.addons.gamification.rest.model.DomainWithChallengesRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.service.DomainService;
+import org.exoplatform.addons.gamification.utils.EntityBuilder;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
@@ -55,9 +51,9 @@ public class ChallengeRest implements ResourceContainer {
 
   private static final Log    LOG = ExoLogger.getLogger(ChallengeRest.class);
 
-  private DomainService       domainService;
+  private DomainService domainService;
 
-  private ChallengeService    challengeService;
+  private ChallengeService challengeService;
 
   private AnnouncementService announcementService;
 
@@ -82,7 +78,7 @@ public class ChallengeRest implements ResourceContainer {
   )
   public Response createChallenge(
                                   @RequestBody(description = "Challenge object to create", required = true)
-                                  Challenge challenge) {
+                                          Challenge challenge) {
     if (challenge == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("challenge object is mandatory").build();
     }

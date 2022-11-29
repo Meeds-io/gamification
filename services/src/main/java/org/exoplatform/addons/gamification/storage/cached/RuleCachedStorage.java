@@ -20,13 +20,13 @@ package org.exoplatform.addons.gamification.storage.cached;
 import java.io.Serializable;
 import java.util.List;
 
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.model.CacheKey;
+import org.exoplatform.addons.gamification.model.RuleDTO;
 import org.exoplatform.addons.gamification.search.RuleSearchConnector;
-import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.exception.ObjectNotFoundException;

@@ -21,16 +21,16 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.portlet.PortletPreferences;
 
+import org.exoplatform.addons.gamification.service.DomainService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.exoplatform.addons.gamification.portlets.common.BaseController;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.DomainFilter;
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityStatusType;
 import org.exoplatform.commons.juzu.ajax.Ajax;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;

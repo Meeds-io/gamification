@@ -1,16 +1,16 @@
 package org.exoplatform.addons.gamification.storage;
 
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
-import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.entity.GamificationActionsHistoryEntity;
+import org.exoplatform.addons.gamification.model.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.model.RealizationsFilter;
+import org.exoplatform.addons.gamification.utils.GamificationActionsHistoryMapper;
 
 import java.util.List;
 
 public class RealizationsStorage {
 
-  private GamificationHistoryDAO gamificationHistoryDAO;
+  private final GamificationHistoryDAO gamificationHistoryDAO;
 
   public RealizationsStorage(GamificationHistoryDAO gamificationHistoryDAO) {
     this.gamificationHistoryDAO = gamificationHistoryDAO;
@@ -19,10 +19,10 @@ public class RealizationsStorage {
   public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter realizationFilter,
                                                                      int offset,
                                                                      int limit) {
-    List<GamificationActionsHistory> gamificationActionsHistoryList =
-                                                                    gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
-                                                                                                                    offset,
-                                                                                                                    limit);
+    List<GamificationActionsHistoryEntity> gamificationActionsHistoryList =
+                                                                          gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
+                                                                                                                          offset,
+                                                                                                                          limit);
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
 
@@ -31,13 +31,13 @@ public class RealizationsStorage {
   }
 
   public GamificationActionsHistoryDTO getRealizationById(Long id) {
-    GamificationActionsHistory gamificationActionsHistory = gamificationHistoryDAO.find(id);
+    GamificationActionsHistoryEntity gamificationActionsHistory = gamificationHistoryDAO.find(id);
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
   }
 
   public GamificationActionsHistoryDTO updateRealizationStatus(GamificationActionsHistoryDTO gamificationActionsHistory) {
-    GamificationActionsHistory gamificationActionsHistoryEntity =
-                                                                GamificationActionsHistoryMapper.toEntity(gamificationActionsHistory);
+    GamificationActionsHistoryEntity gamificationActionsHistoryEntity =
+                                                                      GamificationActionsHistoryMapper.toEntity(gamificationActionsHistory);
     gamificationActionsHistoryEntity = gamificationHistoryDAO.update(gamificationActionsHistoryEntity);
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistoryEntity);
   }

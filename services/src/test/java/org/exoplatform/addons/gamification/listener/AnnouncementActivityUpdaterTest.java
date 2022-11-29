@@ -17,8 +17,8 @@
 package org.exoplatform.addons.gamification.listener;
 
 import org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityUpdater;
+import org.exoplatform.addons.gamification.model.Announcement;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;

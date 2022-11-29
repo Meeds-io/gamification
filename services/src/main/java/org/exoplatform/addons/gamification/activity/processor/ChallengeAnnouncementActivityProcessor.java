@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.model.Announcement;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
@@ -34,17 +34,18 @@ import org.exoplatform.social.core.service.LinkProvider;
 
 public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcessorPlugin {
 
-  public static final String  ANNOUNCEMENT_COMMENT_PARAM = "announcementComment";
+  public static final String        ANNOUNCEMENT_COMMENT_PARAM = "announcementComment";
 
-  public static final String  ACTIVITY_TYPE              = "challenges-announcement";
+  public static final String        ACTIVITY_TYPE              = "challenges-announcement";
 
-  private static final Log    LOG                        = ExoLogger.getLogger(ChallengeAnnouncementActivityProcessor.class);
+  private static final Log          LOG                        =
+                                        ExoLogger.getLogger(ChallengeAnnouncementActivityProcessor.class);
 
-  private static final String APP_URL                    = "/contributions/challenges/";
+  private static final String       APP_URL                    = "/contributions/challenges/";
 
-  private AnnouncementService announcementService;
+  private final AnnouncementService announcementService;
 
-  private IdentityManager     identityManager;
+  private final IdentityManager     identityManager;
 
   public ChallengeAnnouncementActivityProcessor(AnnouncementService announcementService,
                                                 IdentityManager identityManager,

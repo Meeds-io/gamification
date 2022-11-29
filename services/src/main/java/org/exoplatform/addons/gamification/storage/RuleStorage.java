@@ -5,16 +5,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.RuleDTO;
+import org.exoplatform.addons.gamification.model.RuleFilter;
 import org.exoplatform.addons.gamification.search.RuleSearchConnector;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
-import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.utils.RuleMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 

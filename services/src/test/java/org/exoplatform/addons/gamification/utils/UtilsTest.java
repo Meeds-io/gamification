@@ -17,7 +17,7 @@
 
 package org.exoplatform.addons.gamification.utils;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
 import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static org.exoplatform.addons.gamification.utils.Utils.TYPE;
 import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
@@ -26,21 +26,16 @@ import static org.exoplatform.addons.gamification.utils.Utils.toUserInfo;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.junit.Test;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.RuleDTO;
+import org.exoplatform.addons.gamification.model.UserInfo;
+import org.exoplatform.addons.gamification.service.GamificationService;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.ConversationState;
@@ -222,7 +217,7 @@ public class UtilsTest extends AbstractServiceTest {
     assertEquals("root", userInfo.getRemoteId());
     assertTrue(userInfo.isCanAnnounce());
 
-    assertNull(toUserInfo("", Collections.singleton(1l)));
+    assertNull(toUserInfo("", new ArrayList<>(Collections.singleton(1L))));
   }
 
   @Test

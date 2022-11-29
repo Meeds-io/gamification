@@ -17,9 +17,9 @@
 
 package org.exoplatform.addons.gamification.storage;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.model.Challenge;
+import org.exoplatform.addons.gamification.model.RuleFilter;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;

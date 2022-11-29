@@ -20,15 +20,15 @@ package org.exoplatform.addons.gamification.storage.cached;
 import java.io.Serializable;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.dao.DomainDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.model.CacheKey;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.DomainFilter;
 import org.exoplatform.addons.gamification.storage.DomainStorage;
-import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-import org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
@@ -51,27 +51,21 @@ public class DomainCachedStorage extends DomainStorage {
   private FutureExoCache<Serializable, Object, CacheKey> domainFutureCache;
 
   public DomainCachedStorage(DomainDAO domainDAO,
-                             DomainOwnerDAO domainOwnerDAO,
                              FileService fileService,
                              UploadService uploadService,
                              CacheService cacheService,
                              RuleDAO ruleDAO) {
-    super(domainDAO, domainOwnerDAO, fileService, uploadService, ruleDAO);
+    super(domainDAO, fileService, uploadService, ruleDAO);
     ExoCache<Serializable, Object> domainCache = cacheService.getCacheInstance(DOMAIN_CACHE_NAME);
-    Loader<Serializable, Object, CacheKey> domainLoader = new Loader<Serializable, Object, CacheKey>() {
-      @Override
-      public Object retrieve(CacheKey context, Serializable key) throws Exception {
-        if (context.getContext() == DOMAIN_ID_CONTEXT) {
-          return DomainCachedStorage.super.getDomainById(context.getId());
-        } else if (context.getContext() == DOMAIN_TITLE_CONTEXT) {
-          return DomainCachedStorage.super.findEnabledDomainByTitle(context.getTitle());
-        } else if (context.getContext() == ALL_DOMAIN_CONTEXT) {
-          return DomainCachedStorage.super.getDomainsByFilter(context.getDomainFilter(), context.getOffset(), context.getLimit());
-        } else if (context.getContext() == DOMAIN_ENABLED_CONTEXT) {
-          return DomainCachedStorage.super.getEnabledDomains();
-        } else {
-          throw new IllegalStateException("Unknown context id " + context);
-        }
+    Loader<Serializable, Object, CacheKey> domainLoader = (context, key) -> {
+      if (context.getContext() == DOMAIN_ID_CONTEXT) {
+        return DomainCachedStorage.super.getDomainById(context.getId());
+      } else if (context.getContext() == ALL_DOMAIN_CONTEXT) {
+        return DomainCachedStorage.super.getDomainsByFilter(context.getDomainFilter(), context.getOffset(), context.getLimit());
+      } else if (context.getContext() == DOMAIN_ENABLED_CONTEXT) {
+        return DomainCachedStorage.super.getEnabledDomains();
+      } else {
+        throw new IllegalStateException("Unknown context id " + context);
       }
     };
     this.domainFutureCache = new FutureExoCache<>(domainLoader, domainCache);
@@ -90,12 +84,6 @@ public class DomainCachedStorage extends DomainStorage {
   @Override
   public DomainDTO getDomainById(Long id) {
     CacheKey key = new CacheKey(DOMAIN_ID_CONTEXT, id);
-    return (DomainDTO) this.domainFutureCache.get(key, key.hashCode());
-  }
-
-  @Override
-  public DomainDTO findEnabledDomainByTitle(String title) {
-    CacheKey key = new CacheKey(DOMAIN_TITLE_CONTEXT, title);
     return (DomainDTO) this.domainFutureCache.get(key, key.hashCode());
   }
 

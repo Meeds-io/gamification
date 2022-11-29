@@ -16,14 +16,14 @@
  */
 package org.exoplatform.addons.gamification.listener.social.space;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.*;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.EVENT_NAME;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;

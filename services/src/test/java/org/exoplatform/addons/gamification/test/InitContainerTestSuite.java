@@ -36,10 +36,10 @@ import org.exoplatform.addons.gamification.service.AnnouncementServiceTest;
 import org.exoplatform.addons.gamification.service.ChallengeServiceTest;
 import org.exoplatform.addons.gamification.service.GamificationServiceTest;
 import org.exoplatform.addons.gamification.service.RealizationsServiceTest;
-import org.exoplatform.addons.gamification.service.configuration.BadgeRegistryTest;
-import org.exoplatform.addons.gamification.service.configuration.BadgeServiceTest;
-import org.exoplatform.addons.gamification.service.configuration.DomainServiceTest;
-import org.exoplatform.addons.gamification.service.configuration.RuleServiceTest;
+import org.exoplatform.addons.gamification.service.BadgeRegistryTest;
+import org.exoplatform.addons.gamification.service.BadgeServiceTest;
+import org.exoplatform.addons.gamification.service.DomainServiceTest;
+import org.exoplatform.addons.gamification.service.RuleServiceTest;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorageTest;
 import org.exoplatform.addons.gamification.storage.ChallengeStorageTest;
 import org.exoplatform.addons.gamification.storage.DomainStorageTest;
@@ -91,8 +91,7 @@ import org.junit.runners.Suite.SuiteClasses;
         RulesESListenerTest.class,
         GamificationRelationshipListenerTest.class,
         DomainDAOTest.class,
-        DomainStorageTest.class,
-        DomainOwnerDAOTest.class
+        DomainStorageTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

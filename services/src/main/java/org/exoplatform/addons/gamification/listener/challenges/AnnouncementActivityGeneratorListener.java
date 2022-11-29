@@ -21,12 +21,12 @@ import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIV
 import java.util.HashMap;
 import java.util.Map;
 
+import org.exoplatform.addons.gamification.model.Announcement;
+import org.exoplatform.addons.gamification.model.AnnouncementActivity;
+import org.exoplatform.addons.gamification.model.Challenge;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.utils.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.Event;
@@ -44,15 +44,15 @@ import org.exoplatform.social.websocket.entity.ActivityStreamModification;
 
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
 
-  private static final Log               LOG = ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
+  private static final Log                     LOG = ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
 
-  private IdentityManager                identityManager;
+  private final IdentityManager                identityManager;
 
-  private ActivityStorage                activityStorage;
+  private final ActivityStorage                activityStorage;
 
-  private ChallengeService               challengeService;
+  private final ChallengeService               challengeService;
 
-  private ActivityStreamWebSocketService activityStreamWebSocketService;
+  private final ActivityStreamWebSocketService activityStreamWebSocketService;
 
   public AnnouncementActivityGeneratorListener(IdentityManager identityManager,
                                                ActivityStorage activityStorage,

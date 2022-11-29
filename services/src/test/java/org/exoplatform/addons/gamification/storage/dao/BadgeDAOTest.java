@@ -18,7 +18,7 @@ package org.exoplatform.addons.gamification.storage.dao;
 
 import org.junit.Test;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
+import org.exoplatform.addons.gamification.entity.BadgeEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 public class BadgeDAOTest extends AbstractServiceTest {

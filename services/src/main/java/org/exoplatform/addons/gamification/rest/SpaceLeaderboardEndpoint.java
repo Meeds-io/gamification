@@ -17,10 +17,10 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.GamificationUtils;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter;
-import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
+import org.exoplatform.addons.gamification.model.LeaderboardFilter;
+import org.exoplatform.addons.gamification.utils.GamificationUtils;
+import org.exoplatform.addons.gamification.service.GamificationService;
+import org.exoplatform.addons.gamification.service.StandardLeaderboard;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -57,11 +57,11 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
   private final CacheControl    cacheControl;
 
-  protected GamificationService gamificationService   = null;
+  protected GamificationService gamificationService;
 
-  protected IdentityManager     identityManager       = null;
+  protected IdentityManager     identityManager;
 
-  protected SpaceService        spaceService          = null;
+  protected SpaceService        spaceService;
 
   public SpaceLeaderboardEndpoint(GamificationService gamificationService,
                                   IdentityManager identityManager,

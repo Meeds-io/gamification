@@ -18,11 +18,11 @@ package org.exoplatform.addons.gamification.storage.dao;
 
 import org.junit.Test;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.model.DomainFilter;
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 public class DomainDAOTest extends AbstractServiceTest {
@@ -32,18 +32,6 @@ public class DomainDAOTest extends AbstractServiceTest {
     assertNull(domainDAO.getDomainByTitle(GAMIFICATION_DOMAIN));
     newDomain();
     assertNotNull(domainDAO.getDomainByTitle(GAMIFICATION_DOMAIN));
-  }
-
-  @Test
-  public void testFindEnabledDomainByTitle() {
-    assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    DomainEntity domainEntity = newDomain();
-    assertNotNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    domainEntity.setEnabled(false);
-    DomainEntity updatedEntity = domainDAO.update(domainEntity);
-    assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    assertEquals(domainEntity, updatedEntity);
-    assertEquals(domainEntity.hashCode(), updatedEntity.hashCode());
   }
 
   @Test

@@ -2,10 +2,11 @@ package org.exoplatform.addons.gamification.storage.cached;
 
 import java.io.Serializable;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+
+import org.exoplatform.addons.gamification.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.model.Announcement;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.services.cache.CacheService;

@@ -20,9 +20,9 @@ package org.exoplatform.addons.gamification.upgrade;
 import java.util.List;
 
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.model.RuleDTO;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.commons.upgrade.UpgradeProductPlugin;
@@ -34,13 +34,13 @@ import lombok.Getter;
 
 public class RuleIndexingUpgradePlugin extends UpgradeProductPlugin {
 
-  private static final Log LOG        = ExoLogger.getLogger(RuleIndexingUpgradePlugin.class);
+  private static final Log      LOG        = ExoLogger.getLogger(RuleIndexingUpgradePlugin.class);
 
-  private static final int PAGE_COUNT = 20;
+  private static final int      PAGE_COUNT = 20;
 
-  private IndexingService  indexingService;
+  private final IndexingService indexingService;
 
-  private RuleService      ruleService;
+  private final RuleService     ruleService;
 
   /**
    * Used For Test only

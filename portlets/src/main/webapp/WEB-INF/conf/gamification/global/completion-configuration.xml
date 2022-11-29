@@ -18,8 +18,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
   <component>
-    <key>org.exoplatform.addons.gamification.service.completation.GamificationCompletionService</key>
-    <type>org.exoplatform.addons.gamification.service.completation.GamificationCompletionService</type>
+    <key>org.exoplatform.addons.gamification.service.GamificationCompletionService</key>
+    <type>org.exoplatform.addons.gamification.service.GamificationCompletionService</type>
     <init-params>
       <value-param>
         <name>async-execution</name>
@@ -92,11 +92,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- END -->
   <component>
     <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-    <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
+    <type>org.exoplatform.addons.gamification.service.AnnouncementServiceImpl</type>
   </component>
   <component>
     <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
-    <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
+    <type>org.exoplatform.addons.gamification.service.ChallengeServiceImpl</type>
     <init-params>
       <value-param>
         <name>challenge.creator.group</name>
@@ -117,7 +117,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </component>
   <component>
     <key>org.exoplatform.addons.gamification.service.RealizationsService</key>
-    <type>org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl</type>
+    <type>org.exoplatform.addons.gamification.service.RealizationsServiceImpl</type>
   </component>
   <component>
     <type>org.exoplatform.addons.gamification.rest.RealizationsRest</type>

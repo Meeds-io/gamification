@@ -17,12 +17,12 @@
 package org.exoplatform.addons.gamification.listener;
 
 import org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityGeneratorListener;
-import org.exoplatform.addons.gamification.rest.EntityBuilder;
+import org.exoplatform.addons.gamification.model.Announcement;
+import org.exoplatform.addons.gamification.model.AnnouncementActivity;
+import org.exoplatform.addons.gamification.model.Challenge;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.utils.EntityBuilder;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.ExoContainer;

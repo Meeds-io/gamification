@@ -16,14 +16,14 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.model.RuleFilter;
+import org.exoplatform.addons.gamification.model.DateFilterType;
+import org.exoplatform.addons.gamification.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 import java.util.Collections;

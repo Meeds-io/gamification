@@ -31,9 +31,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.constant.IdentityType;
+import org.exoplatform.addons.gamification.entity.GamificationActionsHistoryEntity;
+import org.exoplatform.addons.gamification.service.GamificationService;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -108,14 +108,14 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     // find actions History by userid adding a pagination load more capacity
     // filter
-    List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
+    List<GamificationActionsHistoryEntity> ss = gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
     if (ss == null || ss.isEmpty()) {
       return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
     }
 
     // Build GamificationActionsHistory flow only when the returned list is not
     // null
-    for (GamificationActionsHistory element : ss) {
+    for (GamificationActionsHistoryEntity element : ss) {
       // Load Social identity
       Identity receiverIdentity = identityManager.getIdentity(element.getReceiver());
       Profile profile = receiverIdentity.getProfile();

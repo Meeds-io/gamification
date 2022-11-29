@@ -16,13 +16,13 @@
  */
 package org.exoplatform.addons.gamification.listener.social.relationship;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
-
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.GamificationService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.relationship.RelationshipEvent;
 import org.exoplatform.social.core.relationship.RelationshipListenerPlugin;
+
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
 
 public class GamificationRelationshipListener extends RelationshipListenerPlugin {
 

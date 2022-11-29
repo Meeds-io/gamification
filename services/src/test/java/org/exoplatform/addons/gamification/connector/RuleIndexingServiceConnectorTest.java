@@ -17,7 +17,7 @@
 
 package org.exoplatform.addons.gamification.connector;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.search.domain.Document;
 import org.junit.Test;

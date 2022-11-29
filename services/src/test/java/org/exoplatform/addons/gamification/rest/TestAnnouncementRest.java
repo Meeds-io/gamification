@@ -28,10 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.exoplatform.addons.gamification.model.Announcement;
+import org.exoplatform.addons.gamification.model.Challenge;
+import org.exoplatform.addons.gamification.model.DomainDTO;
 import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;

@@ -18,9 +18,11 @@ package org.exoplatform.addons.gamification.rest;
 
 import java.util.Collections;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.RuleDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -42,7 +44,9 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
+    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry("/platform/users")));
     Identity adminAclIdentity = new Identity("root", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
+    identityRegistry.register(userAclIdentity);
     identityRegistry.register(adminAclIdentity);
     registry(getComponentClass());
     ConversationState.setCurrent(null);
@@ -50,10 +54,24 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
 
   @Test
   public void testGetAllRules() throws Exception {
-    startSessionAs("root1");
-    ContainerResponse response = getResponse("GET", getURLResource("rules"), null);
+
+    DomainEntity domainEntity = newDomain();
+
+    newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
+    newRule("rule1", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
+
+    startSessionAs("user");
+    ContainerResponse response = getResponse("GET", getURLResource("rules?returnSize=true"), null);
     assertEquals(200, response.getStatus());
-    ConversationState.setCurrent(null);
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&limit=-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&offset=-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&domainId=" + domainEntity.getId()), null);
+    assertEquals(200, response.getStatus());
   }
 
   /**
@@ -87,14 +105,20 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     data.put("type", "AUTOMATIC");
     data.put("domainDTO", domainData);
 
-    startSessionAsAdministrator("root");
+    startSessionAs("user");
     ContainerResponse response = getResponse("POST", getURLResource("rules"), data.toString());
+    assertEquals(401, response.getStatus());
+
+    startSessionAs("root");
+    response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("description", entity.getDescription());
     assertEquals("foo", entity.getTitle());
     response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(409, response.getStatus());
+    response = getResponse("POST", getURLResource("rules"), null);
+    assertEquals(400, response.getStatus());
   }
 
   /**
@@ -103,10 +127,20 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Test
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
-    startSessionAsAdministrator("root");
+
+    startSessionAs("user");
     ContainerResponse response = getResponse("DELETE", getURLResource("rules/" + ruleEntity.getId()), null);
+    assertEquals(401, response.getStatus());
+
+    startSessionAs("root");
+    response = getResponse("DELETE", getURLResource("rules/-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("DELETE", getURLResource("rules/20000"), null);
+    assertEquals(404, response.getStatus());
+
+    response = getResponse("DELETE", getURLResource("rules/" + ruleEntity.getId()), null);
     assertEquals(200, response.getStatus());
-    ConversationState.setCurrent(null);
   }
 
   /**
@@ -122,7 +156,20 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     domainData.put("id", domainDTO.getId());
     domainData.put("title", domainDTO.getTitle());
 
+    startSessionAs("root");
+    ContainerResponse response = getResponse("PUT", getURLResource("rules"), null);
+    assertEquals(400, response.getStatus());
+
     JSONObject data = new JSONObject();
+    data.put("id", 0);
+    data.put("title", ruleDTO.getTitle());
+    data.put("description", ruleDTO.getDescription() + "_test");
+
+    startSessionAs("root");
+    response = getResponse("PUT", getURLResource("rules"), data.toString());
+    assertEquals(404, response.getStatus());
+
+    data = new JSONObject();
     data.put("id", ruleDTO.getId());
     data.put("title", ruleDTO.getTitle());
     data.put("description", ruleDTO.getDescription() + "_test");
@@ -132,12 +179,14 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     data.put("domainDTO", domainData);
     data.put("createdDate", ruleDTO.getCreatedDate());
 
-    ContainerResponse response = getResponse("PUT", getURLResource("rules"), data.toString());
-    startSessionAsAdministrator("root");
+    startSessionAs("root");
     response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("Description_test", entity.getDescription());
-    ConversationState.setCurrent(null);
+
+    startSessionAs("user");
+    response = getResponse("PUT", getURLResource("rules"), data.toString());
+    assertEquals(401, response.getStatus());
   }
 }

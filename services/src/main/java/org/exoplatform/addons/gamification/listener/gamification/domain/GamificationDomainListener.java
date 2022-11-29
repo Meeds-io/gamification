@@ -18,13 +18,12 @@ package org.exoplatform.addons.gamification.listener.gamification.domain;
 
 import java.util.List;
 
-import liquibase.pro.packaged.R;
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.model.BadgeDTO;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.RuleDTO;
+import org.exoplatform.addons.gamification.model.RuleFilter;
+import org.exoplatform.addons.gamification.service.BadgeServiceImpl;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -33,13 +32,13 @@ import org.exoplatform.services.log.Log;
 
 public class GamificationDomainListener extends Listener<DomainDTO, String> {
 
-  private static final Log LOG = ExoLogger.getLogger(GamificationDomainListener.class);
+  private static final Log   LOG = ExoLogger.getLogger(GamificationDomainListener.class);
 
-  protected RuleService    ruleService;
+  protected RuleService      ruleService;
 
-  protected BadgeService   badgeService;
+  protected BadgeServiceImpl badgeService;
 
-  public GamificationDomainListener(RuleService ruleService, BadgeService badgeService) {
+  public GamificationDomainListener(RuleService ruleService, BadgeServiceImpl badgeService) {
     this.ruleService = ruleService;
     this.badgeService = badgeService;
   }

@@ -17,12 +17,9 @@
 package org.exoplatform.addons.gamification.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.GamificationUtils;
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
-import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
+import org.exoplatform.addons.gamification.model.BadgeDTO;
+import org.exoplatform.addons.gamification.service.*;
+import org.exoplatform.addons.gamification.utils.GamificationUtils;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.file.services.FileStorageException;
@@ -56,15 +53,15 @@ import java.util.List;
 @RolesAllowed("users")
 public class UserReputationEndpoint implements ResourceContainer {
 
-    private static final Log LOG = ExoLogger.getLogger(UserReputationEndpoint.class);
+  private static final Log      LOG = ExoLogger.getLogger(UserReputationEndpoint.class);
 
-    private final CacheControl cacheControl;
+  private final CacheControl    cacheControl;
 
-    protected GamificationService gamificationService = null;
+  protected GamificationService gamificationService;
 
-    protected IdentityManager identityManager = null;
+  protected IdentityManager     identityManager;
 
-    protected BadgeService badgeService = null;
+  protected BadgeService        badgeService;
 
     public UserReputationEndpoint() {
 

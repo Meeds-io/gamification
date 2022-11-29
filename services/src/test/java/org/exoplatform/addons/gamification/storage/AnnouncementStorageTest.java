@@ -17,17 +17,17 @@
 
 package org.exoplatform.addons.gamification.storage;
 
-import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.constant.IdentityType;
+import org.exoplatform.addons.gamification.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
+import org.exoplatform.addons.gamification.entity.GamificationActionsHistoryEntity;
+import org.exoplatform.addons.gamification.model.Announcement;
+import org.exoplatform.addons.gamification.model.Challenge;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.utils.DomainMapper;
+import org.exoplatform.addons.gamification.utils.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.junit.Before;
@@ -56,7 +56,7 @@ public class AnnouncementStorageTest {
 
   private GamificationHistoryDAO announcementDAO;
 
-  private RuleDAO                ruleDAO;
+  private RuleDAO ruleDAO;
 
   private AnnouncementStorage    announcementStorage;
 
@@ -100,7 +100,7 @@ public class AnnouncementStorageTest {
                 createDate.toString(),
                 null);
 
-        GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
+        GamificationActionsHistoryEntity announcementEntity = new GamificationActionsHistoryEntity();
         announcementEntity.setEarnerId(announcement.getAssignee().toString());
         announcementEntity.setEarnerType(IdentityType.USER);
         announcementEntity.setCreator(announcement.getCreator());
@@ -108,7 +108,7 @@ public class AnnouncementStorageTest {
         announcementEntity.setComment(announcement.getComment());
         announcementEntity.setCreatedDate(createDate);
 
-        GamificationActionsHistory newAnnouncementEntity = new GamificationActionsHistory();
+        GamificationActionsHistoryEntity newAnnouncementEntity = new GamificationActionsHistoryEntity();
         newAnnouncementEntity.setEarnerId(announcement.getAssignee().toString());
         newAnnouncementEntity.setCreator(announcementEntity.getCreator());
         newAnnouncementEntity.setRuleId(challenge.getId());
@@ -164,7 +164,7 @@ public class AnnouncementStorageTest {
         challengeEntity.setId(1l);
 
         Date createDate = new Date(System.currentTimeMillis());
-        GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
+        GamificationActionsHistoryEntity announcementEntity = new GamificationActionsHistoryEntity();
         announcementEntity.setId(1l);
         announcementEntity.setEarnerId("1");
         announcementEntity.setEarnerId("1");
@@ -208,7 +208,7 @@ public class AnnouncementStorageTest {
 
         Date createDate = new Date(System.currentTimeMillis());
 
-        GamificationActionsHistory announcementEntity1 = new GamificationActionsHistory();
+        GamificationActionsHistoryEntity announcementEntity1 = new GamificationActionsHistoryEntity();
         announcementEntity1.setId(1l);
         announcementEntity1.setEarnerId("1");
         announcementEntity1.setCreator(1L);
@@ -225,7 +225,7 @@ public class AnnouncementStorageTest {
         announcementFromEntity1.setChallengeId(announcementEntity1.getRuleId());
         announcementFromEntity1.setId(announcementEntity1.getId());
 
-        GamificationActionsHistory announcementEntity2 = new GamificationActionsHistory();
+        GamificationActionsHistoryEntity announcementEntity2 = new GamificationActionsHistoryEntity();
         announcementEntity2.setId(1l);
         announcementEntity1.setId(1l);
         announcementEntity2.setCreator(1L);
@@ -243,7 +243,7 @@ public class AnnouncementStorageTest {
         announcementFromEntity2.setChallengeId(announcementEntity2.getRuleId());
         announcementFromEntity2.setId(announcementEntity2.getId());
 
-        GamificationActionsHistory announcementEntity3 = new GamificationActionsHistory();
+        GamificationActionsHistoryEntity announcementEntity3 = new GamificationActionsHistoryEntity();
         announcementEntity3.setId(1l);
         announcementEntity3.setEarnerId("1");
         announcementEntity3.setCreator(1L);
@@ -265,7 +265,7 @@ public class AnnouncementStorageTest {
         announcementList.add(announcementFromEntity2);
         announcementList.add(announcementFromEntity3);
 
-        List<GamificationActionsHistory> announcementEntities = new ArrayList<>();
+        List<GamificationActionsHistoryEntity> announcementEntities = new ArrayList<>();
         announcementEntities.add(announcementEntity1);
         announcementEntities.add(announcementEntity2);
         announcementEntities.add(announcementEntity3);

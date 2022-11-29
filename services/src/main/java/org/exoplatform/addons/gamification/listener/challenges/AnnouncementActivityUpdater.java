@@ -19,8 +19,8 @@ package org.exoplatform.addons.gamification.listener.challenges;
 import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.addons.gamification.model.Announcement;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -38,9 +38,9 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
 
   private static final Log    LOG                        = ExoLogger.getLogger(AnnouncementActivityUpdater.class);
 
-  private ActivityManager     activityManager;
+  private final ActivityManager     activityManager;
 
-  private AnnouncementService announcementService;
+  private final AnnouncementService announcementService;
 
   public AnnouncementActivityUpdater(ActivityManager activityManager, AnnouncementService announcementService) {
     this.activityManager = activityManager;

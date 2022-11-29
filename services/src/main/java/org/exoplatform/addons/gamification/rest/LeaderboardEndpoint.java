@@ -27,9 +27,11 @@ import javax.ws.rs.core.*;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.service.effective.*;
-import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
+import org.exoplatform.addons.gamification.constant.IdentityType;
+import org.exoplatform.addons.gamification.model.LeaderboardFilter;
+import org.exoplatform.addons.gamification.service.GamificationService;
+import org.exoplatform.addons.gamification.service.PiechartLeaderboard;
+import org.exoplatform.addons.gamification.service.StandardLeaderboard;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -92,7 +94,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
     }
     leaderboardFilter.setLoadCapacity(limit);
     if(StringUtils.isBlank(period)) {
-      period = Period.ALL.name();
+      period = LeaderboardFilter.Period.ALL.name();
     }
     leaderboardFilter.setPeriod(period);
     leaderboardFilter.setCurrentUser(ConversationState.getCurrent().getIdentity().getUserId());
@@ -245,7 +247,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         if (userSocialId != null) {
           userSocialId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, userSocialId).getId();
         }
-        period = StringUtils.isBlank(period) ? Period.ALL.name() : period.toUpperCase();
+        period = StringUtils.isBlank(period) ? LeaderboardFilter.Period.ALL.name() : period.toUpperCase();
         // Check if the current user is already in top10
         Date startDate = null;
         switch (period) {

@@ -43,6 +43,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.exoplatform.addons.gamification</groupId>
+            <artifactId>gamification-api</artifactId>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

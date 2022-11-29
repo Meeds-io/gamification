@@ -24,12 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.exoplatform.addons.gamification.model.BadgeDTO;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.entity.BadgeEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;

@@ -17,11 +17,10 @@
 
 package org.exoplatform.addons.gamification.service;
 
-import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
+import org.exoplatform.addons.gamification.constant.IdentityType;
+import org.exoplatform.addons.gamification.model.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.model.RealizationsFilter;
+import org.exoplatform.addons.gamification.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;

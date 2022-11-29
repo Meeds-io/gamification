@@ -31,8 +31,6 @@
 @Assets("*")
 package org.exoplatform.addons.gamification.portlets.admin.domain;
 
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-
 import juzu.Application;
 import juzu.asset.AssetLocation;
 import juzu.plugin.asset.Assets;
@@ -42,3 +40,4 @@ import juzu.plugin.binding.Binding;
 import juzu.plugin.binding.Bindings;
 import juzu.plugin.less.Less;
 import juzu.plugin.portlet.Portlet;
+import org.exoplatform.addons.gamification.service.DomainService;

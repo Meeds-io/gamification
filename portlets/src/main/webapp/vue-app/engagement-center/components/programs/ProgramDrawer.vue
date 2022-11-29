@@ -99,7 +99,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-list-item>
             </template>
           </div>
-          <div class="my-2">
+          <span class="subtitle-1"> {{ $t('challenges.label.audienceSpace') }} *</span>
+          <exo-identity-suggester
+            id="EngagementCenterChallengeDrawerIdentitySuggester"
+            ref="challengeSpaceSuggester"
+            name="programSpaceAutocomplete"
+            v-model="audience"
+            :labels="spaceSuggesterLabels"
+            :width="220"
+            include-spaces />
+          <div class="my-2" id="realizationFilter">
             <span class="subtitle-1"> {{ $t('programs.label.programOwners') }} *</span>
             <engagement-center-assignment
               id="engagementCenterProgramDrawerAssignee"
@@ -162,6 +171,12 @@ export default {
     buttonName() {
       return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
     },
+    spaceSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('challenges.spaces.noDataLabel'),
+        placeholder: this.$t('challenges.spaces.placeholder'),
+      };
+    },
   },
   data() {
     return {
@@ -186,6 +201,34 @@ export default {
         this.$refs.programDrawer.startLoading();
       } else {
         this.$refs.programDrawer.endLoading();
+      }
+    },
+    audience() {
+      if (this.audience && this.audience.id && !this.audience.notToChange) {
+        this.$spaceService.getSpaceMembers(null, 0, 0, null,'manager', this.audience.spaceId).then(managers => {
+          const listManagers = [];
+          managers.users.forEach(manager => {
+            const newManager= {
+              id: manager.id,
+              remoteId: manager.username,
+              fullName: manager.fullname,
+              avatarUrl: manager.avatar,
+            };
+            this.$set(this.program.owners,this.program.owners.length, newManager.id);
+            listManagers.push(newManager);
+          });
+          this.$set(this.program,'audienceId', this.audience.spaceId);
+          const data = {
+            managers: listManagers,
+            space: this.audience,
+          };
+          document.dispatchEvent(new CustomEvent('audienceChanged', {detail: data}));
+        });
+      } else if (this.audience && this.audience.id && this.audience.notToChange){
+        this.audience.notToChange = false ;
+        return;
+      } else {
+        document.dispatchEvent(new CustomEvent('audienceChanged'));
       }
     },
   },
@@ -264,6 +307,9 @@ export default {
       this.loading = true;
       if ( this.program?.id) {
         if ( this.program.owners && this.program.owners[0].id){
+          this.program.owners = this.program.owners.map(owner => owner.id);
+        }
+        if ( this.program.audience){
           this.program.owners = this.program.owners.map(owner => owner.id);
         }
         this.$programsServices.updateProgram(this.program)

@@ -44,13 +44,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.DomainFilter;
 import org.exoplatform.addons.gamification.rest.model.DomainList;
 import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.service.DomainService;
+import org.exoplatform.addons.gamification.utils.EntityBuilder;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.IOUtil;
@@ -71,20 +72,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageDomainsEndpoint implements ResourceContainer {
 
-  private static final String       DEFAULT_COVER_PATH          =
+  private static final String       DEFAULT_COVER_PATH       =
                                                        System.getProperty("meeds.engagementCenter.program.defaultCoverPath",
                                                                           "/skin/images/program_default_cover_back.png");
 
-  private static final String       DOMAIN_NOT_FOUND_MESSAGE    = "The domain doesn't exit";
+  private static final String       DOMAIN_NOT_FOUND_MESSAGE = "The domain doesn't exit";
 
-  private static final Log          LOG                         = ExoLogger.getLogger(ManageDomainsEndpoint.class);
+  private static final Log          LOG                      = ExoLogger.getLogger(ManageDomainsEndpoint.class);
 
   // 7 days
-  private static final int          CACHE_IN_SECONDS            = 604800;
+  private static final int          CACHE_IN_SECONDS         = 604800;
 
-  private static final int          CACHE_IN_MILLI_SECONDS      = CACHE_IN_SECONDS * 1000;
+  private static final int          CACHE_IN_MILLI_SECONDS   = CACHE_IN_SECONDS * 1000;
 
-  private static final CacheControl CACHECONTROL                = new CacheControl();
+  private static final CacheControl CACHECONTROL             = new CacheControl();
 
   static {
     CACHECONTROL.setMaxAge(CACHE_IN_SECONDS);
@@ -174,14 +175,14 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @RolesAllowed("rewarding")
   @Operation(summary = "Creates a domain", method = "POST")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   public Response createDomain(@Parameter(description = "Domain object to create", required = true)
-                               DomainDTO domainDTO) {
+                                       DomainDTO domainDTO) {
     if (domainDTO == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Domain object is mandatory").build();
     }
@@ -230,7 +231,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @DELETE
-  @RolesAllowed("administrators")
+  @RolesAllowed("rewarding")
   @Path("{domainId}")
   @Operation(summary = "Deletes an existing domain identified by its id", method = "DELETE")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
@@ -254,18 +255,6 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       LOG.warn("unauthorized user {} trying to delete a domain", identity.getUserId(), e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-  }
-
-  @GET
-  @Path("canAddProgram")
-  @Produces(MediaType.TEXT_PLAIN)
-  @RolesAllowed("users")
-  @Operation(summary = "check if the current user can add a program", method = "GET")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "User ability to add a program is returned"),
-      @ApiResponse(responseCode = "500", description = "Internal server error") })
-  public Response canAddProgram() {
-    org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
-    return Response.ok(String.valueOf(domainService.canAddDomain(identity))).build();
   }
 
   @GET
@@ -294,7 +283,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     if (isDefault) {
       lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_COVER_LAST_MODIFIED));
     } else {
-      domain = domainService.getDomainById(Long.valueOf(domainId));
+      domain = domainService.getDomainById(Long.parseLong(domainId));
       if (domain == null) {
         return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
       }

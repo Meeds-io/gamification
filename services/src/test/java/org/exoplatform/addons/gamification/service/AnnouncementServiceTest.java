@@ -17,12 +17,11 @@
 
 package org.exoplatform.addons.gamification.service;
 
-import org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.model.Announcement;
+import org.exoplatform.addons.gamification.model.Challenge;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.utils.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.testing.BaseExoTestCase;

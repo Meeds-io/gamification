@@ -20,24 +20,25 @@ package org.exoplatform.addons.gamification.storage;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 
 import org.junit.Test;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.DomainFilter;
+import org.exoplatform.addons.gamification.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 
 public class DomainStorageTest extends AbstractServiceTest {
 
   @Test
-  public void testSaveDomain() throws Exception {
+  public void testSaveDomain() {
     assertEquals(0, domainDAO.findAll().size());
     DomainDTO domain = new DomainDTO();
     domain.setTitle(GAMIFICATION_DOMAIN);
@@ -49,9 +50,9 @@ public class DomainStorageTest extends AbstractServiceTest {
     domain.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     domain.setType(EntityType.AUTOMATIC.name());
     domain.setCreatedDate(Utils.toRFC3339Date(new Date()));
-    domain.setBudget(20l);
-    domain.setOwners(Collections.singleton(1l));
-    domain.setCoverFileId(1l);
+    domain.setBudget(20L);
+    domain.setOwners(new ArrayList<>(Collections.singleton(1L)));
+    domain.setCoverFileId(1L);
     DomainDTO savedDomain = domainStorage.saveDomain(domain);
     assertNotNull(savedDomain);
     assertNotEquals(0, savedDomain.getId());
@@ -60,16 +61,6 @@ public class DomainStorageTest extends AbstractServiceTest {
     domain.setCoverUploadId("1");
     assertThrows(IllegalStateException.class, () ->  domainStorage.saveDomain(domain));
 
-  }
-
-  @Test
-  public void testFindEnabledDomainByTitle() throws Exception {
-    assertNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    DomainDTO domain = newDomainDTO();
-    assertNotNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    domain.setEnabled(false);
-    domainStorage.saveDomain(domain);
-    assertNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
   }
 
   @Test
@@ -84,7 +75,7 @@ public class DomainStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllDomains() throws Exception {
+  public void testGetAllDomains() {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);

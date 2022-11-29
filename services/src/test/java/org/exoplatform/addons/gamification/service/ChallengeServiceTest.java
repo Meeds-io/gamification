@@ -34,10 +34,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.model.Challenge;
+import org.exoplatform.addons.gamification.model.RuleFilter;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;

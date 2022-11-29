@@ -16,9 +16,9 @@
 package org.exoplatform.addons.gamification.listener.es;
 
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.constant.EntityType;
+import org.exoplatform.addons.gamification.model.RuleDTO;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.container.ExoContainerContext;
@@ -34,11 +34,11 @@ import org.exoplatform.services.log.Log;
 public class RulesESListener extends Listener<Object, Long> {
   private static final Log LOG = ExoLogger.getLogger(RulesESListener.class);
 
-  private PortalContainer  container;
+  private final PortalContainer container;
 
-  private IndexingService  indexingService;
+  private final IndexingService indexingService;
 
-  private RuleService      ruleService;
+  private final RuleService     ruleService;
 
   public RulesESListener(PortalContainer container,
                          IndexingService indexingService,
@@ -49,7 +49,7 @@ public class RulesESListener extends Listener<Object, Long> {
   }
 
   @Override
-  public void onEvent(Event<Object, Long> event) throws Exception {
+  public void onEvent(Event<Object, Long> event) {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
     Long ruleId = event.getData();

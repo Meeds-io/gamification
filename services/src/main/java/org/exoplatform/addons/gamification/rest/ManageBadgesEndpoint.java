@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityExistsException;
@@ -29,10 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl;
+import org.exoplatform.addons.gamification.model.BadgeDTO;
+import org.exoplatform.addons.gamification.service.BadgeServiceImpl;
+import org.exoplatform.addons.gamification.service.BadgeRegistryImpl;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
@@ -51,27 +50,27 @@ import org.exoplatform.upload.UploadService;
 @RolesAllowed("administrators")
 public class ManageBadgesEndpoint implements ResourceContainer {
 
-  private static final Log        LOG                          = ExoLogger.getLogger(ManageBadgesEndpoint.class);
+  private static final Log              LOG                          = ExoLogger.getLogger(ManageBadgesEndpoint.class);
 
-  private static SimpleDateFormat formatter                    = new SimpleDateFormat("yyyy-MM-dd");
+  private static final SimpleDateFormat formatter                    = new SimpleDateFormat("yyyy-MM-dd");
 
-  private static final String     DEFAULT_BADGE_ICON_NAME      = "DEFAULT_BADGE_ICON";
+  private static final String           DEFAULT_BADGE_ICON_NAME      = "DEFAULT_BADGE_ICON";
 
-  private static final String     DEFAULT_BADGE_ICON_MIME_TYPE = "image/png";
+  private static final String           DEFAULT_BADGE_ICON_MIME_TYPE = "image/png";
 
-  private static final String     DEFAULT_BADGE_ICON_NAMESPACE = "gamification";
+  private static final String           DEFAULT_BADGE_ICON_NAMESPACE = "gamification";
 
-  private final CacheControl      cacheControl;
+  private final CacheControl            cacheControl;
 
-  protected BadgeService          badgeService                 = null;
+  protected BadgeServiceImpl            badgeService;
 
-  protected RuleService           ruleService                  = null;
+  protected RuleService                 ruleService;
 
-  protected FileService           fileService                  = null;
+  protected FileService                 fileService;
 
-  protected UploadService         uploadService                = null;
+  protected UploadService               uploadService;
 
-  protected IdentityManager       identityManager                = null;
+  protected IdentityManager             identityManager;
 
   public ManageBadgesEndpoint() {
 
@@ -81,7 +80,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
     cacheControl.setNoStore(true);
 
-    badgeService = CommonsUtils.getService(BadgeService.class);
+    badgeService = CommonsUtils.getService(BadgeServiceImpl.class);
 
     ruleService = CommonsUtils.getService(RuleService.class);
 
@@ -90,7 +89,6 @@ public class ManageBadgesEndpoint implements ResourceContainer {
     uploadService = CommonsUtils.getService(UploadService.class);
 
     identityManager = CommonsUtils.getService(IdentityManager.class);
-
 
   }
 
@@ -200,10 +198,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
         LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
 
-        return Response.notModified()
-                .cacheControl(cacheControl)
-                .entity("Badge already exists")
-                .build();
+        return Response.notModified().cacheControl(cacheControl).entity("Badge already exists").build();
 
       } catch (Exception e) {
 
@@ -240,14 +235,14 @@ public class ManageBadgesEndpoint implements ResourceContainer {
           if (uploadResource != null) {
 
             fileItem = new FileItem(null,
-                    badgeDTO.getTitle().toLowerCase(),
-                    uploadResource.getMimeType(),
-                    DEFAULT_BADGE_ICON_NAMESPACE,
-                    (long) uploadResource.getUploadedSize(),
-                    new Date(),
-                    currentUserName,
-                    false,
-                    new FileInputStream(uploadResource.getStoreLocation()));
+                                    badgeDTO.getTitle().toLowerCase(),
+                                    uploadResource.getMimeType(),
+                                    DEFAULT_BADGE_ICON_NAMESPACE,
+                                    (long) uploadResource.getUploadedSize(),
+                                    new Date(),
+                                    currentUserName,
+                                    false,
+                                    new FileInputStream(uploadResource.getStoreLocation()));
             fileItem = fileService.writeFile(fileItem);
             /** END upload */
             badgeDTO.setIconFileId(fileItem.getFileInfo().getId());
@@ -264,26 +259,25 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
         // Compute user id
         String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
-        LOG.info("service=gamification operation=edit-badge parameters=\"user_social_id:{},badge_id:{},badge_title:{},badge_description:{}\"", actorId, badgeDTO.getId(), badgeDTO.getTitle(), badgeDTO.getDescription());
+        LOG.info("service=gamification operation=edit-badge parameters=\"user_social_id:{},badge_id:{},badge_title:{},badge_description:{}\"",
+                 actorId,
+                 badgeDTO.getId(),
+                 badgeDTO.getTitle(),
+                 badgeDTO.getDescription());
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
-      }
-        catch (EntityExistsException e) {
+      } catch (EntityExistsException e) {
 
-          LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
+        LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
 
-          return Response.notModified()
-                  .cacheControl(cacheControl)
-                  .entity("Badge already exists")
-                  .build();
+        return Response.notModified().cacheControl(cacheControl).entity("Badge already exists").build();
 
-        }
-        catch (Exception e) {
+      } catch (Exception e) {
 
         LOG.error("Error when updating badge {} by {} ", badgeDTO.getTitle(), currentUserName, e);
 
         return Response.serverError().cacheControl(cacheControl).entity("Error adding new badge").build();
-        }
+      }
 
     } else {
 

@@ -40,15 +40,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Badges Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.BadgeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
+        <key>org.exoplatform.addons.gamification.service.BadgeService</key>
+        <type>org.exoplatform.addons.gamification.service.BadgeServiceImpl</type>
     </component>
 
     <!-- DOmains Service Layer-->
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.DomainServiceImpl</type>
+        <key>org.exoplatform.addons.gamification.service.DomainService</key>
+        <type>org.exoplatform.addons.gamification.service.DomainServiceImpl</type>
     </component>
     <!-- Domains storage Layer-->
     <component>
@@ -82,13 +82,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Gamification Effective Service -->
     <component>
-        <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
+        <type>org.exoplatform.addons.gamification.service.GamificationService</type>
     </component>
 
     <!-- Rules Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.RuleService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RuleServiceImpl</type>
+        <key>org.exoplatform.addons.gamification.service.RuleService</key>
+        <type>org.exoplatform.addons.gamification.service.RuleServiceImpl</type>
     </component>
 
     <component>
@@ -97,7 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
+        <type>org.exoplatform.addons.gamification.dao.GamificationHistoryDAO</type>
     </component>
     <component>
         <type>org.exoplatform.services.rest.impl.ProvidersRegistry</type>
@@ -112,24 +112,20 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
+        <type>org.exoplatform.addons.gamification.dao.BadgeDAO</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.DomainDAO</type>
+        <type>org.exoplatform.addons.gamification.dao.DomainDAO</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO</type>
-    </component>
-
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
+        <type>org.exoplatform.addons.gamification.dao.RuleDAO</type>
     </component>
 
     <component>
         <key>org.exoplatform.addons.gamification.service.RealizationsService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl</type>
+        <type>org.exoplatform.addons.gamification.service.RealizationsServiceImpl</type>
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
@@ -152,11 +148,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <component>
         <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
+        <type>org.exoplatform.addons.gamification.service.AnnouncementServiceImpl</type>
     </component>
     <component>
         <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
+        <type>org.exoplatform.addons.gamification.service.ChallengeServiceImpl</type>
         <init-params>
             <value-param>
                 <name>challenge.creator.group</name>

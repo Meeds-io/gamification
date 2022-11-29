@@ -33,6 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <description>eXo Gamification extension</description>
 
     <modules>
+        <module>gamification-api</module>
         <module>services</module>
         <module>portlets</module>
         <module>packaging</module>
@@ -77,6 +78,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </dependency>
 
             <!-- Gamification Calls extension -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>gamification-api</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gamification-services</artifactId>

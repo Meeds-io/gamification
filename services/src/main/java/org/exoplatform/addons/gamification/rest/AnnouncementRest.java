@@ -23,11 +23,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.model.Announcement;
+import org.exoplatform.addons.gamification.model.AnnouncementActivity;
 import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.utils.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
@@ -75,7 +75,7 @@ public class AnnouncementRest implements ResourceContainer {
           @ApiResponse(responseCode = "403", description = "Forbidden operation"), }
   )
   public Response createAnnouncement(@RequestBody(description = "Announcement object to create", required = true)
-  AnnouncementActivity announcementActivity) {
+                                             AnnouncementActivity announcementActivity) {
     if (announcementActivity == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("announcement object is mandatory").build();
     }

@@ -16,15 +16,16 @@
  */
 package org.exoplatform.addons.gamification.listener.social.profile;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.GamificationService;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
+
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.*;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
 

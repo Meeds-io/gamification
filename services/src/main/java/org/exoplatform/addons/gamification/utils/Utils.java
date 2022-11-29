@@ -13,16 +13,15 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entity.DomainEntity;
+import org.exoplatform.addons.gamification.model.DomainDTO;
+import org.exoplatform.addons.gamification.model.RuleDTO;
+import org.exoplatform.addons.gamification.model.UserInfo;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
+import org.exoplatform.addons.gamification.service.DomainService;
+import org.exoplatform.addons.gamification.service.RuleService;
+import org.exoplatform.addons.gamification.service.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
@@ -79,7 +78,7 @@ public class Utils {
   public static final String            TYPE                        = "cover";
 
   public static final String            REWARDING_GROUP             = "/platform/rewarding";
-  
+
   public static final String            ADMINS_GROUP                = "/platform/administrators";
 
   private static final String           IDENTITIES_REST_PATH        = "/v1/social/identities";                                   // NOSONAR
@@ -227,8 +226,8 @@ public class Utils {
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
     return DomainMapper.domainDTOToDomainEntity(domainService.getDomainById(domainId));
-  }  
-  
+  }
+
   public static long getRulesTotalScoreByDomain(long domainId) {
     if (domainId <= 0) {
       return 0;
@@ -269,7 +268,7 @@ public class Utils {
     }
   }
 
-  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids) {
+  public static List<UserInfo> getDomainOwnersByIds(List<Long> ids) {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
@@ -323,7 +322,7 @@ public class Utils {
     return userInfo;
   }
 
-  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners) {
+  public static UserInfo toUserInfo(String username, List<Long> domainsOwners) {
     if (StringUtils.isBlank(username)) {
       return null;
     }
@@ -421,12 +420,12 @@ public class Utils {
     activity.setTemplateParams(currentTemplateParams);
   }
 
-  public static boolean isProgramOwner(Set<Long> ownerIds, long userId) {
+  public static boolean isProgramOwner(List<Long> ownerIds, long userId) {
     return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
   }
 
   public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type, boolean isDefault) {
-    if (Long.valueOf(domainId) == 0) {
+    if (Long.parseLong(domainId) == 0) {
       return null;
     }
 

@@ -16,16 +16,15 @@
  */
 package org.exoplatform.addons.gamification.listener.social.activity;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.constant.GamificationConstant.*;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.EVENT_NAME;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.RuleService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;

@@ -18,7 +18,7 @@
 package org.exoplatform.addons.gamification.listener;
 
 import org.exoplatform.addons.gamification.listener.es.RulesESListener;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.model.RuleDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.index.IndexingService;

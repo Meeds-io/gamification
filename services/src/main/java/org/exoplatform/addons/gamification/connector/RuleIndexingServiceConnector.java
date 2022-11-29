@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.dao.RuleDAO;
+import org.exoplatform.addons.gamification.entity.RuleEntity;
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
@@ -37,13 +37,13 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnector {
 
-  public static final String INDEX = "rules";
+  public static final String    INDEX = "rules";
 
-  private static final Log   LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
+  private static final Log      LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
 
-  private RuleDAO            ruleDAO;
+  private final RuleDAO         ruleDAO;
 
-  private IdentityManager    identityManager;
+  private final IdentityManager identityManager;
 
   public RuleIndexingServiceConnector(RuleDAO ruleDAO,
                                       IdentityManager identityManager,

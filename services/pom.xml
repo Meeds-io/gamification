@@ -39,6 +39,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gamification-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Others third party -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
