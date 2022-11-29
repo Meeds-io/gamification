@@ -129,7 +129,7 @@ export default {
             fontWeight: 'bold',
             fontSize: this.overviewDisplay ? '14' : '18',
           },
-          left: this.overviewDisplay ? '69%' : '63%',
+          left: this.overviewDisplay ? '67%' : '63%',
           top: this.overviewDisplay && '42%' || '40%',
           textAlign: 'center'
         }],
@@ -149,7 +149,7 @@ export default {
           {
             type: 'pie',
             radius: this.overviewDisplay && ['40%', '70%'] || ['45%', '88%'],
-            center: this.overviewDisplay ? ['70%', '50%'] : ['65%', '50%'],
+            center: this.overviewDisplay ? ['68%', '50%'] : ['65%', '50%'],
             label: {
               normal: {
                 show: false
