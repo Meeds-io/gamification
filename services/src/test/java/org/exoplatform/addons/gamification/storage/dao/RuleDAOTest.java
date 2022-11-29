@@ -131,6 +131,18 @@ public class RuleDAOTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testFindHighestBudgetDomainIds() {
+    RuleEntity r1 = newRule("rule1", "domain1");
+    RuleEntity r2 = newRule("rule2", "domain1");
+    RuleEntity r3 = newRule("rule3", "domain2");
+    r1.setScore(Integer.parseInt(TEST__SCORE)*2);
+    r2.setScore(Integer.parseInt(TEST__SCORE));
+    r3.setScore(Integer.parseInt(TEST__SCORE));
+
+    assertEquals(ruleDAO.findHighestBudgetDomainIds(0,3).get(0), r1.getDomainEntity().getId());
+  }
+
+  @Test
   public void testFindRulesIdsByFilter() {
     RuleFilter filter = new RuleFilter();
     filter.setDateFilterType(DateFilterType.ALL);
