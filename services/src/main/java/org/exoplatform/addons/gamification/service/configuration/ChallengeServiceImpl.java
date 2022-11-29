@@ -183,7 +183,6 @@ public class ChallengeServiceImpl implements ChallengeService {
       challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
     }
     List<Challenge> challenges = new ArrayList<>();
-
     for (Long challengeId : challengesIds) {
       Challenge challenge = getChallengeById(challengeId);
       challenges.add(challenge);
