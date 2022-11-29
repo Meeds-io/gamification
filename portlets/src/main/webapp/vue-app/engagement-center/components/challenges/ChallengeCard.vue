@@ -134,6 +134,10 @@ export default {
         return [];
       },
     },
+    canEditChallenge: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     showMenu: false,
@@ -175,7 +179,7 @@ export default {
       return this.challenge && this.challenge.announcementsCount === 0 && this.status === 'Ended';
     },
     enableEdit(){
-      return this.challenge && this.challenge.userInfo.canEdit;
+      return this.challenge && this.challenge.userInfo.canEdit || this.canEditChallenge;
     },
     announcementCount() {
       return this.challenge && this.challenge.announcementsCount;
