@@ -106,7 +106,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               popover
               popover-left-position />
             <v-card-text
-              class="top3 amber darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
+              class="top3 amber darken-1 px-3 py-1 flex d-flex white--text justify-center font-weight-bold"
               style="height: 25px">
               {{ leaderBoardArray[2].score }}
             </v-card-text>
