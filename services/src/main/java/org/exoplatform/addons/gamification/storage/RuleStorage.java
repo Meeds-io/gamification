@@ -26,9 +26,10 @@ public class RuleStorage {
 
   private GamificationHistoryDAO gamificationHistoryDAO;
 
-  public RuleStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector) {
+  public RuleStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, GamificationHistoryDAO gamificationHistoryDAO) {
     this.ruleSearchConnector = ruleSearchConnector;
     this.ruleDAO = ruleDAO;
+    this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
