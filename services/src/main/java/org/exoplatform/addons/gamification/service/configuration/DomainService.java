@@ -32,14 +32,14 @@ public interface DomainService {
    * @param domainFilter {@link DomainFilter} used to filter results
    * @param offset index of the search
    * @param limit limit of results to return
-   * @return A {@link List <DomainDTO>} object
+   * @return {@link List} of {@link DomainDTO}
    */
   List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, int offset, int limit);
 
   /**
    * Return enabled domains within the DB
    *
-   * @return A {@link List <DomainDTO>} object
+   * @return {@link List} of {@link DomainDTO}
    */
   List<DomainDTO> getEnabledDomains();
 
