@@ -34,11 +34,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
@@ -411,6 +414,23 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setFirstResult(offset);
     query.setMaxResults(limit);
     List<GamificationActionsHistory> resultList = query.getResultList();
+    return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  public List<Long> findMostRealizedRuleIds(int offset, int limit, EntityType type) {
+    TypedQuery<Long> query;
+    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRuleIds", Long.class);
+    LocalDate now = new LocalDate();
+    LocalDate monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
+    LocalDate sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
+    Date utilFromDate = Date.from(monday.toDate().toInstant());
+    Date utilToDate = Date.from(sunday.toDate().toInstant());
+    query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
+         .setParameter(TO_DATE_PARAM_NAME, utilToDate)
+        .setParameter(TYPE, type);
+    query.setFirstResult(offset);
+    query.setMaxResults(limit);
+    List<Long> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
