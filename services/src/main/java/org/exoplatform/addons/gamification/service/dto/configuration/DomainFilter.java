@@ -41,4 +41,6 @@ public class DomainFilter implements Serializable {
 
   private boolean          includeDeleted;
 
+  private boolean          sortByBudget;
+
 }
