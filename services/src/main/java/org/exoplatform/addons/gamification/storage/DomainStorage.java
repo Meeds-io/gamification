@@ -33,6 +33,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilte
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO;
+import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.services.security.IdentityConstants;
@@ -45,17 +46,20 @@ public class DomainStorage {
 
   private final DomainDAO      domainDAO;
 
+  private final RuleDAO ruleDAO;
+
   private final DomainOwnerDAO domainOwnerDAO;
 
   private final FileService    fileService;
 
   private final UploadService  uploadService;
 
-  public DomainStorage(DomainDAO domainDAO, DomainOwnerDAO domainOwnerDAO, FileService fileService, UploadService uploadService) {
+  public DomainStorage(DomainDAO domainDAO, DomainOwnerDAO domainOwnerDAO, FileService fileService, UploadService uploadService, RuleDAO ruleDAO) {
     this.domainDAO = domainDAO;
     this.domainOwnerDAO = domainOwnerDAO;
     this.fileService = fileService;
     this.uploadService = uploadService;
+    this.ruleDAO = ruleDAO;
   }
 
   public DomainDTO saveDomain(DomainDTO domainDTO) {
@@ -84,6 +88,9 @@ public class DomainStorage {
   }
 
   public List<Long> getDomainsByFilter(DomainFilter filter, int offset, int limit) {
+    if(filter.isSortByBudget()) {
+      return ruleDAO.findHighestBudgetDomainIds(offset, limit);
+    }
     return domainDAO.getDomainsByFilter(offset, limit, filter);
   }
 
