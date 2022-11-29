@@ -60,6 +60,18 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   }
 
+  public List<Long> findHighestBudgetDomainIds(int offset, int limit) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Long.class);
+    if (offset > 0) {
+      query.setFirstResult(offset);
+    }
+    if (limit > 0) {
+      query.setMaxResults(limit);
+    }
+    return query.getResultList();
+
+  }
+
   public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
                                                      .setParameter("event", event);
