@@ -26,8 +26,10 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Da
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class RuleDAOTest extends AbstractServiceTest {
 

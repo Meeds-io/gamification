@@ -16,37 +16,98 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <tr :id="`GamificationRealizationItem${realization.id}`">
-    <td class="wrap align-center px-6">
-      <date-format
-        :format="dateFormat"
-        :value="realization.createdDate" />
+    <td>
+      <div v-if="isAutomaticType">
+        <rule-action-value
+          v-if="actionValueExtension"
+          :action-label="actionLabel"
+          :action-u-r-l="actionURL"
+          :action-icon="actionIcon" />
+        <a
+          v-else
+          :href="realization.url"
+          :class="actionLabelClass"
+          class="text-color">
+          <span class="actionDescription">
+            {{ actionLabel }}
+          </span>
+        </a>
+      </div>
+      <challenge-action-value
+        v-else
+        :action-label="actionLabel"
+        :action-u-r-l="actionURL" />
+    </td>
+    <td>
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <a v-on="on" @click="openProgramDetail">
+            <div class="text-truncate">{{ programTitle }}
+            </div>
+          </a>
+        </template>
+        <span v-html="programTitle"></span>
+      </v-tooltip>
+    </td>
+    <td class="wrap">
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <div
+            v-bind="attrs"
+            v-on="on">
+            <date-format
+              :format="dateFormat"
+              :value="realization.createdDate" />
+          </div>
+        </template>
+        <span>           
+          <date-format
+            :format="tooltipDateFormat"
+            :value="realization.createdDate" />
+        </span>
+      </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate align-center">
-      {{ earner }}
+      <exo-user-avatar
+        :identity="earner"
+        :size="28"
+        extra-class="d-inline-block"
+        link-style
+        popover
+        avatar />
     </td>
     <td class="text-truncate align-center">
-      <span class="actionDescription pe-5"> 
-        {{ actionTypeLabel }}
-      </span> 
-    </td>
-    <td class="wrap align-center">
-      <span v-html="domainTitle"></span>
-    </td>
-    <td class="align-center actionTitle px-0">
-      <a
-        :href="realization.url"
-        :class="actionLabelClass"
-        class="text-color">
-        <span class="actionDescription">
-          {{ actionLabel }}
-        </span> 
-      </a>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon
+            :class="statusIconClass"
+            class="me-1"
+            size="16"
+            v-bind="attrs"
+            v-on="on">
+            {{ actionTypeIcon }}
+          </v-icon>
+        </template>
+        <span>{{ isAutomaticTypeLabel }}</span>
+      </v-tooltip>
     </td>
     <td class="text-truncate align-center">
       {{ score }}
     </td>
     <td class="text-truncate align-center">
-      {{ statusLabel }}
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon
+            :class="statusIconClass"
+            class="me-1"
+            size="16"
+            v-bind="attrs"
+            v-on="on">
+            {{ statusIcon }}
+          </v-icon>
+        </template>
+        <span>{{ isAcceptedLabel }}</span>
+      </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate actions align-center">
       <v-menu
@@ -117,31 +178,47 @@ export default {
       type: Boolean,
       default: false,
     },
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
+    },
   },
   data: () => ({
     menu: false,
+    tooltipDateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    },
   }),
   computed: {
     earner() {
-      return this.realization.earner || '';
+      return this.realization?.earner?.profile;
     },
-    isManualType() {
-      return this.realization.action?.type === 'MANUAL';
+    actionURL() {
+      return this.realization?.url;
     },
     isAutomaticType() {
-      return this.realization.action?.type === 'AUTOMATIC';
+      return this.realization?.action?.type === 'AUTOMATIC';
     },
     actionLabel() {
       if (this.isAutomaticType) {
-        const key = `exoplatform.gamification.gamificationinformation.rule.description.${this.realization.actionLabel}`;
+        const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.realization.action.title}`;
         if (this.$te(key)) {
           return this.$t(key);
         }
       }
-      return this.realization.actionLabel;
+      return this.realization.action.title;
     },
-    domainTitle() {
-      return this.realization?.domain?.title || '-';
+    program() {
+      return this.realization?.domain;
+    },
+    programTitle() {
+      return this.program?.title || '-';
     },
     score() {
       return this.realization?.score || '-';
@@ -149,21 +226,14 @@ export default {
     status() {
       return this.realization.status;
     },
-    statusLabel() {
-      switch (this.status) {
-      case 'REJECTED': return this.$t('realization.label.rejected');
-      case 'ACCEPTED': return this.$t('realization.label.accepted');
-      case 'EDITED': return this.$t('realization.label.edited');
-      default: return '';
-      }
+    statusIcon() {
+      return this.status === 'ACCEPTED' ? 'fas fa-check-circle' : 'fas fa-times-circle';
     },
-    actionTypeLabel() {
-      if (this.isAutomaticType) {
-        return this.$t('realization.label.auto');
-      } else if (this.isManualType) {
-        return this.$t('realization.label.manual');
-      }
-      return '-';
+    statusIconClass() {
+      return this.status === 'ACCEPTED' ? 'primary--text' : 'secondary--text';
+    },
+    actionTypeIcon() {
+      return this.isAutomaticType ? 'fas fa-cogs' : 'fas fa-hand-pointer';
     },
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
@@ -174,11 +244,39 @@ export default {
     canAccept() {
       return this.status === 'REJECTED';
     },
+    isAccepted() {
+      return this.status === 'ACCEPTED';
+    },
     canEdit() {
       return this.realization.action && this.realization.action.type === 'MANUAL';
     },
     hasActions() {
       return this.canReject || this.canAccept || this.canEdit;
+    },
+    actionIcon() {
+      return this.actionValueExtension?.icon;
+    },
+    extendedActionValueComponent() {
+      return this.actionValueExtension && {
+        componentName: 'action-value',
+        componentOptions: {
+          vueComponent: this.actionValueExtension.vueComponent,
+        },
+      } || null;
+    },
+    actionValueExtension() {
+      if (this.actionValueExtensions) {
+        return Object.values(this.actionValueExtensions)
+          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+          .find(extension => extension.match && extension.match(this.realization.actionLabel)) || null;
+      }
+      return null;
+    },
+    isAutomaticTypeLabel() {
+      return this.isAutomaticType ? this.$t('gamification.label.automatic') : this.$t('realization.label.manual');
+    },
+    isAcceptedLabel() {
+      return this.isAccepted ? this.$t('realization.label.accepted') : this.$t('realization.label.rejected');
     },
   },
   created() {
@@ -198,6 +296,10 @@ export default {
     },
     editRealization() {
       this.$root.$emit('realization-open-edit-drawer', this.realization, this.actionLabel);
+    },
+    openProgramDetail() {
+      this.$root.$emit('open-program-detail', this.program);
+      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
     },
   }
 };
