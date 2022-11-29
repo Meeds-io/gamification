@@ -54,6 +54,7 @@ public class DomainStorage {
     this.domainDAO = domainDAO;
     this.fileService = fileService;
     this.uploadService = uploadService;
+    this.ruleDAO = ruleDAO;
   }
 
   public DomainDTO saveDomain(DomainDTO domainDTO) {
