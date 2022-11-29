@@ -21,6 +21,34 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
         xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
+    <!-- Domain Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.gamification.domain.action</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Generic Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.gamification.generic.action</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- User Listener -->
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+        <component-plugin>
+            <name>exo.core.security.ConversationRegistry.register</name>
+            <set-method>addListener</set-method>
+            <type>org.exoplatform.addons.gamification.listener.user.GamificationUserLoginListener</type>
+        </component-plugin>
+    </external-component-plugins>
+    <!-- Social listeners -->
     <!-- Relationship -->
     <external-component-plugins>
         <target-component>org.exoplatform.social.core.manager.RelationshipManager</target-component>
@@ -39,7 +67,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <type>org.exoplatform.addons.gamification.listener.social.activity.GamificationActivityListener</type>
         </component-plugin>
     </external-component-plugins>
- <!-- Spaces -->
+    <!-- Spaces -->
     <external-component-plugins>
         <target-component>org.exoplatform.social.core.space.spi.SpaceService</target-component>
         <component-plugin>
@@ -57,5 +85,4 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <type>org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener</type>
         </component-plugin>
     </external-component-plugins>
-
 </configuration>
