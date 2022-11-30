@@ -52,7 +52,7 @@ public class EntityBuilder {
   public static ChallengeRestEntity fromChallenge(AnnouncementService announcementService,
                                                   Challenge challenge,
                                                   int announcementsPerChallenge,
-                                                  boolean noDomain) throws IllegalAccessException, ObjectNotFoundException {
+                                                  boolean noDomain) throws IllegalAccessException {
     if (challenge == null) {
       return null;
     }
@@ -99,6 +99,7 @@ public class EntityBuilder {
     return new DomainRestEntity(domain.getId(),
                                 domain.getTitle(),
                                 domain.getDescription(),
+                                domain.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(domain.getAudienceId())) : null,
                                 domain.getPriority(),
                                 domain.getCreatedBy(),
                                 domain.getCreatedDate(),
