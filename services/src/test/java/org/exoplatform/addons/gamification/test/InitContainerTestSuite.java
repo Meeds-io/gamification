@@ -21,16 +21,7 @@ import org.exoplatform.addons.gamification.listener.AnnouncementActivityGenerato
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdaterTest;
 import org.exoplatform.addons.gamification.listener.GamificationRelationshipListenerTest;
 import org.exoplatform.addons.gamification.listener.RulesESListenerTest;
-import org.exoplatform.addons.gamification.rest.TestAnnouncementRest;
-import org.exoplatform.addons.gamification.rest.TestChallengeRest;
-import org.exoplatform.addons.gamification.rest.TestGamificationRestEndpoint;
-import org.exoplatform.addons.gamification.rest.TestLeaderboardEndpoint;
-import org.exoplatform.addons.gamification.rest.TestManageBadgesEndpoint;
-import org.exoplatform.addons.gamification.rest.TestManageDomainsEndpoint;
-import org.exoplatform.addons.gamification.rest.TestManageRulesEndpoint;
-import org.exoplatform.addons.gamification.rest.TestRealizationsRest;
-import org.exoplatform.addons.gamification.rest.TestSpaceLeaderboardEndpoint;
-import org.exoplatform.addons.gamification.rest.TestUserReputationEndpoint;
+import org.exoplatform.addons.gamification.rest.*;
 import org.exoplatform.addons.gamification.search.RuleSearchConnectorTest;
 import org.exoplatform.addons.gamification.service.AnnouncementServiceTest;
 import org.exoplatform.addons.gamification.service.ChallengeServiceTest;
@@ -92,7 +83,7 @@ import org.junit.runners.Suite.SuiteClasses;
         GamificationRelationshipListenerTest.class,
         DomainDAOTest.class,
         DomainStorageTest.class,
-        DomainOwnerDAOTest.class
+        TestGamificationInformationsEndpoint.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
