@@ -333,6 +333,13 @@ public class ChallengeServiceTest {
     savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
 
     assertEquals(1, savedChallenges.size());
+
+    // Test get most realized challenges
+    filter.setOrderByRealizations(true);
+    when(challengeStorage.findMostRealizedChallengesIds(0, 10)).thenReturn(challengesIds);
+    when(challengeStorage.getChallengeById(challengesIds.get(0))).thenReturn(challenge);
+    List<Challenge> popularChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
+    assertEquals(popularChallenges.get(0).getId(), challenge.getId());
   }
 
   @Test
