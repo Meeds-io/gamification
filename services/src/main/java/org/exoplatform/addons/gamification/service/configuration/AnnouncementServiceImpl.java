@@ -77,7 +77,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   @Override
   public List<Announcement> findAllAnnouncementByChallenge(long challengeId,
                                                            int offset,
-                                                           int limit) throws ObjectNotFoundException {
+                                                           int limit) {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
