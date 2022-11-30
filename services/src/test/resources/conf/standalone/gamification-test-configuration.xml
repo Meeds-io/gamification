@@ -120,10 +120,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO</type>
-    </component>
-
-    <component>
         <type>org.exoplatform.addons.gamification.storage.dao.RuleDAO</type>
     </component>
 

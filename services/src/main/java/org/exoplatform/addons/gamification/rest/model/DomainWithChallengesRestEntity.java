@@ -43,6 +43,7 @@ public class DomainWithChallengesRestEntity extends DomainDTO {
           domain.getTitle(),
           domain.getDescription(),
           domain.getPriority(),
+          domain.getAudienceId(),
           domain.getCreatedBy(),
           domain.getCreatedDate(),
           domain.getLastModifiedBy(),

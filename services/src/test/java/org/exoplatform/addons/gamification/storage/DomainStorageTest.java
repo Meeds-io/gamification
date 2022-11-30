@@ -20,6 +20,7 @@ package org.exoplatform.addons.gamification.storage;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ import org.exoplatform.addons.gamification.utils.Utils;
 public class DomainStorageTest extends AbstractServiceTest {
 
   @Test
-  public void testSaveDomain() throws Exception {
+  public void testSaveDomain() {
     assertEquals(0, domainDAO.findAll().size());
     DomainDTO domain = new DomainDTO();
     domain.setTitle(GAMIFICATION_DOMAIN);
@@ -49,9 +50,9 @@ public class DomainStorageTest extends AbstractServiceTest {
     domain.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     domain.setType(EntityType.AUTOMATIC.name());
     domain.setCreatedDate(Utils.toRFC3339Date(new Date()));
-    domain.setBudget(20l);
-    domain.setOwners(Collections.singleton(1l));
-    domain.setCoverFileId(1l);
+    domain.setBudget(20L);
+    domain.setOwners(new ArrayList<>(Collections.singleton(1L)));
+    domain.setCoverFileId(1L);
     DomainDTO savedDomain = domainStorage.saveDomain(domain);
     assertNotNull(savedDomain);
     assertNotEquals(0, savedDomain.getId());
@@ -63,7 +64,7 @@ public class DomainStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindEnabledDomainByTitle() throws Exception {
+  public void testFindEnabledDomainByTitle() {
     assertNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
     DomainDTO domain = newDomainDTO();
     assertNotNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
@@ -73,7 +74,7 @@ public class DomainStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetEnabledDomains() throws Exception {
+  public void testGetEnabledDomains() {
     assertEquals(0, domainStorage.getEnabledDomains().size());
     newDomain("domain1");
     DomainDTO domain = newDomainDTO("domain2");
@@ -84,7 +85,7 @@ public class DomainStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllDomains() throws Exception {
+  public void testGetAllDomains() {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);

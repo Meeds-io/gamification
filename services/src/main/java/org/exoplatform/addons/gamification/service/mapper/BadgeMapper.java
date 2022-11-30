@@ -51,8 +51,7 @@ public class BadgeMapper {
     badgeDTO.setLastModifiedDate(formatDate(badgeEntity.getLastModifiedDate()));
     badgeDTO.setDomain(badgeEntity.getDomain());
     badgeDTO.setDomainDTO((badgeEntity.getDomainEntity() == null) ? null
-                                                                  : DomainMapper.domainEntityToDomainDTO(badgeEntity.getDomainEntity(),
-                                                                                                         null));
+                                                                  : DomainMapper.domainEntityToDomainDTO(badgeEntity.getDomainEntity()));
     badgeDTO.setIconFileId(badgeEntity.getIconFileId());
     return badgeDTO;
   }

@@ -269,7 +269,7 @@ public class Utils {
     }
   }
 
-  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids) {
+  public static List<UserInfo> getDomainOwnersByIds(List<Long> ids) {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
@@ -323,7 +323,7 @@ public class Utils {
     return userInfo;
   }
 
-  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners) {
+  public static UserInfo toUserInfo(String username, List<Long> domainsOwners) {
     if (StringUtils.isBlank(username)) {
       return null;
     }
@@ -411,17 +411,11 @@ public class Utils {
     if (templateParams != null) {
       templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
     }
-    Iterator<Entry<String, String>> entries = currentTemplateParams.entrySet().iterator();
-    while (entries.hasNext()) {
-      Map.Entry<String, String> entry = entries.next();
-      if (entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-"))) {
-        entries.remove();
-      }
-    }
+    currentTemplateParams.entrySet().removeIf(entry -> entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
     activity.setTemplateParams(currentTemplateParams);
   }
 
-  public static boolean isProgramOwner(Set<Long> ownerIds, long userId) {
+  public static boolean isProgramOwner(List<Long> ownerIds, long userId) {
     return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
   }
 

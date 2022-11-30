@@ -99,6 +99,7 @@ public class EntityBuilder {
     return new DomainRestEntity(domain.getId(),
                                 domain.getTitle(),
                                 domain.getDescription(),
+                                domain.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(domain.getAudienceId())) : null,
                                 domain.getPriority(),
                                 domain.getCreatedBy(),
                                 domain.getCreatedDate(),

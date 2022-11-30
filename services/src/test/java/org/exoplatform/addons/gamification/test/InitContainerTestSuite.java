@@ -91,8 +91,7 @@ import org.junit.runners.Suite.SuiteClasses;
         RulesESListenerTest.class,
         GamificationRelationshipListenerTest.class,
         DomainDAOTest.class,
-        DomainStorageTest.class,
-        DomainOwnerDAOTest.class
+        DomainStorageTest.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

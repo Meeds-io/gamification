@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.exoplatform.social.core.space.model.Space;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,6 +38,8 @@ public class DomainRestEntity {
   private String         title;
 
   private String         description;
+
+  private Space          space;
 
   private int            priority;
 
@@ -67,6 +70,7 @@ public class DomainRestEntity {
   public DomainRestEntity(Long id, // NOSONAR
                           String title,
                           String description,
+                          Space space,
                           int priority,
                           String createdBy,
                           String createdDate,
@@ -82,6 +86,7 @@ public class DomainRestEntity {
     this.id = id;
     this.title = title;
     this.description = description;
+    this.space = space;
     this.priority = priority;
     this.createdBy = createdBy;
     this.createdDate = createdDate;

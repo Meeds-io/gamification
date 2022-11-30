@@ -17,7 +17,7 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +35,8 @@ public class DomainDTO implements Serializable, Cloneable {
   private String            title;
 
   private String            description;
+
+  private long              audienceId;
 
   private int               priority;
 
@@ -60,12 +62,13 @@ public class DomainDTO implements Serializable, Cloneable {
 
   private String            coverUrl;
 
-  private Set<Long>         owners;
+  private List<Long>        owners;
 
   public DomainDTO(long id, // NOSONAR
                    String title,
                    String description,
                    int priority,
+                   long audienceId,
                    String createdBy,
                    String createdDate,
                    String lastModifiedBy,
@@ -76,11 +79,12 @@ public class DomainDTO implements Serializable, Cloneable {
                    String type,
                    long coverFileId,
                    String coverUrl,
-                   Set<Long> owners) {
+                   List<Long> owners) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.priority = priority;
+    this.audienceId = audienceId;
     this.createdBy = createdBy;
     this.createdDate = createdDate;
     this.lastModifiedBy = lastModifiedBy;
@@ -100,6 +104,7 @@ public class DomainDTO implements Serializable, Cloneable {
                          title,
                          description,
                          priority,
+                         audienceId,
                          createdBy,
                          createdDate,
                          lastModifiedBy,
@@ -108,7 +113,6 @@ public class DomainDTO implements Serializable, Cloneable {
                          enabled,
                          budget,
                          type,
-                         coverUploadId,
                          coverFileId,
                          coverUrl,
                          owners);

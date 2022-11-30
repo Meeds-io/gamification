@@ -28,6 +28,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilte
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.storage.DomainStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
@@ -100,6 +101,7 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
+  @ExoTransactional
   public DomainDTO createDomain(DomainDTO domain, Identity aclIdentity) throws IllegalAccessException {
     if (domain == null) {
       throw new IllegalArgumentException("domain is mandatory");
@@ -114,11 +116,13 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
+  @ExoTransactional
   public DomainDTO createDomain(DomainDTO domain) {
     return createDomain(domain, IdentityConstants.SYSTEM);
   }
 
   @Override
+  @ExoTransactional
   public DomainDTO updateDomain(DomainDTO domain, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
     if (!canUpdateDomain(domain.getId(), aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to update domain " + domain);
@@ -170,6 +174,7 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
+  @ExoTransactional
   public DomainDTO getDomainById(long domainId) {
     if (domainId <= 0) {
       throw new IllegalArgumentException("domain id has to be positive integer");
