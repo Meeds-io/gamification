@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -35,6 +36,8 @@ public class DomainDTO implements Serializable, Cloneable {
   private String            title;
 
   private String            description;
+
+  private long              audienceId;
 
   private int               priority;
 
@@ -66,6 +69,7 @@ public class DomainDTO implements Serializable, Cloneable {
                    String title,
                    String description,
                    int priority,
+                   long audienceId,
                    String createdBy,
                    String createdDate,
                    String lastModifiedBy,
@@ -81,6 +85,7 @@ public class DomainDTO implements Serializable, Cloneable {
     this.title = title;
     this.description = description;
     this.priority = priority;
+    this.audienceId = audienceId;
     this.createdBy = createdBy;
     this.createdDate = createdDate;
     this.lastModifiedBy = lastModifiedBy;
@@ -100,6 +105,7 @@ public class DomainDTO implements Serializable, Cloneable {
                          title,
                          description,
                          priority,
+                         audienceId,
                          createdBy,
                          createdDate,
                          lastModifiedBy,
@@ -108,7 +114,6 @@ public class DomainDTO implements Serializable, Cloneable {
                          enabled,
                          budget,
                          type,
-                         coverUploadId,
                          coverFileId,
                          coverUrl,
                          owners);
