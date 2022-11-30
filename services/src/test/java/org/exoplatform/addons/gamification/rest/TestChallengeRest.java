@@ -22,19 +22,14 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
-import org.exoplatform.services.rest.impl.EnvironmentContext;
-import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.SecurityContext;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +49,10 @@ public class TestChallengeRest extends AbstractServiceTest {
   @Before
   public void setUp() throws Exception {
     super.setUp();
+    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry("/platform/users")));
+    Identity adminAclIdentity = new Identity("root1", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
+    identityRegistry.register(userAclIdentity);
+    identityRegistry.register(adminAclIdentity);
     registry(getComponentClass());
     ConversationState.setCurrent(null);
   }
@@ -61,11 +60,6 @@ public class TestChallengeRest extends AbstractServiceTest {
   @Test
   public void testCreateChallenge() throws Exception {
     DomainDTO domain = newDomainDTO();
-    String restPath = "/gamification/challenges/";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -80,7 +74,7 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("endDate")
               .value(endDate)
               .key("managers")
-              .value(Collections.singletonList(1l))
+              .value(Collections.singletonList(1L))
               .key("points")
               .value("10")
               .key("program")
@@ -88,21 +82,21 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
+
+    ContainerResponse response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
+    assertNotNull(response);
+    assertEquals(401, response.getStatus());
+    startSessionAs("user");
+    response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
     startSessionAs("root1");
-    response = launcher.service("POST", restPath, "", h, null, envctx);
+    response = getResponse("POST", getURLResource("challenges"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    ConversationState.setCurrent(null);
   }
 
   @Test
@@ -110,11 +104,6 @@ public class TestChallengeRest extends AbstractServiceTest {
     // add challenge with root1
     startSessionAs("root1");
     DomainDTO domain = newDomainDTO();
-    String restPath = "/gamification/challenges";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -135,17 +124,14 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
+
+    ContainerResponse response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
+
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     ChallengeRestEntity challengeRestEntity = (ChallengeRestEntity) response.getEntity();
     assertNotNull(challengeRestEntity);
     startSessionAs("root2");
-    restPath = "/gamification/challenges";
     writer = new StringWriter();
     jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -168,16 +154,14 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
+
     // null data
-    response = launcher.service("PUT", restPath, "", h, null, envctx);
+    response = getResponse("PUT", getURLResource("challenges"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
     // challenge id 0
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
+    response = getResponse("PUT", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
@@ -203,12 +187,9 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
 
     // update with root 2
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
+    response = getResponse("PUT", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
@@ -234,18 +215,15 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
 
     // update with root 2
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
+    response = getResponse("PUT", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
     startSessionAs("root1");
 
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
+    response = getResponse("PUT", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
@@ -271,12 +249,9 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
 
     // challenge not exists
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
+    response = getResponse("PUT", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(404, response.getStatus());
   }
@@ -286,11 +261,6 @@ public class TestChallengeRest extends AbstractServiceTest {
     // add challenge with root1
     startSessionAs("root1");
     DomainDTO domain = newDomainDTO();
-    String restPath = "/gamification/challenges";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -311,40 +281,27 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
+
+    ContainerResponse response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     ChallengeRestEntity challengeRestEntity = (ChallengeRestEntity) response.getEntity();
     assertNotNull(challengeRestEntity);
     startSessionAs("root2");
-    restPath = "/gamification/challenges/0";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
 
     // challenge id 0
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", getURLResource("challenges/0"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/challenges/555";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-
     // challenge id 5 not exist
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", getURLResource("challenges/555"), null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
 
     startSessionAs("root1");
 
-    restPath = "/gamification/challenges/" + challengeRestEntity.getId();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", getURLResource("challenges/" + challengeRestEntity.getId()), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     ChallengeRestEntity savedChallenge = (ChallengeRestEntity) response.getEntity();
@@ -358,10 +315,6 @@ public class TestChallengeRest extends AbstractServiceTest {
     startSessionAs("root1");
     DomainDTO domain = newDomainDTO();
     String restPath = "/gamification/challenges/";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -384,40 +337,32 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
+
+    ContainerResponse response = getResponse("POST", restPath, writer.getBuffer().toString());
+
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     ChallengeRestEntity challengeRestEntity = (ChallengeRestEntity) response.getEntity();
     assertNotNull(challengeRestEntity);
-    response = launcher.service("POST", restPath, "", h, data, envctx);
+    response = getResponse("POST", restPath, writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     challengeRestEntity = (ChallengeRestEntity) response.getEntity();
     assertNotNull(challengeRestEntity);
     startSessionAs("root2");
     restPath = "/gamification/challenges?offset=-1&limit=10";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
 
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
     restPath = "/gamification/challenges?offset=1&limit=-10";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
     restPath = "/gamification/challenges?offset=0&limit=10";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     List<ChallengeRestEntity> savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
@@ -426,27 +371,21 @@ public class TestChallengeRest extends AbstractServiceTest {
     startSessionAs("root1");
 
     restPath = "/gamification/challenges?offset=0&limit=10&domainId=" + domain.getId() + "&announcements=4";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
     assertEquals(2, savedChallenges.size());
 
     restPath = "/gamification/challenges?offset=0&limit=10&domainId=0&announcements=4&groupByDomain=true";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
     assertEquals(1, savedChallenges.size());
 
     restPath = "/gamification/challenges?offset=0&limit=10";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     savedChallenges = (List<ChallengeRestEntity>) response.getEntity();
@@ -459,10 +398,6 @@ public class TestChallengeRest extends AbstractServiceTest {
     startSessionAs("root1");
     DomainDTO domain = newDomainDTO();
     String restPath = "/gamification/challenges/";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     StringWriter writer = new StringWriter();
     JSONWriter jsonWriter = new JSONWriter(writer);
     jsonWriter.object()
@@ -483,11 +418,9 @@ public class TestChallengeRest extends AbstractServiceTest {
               .key("audience")
               .value("1")
               .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes(StandardCharsets.UTF_8);
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
+
+    ContainerResponse response = getResponse("POST", restPath, writer.getBuffer().toString());
+
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     ChallengeRestEntity challengeRestEntity = (ChallengeRestEntity) response.getEntity();
@@ -496,33 +429,24 @@ public class TestChallengeRest extends AbstractServiceTest {
 
     // challenge id 0
     restPath = "/gamification/challenges/0";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-
-    response = launcher.service("DELETE", restPath, "", h, null, envctx);
+    response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
     // challenge id not exist
     restPath = "/gamification/challenges/1100";
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-
-    response = launcher.service("DELETE", restPath, "", h, null, envctx);
+    response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
 
     // unauthorized user
     restPath = "/gamification/challenges/" + challengeRestEntity.getId();
-    httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    response = launcher.service("DELETE", restPath, "", h, null, envctx);
+    response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
     startSessionAs("root1");
-
-    response = launcher.service("DELETE", restPath, "", h, null, envctx);
+    response = getResponse("DELETE", restPath, null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
   }
@@ -531,13 +455,7 @@ public class TestChallengeRest extends AbstractServiceTest {
   public void testCanAddChallenge() throws Exception {
     startSessionAs("root1");
     String restPath = "/gamification/challenges/canAddChallenge";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    ContainerResponse response = getResponse("GET", getURLResource("challenges/canAddChallenge"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
   }

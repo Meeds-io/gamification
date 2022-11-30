@@ -140,9 +140,6 @@ public class ChallengeRest implements ResourceContainer {
       }
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
       return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList)).build();
-    } catch (ObjectNotFoundException e) {
-      LOG.debug("User '{}' attempts to retrieve a not existing challenge by id '{}'", currentUser, challengeId, e);
-      return Response.status(Response.Status.NOT_FOUND).entity("Challenge not found").build();
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
@@ -285,8 +282,6 @@ public class ChallengeRest implements ResourceContainer {
         LOG.info("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       }
-    } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to access not authorized challenges with owner Ids", currentUser, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
@@ -350,8 +345,7 @@ public class ChallengeRest implements ResourceContainer {
                                                               int offset,
                                                               int limit,
                                                               int announcementsPerChallenge,
-                                                              boolean noDomain) throws IllegalAccessException,
-                                                                                ObjectNotFoundException {
+                                                              boolean noDomain) throws IllegalAccessException {
     List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
     List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
     LOG.info("start mapping challenges");
