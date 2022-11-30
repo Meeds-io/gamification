@@ -26,12 +26,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.toUserInfo;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -222,7 +217,7 @@ public class UtilsTest extends AbstractServiceTest {
     assertEquals("root", userInfo.getRemoteId());
     assertTrue(userInfo.isCanAnnounce());
 
-    assertNull(toUserInfo("", Collections.singleton(1l)));
+    assertNull(toUserInfo("", new ArrayList<>(Collections.singleton(1L))));
   }
 
   @Test
@@ -235,6 +230,7 @@ public class UtilsTest extends AbstractServiceTest {
     savedDomain = Utils.getDomainByTitle(domain.getTitle());
     assertNotNull(savedDomain);
   }
+
   @Test
   public void testGetEnabledDomainByTitle() {
     DomainDTO domain = newDomainDTO();
@@ -259,12 +255,12 @@ public class UtilsTest extends AbstractServiceTest {
   @Test
   public void testGetRuleByTitle() {
 
-      RuleEntity rule = newRule(GAMIFICATION_DEFAULT_DATA_PREFIX + "test", "domain");
-      RuleDTO savedRule = Utils.getRuleByTitle("");
-      assertNull(savedRule);
-      savedRule = Utils.getRuleByTitle("test_domain");
-      assertNotNull(savedRule);
-      assertEquals(rule.getTitle(), savedRule.getTitle());
+    RuleEntity rule = newRule(GAMIFICATION_DEFAULT_DATA_PREFIX + "test", "domain");
+    RuleDTO savedRule = Utils.getRuleByTitle("");
+    assertNull(savedRule);
+    savedRule = Utils.getRuleByTitle("test_domain");
+    assertNotNull(savedRule);
+    assertEquals(rule.getTitle(), savedRule.getTitle());
   }
 
   @Test
@@ -272,6 +268,7 @@ public class UtilsTest extends AbstractServiceTest {
     Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, "root1");
     assertNotNull(identity);
   }
+
   @Test
   public void testGetUserRemoteId() {
     String remoteId = Utils.getUserRemoteId("15893");
@@ -355,7 +352,7 @@ public class UtilsTest extends AbstractServiceTest {
   @Test
   public void testIsAttachmentTokenValid() {
     long lastModifiedTime = System.currentTimeMillis();
-    String domainId ="1";
+    String domainId = "1";
     String token = Utils.generateAttachmentToken(domainId, TYPE, lastModifiedTime);
 
     assertTrue(isAttachmentTokenValid(token, domainId, TYPE, lastModifiedTime));

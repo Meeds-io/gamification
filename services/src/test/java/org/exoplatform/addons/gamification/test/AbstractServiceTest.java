@@ -40,7 +40,6 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainOwnerEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint;
@@ -67,7 +66,6 @@ import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
-import org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -170,8 +168,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected BadgeDAO                     badgeStorage;
 
-  protected DomainOwnerDAO               domainOwnerDAO;
-
   protected DomainDAO                    domainDAO;
 
   protected DomainStorage                domainStorage;
@@ -230,7 +226,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     badgeStorage = ExoContainerContext.getService(BadgeDAO.class);
     challengeStorage = ExoContainerContext.getService(ChallengeStorage.class);
     domainDAO = ExoContainerContext.getService(DomainDAO.class);
-    domainOwnerDAO = ExoContainerContext.getService(DomainOwnerDAO.class);
     realizationsStorage = ExoContainerContext.getService(RealizationsStorage.class);
     ruleIndexingServiceConnector = ExoContainerContext.getService(RuleIndexingServiceConnector.class);
     spaceService = ExoContainerContext.getService(SpaceService.class);
@@ -259,7 +254,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gamificationHistoryDAO.deleteAll();
     badgeStorage.deleteAll();
     ruleDAO.deleteAll();
-    domainOwnerDAO.deleteAll();
     domainDAO.deleteAll();
     domainStorage.clearCache();
     ruleStorage.clearCache();
@@ -424,13 +418,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       domain.setCoverFileId(1L);
       DomainEntity createdDomain = domainDAO.create(domain);
       domainStorage.clearCache();
-      List<DomainOwnerEntity> ownerEntities = new ArrayList<>();
-      if (owners != null) {
-        owners.forEach(owner -> {
-          DomainOwnerEntity domainOwnerEntity = domainOwnerDAO.create(new DomainOwnerEntity(createdDomain, owner));
-          ownerEntities.add(domainOwnerEntity);
-        });
-      }
       restartTransaction();
       return createdDomain;
     } else {
@@ -439,7 +426,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainDTO newDomainDTO(EntityType entityType, String name, boolean status, Set<Long> owners) {
-    return DomainMapper.domainEntityToDomainDTO(newDomain(entityType, name, status, owners), domainOwnerDAO);
+    return DomainMapper.domainEntityToDomainDTO(newDomain(entityType, name, status, owners));
   }
 
   protected DomainEntity newDomain(String name) {
@@ -690,11 +677,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected DomainDTO newDomainDTO() {
-    return DomainMapper.domainEntityToDomainDTO(newDomain(), domainOwnerDAO);
+    return DomainMapper.domainEntityToDomainDTO(newDomain());
   }
 
   protected DomainDTO newDomainDTO(String name) {
-    return DomainMapper.domainEntityToDomainDTO(newDomain(name), domainOwnerDAO);
+    return DomainMapper.domainEntityToDomainDTO(newDomain(name));
   }
 
   protected BadgeDTO newBadgeDTO() {

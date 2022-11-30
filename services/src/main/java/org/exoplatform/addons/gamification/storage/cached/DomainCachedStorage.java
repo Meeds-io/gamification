@@ -28,7 +28,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.storage.DomainStorage;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-import org.exoplatform.addons.gamification.storage.dao.DomainOwnerDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
 import org.exoplatform.commons.file.services.FileService;
@@ -51,12 +50,11 @@ public class DomainCachedStorage extends DomainStorage {
   private FutureExoCache<Serializable, Object, CacheKey> domainFutureCache;
 
   public DomainCachedStorage(DomainDAO domainDAO,
-                             DomainOwnerDAO domainOwnerDAO,
                              FileService fileService,
                              UploadService uploadService,
                              CacheService cacheService,
                              RuleDAO ruleDAO) {
-    super(domainDAO, domainOwnerDAO, fileService, uploadService, ruleDAO);
+    super(domainDAO, fileService, uploadService, ruleDAO);
     ExoCache<Serializable, Object> domainCache = cacheService.getCacheInstance(DOMAIN_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> domainLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override

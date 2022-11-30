@@ -21,19 +21,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.ExoEntity;
@@ -81,8 +69,13 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
   @Column(name = "COVER_FILE_ID")
   protected long                  coverFileId;
 
-  @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.PERSIST })
-  private List<DomainOwnerEntity> owners;                                 // NOSONAR
+  @Column(name = "AUDIENCE_ID")
+  protected Long                  audienceId;
+
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(name = "GAMIFICATION_DOMAIN_OWNERS", joinColumns = @JoinColumn(name = "DOMAIN_ID"))
+  @Column(name = "IDENTITY_ID")
+  private List<Long>              owners;
 
   public Long getId() {
     return id;
@@ -148,11 +141,19 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     this.coverFileId = coverFileId;
   }
 
-  public List<DomainOwnerEntity> getOwners() {
+  public Long getAudienceId() {
+    return audienceId;
+  }
+
+  public void setAudienceId(Long audience) {
+    this.audienceId = audience;
+  }
+
+  public List<Long> getOwners() {
     return owners;
   }
 
-  public void setOwners(List<DomainOwnerEntity> owners) {
+  public void setOwners(List<Long> owners) {
     this.owners = owners;
   }
 
