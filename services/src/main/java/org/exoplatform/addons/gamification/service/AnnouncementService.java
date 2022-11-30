@@ -19,8 +19,7 @@ public interface AnnouncementService {
    * @throws ObjectNotFoundException when the challenge identified by its
    *           technical identifier is not found
    */
-  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit) throws IllegalAccessException,
-                                                                                             ObjectNotFoundException;
+  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit) throws IllegalAccessException;
 
   /**
    * Creates a new announcement

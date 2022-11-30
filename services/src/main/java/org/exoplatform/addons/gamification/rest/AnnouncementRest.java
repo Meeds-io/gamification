@@ -165,8 +165,6 @@ public class AnnouncementRest implements ResourceContainer {
       return builder.build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.FORBIDDEN).build();
-    } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).build();
     }
   }
 
