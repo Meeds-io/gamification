@@ -18,22 +18,10 @@
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.ExoEntity;
@@ -49,40 +37,45 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle")
 public class DomainEntity extends AbstractAuditingEntity implements Serializable {
 
-  private static final long       serialVersionUID = 6578902752036385060L;
+  private static final long serialVersionUID = 6578902752036385060L;
 
   @Id
   @SequenceGenerator(name = "SEQ_GAMIFICATION_DOMAIN_ID", sequenceName = "SEQ_GAMIFICATION_DOMAIN_ID", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_GAMIFICATION_DOMAIN_ID")
-  protected Long                  id;
+  protected Long            id;
 
   @Column(name = "TITLE", unique = true, nullable = false)
-  protected String                title;
+  protected String          title;
 
   @Column(name = "DESCRIPTION")
-  protected String                description;
+  protected String          description;
 
   @Column(name = "PRIORITY")
-  protected int                   priority;
+  protected int             priority;
 
   @Column(name = "DELETED", nullable = false)
-  protected boolean               isDeleted;
+  protected boolean         isDeleted;
 
   @Column(name = "ENABLED", nullable = false)
-  protected boolean               isEnabled;
+  protected boolean         isEnabled;
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
-  protected EntityType            type;
+  protected EntityType      type;
 
   @Column(name = "BUDGET")
-  protected long                  budget;
+  protected long            budget;
 
   @Column(name = "COVER_FILE_ID")
-  protected long                  coverFileId;
+  protected long            coverFileId;
 
-  @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.PERSIST })
-  private List<DomainOwnerEntity> owners;                                 // NOSONAR
+  @Column(name = "AUDIENCE_ID")
+  protected Long            audienceId;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "GAMIFICATION_DOMAIN_OWNERS", joinColumns = @JoinColumn(name = "DOMAIN_ID"))
+  @Column(name = "IDENTITY_ID")
+  private Set<Long>         owners;
 
   public Long getId() {
     return id;
@@ -148,11 +141,19 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     this.coverFileId = coverFileId;
   }
 
-  public List<DomainOwnerEntity> getOwners() {
+  public Long getAudienceId() {
+    return audienceId;
+  }
+
+  public void setAudienceId(Long audience) {
+    this.audienceId = audience;
+  }
+
+  public Set<Long> getOwners() {
     return owners;
   }
 
-  public void setOwners(List<DomainOwnerEntity> owners) {
+  public void setOwners(Set<Long> owners) {
     this.owners = owners;
   }
 
