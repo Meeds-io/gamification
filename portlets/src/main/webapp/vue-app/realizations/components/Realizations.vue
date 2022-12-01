@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </template>
     </v-data-table>
     <v-card
-      v-if="isMobile"
+      v-if="displaySearchResult && isMobile"
       flat
       width="auto"
       class="ms-3 me-7 mb-4">
@@ -88,7 +88,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :headers="realizationsHeaders"
         :realization="item"
         :is-administrator="isAdministrator" 
-        :date-format="dateFormat"
+        :date-format="mobileDateFormat"
         :action-value-extensions="actionValueExtensions" />
     </template>
     <v-toolbar
@@ -151,6 +151,11 @@ export default {
     fromDate: null ,
     selectedPeriod: null,
     dateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
+    mobileDateFormat: {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
