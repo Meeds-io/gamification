@@ -203,9 +203,19 @@ public class RuleServiceImpl implements RuleService {
     long domainId = ruleDTO.getDomainDTO().getId();
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
     if (oldRule != null) {
-      throw new EntityExistsException("Rule with same event and domain already exist");
+      if (oldRule.isDeleted()) {
+        oldRule.setDeleted(false);
+        oldRule.setTitle(ruleDTO.getTitle());
+        oldRule.setDescription(ruleDTO.getDescription());
+        oldRule.setScore(ruleDTO.getScore());
+        oldRule.setEnabled(ruleDTO.isEnabled());
+        ruleDTO = ruleStorage.saveRule(oldRule);
+      } else {
+        throw new EntityExistsException("Rule with same event and domain already exist");
+      }
+    } else {
+      ruleDTO = ruleStorage.saveRule(ruleDTO);
     }
-    ruleDTO = ruleStorage.saveRule(ruleDTO);
     Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
     return ruleDTO;
   }
