@@ -21,7 +21,7 @@
       </template>
       <template #content>
         <v-card flat height="100">
-          <gamification-overview-widget-row v-show="!rewardDisplayed">
+          <gamification-overview-widget-row v-show="!myRewardsDisplayed">
             <template #title>
               <div class="mb-4">
                 {{ $t('gamification.overview.rewards.walletTitle') }}
@@ -35,7 +35,7 @@
             </template>
           </gamification-overview-widget-row>
           <div class="d-flex">
-            <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
+            <gamification-overview-widget-row v-show="myRewardsDisplayed" class="col col-6">
               <template #title>
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
               </template>
@@ -47,7 +47,7 @@
                   class="d-flex flex-row mt-5" />
               </template>
             </gamification-overview-widget-row>
-            <gamification-overview-widget-row v-show="rewardDisplayed" class="col col-6">
+            <gamification-overview-widget-row v-show="myRewardsDisplayed" class="col col-6">
               <template #title>
                 {{ $t('gamification.overview.rewards.walletTitle') }}
               </template>
