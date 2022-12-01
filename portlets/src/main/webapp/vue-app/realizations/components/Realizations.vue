@@ -18,20 +18,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app
     class="Realizations border-box-sizing">
     <div class="d-flex px-7 pt-5" flat>
-      <v-toolbar-title class="d-flex">
+      <v-toolbar-title class="d-flex" v-if="!isMobile">
         <v-btn class="btn btn-primary export" @click="exportFile()">
           <span class="ms-2 d-none d-lg-inline">
             {{ $t("realization.label.export") }}
           </span>
         </v-btn>
       </v-toolbar-title>
-      <v-spacer />
-      <div class="selected-period-menu mt-1 px-3">
+      <v-spacer v-if="!isMobile" />
+      <div class="mt-1 ml-n4 pe-3">
         <select-period
           v-model="selectedPeriod"
-          left="true"
+          :left="!isMobile"
           class="mx-2" />
       </div>
+      <v-spacer v-if="isMobile" />
       <div>
         <v-btn
           class="btn px-2 mt-1 btn-primary filterTasksSetting"
@@ -49,7 +50,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :info="$t('exoplatform.gamification.gamificationinformation.domain.search.noResults')"
       :info-message="$t('exoplatform.gamification.gamificationinformation.domain.search.noResultsMessage')" />
     <v-data-table
-      v-if="displaySearchResult"
+      v-if="displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
       :loading="loading"
@@ -68,6 +69,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           @updated="realizationUpdated" />
       </template>
     </v-data-table>
+    <v-card
+      v-if="isMobile"
+      flat
+      width="auto"
+      class="ms-3 me-7 mb-4">
+      <v-select
+        ref="select"
+        class="pt-0"
+        v-model="selected"
+        :items="availableSortBy"
+        :label="$t('realization.label.sortBy')" />
+    </v-card>
+    <template v-for="item in realizationsToDisplay">
+      <realization-item-mobile
+        :key="item.id"
+        v-if="displaySearchResult && isMobile"
+        :headers="realizationsHeaders"
+        :realization="item"
+        :is-administrator="isAdministrator" 
+        :date-format="dateFormat"
+        :action-value-extensions="actionValueExtensions" />
+    </template>
     <v-toolbar
       color="transparent"
       flat
@@ -113,6 +136,7 @@ export default {
   data: () => ({
     displaySearchResult: false,
     realizations: [],
+    availableSortBy: [],
     searchList: [],
     earnerIds: [],
     offset: 0,
@@ -130,8 +154,31 @@ export default {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
     },
+    isMobile: false,
+    selected: 'Date',
   }),
+  beforeDestroy () {
+    if (typeof window === 'undefined') {return;}
+    window.removeEventListener('resize', this.onResize, { passive: true });
+  },
+  mounted () {
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+  },
+  created() {
+    this.realizationsHeaders.map((header) => {if (header.sortable && header.value !== 'type') {this.availableSortBy.push(header);}});
+    // Workaround to fix closing menu when clicking outside
+    $(document).mousedown(() => {
+      if (this.$refs.select) {
+        window.setTimeout(() => {
+          this.$refs.select.blur();
+        }, 200);
+      }
+    });
+  },
   computed: {
     hasMore() {
       return this.limit < this.totalSize;
@@ -205,6 +252,11 @@ export default {
             width: '90',
           },);
       }
+      if (this.isMobile) {
+        realizationsHeaders.splice(2, 1);
+        realizationsHeaders.splice(4, 1);
+        realizationsHeaders.splice(5, 1); 
+      }
       return realizationsHeaders;
     },
   },
@@ -229,6 +281,20 @@ export default {
         this.sortUpdated();
       }
     },
+    selected(oldVal, newVal) {
+      if (newVal !== oldVal) {
+        this.sortBy = newVal;
+      }
+    },
+    isMobile(newVal) {
+      if (newVal) {
+        this.limit = 9;
+        this.pageSize = 9;
+      } else {
+        this.limit = 25;
+        this.pageSize = 25;
+      }
+    }
   },
   methods: {
     sortUpdated() {
@@ -272,6 +338,9 @@ export default {
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
+    },
+    onResize () {
+      this.isMobile = window.innerWidth < 700;
     },
   }
 };
