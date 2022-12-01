@@ -41,7 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ headers[2].text }}</span>
+          <span class="font-weight-bold"> {{ isAdministrator ? headers[2].text : headers[1].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <v-tooltip bottom>
@@ -57,7 +57,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ headers[3].text }}</span>
+          <span class="font-weight-bold"> {{ isAdministrator ? headers[3].text : headers[2].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <div v-if="isAutomaticType">
@@ -83,7 +83,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ headers[4].text }}</span>
+          <span class="font-weight-bold"> {{ isAdministrator ? headers[4].text : headers[3].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <v-icon
@@ -192,6 +192,9 @@ export default {
       }
       return null;
     },
+  },
+  created() {
+    console.log(this.realization);
   },
   methods: {
     openProgramDetail() {
