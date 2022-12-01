@@ -109,7 +109,7 @@ export default {
     return {
       programs: [],
       totalSize: 0,
-      pageSize: 6,
+      pageSize: 9,
       loading: false,
       canAddProgram: false,
       type: 'ALL',
@@ -118,7 +118,7 @@ export default {
       selectedProgram: {},
       initialized: false,
       offset: 0,
-      limit: 6,
+      limit: 9,
       users: [],
       limitToFetch: 0,
       originalLimitToFetch: 0,
