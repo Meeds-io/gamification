@@ -202,19 +202,20 @@ export default {
           for (let i=0;i<data.length;i++) {
             const optionSeriesName = data[i].label;
             let name ;
+            let serie ;
             if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
               name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
             } else {
               name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
             }
             if (i > 4) { 
-              const serie = {
-                name: 'Autres',
+              serie = {
+                name: this.$t('exoplatform.gamification.gamificationinformation.domain.Autres'),
                 value: this.option.series[0].data[4].value + data[i].value
               };
               this.option.series[0].data[4] = serie;
             } else {
-              const serie = {
+              serie = {
                 name,
                 value: data[i].value
               };
