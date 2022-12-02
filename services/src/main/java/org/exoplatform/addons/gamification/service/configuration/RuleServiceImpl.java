@@ -202,20 +202,10 @@ public class RuleServiceImpl implements RuleService {
   public RuleDTO createRule(RuleDTO ruleDTO) {
     long domainId = ruleDTO.getDomainDTO().getId();
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
-    if (oldRule != null) {
-      if (oldRule.isDeleted()) {
-        oldRule.setDeleted(false);
-        oldRule.setTitle(ruleDTO.getTitle());
-        oldRule.setDescription(ruleDTO.getDescription());
-        oldRule.setScore(ruleDTO.getScore());
-        oldRule.setEnabled(ruleDTO.isEnabled());
-        ruleDTO = ruleStorage.saveRule(oldRule);
-      } else {
-        throw new EntityExistsException("Rule with same event and domain already exist");
-      }
-    } else {
-      ruleDTO = ruleStorage.saveRule(ruleDTO);
+    if (oldRule != null && !oldRule.isDeleted()) {
+      throw new EntityExistsException("Rule with same event and domain already exist");
     }
+    ruleDTO = ruleStorage.saveRule(ruleDTO);
     Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
     return ruleDTO;
   }
@@ -236,7 +226,7 @@ public class RuleServiceImpl implements RuleService {
     if (domainDTO != null) {
       long domainId = ruleDTO.getDomainDTO().getId();
       RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
-      if (existRule != null && !existRule.getId().equals(oldRule.getId())) {
+      if (existRule != null && !existRule.getId().equals(oldRule.getId()) && !existRule.isDeleted()) {
         throw new EntityExistsException("Rule with same event and domain already exist");
       }
     }
