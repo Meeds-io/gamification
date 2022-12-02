@@ -202,7 +202,7 @@ public class RuleServiceImpl implements RuleService {
   public RuleDTO createRule(RuleDTO ruleDTO) {
     long domainId = ruleDTO.getDomainDTO().getId();
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
-    if (oldRule != null) {
+    if (oldRule != null && !oldRule.isDeleted()) {
       throw new EntityExistsException("Rule with same event and domain already exist");
     }
     ruleDTO = ruleStorage.saveRule(ruleDTO);
@@ -226,7 +226,7 @@ public class RuleServiceImpl implements RuleService {
     if (domainDTO != null) {
       long domainId = ruleDTO.getDomainDTO().getId();
       RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
-      if (existRule != null && !existRule.getId().equals(oldRule.getId())) {
+      if (existRule != null && !existRule.getId().equals(oldRule.getId()) && !existRule.isDeleted()) {
         throw new EntityExistsException("Rule with same event and domain already exist");
       }
     }
