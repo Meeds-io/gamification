@@ -1,5 +1,6 @@
 import Realizations from './components/Realizations.vue';
 import RealizationItem from './components/RealizationItem.vue';
+import RealizationItemMobile from './components/RealizationItemMobile.vue';
 import SelectPeriod from './components/SelectPeriod.vue';
 import NoResultFound from '../engagement-center/components/common/NoResultFound.vue';
 import ProgramSuggester from '../engagement-center/components/common/ProgramSuggester.vue';
@@ -12,6 +13,7 @@ import ProgramAttendeeItem from './components/ProgramAttendeeItem.vue';
 const components = {
   'realizations': Realizations,
   'realization-item': RealizationItem,
+  'realization-item-mobile': RealizationItemMobile,
   'select-period': SelectPeriod,
   'edit-realization-drawer': EditRealizationDrawer,
   'filter-realizations-drawer': FilterRealizationsDrawer,
