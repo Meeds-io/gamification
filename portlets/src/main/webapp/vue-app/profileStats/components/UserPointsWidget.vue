@@ -198,16 +198,30 @@ export default {
     getGamificationPointsStats() {
       getGamificationPointsStats(this.period).then(
         (data) => {
-          this.option.series[0].data = JSON.parse(JSON.stringify(data).split('"label":').join('"name":'));
+          this.option.series[0].data = [];
           for (let i=0;i<data.length;i++) {
-            const optionSeriesName = this.option.series[0].data[i].name;
+            const optionSeriesName = data[i].label;
+            let name ;
+            let serie ;
             if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
-              this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
+              name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
             } else {
-              this.option.series[0].data[i].name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
+              name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
+            }
+            if (i > 4) { 
+              serie = {
+                name: this.$t('exoplatform.gamification.gamificationinformation.domain.Autres'),
+                value: this.option.series[0].data[4].value + data[i].value
+              };
+              this.option.series[0].data[4] = serie;
+            } else {
+              serie = {
+                name,
+                value: data[i].value
+              };
+              this.option.series[0].data.push(serie);
             }
           }
-          this.option.legend.data = this.option.series[0].data.name;
           this.initChart(this.option);
           this.$emit('loadingData', false);  
         }
