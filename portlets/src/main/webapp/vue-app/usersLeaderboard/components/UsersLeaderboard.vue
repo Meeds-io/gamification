@@ -178,11 +178,11 @@ export default {
         });
     },
     retrieveDomains() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/api/v1/domains`, {
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains`, {
         credentials: 'include',
       }).then(resp => resp && resp.ok && resp.json())
         .then(data => {
-          const domains = data || [];
+          const domains = data.domains || [];
           domains.forEach(domain => {
             if (!domain || domain.label || !domain.title) {
               return;
