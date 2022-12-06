@@ -1,7 +1,8 @@
 /**
+ *
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association
- * contact@meeds.io
+ * Copyright (C) 2022 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,14 +14,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  */
-
 import Challenges from './components/challenges/Challenges.vue';
 import WelcomeMessage from './components/challenges/WelcomeMessage.vue';
 import ChallengeCard from './components/challenges/ChallengeCard.vue';
 import ChallengesList from './components/challenges/ChallengesList.vue';
 import DomainChallengesList from './components/challenges/DomainChallengesList.vue';
 import ChallengeDrawer from './components/challenges/ChallengeDrawer.vue';
+import ChallengeProgramDrawer from './components/challenges/ChallengeProgramDrawer.vue';
 import ChallengeDatePicker from './components/challenges/ChallengeDatePicker.vue';
 import ChallengeDetailsDrawer from './components/challenges/ChallengeDetailsDrawer.vue';
 import AnnouncementDrawer from './components/challenges/AnnouncementDrawer.vue';
@@ -50,6 +52,9 @@ import ProfileActionValue from './components/actionValues/ProfileActionValue.vue
 import SpaceActionValue from './components/actionValues/SpaceActionValue.vue';
 import ChallengeActionValue from './components/actionValues/ChallengeActionValue.vue';
 
+import ChallengeStandaloneDrawer from './components/deprecated/ChallengeStandaloneDrawer.vue';
+import DomainStandaloneSuggester from './components/deprecated/DomainStandaloneSuggester.vue';
+import StandaloneAssignment from './components/deprecated/StandaloneAssignment.vue';
 
 const components = {
   'challenges': Challenges,
@@ -58,6 +63,7 @@ const components = {
   'challenges-list': ChallengesList,
   'domain-challenges-list': DomainChallengesList,
   'challenge-drawer': ChallengeDrawer,
+  'challenge-program-drawer': ChallengeProgramDrawer,
   'challenge-date-picker': ChallengeDatePicker,
   'challenge-details-drawer': ChallengeDetailsDrawer,
   'announce-drawer': AnnouncementDrawer,
@@ -81,7 +87,10 @@ const components = {
   'stream-action-value': StreamActionValue,
   'profile-action-value': ProfileActionValue,
   'space-action-value': SpaceActionValue,
-  'challenge-action-value': ChallengeActionValue
+  'challenge-action-value': ChallengeActionValue,
+  'challenge-standalone-drawer': ChallengeStandaloneDrawer,
+  'challenge-standalone-domain-suggester': DomainStandaloneSuggester,
+  'challenge-standalone-assignment': StandaloneAssignment,
 };
 
 for (const key in components) {

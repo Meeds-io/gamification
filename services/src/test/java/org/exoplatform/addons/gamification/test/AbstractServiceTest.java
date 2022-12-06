@@ -20,6 +20,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
@@ -395,6 +396,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       domain.setLastModifiedDate(new Date());
       domain.setType(EntityType.AUTOMATIC);
       domain.setCreatedDate(new Date());
+      domain.setAudienceId(1l);
+      HashSet<Long> owners = new HashSet<Long>();
+      owners.add(1l);
+      domain.setOwners(owners);
       domain = domainDAO.create(domain);
       domainStorage.clearCache();
     }
