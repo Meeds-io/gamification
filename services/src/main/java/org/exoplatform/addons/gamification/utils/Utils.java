@@ -7,8 +7,16 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +26,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
@@ -149,14 +158,12 @@ public class Utils {
   public static final boolean canAnnounce(String spaceId, String username) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceById(spaceId);
-    if (space == null) {
-      throw new IllegalArgumentException("space is not exist");
-    }
-    if (StringUtils.isNotBlank(username)) {
-      return spaceService.hasRedactor(space) ? spaceService.isRedactor(space, username) || spaceService.isManager(space, username)
-          || spaceService.isSuperManager(username) : spaceService.isMember(space, username);
-    } else {
+    if (space == null || StringUtils.isBlank(username)) {
       return false;
+    } else {
+      IdentityRegistry identityRegistry = CommonsUtils.getService(IdentityRegistry.class);
+      org.exoplatform.services.security.Identity identity = identityRegistry.getIdentity(username);
+      return spaceService.canRedactOnSpace(space, identity);
     }
   }
 
@@ -221,14 +228,29 @@ public class Utils {
     return domainService.getDomainByTitle(domainTitle);
   }
 
-  public static DomainEntity getDomainById(long domainId) {
+  public static DomainDTO getDomainDTOById(long domainId) {
     if (domainId <= 0) {
       return null;
     }
     DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return DomainMapper.domainDTOToDomainEntity(domainService.getDomainById(domainId));
-  }  
-  
+    return domainService.getDomainById(domainId);
+  }
+
+  @SuppressWarnings("deprecation")
+  public static DomainDTO getChallengeDomainDTO(Challenge challenge) {
+    DomainDTO domain;
+    if (challenge.getProgramId() > 0) {
+      domain = Utils.getDomainDTOById(challenge.getProgramId());
+    } else {
+      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());// NOSONAR kept for backward compatibility
+    }
+    return domain;
+  }
+
+  public static DomainEntity getDomainById(long domainId) {
+    return DomainMapper.domainDTOToDomainEntity(getDomainDTOById(domainId));
+  }
+
   public static long getRulesTotalScoreByDomain(long domainId) {
     if (domainId <= 0) {
       return 0;
@@ -255,14 +277,13 @@ public class Utils {
     }
     try {
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      List<UserInfo> users = new ArrayList<>();
-      for (Long id : ids) {
+      return ids.stream().distinct().map(id -> {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-          users.add(toUserInfo(identity));
+          return toUserInfo(identity);
         }
-      }
-      return users;
+        return null;
+      }).filter(Objects::nonNull).collect(Collectors.toList());
     } catch (Exception e) {
       LOG.error("Error when getting challenge managers {}", e);
       return Collections.emptyList();
@@ -275,16 +296,15 @@ public class Utils {
     }
     try {
       IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      List<UserInfo> users = new ArrayList<>();
-      for (Long id : ids) {
+      return ids.stream().distinct().map(id -> {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
           UserInfo userInfo = toUserInfo(identity);
           userInfo.setDomainOwner(true);
-          users.add(userInfo);
+          return userInfo;
         }
-      }
-      return users;
+        return null;
+      }).filter(Objects::nonNull).collect(Collectors.toList());
     } catch (Exception e) {
       LOG.error("Error when getting challenge managers {}", e);
       return Collections.emptyList();
@@ -304,11 +324,10 @@ public class Utils {
       boolean isManager = isSuperManager || spaceService.isManager(space, username);
       boolean isMember = isManager || spaceService.isMember(space, username);
       boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-      boolean hasRedactor = spaceService.hasRedactor(space);
       userInfo.setManager(isManager);
       userInfo.setMember(isMember);
       userInfo.setRedactor(isRedactor);
-      userInfo.setCanAnnounce(hasRedactor ? isRedactor : isMember);
+      userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
       userInfo.setCanEdit(Utils.isChallengeManager(managerIds, Long.parseLong(space.getId()), username));
     }
     return userInfo;

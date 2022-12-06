@@ -21,10 +21,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.security.RolesAllowed;
-import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -34,6 +32,7 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl;
 import org.exoplatform.common.http.HTTPStatus;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -52,8 +51,6 @@ import org.exoplatform.upload.UploadService;
 public class ManageBadgesEndpoint implements ResourceContainer {
 
   private static final Log        LOG                          = ExoLogger.getLogger(ManageBadgesEndpoint.class);
-
-  private static SimpleDateFormat formatter                    = new SimpleDateFormat("yyyy-MM-dd");
 
   private static final String     DEFAULT_BADGE_ICON_NAME      = "DEFAULT_BADGE_ICON";
 
@@ -119,7 +116,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
       }
 
     } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).build();
     }
 
   }
@@ -146,13 +143,8 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         badgeDTO.setId(null);
         badgeDTO.setCreatedBy(currentUserName);
         badgeDTO.setLastModifiedBy(currentUserName);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         badgeDTO.setCreatedDate(formatter.format(new Date()));
-        /**
-         * Gamification rely on FileService, thus we don't need to persist icon in
-         * Gamification DB
-         */
-        // badgeDTO.setIcon(badgeDTO.getIcon());
-
         badgeDTO.setLastModifiedDate(formatter.format(new Date()));
 
         if (badgeDTO.getUploadId() != null) {
@@ -196,7 +188,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
 
-      } catch (EntityExistsException e) {
+      } catch (ObjectAlreadyExistsException e) {
 
         LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
 
@@ -215,7 +207,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
     } else {
 
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).build();
     }
 
   }
@@ -257,6 +249,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
         // Compute rule's data
         badgeDTO.setCreatedBy(currentUserName);
         badgeDTO.setLastModifiedBy(currentUserName);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         badgeDTO.setLastModifiedDate(formatter.format(new Date()));
 
         // --- Update rule
@@ -268,7 +261,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
         return Response.ok().cacheControl(cacheControl).entity(badgeDTO).build();
       }
-        catch (EntityExistsException e) {
+        catch (ObjectAlreadyExistsException e) {
 
           LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
 
@@ -287,7 +280,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
     } else {
 
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).build();
     }
 
   }
@@ -314,7 +307,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
       }
 
     } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).build();
     }
 
   }
