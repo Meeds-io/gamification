@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       color="transparent"
       flat
       class="pa-4">
-      <div class="border-box-sizing clickable" v-if="canAddChallenge">
+      <div v-if="displayAddChallengeButton" class="border-box-sizing clickable">
         <v-btn
           id="engagementCenterAddChallengeBtn"
           class="btn btn-primary"
@@ -114,6 +114,7 @@ export default {
   data: () => ({
     selectedChallenge: null,
     loading: true,
+    domains: [],
     domainsWithChallenges: [],
     announcementsPerChallenge: 2,
     search: '',
@@ -126,6 +127,9 @@ export default {
     challengeIdFromUrl: null,
   }),
   computed: {
+    displayAddChallengeButton() {
+      return this.canAddChallenge || this.domains?.filter(domain => domain.owners?.filter(owner => Number(owner) === Number(eXo.env.portal.userIdentityId)).length)?.length;
+    },
     classWelcomeMessage() {
       return this.displayWelcomeMessage && 'emptyChallenges' || '';
     },
@@ -259,6 +263,7 @@ export default {
           if (!result) {
             return;
           }
+          this.domains = result;
           if (domainId) {
             const program = Object.assign({}, this.domainsById[domainId]);
             Object.assign(program, {challenges: null});
@@ -270,7 +275,7 @@ export default {
             }
           } else {
             result.forEach(domain => {
-              if (domain.challenges) {
+              if (domain.challenges?.length) {
                 const program = Object.assign({}, domain);
                 Object.assign(program, {challenges: null});
                 Object.values(domain.challenges).forEach(challenge => challenge.program = program);
