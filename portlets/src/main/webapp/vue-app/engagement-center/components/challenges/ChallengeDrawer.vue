@@ -17,11 +17,17 @@
 
 -->
 <template>
-  <challenge-program-drawer v-if="engagementCenterEnabled" />
-  <challenge-standalone-drawer v-else />
+  <challenge-program-drawer v-if="engagementCenterEnabled" :is-administrator="isAdministrator" />
+  <challenge-standalone-drawer v-else :is-administrator="isAdministrator" />
 </template>
 <script>
 export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    }
+  },
   data: () => ({
     engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
   }),
