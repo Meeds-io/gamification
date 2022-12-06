@@ -74,7 +74,7 @@ public class EntityMapper {
     challengeEntity.setManagers(challenge.getManagers());
     challengeEntity.setScore(challenge.getPoints().intValue());
 
-    DomainDTO domain = Utils.getEnabledDomainByTitle(challenge.getProgram());
+    DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
     if (domain != null) {
       challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomainEntity(domain));
     }
@@ -195,9 +195,10 @@ public class EntityMapper {
     rule.setScore(challenge.getPoints() == null ? 0 : challenge.getPoints().intValue());
     rule.setTitle(challenge.getTitle());
     rule.setDescription(challenge.getDescription());
-    rule.setArea(challenge.getProgram());
     rule.setDeleted(false);
-    rule.setDomainDTO(Utils.getDomainByTitle(challenge.getProgram()));
+    DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
+    rule.setArea(domain == null ? null : domain.getTitle());
+    rule.setDomainDTO(domain);
     if (challenge.getAudience() > 0) {
       rule.setAudience(challenge.getAudience());
     }
@@ -229,6 +230,7 @@ public class EntityMapper {
                          ruleDTO.getManagers(),
                          (long) ruleDTO.getScore(),
                          ruleDTO.getDomainDTO() == null ? null : ruleDTO.getDomainDTO().getTitle(),
+                         ruleDTO.getDomainDTO() == null ? 0l : ruleDTO.getDomainDTO().getId(),
                          ruleDTO.isEnabled());
   }
 

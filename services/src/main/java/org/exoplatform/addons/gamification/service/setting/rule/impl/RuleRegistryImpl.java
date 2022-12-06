@@ -16,24 +16,22 @@
  */
 package org.exoplatform.addons.gamification.service.setting.rule.impl;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.picocontainer.Startable;
+
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
 import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.api.settings.SettingService;
-import org.exoplatform.commons.api.settings.SettingValue;
-import org.exoplatform.commons.api.settings.data.Context;
-import org.exoplatform.commons.api.settings.data.Scope;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.picocontainer.Startable;
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RuleRegistryImpl implements Startable, RuleRegistry {
 
@@ -49,10 +47,11 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     protected RuleService ruleService;
 
-    private DomainService domainService;
+    protected DomainService domainService;
 
-    public RuleRegistryImpl() {
-        this.ruleMap = new HashMap<String, RuleConfig>();
+    public RuleRegistryImpl(DomainService domainService) {
+      this.domainService = domainService;
+      this.ruleMap = new HashMap<>();
     }
 
     @Override
@@ -87,7 +86,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     @Override
     public void stop() {
-
+      // Nothing to change
     }
 
     /**
@@ -117,8 +116,10 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
                 ruleDto.setEnabled(true);
                 ruleDto.setDeleted(false);
                 ruleDto.setDomainDTO(domainService.getDomainByTitle(ruleConfig.getZone()));
-                if(ruleDto.getDomainDTO().isEnabled()==false){
-                    ruleDto.setEnabled(false);
+                if (ruleDto.getDomainDTO() == null) {
+                  ruleDto.setEnabled(false);
+                } else {
+                  ruleDto.setEnabled(ruleDto.getDomainDTO().isEnabled());
                 }
                 ruleDto.setDescription(ruleConfig.getDescription());
                 CommonsUtils.getService(RuleService.class).createRule(ruleDto);
@@ -130,12 +131,4 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     }
 
-    private boolean isRulesProcessingDone() {
-        SettingValue<?> setting = CommonsUtils.getService(SettingService.class).get(Context.GLOBAL, Scope.APPLICATION.id(GAMIFICATION_SETTINGS_RULE_KEY), GAMIFICATION_SETTINGS_RULE_PROCESSING_DONE);
-        return (setting != null && setting.getValue().equals("true"));
-    }
-
-    private void setRuleProcessingSettingsDone() {
-        CommonsUtils.getService(SettingService.class).set(Context.GLOBAL, Scope.APPLICATION.id(GAMIFICATION_SETTINGS_RULE_KEY), GAMIFICATION_SETTINGS_RULE_PROCESSING_DONE, SettingValue.create("true"));
-    }
 }

@@ -55,7 +55,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           ref="challengeSpaceSuggester"
           v-model="invitedChallengeAssignee"
           :search-options="searchOptions"
-          :only-manager="onlyManager"
+          :only-manager="multiple"
           :ignore-items="ignoredMembers"
           :type-of-relations="relationsType"
           :width="220"
@@ -95,13 +95,9 @@ export default {
       type: Object,
       default: () => null
     },
-    onlyManager: {
+    multiple: {
       type: Boolean,
       default: false,
-    },
-    allowedUsers: {
-      type: Array,
-      default: null,
     },
   },
   data() {
@@ -117,20 +113,27 @@ export default {
   },
   computed: {
     relationsType(){
-      if (this.audience) {
+      if (this.audience){
         return 'member_of_space';
       }
       return '';
     },
     searchOptions() {
-      const options = {currentUser: ''};
-      if (this.audience?.remoteId) {
-        options.spaceURL = this.audience.remoteId;
+      if (this.assigneeObj && this.assigneeObj.length >0) {
+        return {
+          currentUser: '',
+          spaceURL: this.audience && this.audience.remoteId
+        };
+      } else if (this.audience && this.audience.url) {
+        return {
+          currentUser: '',
+          spaceURL: this.audience && this.audience.url
+        };
+      } else {
+        return  {
+          currentUser: '',
+        };
       }
-      if (this.onlyManager) {
-        options.role = 'MANAGER';
-      }
-      return options;
     },
     assignButtonClass(){
       return this.assigneeObj &&  this.assigneeObj.length && 'mt-2';
@@ -143,9 +146,6 @@ export default {
     },
   },
   watch: {
-    assigneeObj() {
-      this.$emit('input', this.assigneeObj);
-    },
     invitedChallengeAssignee() {
       const found = this.assigneeObj.find(attendee => attendee.remoteId === (this.invitedChallengeAssignee && this.invitedChallengeAssignee.remoteId));
       if (!found && this.invitedChallengeAssignee && this.invitedChallengeAssignee.remoteId) {
@@ -157,10 +157,11 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
-          this.assigneeObj =[];
+          if (!this.multiple){
+            this.assigneeObj =[];
+          }
           this.assigneeObj.push(newUser);
           this.$emit('add-manager',newUser.id);
-          this.$emit('input', this.assigneeObj);
           this.invitedChallengeAssignee = null;
           this.globalMenu = false;
         }).finally(() => {
@@ -181,8 +182,6 @@ export default {
   created() {
     this.assigneeObj = [];
     this.invitedChallengeAssignee = [];
-    this.assigneeObj = this.value || [];
-    this.space = this.audience;
     document.addEventListener('audienceChanged', event => {
       if (event && event.detail) {
         this.assigneeObj = event.detail.managers;
@@ -203,10 +202,11 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
-          this.assigneeObj =[];
+          if (!this.multiple){
+            this.assigneeObj =[];
+          }
           this.assigneeObj.push(newManager);
           this.$emit('add-item',newManager.id);
-          this.$emit('input', this.assigneeObj);
         });
       }
       this.globalMenu = false;
@@ -217,9 +217,15 @@ export default {
       }) >= 0 ? true : false;
     },
     removeUser(user) {
-      this.assigneeObj = [];
+      if (this.multiple){
+        const index =  this.assigneeObj.findIndex(manager => {
+          return manager.remoteId === user.remoteId;
+        });
+        this.assigneeObj.splice(index, 1);
+      } else {
+        this.assigneeObj = [];
+      }
       this.$emit('remove-user', user.id);
-      this.$emit('input', this.assigneeObj);
     },
     reset() {
       this.assigneeObj = [];
