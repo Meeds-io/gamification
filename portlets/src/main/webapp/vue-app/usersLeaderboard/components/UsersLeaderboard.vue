@@ -114,10 +114,13 @@ export default {
     selectedDomain: null,
     loading: null,
     selectedPeriod: 'WEEK',
+    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
   }),
   computed: {
     infoUrl() {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/gamification-earn-points`;
+      return this.engagementCenterEnabled
+        && `/portal/${eXo.env.portal.portalName}/contributions/programs`
+        || `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
     },
     canLoadMore() {
       return this.users && this.limit <= this.users.length;

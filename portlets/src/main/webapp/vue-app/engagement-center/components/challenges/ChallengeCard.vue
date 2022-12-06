@@ -146,9 +146,10 @@ export default {
   }),
   computed: {
     winnerAvatars() {
-      return (this.challenge?.announcements || []).map(announce => ({
-        userName: announce.assignee
-      }));
+      return this.challenge?.announcements?.filter(announce => announce.assignee)
+        .map(announce => ({
+          userName: announce.assignee
+        })) || [];
     },
     showMessage() {
       if (this.challenge && this.challenge.userInfo && !this.challenge.userInfo.canAnnounce) {
@@ -204,7 +205,8 @@ export default {
   },
   methods: {
     editChallenge() {
-      this.$root.$emit('edit-challenge-details', this.challenge);
+      this.$challengesServices.getChallengeById(this.challenge?.id)
+        .then(challenge => this.$root.$emit('edit-challenge-details', challenge));
     },
     announcementAdded(event) {
       const announcement = event?.detail?.announcement;
