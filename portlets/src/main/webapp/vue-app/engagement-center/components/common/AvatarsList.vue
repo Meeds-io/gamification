@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="d-flex">
       <exo-user-avatar
         v-for="avatarToDisplay in avatarsTodisplay"
-        :key="avatarToDisplay.id"
+        :key="avatarToDisplay.userName"
         :profile-id="avatarToDisplay.userName"
         :size="size"
         popover
