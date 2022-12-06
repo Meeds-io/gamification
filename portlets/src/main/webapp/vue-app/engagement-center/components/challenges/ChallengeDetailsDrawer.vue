@@ -17,13 +17,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     id="challengeDetails"
+    v-model="drawer"
     ref="challengeDetails"
     right
     @closed="close">
-    <template slot="title">
+    <template #title>
       {{ $t('challenges.details') }}
     </template>
-    <template slot="content">
+    <template v-if="drawer && challenge" #content>
       <div class="pr-4 pl-4 pt-4 titleChallenge">
         {{ challenge && challenge.title }}
       </div>
@@ -31,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="pl-4 pr-4 descriptionLabel">
         {{ $t('challenges.label.description') }}
       </div>
-      <div class="description pr-4 pl-4 pt-4" v-sanitized-html="challenge && challenge.description"></div>
+      <div class="description pr-4 pl-4 pt-4" v-sanitized-html="description"></div>
       <hr class="separation mx-4">
       <v-flex class="px-4 nowrap winners">
         <span class="winnersLabel">
@@ -45,9 +46,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </span>
       </v-flex>
       <div class="assigneeAvatars flex-nowrap">
-        <div class="winners pa-2" v-if="this.challenge && !this.challenge.announcementsCount">
+        <div class="winners pa-2" v-if="!announcementsCount">
           <p class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
-            {{ challenge && challenge.announcementsCount }} {{ $t('challenges.winners.details') }}
+            {{ announcementsCount }} {{ $t('challenges.winners.details') }}
           </p>
         </div>
         <div v-else class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
@@ -139,7 +140,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   data: () => ({
-    challenge: null,
+    challenge: {},
+    drawer: false,
     winners: [],
     maxAvatarToShow: 5,
   }),
@@ -156,6 +158,9 @@ export default {
     announcementCount() {
       return this.challenge?.announcementsCount || this.winners.length;
     },
+    description() {
+      return this.challenge?.description;
+    },
     isDomainDeleted() {
       return this.challenge?.program?.deleted ;
     },
@@ -163,7 +168,7 @@ export default {
       return !this.challenge?.program?.enabled;
     },
     isDomainDisabledOrDeleted() {
-      return this.challenge?.program && (this.challenge.program.deleted || !this.challenge.program.enabled);
+      return this.challenge?.program && (this.challenge.program?.deleted || !this.challenge.program?.enabled);
     },
     domainShipColor() {
       return !this.isDomainDisabledOrDeleted && 'primary' || '#e0e0e0';
