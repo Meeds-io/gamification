@@ -81,6 +81,10 @@ export default {
         return false;
       },
     },
+    onlyOwned: {
+      type: Boolean,
+      default: false,
+    },
     value: {
       type: Object,
       default: null,
@@ -169,7 +173,14 @@ export default {
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;
           this.domains = [];
-          this.$programsServices.retrievePrograms(0, 10, 'ALL', null, this.searchTerm, this.includeDeleted).then(response => this.domains = response.domains);
+          this.$programsServices.retrievePrograms(0, 10, 'ALL', null, this.searchTerm, this.includeDeleted)
+            .then(data => {
+              if (this.onlyOwned) {
+                this.domains = data?.domains.filter(domain => domain?.owners.find(owner => owner.id === eXo.env.portal.userIdentityId));
+              } else {
+                this.domains = data.domains;
+              }
+            });
         }
         this.previousSearchTerm = this.searchTerm;
       } else {

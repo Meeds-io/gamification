@@ -70,7 +70,9 @@ public class ManageDomainsController extends BaseController {
 
     }
 
-    DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ALL, "", false, false);
+    DomainFilter domainFilter = new DomainFilter();
+    domainFilter.setEntityFilterType(EntityFilterType.ALL);
+    domainFilter.setEntityStatusType(EntityStatusType.ALL);
     // ----Load categories by context
     List<DomainDTO> domains = domainService.getDomainsByFilter(domainFilter, 0, 0);
 

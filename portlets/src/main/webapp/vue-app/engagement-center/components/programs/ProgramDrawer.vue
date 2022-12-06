@@ -119,7 +119,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-model="programOwners"
               :audience="audience"
               class="my-2"
-              only-manager />
+              only-manager
+              multiple />
           </div>
           <div class="my-2 mt-4">
             <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
