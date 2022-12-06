@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface RuleService {
@@ -91,6 +92,7 @@ public interface RuleService {
     List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) ;
 
     /**
+     * @param ruleFilter {@link RuleFilter} used to count associated rules
      * @return count rules by filter
      */
     int countAllRules(RuleFilter ruleFilter);
@@ -152,23 +154,27 @@ public interface RuleService {
      * @param username User name of user attempting to create a rule
      * @return created {@link RuleDTO}
      * @throws IllegalAccessException when user is not authorized to create a rule
+     * @throws ObjectAlreadyExistsException when rule already exists
      */
-     RuleDTO createRule (RuleDTO ruleDTO, String username) throws IllegalAccessException;
+     RuleDTO createRule (RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException;
 
      /**
      * Add Rule to DB
      * @param ruleDTO {@link RuleDTO} to create
      * @return created {@link RuleDTO}
+     * @throws ObjectAlreadyExistsException when rule already already exists
      */
-     RuleDTO createRule (RuleDTO ruleDTO);
+     RuleDTO createRule (RuleDTO ruleDTO) throws ObjectAlreadyExistsException;
 
     /**
      * Update Rule to DB
      * @param ruleDTO {@link RuleDTO} to update
      * @param username User name of user attempting to update a rule
      * @return updated {@link RuleDTO}
+     * @throws ObjectNotFoundException when rule doesn't exists
+     * @throws IllegalAccessException when user sin't allowed to update chosen rule
      */
-     RuleDTO updateRule (RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
+    RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
 
     /**
      * Check whether user can manage rules or not.

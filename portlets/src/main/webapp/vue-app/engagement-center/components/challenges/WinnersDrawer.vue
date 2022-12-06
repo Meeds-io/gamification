@@ -117,7 +117,7 @@ export default {
         }
         this.announcement = append && this.announcement.concat(announcements) || announcements;
         if (announcements.length > 0) {
-          announcements.map(announce => {
+          announcements.filter(announce => announce.assignee).map(announce => {
             const announcement = {
               user: announce.assignee,
               activityId: announce.activityId,

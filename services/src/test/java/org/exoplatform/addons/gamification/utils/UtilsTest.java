@@ -285,7 +285,7 @@ public class UtilsTest extends AbstractServiceTest {
     space.setDisplayName("test space");
     space.setGroupId("/spaces/test_space");
     String username = "root";
-    assertThrows(IllegalArgumentException.class, () -> Utils.canAnnounce("158", username));
+    assertFalse(Utils.canAnnounce("158", username));
     boolean canAnnounce = Utils.canAnnounce("1", "");
     assertFalse(canAnnounce);
     canAnnounce = Utils.canAnnounce("1", "root");
