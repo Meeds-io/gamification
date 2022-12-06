@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
@@ -51,9 +52,9 @@ import java.util.List;
 @RolesAllowed("users")
 public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
-  private static final Log      LOG                   = ExoLogger.getLogger(ManageBadgesEndpoint.class);
+  private static final Log      LOG                   = ExoLogger.getLogger(SpaceLeaderboardEndpoint.class);
 
-  private final static String   YOUR_CURRENT_RANK_MSG = "Your current rank";
+  private static final String   YOUR_CURRENT_RANK_MSG = "Your current rank";
 
   private final CacheControl    cacheControl;
 
@@ -149,7 +150,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
   @GET
   @RolesAllowed("users")
   @Path("filter")
-  public Response filter(@Context UriInfo uriInfo,
+  public Response filter(@Context UriInfo uriInfo, // NOSONAR
                          @QueryParam("domain") String domain,
                          @QueryParam("period") String period,
                          @QueryParam("url") String url,
@@ -184,15 +185,9 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
           return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
         }
 
-        leaderboardInfoList = new ArrayList<LeaderboardEndpoint.LeaderboardInfo>();
+        leaderboardInfoList = new ArrayList<>();
 
         Identity identity = null;
-
-        // Get current User identity
-
-        Identity currentIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME,
-                                                                       conversationState.getIdentity().getUserId());
-
         for (StandardLeaderboard leader : standardLeaderboards) {
 
           // Load Social identity
@@ -211,13 +206,10 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
             leaderboardInfoList.add(leaderboardInfo);
           }
-          // if (leaderboardInfoList.size() == 10) return
-          // Response.ok(leaderboardInfoList,
-          // MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
         }
         // Check if the current user is already in top10
         Date date = null;
-        switch (leaderboardFilter.getPeriod()) {
+        switch (leaderboardFilter.getPeriod()) { // NOSONAR
         case "WEEK":
           date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
           break;
@@ -271,8 +263,9 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
                                                                    Date date,
                                                                    String domain,
                                                                    List<LeaderboardEndpoint.LeaderboardInfo> leaderboardList) {
-    if (leaderboardList.size() == 0)
+    if (CollectionUtils.isEmpty(leaderboardList)) {
       return null;
+    }
     LeaderboardEndpoint.LeaderboardInfo leaderboardInfo = null;
     String currentUser = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, identityId).getId();
     if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
