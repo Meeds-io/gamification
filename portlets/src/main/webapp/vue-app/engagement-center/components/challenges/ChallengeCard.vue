@@ -134,10 +134,6 @@ export default {
         return [];
       },
     },
-    canEditChallenge: {
-      type: Boolean,
-      default: false,
-    },
   },
   data: () => ({
     showMenu: false,
@@ -173,17 +169,17 @@ export default {
         return 'endsColor';
       }
     },
-    enableAnnounce(){
+    enableAnnounce() {
       return this.challenge && !this.challengeProgramEnabled  && this.challenge.userInfo.canAnnounce && this.status !== 'Ended' && this.status !== 'Starts';
     },
-    enableDelete(){
-      return this.challenge && this.challenge.announcementsCount === 0 && this.status === 'Ended';
+    enableDelete() {
+      return this.enableEdit && !this.announcementCount && this.status === 'Ended';
     },
-    enableEdit(){
-      return this.challenge && this.challenge.userInfo.canEdit || this.canEditChallenge;
+    enableEdit() {
+      return this.challenge?.userInfo?.canEdit;
     },
     announcementCount() {
-      return this.challenge && this.challenge.announcementsCount;
+      return this.challenge?.announcementsCount || 0;
     },
     challengeProgramEnabled() {
       return this.domain && (!this.domain.enabled || this.domain.deleted);
