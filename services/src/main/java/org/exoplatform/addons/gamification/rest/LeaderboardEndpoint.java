@@ -110,7 +110,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
           continue;
         }
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
-        leaderboardInfo.setSocialId(identity == null ? null : identity.getId());
+        leaderboardInfo.setSocialId(identity.getId());
         String technicalId = computeTechnicalId(identity);
         leaderboardInfo.setTechnicalId(technicalId);
         leaderboardInfo.setScore(element.getReputationScore());

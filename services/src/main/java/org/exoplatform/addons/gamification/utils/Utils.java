@@ -237,7 +237,7 @@ public class Utils {
     if (challenge.getProgramId() > 0) {
       domain = Utils.getDomainDTOById(challenge.getProgramId());
     } else {
-      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());
+      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());// NOSONAR kept for backward compatibility
     }
     return domain;
   }

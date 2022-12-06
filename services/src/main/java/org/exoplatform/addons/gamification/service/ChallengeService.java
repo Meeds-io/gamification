@@ -114,6 +114,8 @@ public interface ChallengeService {
   /**
    * @return true if engagementCenter Feature is enabled
    */
-  boolean isEngagementCenterEnabled();
+  default boolean isEngagementCenterEnabled() {
+    return false;
+  }
 
 }

@@ -19,7 +19,6 @@ package org.exoplatform.addons.gamification.storage;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -64,12 +63,12 @@ public class DomainStorage {
       Long coverFileId = saveDomainCover(domainDTO.getCoverUploadId());
       domainEntity.setCoverFileId(coverFileId);
     }
-    HashSet<Long> owners = new HashSet<>();
     if (CollectionUtils.isEmpty(domainEntity.getOwners())) {
-      domainEntity.setOwners(owners);
+      domainEntity.setOwners(new HashSet<>());
     } else {
-      domainEntity.getOwners().forEach(owner -> owners.add(owner));
-      domainEntity.setOwners(owners);
+      // Make Set modifiable to avoid Hibernate exception
+      // which expects to have a modifiable collection
+      domainEntity.setOwners(new HashSet<>(domainEntity.getOwners()));
     }
     if (domainEntity.getId() == null || domainEntity.getId() == 0) {
       domainEntity.setId(null);

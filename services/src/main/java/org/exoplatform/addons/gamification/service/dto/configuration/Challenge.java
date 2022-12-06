@@ -24,9 +24,10 @@ public class Challenge implements Cloneable {
    * @param      enabled
    * @deprecated             deprecated to use the full fields constructor
    *                         instead. Kept for API backward compatibility
-   * @since                  05/112/2022
+   * @since                  05/12/2022
    */
-  public Challenge(long id,
+  @Deprecated(forRemoval = true, since = "05/12/2022")
+  public Challenge(long id, // NOSONAR
                    String title,
                    String description,
                    long audience,
@@ -39,7 +40,7 @@ public class Challenge implements Cloneable {
     this(id, title, description, audience, startDate, endDate, managers, points, program, 0, enabled);
   }
 
-  public Challenge(long id,
+  public Challenge(long id, // NOSONAR
                    String title,
                    String description,
                    long audience,
@@ -81,7 +82,7 @@ public class Challenge implements Cloneable {
 
   @Override
   public Challenge clone() { // NOSONAR
-    return new Challenge(id, title, description, audience, startDate, endDate, managers, points, program, programId, enabled);
+    return new Challenge(id, title, description, audience, startDate, endDate, managers, points, program, programId, enabled); // NOSONAR
   }
 
 }
