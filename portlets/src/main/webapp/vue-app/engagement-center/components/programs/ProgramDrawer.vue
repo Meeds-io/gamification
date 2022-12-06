@@ -107,6 +107,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             name="programSpaceAutocomplete"
             v-model="audience"
             :items="audience && [audience] || []"
+            :search-options="audienceSearchOptions"
             :labels="spaceSuggesterLabels"
             :width="220"
             include-spaces />
@@ -118,7 +119,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-model="programOwners"
               :audience="audience"
               class="my-2"
-              multiple />
+              only-manager />
           </div>
           <div class="my-2 mt-4">
             <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
@@ -159,25 +160,36 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
-  data() {
-    return {
-      rules: {
-        length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
-        value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
-      },
-      program: null,
-      programOwners: [],
-      audience: null,
-      warning: null,
-      isValidForm: true,
-      drawer: false,
-      showMenu: false,
-      loading: false,
-      showBudget: false,
-      validDescription: false,
-    };
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    }
   },
+  data: () => ({
+    rules: {
+      length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
+      value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
+    },
+    program: null,
+    programOwners: [],
+    audience: null,
+    warning: null,
+    isValidForm: true,
+    drawer: false,
+    showMenu: false,
+    loading: false,
+    showBudget: false,
+    validDescription: false,
+  }),
   computed: {
+    audienceSearchOptions() {
+      return this.isAdministrator && {
+        filterType: 'all',
+      } || {
+        filterType: 'manager',
+      };
+    },
     drawerTitle() {
       return this.program?.id ? this.$t('programs.button.editProgram') : this.$t('programs.button.addProgram');
     },
@@ -257,14 +269,15 @@ export default {
       if (this.program?.id && this.program?.space) {
         const space = this.program?.space ;
         this.audience = {
-          id: `space:${space.displayName}` ,
+          id: `space:${space.prettyName}` ,
           profile: {
             avatarUrl: space.avatarUrl,
             fullName: space.displayName,
           },
           providerId: 'space',
-          remoteId: space.displayName,
+          remoteId: space.prettyName,
           spaceId: this.program.space.id,
+          displayName: this.program.space.displayName,
           notToChange: true,
         };
       } else {
