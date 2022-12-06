@@ -96,7 +96,7 @@ public class ChallengeRest implements ResourceContainer {
       Challenge newChallenge = challengeService.createChallenge(challenge, currentUser);
       return Response.ok(EntityBuilder.fromChallenge(newChallenge, Collections.emptyList())).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to create a challenge", e);
+      LOG.warn("User '{}' attempts to create a challenge while not authorized", currentUser);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
@@ -139,7 +139,7 @@ public class ChallengeRest implements ResourceContainer {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
-      return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList)).build();
+      return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList, false)).build();
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
@@ -237,7 +237,7 @@ public class ChallengeRest implements ResourceContainer {
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
     try {
-      LOG.info("start getting challenges");
+      LOG.debug("start getting challenges");
       if (domainId > 0) {
         filter.setDomainId(domainId);
         List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
@@ -246,7 +246,7 @@ public class ChallengeRest implements ResourceContainer {
                                                                                     limit,
                                                                                     announcementsPerChallenge,
                                                                                     false);
-        LOG.info("ended mapping challenges");
+        LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
         DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ENABLED, "", true);
@@ -272,14 +272,14 @@ public class ChallengeRest implements ResourceContainer {
       } else {
         List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
         List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
-        LOG.info("start mapping challenges");
+        LOG.debug("start mapping challenges");
         for (Challenge challenge : challenges) {
           challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService,
                                                                 challenge,
                                                                 announcementsPerChallenge,
                                                                 false));
         }
-        LOG.info("ended mapping challenges");
+        LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       }
     } catch (IllegalAccessException e) {
@@ -348,7 +348,7 @@ public class ChallengeRest implements ResourceContainer {
                                                               boolean noDomain) throws IllegalAccessException {
     List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
     List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
-    LOG.info("start mapping challenges");
+    LOG.debug("start mapping challenges");
     for (Challenge challenge : challenges) {
       challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService, challenge, announcementsPerChallenge, noDomain));
     }

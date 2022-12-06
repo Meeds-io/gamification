@@ -28,10 +28,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.services.security.MembershipEntry;
 import org.junit.Test;
 
@@ -89,8 +87,8 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertThrows(IllegalArgumentException.class, () -> ruleService.findEnabledRulesByEvent(null));
     assertEquals(ruleService.findEnabledRulesByEvent("rule1").size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
-    RuleEntity r2 = newRule("rule1", "domain2");
-    RuleEntity r3 = newRule("rule1", "domain3");
+    newRule("rule1", "domain2");
+    newRule("rule1", "domain3");
     assertEquals(ruleService.findEnabledRulesByEvent("rule1").size(), 3);
     r1.setEnabled(false);
     ruleDAO.update(r1);
@@ -129,8 +127,8 @@ public class RuleServiceTest extends AbstractServiceTest {
   public void testGetAllRulesWithNullDomain() {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity r1 = newRule("rule1", "domain1");
-    RuleEntity r2 = newRule("rule1", "domain2");
-    RuleEntity r3 = newRule("rule1", "domain3");
+    newRule("rule1", "domain2");
+    newRule("rule1", "domain3");
     assertEquals(ruleService.getAllRulesWithNullDomain().size(), 0);
     r1.setDomainEntity(null);
     ruleDAO.update(r1);

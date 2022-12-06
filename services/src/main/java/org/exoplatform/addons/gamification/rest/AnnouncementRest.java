@@ -46,7 +46,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("/gamification/announcement/api")
 @Tag(name = "/gamification/announcement/api", description = "Manages announcement associated to users")
-@RolesAllowed("users")
 public class AnnouncementRest implements ResourceContainer {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementRest.class);

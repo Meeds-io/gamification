@@ -48,7 +48,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private EntityType type;
 
-  public GamificationActionsHistoryDTO(Long id,
+  public GamificationActionsHistoryDTO(Long id, // NOSONAR
                                        String earnerId,
                                        String earnerType,
                                        long globalScore,

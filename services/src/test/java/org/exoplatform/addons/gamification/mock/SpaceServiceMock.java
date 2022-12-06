@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ListAccessImpl;
 import org.exoplatform.services.security.MembershipEntry;
@@ -67,7 +69,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isRedactor(Space space, String userId) {
-    return userId == "root";
+    return StringUtils.equals(userId, "root");
   }
 
   @Override
@@ -75,6 +77,18 @@ public class SpaceServiceMock implements SpaceService {
     return "test_space".equals(space.getPrettyName());
   }
 
+  @Override
+  public boolean canRedactOnSpace(Space space, org.exoplatform.services.security.Identity viewer) {
+    if (viewer == null) {
+      throw new IllegalStateException("User ACL Identity is mandatory");
+    }
+    if (space == null) {
+      throw new IllegalStateException("Space is mandatory");
+    }
+    return !"test_space".equals(space.getPrettyName())
+        || StringUtils.equals(viewer.getUserId(), "root1")
+        || StringUtils.equals(viewer.getUserId(), "root");
+  }
 
   public Space getSpaceByUrl(String spaceUrl) {
     throw new UnsupportedOperationException();
@@ -220,7 +234,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(Space space, String userId) {
-    return userId.equals("root1") ? true : false;
+    return userId.equals("root1");
   }
 
   public void setManager(Space space, String userId, boolean isManager) {
@@ -229,7 +243,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isManager(Space space, String userId) {
-    return userId.equals("root1") ? true : false;
+    return userId.equals("root1");
   }
 
   public boolean isOnlyManager(Space space, String userId) {

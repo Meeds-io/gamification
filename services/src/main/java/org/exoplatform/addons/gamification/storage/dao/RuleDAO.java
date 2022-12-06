@@ -263,7 +263,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       suffixes.add("Audience");
-      predicates.add("r.audience in (:ids)");
+      predicates.add("(r.audience in (:ids) OR r.audience IS NULL)");
     }
     if (filter.getDateFilterType() != null) {
       DateFilterType dateFilterType = filter.getDateFilterType();

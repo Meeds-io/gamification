@@ -16,19 +16,6 @@
  */
 package org.exoplatform.addons.gamification.service.setting.badge.impl;
 
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
-import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
-import org.exoplatform.commons.file.model.FileItem;
-import org.exoplatform.commons.file.services.FileService;
-import org.exoplatform.commons.file.services.NameSpaceService;
-import org.exoplatform.commons.utils.CommonsUtils;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.picocontainer.Startable;
-
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Date;
@@ -36,122 +23,123 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.picocontainer.Startable;
+
+import org.exoplatform.addons.gamification.service.configuration.BadgeService;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
+import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
+import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.file.model.FileItem;
+import org.exoplatform.commons.file.services.FileService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+
 public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
-    private static final Log LOG = ExoLogger.getLogger(BadgeRegistryImpl.class);
+  private static final Log               LOG = ExoLogger.getLogger(BadgeRegistryImpl.class);
 
-    private final Map<String, BadgeConfig> badgesMap;
+  private final Map<String, BadgeConfig> badgesMap;
 
-    private BadgeService badgeService;
-    private FileService fileService;
-    private DomainService domainService;
+  private BadgeService                   badgeService;
 
-    public BadgeRegistryImpl(FileService fileService,
-                             BadgeService badgeService,
-                             NameSpaceService nameSpaceService) {
-        this.badgesMap = new HashMap<String, BadgeConfig>();
-        this.fileService = fileService;
-        this.badgeService = badgeService;
-    }
+  private FileService                    fileService;
 
-    @Override
-    public void addPlugin(BadgeConfig badge) {
-        badgesMap.put(badge.getTitle(),badge);
+  private DomainService                  domainService;
 
-    }
+  public BadgeRegistryImpl(FileService fileService,
+                           DomainService domainService,
+                           BadgeService badgeService) {
+    this.badgesMap = new HashMap<>();
+    this.domainService = domainService;
+    this.fileService = fileService;
+    this.badgeService = badgeService;
+  }
 
-    @Override
-    public boolean remove(BadgeConfig badge) {
-        badgesMap.remove(badge.getTitle());
-        return true;
-    }
+  @Override
+  public void addPlugin(BadgeConfig badge) {
+    badgesMap.put(badge.getTitle(), badge);
 
-    @Override
-    public void start() {
-        try {
-            // Processing registered rules
-            List<BadgeDTO> badges = badgeService.getAllBadges();
-            if(badges.isEmpty()){
-                for (BadgeConfig badge : badgesMap.values()) {
-                    BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(),badge.getDomain());
+  }
 
-                    if (badgeDTO == null) {
-                        store(badge);
-                    }
+  @Override
+  public boolean remove(BadgeConfig badge) {
+    badgesMap.remove(badge.getTitle());
+    return true;
+  }
 
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("Error when processing Rules ", e);
+  @Override
+  public void start() {
+    try {
+      // Processing registered rules
+      List<BadgeDTO> badges = badgeService.getAllBadges();
+      if (badges.isEmpty()) {
+        for (BadgeConfig badge : badgesMap.values()) {
+          createBadge(badge);
         }
+      }
+    } catch (Exception e) {
+      LOG.error("Error when processing Rules ", e);
     }
+  }
 
-    private void store(BadgeConfig badgeConfig) {
+  @Override
+  public void stop() {
+    // Nothing to stop
+  }
 
-        domainService = CommonsUtils.getService(DomainService.class);
-        BadgeDTO badgeDTO = new BadgeDTO();
-        badgeDTO.setTitle(badgeConfig.getTitle());
-        badgeDTO.setDescription(badgeConfig.getDescription());
-        badgeDTO.setDomain(badgeConfig.getDomain());
-        badgeDTO.setDomainDTO(domainService.getDomainByTitle(badgeConfig.getDomain()));
-        badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
-        badgeDTO.setNeededScore(badgeConfig.getNeededScore());
-        badgeDTO.setEnabled(badgeConfig.isEnable());
-        badgeDTO.setDeleted(false);
-        badgeDTO.setLastModifiedDate(LocalDate.now().toString());
-        badgeDTO.setLastModifiedBy("Gamification");
-        badgeDTO.setCreatedBy("Gamification");
-
-        badgeDTO.setCreatedDate(LocalDate.now().toString());
-
-        badgeService.addBadge(badgeDTO);
-
+  private void createBadge(BadgeConfig badge) {
+    try {
+      BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(), badge.getDomain());
+      if (badgeDTO == null) {
+        store(badge);
+      }
+    } catch (Exception e) {
+      LOG.error("Error when processing Rules ", e);
     }
+  }
 
-    private long storeIcon (String iconTitle) {
-        InputStream inputStream;
+  private void store(BadgeConfig badgeConfig) throws ObjectAlreadyExistsException {
+    BadgeDTO badgeDTO = new BadgeDTO();
+    badgeDTO.setTitle(badgeConfig.getTitle());
+    badgeDTO.setDescription(badgeConfig.getDescription());
+    badgeDTO.setDomain(badgeConfig.getDomain());
+    badgeDTO.setDomainDTO(domainService.getDomainByTitle(badgeConfig.getDomain()));
+    badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
+    badgeDTO.setNeededScore(badgeConfig.getNeededScore());
+    badgeDTO.setEnabled(badgeConfig.isEnable());
+    badgeDTO.setDeleted(false);
+    badgeDTO.setLastModifiedDate(LocalDate.now().toString());
+    badgeDTO.setLastModifiedBy("Gamification");
+    badgeDTO.setCreatedBy("Gamification");
+    badgeDTO.setCreatedDate(LocalDate.now().toString());
+    badgeService.addBadge(badgeDTO);
+  }
 
-        /** Upload badge's icon into DB */
-        FileItem fileItem = null;
+  private long storeIcon(String iconTitle) {
+    /** Upload badge's icon into DB */
+    // Load icone's binary
+    try (InputStream inputStream = BadgeRegistryImpl.class.getClassLoader().getResourceAsStream("medias/images/" + iconTitle)) {
+      if (inputStream == null) {
+        return 0;
+      }
+      FileItem fileItem = new FileItem(null,
+                              iconTitle,
+                              "image/png",
+                              "gamification",
+                              inputStream.available(),
+                              new Date(),
+                              "gamification",
+                              false,
+                              inputStream);
 
-        long iconFiledId = 0;
-        try {
-
-            // Load icone's binary
-            inputStream = BadgeRegistryImpl.class.getClassLoader().getResourceAsStream("medias/images/"+iconTitle);
-            if (inputStream == null) {
-              LOG.warn("Can't find icon of badge with name '{}'. Ignore adding badge icon", iconTitle);
-              return 0;
-            }
-
-            fileItem = new FileItem(null,
-                    iconTitle,
-                    "image/png",
-                    "gamification",
-                    inputStream.available(),
-                    new Date(),
-                    "gamification",
-                    false,
-                    inputStream);
-
-            fileItem = fileService.writeFile(fileItem);
-
-            iconFiledId = fileItem.getFileInfo().getId();
-
-        } catch (Exception e) {
-
-            LOG.error("Enable to inject icon for badge {} ",iconTitle, e);
-
-        }
-
-        return iconFiledId;
-
-
-
+      fileItem = fileService.writeFile(fileItem);
+      return fileItem.getFileInfo().getId();
+    } catch (Exception e) {
+      LOG.error("Enable to inject icon for badge {} ", iconTitle, e);
+      return 0;
     }
+  }
 
-    @Override
-    public void stop() {
-
-    }
 }
