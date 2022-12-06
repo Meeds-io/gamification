@@ -35,6 +35,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <key>org.exoplatform.commons.api.settings.ExoFeatureService</key>
+        <type>org.exoplatform.settings.impl.ExoFeatureServiceImpl</type>
+    </component>
+
+    <component>
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
 
@@ -59,6 +64,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <key>org.exoplatform.social.core.manager.IdentityManager</key>
         <type>org.exoplatform.addons.gamification.mock.IdentityManagerMock</type>
+    </component>
+
+    <component>
+      <key>org.exoplatform.services.security.IdentityRegistry</key>
+      <type>org.exoplatform.addons.gamification.mock.IdentityRegistryMock</type>
     </component>
 
     <component>
