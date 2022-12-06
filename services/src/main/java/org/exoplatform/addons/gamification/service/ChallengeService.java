@@ -111,4 +111,9 @@ public interface ChallengeService {
    */
   void clearUserChallengeCache();
 
+  /**
+   * @return true if engagementCenter Feature is enabled
+   */
+  boolean isEngagementCenterEnabled();
+
 }

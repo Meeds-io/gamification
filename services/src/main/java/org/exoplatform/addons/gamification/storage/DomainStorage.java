@@ -19,9 +19,12 @@ package org.exoplatform.addons.gamification.storage;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -60,6 +63,13 @@ public class DomainStorage {
     if (StringUtils.isNotBlank(domainDTO.getCoverUploadId())) {
       Long coverFileId = saveDomainCover(domainDTO.getCoverUploadId());
       domainEntity.setCoverFileId(coverFileId);
+    }
+    HashSet<Long> owners = new HashSet<>();
+    if (CollectionUtils.isEmpty(domainEntity.getOwners())) {
+      domainEntity.setOwners(owners);
+    } else {
+      domainEntity.getOwners().forEach(owner -> owners.add(owner));
+      domainEntity.setOwners(owners);
     }
     if (domainEntity.getId() == null || domainEntity.getId() == 0) {
       domainEntity.setId(null);

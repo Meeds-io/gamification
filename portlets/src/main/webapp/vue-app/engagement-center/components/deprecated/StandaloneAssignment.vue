@@ -146,9 +146,6 @@ export default {
     },
   },
   watch: {
-    assigneeObj() {
-      this.$emit('input', this.assigneeObj);
-    },
     invitedChallengeAssignee() {
       const found = this.assigneeObj.find(attendee => attendee.remoteId === (this.invitedChallengeAssignee && this.invitedChallengeAssignee.remoteId));
       if (!found && this.invitedChallengeAssignee && this.invitedChallengeAssignee.remoteId) {
@@ -165,7 +162,6 @@ export default {
           }
           this.assigneeObj.push(newUser);
           this.$emit('add-manager',newUser.id);
-          this.$emit('input', this.assigneeObj);
           this.invitedChallengeAssignee = null;
           this.globalMenu = false;
         }).finally(() => {
@@ -186,8 +182,6 @@ export default {
   created() {
     this.assigneeObj = [];
     this.invitedChallengeAssignee = [];
-    this.assigneeObj = this.value || [];
-    this.space = this.audience;
     document.addEventListener('audienceChanged', event => {
       if (event && event.detail) {
         this.assigneeObj = event.detail.managers;
@@ -213,7 +207,6 @@ export default {
           }
           this.assigneeObj.push(newManager);
           this.$emit('add-item',newManager.id);
-          this.$emit('input', this.assigneeObj);
         });
       }
       this.globalMenu = false;
@@ -233,7 +226,6 @@ export default {
         this.assigneeObj = [];
       }
       this.$emit('remove-user', user.id);
-      this.$emit('input', this.assigneeObj);
     },
     reset() {
       this.assigneeObj = [];

@@ -199,7 +199,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         endDate,
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
     challenge = challengeService.createChallenge(challenge);
     Announcement announcement = new Announcement(0,
