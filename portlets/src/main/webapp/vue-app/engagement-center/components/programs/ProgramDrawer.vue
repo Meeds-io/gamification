@@ -20,12 +20,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="EngagementCenterDrawer"
     v-model="drawer"
     :right="!$vuetify.rtl"
-    eager
-    @closed="close">
+    eager>
     <template slot="title">
       <span class="pb-2"> {{ drawerTitle }} </span>
     </template>
-    <template slot="content">
+    <template v-if="drawer" #content>
       <v-card-text v-if="program">
         <div
           v-if="warning"
@@ -36,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-form
           id="EngagementCenterProgramDrawerForm"
           ref="form"
-          v-model="isValidTitle"
+          v-model="isValidForm"
           @submit="
             $event.preventDefault();
             $event.stopPropagation();
@@ -72,12 +71,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               ref="programDescription"
               v-model="program.description"
               :label="$t('programs.label.describeProgram')"
-              @addDescription="addDescription($event)" />
+              :max-length="maxDescriptionLength"
+              @addDescription="addDescription($event)"
+              @validity-updated="validDescription = $event" />
           </div>
           <div 
             v-if="showBudget"
             class="mt-4">
-            <span class="subtitle-1"> {{ $t('programs.label.budget') }}</span>
+            <span class="subtitle-1">{{ $t('programs.label.budget') }}</span>
             <template>
               <v-list-item
                 flat
@@ -99,41 +100,38 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-list-item>
             </template>
           </div>
-          <span class="subtitle-1"> {{ $t('challenges.label.audienceSpace') }} *</span>
+          <span class="subtitle-1">{{ $t('challenges.label.audienceSpace') }} *</span>
           <exo-identity-suggester
-              id="EngagementCenterProgramDrawerSpaceSuggester"
-              ref="programSpaceSuggester"
-              name="programSpaceAutocomplete"
-              v-model="audience"
-              :labels="spaceSuggesterLabels"
-              :width="220"
-              include-spaces />
+            id="EngagementCenterProgramDrawerSpaceSuggester"
+            ref="programSpaceSuggester"
+            name="programSpaceAutocomplete"
+            v-model="audience"
+            :items="audience && [audience] || []"
+            :labels="spaceSuggesterLabels"
+            :width="220"
+            include-spaces />
           <div class="my-2">
             <span class="subtitle-1"> {{ $t('programs.label.programOwners') }} *</span>
             <engagement-center-assignment
               id="engagementCenterProgramDrawerAssignee"
               ref="programAssignment"
-              class="my-2"
+              v-model="programOwners"
               :audience="audience"
-              v-model="program.owners"
-              multiple
-              @remove-user="removeOwner"
-              @add-item="addOwner" />
+              class="my-2"
+              multiple />
           </div>
           <div class="my-2 mt-4">
-            <template>
-              <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
-              <v-list-item class="px-0 mt-n6 mx-auto">
-                <v-list-item-content class="pt-1 mt-6">
-                  <span class="subtitle-1 text-light-color"> {{ $t('programs.label.enabled') }}</span>
-                </v-list-item-content>
-                <v-list-item-content class="flex flex-grow-0 flex-shrink-0 overflow-visible me-7">
-                  <v-switch
-                    id="engagementCenterProgramDrawerSwitch"
-                    v-model="program.enabled" />
-                </v-list-item-content>
-              </v-list-item>
-            </template>
+            <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
+            <v-list-item class="px-0 mt-n6 mx-auto">
+              <v-list-item-content class="pt-1 mt-6">
+                <span class="subtitle-1 text-light-color"> {{ $t('programs.label.enabled') }}</span>
+              </v-list-item-content>
+              <v-list-item-content class="flex flex-grow-0 flex-shrink-0 overflow-visible me-7">
+                <v-switch
+                  id="engagementCenterProgramDrawerSwitch"
+                  v-model="program.enabled" />
+              </v-list-item-content>
+            </v-list-item>
           </div>
         </v-form>
       </v-card-text>
@@ -144,11 +142,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-btn
           :disabled="loading"
           class="btn mx-1"
-          @click="close">
+          @click="$programDrawer.close()">
           {{ $t('engagementCenter.button.cancel') }}
         </v-btn>
         <v-btn
-          :disabled="!disabledSave"
+          :disabled="disabledSave"
           :loading="loading"
           class="btn btn-primary"
           @click="save">
@@ -161,23 +159,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 <script>
 export default {
-  computed: {
-    drawerTitle() {
-      return this.program && this.program.id ? this.$t('programs.button.editProgram') : this.$t('programs.button.addProgram');
-    },
-    disabledSave() {
-      return this.program && this.program.title && this.program.owners.length > 0 && this.program.description && this.isValidTitle && this.validDescription && !this.disabledUpdate;
-    },
-    buttonName() {
-      return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
-    },
-    spaceSuggesterLabels() {
-      return {
-        searchPlaceholder: this.$t('challenges.spaces.noDataLabel'),
-        placeholder: this.$t('challenges.spaces.placeholder'),
-      };
-    },
-  },
   data() {
     return {
       rules: {
@@ -185,15 +166,39 @@ export default {
         value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
       },
       program: null,
-      audience: '',
+      programOwners: [],
+      audience: null,
       warning: null,
-      validDescription: true,
-      isValidTitle: true,
+      isValidForm: true,
       drawer: false,
       showMenu: false,
       loading: false,
       showBudget: false,
+      validDescription: false,
     };
+  },
+  computed: {
+    drawerTitle() {
+      return this.program?.id ? this.$t('programs.button.editProgram') : this.$t('programs.button.addProgram');
+    },
+    disabledSave() {
+      return !this.isValidForm
+        || !this.audienceId
+        || !this.programOwners.length
+        || !this.validDescription;
+    },
+    buttonName() {
+      return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
+    },
+    audienceId() {
+      return Number(this.audience?.spaceId) || 0;
+    },
+    spaceSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('challenges.spaces.noDataLabel'),
+        placeholder: this.$t('challenges.spaces.placeholder'),
+      };
+    },
   },
   watch: {
     loading() {
@@ -204,31 +209,28 @@ export default {
       }
     },
     audience() {
-      if (this.audience && this.audience.id && !this.audience.notToChange) {
-        this.$spaceService.getSpaceMembers(null, 0, 0, null,'manager', this.audience.spaceId).then(managers => {
-          const listManagers = [];
-          managers.users.forEach(manager => {
-            const newManager= {
-              id: manager.id,
-              remoteId: manager.username,
-              fullName: manager.fullname,
-              avatarUrl: manager.avatar,
-            };
-            this.$set(this.program.owners,this.program.owners.length, newManager.id);
-            listManagers.push(newManager);
-          });
-          this.$set(this.program,'audienceId', this.audience.spaceId);
-          const data = {
-            managers: listManagers,
-            space: this.audience,
-          };
-          document.dispatchEvent(new CustomEvent('audienceChanged', {detail: data}));
-        });
-      } else if (this.audience && this.audience.id && this.audience.notToChange){
-        this.audience.notToChange = false ;
-        return;
-      } else {
-        document.dispatchEvent(new CustomEvent('audienceChanged'));
+      if (this.drawer) {
+        if (this.audience?.spaceId) {
+          this.$spaceService.getSpaceMembers(null, 0, 0, null,'manager', this.audience.spaceId)
+            .then(managers => {
+              const listManagers = managers.users.map(manager => ({
+                id: manager.id,
+                remoteId: manager.username,
+                fullName: manager.fullname,
+                avatarUrl: manager.avatar,
+              }));
+              const data = {
+                managers: listManagers,
+                space: this.audience,
+              };
+              this.programOwners = listManagers;
+              document.dispatchEvent(new CustomEvent('audienceChanged', {detail: data}));
+            });
+        } else {
+          this.program.space = null;
+          this.programOwners = [];
+          document.dispatchEvent(new CustomEvent('audienceChanged'));
+        }
       }
     },
   },
@@ -250,37 +252,30 @@ export default {
         enabled: true,
         owners: []
       };
+      this.programOwners = this.program?.owners?.slice() || [];
+
+      if (this.program?.id && this.program?.space) {
+        const space = this.program?.space ;
+        this.audience = {
+          id: `space:${space.displayName}` ,
+          profile: {
+            avatarUrl: space.avatarUrl,
+            fullName: space.displayName,
+          },
+          providerId: 'space',
+          remoteId: space.displayName,
+          spaceId: this.program.space.id,
+          notToChange: true,
+        };
+      } else {
+        this.audience = null;
+      }
       this.$refs.programDrawer.open();
-      this.$nextTick()
-        .then(() => {
-          if (this.program?.id) {
-            this.$refs.programAssignment.setUp(this.program?.owners);
-            if (this.program?.space) {
-              const space = this.program?.space ;
-              const NewAudience = {
-                id: `space:${ space.displayName }` ,
-                profile: {
-                  avatarUrl: space.avatarUrl,
-                  fullName: space.displayName,
-                },
-                providerId: 'space',
-                remoteId: space.displayName,
-                spaceId: this.program.space.id,
-                notToChange: true,
-              };
-              this.$refs.programSpaceSuggester.emitSelectedValue(NewAudience);
-            }
-          }
-          this.$refs.programDescription.initCKEditor();
-        });
+      this.$nextTick().then(() => this.$refs.programDescription.initCKEditor());
     },
     close() {
-      this.program = {};
-      this.$refs.programDescription.destroyCKEditor();
-      this.$refs.programCover.reset();
-      this.$refs.programAssignment.reset();
       this.$refs.programDrawer.close();
-      this.$refs.programSpaceSuggester.emitSelectedValue( {});
+      this.program = {};
     },
     addDescription(value) {
       if (value) {
@@ -292,58 +287,35 @@ export default {
         this.$set(this.program, 'coverUploadId', value);
       }
     },
-    removeOwner(id) {
-      const index = this.program.owners && this.program.owners.findIndex((owner) => {
-        if (owner?.id) {
-          return owner.id === id;
-        } else {
-          return owner === id;
-        }
-      });
-      if (index >= 0) {
-        this.$delete(this.program.owners, index, 1);
-      }
-    },
-    addOwner(id) {
-      const index = this.program.owners && this.program.owners.findIndex((owner) => {
-        if (owner?.id) {
-          return owner.id === id;
-        } else {
-          return owner === id;
-        }
-      });
-      if (index < 0) {
-        this.$set(this.program.owners, this.program.owners.length, id);
-      }
-    },
     save() {
+      if (this.disabledSave) {
+        return;
+      }
       this.program.type = 'MANUAL';
       this.loading = true;
-      if ( this.program?.id) {
-        if ( this.program.owners && this.program.owners[0].id){
-          this.program.owners = this.program.owners.map(owner => owner.id);
-        }
-        if ( this.program.audience){
-          this.program.owners = this.program.owners.map(owner => owner.id);
-        }
-        this.$programsServices.updateProgram(this.program)
-          .then((program) =>{
+      if (this.program?.id) {
+        const programToSave = JSON.parse(JSON.stringify(this.program));
+        programToSave.owners = this.programOwners?.map(owner => owner.id).filter(id => !!id);
+        programToSave.audienceId = this.audienceId;
+        this.$programsServices.updateProgram(programToSave)
+          .then((program) => {
+            this.close();
             this.$root.$emit('program-added', program);
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateSuccess'));
-            this.close();
-            this.program = {};
           })
           .catch(() => {
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateError'), 'error');
           })
           .finally(() => this.loading = false);
       } else {
-        this.$programsServices.saveProgram(this.program)
-          .then((program) =>{
+        const programToSave = JSON.parse(JSON.stringify(this.program));
+        programToSave.owners = this.programOwners?.map(owner => owner.id).filter(id => !!id);
+        programToSave.audienceId = this.audienceId;
+        this.$programsServices.saveProgram(programToSave)
+          .then((program) => {
             this.$root.$emit('program-added', program);
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateSuccess'));
             this.close();
-            this.program = {};
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateSuccess'));
           })
           .catch(() => {
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateError'),'error');

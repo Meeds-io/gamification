@@ -106,6 +106,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
       for (StandardLeaderboard element : standardLeaderboards) {
         Identity identity = identityManager.getIdentity(element.getEarnerId());
+        if (identity == null) {
+          continue;
+        }
         LeaderboardInfo leaderboardInfo = new LeaderboardInfo();
         leaderboardInfo.setSocialId(identity.getId());
         String technicalId = computeTechnicalId(identity);
