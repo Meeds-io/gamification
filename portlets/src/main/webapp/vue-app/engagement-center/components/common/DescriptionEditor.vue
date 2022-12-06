@@ -135,12 +135,12 @@ export default {
       this.editor = CKEDITOR.instances['descriptionContent'];
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
-        extraPlugins: 'simpleLink,widget',
+        extraPlugins: 'simpleLink,widget,emoji',
         removePlugins: 'suggester,image,maximize,resize',
         toolbarLocation: 'bottom',
         autoGrow_onStartup: true,
         toolbar: [
-          ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
+          ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote', 'emoji'],
         ],
         on: {
           change: evt => this.inputVal = evt.editor.getData(),
