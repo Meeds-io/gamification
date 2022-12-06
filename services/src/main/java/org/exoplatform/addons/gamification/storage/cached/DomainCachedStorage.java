@@ -23,7 +23,6 @@ import java.util.List;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.storage.DomainStorage;
 import org.exoplatform.addons.gamification.storage.dao.DomainDAO;
@@ -100,7 +99,9 @@ public class DomainCachedStorage extends DomainStorage {
   @Override
   @SuppressWarnings("unchecked")
   public List<DomainDTO> getEnabledDomains() {
-    CacheKey key = new CacheKey(DOMAIN_ENABLED_CONTEXT, new DomainFilter(EntityFilterType.ALL, EntityStatusType.ENABLED, "", false, false));
+    DomainFilter domainFilter = new DomainFilter();
+    domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
+    CacheKey key = new CacheKey(DOMAIN_ENABLED_CONTEXT, domainFilter);
 
     return (List<DomainDTO>) this.domainFutureCache.get(key, key.hashCode());
   }
