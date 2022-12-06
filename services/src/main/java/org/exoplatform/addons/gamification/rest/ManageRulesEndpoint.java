@@ -30,13 +30,13 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import javax.annotation.security.RolesAllowed;
-import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.CacheControl;
@@ -141,7 +141,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
       return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to create rule").build();
-    } catch (EntityExistsException e) {
+    } catch (ObjectAlreadyExistsException e) {
       return Response.status(Response.Status.CONFLICT).entity("Rule already exists").build();
     }
   }
@@ -170,8 +170,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
       return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to update rule").build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
-    } catch (EntityExistsException e) {
-      return Response.status(Response.Status.CONFLICT).entity("Rule already exists").build();
     }
   }
 

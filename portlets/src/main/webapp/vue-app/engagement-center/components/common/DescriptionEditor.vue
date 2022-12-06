@@ -58,11 +58,14 @@ export default {
       type: String,
       default: ''
     },
+    maxLength: {
+      type: Number,
+      default: () => 1300,
+    },
   },
   data() {
     return {
       inputVal: '',
-      maxLength: 1300,
       minLength: 1,
       disabled: false,
       displayPlaceholder: true,
