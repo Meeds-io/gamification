@@ -88,7 +88,7 @@ public class EntityBuilder {
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    fromAnnouncementList(challengeAnnouncements),
                                    challenge.getPoints(),
-                                   noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()),
+                                   noDomain ? null : Utils.getChallengeDomainDTO(challenge),
                                    challenge.isEnabled());
   }
 

@@ -119,8 +119,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("10")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
