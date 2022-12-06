@@ -190,7 +190,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       domainDTO = domainService.createDomain(domainDTO, identity);
       return Response.ok(EntityBuilder.toRestEntity(domainDTO, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("Unauthorized user {} attempts to create a domain", identity.getUserId(), domainDTO.getId(), e);
+      LOG.warn("Unauthorized user {} attempts to create a domain", identity.getUserId());
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
     }
   }
@@ -222,7 +222,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       domainDTO = domainService.updateDomain(domainDTO, identity);
       return Response.ok(EntityBuilder.toRestEntity(domainDTO, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("Unauthorized user {} attempts to update the domain", identity.getUserId(), domainDTO.getId(), e);
+      LOG.warn("Unauthorized user {} attempts to update the domain {}", identity.getUserId(), domainDTO.getId());
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
@@ -251,7 +251,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("unauthorized user {} trying to delete a domain", identity.getUserId(), e);
+      LOG.warn("unauthorized user {} trying to delete domain with id {}", identity.getUserId(), domainId);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
   }

@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.search.domain.Document;
@@ -88,8 +90,17 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("title", rule.getTitle());
     fields.put("description", StringEscapeUtils.unescapeHtml(rule.getDescription()));
     fields.put("score", String.valueOf(rule.getScore()));
-    fields.put("area", !StringUtils.isBlank(rule.getArea()) ? rule.getArea() : rule.getDomainEntity().getTitle());
-    fields.put("domainId", String.valueOf(rule.getDomainEntity().getId()));
+    DomainEntity domainEntity = rule.getDomainEntity();
+    if (StringUtils.isBlank(rule.getArea())) {
+      if (domainEntity != null) {
+        fields.put("area", domainEntity.getTitle());
+      }
+    } else {
+      fields.put("area", rule.getArea());
+    }
+    if (domainEntity != null) {
+      fields.put("domainId", String.valueOf(domainEntity.getId()));
+    }
     fields.put("event", rule.getEvent());
     fields.put("audience", String.valueOf(rule.getAudience() != null ? rule.getAudience() : 0));
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
