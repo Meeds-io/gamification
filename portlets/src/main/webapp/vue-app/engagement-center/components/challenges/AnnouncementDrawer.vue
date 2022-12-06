@@ -18,14 +18,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <exo-drawer
     ref="announcementDrawer"
     id="announcementDrawer"
-    class="EngagementCenterDrawer"
+    v-model="drawer"
     :right="!$vuetify.rtl"
+    class="EngagementCenterDrawer"
     @closed="close"
     eager>
-    <template slot="title">
+    <template #title>
       <span class="pb-2"> {{ $t('challenges.label.announce') }} </span>
     </template>
-    <template slot="content">
+    <template v-if="drawer" #content>
       <div class="pl-4 pr-4 mt-7 descriptionLabel">
         {{ $t('challenges.label.title') }}
       </div>
@@ -39,11 +40,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="pl-4" v-if="enableSuggester">
         <engagement-center-assignment
           ref="challengeAssignment"
-          class="my-2"
+          v-model="assignee"
           :audience="space"
-          v-model="announcement.assignee"
-          @remove-user="removeAssignee"
-          @add-item="addUser($event)" />
+          class="my-2" />
       </div>
       <div v-else-if="disableSuggester" class="pl-4 pr-4">
         <v-chip
@@ -62,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ $t('challenges.label.describeYourAchievement') }} *
         </div>
         <exo-activity-rich-editor
-          v-model="announcement.comment"
+          v-model="comment"
           ref="announcementRichEditor"
           :max-length="MAX_LENGTH"
           :template-params="templateParams"
@@ -100,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ $t('engagementCenter.button.cancel') }}
         </button>
         <button
-          :disabled="!disabledSave"
+          :disabled="disabledSave"
           class="ignore-vuetify-classes btn btn-primary"
           @click="createAnnouncement">
           {{ $t('engagementCenter.button.create') }}
@@ -118,20 +117,25 @@ export default {
       default: null
     }
   },
-  data() {
-    return {
-      announcement: {},
-      templateParams: {},
-      validInput: true,
-      MAX_LENGTH: 1300
-    };
-  },
+  data: () => ({
+    drawer: false,
+    assignee: null,
+    comment: null,
+    templateParams: {},
+    validInput: true,
+    MAX_LENGTH: 1300
+  }),
   computed: {
     space() {
       return this.challenge && this.challenge.space;
     },
     disabledSave() {
-      return this.announcement.assignee && this.announcement.assignee.length > 0 && this.validInput && this.announcement.comment && this.announcement.comment.length > 0;
+      return !this.assignee
+        || !this.assignee.length
+        || !this.assignee[0].id
+        || !this.validInput
+        || !this.comment
+        || !this.comment.length;
     },
     enableSuggester() {
       return this.challenge && (this.challenge.userInfo && this.challenge.userInfo.manager || this.challenge.userInfo && this.challenge.userInfo.redactor);
@@ -145,43 +149,45 @@ export default {
   },
   methods: {
     initAnnounce() {
-      this.announcement = {};
       this.templateParams = {};
+      this.comment = null;
       if (this.disableSuggester) {
-        this.$set(this.announcement,'assignee', this.challenge.userInfo.id);
+        this.assignee = [this.challenge.userInfo];
       } else {
-        this.$refs.challengeAssignment.assigneeObj = [];
+        this.assignee = null;
       }
     },
     open() {
       this.initAnnounce();
-      this.$refs.announcementRichEditor.initCKEditor();
       this.$refs.announcementDrawer.open();
+      this.$nextTick().then(() => this.$refs.announcementRichEditor.initCKEditor());
     },
     close() {
       this.$refs.announcementRichEditor.destroyCKEditor();
       this.$refs.announcementDrawer.close();
     },
-    removeAssignee() {
-      this.$set(this.announcement,'assignee', 0);
-    },
-    addDescription(value) {
-      if (value) {
-        this.$set(this.announcement,'comment', value);
-      }
-    },
     createAnnouncement() {
-      this.announcement.challengeId =  this.challenge.id;
-      this.announcement.challengeTitle =  this.challenge.title;
-      this.announcement.createdDate = new Date();
-      this.announcement.templateParams = this.templateParams;
-      this.$refs.announcementDrawer.startLoading();
+      if (this.disabledSave) {
+        return;
+      }
+      const announcement = {
+        assignee: this.assignee[0].id,
+        comment: this.comment,
+        challengeId: this.challenge.id,
+        challengeTitle: this.challenge.title,
+        templateParams: this.templateParams,
+      };
 
-      this.$challengesServices.saveAnnouncement(this.announcement).then((announcement) =>{
-        this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
-        this.$root.$emit('announcement-added', {detail: {announcement: announcement , challengeId: this.challenge.id}});
-        this.close();
-      })
+      this.$refs.announcementDrawer.startLoading();
+      this.$challengesServices.saveAnnouncement(announcement)
+        .then(createdAnnouncement => {
+          this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
+          this.$root.$emit('announcement-added', {detail: {
+            announcement: createdAnnouncement,
+            challengeId: this.challenge.id,
+          }});
+          this.close();
+        })
         .catch(e => {
           let msg = '';
           if (e.message === '401' || e.message === '403') {
@@ -194,9 +200,6 @@ export default {
           this.$engagementCenterUtils.displayAlert(msg, 'error');
         })
         .finally(() => this.$refs.announcementDrawer.endLoading());
-    },
-    addUser(id){
-      this.$set(this.announcement,'assignee', id);
     },
     openDrawer(event) {
       if (event) {

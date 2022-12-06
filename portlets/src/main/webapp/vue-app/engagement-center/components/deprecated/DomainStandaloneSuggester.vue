@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-flex :id="id">
     <v-autocomplete
       ref="selectAutoComplete"
-      v-model="program"
+      v-model="value"
       :label="labels.label"
       :placeholder="labels.placeholder"
       :items="domains"
@@ -57,7 +57,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :input-value="selected"
           :close="true"
           class="identitySuggesterItem"
-          @click:close="program = null">
+          @click:close="remove(item)">
           <span class="text-truncate">
             {{ item.title }}
           </span>
@@ -105,7 +105,6 @@ export default {
     return {
       id: `AutoComplete${parseInt(Math.random() * 10000)}`,
       domains: [],
-      program: null,
       searchTerm: null,
       loadingSuggestions: false,
       broadcast: true,
@@ -123,22 +122,14 @@ export default {
         this.waitForEndTyping();
       }
     },
-    program() {
-      if (this.program !== this.value) {
-        this.$emit('input', this.program);
-      }
-    },
     value() {
-      if (!this.domains.length && this.value) {
-        this.domains.push(this.value);
+      if (this.value && this.broadcast){
+        this.$emit('addProgram',this.value.title);
+      } else if (!this.broadcast) {
+        this.broadcast = true;
       }
+      this.$emit('input', this.value);
     },
-  },
-  created() {
-    this.program = this.value;
-    if (this.program) {
-      this.domains = [this.program];
-    }
   },
   mounted() {
     $(`#${this.id} input`).on('blur', () => {

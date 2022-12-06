@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <main v-else>
       <challenges :can-add-challenge="canAddChallenge" />
     </main>
-    <challenge-drawer v-if="canAddChallenge" ref="challengeDrawer" />
+    <challenge-drawer ref="challengeDrawer" />
   </v-app>
 </template>
 
