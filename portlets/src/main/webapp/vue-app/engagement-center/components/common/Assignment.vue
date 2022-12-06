@@ -55,7 +55,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           ref="challengeSpaceSuggester"
           v-model="invitedChallengeAssignee"
           :search-options="searchOptions"
-          :only-manager="onlyManager"
           :ignore-items="ignoredMembers"
           :type-of-relations="relationsType"
           :width="220"
@@ -94,6 +93,10 @@ export default {
     audience: {
       type: Object,
       default: () => null
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
     },
     onlyManager: {
       type: Boolean,
@@ -157,7 +160,9 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
-          this.assigneeObj =[];
+          if (!this.multiple){
+            this.assigneeObj =[];
+          }
           this.assigneeObj.push(newUser);
           this.$emit('add-manager',newUser.id);
           this.$emit('input', this.assigneeObj);
@@ -203,7 +208,9 @@ export default {
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
           };
-          this.assigneeObj =[];
+          if (!this.multiple){
+            this.assigneeObj =[];
+          }
           this.assigneeObj.push(newManager);
           this.$emit('add-item',newManager.id);
           this.$emit('input', this.assigneeObj);
@@ -217,7 +224,14 @@ export default {
       }) >= 0 ? true : false;
     },
     removeUser(user) {
-      this.assigneeObj = [];
+      if (this.multiple){
+        const index =  this.assigneeObj.findIndex(manager => {
+          return manager.remoteId === user.remoteId;
+        });
+        this.assigneeObj.splice(index, 1);
+      } else {
+        this.assigneeObj = [];
+      }
       this.$emit('remove-user', user.id);
       this.$emit('input', this.assigneeObj);
     },
