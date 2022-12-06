@@ -57,7 +57,8 @@
             id="EngagementCenterChallengeDrawerProgramSuggester"
             ref="challengeProgram"
             v-model="challenge.program"
-            :labels="programSuggesterLabels" />
+            :labels="programSuggesterLabels"
+            :only-owned="!isAdministrator" />
 
           <div class="mt-4">
             <span class="subtitle-1"> {{ $t('challenges.label.ChallengeDates') }} *</span>
@@ -128,6 +129,12 @@
 </template>
 <script>
 export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    }
+  },
   data() {
     return {
       rules: {
