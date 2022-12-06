@@ -17,28 +17,28 @@
 
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
+import java.io.Serializable;
+
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class DomainFilter implements Serializable {
 
   private static final long serialVersionUID = -610860313235738916L;
 
-  private EntityFilterType entityFilterType;
+  private EntityFilterType  entityFilterType = EntityFilterType.ALL;
 
-  private EntityStatusType entityStatusType;
-  
-  private String           domainTitle;
+  private EntityStatusType  entityStatusType = EntityStatusType.ALL;
 
-  private boolean          includeDeleted;
+  private String            domainTitle;
+
+  private boolean           includeDeleted;
+
+  private boolean           sortByBudget;
 
 }
