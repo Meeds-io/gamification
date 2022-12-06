@@ -21,13 +21,11 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEn
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 import org.exoplatform.addons.gamification.storage.dao.BadgeDAO;
-import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -125,92 +123,70 @@ public class BadgeService {
      * Add Badge to DB
      * @param badgeDTO : an object of type RuleDTO
      * @return BadgeDTO object
+     * @throws ObjectAlreadyExistsException when badge already exists
      */
-    public BadgeDTO addBadge (BadgeDTO badgeDTO) {
-
-        BadgeEntity badgeEntity = null;
-        try {
-            if(badgeDTO.getDomainDTO()!=null){
-                badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
-            }
-            badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(),badgeDTO.getDomain());
-            if(badgeEntity==null){
-                if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
-                    badgeDTO.setEnabled(false);
-                }
-                badgeEntity = badgeStorage.create(BadgeMapper.badgeDTOToBadge(badgeDTO));
-            }else if(badgeEntity.isDeleted()){
-                Long id = badgeEntity.getId();
-                badgeEntity = BadgeMapper.badgeDTOToBadge(badgeDTO);
-                badgeEntity.setId(id);
-                if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
-                    badgeDTO.setEnabled(false);
-                }
-                badgeEntity = badgeStorage.update(badgeEntity);
-            }else{
-                throw(new EntityExistsException());
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to create badge with title {}", badgeDTO.getTitle() , e);
-            throw(e);
+    public BadgeDTO addBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
+      BadgeEntity badgeEntity = null;
+      if (badgeDTO.getDomainDTO() != null) {
+        badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
+      }
+      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomain());
+      if (badgeEntity == null) {
+        if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
+          badgeDTO.setEnabled(false);
         }
-
-        return BadgeMapper.badgeToBadgeDTO(badgeEntity);
+        badgeEntity = badgeStorage.create(BadgeMapper.badgeDTOToBadge(badgeDTO));
+      } else if (badgeEntity.isDeleted()) {
+        Long id = badgeEntity.getId();
+        badgeEntity = BadgeMapper.badgeDTOToBadge(badgeDTO);
+        badgeEntity.setId(id);
+        if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
+          badgeDTO.setEnabled(false);
+        }
+        badgeEntity = badgeStorage.update(badgeEntity);
+      } else {
+        throw new ObjectAlreadyExistsException("Badge already exists");
+      }
+      return BadgeMapper.badgeToBadgeDTO(badgeEntity);
     }
 
     /**
      * Update Badge to DB
      * @param badgeDTO : an instance of type BadgeDTO
      * @return BadgeDTO object
+     * @throws ObjectAlreadyExistsException when badge already exists
      */
-    public BadgeDTO updateBadge (BadgeDTO badgeDTO) {
-
-        BadgeEntity badgeEntity = null;
-        try {
-            if(badgeDTO.getDomainDTO()!=null){
-                badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
-            }
-            badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(),badgeDTO.getDomain());
-            if(  badgeEntity!=null && badgeEntity.getId()!=badgeDTO.getId()){
-                throw(new EntityExistsException("Badge with same title and domain already exist"));
-            }
-                if(badgeDTO.getDomainDTO()==null || !badgeDTO.getDomainDTO().isEnabled()){
-                    badgeDTO.setEnabled(false);
-                }
-                badgeEntity = badgeStorage.update(BadgeMapper.badgeDTOToBadge(badgeDTO));
-
-        } catch (Exception e) {
-            LOG.error("Error to update with title {}", badgeDTO.getTitle() , e);
-            throw(e);
-        }
-
-        return BadgeMapper.badgeToBadgeDTO(badgeEntity);
+    public BadgeDTO updateBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
+      BadgeEntity badgeEntity = null;
+      if (badgeDTO.getDomainDTO() != null) {
+        badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
+      }
+      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomain());
+      if (badgeEntity != null
+          && badgeDTO.getId() != null
+          && badgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
+        throw new ObjectAlreadyExistsException("Badge with same title and domain already exist");
+      }
+      if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
+        badgeDTO.setEnabled(false);
+      }
+      badgeEntity = badgeStorage.update(BadgeMapper.badgeDTOToBadge(badgeDTO));
+      return BadgeMapper.badgeToBadgeDTO(badgeEntity);
     }
 
     /**
      * Delete a BadgeEntity using the id
      * @param id : badge id
+     * @throws ObjectNotFoundException when badge doesn't exist
      */
-    public void deleteBadge (Long id) {
-
-        try {
-
-            BadgeEntity badgeEntity = badgeStorage.find(id);
-            if(badgeEntity!=null){
-                badgeEntity.setDeleted(true);
-                badgeStorage.update(badgeEntity);
-            }else{
-                LOG.warn("Badge {} not Found",id);
-                throw(new EntityNotFoundException());
-            }
-
-
-        } catch (Exception e) {
-            LOG.error("Error to delete badge with title {}", id, e);
-        }
-
-
+    public void deleteBadge(Long id) throws ObjectNotFoundException {
+      BadgeEntity badgeEntity = badgeStorage.find(id);
+      if (badgeEntity != null) {
+        badgeEntity.setDeleted(true);
+        badgeStorage.update(badgeEntity);
+      } else {
+        throw new ObjectNotFoundException("Badge with id " + id + " not Found");
+      }
     }
 
     public List<BadgeDTO> findBadgesByDomain(String badgeDomain) {
@@ -225,9 +201,7 @@ public class BadgeService {
         } catch (Exception e) {
             LOG.error("Error to find badges within domain {}", badgeDomain, e);
         }
-        return null;
-
-
+        return Collections.emptyList();
     }
 
     public List<BadgeDTO> findEnabledBadgesByDomain(String badgeDomain) {
@@ -242,9 +216,7 @@ public class BadgeService {
         } catch (Exception e) {
             LOG.error("Error to find badges within domain {}", badgeDomain, e);
         }
-        return null;
-
-
+        return Collections.emptyList();
     }
 
 
@@ -252,7 +224,7 @@ public class BadgeService {
      * Get all Rules by with null DomainDTO from DB
      * @return RuleDTO list
      */
-    public List<BadgeDTO> getAllBadgesWithNullDomain() throws Exception{
+    public List<BadgeDTO> getAllBadgesWithNullDomain() {
         try {
             List<BadgeEntity> rules =  badgeStorage.getAllBadgesWithNullDomain();
             if (rules != null) {
@@ -263,7 +235,7 @@ public class BadgeService {
             LOG.error("Error to find Badges",e);
             throw (e);
         }
-        return null;
+        return Collections.emptyList();
     }
 
 

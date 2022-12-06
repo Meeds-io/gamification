@@ -7,8 +7,15 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -151,15 +158,12 @@ public class Utils {
   public static final boolean canAnnounce(String spaceId, String username) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceById(spaceId);
-    if (space == null) {
-      throw new IllegalArgumentException("space doesn't exist");
-    }
-    if (StringUtils.isNotBlank(username)) {
+    if (space == null || StringUtils.isBlank(username)) {
+      return false;
+    } else {
       IdentityRegistry identityRegistry = CommonsUtils.getService(IdentityRegistry.class);
       org.exoplatform.services.security.Identity identity = identityRegistry.getIdentity(username);
       return spaceService.canRedactOnSpace(space, identity);
-    } else {
-      return false;
     }
   }
 
@@ -232,6 +236,7 @@ public class Utils {
     return domainService.getDomainById(domainId);
   }
 
+  @SuppressWarnings("deprecation")
   public static DomainDTO getChallengeDomainDTO(Challenge challenge) {
     DomainDTO domain;
     if (challenge.getProgramId() > 0) {
@@ -315,8 +320,6 @@ public class Utils {
     String username = identity.getRemoteId();
     if (space != null) {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      IdentityRegistry identityRegistry = CommonsUtils.getService(IdentityRegistry.class);
-
       boolean isSuperManager = spaceService.isSuperManager(username);
       boolean isManager = isSuperManager || spaceService.isManager(space, username);
       boolean isMember = isManager || spaceService.isMember(space, username);
@@ -324,12 +327,7 @@ public class Utils {
       userInfo.setManager(isManager);
       userInfo.setMember(isMember);
       userInfo.setRedactor(isRedactor);
-      org.exoplatform.services.security.Identity userAclIdentity = identityRegistry.getIdentity(username);
-      if (userAclIdentity != null) {
-        userInfo.setCanAnnounce(spaceService.canRedactOnSpace(space, userAclIdentity));
-      } else {
-        userInfo.setCanAnnounce(false);
-      }
+      userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
       userInfo.setCanEdit(Utils.isChallengeManager(managerIds, Long.parseLong(space.getId()), username));
     }
     return userInfo;

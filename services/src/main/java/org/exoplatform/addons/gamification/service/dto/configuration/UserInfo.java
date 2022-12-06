@@ -47,7 +47,7 @@ public class UserInfo implements Cloneable {
   private boolean isDomainOwner;
 
   @Override
-  protected UserInfo clone() {
+  protected UserInfo clone() { //NOSONAR
     return new UserInfo(id, remoteId, fullName, avatarUrl, canEdit, canAnnounce, isMember, isRedactor, isManager, isDomainOwner);
   }
 

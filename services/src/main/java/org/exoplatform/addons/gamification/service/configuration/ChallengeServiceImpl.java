@@ -101,12 +101,14 @@ public class ChallengeServiceImpl implements ChallengeService {
       return null;
     }
     String idSpace = String.valueOf(challenge.getAudience());
-    if (StringUtils.isBlank(idSpace)) {
-      throw new IllegalArgumentException("space id must not be null or empty");
-    }
-    Space space = spaceService.getSpaceById(idSpace);
-    if (!spaceService.isManager(space, username) && !spaceService.isMember(space, username)) {
-      throw new IllegalAccessException("user is not allowed to access to the challenge");
+    if (StringUtils.isNotBlank(idSpace)) {
+      Space space = spaceService.getSpaceById(idSpace);
+      if (space != null
+          && !spaceService.isMember(space, username)
+          && !spaceService.isSuperManager(username)
+          && !Utils.isAdministrator(username)) {
+        throw new IllegalAccessException("user is not allowed to access to the challenge");
+      }
     }
     return challenge;
   }
@@ -263,9 +265,9 @@ public class ChallengeServiceImpl implements ChallengeService {
   private void applyDomainAttributes(Challenge challenge, boolean throwWhenNotfound) {
     DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
     if (domain == null) {
-      if (throwWhenNotfound) {
+      if (challenge.getAudience() == 0 && throwWhenNotfound) {
         // Should be ObjectNotFoundException, but avoid changing API signature
-        throw new IllegalArgumentException("Program is Mandatory");
+        throw new IllegalArgumentException("Audience is Mandatory");
       }
     } else {
       challenge.setProgramId(domain.getId());

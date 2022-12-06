@@ -17,7 +17,6 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;

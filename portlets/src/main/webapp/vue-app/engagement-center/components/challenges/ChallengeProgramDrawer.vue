@@ -255,7 +255,7 @@ export default {
       if (this.challenge.id) {
         const chanllengeToSave = JSON.parse(JSON.stringify(this.challenge));
         chanllengeToSave.programId = this.challenge.program.id;
-
+        chanllengeToSave.program = this.challenge.program.title;
         this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.updateChallenge(chanllengeToSave)
           .then(challenge =>{
@@ -271,10 +271,10 @@ export default {
           })
           .finally(() => this.$refs.challengeDrawer.endLoading());
       } else {
-        this.$refs.challengeDrawer.startLoading();
-
         const chanllengeToSave = JSON.parse(JSON.stringify(this.challenge));
         chanllengeToSave.programId = this.challenge.program.id;
+        chanllengeToSave.program = this.challenge.program.title;
+        this.$refs.challengeDrawer.startLoading();
         this.$challengesServices.saveChallenge(chanllengeToSave)
           .then((challenge) =>{
             this.$root.$emit('challenge-added', challenge);

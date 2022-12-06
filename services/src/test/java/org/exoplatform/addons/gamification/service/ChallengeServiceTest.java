@@ -151,10 +151,13 @@ public class ChallengeServiceTest {
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challengeCreated, "root"));
 
     when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(false);
-    assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challenge, "root"));
-    when(Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
+    assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
+    when(Utils.isAdministrator("root")).thenReturn(true);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
     when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
+    challenge.setAudience(0);
+    assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challenge, "root"));
+    challenge.setAudience(1l);
 
     Challenge savedChallenge = challengeService.createChallenge(challenge, "root");
     assertNotNull(savedChallenge);
@@ -241,11 +244,10 @@ public class ChallengeServiceTest {
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
+    when(Utils.isAdministrator("root")).thenReturn(true);
     Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
     assertNotNull(storedChallenge);
     assertEquals(1l, storedChallenge.getId());
-
-    PowerMockito.mockStatic(Utils.class);
 
     // When
     assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(-1l, "root"));

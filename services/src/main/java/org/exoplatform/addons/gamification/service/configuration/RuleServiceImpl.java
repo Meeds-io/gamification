@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
-
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
@@ -31,10 +29,13 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
 
 public class RuleServiceImpl implements RuleService {
+
+  private static final String USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
   private final RuleStorage      ruleStorage;
 
@@ -153,7 +154,7 @@ public class RuleServiceImpl implements RuleService {
   @Override
   public RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
     if (username == null) {
-      throw new IllegalArgumentException("Username is mandatory");
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     if (ruleId == null || ruleId <= 0) {
       throw new IllegalArgumentException("ruleId must be positive");
@@ -174,12 +175,12 @@ public class RuleServiceImpl implements RuleService {
    * {@inheritDoc}
    */
   @Override
-  public RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException {
+  public RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException {
     if (ruleDTO == null) {
       throw new IllegalArgumentException("rule object is mandatory");
     }
     if (username == null) {
-      throw new IllegalArgumentException("Username is mandatory");
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     if (ruleDTO.getId() != null) {
       throw new IllegalArgumentException("domain id must be equal to 0");
@@ -199,11 +200,11 @@ public class RuleServiceImpl implements RuleService {
    * {@inheritDoc}
    */
   @Override
-  public RuleDTO createRule(RuleDTO ruleDTO) {
+  public RuleDTO createRule(RuleDTO ruleDTO) throws ObjectAlreadyExistsException {
     long domainId = ruleDTO.getDomainDTO().getId();
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
     if (oldRule != null && !oldRule.isDeleted()) {
-      throw new EntityExistsException("Rule with same event and domain already exist");
+      throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
     ruleDTO = ruleStorage.saveRule(ruleDTO);
     Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
@@ -216,7 +217,7 @@ public class RuleServiceImpl implements RuleService {
   @Override
   public RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException {
     if (username == null) {
-      throw new IllegalArgumentException("Username is mandatory");
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     if (ruleDTO.getId() == null || ruleDTO.getId() == 0) {
       throw new ObjectNotFoundException("Rule id is mandatory");
@@ -230,7 +231,7 @@ public class RuleServiceImpl implements RuleService {
       long domainId = ruleDTO.getDomainDTO().getId();
       RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
       if (existRule != null && !existRule.getId().equals(oldRule.getId()) && !existRule.isDeleted()) {
-        throw new EntityExistsException("Rule with same event and domain already exist");
+        throw new IllegalStateException("Rule with same event and domain already exist");
       }
     }
     if (!canManageRule(username)) {

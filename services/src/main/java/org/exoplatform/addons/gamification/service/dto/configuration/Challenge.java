@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 public class Challenge implements Cloneable {
 
   /**
-   * @param      id
-   * @param      title
-   * @param      description
-   * @param      audience
-   * @param      startDate
-   * @param      endDate
-   * @param      managers
-   * @param      points
-   * @param      program
-   * @param      enabled
+   * @param      id technical identifier
+   * @param      title challenge title
+   * @param      description challenge description
+   * @param      audience challenge rule/program audience
+   * @param      startDate challenge start date
+   * @param      endDate challenge end date
+   * @param      managers challenge rule/program managers
+   * @param      points challenge associated points when announced
+   * @param      program associated program title, deprecated, should use programId
+   * @param      enabled whether challenge is enabled or not
    * @deprecated             deprecated to use the full fields constructor
    *                         instead. Kept for API backward compatibility
    * @since                  05/12/2022
@@ -74,7 +74,7 @@ public class Challenge implements Cloneable {
    *             compatibility when engagement center is disabled
    */
   @Deprecated(forRemoval = true, since = "05/12/2022")
-  private String     program;
+  private String     program;    // NOSONAR
 
   private long       programId;
 
