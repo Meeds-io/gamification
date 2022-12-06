@@ -255,7 +255,10 @@ public class ChallengeRest implements ResourceContainer {
         LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
-        DomainFilter domainFilter = new DomainFilter(EntityFilterType.ALL, EntityStatusType.ENABLED, "", true, false);
+        DomainFilter domainFilter = new DomainFilter();
+        domainFilter.setEntityFilterType(EntityFilterType.ALL);
+        domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
+        domainFilter.setSortByBudget(true);
         List<DomainDTO> domains = domainService.getDomainsByFilter(domainFilter, 0, -1);
         List<DomainWithChallengesRestEntity> domainsWithChallenges = new ArrayList<>();
         for (DomainDTO domain : domains) {
