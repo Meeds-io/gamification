@@ -143,7 +143,7 @@ export default {
           ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
         ],
         on: {
-          change: evt => this.inputVal = evt.editor.getData(),
+          change: evt => this.inputVal = evt.editor?.getData() || '',
           destroy: () => this.inputVal = '',
         }
       });
