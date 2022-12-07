@@ -154,7 +154,7 @@ export default {
     },
     domainsById() {
       const domainsById = {};
-      this.domainsHavingChallenges.forEach(domain => {
+      this.domainsWithChallenges.forEach(domain => {
         domainsById[domain.id] = domain;
       });
       return domainsById;
@@ -242,8 +242,8 @@ export default {
   },
   methods: {
     pushChallenge(challenge) {
-      if (challenge?.program?.id && this.challengesByDomainId[challenge.program.id]) {
-        this.challengesByDomainId[challenge.program.id].push(challenge);
+      if (challenge?.program?.id) {
+        this.getChallenges(false, challenge.program.id);
       }
     },
     refreshChallenges() {
@@ -265,20 +265,27 @@ export default {
           }
           this.domains = result;
           if (domainId) {
-            const program = Object.assign({}, this.domainsById[domainId]);
-            Object.assign(program, {challenges: null});
+            const program = this.domainsById[domainId] || {};
+            if (!program.challenges) {
+              program.challenges = [];
+            }
             result.forEach(challenge => challenge.program = program);
             if (append) {
-              this.domainsById[domainId].challenges = this.challengesByDomainId[domainId].concat(result);
+              program.challenges = this.challengesByDomainId[domainId].concat(result);
             } else {
-              this.domainsById[domainId].challenges = result;
+              program.challenges = result || [];
+              if (!program.challengesSize || program.challengesSize < 6) {
+                program.challengesSize = result.length;
+              }
             }
           } else {
             result.forEach(domain => {
-              if (domain.challenges?.length) {
+              if (domain.challenges) {
                 const program = Object.assign({}, domain);
-                Object.assign(program, {challenges: null});
-                Object.values(domain.challenges).forEach(challenge => challenge.program = program);
+                delete program.challenges;
+                domain.challenges.forEach(challenge => challenge.program = program);
+              } else {
+                domain.challenges = [];
               }
             });
             this.domainsWithChallenges = result;

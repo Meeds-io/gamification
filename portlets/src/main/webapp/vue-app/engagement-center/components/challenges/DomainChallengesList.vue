@@ -15,7 +15,7 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-expansion-panel v-if="!loading">
+  <v-expansion-panel v-if="size">
     <v-expansion-panel-header class="pa-3" hide-actions>
       <template #default="{open}">
         <v-list-item flat dense>
@@ -36,6 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-container>
+        <v-progress-linear v-if="loading" indeterminate />
         <v-row no-gutters>
           <v-col
             v-for="challenge in challenges"
