@@ -39,21 +39,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ $t('challenges.winners.details') }}
         </span>
         <span
-          v-if="winners && winners.length"
+          v-if="announcementsCount"
           class="viewAll"
           @click="openDetails">
           {{ $t('challenges.label.fullView') }}
         </span>
       </v-flex>
       <div class="assigneeAvatars flex-nowrap">
-        <div class="winners pa-2" v-if="!announcementsCount">
+        <div v-if="!announcementsCount" class="winners pa-2">
           <p class="emptyWinners my-auto pl-2 align-self-end text-no-wrap pt-1">
             {{ announcementsCount }} {{ $t('challenges.winners.details') }}
           </p>
         </div>
         <div v-else class="winners winnersAvatarsList d-flex flex-nowrap my-2 px-4">
           <engagement-center-avatars-list
-            :avatars="avatarToDisplay"
+            :avatars="winners"
             :max-avatars-to-show="6"
             :avatars-count="announcementCount"
             :size="28"
@@ -142,21 +142,21 @@ export default {
   data: () => ({
     challenge: {},
     drawer: false,
-    winners: [],
+    announcements: [],
     maxAvatarToShow: 5,
   }),
   computed: {
-    avatarToDisplay () {
-      return this.winners ;
-    },
     space() {
       return this.challenge?.space;
     },
     users() {
       return this.challenge?.managers || [];
     },
-    announcementCount() {
-      return this.challenge?.announcementsCount || this.winners.length;
+    winners() {
+      return this.announcements?.map(announce => ({'userName': announce.assignee})) || [];
+    },
+    announcementsCount() {
+      return this.challenge?.announcementsCount || this.announcements?.length || 0;
     },
     description() {
       return this.challenge?.description;
@@ -177,30 +177,31 @@ export default {
       return this.challenge?.program?.title;
     }
   },
+  watch: {
+    challenge() {
+      if (this.challenge) {
+        window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.challenge.id}`);
+      } else {
+        window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
+      }
+    },
+  },
   created() {
     this.$root.$on('open-challenge-details', this.open);
   },
   methods: {
     open(challenge) {
       this.challenge = challenge;
-      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.challenge.id}`);
-
-      this.$refs.challengeDetails.open();
       this.$refs.challengeDetails.startLoading();
       this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge?.id, 0, this.maxAvatarToShow)
-        .then(announcements => {
-          this.winners = [];
-          if (announcements.length > 0) {
-            announcements.map(announce => {
-              this.winners.push({'userName': announce.assignee });
-            });
-          }
-          return this.$nextTick();
-        }).finally(() => this.$refs.challengeDetails.endLoading());
+        .then(announcements => this.announcements = announcements)
+        .finally(() => this.$refs.challengeDetails.endLoading());
+
+      this.$refs.challengeDetails.open();
     },
     close() {
-      window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
       this.$refs.challengeDetails.close();
+      this.challenge = null;
     },
     getFromDate(date) {
       return this.$engagementCenterUtils.getFromDate(date);
