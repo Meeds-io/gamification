@@ -192,6 +192,7 @@ export default {
       this.challenge = challenge && JSON.parse(JSON.stringify(challenge)) || {
         points: 20,
         enabled: true,
+        description: '',
       };
 
       const status = this.getChallengeStatus();
