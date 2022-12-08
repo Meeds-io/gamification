@@ -312,9 +312,9 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testGetManagersByIds() {
-    List<UserInfo> usersInfo = Utils.getManagersByIds(Collections.emptyList());
+    List<UserInfo> usersInfo = Utils.getOwners(Collections.emptyList());
     assertEquals(0, usersInfo.size());
-    usersInfo = Utils.getManagersByIds(Collections.singletonList(1l));
+    usersInfo = Utils.getOwners(Collections.singletonList(1l));
     assertEquals(1, usersInfo.size());
   }
 

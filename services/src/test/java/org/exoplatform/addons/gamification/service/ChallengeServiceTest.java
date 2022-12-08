@@ -90,8 +90,7 @@ public class ChallengeServiceTest {
     challengeService = new ChallengeServiceImpl(challengeStorage,
                                                 spaceService,
                                                 exoFeatureService,
-                                                listenerService,
-                                                params);
+                                                listenerService);
   }
 
   @PrepareForTest({ Utils.class })
@@ -152,7 +151,7 @@ public class ChallengeServiceTest {
 
     when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(false);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-    when(Utils.isAdministrator("root")).thenReturn(true);
+    when(Utils.isSuperManager("root")).thenReturn(true);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
     when(Utils.isChallengeManager(anyList(), anyLong(), anyString())).thenReturn(true);
     challenge.setAudience(0);
@@ -244,7 +243,7 @@ public class ChallengeServiceTest {
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
-    when(Utils.isAdministrator("root")).thenReturn(true);
+    when(Utils.isSuperManager("root")).thenReturn(true);
     Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
     assertNotNull(storedChallenge);
     assertEquals(1l, storedChallenge.getId());

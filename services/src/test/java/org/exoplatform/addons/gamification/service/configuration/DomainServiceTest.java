@@ -283,14 +283,14 @@ public class DomainServiceTest extends AbstractServiceTest {
   @Test
   public void testCanUpdateDomain() throws IllegalAccessException, ObjectNotFoundException {
     DomainDTO domain = newDomainDTO();
-    assertFalse(domainService.canUpdateDomain(domain.getId(), null));
-    assertFalse(domainService.canUpdateDomain(domain.getId(), regularAclIdentity));
-    assertTrue(domainService.canUpdateDomain(domain.getId(), adminAclIdentity));
-    assertFalse(domainService.canUpdateDomain(0, regularAclIdentity));
+    assertFalse(domainService.isDomainOwner(domain.getId(), null));
+    assertFalse(domainService.isDomainOwner(domain.getId(), regularAclIdentity));
+    assertTrue(domainService.isDomainOwner(domain.getId(), adminAclIdentity));
+    assertFalse(domainService.isDomainOwner(0, regularAclIdentity));
     String identityId = identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId()).getId();
     domain.setOwners(Collections.singleton(Long.parseLong(identityId)));
     domainService.updateDomain(domain, adminAclIdentity);
-    assertTrue(domainService.canUpdateDomain(domain.getId(), regularAclIdentity));
+    assertTrue(domainService.isDomainOwner(domain.getId(), regularAclIdentity));
   }
 
   @Test
