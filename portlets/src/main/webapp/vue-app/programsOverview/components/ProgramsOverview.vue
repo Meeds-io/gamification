@@ -23,7 +23,7 @@
         {{ $t('gamification.overview.programsOverviewTitle') }}
       </template>
       <template #content>
-        <gamification-overview-widget-row v-show="!programsDisplayed" class="my-auto">
+        <gamification-overview-widget-row v-show="!programsDisplayed" class="my-auto mx-4">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-bullhorn</v-icon>
           </template>
