@@ -8,9 +8,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +42,7 @@ import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.resources.ResourceBundleService;
+import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -51,6 +55,8 @@ import org.exoplatform.social.rest.api.EntityBuilder;
 import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
+
+import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 
 public class Utils {
 
@@ -65,7 +71,9 @@ public class Utils {
   public static final DateTimeFormatter SIMPLE_DATE_FORMATTER       = DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
                                                                                        .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
+  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = {
+      ',', ';', '\n'
+  };
 
   public static final String            POST_CREATE_RULE_EVENT      = "rule.created";
 
@@ -88,7 +96,7 @@ public class Utils {
   public static final String            TYPE                        = "cover";
 
   public static final String            REWARDING_GROUP             = "/platform/rewarding";
-  
+
   public static final String            ADMINS_GROUP                = "/platform/administrators";
 
   private static final String           IDENTITIES_REST_PATH        = "/v1/social/identities";                                   // NOSONAR
@@ -132,20 +140,46 @@ public class Utils {
     return null;
   }
 
-  public static boolean isChallengeManager(List<Long> managersId, long spaceId, String username) {
-    org.exoplatform.services.security.Identity currentUser = ConversationState.getCurrent().getIdentity();
+  @SuppressWarnings("removal")
+  public static boolean isChallengeManager(Challenge challenge, long spaceId, String username) {
     ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-    if (currentUser != null && challengeService.canAddChallenge(currentUser)) {
-      return true;
-    }
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    if (challengeService.isEngagementCenterEnabled()) {
+      return isChallengeManager(challenge, username);
+    } else {
+      // Kept for backward compatibility
+      org.exoplatform.services.security.Identity currentUser = getUserAclIdentity(username);
+      if (currentUser != null && challengeService.canAddChallenge(currentUser)) {
+        return true;
+      }
+      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
 
-    Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
-    if (identity != null) {
-      return managersId.stream().anyMatch(id -> id == Long.parseLong(identity.getId())) || isSpaceManager(spaceId, username)
-          || spaceService.isSuperManager(username);
+      Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
+      if (identity != null) {
+        return isSpaceManager(spaceId, username)
+            || spaceService.isSuperManager(username)
+            || (challenge.getManagers() != null
+                && challenge.getManagers().stream().anyMatch(id -> id == Long.parseLong(identity.getId())));
+      }
+      return false;
     }
-    return false;
+  }
+
+  @SuppressWarnings("deprecation")
+  public static boolean isChallengeManager(Challenge challenge, String username) {
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    long programId = challenge.getProgramId();
+    if (programId == 0) {
+      if (StringUtils.isBlank(challenge.getProgram())) {// NOSONAR
+        return false;
+      } else {
+        DomainDTO domain = domainService.getDomainByTitle(challenge.getProgram());// NOSONAR
+        if (domain == null) {
+          return false;
+        }
+        programId = domain.getId();
+      }
+    }
+    return domainService.isDomainOwner(programId, getUserAclIdentity(username));
   }
 
   public static final boolean canAnnounce(String spaceId, String username) {
@@ -154,8 +188,7 @@ public class Utils {
     if (space == null || StringUtils.isBlank(username)) {
       return false;
     } else {
-      IdentityRegistry identityRegistry = CommonsUtils.getService(IdentityRegistry.class);
-      org.exoplatform.services.security.Identity identity = identityRegistry.getIdentity(username);
+      org.exoplatform.services.security.Identity identity = getUserAclIdentity(username);
       return spaceService.canRedactOnSpace(space, identity);
     }
   }
@@ -235,7 +268,10 @@ public class Utils {
     if (challenge.getProgramId() > 0) {
       domain = Utils.getDomainDTOById(challenge.getProgramId());
     } else {
-      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());// NOSONAR kept for backward compatibility
+      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());// NOSONAR
+                                                                     // kept for
+                                                                     // backward
+                                                                     // compatibility
     }
     return domain;
   }
@@ -264,7 +300,35 @@ public class Utils {
     return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
   }
 
-  public static List<UserInfo> getManagersByIds(List<Long> ids) {
+  public static List<UserInfo> getOwners(Challenge challenge) {// NOSONAR
+    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+    if (challengeService.isEngagementCenterEnabled()) {
+      DomainDTO domain = getChallengeDomainDTO(challenge);
+      if (domain == null) {
+        return Collections.emptyList();
+      } else {
+        Set<Long> owners = domain.getOwners() == null ? new HashSet<>()
+                                                      : new HashSet<>(domain.getOwners());
+        if (domain.getAudienceId() > 0) {
+          SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+          Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
+          if (space != null) {
+            IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+            String[] managers = space.getManagers();
+            Arrays.stream(managers).map(manager -> {
+              Identity identity = identityManager.getOrCreateUserIdentity(manager);
+              return identity == null || identity.isDeleted() || !identity.isEnable() ? null : Long.parseLong(identity.getId());
+            }).filter(Objects::nonNull).forEach(owners::add);
+          }
+        }
+        return toUserInfo(owners);
+      }
+    } else {
+      return toUserInfo(challenge.getManagers());
+    }
+  }
+
+  public static List<UserInfo> toUserInfo(Collection<Long> ids) {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
@@ -304,24 +368,60 @@ public class Utils {
     }
   }
 
-  public static UserInfo toUserInfo(Identity identity, Space space, List<Long> managerIds) {
+  public static UserInfo toUserInfo(Challenge challenge, Identity identity, Space space) {
+    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
+    if (challengeService.isEngagementCenterEnabled()) {
+      DomainDTO domain = getChallengeDomainDTO(challenge);
+      return toUserInfo(domain == null ? 0 : domain.getId(), identity.getRemoteId());
+    } else {
+      UserInfo userInfo = new UserInfo();
+      userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
+      userInfo.setFullName(identity.getProfile().getFullName());
+      userInfo.setRemoteId(identity.getRemoteId());
+      userInfo.setId(identity.getId());
+      String username = identity.getRemoteId();
+      if (space != null) {
+        SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+        boolean isSuperManager = spaceService.isSuperManager(username);
+        boolean isManager = isSuperManager || spaceService.isManager(space, username);
+        boolean isMember = isManager || spaceService.isMember(space, username);
+        boolean isRedactor = isManager || spaceService.isRedactor(space, username);
+        userInfo.setManager(isManager);
+        userInfo.setMember(isMember);
+        userInfo.setRedactor(isRedactor);
+        userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
+        userInfo.setCanEdit(Utils.isChallengeManager(challenge, Long.parseLong(space.getId()), username));
+      }
+      return userInfo;
+    }
+  }
+
+  public static UserInfo toUserInfo(long domainId, String username) {
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    DomainDTO domain = domainService.getDomainById(domainId);
+
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    Identity identity = identityManager.getOrCreateUserIdentity(username);
     UserInfo userInfo = new UserInfo();
     userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
-    String username = identity.getRemoteId();
-    if (space != null) {
+    if (domain != null) {
+      long spaceId = domain.getAudienceId();
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      boolean isSuperManager = spaceService.isSuperManager(username);
-      boolean isManager = isSuperManager || spaceService.isManager(space, username);
-      boolean isMember = isManager || spaceService.isMember(space, username);
-      boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-      userInfo.setManager(isManager);
-      userInfo.setMember(isMember);
-      userInfo.setRedactor(isRedactor);
-      userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
-      userInfo.setCanEdit(Utils.isChallengeManager(managerIds, Long.parseLong(space.getId()), username));
+      Space space = spaceService.getSpaceById(String.valueOf(spaceId));
+      if (space != null) {
+        boolean isSuperManager = spaceService.isSuperManager(username);
+        boolean isManager = isSuperManager || spaceService.isManager(space, username);
+        boolean isMember = isManager || spaceService.isMember(space, username);
+        boolean isRedactor = isManager || spaceService.isRedactor(space, username);
+        userInfo.setManager(isManager);
+        userInfo.setMember(isMember);
+        userInfo.setRedactor(isRedactor);
+        userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
+        userInfo.setCanEdit(Utils.isProgramOwner(spaceId, domain.getOwners(), identity));
+      }
     }
     return userInfo;
   }
@@ -332,23 +432,6 @@ public class Utils {
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
-    return userInfo;
-  }
-
-  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners, long spaceId) {
-    if (StringUtils.isBlank(username)) {
-      return null;
-    }
-    Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
-    if (identity == null) {
-      return null;
-    }
-    UserInfo userInfo = new UserInfo();
-    userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-    userInfo.setFullName(identity.getProfile().getFullName());
-    userInfo.setRemoteId(identity.getRemoteId());
-    userInfo.setId(identity.getId());
-    userInfo.setDomainOwner(isProgramOwner(domainsOwners, Long.parseLong(identity.getId())) || isSpaceManager(spaceId, username));
     return userInfo;
   }
 
@@ -423,12 +506,22 @@ public class Utils {
     if (templateParams != null) {
       templateParams.forEach((name, value) -> currentTemplateParams.put(name, (String) value));
     }
-    currentTemplateParams.entrySet().removeIf(entry -> entry != null && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
+    currentTemplateParams.entrySet()
+                         .removeIf(entry -> entry != null
+                             && (StringUtils.isBlank(entry.getValue()) || StringUtils.equals(entry.getValue(), "-")));
     activity.setTemplateParams(currentTemplateParams);
   }
 
-  public static boolean isProgramOwner(Set<Long> ownerIds, long userId) {
-    return ownerIds != null && !ownerIds.isEmpty() && ownerIds.stream().anyMatch(id -> id == userId);
+  public static boolean isProgramOwner(long spaceId, Set<Long> ownerIds, Identity userIdentity) {
+    String username = userIdentity.getRemoteId();
+    if (isSpaceManager(spaceId, username)) {
+      return true;
+    }
+    if (isSpaceMember(spaceId, username)
+        && CollectionUtils.containsAny(ownerIds, Long.parseLong(userIdentity.getId()))) {
+      return true;
+    }
+    return isSuperManager(username);
   }
 
   public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type, boolean isDefault) {
@@ -495,17 +588,6 @@ public class Utils {
         + BASE_URL_DOMAINS_REST_API;
   }
 
-  public static boolean isAdministrator(String username) {
-    if (StringUtils.isBlank(username)) {
-      throw new IllegalArgumentException("Username is mandatory");
-    }
-    org.exoplatform.services.security.Identity identity = CommonsUtils.getService(IdentityRegistry.class).getIdentity(username);
-    if (identity != null) {
-      return identity.isMemberOf(REWARDING_GROUP) || identity.isMemberOf(ADMINS_GROUP);
-    }
-    return false;
-  }
-
   public static void broadcastEvent(ListenerService listenerService, String eventName, Object source, Object data) {
     try {
       listenerService.broadcast(eventName, source, data);
@@ -529,13 +611,44 @@ public class Utils {
     return result;
   }
 
-  public static boolean isSpaceManager(long spaceId,
-                                       String userId) {
+  public static boolean isSuperManager(String username) {
+    org.exoplatform.services.security.Identity aclIdentity = getUserAclIdentity(username);
+    return aclIdentity != null && (aclIdentity.isMemberOf(REWARDING_GROUP) || aclIdentity.isMemberOf(ADMINS_GROUP));
+  }
+
+  public static org.exoplatform.services.security.Identity getUserAclIdentity(String username) {
+    IdentityRegistry identityRegistry = CommonsUtils.getService(IdentityRegistry.class);
+    org.exoplatform.services.security.Identity aclIdentity = identityRegistry.getIdentity(username);
+    if (aclIdentity == null) {
+      Authenticator authenticator = CommonsUtils.getService(Authenticator.class);
+      try {
+        aclIdentity = authenticator.createIdentity(username);
+      } catch (Exception e) {
+        LOG.warn("Can't check user ACL admin {} roles to determine if it's program manager", username, e);
+      }
+    }
+    return aclIdentity;
+  }
+
+  public static boolean isSpaceManager(long spaceId, String userId) {
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    if (spaceService.isSuperManager(userId)) {
+      return true;
+    }
     Space space = getSpaceById(String.valueOf(spaceId));
     if (space == null) {
       return false;
     }
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    return spaceService.isManager(space, userId) || spaceService.isSuperManager(userId);
+    return spaceService.isManager(space, userId);
   }
+
+  public static boolean isSpaceMember(long spaceId, String userId) {
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    Space space = getSpaceById(String.valueOf(spaceId));
+    if (space == null) {
+      return false;
+    }
+    return spaceService.isMember(space, userId);
+  }
+
 }

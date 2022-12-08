@@ -61,9 +61,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               v-model="program.coverUrl"
               class="mb-2"
               @updated="addCover" />
-            <span class="text-caption mt-2 text-light-color">
+            <span class="caption mt-2 text-light-color">
               <v-icon class="mb-1" small>fas fa-info-circle</v-icon>
-              {{ $t('programs.label.coverWarning') }}</span>
+              {{ $t('programs.label.coverWarning') }}
+            </span>
           </div>
           <div class="py-2">
             <engagement-center-description-editor
@@ -93,7 +94,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     required />
                 </v-list-item-content>
                 <v-list-item-content class="flex flex-grow-0 flex-shrink-0 me-2">
-                  <span class="text-caption mx-2 text-light-color"> {{ $t('programs.label.budgetPerWeek') }} </span>
+                  <span class="caption mx-2 text-light-color"> {{ $t('programs.label.budgetPerWeek') }} </span>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -109,45 +110,44 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :labels="spaceSuggesterLabels"
             :width="220"
             include-spaces />
-          <div class="my-2">
-            <div>
-              <span class="subtitle-1"> {{ $t('programs.label.programOwners') }}</span>
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('programs.label.programOwners') }}</span>
+            <div class="d-flex">
+              <v-icon class="me-1" small>fas fa-info-circle</v-icon>
+              <span class="caption text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
             </div>
-            <v-icon class="me-1" small>fas fa-info-circle</v-icon>
-            <span class="text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
           </div>
-          <v-row v-if="audience" justify="space-between">
-            <v-col class="ps-6">
+          <v-row v-if="audience" class="pa-0 mx-0 mt-4 mb-2">
+            <v-col class="pa-0 d-flex align-center">
               <span> {{ $t('programs.label.spaceHostsOf') }}</span>
             </v-col>
-            <v-col><exo-space-avatar
-                v-if="selectedSpace"
-                :space="selectedSpace"/>
+            <v-col class="pa-0 d-flex align-center">
+              <exo-space-avatar
+                v-if="spaceId"
+                :space-id="spaceId"
+                extra-class=" ms-auto d-flex align-center primary--text" />
             </v-col>
           </v-row>
-          <div class="ps-3">
-              <span v-show="programOwners.length"> {{ $t('programs.label.and') }}</span>
-              <engagement-center-assignment
-                  v-if="audience"
-                  id="engagementCenterProgramDrawerAssignee"
-                  ref="programAssignment"
-                  v-model="programOwners"
-                  :audience="audience"
-                  class="mt-5"
-                  multiple />
-          </div>
-          <div class="my-2 mt-4">
-            <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
-            <v-list-item class="px-0 mt-n6 mx-auto">
-              <v-list-item-content class="pt-1 mt-6">
-                <span class="subtitle-1 text-light-color"> {{ $t('programs.label.enabled') }}</span>
-              </v-list-item-content>
-              <v-list-item-content class="flex flex-grow-0 flex-shrink-0 overflow-visible me-7">
-                <v-switch
-                  id="engagementCenterProgramDrawerSwitch"
-                  v-model="program.enabled" />
-              </v-list-item-content>
-            </v-list-item>
+          <engagement-center-program-owner-assignment
+              v-if="audience"
+              id="engagementCenterProgramOwnerAssignee"
+              ref="programAssignment"
+              v-model="programOwners"
+              :audience="audience"
+              class="mt-4"
+              multiple />
+          <div class="mt-4">
+            <div class="d-flex">
+              <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>
+              <v-switch
+                id="engagementCenterProgramDrawerSwitch"
+                v-model="program.enabled"
+                class="my-0 ms-0 me-n1" />
+            </div>
+            <div class="caption text-light-color">
+              <v-icon class="me-1" small>fas fa-info-circle</v-icon>
+              {{ $t('programs.label.programStatusSubtitle') }}
+            </div>
           </div>
         </v-form>
       </v-card-text>
@@ -196,7 +196,7 @@ export default {
     loading: false,
     showBudget: false,
     validDescription: false,
-    selectedSpace: null
+    programSpace: null,
   }),
   computed: {
     audienceSearchOptions() {
@@ -217,6 +217,9 @@ export default {
     buttonName() {
       return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
     },
+    spaceId() {
+      return this.audience?.spaceId;
+    },
     audienceId() {
       return Number(this.audience?.spaceId) || 0;
     },
@@ -236,14 +239,9 @@ export default {
       }
     },
     audience() {
-      if (this.drawer) {
-        if (this.audience?.spaceId) {
-          this.selectedSpace = this.audience;
-          this.selectedSpace.avatarUrl = this.audience.profile.avatarUrl;
-        } else {
-          this.program.space = null;
-          document.dispatchEvent(new CustomEvent('audienceChanged'));
-        }
+      if (this.drawer && !this.audience?.spaceId) {
+        this.program.space = null;
+        document.dispatchEvent(new CustomEvent('audienceChanged'));
       }
     },
   },
@@ -281,8 +279,6 @@ export default {
           displayName: this.program.space.displayName,
           notToChange: true,
         };
-        this.selectedSpace = this.audience;
-        this.selectedSpace.avatarUrl = this.audience.profile.avatarUrl;
       } else {
         this.audience = null;
       }

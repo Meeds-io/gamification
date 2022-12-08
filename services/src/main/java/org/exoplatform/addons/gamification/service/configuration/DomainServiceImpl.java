@@ -120,7 +120,7 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public DomainDTO updateDomain(DomainDTO domain, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!canUpdateDomain(domain.getId(), aclIdentity)) {
+    if (!isDomainOwner(domain.getId(), aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to update domain " + domain);
     }
     DomainDTO storedDomain = domainStorage.getDomainById(domain.getId());
@@ -154,7 +154,7 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public DomainDTO deleteDomainById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!canUpdateDomain(domainId, aclIdentity)) {
+    if (!isDomainOwner(domainId, aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to create a domain");
     }
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
@@ -198,25 +198,14 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public boolean canAddDomain(Identity aclIdentity) {
-    return isAdministrator(aclIdentity);
+    return Utils.isSuperManager(aclIdentity.getUserId());
   }
 
   @Override
-  public boolean canUpdateDomain(long domainId, Identity aclIdentity) {
-    if (isAdministrator(aclIdentity)) {
-      return true;
-    } else if (aclIdentity == null) {
-      return false;
-    }
+  public boolean isDomainOwner(long domainId, Identity aclIdentity) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
     DomainDTO domain = domainStorage.getDomainById(domainId);
-    org.exoplatform.social.core.identity.model.Identity userIdentity =
-                                                                     identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
-    return domain != null && userIdentity != null && domain.getOwners() != null
-        && domain.getOwners().contains(Long.parseLong(userIdentity.getId()));
-  }
-
-  private boolean isAdministrator(org.exoplatform.services.security.Identity identity) {
-    return identity != null && identity.isMemberOf("/platform/administrators");
+    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
   private void broadcast(DomainDTO domain, String operation) {

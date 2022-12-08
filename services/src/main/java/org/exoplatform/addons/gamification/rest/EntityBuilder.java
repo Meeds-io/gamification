@@ -32,7 +32,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 
@@ -80,11 +79,11 @@ public class EntityBuilder {
                                    space,
                                    challenge.getStartDate(),
                                    challenge.getEndDate(),
-                                   Utils.toUserInfo(Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
+                                   Utils.toUserInfo(challenge, 
+                                                    Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
                                                                                  Utils.getCurrentUser()),
-                                                    space,
-                                                    challenge.getManagers()),
-                                   Utils.getManagersByIds(challenge.getManagers()),
+                                                    space),
+                                   Utils.getOwners(challenge),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    fromAnnouncementList(challengeAnnouncements),
                                    challenge.getPoints(),
@@ -111,7 +110,7 @@ public class EntityBuilder {
                                 domain.getCoverUrl(),
                                 Utils.getRulesTotalScoreByDomain(domain.getId()),
                                 Utils.getDomainOwnersByIds(domain.getOwners()),
-                                Utils.toUserInfo(username, domain.getOwners(), domain.getAudienceId()));
+                                Utils.toUserInfo(domain.getId(), username));
   }
 
   public static List<DomainRestEntity> toRestEntities(List<DomainDTO> domains, String username) {
