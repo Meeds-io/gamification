@@ -217,7 +217,7 @@ public class UtilsTest extends AbstractServiceTest {
     assertEquals("root", userInfo.getRemoteId());
     assertTrue(userInfo.isCanAnnounce());
 
-    assertNull(toUserInfo("", Collections.singleton(1L)));
+    assertNull(toUserInfo("", Collections.singleton(1L), 1L));
   }
 
   @Test
