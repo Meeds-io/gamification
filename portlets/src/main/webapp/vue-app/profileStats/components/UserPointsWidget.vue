@@ -185,15 +185,16 @@ export default {
   },
   methods: {
     getGamificationPoints() {
-      getGamificationPoints(this.period).then(
-        (data) => {
-          this.userPoints = data.points;
-          if (data.points !== 0) {
-            this.$emit('seeAll', true);
-          }
-          this.option.title[0].subtext = data.points;
-        }
-      );
+      this.$nextTick().then(()=>{
+        getGamificationPoints(this.period).then(
+          (data) => {
+            this.userPoints = data.points;
+            if (data.points !== 0) {
+              this.$emit('seeAll', true);
+            }
+            this.option.title[0].subtext = data.points;
+          });
+      });
     },
     getGamificationPointsStats() {
       getGamificationPointsStats(this.period).then(
@@ -222,10 +223,11 @@ export default {
               this.option.series[0].data.push(serie);
             }
           }
-          this.initChart(this.option);
           this.$emit('loadingData', false);  
-        }
-      );
+          return this.$nextTick();
+        }).finally(() => {
+        this.initChart(this.option);
+      });
     },
     toProfileStats() {
       this.$emit('isProfileStats');
