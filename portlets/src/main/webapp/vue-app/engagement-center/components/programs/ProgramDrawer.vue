@@ -73,7 +73,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :label="$t('programs.label.describeProgram')"
               @validity-updated="validDescription = $event" />
           </div>
-          <div 
+          <div
             v-if="showBudget"
             class="mt-4">
             <span class="subtitle-1">{{ $t('programs.label.budget') }}</span>
@@ -98,7 +98,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-list-item>
             </template>
           </div>
-          <span class="subtitle-1">{{ $t('challenges.label.audienceSpace') }} *</span>
+          <span class="subtitle-1">{{ $t('programs.label.audienceSpace') }}</span>
           <exo-identity-suggester
             id="EngagementCenterProgramDrawerSpaceSuggester"
             ref="programSpaceSuggester"
@@ -110,15 +110,31 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :width="220"
             include-spaces />
           <div class="my-2">
-            <span class="subtitle-1"> {{ $t('programs.label.programOwners') }} *</span>
-            <engagement-center-assignment
-              id="engagementCenterProgramDrawerAssignee"
-              ref="programAssignment"
-              v-model="programOwners"
-              :audience="audience"
-              class="my-2"
-              only-manager
-              multiple />
+            <div>
+              <span class="subtitle-1"> {{ $t('programs.label.programOwners') }}</span>
+            </div>
+            <v-icon class="me-1" small>fas fa-info-circle</v-icon>
+            <span class="text-light-color"> {{ $t('programs.label.accessPermission') }}</span>
+          </div>
+          <v-row v-if="audience" justify="space-between">
+            <v-col class="ps-6">
+              <span> {{ $t('programs.label.spaceHostsOf') }}</span>
+            </v-col>
+            <v-col><exo-space-avatar
+                v-if="selectedSpace"
+                :space="selectedSpace"/>
+            </v-col>
+          </v-row>
+          <div class="ps-3">
+              <span v-show="programOwners.length"> {{ $t('programs.label.and') }}</span>
+              <engagement-center-assignment
+                  v-if="audience"
+                  id="engagementCenterProgramDrawerAssignee"
+                  ref="programAssignment"
+                  v-model="programOwners"
+                  :audience="audience"
+                  class="mt-5"
+                  multiple />
           </div>
           <div class="my-2 mt-4">
             <span class="subtitle-1"> {{ $t('programs.label.status') }}</span>
@@ -180,6 +196,7 @@ export default {
     loading: false,
     showBudget: false,
     validDescription: false,
+    selectedSpace: null
   }),
   computed: {
     audienceSearchOptions() {
@@ -194,9 +211,8 @@ export default {
     },
     disabledSave() {
       return !this.isValidForm
-        || !this.audienceId
-        || !this.programOwners.length
-        || !this.validDescription;
+          || !this.audienceId
+          || !this.validDescription;
     },
     buttonName() {
       return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
@@ -206,8 +222,8 @@ export default {
     },
     spaceSuggesterLabels() {
       return {
-        searchPlaceholder: this.$t('challenges.spaces.noDataLabel'),
-        placeholder: this.$t('challenges.spaces.placeholder'),
+        searchPlaceholder: this.$t('programs.label.spaces.noDataLabel'),
+        placeholder: this.$t('programs.label.spaces.placeholder'),
       };
     },
   },
@@ -222,24 +238,10 @@ export default {
     audience() {
       if (this.drawer) {
         if (this.audience?.spaceId) {
-          this.$spaceService.getSpaceMembers(null, 0, 0, null,'manager', this.audience.spaceId)
-            .then(managers => {
-              const listManagers = managers.users.map(manager => ({
-                id: manager.id,
-                remoteId: manager.username,
-                fullName: manager.fullname,
-                avatarUrl: manager.avatar,
-              }));
-              const data = {
-                managers: listManagers,
-                space: this.audience,
-              };
-              this.programOwners = listManagers;
-              document.dispatchEvent(new CustomEvent('audienceChanged', {detail: data}));
-            });
+          this.selectedSpace = this.audience;
+          this.selectedSpace.avatarUrl = this.audience.profile.avatarUrl;
         } else {
           this.program.space = null;
-          this.programOwners = [];
           document.dispatchEvent(new CustomEvent('audienceChanged'));
         }
       }
@@ -266,9 +268,9 @@ export default {
       this.programOwners = this.program?.owners?.slice() || [];
 
       if (this.program?.id && this.program?.space) {
-        const space = this.program?.space ;
+        const space = this.program?.space;
         this.audience = {
-          id: `space:${space.prettyName}` ,
+          id: `space:${space.prettyName}`,
           profile: {
             avatarUrl: space.avatarUrl,
             fullName: space.displayName,
@@ -279,6 +281,8 @@ export default {
           displayName: this.program.space.displayName,
           notToChange: true,
         };
+        this.selectedSpace = this.audience;
+        this.selectedSpace.avatarUrl = this.audience.profile.avatarUrl;
       } else {
         this.audience = null;
       }
@@ -330,7 +334,7 @@ export default {
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateSuccess'));
           })
           .catch(() => {
-            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateError'),'error');
+            this.$engagementCenterUtils.displayAlert(this.$t('programs.programCreateError'), 'error');
           })
           .finally(() => this.loading = false);
       }

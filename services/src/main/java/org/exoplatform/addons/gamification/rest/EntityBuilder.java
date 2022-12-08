@@ -111,7 +111,7 @@ public class EntityBuilder {
                                 domain.getCoverUrl(),
                                 Utils.getRulesTotalScoreByDomain(domain.getId()),
                                 Utils.getDomainOwnersByIds(domain.getOwners()),
-                                Utils.toUserInfo(username, domain.getOwners()));
+                                Utils.toUserInfo(username, domain.getOwners(), domain.getAudienceId()));
   }
 
   public static List<DomainRestEntity> toRestEntities(List<DomainDTO> domains, String username) {

@@ -131,9 +131,6 @@ export default {
       if (spacePrettyName) {
         options.spaceURL = spacePrettyName;
       }
-      if (this.onlyManager) {
-        options.role = 'MANAGER';
-      }
       return options;
     },
     assignButtonClass(){
@@ -191,10 +188,8 @@ export default {
     this.space = this.audience;
     document.addEventListener('audienceChanged', event => {
       if (event && event.detail) {
-        this.assigneeObj = event.detail.managers;
         this.space = event.detail.space;
       } else {
-        this.assigneeObj = [];
         this.space = {};
       }
     });

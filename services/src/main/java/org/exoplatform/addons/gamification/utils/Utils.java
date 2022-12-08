@@ -138,21 +138,14 @@ public class Utils {
     if (currentUser != null && challengeService.canAddChallenge(currentUser)) {
       return true;
     }
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+
     Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
     if (identity != null) {
-      if (managersId.stream().noneMatch(id -> id == Long.parseLong(identity.getId()))) {
-        return false;
-      }
-    } else {
-      return false;
+      return managersId.stream().anyMatch(id -> id == Long.parseLong(identity.getId())) || isSpaceManager(spaceId, username)
+          || spaceService.isSuperManager(username);
     }
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    Space space = spaceService.getSpaceById(String.valueOf(spaceId));
-    if (space != null) {
-      return spaceService.isManager(space, username) || spaceService.isSuperManager(username);
-    } else {
-      return spaceService.isSuperManager(username);
-    }
+    return false;
   }
 
   public static final boolean canAnnounce(String spaceId, String username) {
@@ -342,7 +335,7 @@ public class Utils {
     return userInfo;
   }
 
-  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners) {
+  public static UserInfo toUserInfo(String username, Set<Long> domainsOwners, long spaceId) {
     if (StringUtils.isBlank(username)) {
       return null;
     }
@@ -355,7 +348,7 @@ public class Utils {
     userInfo.setFullName(identity.getProfile().getFullName());
     userInfo.setRemoteId(identity.getRemoteId());
     userInfo.setId(identity.getId());
-    userInfo.setDomainOwner(isProgramOwner(domainsOwners, Long.valueOf(identity.getId())));
+    userInfo.setDomainOwner(isProgramOwner(domainsOwners, Long.parseLong(identity.getId())) || isSpaceManager(spaceId, username));
     return userInfo;
   }
 
@@ -534,5 +527,15 @@ public class Utils {
       }
     }
     return result;
+  }
+
+  public static boolean isSpaceManager(long spaceId,
+                                       String userId) {
+    Space space = getSpaceById(String.valueOf(spaceId));
+    if (space == null) {
+      return false;
+    }
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    return spaceService.isManager(space, userId) || spaceService.isSuperManager(userId);
   }
 }
