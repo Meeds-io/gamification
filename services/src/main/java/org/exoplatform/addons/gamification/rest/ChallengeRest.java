@@ -18,7 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
