@@ -249,6 +249,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("filterType", EntityType.valueOf(filter.getEntityFilterType().name()));
     }
+    if (filter.getExcludedChallengesIds() != null && !filter.getExcludedChallengesIds().isEmpty()) {
+      query.setParameter("excludedIds", filter.getExcludedChallengesIds());
+    }
     EntityStatusType entityStatusType = filter.getEntityStatusType();
     if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
       if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
@@ -278,6 +281,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       suffixes.add("Audience");
       predicates.add("(r.audience in (:ids) OR r.audience IS NULL)");
+    }
+    if (filter.getExcludedChallengesIds() != null && !filter.getExcludedChallengesIds().isEmpty()) {
+      suffixes.add("ExcludeIds");
+      predicates.add("r.id NOT IN :excludedIds");
     }
     if (filter.getDateFilterType() != null) {
       DateFilterType dateFilterType = filter.getDateFilterType();
