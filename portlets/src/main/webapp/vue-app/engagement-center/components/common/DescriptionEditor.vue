@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div
     id="descriptionId"
     :class="newEditorToolbarEnabled && 'newEditorToolbar' || ''"
-    class="activityRichEditor" >
+    class="activityRichEditor">
     <div class="py-1 subtitle-1">
       {{ label }}
     </div>
