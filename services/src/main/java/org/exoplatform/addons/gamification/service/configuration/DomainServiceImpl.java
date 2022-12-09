@@ -120,13 +120,14 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public DomainDTO updateDomain(DomainDTO domain, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!canUpdateDomain(domain.getId(), aclIdentity)) {
-      throw new IllegalAccessException("The user is not authorized to update domain " + domain);
-    }
     DomainDTO storedDomain = domainStorage.getDomainById(domain.getId());
     if (storedDomain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
-    } else if (domain.equals(storedDomain)) {
+    }
+    if (!isDomainOwner(domain.getId(), aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to update domain " + domain);
+    }
+    if (domain.equals(storedDomain)) {
       // No changes so no modifications needed
       return storedDomain;
     } else if (storedDomain.isDeleted()) {
@@ -154,13 +155,13 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public DomainDTO deleteDomainById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!canUpdateDomain(domainId, aclIdentity)) {
-      throw new IllegalAccessException("The user is not authorized to create a domain");
-    }
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
     DomainDTO domain = domainStorage.getDomainById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
+    }
+    if (!isDomainOwner(domainId, aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to delete the domain");
     }
     domain.setDeleted(true);
     domain.setLastModifiedDate(date);
@@ -198,25 +199,14 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public boolean canAddDomain(Identity aclIdentity) {
-    return isAdministrator(aclIdentity);
+    return aclIdentity != null && Utils.isSuperManager(aclIdentity.getUserId());
   }
 
   @Override
-  public boolean canUpdateDomain(long domainId, Identity aclIdentity) {
-    if (isAdministrator(aclIdentity)) {
-      return true;
-    } else if (aclIdentity == null) {
-      return false;
-    }
+  public boolean isDomainOwner(long domainId, Identity aclIdentity) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
     DomainDTO domain = domainStorage.getDomainById(domainId);
-    org.exoplatform.social.core.identity.model.Identity userIdentity =
-                                                                     identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
-    return domain != null && userIdentity != null && domain.getOwners() != null
-        && domain.getOwners().contains(Long.parseLong(userIdentity.getId()));
-  }
-
-  private boolean isAdministrator(org.exoplatform.services.security.Identity identity) {
-    return identity != null && identity.isMemberOf("/platform/administrators");
+    return domain != null && Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
   private void broadcast(DomainDTO domain, String operation) {
