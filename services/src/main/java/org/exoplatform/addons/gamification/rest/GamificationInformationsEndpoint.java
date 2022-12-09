@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -83,7 +84,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     providerId = IdentityType.getType(providerId).getProviderId();
 
-    boolean isManager = isCurrentUserSuperManager();
+    boolean isManager = Utils.isSuperManager(remoteId);
     boolean canShowDetails = isManager || isCurrentUser(providerId, remoteId);
 
     if (SpaceIdentityProvider.NAME.equals(providerId)) {
@@ -165,10 +166,6 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
   private String getCurrentUsername() {
     return ConversationState.getCurrent().getIdentity().getUserId();
-  }
-
-  private boolean isCurrentUserSuperManager() {
-    return ConversationState.getCurrent().getIdentity().isMemberOf("/platform/administrators");
   }
 
   public static class GamificationHistoryInfo {

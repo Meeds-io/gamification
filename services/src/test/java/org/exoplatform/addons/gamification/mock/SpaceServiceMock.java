@@ -19,7 +19,6 @@ package org.exoplatform.addons.gamification.mock;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.ListAccess;
@@ -65,6 +64,8 @@ public class SpaceServiceMock implements SpaceService {
     space.setPrettyName("test_space");
     space.setDisplayName("test space");
     space.setGroupId("/spaces/test_space");
+    space.setManagers(new String[]{"root"});
+    space.setMembers(new String[]{"root10"});
     return space;
   }
 
@@ -234,7 +235,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(Space space, String userId) {
-    return userId.equals("root1");
+    return userId.equals("root1") || userId.equals("root10");
   }
 
   public void setManager(Space space, String userId, boolean isManager) {
