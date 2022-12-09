@@ -148,6 +148,6 @@ public interface DomainService {
    * @param aclIdentity Security identity of user
    * @return true if user has enough privileges to create a program, else false
    */
-  boolean canUpdateDomain(long domainId, Identity aclIdentity);
+  boolean isDomainOwner(long domainId, Identity aclIdentity);
 
 }

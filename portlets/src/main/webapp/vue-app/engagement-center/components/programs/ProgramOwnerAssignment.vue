@@ -28,18 +28,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       offset-y
       allow-overflow
       eager
-      bottom
-      :disabled="disabledUnAssign">
+      top>
       <template #activator="{ on }">
-        <div class="d-flex align-" v-on="on">
-          <a
+        <div class="d-flex align-center">
+          <span>{{ $t('programs.label.and') }}</span>
+          <v-btn
             id="EngagementCenterAssignmentBtn"
-            :disabled="disabledUnAssign"
-            :class="assignButtonClass"
-            class="challengeAssignBtn align-end mt-n8">
-            <i class="uiIcon uiAddAssignIcon"></i>
-            <span class="text-decoration-underline">{{ $t('challenges.label.assign') }}</span>
-          </a>
+            class="ms-auto pa-0"
+            color="primary"
+            text
+            v-on="on">
+            <v-icon size="18" class="me-2">fas fa-user-plus</v-icon>
+            <span class="text-capitalize">{{ $t('challenges.label.assign') }}</span>
+          </v-btn>
         </div>
       </template>
       <v-card class="pb-4 assignChallengeMenu pa-4">
@@ -50,7 +51,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <span>{{ $t('challenges.label.addMe') }}</span>
           </a>
         </v-card-text>
-
         <exo-identity-suggester
           ref="challengeSpaceSuggester"
           v-model="invitedChallengeAssignee"
@@ -64,10 +64,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-menu>
     <div class="assigneeName">
       <v-chip
-        :close="!disabledUnAssign"
         v-for="user in assigneeObj"
         :key="user"
-        class="identitySuggesterItem mx-1 mb-2"
+        class="identitySuggesterItem mt-2"
+        close
         @click:close="removeUser(user)">
         <v-avatar left>
           <v-img :src="user.avatarUrl" />
@@ -115,7 +115,6 @@ export default {
       menu: false,
       space: {},
       menuId: `AssigneeMenu${parseInt(Math.random() * 10000)}`,
-      disabledUnAssign: false,
     };
   },
   computed: {
@@ -132,9 +131,6 @@ export default {
         options.spaceURL = spacePrettyName;
       }
       return options;
-    },
-    assignButtonClass(){
-      return this.assigneeObj &&  this.assigneeObj.length && 'mt-2';
     },
     ignoredMembers() {
       if (this.assigneeObj){
