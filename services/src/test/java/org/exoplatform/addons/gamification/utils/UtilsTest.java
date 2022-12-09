@@ -22,12 +22,12 @@ import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_IMAGE_REMO
 import static org.exoplatform.addons.gamification.utils.Utils.TYPE;
 import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
 import static org.exoplatform.addons.gamification.utils.Utils.isAttachmentTokenValid;
-import static org.exoplatform.addons.gamification.utils.Utils.toUserInfo;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.*;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
@@ -212,12 +212,22 @@ public class UtilsTest extends AbstractServiceTest {
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
 
-    UserInfo userInfo = Utils.toUserInfo(rootIdentity, space, Collections.singletonList(1l));
-    assertNotNull(userInfo);
-    assertEquals("root", userInfo.getRemoteId());
-    assertTrue(userInfo.isCanAnnounce());
+    Challenge challenge = new Challenge(1,
+                                        "new challenge",
+                                        "challenge description",
+                                        1L,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        newDomain().getId(),
+                                        true);
+    Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
-    assertNull(toUserInfo("", Collections.singleton(1L)));
+    UserInfo userInfo = Utils.toUserInfo(challenge, identity, space);
+    assertNotNull(userInfo);
+    assertEquals("root1", userInfo.getRemoteId());
+    assertTrue(userInfo.isCanAnnounce());
   }
 
   @Test
@@ -312,9 +322,29 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testGetManagersByIds() {
-    List<UserInfo> usersInfo = Utils.getManagersByIds(Collections.emptyList());
+    Challenge challenge = new Challenge(1,
+            "new challenge",
+            "challenge description",
+            1L,
+            new Date(System.currentTimeMillis()).toString(),
+            new Date(System.currentTimeMillis() + 1).toString(),
+            Collections.emptyList(),
+            10L,
+            1L,
+            true);
+    List<UserInfo> usersInfo = Utils.getOwners(challenge);
     assertEquals(0, usersInfo.size());
-    usersInfo = Utils.getManagersByIds(Collections.singletonList(1l));
+    challenge = new Challenge(1,
+            "new challenge",
+            "challenge description",
+            1L,
+            new Date(System.currentTimeMillis()).toString(),
+            new Date(System.currentTimeMillis() + 1).toString(),
+            new ArrayList<>(Collections.singleton(1L)),
+            10L,
+            newDomain().getId(),
+            true);
+    usersInfo = Utils.getOwners(challenge);
     assertEquals(1, usersInfo.size());
   }
 

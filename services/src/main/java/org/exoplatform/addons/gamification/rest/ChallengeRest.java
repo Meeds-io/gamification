@@ -252,7 +252,6 @@ public class ChallengeRest implements ResourceContainer {
         DomainFilter domainFilter = new DomainFilter();
         domainFilter.setEntityFilterType(EntityFilterType.ALL);
         domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
-        domainFilter.setSortByBudget(true);
         List<DomainDTO> domains = domainService.getDomainsByFilter(domainFilter, 0, -1);
         List<DomainWithChallengesRestEntity> domainsWithChallenges = new ArrayList<>();
         for (DomainDTO domain : domains) {
@@ -304,7 +303,7 @@ public class ChallengeRest implements ResourceContainer {
           @ApiResponse(responseCode = "401", description = "User not authorized to add a challenge") }
   )
   public Response canAddChallenge() {
-    boolean canAddChallenge = challengeService.canAddChallenge(ConversationState.getCurrent().getIdentity());
+    boolean canAddChallenge = Utils.isSuperManager(ConversationState.getCurrent().getIdentity().getUserId());
     return Response.ok(String.valueOf(canAddChallenge)).build();
   }
 
