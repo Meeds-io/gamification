@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="pl-4 pr-4 descriptionLabel">
         {{ $t('challenges.label.description') }}
       </div>
-      <div class="description pr-4 pl-4 pt-4" v-sanitized-html="description"></div>
+      <div class="description pr-4 pl-4 pt-4 rich-editor-content" v-sanitized-html="description"></div>
       <hr class="separation mx-4">
       <v-flex class="px-4 nowrap winners">
         <span class="winnersLabel">
