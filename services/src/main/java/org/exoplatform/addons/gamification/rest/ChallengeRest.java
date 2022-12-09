@@ -18,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
@@ -229,7 +230,12 @@ public class ChallengeRest implements ResourceContainer {
                                          )
                                          @DefaultValue("false")
                                          @QueryParam("orderByRealizations")
-                                         boolean orderByRealizations) {
+                                         boolean orderByRealizations,
+                                         @Parameter(
+                                             description = "Excluded challenges Ids", required = false
+                                         )
+                                         @QueryParam("excludedChallengesIds")
+                                         List<Long>  excludedChallengesIds) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -242,6 +248,9 @@ public class ChallengeRest implements ResourceContainer {
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
     filter.setOrderByRealizations(orderByRealizations);
+    if (excludedChallengesIds != null && !excludedChallengesIds.isEmpty()) {
+      filter.setExcludedChallengesIds(excludedChallengesIds);
+    }
     try {
       LOG.debug("start getting challenges");
       if (domainId > 0) {
