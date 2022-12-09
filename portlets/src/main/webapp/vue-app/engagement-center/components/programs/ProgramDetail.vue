@@ -44,7 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ $t('programs.details.label.description') }}
           </v-list-item-title>
           <v-list-item-subtitle class="text-color pt-4">
-            <div class="d-flex flex-grow-0 flex-shrink-1 pb-5">
+            <div class="d-flex flex-grow-0 flex-shrink-1 pb-5 rich-editor-content">
               <span
                 class="mt-1 align-self-center text-wrap text-left text-break"
                 v-sanitized-html="programDescription"></span>
