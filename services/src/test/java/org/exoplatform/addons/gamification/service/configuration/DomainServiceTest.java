@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.exoplatform.social.core.space.model.Space;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -48,6 +49,13 @@ public class DomainServiceTest extends AbstractServiceTest {
 
   private final Identity regularAclIdentity =
                                             new Identity("root10", Collections.singleton(new MembershipEntry("/platform/users")));
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    identityRegistry.register(adminAclIdentity);
+    identityRegistry.register(regularAclIdentity);
+  }
 
   @Test
   public void testGetAllDomains() {
@@ -206,7 +214,7 @@ public class DomainServiceTest extends AbstractServiceTest {
     assertFalse(updatedDomain.isEnabled());
 
     updatedDomain.setEnabled(true);
-    domainService.updateDomain(updatedDomain, regularAclIdentity);
+    domainService.updateDomain(updatedDomain, adminAclIdentity);
 
     DomainDTO storedDomain = domainService.getDomainById(updatedDomain.getId());
     assertNotNull(storedDomain);
@@ -283,14 +291,13 @@ public class DomainServiceTest extends AbstractServiceTest {
   @Test
   public void testCanUpdateDomain() throws IllegalAccessException, ObjectNotFoundException {
     DomainDTO domain = newDomainDTO();
-    assertFalse(domainService.canUpdateDomain(domain.getId(), null));
-    assertFalse(domainService.canUpdateDomain(domain.getId(), regularAclIdentity));
-    assertTrue(domainService.canUpdateDomain(domain.getId(), adminAclIdentity));
-    assertFalse(domainService.canUpdateDomain(0, regularAclIdentity));
+    assertFalse(domainService.isDomainOwner(domain.getId(), regularAclIdentity));
+    assertTrue(domainService.isDomainOwner(domain.getId(), adminAclIdentity));
+    assertFalse(domainService.isDomainOwner(0, regularAclIdentity));
     String identityId = identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId()).getId();
     domain.setOwners(Collections.singleton(Long.parseLong(identityId)));
     domainService.updateDomain(domain, adminAclIdentity);
-    assertTrue(domainService.canUpdateDomain(domain.getId(), regularAclIdentity));
+    assertTrue(domainService.isDomainOwner(domain.getId(), regularAclIdentity));
   }
 
   @Test
