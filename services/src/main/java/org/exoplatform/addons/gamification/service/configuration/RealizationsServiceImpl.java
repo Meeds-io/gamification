@@ -80,7 +80,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (isAdministrator(identity) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
+    if (Utils.isSuperManager(username) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
         && filter.getEarnerIds().contains(userIdentity.getId()))) {
       return realizationsStorage.getRealizationsByFilter(filter, offset, limit);
     } else {
@@ -110,7 +110,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (isAdministrator(identity) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
+    if (Utils.isSuperManager(username) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
             && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
       return realizationsStorage.countRealizationsByFilter(filter);
     } else {
@@ -232,9 +232,5 @@ public class RealizationsServiceImpl implements RealizationsService {
       }
     });
     return sbResult.toString();
-  }
-
-  private boolean isAdministrator(Identity identity) {
-    return identity.isMemberOf("/platform/administrators");
   }
 }
