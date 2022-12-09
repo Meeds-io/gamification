@@ -17,7 +17,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div
     id="descriptionId"
-    class="activityRichEditor">
+    :class="newEditorToolbarEnabled && 'newEditorToolbar' || ''"
+    class="activityRichEditor" >
     <div class="py-1 subtitle-1">
       {{ label }}
     </div>
@@ -70,6 +71,7 @@ export default {
       disabled: false,
       displayPlaceholder: true,
       editor: null,
+      newEditorToolbarEnabled: eXo.env.portal.editorToolbarEnabled,
     };
   },
   computed: {
@@ -81,6 +83,9 @@ export default {
     },
     editorReady() {
       return this.editor && this.editor.status === 'ready';
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs';
     },
   },
   watch: {
@@ -119,6 +124,7 @@ export default {
       }
       if (val !== editorData) {
         this.initCKEditorData(val || '');
+        this.setEditorReady();
       }
     }
   },
@@ -131,17 +137,30 @@ export default {
   },
   methods: {
     initCKEditor() {
+      let extraPlugins = 'simpleLink,widget';
+      let removePlugins = 'image,maximize,resize';
+      const toolbar = [
+        ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
+      ];
+      if (this.newEditorToolbarEnabled) {
+        extraPlugins = `${extraPlugins},emoji,formatOption`;
+        if (!this.isMobile) {
+          toolbar[0].push('emoji');
+        }
+        toolbar[0].unshift('formatOption');
+      } else {
+        removePlugins = `${removePlugins},emoji,formatOption`;
+      }
+
       this.inputVal = this.value || '';
       this.editor = CKEDITOR.instances['descriptionContent'];
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
-        extraPlugins: 'simpleLink,widget',
-        removePlugins: 'suggester,image,maximize,resize',
+        extraPlugins,
+        removePlugins,
+        toolbar,
         toolbarLocation: 'bottom',
         autoGrow_onStartup: true,
-        toolbar: [
-          ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
-        ],
         on: {
           change: evt => this.inputVal = evt.editor?.getData() || '',
           destroy: () => this.inputVal = '',
@@ -162,6 +181,11 @@ export default {
       if (this.editor) {
         this.editor.setData(this.inputVal);
       }
+    },
+    setEditorReady: function() {
+      window.setTimeout(() => {
+        this.$set(this.editor, 'status', 'ready');
+      }, 200);
     },
     setFocus: function() {
       if (this.editorReady) {
