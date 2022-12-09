@@ -97,6 +97,8 @@ export default {
     loading: true,
     displayChallenges: false,
     listChallenges: [],
+    listRealizations: [],
+    orderByRealizations: true,
   }),
   computed: {
     emptySummaryText() {
@@ -122,7 +124,7 @@ export default {
     },
     getChallenges() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, true)
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.orderByRealizations, this.listRealizations)
         .then(result => {
           if (!result) {
             return;
@@ -134,7 +136,12 @@ export default {
             challenge.challengePoints =  data.points;
             challenge.challengesAnnouncementsCount =  data.announcements.length;
             this.listChallenges.push(challenge);
+            this.listRealizations.push(data.id);
           });
+          if (this.listChallenges.length < 3 && this.orderByRealizations) {
+            this.orderByRealizations = false;
+            this.getChallenges();
+          }
           this.listChallenges = this.listChallenges.sort((challenge1, challenge2) => challenge2.challengePoints - challenge1.challengePoints);
           this.displayChallenges = this.listChallenges.length > 0;
         }).finally(() => this.loading = false);
