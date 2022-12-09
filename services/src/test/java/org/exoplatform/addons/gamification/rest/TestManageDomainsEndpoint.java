@@ -17,12 +17,12 @@
 package org.exoplatform.addons.gamification.rest;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.SecurityContext;
-
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,21 +32,9 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
-import org.exoplatform.services.rest.impl.EnvironmentContext;
-import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
-import org.exoplatform.services.rest.wadl.research.HTTPMethods;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.exoplatform.ws.frameworks.json.impl.JsonException;
-import org.exoplatform.ws.frameworks.json.impl.JsonGeneratorImpl;
 
 public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
-
-  private static final String PATH_SEPARATOR = "/";                     // NOSONAR
-
-  private static final String TEST_USER      = "root0";
-
-  private static final String REST_PATH      = "/gamification/domains"; // NOSONAR
 
   protected Class<?> getComponentClass() {
     return ManageDomainsEndpoint.class;
@@ -60,67 +48,64 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
   @Before
   public void setUp() throws Exception {
     super.setUp();
-
+    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry("/platform/users")));
+    Identity adminAclIdentity = new Identity("root1", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
+    identityRegistry.register(userAclIdentity);
+    identityRegistry.register(adminAclIdentity);
+    autoDomain = newDomainDTO(EntityType.AUTOMATIC, "domain1", true, Collections.singleton(1L));
+    manualDomain = newDomainDTO(EntityType.MANUAL, "domain2", true, Collections.singleton(1L));
+    ConversationState.setCurrent(null);
     registry(getComponentClass());
-    autoDomain = newDomainDTO(EntityType.AUTOMATIC, "domain1", true, Collections.singleton(1l));
-    manualDomain = newDomainDTO(EntityType.MANUAL, "domain2", true, Collections.singleton(1l));
   }
 
   @Test
   public void testGetAllDomains() throws Exception {
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
 
-    ContainerResponse response = launcher.service("GET", REST_PATH + "?offset=-1&limit=10", "", null, null, envctx);
-    assertNotNull(response); // NOSONAR
-    assertEquals(400, response.getStatus());
-
-    response = launcher.service("GET", REST_PATH + "?offset=0&limit=-10", "", null, null, envctx);
+    startSessionAs("root1");
+    ContainerResponse response = getResponse("GET", getURLResource("domains?offset=-1&limit=10"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    response = launcher.service("GET", REST_PATH, "", null, null, envctx);
+    response = getResponse("GET", getURLResource("domains?offset=0&limit=-10"), null);
+    assertNotNull(response);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("domains"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    response = launcher.service("GET", REST_PATH + "?offset=0&limit=10", "", null, null, envctx);
+    response = getResponse("GET", getURLResource("domains?offset=0&limit=10"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    response = launcher.service("GET", REST_PATH + "?offset=0&limit=10&type=MANUAL&returnSize=true", "", null, null, envctx);
+    response = getResponse("GET", getURLResource("domains?offset=0&limit=10&type=MANUAL&returnSize=true"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
   }
 
   @Test
   public void testCreateDomain() throws Exception {
-    EnvironmentContext envctx = new EnvironmentContext();
-
-    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
 
     DomainDTO domain = manualDomain.clone();
     domain.setId(0);
     domain.setTitle("foo");
     domain.setDescription("fooDescription");
-    byte[] data = toJsonString(domain).getBytes();
+    JSONObject domainData = new JSONObject();
+    domainData.put("id", domain.getId());
+    domainData.put("title", domain.getTitle());
+    domainData.put("description", domain.getDescription());
 
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", REST_PATH, "", h, null, envctx);
+    ContainerResponse response = getResponse("POST", getURLResource("domains"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    response = launcher.service("POST", REST_PATH, "", h, data, envctx);
+    startSessionAs("user");
+    response = getResponse("POST", getURLResource("domains"), domainData.toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
-    startSessionAsAdministrator(TEST_USER);
-    response = launcher.service("POST", REST_PATH, "", h, data, envctx);
+    startSessionAs("root1");
+    response = getResponse("POST", getURLResource("domains"), domainData.toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
@@ -131,40 +116,34 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testUpdateDomain() throws Exception {
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH + "/0", null, 0, HTTPMethods.PUT.toString(), null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
     DomainDTO domain = autoDomain.clone();
     domain.setId(0);
-    String data = toJsonString(domain);
 
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length());
+    JSONObject domainData = new JSONObject();
+    domainData.put("id", domain.getId());
 
-    ContainerResponse response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH + "/" + domain.getId(), "", h, null, envctx);
+    ContainerResponse response = getResponse("PUT", getURLResource("domains/" + domain.getId()), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH + "/" + domain.getId(), "", h, data.getBytes(), envctx);
+    response = getResponse("PUT", getURLResource("domains/" + domain.getId()), domainData.toString());
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
     domain = autoDomain.clone();
-    data = toJsonString(domain);
-
-    startSessionAs(TEST_USER);
-    response = launcher.service(HTTPMethods.PUT.toString(), REST_PATH + "/" + domain.getId(), "", h, data.getBytes(), envctx);
+    startSessionAs("root10");
+    response = getResponse("PUT", getURLResource("domains/" + domain.getId()), domainData.toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
     domain.setTitle("TeamWork modified");
     domain.setDescription("description modified");
-    data = toJsonString(domain);
-    startSessionAsAdministrator(TEST_USER);
-    response = launcher.service(HTTPMethods.PUT.name(), REST_PATH + "/" + domain.getId(), "", h, data.getBytes(), envctx);
+    domainData = new JSONObject();
+    domainData.put("id", domain.getId());
+    domainData.put("title", domain.getTitle());
+    domainData.put("description", domain.getDescription());
+    startSessionAs("root1");
+    response = getResponse("PUT", getURLResource("domains/" + domain.getId()), domainData.toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
@@ -175,55 +154,31 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
 
   @Test
   public void testDeleteDomain() throws Exception {
-    EnvironmentContext envctx = new EnvironmentContext();
-
-    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH, null, 0, HTTPMethods.DELETE.name(), null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
-    String restPath = REST_PATH + "/0";
-    ContainerResponse response = launcher.service(HTTPMethods.DELETE.name(), restPath, "", null, null, envctx);
+    ContainerResponse response = getResponse("DELETE", getURLResource("domains/0"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = REST_PATH + "/1555";
-    response = launcher.service(HTTPMethods.DELETE.name(), restPath, "", null, null, envctx);
-    assertNotNull(response);
-    assertEquals(404, response.getStatus());
-
-    startSessionAs(TEST_USER);
-    restPath = REST_PATH + PATH_SEPARATOR + manualDomain.getId(); // NOSONAR
-    response = launcher.service(HTTPMethods.DELETE.name(), restPath, "", null, null, envctx);
+    startSessionAs("root10");
+    response = getResponse("DELETE", getURLResource("domains/" + manualDomain.getId()), null);
     assertNotNull(response);
     assertEquals(401, response.getStatus());
 
-    startSessionAsAdministrator(TEST_USER);
-    restPath = REST_PATH + PATH_SEPARATOR + autoDomain.getId(); // NOSONAR
-    response = launcher.service(HTTPMethods.DELETE.name(), restPath, "", null, null, envctx);
+    startSessionAs("root1");
+    response = getResponse("DELETE", getURLResource("domains/" + autoDomain.getId()), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
-    ConversationState.setCurrent(null);
   }
 
   @Test
   public void testCanAddProgram() throws Exception {
-    String restPath = REST_PATH + "/canAddProgram";
-    EnvironmentContext envctx = new EnvironmentContext();
-
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
-    startSessionAsAdministrator("root1");
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    startSessionAs("root1");
+    ContainerResponse response = getResponse("GET", getURLResource("domains/canAddProgram"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     assertEquals("true", response.getEntity());
 
-    startSessionAs("root1");
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    startSessionAs("user");
+    response = getResponse("GET", getURLResource("domains/canAddProgram"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     assertEquals("false", response.getEntity());
@@ -235,63 +190,50 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
     String token = URLEncoder.encode(Utils.generateAttachmentToken(String.valueOf(manualDomain.getId()),
                                                                    Utils.TYPE,
                                                                    lastUpdateCoverTime),
-                                     "UTF-8");
+                                     StandardCharsets.UTF_8);
 
-    String extraPath = "/cover?lastModified="; // NOSONAR
-    String restPath =
-                    REST_PATH + PATH_SEPARATOR + Utils.DEFAULT_IMAGE_REMOTE_ID + extraPath + lastUpdateCoverTime + "&r=" + token;
-
-    EnvironmentContext envctx = new EnvironmentContext();
-
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
+    ContainerResponse response = getResponse("GET",
+                                             getURLResource("domains/" + Utils.DEFAULT_IMAGE_REMOTE_ID + "/cover?lastModified="
+                                                 + lastUpdateCoverTime + "&r=" + token),
+                                             null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    restPath = REST_PATH + PATH_SEPARATOR + 155 + extraPath + lastUpdateCoverTime + "&r=" + token;
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET", getURLResource("domains/155/cover?lastModified=" + lastUpdateCoverTime + "&r=" + token), null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
 
-    restPath = REST_PATH + PATH_SEPARATOR + manualDomain.getId() + extraPath + lastUpdateCoverTime + "&r=" + token;
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET",
+                           getURLResource("domains/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime + "&r="
+                               + token),
+                           null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    restPath = REST_PATH + PATH_SEPARATOR + manualDomain.getId() + extraPath + lastUpdateCoverTime + "&r=" + "wrongToken";
-    response = launcher.service("GET", restPath, "", h, null, envctx);
+    response = getResponse("GET",
+                           getURLResource("domains/" + manualDomain.getId() + "/cover?lastModified=" + lastUpdateCoverTime + "&r="
+                               + "wrongToken"),
+                           null);
     assertNotNull(response);
     assertEquals(403, response.getStatus());
   }
 
   @Test
   public void testGetDomainById() throws Exception {
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(REST_PATH, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-
-    ContainerResponse response = launcher.service("GET", REST_PATH + "/0", "", null, null, envctx);
+    startSessionAs("root1");
+    ContainerResponse response = getResponse("GET", getURLResource("domains/0"), null);
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    response = launcher.service("GET", REST_PATH + "/7580", "", null, null, envctx);
+    response = getResponse("GET", getURLResource("domains/7580"), null);
     assertNotNull(response);
     assertEquals(404, response.getStatus());
 
-    response = launcher.service("GET", REST_PATH + "/" + autoDomain.getId(), "", null, null, envctx);
+    response = getResponse("GET", getURLResource("domains/" + autoDomain.getId()), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     DomainRestEntity savedDomain = (DomainRestEntity) response.getEntity();
     assertNotNull(savedDomain);
-    assertEquals((long) autoDomain.getId(), (long) savedDomain.getId());
-  }
-
-  private String toJsonString(DomainDTO domain) throws JsonException {
-    return new JsonGeneratorImpl().createJsonObject(domain).toString();
+    assertEquals(autoDomain.getId(), (long) savedDomain.getId());
   }
 }

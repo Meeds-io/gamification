@@ -129,13 +129,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-col>
           </v-row>
           <engagement-center-program-owner-assignment
-              v-if="audience"
-              id="engagementCenterProgramOwnerAssignee"
-              ref="programAssignment"
-              v-model="programOwners"
-              :audience="audience"
-              class="mt-4"
-              multiple />
+            v-if="audience"
+            id="engagementCenterProgramOwnerAssignee"
+            ref="programAssignment"
+            v-model="programOwners"
+            :audience="audience"
+            class="mt-4"
+            multiple />
           <div class="mt-4">
             <div class="d-flex">
               <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>

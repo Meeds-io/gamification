@@ -120,13 +120,14 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public DomainDTO updateDomain(DomainDTO domain, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!isDomainOwner(domain.getId(), aclIdentity)) {
-      throw new IllegalAccessException("The user is not authorized to update domain " + domain);
-    }
     DomainDTO storedDomain = domainStorage.getDomainById(domain.getId());
     if (storedDomain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
-    } else if (domain.equals(storedDomain)) {
+    }
+    if (!isDomainOwner(domain.getId(), aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to update domain " + domain);
+    }
+    if (domain.equals(storedDomain)) {
       // No changes so no modifications needed
       return storedDomain;
     } else if (storedDomain.isDeleted()) {
@@ -154,13 +155,13 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public DomainDTO deleteDomainById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    if (!isDomainOwner(domainId, aclIdentity)) {
-      throw new IllegalAccessException("The user is not authorized to create a domain");
-    }
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
     DomainDTO domain = domainStorage.getDomainById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
+    }
+    if (!isDomainOwner(domainId, aclIdentity)) {
+      throw new IllegalAccessException("The user is not authorized to delete the domain");
     }
     domain.setDeleted(true);
     domain.setLastModifiedDate(date);
@@ -198,14 +199,14 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public boolean canAddDomain(Identity aclIdentity) {
-    return Utils.isSuperManager(aclIdentity.getUserId());
+    return aclIdentity != null && Utils.isSuperManager(aclIdentity.getUserId());
   }
 
   @Override
   public boolean isDomainOwner(long domainId, Identity aclIdentity) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
     DomainDTO domain = domainStorage.getDomainById(domainId);
-    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
+    return domain != null && Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
   private void broadcast(DomainDTO domain, String operation) {
