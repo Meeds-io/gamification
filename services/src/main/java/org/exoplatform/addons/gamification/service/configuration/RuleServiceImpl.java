@@ -252,6 +252,6 @@ public class RuleServiceImpl implements RuleService {
    */
   @Override
   public boolean canManageRule(String username) {
-    return Utils.isAdministrator(username);
+    return Utils.isSuperManager(username);
   }
 }
