@@ -76,7 +76,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <engagement-center-no-results
       v-else-if="displayNoSearchResult"
       :info="$t('challenges.search.noResults')"
-      :info-message="$t('challenges.search.noResultsMessage')" />
+      :info-message="notFoundInfoMessage" />
     <challenges-list
       v-else-if="displayChallengesList"
       :domains="domainsHavingChallenges"
@@ -137,10 +137,19 @@ export default {
       return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
     },
     displayWelcomeMessage() {
-      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && !this.search?.length;
+      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && !this.search?.length && (this.filter === 'ALL' || this.filter === 'STARTED');
+    },
+    notFoundInfoMessage() {
+      if (this.filter === 'NOT_STARTED' && !this.search?.length) {
+        return this.$t('challenges.filter.upcomingNoResultsMessage');
+      } else if (this.filter === 'ENDED' && !this.search?.length) {
+        return this.$t('challenges.filter.endedNoResultsMessage');
+      } else {
+        return this.$t('challenges.search.noResultsMessage');
+      }
     },
     displayNoSearchResult() {
-      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && this.search?.length;
+      return !this.typing && !this.loading && !this.domainsHavingChallenges.length && (this.search?.length || (this.filter === 'NOT_STARTED' || this.filter === 'ENDED'));
     },
     displayChallengesList() {
       return this.domainsHavingChallenges.length;
