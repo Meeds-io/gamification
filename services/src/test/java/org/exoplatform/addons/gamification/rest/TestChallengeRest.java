@@ -86,7 +86,7 @@ public class TestChallengeRest extends AbstractServiceTest {
     ContainerResponse response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
-    startSessionAs("user");
+    startSessionAs("root10");
     response = getResponse("POST", getURLResource("challenges"), writer.getBuffer().toString());
     assertNotNull(response);
     assertEquals(401, response.getStatus());
