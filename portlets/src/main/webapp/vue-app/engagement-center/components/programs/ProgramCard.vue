@@ -142,7 +142,7 @@ export default {
       return this.program?.rulesTotalScore || 0;
     },
     showActionsMenu() {
-      return this.isAdministrator || this.program?.userInfo?.domainOwner;
+      return this.isAdministrator || this.program?.userInfo?.canEdit;
     },
     owners() {
       return (this.program?.owners || []).map(owner => ({

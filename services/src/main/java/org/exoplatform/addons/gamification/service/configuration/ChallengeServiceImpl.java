@@ -23,7 +23,6 @@ import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -44,24 +43,16 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private ExoFeatureService   featureService;
 
-  private String              groupOfCreators;
-
-  private static final String CREATORS_GROUP_KEY             = "challenge.creator.group";
-
   private ListenerService     listenerService;
 
   public ChallengeServiceImpl(ChallengeStorage challengeStorage,
                               SpaceService spaceService,
                               ExoFeatureService featureService,
-                              ListenerService listenerService,
-                              InitParams params) {
+                              ListenerService listenerService) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
     this.featureService = featureService;
     this.listenerService = listenerService;
-    if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {
-      this.groupOfCreators = params.getValueParam(CREATORS_GROUP_KEY).getValue();
-    }
   }
 
   @Override
@@ -105,8 +96,7 @@ public class ChallengeServiceImpl implements ChallengeService {
       Space space = spaceService.getSpaceById(idSpace);
       if (space != null
           && !spaceService.isMember(space, username)
-          && !spaceService.isSuperManager(username)
-          && !Utils.isAdministrator(username)) {
+          && !Utils.isSuperManager(username)) {
         throw new IllegalAccessException("user is not allowed to access to the challenge");
       }
     }
@@ -147,14 +137,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   @Override
   public boolean canAddChallenge(org.exoplatform.services.security.Identity identity) {
-    if (identity != null) {
-      if (StringUtils.isNotBlank(groupOfCreators)) {
-        List<String> permissions = Utils.getPermissions(groupOfCreators);
-        return permissions.stream().anyMatch(identity::isMemberOf);
-      }
-      return true;
-    }
-    return false;
+    return Utils.isSuperManager(identity.getUserId());
   }
 
   @Override
@@ -166,7 +149,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge == null) {
       throw new ObjectNotFoundException("challenge doesn't exist");
     }
-    if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
+    if (!Utils.isChallengeManager(challenge, challenge.getAudience(), username)) {
       throw new IllegalAccessException("User is not allowed to delete challenge with id " + challenge.getId());
     }
     if (Utils.countAnnouncementsByChallenge(challengeId) > 0) {
@@ -246,7 +229,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private void checkChallengePermissionAndDates(Challenge challenge, String username) throws IllegalAccessException {
     applyDomainAttributes(challenge, true);
-    if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
+    if (!Utils.isChallengeManager(challenge, username)) {
       if (challenge.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update challenge with id " + challenge.getId());
       } else {
