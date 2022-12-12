@@ -18,9 +18,12 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
@@ -37,6 +40,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class DomainServiceImpl implements DomainService {
 
@@ -50,21 +54,35 @@ public class DomainServiceImpl implements DomainService {
 
   protected final IdentityManager identityManager;
 
+  protected final SpaceService    spaceService;
+
   protected final FileService     fileService;
 
   public DomainServiceImpl(DomainStorage domainStorage,
                            ListenerService listenerService,
                            IdentityManager identityManager,
-                           FileService fileService) {
+                           SpaceService spaceService, FileService fileService) {
     this.domainStorage = domainStorage;
     this.listenerService = listenerService;
     this.identityManager = identityManager;
+    this.spaceService = spaceService;
     this.fileService = fileService;
   }
 
   @Override
-  public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, int offset, int limit) {
+  public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {
     List<DomainDTO> domains = new ArrayList<>();
+    if (!Utils.isSuperManager(username)) {
+      List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
+      if (spaceIds.isEmpty()) {
+        return Collections.emptyList();
+      }
+      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
+      if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
+        userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
+      }
+      domainFilter.setSpacesIds(userSpaceIds);
+    }
     List<Long> domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
     for (Long domainId : domainIds) {
       DomainDTO domainDTO = getDomainById(domainId);
