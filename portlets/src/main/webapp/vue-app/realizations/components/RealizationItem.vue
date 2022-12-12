@@ -171,12 +171,12 @@ export default {
     },
     actionLabel() {
       if (this.isAutomaticType) {
-        const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.realization.actionLabel}`;
+        const key = `exoplatform.gamification.gamificationinformation.rule.title.${this.realization.action.title}`;
         if (this.$te(key)) {
           return this.$t(key);
         }
       }
-      return this.realization.actionLabel;
+      return this.realization.action.title;
     },
     program() {
       return this.realization?.domain;
