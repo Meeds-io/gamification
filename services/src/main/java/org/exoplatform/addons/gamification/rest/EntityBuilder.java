@@ -109,7 +109,7 @@ public class EntityBuilder {
                                 domain.getType(),
                                 domain.getCoverUrl(),
                                 Utils.getRulesTotalScoreByDomain(domain.getId()),
-                                Utils.getDomainOwnersByIds(domain.getOwners()),
+                                Utils.getDomainOwnersByIds(domain.getOwners(), domain.getAudienceId()),
                                 Utils.toUserInfo(domain.getId(), username));
   }
 

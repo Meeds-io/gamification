@@ -264,7 +264,7 @@ export default {
         enabled: true,
         owners: []
       };
-      this.programOwners = this.program?.owners?.slice() || [];
+      this.programOwners = this.program?.owners?.filter(owner => owner.domainOwner).slice() || [];
 
       if (this.program?.id && this.program?.space) {
         const space = this.program?.space;
