@@ -17,6 +17,89 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <tr :id="`GamificationRealizationItem${realization.id}`">
     <td class="wrap">
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <div
+            v-bind="attrs"
+            v-on="on">
+            <date-format
+              :format="dateFormat"
+              :value="realization.createdDate" />
+          </div>
+        </template>
+        <span>           <date-format
+          :format="tooltipDateFormat"
+          :value="realization.createdDate" /></span>
+      </v-tooltip>
+    </td>
+    <td v-if="isAdministrator" class="text-truncate align-center">
+      <exo-user-avatar
+        :identity="earner"
+        :size="28"
+        extra-class="d-inline-block"
+        link-style
+        popover
+        avatar />
+    </td>
+    <td class="text-truncate align-center">
+            <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon
+            :class="statusIconClass"
+            class="me-1"
+            size="16"
+            v-bind="attrs"
+            v-on="on">
+        {{ actionTypeIcon }}
+          </v-icon>
+        </template>
+        <span>{{ isAutomaticType ? $t('gamification.label.automatic') : $t('realization.label.manual')  }}</span>
+      </v-tooltip>
+    </td>
+    <td>
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <a v-on="on" @click="openProgramDetail">
+            <div class="text-truncate">{{ programTitle }}
+            </div>
+          </a>
+        </template>
+        <span v-html="programTitle"></span>
+      </v-tooltip>
+    </td>
+    <td>
+      <div v-if="isAutomaticType">
+        <extension-registry-component
+          v-if="actionValueExtension"
+          :component="extendedActionValueComponent"
+          :params="actionValueComponentParams" />
+        <a
+          v-else
+          :href="realization.url"
+          :class="actionLabelClass"
+          class="text-color">
+          <span class="actionDescription">
+            {{ actionLabel }}
+          </span>
+        </a>
+      </div>
+      <challenge-action-value
+        v-else
+        :action-label="actionLabel"
+        :action-u-r-l="actionURL" />
+    </td>
+    <td>
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <a v-on="on" @click="openProgramDetail">
+            <div class="text-truncate">{{ programTitle }}
+            </div>
+          </a>
+        </template>
+        <span v-html="programTitle"></span>
+      </v-tooltip>
+    </td>
+    <td class="wrap">
       <date-format
         :format="dateFormat"
         :value="realization.createdDate" />
@@ -73,12 +156,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       {{ score }}
     </td>
     <td class="text-truncate align-center">
-      <v-icon
-        :class="statusIconClass"
-        class="me-1"
-        size="16">
-        {{ statusIcon }}
-      </v-icon>
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon
+            :class="statusIconClass"
+            class="me-1"
+            size="16"
+            v-bind="attrs"
+            v-on="on">
+            {{ statusIcon }}
+          </v-icon>
+        </template>
+        <span>{{ isAccepted ? $t('realization.label.accepted') : $t('realization.label.rejected') }}</span>
+      </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate actions align-center">
       <v-menu
@@ -158,6 +248,13 @@ export default {
   },
   data: () => ({
     menu: false,
+    tooltipDateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    },
   }),
   computed: {
     earner() {
@@ -207,6 +304,9 @@ export default {
     },
     canAccept() {
       return this.status === 'REJECTED';
+    },
+    isAccepted() {
+      return this.status === 'ACCEPTED';
     },
     canEdit() {
       return this.realization.action && this.realization.action.type === 'MANUAL';
