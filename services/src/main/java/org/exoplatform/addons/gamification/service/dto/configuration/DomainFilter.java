@@ -18,6 +18,7 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
@@ -40,5 +41,7 @@ public class DomainFilter implements Serializable {
   private boolean           includeDeleted;
 
   private boolean           sortByBudget;
+
+  private List<Long> spacesIds;
 
 }

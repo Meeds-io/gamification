@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
@@ -34,7 +35,7 @@ public interface DomainService {
    * @param limit limit of results to return
    * @return A {@link List  &lt;DomainDTO&gt;} object
    */
-  List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, int offset, int limit);
+  List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username,int offset, int limit);
 
   /**
    * Return enabled domains within the DB
