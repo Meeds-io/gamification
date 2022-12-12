@@ -241,6 +241,7 @@ export default {
     audience() {
       if (this.drawer && !this.audience?.spaceId) {
         this.program.space = null;
+        this.programOwners = [];
         document.dispatchEvent(new CustomEvent('audienceChanged'));
       }
     },
