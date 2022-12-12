@@ -350,7 +350,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   private List<DomainRestEntity> getDomainsRestEntitiesByFilter(DomainFilter filter, int offset, int limit, String currentUser) {
-    List<DomainDTO> domains = domainService.getDomainsByFilter(filter, offset, limit);
+    List<DomainDTO> domains = domainService.getDomainsByFilter(filter, currentUser, offset, limit);
     return EntityBuilder.toRestEntities(domains, currentUser);
   }
 
