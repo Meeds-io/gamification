@@ -197,6 +197,20 @@ export default {
     realizationsHeaders() {
       const realizationsHeaders = [
         {
+          text: this.$t('realization.label.actionLabel'),
+          sortable: false,
+          value: 'actionLabel',
+          class: 'actionHeader',
+          width: '200'
+        },
+        {
+          text: this.$t('realization.label.programLabel'),
+          sortable: false,
+          value: 'programLabel',
+          class: 'actionHeader',
+          width: '120'
+        },
+        {
           text: this.$t('realization.label.date'),
           sortable: true,
           value: 'date',
@@ -210,18 +224,6 @@ export default {
           value: 'type',
           class: 'actionHeader',
           width: '100',
-        },
-        {
-          text: this.$t('realization.label.programLabel'),
-          sortable: false,
-          value: 'programLabel',
-          class: 'actionHeader'
-        },
-        {
-          text: this.$t('realization.label.actionLabel'),
-          sortable: false,
-          value: 'actionLabel',
-          class: 'actionHeader'
         },
         {
           text: this.$t('realization.label.points'),
@@ -247,7 +249,7 @@ export default {
           class: 'actionHeader',
           width: '90',
         });
-        realizationsHeaders.splice(1, 0,         
+        realizationsHeaders.splice(3, 0,         
           {
             text: this.$t('realization.label.grantee'),
             sortable: false,
@@ -258,8 +260,8 @@ export default {
           },);
       }
       if (this.isMobile) {
-        realizationsHeaders.splice(2, 1);
-        realizationsHeaders.splice(4, 1);
+        realizationsHeaders.splice(1, 1);
+        realizationsHeaders.splice(0, 1);
         realizationsHeaders.splice(5, 1); 
       }
       return realizationsHeaders;
