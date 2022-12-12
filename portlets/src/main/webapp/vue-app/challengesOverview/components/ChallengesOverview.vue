@@ -138,8 +138,9 @@ export default {
             this.listChallenges.push(challenge);
             this.listRealizations.push(data.id);
           });
-          if (this.listChallenges.length < 3 && this.orderByRealizations) {
+          if (this.listChallenges.length < this.challengePerPage && this.orderByRealizations) {
             this.orderByRealizations = false;
+            this.challengePerPage -= this.listChallenges.length;
             this.getChallenges();
           }
           this.listChallenges = this.listChallenges.sort((challenge1, challenge2) => challenge2.challengePoints - challenge1.challengePoints);
