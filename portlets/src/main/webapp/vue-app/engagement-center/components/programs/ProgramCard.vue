@@ -145,7 +145,7 @@ export default {
       return this.isAdministrator || this.program?.userInfo?.canEdit;
     },
     owners() {
-      return (this.program?.owners || []).map(owner => ({
+      return (this.program?.owners || []).filter(owner => owner.domainOwner).map(owner => ({
         userName: owner.remoteId
       }));
     },

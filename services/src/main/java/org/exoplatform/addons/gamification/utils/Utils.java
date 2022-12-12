@@ -347,7 +347,7 @@ public class Utils {
     }
   }
 
-  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids) {
+  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids, long spaceId) {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
@@ -357,7 +357,7 @@ public class Utils {
         Identity identity = identityManager.getIdentity(String.valueOf(id));
         if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
           UserInfo userInfo = toUserInfo(identity);
-          userInfo.setDomainOwner(true);
+          userInfo.setDomainOwner(isProgramOwner(spaceId, ids, identity));
           return userInfo;
         }
         return null;

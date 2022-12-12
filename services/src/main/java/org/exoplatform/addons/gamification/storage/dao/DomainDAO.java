@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -115,6 +116,9 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
   }
 
   private <T> void addQueryFilterParameters(DomainFilter filter, TypedQuery<T> query) {
+    if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
+      query.setParameter("spacesIds", filter.getSpacesIds());
+    }
     EntityFilterType entityFilterType = filter.getEntityFilterType();
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("type", EntityType.valueOf(entityFilterType.name()));
@@ -125,6 +129,10 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
   }
 
   private void buildPredicates(DomainFilter filter, List<String> suffixes, List<String> predicates) {
+    if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
+      suffixes.add("Audience");
+      predicates.add("(d.audienceId in (:spacesIds) OR d.audienceId IS NULL)");
+    }
     if (filter.getEntityFilterType() != null && filter.getEntityFilterType() != EntityFilterType.ALL) {
       suffixes.add("Type");
       predicates.add("d.type = :type");
