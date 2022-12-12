@@ -39,7 +39,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             text
             v-on="on">
             <v-icon size="18" class="me-2">fas fa-user-plus</v-icon>
-            <span class="text-capitalize">{{ $t('challenges.label.assign') }}</span>
+            <span class="text-capitalize">{{ $t('programs.label.addOwners') }}</span>
           </v-btn>
         </div>
       </template>
@@ -62,7 +62,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           include-users />
       </v-card>
     </v-menu>
-    <div class="assigneeName">
+    <div class="assigneeName d-flex align-start flex-column">
       <v-chip
         v-for="user in assigneeObj"
         :key="user"
