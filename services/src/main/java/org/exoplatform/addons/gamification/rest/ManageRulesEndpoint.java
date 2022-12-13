@@ -125,7 +125,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Operation(summary = "Creates a rule", method = "POST")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
@@ -149,7 +149,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Operation(summary = "Updates a rule", method = "PUT")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "404", description = "Object not found"),
@@ -176,7 +176,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
   @DELETE
   @Path("{ruleId}")
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Operation(summary = "Deletes a rule", method = "DELETE")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "404", description = "Object not found"),
