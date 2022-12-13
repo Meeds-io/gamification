@@ -89,7 +89,7 @@ public class DomainStorage {
 
   public List<Long> getDomainsByFilter(DomainFilter filter, int offset, int limit) {
     if(filter.isSortByBudget()) {
-      return ruleDAO.findHighestBudgetDomainIds(offset, limit);
+      return ruleDAO.findHighestBudgetDomainIds(filter.getSpacesIds(), offset, limit);
     }
     return domainDAO.getDomainsByFilter(offset, limit, filter);
   }
