@@ -143,7 +143,7 @@ export default {
       type: Number,
       default: () => 0,
     },
-    canManageRule: {
+    isAdministrator: {
       type: Boolean,
       default: false,
     },
@@ -195,6 +195,9 @@ export default {
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;
     },
+    canManageRule() {
+      return this.isAdministrator || this.program?.userInfo?.canEdit;
+    }
   },
   watch: {
     program() {

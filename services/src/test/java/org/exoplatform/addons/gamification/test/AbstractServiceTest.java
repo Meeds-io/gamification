@@ -445,6 +445,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       domain.setLastModifiedDate(new Date());
       domain.setType(EntityType.AUTOMATIC);
       domain.setCreatedDate(new Date());
+      domain.setAudienceId(1L);
       domain = domainDAO.create(domain);
       domainStorage.clearCache();
       restartTransaction();
