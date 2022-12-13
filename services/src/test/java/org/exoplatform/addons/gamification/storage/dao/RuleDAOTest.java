@@ -131,6 +131,33 @@ public class RuleDAOTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testFindHighestBudgetDomainIds() {
+    RuleEntity r1 = newRule("rule1", "domain1");
+    RuleEntity r2 = newRule("rule2", "domain1");
+    RuleEntity r3 = newRule("rule3", "domain2");
+    r1.setScore(Integer.parseInt(TEST__SCORE) * 2);
+    r2.setScore(Integer.parseInt(TEST__SCORE));
+    r3.setScore(Integer.parseInt(TEST__SCORE));
+    assertEquals(ruleDAO.findHighestBudgetDomainIds(0, 3).get(0), r1.getDomainEntity().getId());
+  }
+
+  @Test
+  public void testExcludRuleIds() {
+    RuleFilter filter = new RuleFilter();
+    filter.setDateFilterType(DateFilterType.ALL);
+    RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
+    filter.setDomainId(ruleEntity1.getDomainEntity().getId());
+    filter.setSpaceIds(Collections.singletonList(1l));
+    assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+    newRule("rule2", "domain1", 1l);
+    assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+    List<Long> excludedIds = new ArrayList<>();
+    excludedIds.add(ruleEntity1.getId());
+    filter.setExcludedChallengesIds(excludedIds);
+    assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+  }
+
+  @Test
   public void testFindRulesIdsByFilter() {
     RuleFilter filter = new RuleFilter();
     filter.setDateFilterType(DateFilterType.ALL);
