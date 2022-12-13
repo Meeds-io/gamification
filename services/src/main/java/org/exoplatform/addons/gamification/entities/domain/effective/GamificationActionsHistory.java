@@ -163,7 +163,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findMostRealizedRuleIds",
-    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type= :type AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
+    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type= :type AND (a.domainEntity.audienceId in (:spacesIds) OR a.domainEntity.audienceId = null ) AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
             "group by a.ruleId order by count(*) DESC"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
