@@ -70,9 +70,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </select>
       </div>
     </v-toolbar>
-    <challenge-welcome-message
-      v-if="displayWelcomeMessage"
-      :can-add-challenge="canAddChallenge" />
+    <engagement-center-welcome-message
+      v-if="displayWelcomeMessage">
+      <template #content>
+      <div class="mx-4 my-6 dark-grey-color">
+        <p class="align-center font-weight-bold mb-5"> {{ $t('challenges.welcomeMessage') }} </p>
+        <p v-if="canAddChallenge" class="align-center"> {{ $t('challenges.welcomeMessageForManager') }} </p>
+        <p v-else class="align-center"> {{ $t('challenges.welcomeMessageForUser') }} </p>
+      </div>
+      </template>
+    </engagement-center-welcome-message>
     <engagement-center-no-results
       v-else-if="displayNoSearchResult"
       :info="$t('challenges.search.noResults')"
