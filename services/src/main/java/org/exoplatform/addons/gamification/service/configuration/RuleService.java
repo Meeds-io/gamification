@@ -175,12 +175,4 @@ public interface RuleService {
      * @throws IllegalAccessException when user sin't allowed to update chosen rule
      */
     RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
-
-    /**
-     * Check whether user can manage rules or not.
-     *
-     * @param username User name
-     * @return true if the user is a member of platform/rewarding, else return false.
-     */
-    boolean canManageRule(String username);
 }
