@@ -51,4 +51,6 @@ public class RuleFilter implements Serializable {
   private boolean           includeDeleted;
 
   private boolean           orderByRealizations;
+
+  private List<Long>        excludedChallengesIds;
 }
