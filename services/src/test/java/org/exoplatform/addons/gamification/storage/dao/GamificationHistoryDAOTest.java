@@ -864,7 +864,10 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule2Manual.getId()));
     histories.add(newGamificationActionsHistoryWithRuleId("Manual action", rule2Manual.getId()));
 
-    List<Long> result = gamificationHistoryDAO.findMostRealizedRuleIds(0, 6, EntityType.MANUAL);
+    List<Long> spacesIds = new ArrayList<>();
+    spacesIds.add(1L);
+
+    List<Long> result = gamificationHistoryDAO.findMostRealizedRuleIds(spacesIds, 0, 6, EntityType.MANUAL);
 
     assertNotNull(result);
     assertEquals(2, result.size());
