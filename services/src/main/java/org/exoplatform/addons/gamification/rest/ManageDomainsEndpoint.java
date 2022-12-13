@@ -162,7 +162,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     DomainList domainList = new DomainList();
     List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
     if (returnSize) {
-      int domainsSize = domainService.countDomains(domainFilter);
+      int domainsSize = domainService.countDomains(domainFilter, currentUser);
       domainList.setDomainsSize(domainsSize);
     }
     domainList.setDomains(domains);
