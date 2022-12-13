@@ -324,7 +324,9 @@ public class ChallengeServiceTest {
 
     // Test get most realized challenges
     filter.setOrderByRealizations(true);
-    when(challengeStorage.findMostRealizedChallengesIds(0, 10)).thenReturn(challengesIds);
+    List<Long> spacesIds = new ArrayList<>();
+    spacesIds.add(1L);
+    when(challengeStorage.findMostRealizedChallengesIds(spacesIds, 0, 10)).thenReturn(challengesIds);
     when(challengeStorage.getChallengeById(challengesIds.get(0))).thenReturn(challenge);
     List<Challenge> popularChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
     assertEquals(popularChallenges.get(0).getId(), challenge.getId());
@@ -332,7 +334,7 @@ public class ChallengeServiceTest {
 
   @Test
   public void testCountChallengesByFilterAndUser() {
-    Challenge challenge = new Challenge(1l,
+    Challenge challenge = new Challenge(1L,
                                         "Challenge",
                                         "description",
                                         1l,

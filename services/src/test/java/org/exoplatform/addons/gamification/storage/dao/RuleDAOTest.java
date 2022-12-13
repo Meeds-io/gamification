@@ -140,8 +140,9 @@ public class RuleDAOTest extends AbstractServiceTest {
     r1.setScore(Integer.parseInt(TEST__SCORE)*2);
     r2.setScore(Integer.parseInt(TEST__SCORE));
     r3.setScore(Integer.parseInt(TEST__SCORE));
-
-    assertEquals(ruleDAO.findHighestBudgetDomainIds(0,3).get(0), r1.getDomainEntity().getId());
+    List<Long> spacesIds = new ArrayList<>();
+    spacesIds.add(1L);
+    assertEquals(ruleDAO.findHighestBudgetDomainIds(spacesIds, 0, 3).get(0), r1.getDomainEntity().getId());
   }
   @Test
   public void testExcludRuleIds() {
