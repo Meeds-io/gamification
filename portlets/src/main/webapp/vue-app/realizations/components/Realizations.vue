@@ -102,7 +102,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :disabled="loading"
         @click="loadMore"
         block>
-        <span class="ms-2 d-none d-lg-inline">
+        <span class="ms-2 d-inline">
           {{ $t("realization.label.loadMore") }}
         </span>
       </v-btn>
