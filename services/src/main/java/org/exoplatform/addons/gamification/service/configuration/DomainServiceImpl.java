@@ -113,7 +113,18 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  public int countDomains(DomainFilter domainFilter) {
+  public int countDomains(DomainFilter domainFilter, String username) {
+    if (!Utils.isSuperManager(username)) {
+      List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
+      if (spaceIds.isEmpty()) {
+        return 0;
+      }
+      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
+      if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
+        userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
+      }
+      domainFilter.setSpacesIds(userSpaceIds);
+    }
     return domainStorage.countDomains(domainFilter);
   }
 

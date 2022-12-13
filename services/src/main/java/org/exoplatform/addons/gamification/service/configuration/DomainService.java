@@ -31,6 +31,7 @@ public interface DomainService {
    * Gets domains by filter.
    *
    * @param domainFilter {@link DomainFilter} used to filter results
+   * @param username User name accessing domains
    * @param offset index of the search
    * @param limit limit of results to return
    * @return {@link List} of {@link DomainDTO}
@@ -121,9 +122,10 @@ public interface DomainService {
    * Count all domains by filter
    *
    * @param domainFilter {@link DomainFilter} used to filter domains
+   * @param username User name accessing domains
    * @return domains count
    */
-  int countDomains(DomainFilter domainFilter);
+  int countDomains(DomainFilter domainFilter, String username);
 
   /**
    * Retrieves a cover identified by domain technical identifier.
