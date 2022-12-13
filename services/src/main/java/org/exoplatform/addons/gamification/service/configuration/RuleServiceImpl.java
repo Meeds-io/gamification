@@ -163,7 +163,7 @@ public class RuleServiceImpl implements RuleService {
     if (ruleDTO == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!canManageRule(username)) {
+    if (!Utils.isRuleManager(ruleDTO, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
     ruleDTO = ruleStorage.deleteRuleById(ruleId, username);
@@ -185,7 +185,7 @@ public class RuleServiceImpl implements RuleService {
     if (ruleDTO.getId() != null) {
       throw new IllegalArgumentException("domain id must be equal to 0");
     }
-    if (!canManageRule(username)) {
+    if (!Utils.isRuleManager(ruleDTO, username)) {
       throw new IllegalAccessException("The user is not authorized to create a rule");
     }
     ruleDTO.setCreatedBy(username);
@@ -234,7 +234,7 @@ public class RuleServiceImpl implements RuleService {
         throw new IllegalStateException("Rule with same event and domain already exist");
       }
     }
-    if (!canManageRule(username)) {
+    if (!Utils.isRuleManager(ruleDTO, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
     ruleDTO.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
@@ -245,13 +245,5 @@ public class RuleServiceImpl implements RuleService {
     Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());
 
     return ruleDTO;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean canManageRule(String username) {
-    return Utils.isSuperManager(username);
   }
 }
