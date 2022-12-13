@@ -17,7 +17,6 @@
  *
  */
 import Challenges from './components/challenges/Challenges.vue';
-import WelcomeMessage from './components/challenges/WelcomeMessage.vue';
 import ChallengeCard from './components/challenges/ChallengeCard.vue';
 import ChallengesList from './components/challenges/ChallengesList.vue';
 import DomainChallengesList from './components/challenges/DomainChallengesList.vue';
@@ -47,6 +46,7 @@ import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
 import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
+import WelcomeMessage from './components/common/WelcomeMessage.vue';
 
 import StreamActionValue from './components/actionValues/StreamActionValue.vue';
 import ProfileActionValue from './components/actionValues/ProfileActionValue.vue';
@@ -59,7 +59,6 @@ import StandaloneAssignment from './components/deprecated/StandaloneAssignment.v
 
 const components = {
   'challenges': Challenges,
-  'challenge-welcome-message': WelcomeMessage,
   'challenge-card': ChallengeCard,
   'challenges-list': ChallengesList,
   'domain-challenges-list': DomainChallengesList,
@@ -86,6 +85,7 @@ const components = {
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-description-editor': DescriptionEditor,
   'engagement-center-image-selector': ImageSelector,
+  'engagement-center-welcome-message': WelcomeMessage,
   'stream-action-value': StreamActionValue,
   'profile-action-value': ProfileActionValue,
   'space-action-value': SpaceActionValue,
