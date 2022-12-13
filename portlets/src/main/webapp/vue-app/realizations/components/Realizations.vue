@@ -201,14 +201,14 @@ export default {
           sortable: false,
           value: 'actionLabel',
           class: 'actionHeader',
-          width: '200'
+          width: '161'
         },
         {
           text: this.$t('realization.label.programLabel'),
           sortable: false,
           value: 'programLabel',
           class: 'actionHeader',
-          width: '120'
+          width: '110'
         },
         {
           text: this.$t('realization.label.date'),
@@ -223,7 +223,7 @@ export default {
           align: 'center',
           value: 'type',
           class: 'actionHeader',
-          width: '100',
+          width: '85',
         },
         {
           text: this.$t('realization.label.points'),
@@ -231,7 +231,7 @@ export default {
           align: 'center',
           value: 'points',
           class: 'actionHeader',
-          width: '90',
+          width: '80',
         },
         {
           text: this.$t('realization.label.status'),
@@ -247,7 +247,7 @@ export default {
           text: this.$t('realization.label.actions'),
           sortable: false,
           class: 'actionHeader',
-          width: '90',
+          width: '80',
         });
         realizationsHeaders.splice(3, 0,         
           {
@@ -256,7 +256,7 @@ export default {
             align: 'center',
             value: 'grantee',
             class: 'actionHeader',
-            width: '90',
+            width: '70',
           },);
       }
       if (this.isMobile) {
@@ -347,7 +347,7 @@ export default {
       this.loadRealizations();
     },
     onResize () {
-      this.isMobile = window.innerWidth < 700;
+      this.isMobile = window.innerWidth < 1020;
     },
   }
 };
