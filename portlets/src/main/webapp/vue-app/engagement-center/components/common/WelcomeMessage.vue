@@ -15,26 +15,21 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="welcomeMessage">
+  <div>
     <img
       src="/gamification-portlets/skin/images/Challenge_app_backg_image.png"
       :alt="$t('challenges.welcomeMessageImgAlt')"
-      class="mx-4"
+      class="justify-center ma-auto d-flex flex-no-wrap"
+      width="800px"
       loading="lazy">
-    <div class="mx-4 my-6">
-      <p class="title"> {{ $t('challenges.welcomeMessage') }} </p>
-      <p v-if="canAddChallenge"> {{ $t('challenges.welcomeMessageForManager') }} </p>
-      <p v-else> {{ $t('challenges.welcomeMessageForUser') }} </p>
-    </div>
+    <v-list-item class="px-0">
+      <v-list-item-content>
+        <div class="justify-center ma-auto d-flex flex-no-wrap">
+          <slot name="content"></slot>
+        </div>
+      </v-list-item-content>
+    </v-list-item>
   </div>
 </template>
 <script>
-export default {
-  props: {
-    canAddChallenge: {
-      type: Boolean,
-      default: false,
-    },
-  },
-};
 </script>
