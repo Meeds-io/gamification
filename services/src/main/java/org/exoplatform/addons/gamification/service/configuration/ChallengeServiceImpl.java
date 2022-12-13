@@ -178,7 +178,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     setFilterAudience(challengeFilter, spaceIds);
     List<Long> challengesIds = null;
     if (challengeFilter.isOrderByRealizations()) {
-      challengesIds = challengeStorage.findMostRealizedChallengesIds(offset, limit);
+      challengesIds = challengeStorage.findMostRealizedChallengesIds(challengeFilter.getSpaceIds(), offset, limit);
     } else {
       challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
     }

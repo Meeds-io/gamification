@@ -44,6 +44,7 @@ import java.util.Objects;
 @NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
 @NamedQuery(name = "Rule.getRulesTotalScoreByDomain", query = "SELECT SUM(rule.score) FROM Rule rule where rule.domainEntity.id = :domainId AND rule.isEnabled = true AND rule.isDeleted = false AND (rule.type = 0 OR (rule.type = 1 AND rule.startDate <= :date AND rule.endDate >= :date))")
 @NamedQuery(name = "Rule.getHighestBudgetDomainIds", query = "SELECT rule.domainEntity.id FROM Rule rule WHERE rule.isEnabled = true AND rule.isDeleted = false GROUP BY rule.domainEntity.id ORDER BY SUM(rule.score) DESC")
+@NamedQuery(name = "Rule.getHighestBudgetDomainIdsBySpacesIds", query = "SELECT rule.domainEntity.id FROM Rule rule WHERE rule.isEnabled = true AND rule.isDeleted = false AND (rule.domainEntity.audienceId in (:spacesIds) OR rule.domainEntity.audienceId = null ) GROUP BY rule.domainEntity.id ORDER BY SUM(rule.score) DESC")
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
