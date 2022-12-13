@@ -417,20 +417,24 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
-  public List<Long> findMostRealizedRuleIds(int offset, int limit, EntityType type) {
-    TypedQuery<Long> query;
-    query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRuleIds", Long.class);
-    LocalDate now = new LocalDate();
-    LocalDate monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
-    LocalDate sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
-    Date utilFromDate = Date.from(monday.toDate().toInstant());
-    Date utilToDate = Date.from(sunday.toDate().toInstant());
-    query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
-         .setParameter(TO_DATE_PARAM_NAME, utilToDate)
-        .setParameter(TYPE, type);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
-    List<Long> resultList = query.getResultList();
+  public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {
+    List<Long> resultList = null;
+    if (CollectionUtils.isNotEmpty(spacesIds)) {
+      TypedQuery<Long> query;
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRuleIds", Long.class);
+      query.setParameter("spacesIds", spacesIds);
+      LocalDate now = new LocalDate();
+      LocalDate monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
+      LocalDate sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
+      Date utilFromDate = Date.from(monday.toDate().toInstant());
+      Date utilToDate = Date.from(sunday.toDate().toInstant());
+      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
+           .setParameter(TO_DATE_PARAM_NAME, utilToDate)
+           .setParameter(TYPE, type);
+      query.setFirstResult(offset);
+      query.setMaxResults(limit);
+      resultList = query.getResultList();
+    }
     return resultList == null ? Collections.emptyList() : resultList;
   }
 
