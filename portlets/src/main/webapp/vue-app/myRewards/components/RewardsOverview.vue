@@ -53,6 +53,7 @@
               </template>
               <template #content>
                 <extension-registry-components
+                  :params="params"
                   name="my-rewards-wallet-overview"
                   type="my-rewards-wallet-item"
                   class="d-flex flex-row mt-5" />
