@@ -300,6 +300,21 @@ public class Utils {
     return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
   }
 
+  public static boolean isRuleManager(RuleDTO rule, String username) {
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    long programId;
+    if (StringUtils.isBlank(rule.getArea())) {
+      return false;
+    } else {
+      DomainDTO domain = domainService.getDomainByTitle(rule.getArea());
+      if (domain == null) {
+        return false;
+      }
+      programId = domain.getId();
+    }
+    return domainService.isDomainOwner(programId, getUserAclIdentity(username));
+  }
+
   public static List<UserInfo> getOwners(Challenge challenge) {// NOSONAR
     ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
     if (challengeService.isEngagementCenterEnabled()) {
