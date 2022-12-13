@@ -46,7 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="displayProgramDetail"
             :program="program"
             :events="events"
-            :can-manage-rule="isAdministrator" />
+            :is-administrator="isAdministrator" />
         </v-tab-item>
         <v-tab-item>
           <challenges :challenge-id="challengeId" :can-add-challenge="canAddChallenge" />
@@ -62,7 +62,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="displayProgramDetail"
             :program="program"
             :events="events"
-            :can-manage-rule="isAdministrator"
+            :is-administrator="isAdministrator"
             :tab="2" />
         </v-tab-item>
       </v-tabs-items>
