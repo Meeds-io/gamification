@@ -16,6 +16,59 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <tr :id="`GamificationRealizationItem${realization.id}`">
+    <td class="wrap">
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <div
+            v-bind="attrs"
+            v-on="on">
+            <date-format
+              :format="dateFormat"
+              :value="realization.createdDate" />
+          </div>
+        </template>
+        <span>           
+          <date-format
+            :format="tooltipDateFormat"
+            :value="realization.createdDate" />
+        </span>
+      </v-tooltip>
+    </td>
+    <td v-if="isAdministrator" class="text-truncate align-center">
+      <exo-user-avatar
+        :identity="earner"
+        :size="28"
+        extra-class="d-inline-block"
+        link-style
+        popover
+        avatar />
+    </td>
+    <td class="text-truncate align-center">
+      <v-tooltip bottom>
+        <template #activator="{ on, attrs }">
+          <v-icon
+            :class="statusIconClass"
+            class="me-1"
+            size="16"
+            v-bind="attrs"
+            v-on="on">
+            {{ actionTypeIcon }}
+          </v-icon>
+        </template>
+        <span>{{ isAutomaticTypeLabel }}</span>
+      </v-tooltip>
+    </td>
+    <td>
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <a v-on="on" @click="openProgramDetail">
+            <div class="text-truncate">{{ programTitle }}
+            </div>
+          </a>
+        </template>
+        <span v-html="programTitle"></span>
+      </v-tooltip>
+    </td>
     <td>
       <div v-if="isAutomaticType">
         <extension-registry-component
