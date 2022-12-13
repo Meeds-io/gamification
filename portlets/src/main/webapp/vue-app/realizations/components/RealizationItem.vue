@@ -27,9 +27,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :value="realization.createdDate" />
           </div>
         </template>
-        <span>           <date-format
-          :format="tooltipDateFormat"
-          :value="realization.createdDate" /></span>
+        <span>           
+          <date-format
+            :format="tooltipDateFormat"
+            :value="realization.createdDate" />
+        </span>
       </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate align-center">
@@ -42,7 +44,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         avatar />
     </td>
     <td class="text-truncate align-center">
-            <v-tooltip bottom>
+      <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-icon
             :class="statusIconClass"
@@ -50,10 +52,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             size="16"
             v-bind="attrs"
             v-on="on">
-        {{ actionTypeIcon }}
+            {{ actionTypeIcon }}
           </v-icon>
         </template>
-        <span>{{ isAutomaticType ? $t('gamification.label.automatic') : $t('realization.label.manual')  }}</span>
+        <span>{{ isAutomaticTypeLabel }}</span>
       </v-tooltip>
     </td>
     <td>
@@ -135,7 +137,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ statusIcon }}
           </v-icon>
         </template>
-        <span>{{ isAccepted ? $t('realization.label.accepted') : $t('realization.label.rejected') }}</span>
+        <span>{{ isAcceptedLabel }}</span>
       </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate actions align-center">
@@ -303,6 +305,12 @@ export default {
           .find(extension => extension.match && extension.match(this.realization.actionLabel)) || null;
       }
       return null;
+    },
+    isAutomaticTypeLabel() {
+      return this.isAutomaticType ? this.$t('gamification.label.automatic') : this.$t('realization.label.manual');
+    },
+    isAcceptedLabel() {
+      return this.isAccepted ? this.$t('realization.label.accepted') : this.$t('realization.label.rejected');
     },
   },
   created() {
