@@ -96,32 +96,32 @@ public class DomainServiceTest extends AbstractServiceTest {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, domainService.countDomains(filter));
+    assertEquals(0, domainService.countDomains(filter, "root1"));
     newDomain(EntityType.MANUAL, "domain1", true, new HashSet<>());
     newDomain(EntityType.MANUAL, "domain2", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain3", true, new HashSet<>());
     newDomain(EntityType.AUTOMATIC, "domain4", true, new HashSet<>());
-    assertEquals(4, domainService.countDomains(filter));
+    assertEquals(4, domainService.countDomains(filter, "root1"));
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, domainService.countDomains(filter));
+    assertEquals(2, domainService.countDomains(filter, "root1"));
     newDomain(EntityType.AUTOMATIC, "domain5", false, new HashSet<>());
-    assertEquals(2, domainService.countDomains(filter));
+    assertEquals(2, domainService.countDomains(filter, "root1"));
 
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(2, domainService.countDomains(filter));
+    assertEquals(2, domainService.countDomains(filter, "root1"));
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, domainService.countDomains(filter));
+    assertEquals(2, domainService.countDomains(filter, "root1"));
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(6, domainService.countDomains(filter));
+    assertEquals(6, domainService.countDomains(filter, "root1"));
     filter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, domainService.countDomains(filter));
+    assertEquals(2, domainService.countDomains(filter, "root1"));
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, domainService.countDomains(filter));
+    assertEquals(1, domainService.countDomains(filter, "root1"));
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(1, domainService.countDomains(filter));
+    assertEquals(1, domainService.countDomains(filter, "root1"));
   }
 
   @Test

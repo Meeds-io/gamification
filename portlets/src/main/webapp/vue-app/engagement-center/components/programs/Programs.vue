@@ -89,9 +89,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :ok-label="$t('programs.label.ok.button')"
       :cancel-label="$t('programs.label.cancel.button')"
       @ok="deleteProgram" />
-    <engagement-center-no-results
-      v-if="displayNoSearchResult"
-      :info="$t('program.filter.noResults')" />
+    <engagement-center-welcome-message
+        v-if="displayNoSearchResult"
+      class="mx-16 mb-5">
+      <template #content>
+        <div class="mx-4 my-6 dark-grey-color">
+          <p class="align-center font-weight-bold mb-5"> {{ $t('programs.label.welcome') }} </p>
+          <p class="align-center mb-5" v-html="welcomeMessage"/>
+          <p class="align-center"> {{ $t('programs.label.seeYouSoon') }} </p>
+        </div>
+      </template>
+    </engagement-center-welcome-message>
     <engagement-center-program-drawer
       ref="programDrawer"
       :is-administrator="isAdministrator" />
@@ -140,11 +148,16 @@ export default {
       }];
     },
     displayNoSearchResult() {
-      return !this.loading && this.programsList?.domainsSize === 0;
+      return !this.loading && this.totalSize === 0;
+    },
+    welcomeMessage() {
+      return this.$t('programs.label.welcomeMessage', {
+        0: `<a class="primary--text font-weight-bold" href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces/">`,
+        1: '</a>',
+      });
     },
     hasMore() {
       return this.loading || this.limitToFetch < this.totalSize;
-
     },
   },
   watch: {
