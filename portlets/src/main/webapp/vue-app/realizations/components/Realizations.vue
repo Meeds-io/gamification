@@ -201,7 +201,7 @@ export default {
           sortable: false,
           value: 'actionLabel',
           class: 'actionHeader',
-          width: '161'
+          width: '188'
         },
         {
           text: this.$t('realization.label.programLabel'),
@@ -215,7 +215,7 @@ export default {
           sortable: true,
           value: 'date',
           class: 'actionHeader',
-          width: '150'
+          width: '120'
         },
         {
           text: this.$t('realization.label.actionType'),
