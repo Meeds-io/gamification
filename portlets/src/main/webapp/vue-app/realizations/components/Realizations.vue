@@ -197,11 +197,25 @@ export default {
     realizationsHeaders() {
       const realizationsHeaders = [
         {
+          text: this.$t('realization.label.actionLabel'),
+          sortable: false,
+          value: 'actionLabel',
+          class: 'actionHeader',
+          width: '188'
+        },
+        {
+          text: this.$t('realization.label.programLabel'),
+          sortable: false,
+          value: 'programLabel',
+          class: 'actionHeader',
+          width: '110'
+        },
+        {
           text: this.$t('realization.label.date'),
           sortable: true,
           value: 'date',
           class: 'actionHeader',
-          width: '150'
+          width: '120'
         },
         {
           text: this.$t('realization.label.actionType'),
@@ -209,19 +223,7 @@ export default {
           align: 'center',
           value: 'type',
           class: 'actionHeader',
-          width: '100',
-        },
-        {
-          text: this.$t('realization.label.programLabel'),
-          sortable: false,
-          value: 'programLabel',
-          class: 'actionHeader'
-        },
-        {
-          text: this.$t('realization.label.actionLabel'),
-          sortable: false,
-          value: 'actionLabel',
-          class: 'actionHeader'
+          width: '85',
         },
         {
           text: this.$t('realization.label.points'),
@@ -229,7 +231,7 @@ export default {
           align: 'center',
           value: 'points',
           class: 'actionHeader',
-          width: '90',
+          width: '80',
         },
         {
           text: this.$t('realization.label.status'),
@@ -245,21 +247,21 @@ export default {
           text: this.$t('realization.label.actions'),
           sortable: false,
           class: 'actionHeader',
-          width: '90',
+          width: '80',
         });
-        realizationsHeaders.splice(1, 0,         
+        realizationsHeaders.splice(3, 0,         
           {
             text: this.$t('realization.label.grantee'),
             sortable: false,
             align: 'center',
             value: 'grantee',
             class: 'actionHeader',
-            width: '90',
+            width: '70',
           },);
       }
       if (this.isMobile) {
-        realizationsHeaders.splice(2, 1);
-        realizationsHeaders.splice(4, 1);
+        realizationsHeaders.splice(1, 1);
+        realizationsHeaders.splice(0, 1);
         realizationsHeaders.splice(5, 1); 
       }
       return realizationsHeaders;
@@ -345,7 +347,7 @@ export default {
       this.loadRealizations();
     },
     onResize () {
-      this.isMobile = window.innerWidth < 700;
+      this.isMobile = window.innerWidth < 1020;
     },
   }
 };
