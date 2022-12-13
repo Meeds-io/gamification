@@ -105,11 +105,11 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     data.put("type", "AUTOMATIC");
     data.put("domainDTO", domainData);
 
-    startSessionAs("user");
+    startSessionAs("root10");
     ContainerResponse response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(401, response.getStatus());
 
-    startSessionAs("root");
+    startSessionAs("root1");
     response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
@@ -127,11 +127,11 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Test
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
-    startSessionAs("user");
+    startSessionAs("root10");
     ContainerResponse response = getResponse("DELETE", getURLResource("rules/" + ruleEntity.getId()), null);
     assertEquals(401, response.getStatus());
 
-    startSessionAs("root");
+    startSessionAs("root1");
     response = getResponse("DELETE", getURLResource("rules/-1"), null);
     assertEquals(400, response.getStatus());
 
@@ -155,7 +155,7 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     domainData.put("id", domainDTO.getId());
     domainData.put("title", domainDTO.getTitle());
 
-    startSessionAs("root");
+    startSessionAs("root1");
     ContainerResponse response = getResponse("PUT", getURLResource("rules"), null);
     assertEquals(400, response.getStatus());
 
@@ -164,7 +164,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     data.put("title", ruleDTO.getTitle());
     data.put("description", ruleDTO.getDescription() + "_test");
 
-    startSessionAs("root");
     response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(404, response.getStatus());
 
@@ -178,13 +177,12 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     data.put("domainDTO", domainData);
     data.put("createdDate", ruleDTO.getCreatedDate());
 
-    startSessionAs("root");
     response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("Description_test", entity.getDescription());
 
-    startSessionAs("user");
+    startSessionAs("root10");
     response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(401, response.getStatus());
   }
