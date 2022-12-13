@@ -67,11 +67,10 @@
               {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
             </div>
           </template>
-          <template #icon>
-            <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
-          </template>
           <template #content>
-            <span v-html="emptyPerkstoreSummaryText"></span>
+            <extension-registry-components
+              name="my-rewards-perkstore-overview"
+              type="my-rewards-perkstore-item" />
           </template>
         </gamification-overview-widget-row>
       </template>
