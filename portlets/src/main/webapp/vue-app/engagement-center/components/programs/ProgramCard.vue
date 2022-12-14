@@ -153,7 +153,7 @@ export default {
       return this.program?.space?.managers;
     },
     spaceManagersList() {
-      return this.spaceManagers?.length > 0 && this.spaceManagers.map(owner => ({
+      return (this.spaceManagers || []).map(owner => ({
         userName: owner
       }));
     },
