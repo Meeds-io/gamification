@@ -118,7 +118,6 @@ export default {
     document.addEventListener('kudosCount', (event) => {
       if (event) {
         this.kudosDisplayed = event.detail > 0;
-        console.warn('this.kudosDisplayed', this.kudosDisplayed);
         this.$nextTick().then(() => this.loadingKudos = false);
       }
     });
