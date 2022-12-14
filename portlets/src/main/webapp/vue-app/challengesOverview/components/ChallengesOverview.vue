@@ -22,7 +22,7 @@
         {{ $t('gamification.overview.emptyChallengesOverviewTitle') }}
       </template>
       <template #content>
-        <gamification-overview-widget-row class="my-auto">
+        <gamification-overview-widget-row v-show="!loading" class="my-auto">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-rocket</v-icon>
           </template>
@@ -133,7 +133,7 @@ export default {
           if (this.listChallenges.length < this.challengePerPage && this.orderByRealizations) {
             this.orderByRealizations = false;
             this.challengePerPage -= this.listChallenges.length;
-            this.getChallenges();
+            return this.getChallenges();
           }
           this.listChallenges = this.listChallenges.sort((challenge1, challenge2) => challenge2.challengePoints - challenge1.challengePoints);
           this.displayChallenges = this.listChallenges.length > 0;

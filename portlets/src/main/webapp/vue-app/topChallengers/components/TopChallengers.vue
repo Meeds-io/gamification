@@ -24,12 +24,12 @@
       <template #content>
         <gamification-overview-widget-row
           class="my-auto"
-          v-show="!rankDisplayed">
+          v-show="!rankDisplayed && !loading">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>
           <template #content>
-            <span v-html="$t('gamification.overview.topChallengersSummary')"></span>
+            <span v-sanitized-html="$t('gamification.overview.topChallengersSummary')"></span>
           </template>
         </gamification-overview-widget-row>
         <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed">
