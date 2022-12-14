@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </template>
     <template #content>
       <v-card flat height="94">
-        <gamification-overview-widget-row v-show="kudosDisplayed">
+        <gamification-overview-widget-row v-show="kudosDisplayed && !loading">
           <template #title>
             {{ $t('gamification.myReputation.KudosTitle') }}
           </template>
@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="d-flex flex-column mx-n4" />
           </template>
         </gamification-overview-widget-row>
-        <gamification-overview-widget-row v-show="!kudosDisplayed">
+        <gamification-overview-widget-row v-if="!kudosDisplayed && !loading">
           <template #title>
             <div class="mb-4">
               {{ $t('gamification.myReputation.KudosTitleNoData') }}
@@ -49,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-card>
       <gamification-overview-widget-row
         class="my-auto"
-        v-show="badgesDisplayed">
+        v-show="badgesDisplayed && !loading">
         <template #title>
           <div class="subtitle-2 align-self-start mt-10">
             {{ $t('gamification.myReputation.badgesTitle') }}
@@ -65,7 +65,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </gamification-overview-widget-row>
       <gamification-overview-widget-row
         class="my-auto"
-        v-show="!badgesDisplayed">
+        v-show="!badgesDisplayed && !loading">
         <template #title>
           <div class="mb-3 mt-1">
             {{ $t('gamification.myReputation.badgesTitle') }}
@@ -86,15 +86,19 @@ export default {
   data: () => ({
     emptyKudosActionName: 'gamification-myReputation-kudos-check-actions',
     receivedKudosCount: 0,
-    kudosDisplayed: false,
-    badgesDisplayed: false,
-    loading: true,
+    kudosDisplayed: true,
+    badgesDisplayed: true,
+    loadingKudos: true,
+    loadingBadges: true,
   }),
   computed: {
     params() {
       return {
         isOverviewDisplay: true,
       };
+    },
+    loading() {
+      return this.loadingBadges || this.loadingKudos;
     },
     emptyKudosSummaryText() {
       return this.$t('gamification.overview.reputationKudosSummary', {
@@ -114,13 +118,14 @@ export default {
     document.addEventListener('kudosCount', (event) => {
       if (event) {
         this.kudosDisplayed = event.detail > 0;
-        this.loading = false;
+        console.warn('this.kudosDisplayed', this.kudosDisplayed);
+        this.$nextTick().then(() => this.loadingKudos = false);
       }
     });
     document.addEventListener('badgesCount', (event) => {
       if (event) {
         this.badgesDisplayed = event.detail > 0;
-        this.loading = false;
+        this.$nextTick().then(() => this.loadingBadges = false);
       }
     });
     this.$root.$applicationLoaded();
