@@ -20,8 +20,8 @@
         {{ $t('gamification.overview.rewardsTitle') }}
       </template>
       <template #content>
-        <v-card flat height="100">
-          <gamification-overview-widget-row v-show="!myRewardsDisplayed">
+        <v-card min-height="114" max-height="114" flat>
+          <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
             <template #title>
               <div class="mb-4">
                 {{ $t('gamification.overview.rewards.walletTitle') }}
@@ -31,11 +31,11 @@
               <v-icon class="secondary--text" size="55">fas fa-wallet</v-icon>
             </template>
             <template #content>
-              <span v-html="emptyWalletSummaryText"></span>
+              <span v-sanitized-html="emptyWalletSummaryText"></span>
             </template>
           </gamification-overview-widget-row>
-          <div class="d-flex">
-            <gamification-overview-widget-row v-show="myRewardsDisplayed" class="col col-6">
+          <div class="d-flex flex-grow-1" v-else>
+            <gamification-overview-widget-row class="col col-6 px-0">
               <template #title>
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
               </template>
@@ -47,7 +47,7 @@
                   class="d-flex flex-row mt-5" />
               </template>
             </gamification-overview-widget-row>
-            <gamification-overview-widget-row v-show="myRewardsDisplayed" class="col col-6">
+            <gamification-overview-widget-row class="col col-6 px-0">
               <template #title>
                 {{ $t('gamification.overview.rewards.walletTitle') }}
               </template>
@@ -61,42 +61,57 @@
             </gamification-overview-widget-row>
           </div>
         </v-card>
-        <gamification-overview-widget-row class="mt-8">
+        <gamification-overview-widget-row class="mt-5 fill-height d-flex flex-column flex-grow-1">
           <template #title>
-            <div class="mb-4">
+            <div class="d-flex">
               {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
+              <div v-if="productsLoaded" class="ms-auto">
+                <a :href="perkstoreLink">
+                  <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
+                </a>
+              </div>
             </div>
           </template>
+          <template v-if="displayPerkstorePlaceholder" #icon>
+            <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
+          </template>
           <template #content>
+            <span v-if="displayPerkstorePlaceholder" v-sanitized-html="emptyPerkstoreSummaryText"></span>
             <extension-registry-components
+              v-if="hasConfiguredWallet"
               name="my-rewards-perkstore-overview"
               type="my-rewards-perkstore-item" />
           </template>
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
+    <div id="WalletAPIApp"></div>
   </v-app>
 </template>
 <script>
 export default {
   data: () => ({
-    emptyWalletActionName: 'gamification-wallet-check-actions',
+    walletLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet`,
+    perkstoreLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/perkstore`,
     emptyPerkstoreActionName: 'gamification-perk-store-check-actions',
-    rewardDisplay: false,
-    walletDisplay: false,
-    loadingReward: true,
-    loadingWallet: true,
+    loading: true,
+    hasConfiguredWallet: false,
+    productsLoaded: false,
   }),
   computed: {
+    displayPerkstorePlaceholder() {
+      return !this.hasConfiguredWallet || !this.productsLoaded;
+    },
     emptyWalletSummaryText() {
       return this.$t('gamification.overview.rewardsWalletSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyWalletActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="${this.walletLink}">`,
         1: '</a>',
       });
     },
     emptyPerkstoreSummaryText() {
-      return this.$t('gamification.overview.rewardsPerkstoreSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyPerkstoreActionName}'))">`,
+      const labelKey = this.hasConfiguredWallet && 'gamification.overview.rewardsPerkstoreNoProductsSummary' || 'gamification.overview.rewardsPerkstoreSummary';
+      return this.$t(labelKey, {
+        0: `<a class="primary--text font-weight-bold" href="${this.perkstoreLink}">`,
         1: '</a>',
       });
     },
@@ -106,39 +121,32 @@ export default {
       };
     },
     walletURL() {
-      return this.myRewardsDisplayed ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet` : '';
+      return this.hasConfiguredWallet && this.walletLink || null;
     },
-    myRewardsDisplayed() {
-      return this.rewardDisplay || this.walletDisplay;
-    },
-    loading() {
-      return this.loadingReward && this.loadingWallet;
-    }
   },
   created() {
-    document.addEventListener(this.emptyWalletActionName, this.clickOnWalletEmptyActionLink);
-    document.addEventListener('countReward', (event) => {
-      if (event) {
-        this.rewardDisplay = event.detail > 0;
-        this.loadingReward = false;
-      }
-    });
-    document.addEventListener('balanceAmount', (event) => {
-      if (event) {
-        this.walletDisplay = event.detail > 0;
-        this.loadingWallet = false;
-      }
-    });
-    
-    document.addEventListener(this.emptyPerkstoreActionName, this.clickOnWalletEmptyActionLink);
+    document.addEventListener('exo-wallet-api-initialized', this.init);
+    document.addEventListener('exo-wallet-settings-loaded', this.checkUserWalletStatus);
+    document.addEventListener('perk-store-products-loaded', this.handleProductsLoaded);
+  },
+  mounted() {
+    this.init();
   },
   beforeDestroy() {
-    document.removeEventListener(this.emptyWalletActionName, this.clickOnWalletEmptyActionLink);
-    document.removeEventListener(this.emptyPerkstoreActionName, this.clickOnWalletEmptyActionLink);
+    document.removeEventListener('exo-wallet-api-initialized', this.init);
+    document.removeEventListener('exo-wallet-settings-loaded', this.checkUserWalletStatus);
+    document.removeEventListener('perk-store-products-loaded', this.handleProductsLoaded);
   },
   methods: {
-    clickOnWalletEmptyActionLink() {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/wallet`;
+    handleProductsLoaded() {
+      this.productsLoaded = true;
+    },
+    init() {
+      document.dispatchEvent(new CustomEvent('exo-wallet-init'));
+    },
+    checkUserWalletStatus() {
+      this.hasConfiguredWallet = !!window?.walletSettings?.wallet.address;
+      this.loading = false;
     },
   },
 };

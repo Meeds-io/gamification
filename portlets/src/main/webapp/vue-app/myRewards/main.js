@@ -33,7 +33,7 @@ export function init() {
       }, `#${appId}`, 'My Rewards');
     });
   Object.keys(window.requirejs.s.contexts._.registry)
-    .filter(definedMofule => definedMofule.includes('wallet-api') || definedMofule.includes('perk-store-overview-api'))
+    .filter(definedMofule => definedMofule.includes('WalletAPIBundle') || definedMofule.includes('PerkStoreOverviewAPI'))
     .forEach(module => {
       window.require([module], app => app.init());
     });
