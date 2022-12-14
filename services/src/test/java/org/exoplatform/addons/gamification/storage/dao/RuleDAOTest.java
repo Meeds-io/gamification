@@ -137,13 +137,12 @@ public class RuleDAOTest extends AbstractServiceTest {
     RuleEntity r1 = newRule("rule1", "domain1");
     RuleEntity r2 = newRule("rule2", "domain1");
     RuleEntity r3 = newRule("rule3", "domain2");
-    r1.setScore(Integer.parseInt(TEST__SCORE)*2);
+    r1.setScore(Integer.parseInt(TEST__SCORE) * 2);
     r2.setScore(Integer.parseInt(TEST__SCORE));
     r3.setScore(Integer.parseInt(TEST__SCORE));
-    List<Long> spacesIds = new ArrayList<>();
-    spacesIds.add(1L);
-    assertEquals(ruleDAO.findHighestBudgetDomainIds(spacesIds, 0, 3).get(0), r1.getDomainEntity().getId());
+    assertEquals(ruleDAO.findHighestBudgetDomainIds(0, 3).get(0), r1.getDomainEntity().getId());
   }
+
   @Test
   public void testExcludRuleIds() {
     RuleFilter filter = new RuleFilter();
@@ -159,6 +158,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     filter.setExcludedChallengesIds(excludedIds);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
   }
+
   @Test
   public void testFindRulesIdsByFilter() {
     RuleFilter filter = new RuleFilter();

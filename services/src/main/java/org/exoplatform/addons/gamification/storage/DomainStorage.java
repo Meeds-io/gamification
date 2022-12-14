@@ -87,10 +87,15 @@ public class DomainStorage {
     return DomainMapper.domainEntityToDomainDTO(domainDAO.getDomainByTitle(domainTitle));
   }
 
-  public List<Long> getDomainsByFilter(DomainFilter filter, int offset, int limit) {
-    if(filter.isSortByBudget()) {
-      return ruleDAO.findHighestBudgetDomainIds(filter.getSpacesIds(), offset, limit);
+  public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
+    if(CollectionUtils.isNotEmpty(spacesIds)) {
+      return ruleDAO.findHighestBudgetDomainIdsBySpacesIds(spacesIds, offset, limit);
+    } else {
+      return ruleDAO.findHighestBudgetDomainIds(offset, limit);
     }
+  }
+
+  public List<Long> getDomainsByFilter(DomainFilter filter, int offset, int limit) {
     return domainDAO.getDomainsByFilter(offset, limit, filter);
   }
 

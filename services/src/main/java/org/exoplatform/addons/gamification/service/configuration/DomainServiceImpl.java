@@ -72,6 +72,7 @@ public class DomainServiceImpl implements DomainService {
   @Override
   public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {
     List<DomainDTO> domains = new ArrayList<>();
+    List<Long> domainIds;
     if (!Utils.isSuperManager(username)) {
       List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
       if (spaceIds.isEmpty()) {
@@ -83,7 +84,11 @@ public class DomainServiceImpl implements DomainService {
       }
       domainFilter.setSpacesIds(userSpaceIds);
     }
-    List<Long> domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
+    if (domainFilter.isSortByBudget()) {
+      domainIds = domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+    } else {
+      domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
+    }
     for (Long domainId : domainIds) {
       DomainDTO domainDTO = getDomainById(domainId);
       domains.add(domainDTO);
