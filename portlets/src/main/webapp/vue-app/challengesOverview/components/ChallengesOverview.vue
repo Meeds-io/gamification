@@ -89,7 +89,6 @@
 <script>
 export default {
   data: () => ({
-    emptyActionName: 'gamification-challengesOverview-check-action',
     search: '',
     challengePerPage: 3,
     announcementsPerChallenge: 2,
@@ -103,7 +102,7 @@ export default {
   computed: {
     emptySummaryText() {
       return this.$t('gamification.overview.challengesOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="${this.challengesURL}">`,
         1: '</a>',
       });
     },
@@ -112,16 +111,9 @@ export default {
     },
   },
   created() {
-    document.addEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
     this.getChallenges();
   },
-  beforeDestroy() {
-    document.removeEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
-  },
   methods: {
-    clickOnEmptyActionLink() {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
-    },
     getChallenges() {
       this.loading = true;
       return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.orderByRealizations, this.listRealizations)
