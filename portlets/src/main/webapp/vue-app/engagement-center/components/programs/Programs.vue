@@ -90,12 +90,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :cancel-label="$t('programs.label.cancel.button')"
       @ok="deleteProgram" />
     <engagement-center-welcome-message
-        v-if="displayNoSearchResult"
-        class="mx-16 mb-5">
+      v-if="displayNoSearchResult"
+      class="mx-16 mb-5">
       <template #content>
         <div class="mx-4 my-6 dark-grey-color">
           <p class="align-center font-weight-bold mb-5"> {{ $t('programs.label.welcome') }} </p>
-          <p class="align-center mb-5" v-html="welcomeMessage"/>
+          <p class="align-center mb-5" v-html="welcomeMessage"></p>
           <p class="align-center"> {{ $t('programs.label.seeYouSoon') }} </p>
         </div>
       </template>

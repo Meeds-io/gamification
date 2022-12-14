@@ -144,11 +144,23 @@ export default {
     showActionsMenu() {
       return this.isAdministrator || this.program?.userInfo?.canEdit;
     },
-    owners() {
-      return (this.program?.owners || []).filter(owner => owner.domainOwner).map(owner => ({
+    addedOwnersList() {
+      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
         userName: owner.remoteId
       }));
     },
+    spaceManagers() {
+      return this.program?.space?.managers;
+    },
+    spaceManagersList() {
+      return this.spaceManagers?.length > 0 && this.spaceManagers.map(owner => ({
+        userName: owner
+      }));
+    },
+    owners() {
+      return this.addedOwnersList.concat(this.spaceManagersList);
+    },
+
     ownersCount() {
       return this.owners?.length;
     }
