@@ -110,8 +110,9 @@ export default {
     },
     emptyPerkstoreSummaryText() {
       const labelKey = this.hasConfiguredWallet && 'gamification.overview.rewardsPerkstoreNoProductsSummary' || 'gamification.overview.rewardsPerkstoreSummary';
+      const link = this.hasConfiguredWallet && this.perkstoreLink || this.walletLink;
       return this.$t(labelKey, {
-        0: `<a class="primary--text font-weight-bold" href="${this.perkstoreLink}">`,
+        0: `<a class="primary--text font-weight-bold" href="${link}">`,
         1: '</a>',
       });
     },
