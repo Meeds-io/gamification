@@ -35,7 +35,7 @@
             </template>
           </gamification-overview-widget-row>
           <div class="d-flex flex-grow-1" v-else>
-            <gamification-overview-widget-row class="col col-6 px-0">
+            <gamification-overview-widget-row class="col col-6 px-0" normal-height>
               <template #title>
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
               </template>
@@ -47,7 +47,7 @@
                   class="d-flex flex-row mt-5" />
               </template>
             </gamification-overview-widget-row>
-            <gamification-overview-widget-row class="col col-6 px-0">
+            <gamification-overview-widget-row class="col col-6 px-0" normal-height>
               <template #title>
                 {{ $t('gamification.overview.rewards.walletTitle') }}
               </template>
