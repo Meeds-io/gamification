@@ -21,21 +21,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         xsi:schemaLocation="http://www.gatein.org/xml/ns/gatein_objects_1_3 http://www.gatein.org/xml/ns/gatein_objects_1_3"
         xmlns="http://www.gatein.org/xml/ns/gatein_objects_1_3">
     <page>
-        <name>rules</name>
-        <title>Manage Rules</title>
-        <access-permissions>*:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
-        <portlet-application>
-            <portlet>
-                <application-ref>gamification-portlets</application-ref>
-                <portlet-ref>GamificationManageRules</portlet-ref>
-            </portlet>
-            <title>Gamification Manage Rules</title>
-            <access-permissions>*:/platform/administrators</access-permissions>
-            <show-info-bar>false</show-info-bar>
-        </portlet-application>
-    </page>
-    <page>
         <name>badges</name>
         <title>Gamification Manage Badges</title>
         <access-permissions>*:/platform/administrators</access-permissions>
@@ -46,36 +31,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <portlet-ref>GamificationManageBadges</portlet-ref>
             </portlet>
             <title>Gamification Manage Badges</title>
-            <access-permissions>*:/platform/administrators</access-permissions>
-            <show-info-bar>false</show-info-bar>
-        </portlet-application>
-    </page>
-    <page>
-        <name>domains</name>
-        <title>Gamification Manage Domains</title>
-        <access-permissions>*:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
-        <portlet-application>
-            <portlet>
-                <application-ref>gamification-portlets</application-ref>
-                <portlet-ref>GamificationManageDomains</portlet-ref>
-            </portlet>
-            <title>Gamification Manage Domains</title>
-            <access-permissions>*:/platform/administrators</access-permissions>
-            <show-info-bar>false</show-info-bar>
-        </portlet-application>
-    </page>
-    <page>
-        <name>realizations</name>
-        <title>Gamification Manage users realizations</title>
-        <access-permissions>*:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
-        <portlet-application>
-            <portlet>
-                <application-ref>gamification-portlets</application-ref>
-                <portlet-ref>Realizations</portlet-ref>
-            </portlet>
-            <title>Gamification Manage realizations</title>
             <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
         </portlet-application>
