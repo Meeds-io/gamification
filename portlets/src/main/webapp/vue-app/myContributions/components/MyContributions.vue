@@ -21,9 +21,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </template>
     <template #content>
       <user-points-widget
+        v-show="!loading"
         overview-display
         @seeAll="updateDisplaySeeAll($event)"
-        @loadingData="updateLoading($event)" />
+        @loaded="loading = false" />
     </template>
   </gamification-overview-widget>
 </template>
@@ -32,20 +33,17 @@ export default {
   data() {
     return {
       seeAllDisplay: false,
-      loading: true
+      loading: true,
     };
   },
   computed: {
     achievementsURL() {
-      return this.seeAllDisplay ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements` : '';
+      return this.seeAllDisplay && !this.loading ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements` : '';
     }
   },
   methods: {
     updateDisplaySeeAll(value) {
       this.seeAllDisplay = value;
-    },
-    updateLoading(value) {
-      this.loading = value;
     },
   }
 };
