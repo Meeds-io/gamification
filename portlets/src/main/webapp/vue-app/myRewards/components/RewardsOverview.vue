@@ -65,7 +65,7 @@
           <template #title>
             <div class="d-flex">
               {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
-              <div v-if="productsLoaded" class="ms-auto">
+              <div v-if="productsLoaded && hasConfiguredWallet" class="ms-auto">
                 <a :href="perkstoreLink">
                   <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
                 </a>
