@@ -95,7 +95,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <template #content>
         <div class="mx-4 my-6 dark-grey-color">
           <p class="align-center font-weight-bold mb-5"> {{ $t('programs.label.welcome') }} </p>
-          <p class="align-center mb-5" v-html="welcomeMessage"></p>
+          <p class="align-center mb-5" v-sanitized-html="welcomeMessage"></p>
           <p class="align-center"> {{ $t('programs.label.seeYouSoon') }} </p>
         </div>
       </template>
