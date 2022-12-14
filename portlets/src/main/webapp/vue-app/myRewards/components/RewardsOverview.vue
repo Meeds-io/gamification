@@ -19,7 +19,7 @@
       <template #title>
         {{ $t('gamification.overview.rewardsTitle') }}
       </template>
-      <template #content>
+      <template v-if="!loading" #content>
         <v-card min-height="114" max-height="114" flat>
           <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
             <template #title>
@@ -65,7 +65,7 @@
           <template #title>
             <div class="d-flex">
               {{ $t('gamification.overview.rewardsPerkstoreSubtitle') }}
-              <div v-if="productsLoaded" class="ms-auto">
+              <div v-if="productsLoaded && hasConfiguredWallet" class="ms-auto">
                 <a :href="perkstoreLink">
                   <span class="text-font-size primary--text my-0">{{ $t('overview.myContributions.seeAll') }}</span>
                 </a>
@@ -75,7 +75,7 @@
           <template v-if="displayPerkstorePlaceholder" #icon>
             <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
           </template>
-          <template #content>
+          <template v-if="!loading" #content>
             <span v-if="displayPerkstorePlaceholder" v-sanitized-html="emptyPerkstoreSummaryText"></span>
             <extension-registry-components
               v-if="hasConfiguredWallet"
@@ -100,7 +100,7 @@ export default {
   }),
   computed: {
     displayPerkstorePlaceholder() {
-      return !this.hasConfiguredWallet || !this.productsLoaded;
+      return !this.loading && (!this.hasConfiguredWallet || !this.productsLoaded);
     },
     emptyWalletSummaryText() {
       return this.$t('gamification.overview.rewardsWalletSummary', {
@@ -110,8 +110,9 @@ export default {
     },
     emptyPerkstoreSummaryText() {
       const labelKey = this.hasConfiguredWallet && 'gamification.overview.rewardsPerkstoreNoProductsSummary' || 'gamification.overview.rewardsPerkstoreSummary';
+      const link = this.hasConfiguredWallet && this.perkstoreLink || this.walletLink;
       return this.$t(labelKey, {
-        0: `<a class="primary--text font-weight-bold" href="${this.perkstoreLink}">`,
+        0: `<a class="primary--text font-weight-bold" href="${link}">`,
         1: '</a>',
       });
     },
