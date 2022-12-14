@@ -158,7 +158,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-btn
           :disabled="loading"
           class="btn mx-1"
-          @click="$programDrawer.close()">
+          @click="close">
           {{ $t('engagementCenter.button.cancel') }}
         </v-btn>
         <v-btn
