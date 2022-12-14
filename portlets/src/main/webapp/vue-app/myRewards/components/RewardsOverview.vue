@@ -19,7 +19,7 @@
       <template #title>
         {{ $t('gamification.overview.rewardsTitle') }}
       </template>
-      <template #content>
+      <template v-if="!loading" #content>
         <v-card min-height="114" max-height="114" flat>
           <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
             <template #title>
@@ -75,7 +75,7 @@
           <template v-if="displayPerkstorePlaceholder" #icon>
             <v-icon color="secondary" size="55px">fas fa-shopping-cart</v-icon>
           </template>
-          <template #content>
+          <template v-if="!loading" #content>
             <span v-if="displayPerkstorePlaceholder" v-sanitized-html="emptyPerkstoreSummaryText"></span>
             <extension-registry-components
               v-if="hasConfiguredWallet"
@@ -100,7 +100,7 @@ export default {
   }),
   computed: {
     displayPerkstorePlaceholder() {
-      return !this.hasConfiguredWallet || !this.productsLoaded;
+      return !this.loading && (!this.hasConfiguredWallet || !this.productsLoaded);
     },
     emptyWalletSummaryText() {
       return this.$t('gamification.overview.rewardsWalletSummary', {
