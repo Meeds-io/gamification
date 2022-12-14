@@ -20,7 +20,10 @@
         {{ $t('gamification.overview.rewardsTitle') }}
       </template>
       <template v-if="!loading" #content>
-        <v-card min-height="114" max-height="114" flat>
+        <v-card
+          min-height="114"
+          max-height="114"
+          flat>
           <gamification-overview-widget-row v-if="!hasConfiguredWallet" class="flex-grow-1">
             <template #title>
               <div class="mb-4">
