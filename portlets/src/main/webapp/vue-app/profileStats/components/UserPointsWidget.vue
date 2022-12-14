@@ -40,7 +40,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         row
         wrap
         align-start
-        mx-0>
+        mx-4
+        my-4>
         <v-flex
           d-flex
           xs1>
@@ -113,9 +114,13 @@ export default {
     return {
       userPoints: 0,
       period: 'WEEK',
-      option: {
+    };
+  },
+  computed: {
+    option() {
+      return {
         title: [{
-          text: 'Total',
+          text: this.$t('overview.myContributions.Total'),
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
@@ -128,6 +133,7 @@ export default {
             color: '#4d5466',
             fontWeight: 'bold',
             fontSize: this.overviewDisplay ? '14' : '18',
+            lineHeight: 22,
           },
           left: this.overviewDisplay ? '65%' : '63%',
           top: this.overviewDisplay && '42%' || '40%',
@@ -162,10 +168,8 @@ export default {
               '#a47e1b', '#ff4d6d', '#62b0de', '#FF97D0', '#92e03a', '#f44336', '#3d6d8a', '#E0A5FF', '#FF9DB8', '#808080']
           }, 
         ]
-      }
-    };
-  },
-  computed: {
+      };
+    },
     parentPieChartDimensions() {
       return this.overviewDisplay ? 'width:100%; height:calc(100% - 34px);' : '';
     },
@@ -197,46 +201,50 @@ export default {
       });
     },
     getGamificationPointsStats() {
-      getGamificationPointsStats(this.period).then(
-        (data) => {
-          this.option.series[0].data = [];
-          for (let i=0;i<data.length;i++) {
-            const optionSeriesName = data[i].label;
-            let name ;
-            let serie ;
-            if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
-              name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
-            } else {
-              name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
-            }
-            if (i > 4) { 
-              serie = {
-                name: this.$t('exoplatform.gamification.gamificationinformation.domain.Autres'),
-                value: this.option.series[0].data[4].value + data[i].value
-              };
-              this.option.series[0].data[4] = serie;
-            } else {
-              serie = {
-                name,
-                value: data[i].value
-              };
-              this.option.series[0].data.push(serie);
-            }
+      return getGamificationPointsStats(this.period).then((data) => {
+        this.option.series[0].data = [];
+        for (let i=0;i<data.length;i++) {
+          const optionSeriesName = data[i].label;
+          let name ;
+          let serie ;
+          if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
+            name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
+          } else {
+            name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
           }
-          this.$emit('loadingData', false);  
-          return this.$nextTick();
-        }).finally(() => {
-        this.initChart(this.option);
-      });
+          if (i > 4) { 
+            serie = {
+              name: this.$t('exoplatform.gamification.gamificationinformation.domain.Autres'),
+              value: this.option.series[0].data[4].value + data[i].value
+            };
+            this.option.series[0].data[4] = serie;
+          } else {
+            serie = {
+              name,
+              value: data[i].value
+            };
+            this.option.series[0].data.push(serie);
+          }
+        }
+        return this.$nextTick();
+      })
+        .finally(() => this.initChart(this.option));
     },
     toProfileStats() {
       this.$emit('isProfileStats');
     },
     initChart(option) {
-      $(document).ready(function(){
-        const chartContainerId = document.getElementById('echartUserPoints');
-        window.require(['SHARED/eCharts'], echarts => {
-          const chart = echarts.init(chartContainerId);
+      window.require(['SHARED/eCharts'], echarts => {
+        this.$emit('loaded', false);  
+        this.$nextTick().then(() => {
+          const chartContainer = document.getElementById('echartUserPoints');
+          if (!chartContainer) {
+            window.setTimeout(() => {
+              this.initChart(option);
+            }, 200);
+            return;
+          }
+          const chart = echarts.init(chartContainer);
           chart.setOption(option, true);
         });
       });
