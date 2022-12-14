@@ -44,7 +44,7 @@
                   :params="params"
                   name="my-rewards-overview"
                   type="my-rewards-item"
-                  class="d-flex flex-row mt-5" />
+                  class="d-flex flex-row mt-4" />
               </template>
             </gamification-overview-widget-row>
             <gamification-overview-widget-row class="col col-6 px-0" normal-height>
@@ -56,7 +56,7 @@
                   :params="params"
                   name="my-rewards-wallet-overview"
                   type="my-rewards-wallet-item"
-                  class="d-flex flex-row mt-5" />
+                  class="d-flex flex-row mt-4" />
               </template>
             </gamification-overview-widget-row>
           </div>

@@ -16,7 +16,7 @@
 <template>
   <v-app>
     <gamification-overview-widget
-      :see-all-url="programURL"
+      :see-all-url="programLink"
       :loading="loading"
       extra-class="px-0">
       <template #title>
@@ -71,7 +71,6 @@
 <script>
 export default {
   data: () => ({
-    emptyActionName: 'gamification-programsOverview-check-action',
     programs: [],
     status: 'ENABLED',
     type: 'ALL',
@@ -81,25 +80,21 @@ export default {
   computed: {
     emptySummaryText() {
       return this.$t('gamification.overview.programsOverviewSummary', {
-        0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyActionName}'))">`,
+        0: `<a class="primary--text font-weight-bold" href="${this.programURL}">`,
         1: '</a>',
       });
     },
     programURL() {
-      return this.programsDisplayed ? `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs` : '';
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
+    },
+    programLink() {
+      return this.programsDisplayed && this.programURL || null;
     },
   },
   created() {
-    document.addEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
     this.retrievePrograms();
   },
-  beforeDestroy() {
-    document.removeEventListener(this.emptyActionName, this.clickOnEmptyActionLink);
-  },
   methods: {
-    clickOnEmptyActionLink() {
-      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
-    },
     retrievePrograms() {
       return this.$programsServices
         .retrievePrograms(0, 3, this.type, this.status, null, false, true)
