@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <tr>
     <td>
-      <div class="align-start text-truncate">
+      <div @click="openRule" class="clickable align-start text-truncate">
         <engagement-center-rule-title :rule="rule" />
       </div>
     </td>
@@ -112,6 +112,13 @@ export default {
         this.$root.$emit('rule-form-drawer', this.rule);
       } else {
         this.$root.$emit('edit-manuel-rule', this.rule);
+      }
+    },
+    openRule() {
+      if (this.automaticRule) {
+        this.$root.$emit('rule-detail-drawer', this.rule);
+      } else {
+        this.$root.$emit('manuel-rule-detail-drawer', this.rule);
       }
     },
     deleteRule() {

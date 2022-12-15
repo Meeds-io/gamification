@@ -40,6 +40,7 @@ import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment
 import RuleTitle from './components/rules/RuleTitle.vue';
 import RuleItem from './components/rules/RuleItem.vue';
 import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
+import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
 import RuleFilter from './components/rules/RuleFilter.vue';
 
 import Assignment from './components/common/Assignment.vue';
@@ -48,9 +49,7 @@ import DescriptionEditor from './components/common/DescriptionEditor.vue';
 import ImageSelector from './components/common/ImageSelector.vue';
 import WelcomeMessage from './components/common/WelcomeMessage.vue';
 
-import StreamActionValue from './components/actionValues/StreamActionValue.vue';
-import ProfileActionValue from './components/actionValues/ProfileActionValue.vue';
-import SpaceActionValue from './components/actionValues/SpaceActionValue.vue';
+import RuleActionValue from './components/actionValues/RuleActionValue.vue';
 import ChallengeActionValue from './components/actionValues/ChallengeActionValue.vue';
 
 import ChallengeStandaloneDrawer from './components/deprecated/ChallengeStandaloneDrawer.vue';
@@ -80,15 +79,14 @@ const components = {
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-form-drawer': RuleFormDrawer,
+  'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rule-filter': RuleFilter,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,
   'engagement-center-description-editor': DescriptionEditor,
   'engagement-center-image-selector': ImageSelector,
   'engagement-center-welcome-message': WelcomeMessage,
-  'stream-action-value': StreamActionValue,
-  'profile-action-value': ProfileActionValue,
-  'space-action-value': SpaceActionValue,
+  'rule-action-value': RuleActionValue,
   'challenge-action-value': ChallengeActionValue,
   'challenge-standalone-drawer': ChallengeStandaloneDrawer,
   'challenge-standalone-domain-suggester': DomainStandaloneSuggester,
