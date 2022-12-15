@@ -36,32 +36,36 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.storage.api.ActivityStorage;
-import org.exoplatform.social.websocket.ActivityStreamWebSocketService;
-import org.exoplatform.social.websocket.entity.ActivityStreamModification;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class AnnouncementActivityGeneratorListener extends Listener<AnnouncementService, AnnouncementActivity> {
 
-  private static final Log               LOG = ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
+  public static final String ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM = "announcementDescription";
 
-  private IdentityManager                identityManager;
+  public static final String ANNOUNCEMENT_ID_TEMPLATE_PARAM          = "announcementId";
 
-  private ActivityStorage                activityStorage;
+  private static final Log   LOG                                     =
+                                 ExoLogger.getLogger(AnnouncementActivityGeneratorListener.class);
 
-  private ChallengeService               challengeService;
+  private IdentityManager    identityManager;
 
-  private ActivityStreamWebSocketService activityStreamWebSocketService;
+  private SpaceService       spaceService;
 
-  public AnnouncementActivityGeneratorListener(IdentityManager identityManager,
-                                               ActivityStorage activityStorage,
-                                               ChallengeService challengeService,
-                                               ActivityStreamWebSocketService activityStreamWebSocketService) {
+  private ActivityManager    activityManager;
+
+  private ChallengeService   challengeService;
+
+  public AnnouncementActivityGeneratorListener(SpaceService spaceService,
+                                               IdentityManager identityManager,
+                                               ActivityManager activityManager,
+                                               ChallengeService challengeService) {
+    this.spaceService = spaceService;
     this.identityManager = identityManager;
-    this.activityStorage = activityStorage;
+    this.activityManager = activityManager;
     this.challengeService = challengeService;
-    this.activityStreamWebSocketService = activityStreamWebSocketService;
   }
 
   @Override
@@ -75,11 +79,6 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
       ExoSocialActivity activity = createActivity(announcement, announcementActivity.getTemplateParams(), challenge);
       announcement.setActivityId(Long.parseLong(activity.getId()));
       announcementService.updateAnnouncement(announcement);
-      Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
-      ActivityStreamModification activityStreamModification = new ActivityStreamModification(activity.getId(),
-                                                                                             "createActivity",
-                                                                                             space.getId());
-      activityStreamWebSocketService.sendMessage(activityStreamModification);
     } catch (Exception e) {
       LOG.warn("Error while creating activity for announcement with id {} made by user {}",
                announcementActivity.getId(),
@@ -94,20 +93,25 @@ public class AnnouncementActivityGeneratorListener extends Listener<Announcement
     if (params == null) {
       params = new HashMap<>();
     }
+    Space space = spaceService.getSpaceById(String.valueOf(challenge.getAudience()));
+    if (space == null) {
+      throw new ObjectNotFoundException("space doesn't exists");
+    }
+    Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+    if (spaceIdentity == null) {
+      throw new ObjectNotFoundException("space doesn't exists");
+    }
+
     ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
     activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
-    activity.setTitle(challenge.getTitle());
-    activity.setUserId(String.valueOf(announcement.getCreator()));
-    params.put("announcementId", String.valueOf(announcement.getId()));
-    params.put("announcementDescription", challenge.getTitle());
     activity.setTitle(announcement.getComment());
+    activity.setUserId(String.valueOf(announcement.getCreator()));
+    params.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
+    params.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, challenge.getTitle());
     Utils.buildActivityParams(activity, params);
-    Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
-    if (space == null) {
-      throw new ObjectNotFoundException("space does not exist");
-    }
-    Identity owner = Utils.getIdentityByTypeAndId("space", space.getPrettyName());
-    return activityStorage.saveActivity(owner, activity);
+
+    activityManager.saveActivityNoReturn(spaceIdentity, activity);
+    return activityManager.getActivity(activity.getId());
   }
 
 }
