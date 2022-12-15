@@ -44,9 +44,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class DomainServiceImpl implements DomainService {
 
-  public static final String      GAMIFICATION_DOMAIN_LISTENER = "exo.gamification.domain.action";
-
-  private static final Log        LOG                          = ExoLogger.getLogger(DomainServiceImpl.class);
+  private static final Log        LOG                                  = ExoLogger.getLogger(DomainServiceImpl.class);
 
   protected final DomainStorage   domainStorage;
 
@@ -69,6 +67,7 @@ public class DomainServiceImpl implements DomainService {
     this.fileService = fileService;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {
     List<DomainDTO> domains = new ArrayList<>();
@@ -118,6 +117,7 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public int countDomains(DomainFilter domainFilter, String username) {
     if (!Utils.isSuperManager(username)) {
       List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
@@ -179,10 +179,9 @@ public class DomainServiceImpl implements DomainService {
 
     domain = domainStorage.saveDomain(domain);
     if (storedDomain.isEnabled() && !domain.isEnabled()) {
-      broadcast(domain, "disable");
-    }
-    if (!storedDomain.isEnabled() && domain.isEnabled()) {
-      broadcast(domain, "enable");
+      broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, domain, aclIdentity.getUserId());
+    } else if (!storedDomain.isEnabled() && domain.isEnabled()) {
+      broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, domain, aclIdentity.getUserId());
     }
     return domain;
   }
@@ -200,7 +199,7 @@ public class DomainServiceImpl implements DomainService {
     domain.setDeleted(true);
     domain.setLastModifiedDate(date);
     domain = domainStorage.saveDomain(domain);
-    broadcast(domain, "delete");
+    broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, domain, aclIdentity.getUserId());
     return domain;
   }
 
@@ -243,12 +242,12 @@ public class DomainServiceImpl implements DomainService {
     return domain != null && Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
-  private void broadcast(DomainDTO domain, String operation) {
+  private void broadcast(String eventName, DomainDTO domain, String userName) {
     try {
-      listenerService.broadcast(GAMIFICATION_DOMAIN_LISTENER, domain, operation);
+      listenerService.broadcast(eventName, domain, userName);
     } catch (Exception e) {
       LOG.warn("Error while broadcasting operation '{}' on domain {}. The operation '{}' isn't interrupted.",
-               operation,
+               eventName,
                domain,
                e);
     }
