@@ -10,8 +10,9 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   type: 'Stream',
   options: {
     rank: 10,
-    vueComponent: Vue.options.components['stream-action-value'],
+    icon: 'fas fa-stream',
     match: (actionLabel) => streamUserActions.includes(actionLabel),
+    getLabel: () => ''
   },
 });
 
@@ -19,8 +20,9 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   type: 'Profile',
   options: {
     rank: 20,
-    vueComponent: Vue.options.components['profile-action-value'],
+    icon: 'fas fa-user',
     match: (actionLabel) => profileUserActions.includes(actionLabel),
+    getLabel: () => ''
   },
 });
 
@@ -28,7 +30,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
   type: 'Space',
   options: {
     rank: 30,
-    vueComponent: Vue.options.components['space-action-value'],
+    icon: 'fas fa-layer-group',
     match: (actionLabel) => spaceUserActions.includes(actionLabel),
+    getLabel: () => ''
   },
 });
