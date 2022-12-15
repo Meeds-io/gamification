@@ -16,16 +16,18 @@
  */
 package org.exoplatform.addons.gamification.listener.gamification.domain;
 
+import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
+
 import java.util.List;
 
-import liquibase.pro.packaged.R;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -48,17 +50,19 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
   public void onEvent(Event<DomainDTO, String> event) throws Exception {
     LOG.info("Update Rules related to the edited domain");
     DomainDTO domain = event.getSource();
-    String action = (String) event.getData();
+    String username = event.getData();
+    String action = event.getEventName();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setDomainId(domain.getId());
     List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, 0, -1);
     List<BadgeDTO> badges = badgeService.findBadgesByDomain(domain.getTitle());
-    if (action.equals("delete")) {
+    switch (action) {
+    case GAMIFICATION_DOMAIN_DELETE_LISTENER:
       for (RuleDTO rule : rules) {
         rule.setDomainDTO(null);
         rule.setArea("");
         rule.setEnabled(false);
-        ruleService.updateRule(rule, Utils.getCurrentUser());
+        ruleService.updateRule(rule, username);
       }
       for (BadgeDTO badge : badges) {
         badge.setDomainDTO(null);
@@ -66,27 +70,30 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
         badge.setEnabled(false);
         badgeService.updateBadge(badge);
       }
-    }
-    if (action.equals("disable")) {
+      break;
+    case GAMIFICATION_DOMAIN_DISABLE_LISTENER:
       for (RuleDTO rule : rules) {
         rule.setEnabled(false);
-        ruleService.updateRule(rule, Utils.getCurrentUser());
+        ruleService.updateRule(rule, username);
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(false);
         badgeService.updateBadge(badge);
       }
-    }
-    if (action.equals("enable")) {
+      break;
+    case GAMIFICATION_DOMAIN_ENABLE_LISTENER:
       for (RuleDTO rule : rules) {
         rule.setEnabled(true);
-        ruleService.updateRule(rule, Utils.getCurrentUser());
+        ruleService.updateRule(rule, username);
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(true);
         badgeService.updateBadge(badge);
       }
+      break;
+    default:
+      LOG.warn("Unknown  triggered action name {}", action);
+      break;
     }
-
   }
 }
