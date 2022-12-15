@@ -122,13 +122,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
 
                   <select v-model="editedbadge.domainDTO" class="mb-4">
-                    <option :value="null" disabled>
-                      {{ this.$t('exoplatform.gamification.selectdomain','Select domain')
-                      }}
+                    <option disabled>
+                      {{ $t('exoplatform.gamification.selectdomain') }}
                     </option>
-                    <option v-for="option in domains" :value="option">
+                    <option
+                      v-for="domain in domains"
+                      :key="domain.id"
+                      :value="domain">
                       {{
-                        $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
+                        $t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`,domain.title)
                       }}
                     </option>
                   </select>
@@ -156,15 +158,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       class="btn secondary pull-right"
                       type="cancel"
                       @click.prevent="collapseEditButton(), onCancel()">
-                      {{
-                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel',"cancel") }}
+                      {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel',"cancel") }}
                     </button>
                     <button
                       class="btn-primary pull-right"
                       type="submit"
                       :disabled="isDisabled"
                       @click.prevent="onSave">
-                      {{ this.$t('exoplatform.gamification.gamificationinformation.domain.confirm',"confirm") }}
+                      {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm',"confirm") }}
                     </button>
                   </b-col>
                 </b-row>
@@ -187,8 +188,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               style="width: 760px; z-index:1000000; position: relative; left: auto; margin: 0 20px; z-index: 1; max-width: 100%;margin: 0 auto;height: 100%;">
               <div class="popupHeader ClearFix">
                 <div id="confirmLabel" class="PopupTitle popupTitle">
-                  {{
-                    this.$t('exoplatform.gamification.Confirmation') }}
+                  {{ $t('exoplatform.gamification.Confirmation') }}
                 </div>
 
                 <a class="uiIconClose pull-right" @click.prevent="collapseConfirm(badge)"></a>
@@ -200,8 +200,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   </div>
                   <div class="media-body">
                     <p class="msg">
-                      {{ this.$t('exoplatform.gamification.areyousure.deletebadge')
-                      }}
+                      {{ $t('exoplatform.gamification.areyousure.deletebadge') }}
                     </p>
                   </div>
                 </div>
@@ -211,9 +210,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       class="btn cancel pull-right"
                       type="submit"
                       @click.prevent="collapseConfirm(badge), onCancel()">
-                      {{
-                        this.$t('exoplatform.gamification.gamificationinformation.domain.cancel')
-                      }}
+                      {{ $t('exoplatform.gamification.gamificationinformation.domain.cancel') }}
                     </button>
 
 
@@ -222,9 +219,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       type="submit"
 
                       @click.prevent="onRemove(badge.id,badge.title),collapseConfirm(badge)">
-                      {{
-                        this.$t('exoplatform.gamification.gamificationinformation.domain.confirm')
-                      }}
+                      {{ $t('exoplatform.gamification.gamificationinformation.domain.confirm') }}
                     </button>
                   </b-col>
                 </div>
@@ -235,16 +230,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <table class=" uiGrid table table-hover badge-table">
           <thead>
             <tr>
-              <th class="badge-icon-col">{{ this.$t('exoplatform.gamification.icon') }}</th>
-              <th class="badge-title-col">{{ this.$t('exoplatform.gamification.title') }}</th>
+              <th class="badge-icon-col">{{ $t('exoplatform.gamification.icon') }}</th>
+              <th class="badge-title-col">{{ $t('exoplatform.gamification.title') }}</th>
               <th class="badge-desc-col">
                 {{
-                  this.$t('exoplatform.gamification.gamificationinformation.domain.Description') }}
+                  $t('exoplatform.gamification.gamificationinformation.domain.Description') }}
               </th>
-              <th class="badge-nedded-score-col">{{ this.$t('exoplatform.gamification.neededscore') }}</th>
+              <th class="badge-nedded-score-col">{{ $t('exoplatform.gamification.neededscore') }}</th>
               <th class="badge-domain-col">
-                {{
-                  this.$t('exoplatform.gamification.gamificationinformation.Domain') }}
+                {{ $t('exoplatform.gamification.gamificationinformation.Domain') }}
               </th>
                         
               <th class="badge-status-col">{{ this.$t('exoplatform.gamification.status') }}</th>
@@ -418,6 +412,9 @@ export default {
     },
     collapseEditButton(badge) {
       if ( badge ) {
+        if (badge?.domainDTO && this.domains?.length) {
+          badge.domainDTO = this.domains.find(domain => domain.title === badge.domainDTO.title);
+        }
         this.badge = badge;
         this.editedbadge=badge;
         this.editedbadge.description =  this.$t(`badge.description.${this.editedbadge.title.replace(' ','')}_${this.editedbadge.domain}`,this.editedbadge.description) ;
