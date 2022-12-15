@@ -18,10 +18,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <tr :id="`GamificationRealizationItem${realization.id}`">
     <td>
       <div v-if="isAutomaticType">
-        <extension-registry-component
+        <rule-action-value
           v-if="actionValueExtension"
-          :component="extendedActionValueComponent"
-          :params="actionValueComponentParams" />
+          :action-label="actionLabel"
+          :action-u-r-l="actionURL"
+          :action-icon="actionIcon" />
         <a
           v-else
           :href="realization.url"
@@ -252,18 +253,15 @@ export default {
     hasActions() {
       return this.canReject || this.canAccept || this.canEdit;
     },
+    actionIcon() {
+      return this.actionValueExtension?.icon;
+    },
     extendedActionValueComponent() {
       return this.actionValueExtension && {
         componentName: 'action-value',
         componentOptions: {
           vueComponent: this.actionValueExtension.vueComponent,
         },
-      } || null;
-    },
-    actionValueComponentParams() {
-      return this.actionValueExtension && {
-        actionURL: this.actionURL,
-        actionLabel: this.actionLabel
       } || null;
     },
     actionValueExtension() {

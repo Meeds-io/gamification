@@ -224,7 +224,9 @@ export default {
         area: this.programTitle
       };
       this.eventExist = false;
-      this.$refs.ruleFormDrawer.open();
+      if (this.$refs.ruleFormDrawer) {
+        this.$refs.ruleFormDrawer.open();
+      }
       window.setTimeout(() => {
         if (this.$refs.ruleTitle) {
           this.$refs.ruleTitle.focus();
