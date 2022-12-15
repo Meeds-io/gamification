@@ -4,7 +4,7 @@
       <slot name="title"></slot>
     </div>
     <v-list-item
-      v-on="redirectionUrl ? { click: selectedRowUrl } : {}"
+      :href="redirectionUrl"
       :dense="!normalHeight"
       class="px-0">
       <v-list-item-action-text v-if="$slots.icon" class="me-4">
@@ -29,11 +29,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  methods: {
-    selectedRowUrl() {
-      window.location.href = this.redirectionUrl;
-    }
   },
 };
 </script>
