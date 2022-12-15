@@ -188,8 +188,15 @@ export default {
   },
   created() {
     this.$root.$on('open-challenge-details', this.open);
+    this.$root.$on('manuel-rule-detail-drawer', this.displayManuelRule);
   },
   methods: {
+    displayManuelRule(rule) {
+      this.$challengesServices.getChallengeById(rule.id)
+        .then(challenge => {
+          this.open(challenge);
+        });
+    },
     open(challenge) {
       this.challenge = challenge;
       this.$refs.challengeDetails.startLoading();
