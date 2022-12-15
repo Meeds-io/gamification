@@ -103,13 +103,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
 
                 <select v-model="badge.domainDTO" class="mb-4">
-                  <option :value="null" disabled>
-                    {{ this.$t('exoplatform.gamification.selectdomain')
-                    }}
+                  <option disabled>
+                    {{ this.$t('exoplatform.gamification.selectdomain') }}
                   </option>
-                  <option v-for="option in domains" :value="option">
+                  <option
+                    v-for="domain in domains"
+                    :key="domain.id"
+                    :value="domain">
                     {{
-                      $t(`exoplatform.gamification.gamificationinformation.domain.${option.title}`,option.title)
+                      $t(`exoplatform.gamification.gamificationinformation.domain.${domain.title}`,domain.title)
                     }}
                   </option>
                 </select>
@@ -206,7 +208,7 @@ export default {
         .then(response => {
           this.addSuccess = true;
           this.updateMessage = 'added';
-          this.$emit('submit', this.badge);
+          this.$emit('submit', response.data);
           this.uploadId='';
         })
         .catch(e => {

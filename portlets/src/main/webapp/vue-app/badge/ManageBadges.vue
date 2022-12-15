@@ -187,13 +187,10 @@ export default {
         });
     },
     getDomains(){
-      axios.get('/portal/rest/gamification/domains')
-        .then(response => {
-          this.domains = response.data;
-        })
-        .catch(e => {
-          console.log(e);
-        });
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?type=ALL`, {
+        credentials: 'include',
+      }).then(resp => resp && resp.ok && resp.json())
+        .then(data => this.domains = data?.domains || []);
     }
   }
 };
