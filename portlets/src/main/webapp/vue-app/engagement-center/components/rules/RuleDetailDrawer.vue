@@ -21,7 +21,7 @@
         <div class="d-flex flex-row pt-3">
           <img
             :src="program.coverUrl"
-            width="50"><span class="font-weight-bold my-auto">{{ program.title }}</span>
+            width="50"><span class="font-weight-bold my-auto ms-1">{{ program.title }}</span>
         </div>
       </v-card-text>
     </template>

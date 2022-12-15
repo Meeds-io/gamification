@@ -91,7 +91,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :loading="loading"
       :can-edit-challenge="canAddChallenge"
       class="pl-2 pt-8" />
-    <challenge-winners-details ref="winnersDetails" />
     <exo-confirm-dialog
       ref="deleteChallengeConfirmDialog"
       :title="$t('challenges.delete')"
