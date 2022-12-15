@@ -219,27 +219,33 @@ public class RuleServiceImpl implements RuleService {
     if (username == null) {
       throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
-    if (ruleDTO.getId() == null || ruleDTO.getId() == 0) {
-      throw new ObjectNotFoundException("Rule id is mandatory");
-    }
     RuleDTO oldRule = ruleStorage.findRuleById(ruleDTO.getId());
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule does not exist");
+    }
+    if (!Utils.isRuleManager(oldRule, username)) {
+      throw new IllegalAccessException("The user is not authorized to update a rule");
+    }
+    ruleDTO.setCreatedBy(username);
+    ruleDTO.setLastModifiedBy(username);
+
+    return updateRule(ruleDTO);
+  }
+
+  @Override
+  public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
+    if (ruleDTO.getId() == null || ruleDTO.getId() == 0 || ruleStorage.findRuleById(ruleDTO.getId()) == null) {
+      throw new ObjectNotFoundException("Rule id is mandatory");
     }
     DomainDTO domainDTO = ruleDTO.getDomainDTO();
     if (domainDTO != null) {
       long domainId = ruleDTO.getDomainDTO().getId();
       RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
-      if (existRule != null && !existRule.getId().equals(oldRule.getId()) && !existRule.isDeleted()) {
+      if (existRule != null && !existRule.getId().equals(ruleDTO.getId()) && !existRule.isDeleted()) {
         throw new IllegalStateException("Rule with same event and domain already exist");
       }
     }
-    if (!Utils.isRuleManager(ruleDTO, username)) {
-      throw new IllegalAccessException("The user is not authorized to update a rule");
-    }
     ruleDTO.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
-    ruleDTO.setCreatedBy(username);
-    ruleDTO.setLastModifiedBy(username);
     ruleDTO = ruleStorage.saveRule(ruleDTO);
 
     Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());

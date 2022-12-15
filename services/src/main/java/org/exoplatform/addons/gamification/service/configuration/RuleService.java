@@ -175,4 +175,14 @@ public interface RuleService {
      * @throws IllegalAccessException when user sin't allowed to update chosen rule
      */
     RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
+
+    /**
+     * Update Rule to DB
+     * @param ruleDTO {@link RuleDTO} to update
+     * @return updated {@link RuleDTO}
+     * @throws ObjectNotFoundException when rule doesn't exists
+     */
+    default RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
+      return null;
+    }
 }
