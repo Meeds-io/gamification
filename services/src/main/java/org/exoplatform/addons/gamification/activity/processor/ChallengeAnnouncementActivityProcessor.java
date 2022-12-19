@@ -92,7 +92,7 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
 
   private String getAnnouncementChallenge(String challengeId, String challengeDescription) {
     StringBuilder challenge = new StringBuilder();
-    challenge.append("<a href=\"");
+    challenge.append("<a class='primary--text' href=\"");
     String portalName = LinkProvider.getPortalName("");
     String portalOwner = LinkProvider.getPortalOwner("");
     String url = "/" + portalName + "/" + portalOwner + APP_URL + challengeId;
