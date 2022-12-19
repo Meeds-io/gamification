@@ -102,7 +102,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </engagement-center-welcome-message>
     <engagement-center-no-results
       v-else-if="displayNoSearchResult && isStatusDisabled" 
-      class="mt-11"/>
+      :info="$t('program.filter.noResults')"
+      class="mt-11" />
     <engagement-center-program-drawer
       ref="programDrawer"
       :is-administrator="isAdministrator" />
