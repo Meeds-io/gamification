@@ -90,7 +90,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :cancel-label="$t('programs.label.cancel.button')"
       @ok="deleteProgram" />
     <engagement-center-welcome-message
-      v-if="displayNoSearchResult"
+      v-if="displayNoSearchResult && !isStatusDisabled"
       class="mx-16 mb-5">
       <template #content>
         <div class="mx-4 my-6 dark-grey-color">
@@ -100,6 +100,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
       </template>
     </engagement-center-welcome-message>
+    <engagement-center-no-results
+      v-else-if="displayNoSearchResult && isStatusDisabled" 
+      class="mt-11"/>
     <engagement-center-program-drawer
       ref="programDrawer"
       :is-administrator="isAdministrator" />
@@ -159,6 +162,9 @@ export default {
     hasMore() {
       return this.loading || this.limitToFetch < this.totalSize;
     },
+    isStatusDisabled() {
+      return this.status === 'DISABLED';
+    }
   },
   watch: {
     loading() {
