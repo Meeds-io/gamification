@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <template #activator="{ on }">
       <div v-on="on">
         <a class="flex-nowrap flex-grow-1 d-flex text-truncate container--fluid text-truncate" :href="actionURL">
-          <v-icon size="15" class="primary--text">fas fa-child</v-icon>
+          <v-icon size="15" class="primary--text">fas fa-trophy</v-icon>
           <div class="ps-2 text-truncate">{{ actionLabel }}
           </div>
         </a>
