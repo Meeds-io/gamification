@@ -4,7 +4,7 @@
     ref="ruleDetailDrawer"
     :right="!$vuetify.rtl">
     <template #title>
-      <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo')}} </span>
+      <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
     </template>
     <template #content>
       <v-card-text>
