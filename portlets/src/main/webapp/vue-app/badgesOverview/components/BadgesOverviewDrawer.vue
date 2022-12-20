@@ -21,12 +21,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     body-classes="hide-scroll decrease-z-index-more"
     right>
     <template slot="title">
-      <div class="d-flex">
+      <div class="d-flex width-fit-content">
         {{ $t('exoplatform.gamification.badgesByDomain') }}:
         <v-tooltip bottom>
           <template #activator="{ on }">
-            <div v-on="on" class="ms-1">
-              {{ domainLabelToDisplay }}
+            <div class="ms-1 text-truncate" v-on="on">
+              {{ domainLabel }}
             </div>
           </template>
           <span>{{ domainLabel }}</span>
@@ -55,9 +55,6 @@ export default {
     domainLabel() {
       return this.badge?.domainLabel;
     },
-    domainLabelToDisplay() {
-      return this.domainLabel.length > 9 ? `${this.domainLabel.substring(0, 9)  }...` : this.domainLabel;
-    }
   },
   created() {
     this.$root.$on('open-badge-drawer', (badge) => {
