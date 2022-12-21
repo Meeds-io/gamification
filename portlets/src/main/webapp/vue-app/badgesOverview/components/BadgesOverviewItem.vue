@@ -17,19 +17,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-tooltip bottom>
     <template #activator="{ on }">
-      <div class="px-2" v-on="on">
-        <v-avatar
-          class="d-flex flex-column BadgeItemAvatar content-box-sizing clickable mx-auto"
-          tile
-          @click="openDrawer">
-          <img
-            :src="badge.avatar">
-        </v-avatar>
-        <div
-          class="d-block text-center mt-2 clickable"
-          @click="openDrawer">
-          {{ badgeLabel }}
-        </div>
+      <div class="px-1" v-on="on">
+        <v-card 
+          flat
+          width="80">
+          <v-avatar
+            class="d-flex flex-column content-box-sizing clickable mx-auto"
+            height="50"
+            width="auto"
+            tile
+            @click="openDrawer">
+            <img 
+            :src="badge.avatar"
+            alt="">
+          </v-avatar>
+          <div
+            class="d-block text-center mt-2 clickable text-truncate"
+            @click="openDrawer">
+            {{ badgeLabel }}
+          </div>
+        </v-card>
       </div>
     </template>
     <span>{{ badgeLabel }}</span>
