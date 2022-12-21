@@ -182,10 +182,6 @@ export default {
     }
   },
   data: () => ({
-    rules: {
-      length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
-      value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
-    },
     program: null,
     programOwners: [],
     audience: null,
@@ -229,6 +225,12 @@ export default {
         placeholder: this.$t('programs.label.spaces.placeholder'),
       };
     },
+    rules() {
+      return {
+        length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
+        value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
+      };
+    }
   },
   watch: {
     loading() {
