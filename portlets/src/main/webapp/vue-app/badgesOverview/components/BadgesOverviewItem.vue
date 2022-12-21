@@ -20,17 +20,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="px-2" v-on="on">
         <v-avatar
           class="d-flex flex-column BadgeItemAvatar content-box-sizing clickable mx-auto"
-          :tile="!skeleton"
+          tile
           @click="openDrawer">
           <img
-            :class="skeleton && 'skeleton-background no-border'"
             :src="badge.avatar">
         </v-avatar>
         <div
-          :class="skeleton && 'skeleton-text skeleton-background skeleton-text-height skeleton-border-radius px-6'"
           class="d-block text-center mt-2 clickable"
           @click="openDrawer">
-          {{ skeleton && '&nbsp;' || badgeLabel }}
+          {{ badgeLabel }}
         </div>
       </div>
     </template>
@@ -44,10 +42,6 @@ export default {
     badge: {
       type: Object,
       default: () => ({}),
-    },
-    skeleton: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
