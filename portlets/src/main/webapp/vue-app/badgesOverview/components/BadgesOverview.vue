@@ -33,10 +33,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card flat :class="isOverviewDisplay ? 'pt-4' : ''">
       <v-card-text
         :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
-        class="mx-auto d-flex flex-wrap justify-center">
+        class="mx-auto d-flex justify-center">
         <template v-if="badges && badges.length">
           <badges-overview-item
-            v-for="badge in badges"
+            v-for="badge in badgesToDisplay"
             :key="badge.id"
             :badge="badge" />
         </template>
@@ -61,6 +61,11 @@ export default {
       type: Boolean,
       default: () => false,
     },
+  },
+  computed: {
+    badgesToDisplay() {
+      return this.badges?.slice(0, 3);
+    }
   },
   data: () => ({
     badges: [],
