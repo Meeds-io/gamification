@@ -16,6 +16,10 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -40,8 +44,6 @@ import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard
 import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
 
 public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationActionsHistory, Long> {
 
@@ -423,11 +425,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       TypedQuery<Long> query;
       query = getEntityManager().createNamedQuery("GamificationActionsHistory.findMostRealizedRuleIds", Long.class);
       query.setParameter("spacesIds", spacesIds);
-      LocalDate now = new LocalDate();
-      LocalDate monday = now.withDayOfWeek(DateTimeConstants.MONDAY);
-      LocalDate sunday = now.withDayOfWeek(DateTimeConstants.SUNDAY);
-      Date utilFromDate = Date.from(monday.toDate().toInstant());
-      Date utilToDate = Date.from(sunday.toDate().toInstant());
+      LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+      LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+      Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date utilToDate = Date.from(sunday.atStartOfDay(ZoneId.systemDefault()).toInstant());
       query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
            .setParameter(TO_DATE_PARAM_NAME, utilToDate)
            .setParameter(TYPE, type);
