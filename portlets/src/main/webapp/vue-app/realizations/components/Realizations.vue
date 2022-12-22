@@ -259,11 +259,6 @@ export default {
             width: '70',
           },);
       }
-      if (this.isMobile) {
-        realizationsHeaders.splice(1, 1);
-        realizationsHeaders.splice(0, 1);
-        realizationsHeaders.splice(5, 1); 
-      }
       return realizationsHeaders;
     },
   },
