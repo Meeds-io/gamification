@@ -22,7 +22,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.testing.BaseExoTestCase;
@@ -51,7 +50,7 @@ import static org.mockito.Mockito.when;
 public class AnnouncementServiceTest extends BaseExoTestCase {
   private AnnouncementStorage announcementStorage;
 
-  private ChallengeStorage    challengeStorage;
+  private ChallengeService    challengeService;
 
   private AnnouncementService announcementService;
 
@@ -65,11 +64,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   public void setUp() throws Exception { // NOSONAR
     super.setUp();
     announcementStorage = mock(AnnouncementStorage.class);
-    challengeStorage = mock(ChallengeStorage.class);
+    challengeService = mock(ChallengeService.class);
     spaceService = mock(SpaceService.class);
     identityManager = mock(IdentityManager.class);
     listenerService = mock(ListenerService.class);
-    announcementService = new AnnouncementServiceImpl(announcementStorage, challengeStorage, listenerService);
+    announcementService = new AnnouncementServiceImpl(announcementStorage,
+                                                      challengeService,
+                                                      identityManager,
+                                                      listenerService);
   }
 
   @PrepareForTest({ Utils.class, EntityMapper.class })
@@ -83,7 +85,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
 
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),
@@ -135,11 +138,13 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(spaceService.isRedactor(space, "root")).thenReturn(true);
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
     when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
     PowerMockito.mockStatic(Utils.class);
 
     Identity identity = mock(Identity.class);
+    when(identity.isEnable()).thenReturn(true);
     when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     when(identity.getId()).thenReturn("1");
 
@@ -153,11 +158,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertThrows(ObjectNotFoundException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
 
-    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
+    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
     assertThrows(IllegalArgumentException.class,
                  () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", false));
 
     when(Utils.canAnnounce(any(), anyString())).thenReturn(false);
+    assertThrows(ObjectNotFoundException.class,
+                 () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
+    when(identityManager.getIdentity("1")).thenReturn(identity);
     assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
     when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
@@ -179,7 +187,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),
                                                  challenge.getTitle(),
@@ -227,17 +236,20 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(spaceService.isRedactor(space, "root")).thenReturn(true);
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
     when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.saveAnnouncement(createdAnnouncement)).thenReturn(editedAnnouncement);
     PowerMockito.mockStatic(Utils.class);
     when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
     Identity identity = mock(Identity.class);
-    when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
+    when(identity.isEnable()).thenReturn(true);
     when(identity.getId()).thenReturn("1");
+    when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
     when(announcementStorage.getAnnouncementById(1L)).thenReturn(createdAnnouncement);
 
     Announcement newAnnouncement = null;
-    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
+    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    when(identityManager.getIdentity("1")).thenReturn(identity);
     newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", false);
     assertNotNull(newAnnouncement);
     newAnnouncement.setActivityId(1L);
@@ -268,7 +280,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
     Announcement announcement1 = new Announcement(0,
                                                   challenge.getId(),
                                                   challenge.getTitle(),
@@ -318,13 +331,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                         new Date(System.currentTimeMillis() + 1).toString(),
                                         Collections.emptyList(),
                                         10L,
-                                        "gamification");
+                                        "gamification",
+                                        true);
 
     when(announcementStorage.countAnnouncementsByChallenge(challenge.getId())).thenReturn(10l);
 
     assertThrows(IllegalArgumentException.class, () -> announcementService.countAllAnnouncementsByChallenge(0l));
     assertThrows(ObjectNotFoundException.class, () -> announcementService.countAllAnnouncementsByChallenge(challenge.getId()));
-    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
+    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
 
     Long count = announcementService.countAllAnnouncementsByChallenge(challenge.getId());
     assertEquals(10l, (long) count);

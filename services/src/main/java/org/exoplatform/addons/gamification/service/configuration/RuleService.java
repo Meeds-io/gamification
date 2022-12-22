@@ -16,8 +16,12 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import java.util.List;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public interface RuleService {
 
@@ -33,7 +37,7 @@ public interface RuleService {
      * @param id : rule's id param
      * @return an instance of RuleDTO
      */
-    RuleDTO findRuleById (Long id);
+    RuleDTO findRuleById (long id);
 
     /**
      * Find enable RuleEntity by title
@@ -50,13 +54,14 @@ public interface RuleService {
      RuleDTO findRuleByTitle (String ruleTitle);
 
 
-    /**
-     * Find a RuleEntity by title
-     * @param ruleTitle : rule's title param
-     * @param domain : rule's domain param
-     * @return an instance of RuleDTO
-     */
-    RuleDTO findRuleByEventAndDomain (String ruleTitle, String domain);
+     /**
+      * Find a RuleEntity by title
+      * 
+      * @param ruleTitle : rule's title param
+      * @param domainId domain id
+      * @return an instance of RuleDTO
+      */
+     RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId);
 
     /**
      * Get all Rules from DB
@@ -77,9 +82,20 @@ public interface RuleService {
     List<RuleDTO> findAllRules(int offset, int limit) ;
 
     /**
-     * @return count of all existing rules
+     * Get Rules by filter using offset and limit.
+     *
+     * @param ruleFilter {@link RuleFilter} used to filter rules
+     * @param offset Offset of result
+     * @param limit Limit of result
+     * @return {@link List} of {@link RuleDTO}
      */
-    int countAllRules();
+    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) ;
+
+    /**
+     * @param ruleFilter {@link RuleFilter} used to count associated rules
+     * @return count rules by filter
+     */
+    int countAllRules(RuleFilter ruleFilter);
 
     /**
      * Get all active Rules from DB
@@ -113,22 +129,60 @@ public interface RuleService {
      List<String> getDomainListFromRules() ;
 
     /**
-     * delete rule with specific id
+     *
+     * @param domainId domain id
+     * @return rules total scores that can be earned
      */
-     void deleteRule (Long id)  throws Exception;
+     long getRulesTotalScoreByDomain(long domainId);
+
+     /**
+      * Deletes an existing rule
+      *
+      * @param ruleId Rule technical identifier to delete
+      * @param username User name of user attempting to delete a rule
+      * @return deleted {@link RuleDTO}
+      * @throws IllegalAccessException when user is not authorized to delete the
+      *           rule
+      * @throws ObjectNotFoundException when the rule identified by its technical
+      *           identifier is not found
+      */
+     RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
     /**
      * Add Rule to DB
-     * @param ruleDTO : an object of type RuleDTO
-     * @return RuleDTO object
+     * @param ruleDTO {@link RuleDTO} to create
+     * @param username User name of user attempting to create a rule
+     * @return created {@link RuleDTO}
+     * @throws IllegalAccessException when user is not authorized to create a rule
+     * @throws ObjectAlreadyExistsException when rule already exists
      */
-     RuleDTO addRule (RuleDTO ruleDTO)  throws Exception;
+     RuleDTO createRule (RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException;
+
+     /**
+     * Add Rule to DB
+     * @param ruleDTO {@link RuleDTO} to create
+     * @return created {@link RuleDTO}
+     * @throws ObjectAlreadyExistsException when rule already already exists
+     */
+     RuleDTO createRule (RuleDTO ruleDTO) throws ObjectAlreadyExistsException;
 
     /**
      * Update Rule to DB
-     * @param ruleDTO : an object of type RuleDTO
-     * @return RuleDTO object
+     * @param ruleDTO {@link RuleDTO} to update
+     * @param username User name of user attempting to update a rule
+     * @return updated {@link RuleDTO}
+     * @throws ObjectNotFoundException when rule doesn't exists
+     * @throws IllegalAccessException when user sin't allowed to update chosen rule
      */
-     RuleDTO updateRule (RuleDTO ruleDTO) throws Exception;
+    RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException;
 
+    /**
+     * Update Rule to DB
+     * @param ruleDTO {@link RuleDTO} to update
+     * @return updated {@link RuleDTO}
+     * @throws ObjectNotFoundException when rule doesn't exists
+     */
+    default RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
+      return null;
+    }
 }

@@ -30,14 +30,14 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
 import org.exoplatform.addons.gamification.utils.Utils;
 
 public class EntityMapper {
@@ -74,9 +74,9 @@ public class EntityMapper {
     challengeEntity.setManagers(challenge.getManagers());
     challengeEntity.setScore(challenge.getPoints().intValue());
 
-    DomainDTO domain = Utils.getEnabledDomainByTitle(challenge.getProgram());
+    DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
     if (domain != null) {
-      challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomain(domain));
+      challengeEntity.setDomainEntity(DomainMapper.domainDTOToDomainEntity(domain));
     }
     return challengeEntity;
   }
@@ -147,6 +147,7 @@ public class EntityMapper {
     announcementEntity.setDomainEntity(domainEntity);
     announcementEntity.setDomain(domainEntity.getTitle());
     announcementEntity.setObjectId("");
+    announcementEntity.setType(ruleEntity.getType());
     return announcementEntity;
   }
 
@@ -187,16 +188,17 @@ public class EntityMapper {
       return null;
     }
     RuleDTO rule = new RuleDTO();
+    rule.setEnabled(true);
     if (challenge.getId() > 0) {
       rule.setId(challenge.getId());
     }
     rule.setScore(challenge.getPoints() == null ? 0 : challenge.getPoints().intValue());
     rule.setTitle(challenge.getTitle());
     rule.setDescription(challenge.getDescription());
-    rule.setArea(challenge.getProgram());
-    rule.setEnabled(false);
     rule.setDeleted(false);
-    rule.setDomainDTO(Utils.getDomainByTitle(challenge.getProgram()));
+    DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
+    rule.setArea(domain == null ? null : domain.getTitle());
+    rule.setDomainDTO(domain);
     if (challenge.getAudience() > 0) {
       rule.setAudience(challenge.getAudience());
     }
@@ -206,7 +208,7 @@ public class EntityMapper {
     if (challenge.getStartDate() != null) {
       rule.setStartDate(challenge.getStartDate());
     }
-    rule.setType(TypeRule.MANUAL);
+    rule.setType(EntityType.MANUAL);
     if (challenge.getManagers() != null) {
       rule.setManagers(challenge.getManagers());
     } else {
@@ -227,7 +229,9 @@ public class EntityMapper {
                          ruleDTO.getEndDate(),
                          ruleDTO.getManagers(),
                          (long) ruleDTO.getScore(),
-                         ruleDTO.getDomainDTO() == null ? null : ruleDTO.getDomainDTO().getTitle());
+                         ruleDTO.getDomainDTO() == null ? null : ruleDTO.getDomainDTO().getTitle(),
+                         ruleDTO.getDomainDTO() == null ? 0l : ruleDTO.getDomainDTO().getId(),
+                         ruleDTO.isEnabled());
   }
 
 }

@@ -35,6 +35,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
+        <key>org.exoplatform.commons.api.settings.ExoFeatureService</key>
+        <type>org.exoplatform.settings.impl.ExoFeatureServiceImpl</type>
+    </component>
+
+    <component>
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
 
@@ -61,6 +66,25 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.mock.IdentityManagerMock</type>
     </component>
 
+    <component>
+      <key>org.exoplatform.services.security.IdentityRegistry</key>
+      <type>org.exoplatform.addons.gamification.mock.IdentityRegistryMock</type>
+    </component>
+
+    <component>
+      <key>org.exoplatform.upload.UploadService</key>
+      <type>org.exoplatform.social.core.mock.MockUploadService</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.web.security.codec.CodecInitializer</type>
+        <init-params>
+            <value-param>
+                <name>gatein.conf.dir</name>
+                <value>jar:/conf</value>
+            </value-param>
+        </init-params>
+    </component>
     <component>
         <key>org.exoplatform.social.core.space.spi.SpaceService</key>
         <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
@@ -116,9 +140,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
     </component>
-    <component>
-        <type>org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO</type>
-    </component>
 
     <component>
         <key>org.exoplatform.addons.gamification.storage.AnnouncementStorage</key>
@@ -142,6 +163,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
         <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
+        <init-params>
+            <value-param>
+                <name>challenge.creator.group</name>
+                <description>groups with membership type have permission to manage challenges</description>
+                <value>${exo.challenges.creators.group:/platform/administrators,/platform/rewarding}</value>
+            </value-param>
+        </init-params>
     </component>
 
     <component>
@@ -531,4 +559,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </component-plugin>
     </external-component-plugins>
 
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.file.services.NameSpaceService</target-component>
+        <component-plugin>
+            <name>SocialNameSpacePlugin</name>
+            <set-method>addNameSpacePlugin</set-method>
+            <type>org.exoplatform.commons.file.services.NameSpacePlugin</type>
+            <priority>1000</priority>
+            <init-params>
+                <properties-param>
+                    <name>fileNameSpace.params</name>
+                    <property name="name" value="gamification"/>
+                    <property name="description" value="gamification files storage"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+  <remove-configuration>org.exoplatform.portal.config.UserPortalConfigListener</remove-configuration>
+  <remove-configuration>org.exoplatform.portal.config.GroupPortalConfigListener</remove-configuration>
 </configuration>

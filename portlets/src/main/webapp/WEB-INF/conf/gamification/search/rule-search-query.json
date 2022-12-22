@@ -1,0 +1,45 @@
+{
+  "from": "@offset@",
+  "size": "@limit@",
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "query_string": {
+            "query": "title:(*@term@*) OR description:(@term_query@)",
+            "default_operator": "AND",
+            "fuzziness": 1,
+            "phrase_slop": 1
+          }
+        }
+        @date_filtering@
+        @domain_filtering@
+        @audience_filtering@
+      ]
+    }
+  },
+  "highlight": {
+    "number_of_fragments": 2,
+    "fragment_size": 150,
+    "no_match_size": 0,
+    "order": "score",
+    "fields": {
+      "title": {
+        "pre_tags": [
+          "<span class='searchMatchExcerpt'>"
+        ],
+        "post_tags": [
+          "</span>"
+        ]
+      },
+      "description": {
+        "pre_tags": [
+          "<span class='searchMatchExcerpt'>"
+        ],
+        "post_tags": [
+          "</span>"
+        ]
+      }
+    }
+  }
+}

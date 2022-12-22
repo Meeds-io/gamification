@@ -1,0 +1,201 @@
+<!--
+This file is part of the Meeds project (https://meeds.io/).
+Copyright (C) 2022 Meeds Association
+contact@meeds.io
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<template>
+  <v-card
+    id="engagementCenterProgramCard"
+    class="card engagement-center-card"
+    height="240"
+    max-height="240"
+    outlined
+    hover>
+    <div @click="openProgramDetail">
+      <v-img
+        :src="programCover"
+        :alt="$t('programs.cover.default')"
+        width="100%"
+        aspect-ratio="1"
+        min-height="70"
+        min-width="70"
+        max-height="120"
+        class="primary--text">
+        <v-menu
+          v-if="showActionsMenu"
+          v-model="showMenu"
+          :left="!$vuetify.rtl"
+          :right="$vuetify.rtl"
+          bottom
+          offset-y
+          attach>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              width="26"
+              height="26"
+              class="pull-right primary ma-2"
+              v-bind="attrs"
+              v-on="on"
+              @blur="closeMenu">
+              <v-icon size="15" color="white">fas fa-ellipsis-v</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense class="pa-0">
+            <v-list-item
+              dense
+              @mousedown="$event.preventDefault()"
+              @click="editProgram">
+              <v-layout class="me-3">
+                <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
+              </v-layout>
+              <v-list-item-title class="d-flex">{{ $t('programs.button.editProgram') }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              dense
+              @mousedown="$event.preventDefault()"
+              @click="deleteProgram">
+              <v-layout class="me-3">
+                <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
+              </v-layout>
+              <v-list-item-title class="d-flex">
+                {{ $t('programs.button.deleteProgram') }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-img>
+      <v-list class="pb-0 pt-1" dense>
+        <v-list-item class="px-3">
+          <v-list-item-content class="align-center py-0">
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <span
+                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text--secondary" 
+                  v-bind="attrs"
+                  v-on="on">
+                  {{ program.title }}
+                </span>
+              </template>
+              {{ program.title }}
+            </v-tooltip>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content class="py-0">
+            <div class="d-flex justify-center">
+              <v-icon size="16" class="pe-2 primary--text">fas fa-trophy</v-icon>
+              <span class="text-light-color" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+            </div>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </div>
+    <div class="d-flex mx-2">
+      <div class="pa-1">
+        <span class="my-auto caption text-light-color"> {{ this.$t('programs.details.label.hosts') }} </span>
+      </div>
+      <v-spacer />
+      <engagement-center-avatars-list
+        :avatars="owners"
+        :max-avatars-to-show="4"
+        :avatars-count="ownersCount"
+        :size="25"
+        @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+    </div>
+  </v-card>
+</template>
+<script>
+export default {
+  props: {
+    program: {
+      type: Object,
+      default: null
+    },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    }
+  },
+  data: () => ({
+    showMenu: false,
+  }),
+  computed: {
+    programCover() {
+      return this.program?.coverUrl || '';
+    },
+    programBudgetLabel() {
+      return {0: `<span>${this.programBudget} ${this.$t('programs.details.label.points')}</span>`};
+    },
+    programBudget() {
+      return this.program?.rulesTotalScore || 0;
+    },
+    showActionsMenu() {
+      return this.isAdministrator || this.program?.userInfo?.canEdit;
+    },
+    addedOwnersList() {
+      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+        userName: owner.remoteId
+      }));
+    },
+    spaceManagers() {
+      return this.program?.space?.managers;
+    },
+    spaceManagersList() {
+      return (this.spaceManagers || []).map(owner => ({
+        userName: owner
+      }));
+    },
+    owners() {
+      return this.addedOwnersList.concat(this.spaceManagersList);
+    },
+
+    ownersCount() {
+      return this.owners?.length;
+    }
+  },
+  created() {
+    $(document).mousedown(() => {
+      if (this.showMenu) {
+        window.setTimeout(() => {
+          this.showMenu = false;
+        }, 200);
+      }
+    });
+  },
+  methods: {
+    editProgram(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      this.$root.$emit('edit-program-details', this.program);
+    },
+    deleteProgram(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      this.$emit('delete-program', this.program);
+    },
+    openProgramDetail() {
+      this.$root.$emit('open-program-detail', this.program);
+      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
+    },
+    closeMenu() {
+      this.showMenu = false;
+    },
+  }
+};
+</script>

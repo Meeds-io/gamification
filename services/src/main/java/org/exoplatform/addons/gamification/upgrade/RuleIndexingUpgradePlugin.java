@@ -22,7 +22,7 @@ import java.util.List;
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.commons.upgrade.UpgradeProductPlugin;
@@ -71,7 +71,7 @@ public class RuleIndexingUpgradePlugin extends UpgradeProductPlugin {
 
   @Override
   public void processUpgrade(String oldVersion, String newVersion) { // NOSONAR
-    rulesCount = ruleService.countAllRules();
+    rulesCount = ruleService.countAllRules(null);
     LOG.info("START::Index '{}' Gamification rules", rulesCount);
 
     long startTime = System.currentTimeMillis();
@@ -79,7 +79,7 @@ public class RuleIndexingUpgradePlugin extends UpgradeProductPlugin {
     while (offset < rulesCount) {
       List<RuleDTO> rules = ruleService.findAllRules(offset, PAGE_COUNT);
       for (RuleDTO rule : rules) {
-        if (!rule.isDeleted() && (rule.isEnabled() || TypeRule.MANUAL == rule.getType())) {
+        if (!rule.isDeleted() && (rule.isEnabled() || EntityType.MANUAL == rule.getType())) {
           long ruleId = rule.getId();
           try {
             indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));

@@ -119,20 +119,12 @@ public class UserReputationEndpoint implements ResourceContainer {
                 return Response.ok().cacheControl(cacheControl).entity(reputation.toString()).build();
 
             } catch (Exception e) {
-
                 LOG.error("Error to calculate repuation score for user {} ",profileOwner, e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error to compute the user reputaiotn points")
-                        .build();
+                return Response.serverError().build();
             }
 
         } else {
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
-                    .build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 
@@ -156,48 +148,33 @@ public class UserReputationEndpoint implements ResourceContainer {
 
         ConversationState conversationState = ConversationState.getCurrent();
         if (conversationState != null) {
-            String profilePageOwner=conversationState.getIdentity().getUserId();
-            try {
-
-                if(url!=null){
-                    profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url,"/");
-                    if(profilePageOwner.equals("profile")){
-                        profilePageOwner= conversationState.getIdentity().getUserId();
-                    }
-                }
-
-                /** This is a fake */
-                JSONArray allBadges = new JSONArray();
-
-                // Compute user id
-                Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
-
-                if(id==null){
-                    profilePageOwner= conversationState.getIdentity().getUserId();
-                    id= identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
-                }
-                String actorId = id.getId();
-
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
-
-                allBadges = buildProfileBadges(badgesByDomain);
-
-                return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
-
-            } catch (Exception e) {
-
-                LOG.error("Error loading badges belong to user : {} ",profilePageOwner, e);
-
-                return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error loading user's badges")
-                        .build();
+          String profilePageOwner = conversationState.getIdentity().getUserId();
+          if (url != null) {
+            profilePageOwner = GamificationUtils.extractProfileOwnerFromUrl(url, "/");
+            if (profilePageOwner.equals("profile")) {
+              profilePageOwner = conversationState.getIdentity().getUserId();
             }
+          }
 
+          /** This is a fake */
+          JSONArray allBadges = new JSONArray();
+
+          // Compute user id
+          Identity id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
+
+          if (id == null) {
+            profilePageOwner = conversationState.getIdentity().getUserId();
+            id = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, profilePageOwner);
+          }
+          String actorId = id.getId();
+
+          List<ProfileReputation> badgesByDomain = gamificationService.buildDomainScoreByIdentityId(actorId);
+
+          allBadges = buildProfileBadges(badgesByDomain);
+
+          return Response.ok().cacheControl(cacheControl).entity(allBadges.toString()).build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
                     .build();
         }
     }
@@ -246,19 +223,13 @@ public class UserReputationEndpoint implements ResourceContainer {
                 return builder.cacheControl(cc).build();
 
             } catch (Exception e) {
-
                 LOG.error("Error getting badge's avatar", e);
-
                 return Response.serverError()
-                        .cacheControl(cacheControl)
-                        .entity("Error getting badge's avatar")
                         .build();
             }
 
         } else {
             return Response.status(Response.Status.UNAUTHORIZED)
-                    .cacheControl(cacheControl)
-                    .entity("Unauthorized user")
                     .build();
         }
 
@@ -270,7 +241,7 @@ public class UserReputationEndpoint implements ResourceContainer {
             return null;
         }
         Long avatarId = badgeDTO.getIconFileId();
-        if (avatarId == null) {
+        if (avatarId == 0) {
             return null;
         }
         try {
@@ -278,11 +249,7 @@ public class UserReputationEndpoint implements ResourceContainer {
         } catch (FileStorageException e) {
             return null;
         }
-
-        if (file == null) {
-            return null;
-        }
-        return file.getAsStream();
+        return file == null ? null : file.getAsStream();
     }
 
     private JSONArray buildProfileBadges(List<ProfileReputation> reputationLis) {

@@ -16,31 +16,30 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
-import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_RULE_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
-
 import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 public class RuleServiceImpl implements RuleService {
 
-  private static final Log LOG = ExoLogger.getExoLogger(RuleServiceImpl.class);
+  private static final String USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
-  private RuleStorage      ruleStorage;
+  private final RuleStorage      ruleStorage;
 
-  private ListenerService  listenerService;
+  private final ListenerService  listenerService;
 
   public RuleServiceImpl(RuleStorage ruleStorage,  ListenerService listenerService) {
     this.ruleStorage = ruleStorage;
@@ -52,8 +51,8 @@ public class RuleServiceImpl implements RuleService {
     return rule != null && rule.isEnabled() ? rule : null;
   }
 
-  public RuleDTO findRuleById(Long id) throws IllegalArgumentException {
-    if (id == null) {
+  public RuleDTO findRuleById(long id) throws IllegalArgumentException {
+    if (id == 0) {
       throw new IllegalArgumentException("Rule id is mandatory");
     }
     return ruleStorage.findRuleById(id);
@@ -73,14 +72,14 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.findRuleByTitle(ruleTitle);
   }
 
-  public RuleDTO findRuleByEventAndDomain(String ruleTitle, String domain) throws IllegalArgumentException {
+  public RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId) throws IllegalArgumentException {
     if (StringUtils.isBlank(ruleTitle)) {
       throw new IllegalArgumentException("Rule title is mandatory");
     }
-    if (StringUtils.isBlank(domain)) {
-      throw new IllegalArgumentException("Rule domain is mandatory");
+    if (domainId < 0) {
+      throw new IllegalArgumentException("Domain id must be positive");
     }
-    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domain);
+    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domainId);
   }
 
   public List<RuleDTO> findAllRules() {// NOSONAR
@@ -89,12 +88,37 @@ public class RuleServiceImpl implements RuleService {
 
   @Override
   public List<RuleDTO> findAllRules(int offset, int limit) {
-    return ruleStorage.findAllRules(offset, limit);
+    List<Long> rulesIds = ruleStorage.findAllRulesIds(offset, limit);
+    List<RuleDTO> rules = new ArrayList<>();
+    for (Long ruleId : rulesIds) {
+      RuleDTO rule = findRuleById(ruleId);
+      if (rule.isDeleted()) {
+        continue;
+      }
+      rules.add(rule);
+    }
+    return rules;
   }
 
   @Override
-  public int countAllRules() {
-    return ruleStorage.countRulesByFilter(null);
+  public List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    List<Long> rulesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
+    List<RuleDTO> rules = new ArrayList<>();
+    ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
+
+    for (Long ruleId : rulesIds) {
+      RuleDTO rule = findRuleById(ruleId);
+      if (rule.isDeleted()) {
+        continue;
+      }
+      rules.add(rule);
+    }
+    return rules;
+  }
+
+  @Override
+  public int countAllRules(RuleFilter ruleFilter) {
+    return ruleStorage.countRulesByFilter(ruleFilter);
   }
 
   public List<RuleDTO> getActiveRules() {
@@ -120,50 +144,112 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.getDomainListFromRules();
   }
 
-  public void deleteRule(Long id) throws IllegalArgumentException, ObjectNotFoundException {
-    if (id == null) {
-      throw new IllegalArgumentException("rule id is mandatory");
-    }
-    ruleStorage.deleteRule(id);
-    try {
-      listenerService.broadcast(POST_UPDATE_RULE_EVENT, this,id);
-    } catch (Exception e) {
-      LOG.error("Error broadcasting rule with id {} update event", id, e);
-    }
+  public long getRulesTotalScoreByDomain(long domainId) {
+    return ruleStorage.getRulesTotalScoreByDomain(domainId);
   }
 
-  public RuleDTO addRule(RuleDTO ruleDTO) throws IllegalArgumentException, EntityExistsException {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
+    }
+    if (ruleId == null || ruleId <= 0) {
+      throw new IllegalArgumentException("ruleId must be positive");
+    }
+    RuleDTO ruleDTO = ruleStorage.findRuleById(ruleId);
     if (ruleDTO == null) {
-      throw new IllegalArgumentException("rule is mandatory");
+      throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
-    if (oldRule != null) {
-      throw new EntityExistsException("Rule with same event and domain already exist");
+    if (!Utils.isRuleManager(ruleDTO, username)) {
+      throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
-    ruleDTO = ruleStorage.saveRule(ruleDTO);
-    try {
-      listenerService.broadcast(POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
-    } catch (Exception e) {
-      LOG.error("Error broadcasting rule with id {} creation event", ruleDTO.getId(), e);
-    }
+    ruleDTO = ruleStorage.deleteRuleById(ruleId, username);
+    Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, this, ruleDTO);
     return ruleDTO;
   }
 
-  public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
-    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), ruleDTO.getArea());
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException {
+    if (ruleDTO == null) {
+      throw new IllegalArgumentException("rule object is mandatory");
+    }
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
+    }
+    if (ruleDTO.getId() != null) {
+      throw new IllegalArgumentException("domain id must be equal to 0");
+    }
+    if (!Utils.isRuleManager(ruleDTO, username)) {
+      throw new IllegalAccessException("The user is not authorized to create a rule");
+    }
+    ruleDTO.setCreatedBy(username);
+    ruleDTO.setLastModifiedBy(username);
+    DomainDTO domainDTO = Utils.getDomainByTitle(ruleDTO.getArea());
+    ruleDTO.setDomainDTO(domainDTO);
+
+    return createRule(ruleDTO);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public RuleDTO createRule(RuleDTO ruleDTO) throws ObjectAlreadyExistsException {
+    long domainId = ruleDTO.getDomainDTO().getId();
+    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
+    if (oldRule != null && !oldRule.isDeleted()) {
+      throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
+    }
+    ruleDTO = ruleStorage.saveRule(ruleDTO);
+    Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
+    return ruleDTO;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException {
+    if (username == null) {
+      throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
+    }
+    RuleDTO oldRule = ruleStorage.findRuleById(ruleDTO.getId());
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule does not exist");
     }
-    if (!ruleDTO.getTitle().startsWith(GAMIFICATION_DEFAULT_DATA_PREFIX)) {
-      ruleDTO.setTitle(ruleDTO.getEvent() + "_" + ruleDTO.getArea());
+    if (!Utils.isRuleManager(oldRule, username)) {
+      throw new IllegalAccessException("The user is not authorized to update a rule");
+    }
+    ruleDTO.setCreatedBy(username);
+    ruleDTO.setLastModifiedBy(username);
+
+    return updateRule(ruleDTO);
+  }
+
+  @Override
+  public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
+    if (ruleDTO.getId() == null || ruleDTO.getId() == 0 || ruleStorage.findRuleById(ruleDTO.getId()) == null) {
+      throw new ObjectNotFoundException("Rule id is mandatory");
+    }
+    DomainDTO domainDTO = ruleDTO.getDomainDTO();
+    if (domainDTO != null) {
+      long domainId = ruleDTO.getDomainDTO().getId();
+      RuleDTO existRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
+      if (existRule != null && !existRule.getId().equals(ruleDTO.getId()) && !existRule.isDeleted()) {
+        throw new IllegalStateException("Rule with same event and domain already exist");
+      }
     }
     ruleDTO.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     ruleDTO = ruleStorage.saveRule(ruleDTO);
-    try {
-      listenerService.broadcast(POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());
-    } catch (Exception e) {
-      LOG.error("Error broadcasting rule with id {} update event", ruleDTO.getId(), e);
-    }
+
+    Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());
+
     return ruleDTO;
   }
 }

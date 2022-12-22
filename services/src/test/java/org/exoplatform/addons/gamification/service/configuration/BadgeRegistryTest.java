@@ -16,17 +16,15 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.setting.badge.impl.BadgeRegistryImpl;
 import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-import org.exoplatform.commons.file.services.FileService;
-import org.exoplatform.commons.file.services.NameSpaceService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
-import org.junit.Before;
-import org.junit.Test;
 
 public class BadgeRegistryTest extends AbstractServiceTest {
 
@@ -35,9 +33,9 @@ public class BadgeRegistryTest extends AbstractServiceTest {
   @Before
   public void init() throws Exception {
     if (badgeRegistry == null) {
-      badgeRegistry = new BadgeRegistryImpl(CommonsUtils.getService(FileService.class),
-                                            badgeService,
-                                            CommonsUtils.getService(NameSpaceService.class));
+      badgeRegistry = new BadgeRegistryImpl(fileService,
+                                            domainService,
+                                            badgeService);
     }
   }
 

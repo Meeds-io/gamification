@@ -16,34 +16,40 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.rest.model.RuleList;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import javax.annotation.security.RolesAllowed;
-import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import java.util.List;
-import java.util.Locale;
 
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
-
-  private static final Log   LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
 
   private final CacheControl cacheControl;
 
@@ -60,141 +66,135 @@ public class ManageRulesEndpoint implements ResourceContainer {
   }
 
   @GET
-  @Path("/all")
+  @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  public Response getAllRules() {
-    ConversationState conversationState = ConversationState.getCurrent();
-    if (conversationState != null) {
-      try {
-        List<RuleDTO> allRules = ruleService.findAllRules();
-        return Response.ok().cacheControl(cacheControl).entity(allRules).build();
-      } catch (Exception e) {
-        LOG.error("Error listing all rules ", e);
-        return Response.serverError().cacheControl(cacheControl).entity("Error listing all rules").build();
-      }
-    } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+  @Operation(summary = "Retrieves the list of available rules", method = "GET")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response getRules(@Parameter(description = "Offset of results to retrieve", required = false) @QueryParam("offset") @DefaultValue("0") int offset,
+                           @Parameter(description = "Limit of results to retrieve", required = false) @QueryParam("limit") @DefaultValue("20") int limit,
+                           @Parameter(description = "Used to filter rules by domain", required = false) @QueryParam("domainId") long domainId,                           
+                           @Parameter(description = "Rules type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = ALL.", required = false) @QueryParam("type") @DefaultValue("ALL") String type,
+                           @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
+                           @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
+                           @Parameter(description = "term to search rules with") @QueryParam("term") String term,
+                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
+    if (offset < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
-
+    if (limit < 0) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
+    }
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setIncludeDeleted(includeDeleted);
+    EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
+    ruleFilter.setEntityFilterType(filterType);
+    EntityStatusType statusType = StringUtils.isBlank(status) ? EntityStatusType.ENABLED : EntityStatusType.valueOf(status);
+    ruleFilter.setEntityStatusType(statusType);
+    ruleFilter.setTerm(term);
+    if (domainId > 0) {
+      ruleFilter.setDomainId(domainId);
+    }
+    RuleList ruleList = new RuleList();
+    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
+    if (returnSize) {
+      int rulesSize = ruleService.countAllRules(ruleFilter);
+      ruleList.setSize(rulesSize);
+    }
+    ruleList.setRules(rules);
+    ruleList.setOffset(offset);
+    ruleList.setLimit(limit);
+    return Response.ok(ruleList).build();
   }
 
   @GET
   @Path("/active")
   @RolesAllowed("users")
-  public Response getActiveRules( ) {
+  public Response getActiveRules() {
     ConversationState conversationState = ConversationState.getCurrent();
     if (conversationState != null) {
-      try {
-        List<RuleDTO> activesRules = ruleService.getActiveRules();
-        return Response.ok().cacheControl(cacheControl).entity(activesRules).build();
-      } catch (Exception e) {
-        LOG.error("Error listing active rules ", e);
-        return Response.serverError().cacheControl(cacheControl).entity("Error listing active rules").build();
-      }
+      List<RuleDTO> activesRules = ruleService.getActiveRules();
+      return Response.ok().cacheControl(cacheControl).entity(activesRules).build();
     } else {
       return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
     }
   }
 
   @POST
-  @Consumes({ MediaType.APPLICATION_JSON })
-  @RolesAllowed("administrators")
-  @Path("/add")
-  public Response addRule(@RequestBody(description = "rule object to save", required = true)
-                                     RuleDTO ruleDTO) {
-    ConversationState conversationState = ConversationState.getCurrent();
-    if (conversationState != null) {
-      String currentUserName = conversationState.getIdentity().getUserId();
-      try {
-        // Compute rule's data
-        ruleDTO.setId(null);
-        ruleDTO.setTitle(ruleDTO.getEvent() + "_" + ruleDTO.getArea());
-        ruleDTO.setCreatedBy(currentUserName);
-        ruleDTO.setLastModifiedBy(currentUserName);
-
-        // --- Add rule
-        ruleDTO = ruleService.addRule(ruleDTO);
-
-        return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
-
-      } catch (EntityExistsException e) {
-        return Response.status(Status.CONFLICT).entity("Rule already exists").build();
-      } catch (Exception e) {
-        LOG.warn("Error adding new rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
-        return Response.serverError().cacheControl(cacheControl).entity("Error adding new rule").build();
-      }
-    } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Operation(summary = "Creates a rule", method = "POST")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response createRule(@RequestBody(description = "rule object to save", required = true) RuleDTO ruleDTO) {
+    if (ruleDTO == null) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
+    }
+    String username = Utils.getCurrentUser();
+    try {
+      ruleDTO = ruleService.createRule(ruleDTO, username);
+      return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to create rule").build();
+    } catch (ObjectAlreadyExistsException e) {
+      return Response.status(Response.Status.CONFLICT).entity("Rule already exists").build();
     }
   }
 
   @PUT
-  @RolesAllowed("administrators")
-  @Path("/update")
-  public Response updateRule(@Context HttpServletRequest request,@RequestBody(description = "rule object to update", required = true)
-                                        RuleDTO ruleDTO) {
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Operation(summary = "Updates a rule", method = "PUT")
+  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response updateRule(@Context HttpServletRequest request,
+                             @RequestBody(description = "rule object to update", required = true) RuleDTO ruleDTO) {
+    String username = Utils.getCurrentUser();
 
-    ConversationState conversationState = ConversationState.getCurrent();
-
-    if (conversationState != null) {
-
-      String currentUserName = conversationState.getIdentity().getUserId();
-      try {
-
-        // TODO : Load locale
-        Locale lc = request.getLocale();
-
-        // Compute rule's data
-        ruleDTO.setCreatedBy(currentUserName);
-        ruleDTO.setLastModifiedBy(currentUserName);
-
-        // --- Add rule
-        ruleDTO = ruleService.updateRule(ruleDTO);
-
-        // Compute user id
-        String actorId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUserName).getId();
-        LOG.info("service=gamification operation=edit-rule parameters=\"user_social_id:{},rule_id:{},rule_title:{},rule_description:{}\"",
-                 actorId,
-                 ruleDTO.getId(),
-                 ruleDTO.getTitle(),
-                 ruleDTO.getDescription());
-
-        return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
-
-      } catch (Exception e) {
-
-        LOG.error("Error updating rule {} by {} ", ruleDTO.getTitle(), currentUserName, e);
-
-        return Response.serverError().cacheControl(cacheControl).entity("Error updating a rule").build();
-      }
-
-    } else {
-
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+    if (ruleDTO == null) {
+      return Response.status(Response.Status.BAD_REQUEST).entity("Rule object is mandatory").build();
     }
-
+    try {
+      ruleDTO = ruleService.updateRule(ruleDTO, username);
+      return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to update rule").build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
+    }
   }
 
-  @PUT
-  @RolesAllowed("administrators")
-  @Path("/delete/{id}")
-  public Response deleteRule(@Parameter(description = "id of the rule", required = true)
-  @PathParam("id")
-          Long id) {
-    ConversationState conversationState = ConversationState.getCurrent();
-    if (conversationState != null) {
-      String currentUserName = conversationState.getIdentity().getUserId();
-      try {
-        ruleService.deleteRule(id);
-        return Response.ok().cacheControl(cacheControl).entity("Rule " + id + " has been removed successfully ").build();
-      } catch (Exception e) {
-        LOG.error("Error deleting rule {} by {} ", id, currentUserName, e);
-        return Response.serverError().cacheControl(cacheControl).entity("Error deleting a rule").build();
-      }
-
-    } else {
-      return Response.status(Response.Status.UNAUTHORIZED).cacheControl(cacheControl).entity("Unauthorized user").build();
+  @DELETE
+  @Path("{ruleId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Operation(summary = "Deletes a rule", method = "DELETE")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response deleteRule(@Parameter(description = "Rule technical identifier", required = true) @PathParam("ruleId") long ruleId) {
+    if (ruleId <= 0) {
+      return Response.status(Status.BAD_REQUEST).entity("Rule technical identifier must be positive").build();
     }
-
+    String username = Utils.getCurrentUser();
+    try {
+      RuleDTO ruleDTO = ruleService.deleteRuleById(ruleId, username);
+      return Response.ok().cacheControl(cacheControl).entity(ruleDTO).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to delete rule").build();
+    }
   }
 }

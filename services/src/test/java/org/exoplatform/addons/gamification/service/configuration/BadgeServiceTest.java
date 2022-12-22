@@ -16,12 +16,17 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
+
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.exoplatform.commons.ObjectAlreadyExistsException;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+
+import static org.junit.Assert.assertThrows;
 
 public class BadgeServiceTest extends AbstractServiceTest {
 
@@ -46,13 +51,20 @@ public class BadgeServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testAddBadge() {
+  public void testFindBadge() {
+    BadgeEntity badgeEntity = newBadge("badge1", "domain1");
+    assertNotNull(badgeService.findBadgeById(badgeEntity.getId()));
+    assertNotNull(badgeService.findBadgeByTitleAndDomain("badge1", "domain1"));
+  }
+
+  @Test
+  public void testAddBadge() throws ObjectAlreadyExistsException {
     assertNull(badgeService.findBadgeByTitle(BADGE_NAME));
     BadgeDTO badge = new BadgeDTO();
     badge.setTitle(BADGE_NAME);
     badge.setDescription("Description");
     badge.setNeededScore(Integer.parseInt(TEST_GLOBAL_SCORE));
-    badge.setDomain(GAMIFICATION_DOMAIN);
+    badge.setDomainDTO(newDomainDTO(GAMIFICATION_DOMAIN));
     badge.setIconFileId(10245);
     badge.setEnabled(true);
     badge.setDeleted(false);
@@ -61,10 +73,21 @@ public class BadgeServiceTest extends AbstractServiceTest {
     badge = badgeService.addBadge(badge);
     assertNotNull(badge);
     assertNotNull(badgeService.findBadgeByTitle(BADGE_NAME));
+
+    //
+    BadgeDTO finalBadge = badge;
+    assertThrows(ObjectAlreadyExistsException.class, () -> badgeService.addBadge(finalBadge));
+
+    //
+    badge.setDeleted(true);
+    badgeService.updateBadge(badge);
+    badge = badgeService.addBadge(badge);
+    assertNotNull(badge);
+    assertNotNull(badgeService.findBadgeByTitle(BADGE_NAME));
   }
 
   @Test
-  public void testUpdateBadge() {
+  public void testUpdateBadge() throws ObjectAlreadyExistsException {
     BadgeEntity badge = newBadge();
     badge.setDescription("Desc_2");
     badgeService.updateBadge(BadgeMapper.badgeToBadgeDTO(badge));
@@ -74,7 +97,7 @@ public class BadgeServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testDeleteBadge() {
+  public void testDeleteBadge() throws ObjectNotFoundException {
     assertNull(badgeService.findBadgeByTitle(BADGE_NAME));
     BadgeEntity badge = newBadge();
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);

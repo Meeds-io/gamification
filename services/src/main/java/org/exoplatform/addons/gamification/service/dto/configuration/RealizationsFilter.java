@@ -18,6 +18,10 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import org.exoplatform.addons.gamification.IdentityType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +33,8 @@ public class RealizationsFilter implements Serializable {
 
   private static final long serialVersionUID = 7863115218512008696L;
 
+  private List<String>      earnerIds;
+
   private String            sortField;
 
   private boolean           sortDescending;
@@ -36,5 +42,9 @@ public class RealizationsFilter implements Serializable {
   private Date              fromDate;
 
   private Date              toDate;
-
+  
+  private IdentityType      identityType;
+  
+  private List<Long>        domainIds;
+  
 }

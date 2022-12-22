@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
 
@@ -25,15 +25,19 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   private AnnouncementStorage announcementStorage;
 
-  private ChallengeStorage    challengeStorage;
+  private IdentityManager     identityManager;
+
+  private ChallengeService    challengeService;
 
   private ListenerService     listenerService;
 
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
-                                 ChallengeStorage challengeStorage,
+                                 ChallengeService challengeService,
+                                 IdentityManager identityManager,
                                  ListenerService listenerService) {
     this.announcementStorage = announcementStorage;
-    this.challengeStorage = challengeStorage;
+    this.identityManager = identityManager;
+    this.challengeService = challengeService;
     this.listenerService = listenerService;
   }
 
@@ -50,19 +54,25 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (announcement.getId() != 0) {
       throw new IllegalArgumentException("announcement id must be equal to 0");
     }
-    Challenge challenge = challengeStorage.getChallengeById(announcement.getChallengeId());
+    Challenge challenge = challengeService.getChallengeById(announcement.getChallengeId());
     if (challenge == null) {
       throw new ObjectNotFoundException("challenge does not exist");
     }
-    if (announcement.getAssignee() == null) {
+    Long assignee = announcement.getAssignee();
+    if (assignee == null) {
       throw new IllegalArgumentException("announcement assignee must have at least one winner");
     }
-    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()), currentUser)) {
-      throw new IllegalAccessException("user is not allowed to announce challenge");
+    Identity assigneeIdentity = identityManager.getIdentity(assignee.toString());
+    if (assigneeIdentity == null || assigneeIdentity.isDeleted() || !assigneeIdentity.isEnable()) {
+      throw new ObjectNotFoundException("Assignee with id " + assignee + " does not exist");
     }
 
-    Identity identity = Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, currentUser);
-    announcement.setCreator(Long.parseLong(identity.getId()));
+    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()), currentUser)) {
+      throw new IllegalAccessException("user " + currentUser + " is not allowed to announce challenge on  space with id "
+          + challenge.getAudience());
+    }
+    Identity creatorIdentity = identityManager.getOrCreateUserIdentity(currentUser);
+    announcement.setCreator(Long.parseLong(creatorIdentity.getId()));
     announcement = announcementStorage.saveAnnouncement(announcement);
     if (!system) {
       try {
@@ -77,7 +87,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   @Override
   public List<Announcement> findAllAnnouncementByChallenge(long challengeId,
                                                            int offset,
-                                                           int limit) throws ObjectNotFoundException {
+                                                           int limit) {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
@@ -89,7 +99,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    Challenge challenge = challengeStorage.getChallengeById(challengeId);
+    Challenge challenge = challengeService.getChallengeById(challengeId);
     if (challenge == null) {
       throw new ObjectNotFoundException("challenge does not exist");
     }

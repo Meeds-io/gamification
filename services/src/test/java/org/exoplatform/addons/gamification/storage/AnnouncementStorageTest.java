@@ -80,7 +80,8 @@ public class AnnouncementStorageTest {
                 endDate.toString(),
                 Collections.emptyList(),
                 10L,
-                "gamification");
+                "gamification",
+                true);
 
         RuleEntity challengeEntity = new RuleEntity();
         challengeEntity.setDescription(challenge.getDescription());
@@ -139,7 +140,7 @@ public class AnnouncementStorageTest {
         domainEntity.setTitle("gamification");
         PowerMockito.mockStatic(DomainMapper.class);
         when(Utils.getEnabledDomainByTitle(any())).thenReturn(domainDTO);
-        when(DomainMapper.domainDTOToDomain(domainDTO)).thenReturn(domainEntity);
+        when(DomainMapper.domainDTOToDomainEntity(domainDTO)).thenReturn(domainEntity);
 
         Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
 

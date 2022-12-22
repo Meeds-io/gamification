@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -50,7 +50,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     return AnnouncementRest.class;
   }
 
-  private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  private static final long   MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                                                            // NOSONAR
 
   private static final String startDate       = Utils.toRFC3339Date(new Date(System.currentTimeMillis() - 3 * MILLIS_IN_A_DAY));
 
@@ -80,7 +80,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         endDate,
                                         Collections.singletonList(identityId),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
     challenge = challengeService.createChallenge(challenge);
     String restPath = "/gamification/announcement/api/addAnnouncement";
     EnvironmentContext envctx = new EnvironmentContext();
@@ -198,7 +199,8 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         endDate,
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getId(),
+                                        true);
     challenge = challengeService.createChallenge(challenge);
     Announcement announcement = new Announcement(0,
                                                  challenge.getId(),

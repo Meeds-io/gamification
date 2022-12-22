@@ -41,21 +41,21 @@ public class ChallengeStorageTest extends AbstractServiceTest {
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
-    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 1);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
     assertEquals("new challenge", challenge.getTitle());
     challenge.setDescription("challenge description updated");
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
     assertEquals("challenge description updated", challenge.getDescription());
-    assertEquals(ruleDAO.findRulesByFilter(filter, 0, 10).size(), 1);
-
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
   }
 
   @Test
@@ -69,7 +69,8 @@ public class ChallengeStorageTest extends AbstractServiceTest {
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
 
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
@@ -77,7 +78,7 @@ public class ChallengeStorageTest extends AbstractServiceTest {
     Challenge savedChallenge = challengeStorage.getChallengeById(challenge.getId());
     assertNotNull(savedChallenge);
 
-    challengeStorage.deleteChallenge(challenge.getId());
+    challengeStorage.deleteChallenge(challenge.getId(), "root");
     savedChallenge = challengeStorage.getChallengeById(challenge.getId());
     assertNull(savedChallenge);
   }
@@ -93,7 +94,8 @@ public class ChallengeStorageTest extends AbstractServiceTest {
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
 
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
@@ -103,7 +105,7 @@ public class ChallengeStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindChallengesByFilter() {
+  public void testFindChallengesIdsByFilter() {
     DomainEntity domain = newDomain();
     Challenge challenge = new Challenge(0,
                                         "new challenge",
@@ -113,19 +115,21 @@ public class ChallengeStorageTest extends AbstractServiceTest {
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 1);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 2);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 2);
     filter.setDomainId(100l);
-    assertEquals(challengeStorage.findChallengesByFilter(filter, 0, 10).size(), 0);
+    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
 
   }
+
   @Test
   public void testCountChallengesByFilter() {
     DomainEntity domain = newDomain();
@@ -137,16 +141,17 @@ public class ChallengeStorageTest extends AbstractServiceTest {
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle());
+                                        domain.getTitle(),
+                                        true);
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
-    filter.setSpaceIds(Collections.singletonList(1l));
+    filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(challengeStorage.countChallengesByFilter(filter), 0);
     challengeStorage.saveChallenge(challenge, "root");
     assertEquals(challengeStorage.countChallengesByFilter(filter), 1);
     challengeStorage.saveChallenge(challenge, "root");
     assertEquals(challengeStorage.countChallengesByFilter(filter), 2);
-    filter.setDomainId(100l);
+    filter.setDomainId(100L);
     assertEquals(challengeStorage.countChallengesByFilter(filter), 0);
   }
 

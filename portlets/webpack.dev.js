@@ -24,4 +24,5 @@ module.exports = merge(common, {
       path: `/exo-server/webapps/gamification-portlets/`,
   },
   mode: 'development',
+  devtool: 'inline-source-map'
 });

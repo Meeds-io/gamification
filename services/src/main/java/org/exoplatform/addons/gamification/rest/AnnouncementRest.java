@@ -21,20 +21,14 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -42,10 +36,16 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.rest.api.EntityBuilder;
 import org.exoplatform.social.rest.api.RestUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @Path("/gamification/announcement/api")
 @Tag(name = "/gamification/announcement/api", description = "Manages announcement associated to users")
-@RolesAllowed("users")
 public class AnnouncementRest implements ResourceContainer {
 
   private static final Log    LOG = ExoLogger.getLogger(AnnouncementRest.class);
@@ -96,9 +96,6 @@ public class AnnouncementRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-      LOG.warn("Error creating an announcement: { } ", announcementActivity, e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -165,9 +162,8 @@ public class AnnouncementRest implements ResourceContainer {
         builder.cacheControl(cacheControl);
       }
       return builder.build();
-    } catch (Exception e) {
-      LOG.warn("Error retrieving list of announcements", e);
-      return Response.serverError().entity(e.getMessage()).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Response.Status.FORBIDDEN).build();
     }
   }
 

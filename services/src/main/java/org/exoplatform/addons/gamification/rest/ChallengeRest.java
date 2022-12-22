@@ -3,7 +3,6 @@ package org.exoplatform.addons.gamification.rest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -19,6 +18,28 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
+import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.rest.model.DomainWithChallengesRestEntity;
+import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.ChallengeService;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,19 +47,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.ChallengeService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
-import org.exoplatform.addons.gamification.service.dto.configuration.*;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.common.http.HTTPStatus;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.services.rest.resource.ResourceContainer;
-import org.exoplatform.services.security.ConversationState;
 
 
 @Path("/gamification/challenges")
@@ -88,11 +96,8 @@ public class ChallengeRest implements ResourceContainer {
       Challenge newChallenge = challengeService.createChallenge(challenge, currentUser);
       return Response.ok(EntityBuilder.fromChallenge(newChallenge, Collections.emptyList())).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to create a challenge", e);
+      LOG.warn("User '{}' attempts to create a challenge while not authorized", currentUser);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    } catch (Exception e) {
-      LOG.warn("Error creating a challenge", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -127,17 +132,17 @@ public class ChallengeRest implements ResourceContainer {
       LOG.warn("Bad request sent to server with empty challengeId");
       return Response.status(400).build();
     }
-    String currentUserId = Utils.getCurrentUser();
+    String currentUser = Utils.getCurrentUser();
     try {
-      Challenge challenge = challengeService.getChallengeById(challengeId, currentUserId);
+      Challenge challenge = challengeService.getChallengeById(challengeId, currentUser);
       if (challenge == null) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
-      return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList)).build();
-    } catch (Exception e) {
-      LOG.error("Error getting challenge", e);
-      return Response.status(500).build();
+      return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList, false)).build();
+    } catch (IllegalAccessException e) {
+      LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
 
@@ -177,9 +182,6 @@ public class ChallengeRest implements ResourceContainer {
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to update a challenge for owner '{}'", currentUser, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    } catch (Exception e) {
-      LOG.warn("Error updating a challenge", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -235,7 +237,7 @@ public class ChallengeRest implements ResourceContainer {
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
     try {
-      LOG.info("start getting challenges");
+      LOG.debug("start getting challenges");
       if (domainId > 0) {
         filter.setDomainId(domainId);
         List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
@@ -244,50 +246,47 @@ public class ChallengeRest implements ResourceContainer {
                                                                                     limit,
                                                                                     announcementsPerChallenge,
                                                                                     false);
-        LOG.info("ended mapping challenges");
+        LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       } else if (groupByDomain) {
-        List<DomainDTO> domains = domainService.getAllDomains();
-        List<DomainWithChallengesRestEntity> domainsWithChallenges = domains.stream().map(domain -> {
+        DomainFilter domainFilter = new DomainFilter();
+        domainFilter.setEntityFilterType(EntityFilterType.ALL);
+        domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
+        List<DomainDTO> domains = domainService.getDomainsByFilter(domainFilter, currentUser, 0, -1);
+        List<DomainWithChallengesRestEntity> domainsWithChallenges = new ArrayList<>();
+        for (DomainDTO domain : domains) {
           DomainWithChallengesRestEntity domainWithChallenge = new DomainWithChallengesRestEntity(domain);
-          try {
-            filter.setDomainId(domain.getId());
-            List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
-                                                                                        currentUser,
-                                                                                        offset,
-                                                                                        limit,
-                                                                                        announcementsPerChallenge,
-                                                                                        true);
-            domainWithChallenge.setChallenges(challengeRestEntities);
-            domainWithChallenge.setChallengesOffset(offset);
-            domainWithChallenge.setChallengesLimit(limit);
-            int size = challengeService.countChallengesByFilterAndUser(filter, currentUser);
-            domainWithChallenge.setChallengesSize(size);
-          } catch (IllegalAccessException | ObjectNotFoundException e) {
-            LOG.debug("Error retrieving challenges of domain {} for user {}", domain.getTitle(), currentUser, e);
-          }
-          return domainWithChallenge;
-        }).collect(Collectors.toList());
+          filter.setDomainId(domain.getId());
+          List<ChallengeRestEntity> challengeRestEntities = getUserChallengesByDomain(filter,
+                                                                                      currentUser,
+                                                                                      offset,
+                                                                                      limit,
+                                                                                      announcementsPerChallenge,
+                                                                                      true);
+          domainWithChallenge.setChallenges(challengeRestEntities);
+          domainWithChallenge.setChallengesOffset(offset);
+          domainWithChallenge.setChallengesLimit(limit);
+          int size = challengeService.countChallengesByFilterAndUser(filter, currentUser);
+          domainWithChallenge.setChallengesSize(size);
+          domainsWithChallenges.add(domainWithChallenge);
+        }
         return Response.ok(domainsWithChallenges).build();
       } else {
         List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
         List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
-        LOG.info("start mapping challenges");
+        LOG.debug("start mapping challenges");
         for (Challenge challenge : challenges) {
           challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService,
                                                                 challenge,
                                                                 announcementsPerChallenge,
                                                                 false));
         }
-        LOG.info("ended mapping challenges");
+        LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
       }
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to access not authorized challenges with owner Ids", currentUser, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-    } catch (Exception e) {
-      LOG.warn("Error retrieving list of challenges", e);
-      return Response.serverError().entity(e.getMessage()).build();
     }
   }
 
@@ -304,13 +303,8 @@ public class ChallengeRest implements ResourceContainer {
           @ApiResponse(responseCode = "401", description = "User not authorized to add a challenge") }
   )
   public Response canAddChallenge() {
-    try {
-      boolean canAddChallenge = challengeService.canAddChallenge(ConversationState.getCurrent().getIdentity());
-      return Response.ok(String.valueOf(canAddChallenge)).build();
-    } catch (Exception e) {
-      LOG.error("Error when checking if the authenticated user can add a challenge", e);
-      return Response.serverError().build();
-    }
+    boolean canAddChallenge = Utils.isSuperManager(ConversationState.getCurrent().getIdentity().getUserId());
+    return Response.ok(String.valueOf(canAddChallenge)).build();
   }
 
   @DELETE
@@ -341,14 +335,10 @@ public class ChallengeRest implements ResourceContainer {
       challengeService.deleteChallenge(challengeId, currentUser);
       return Response.ok().build();
     } catch (ObjectNotFoundException e) {
-      LOG.error("User '{}' attempts to to delete not existing challenge", currentUser, e);
-      return Response.status(Response.Status.NOT_FOUND).entity("challenge trying to delete not found").build();
+      return Response.status(Response.Status.NOT_FOUND).entity("The challenge doesn't exist").build();
     } catch (IllegalAccessException e) {
-      LOG.error("unauthorized user {} trying to delete a challenge", currentUser, e);
+      LOG.warn("User {} is not authorized to delete challenge with id {}", currentUser, challengeId, e);
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to delete a challenge").build();
-    } catch (Exception e) {
-      LOG.error("Error when deleting challenge", e);
-      return Response.serverError().entity("Error when deleting challenge").build();
     }
   }
 
@@ -357,11 +347,10 @@ public class ChallengeRest implements ResourceContainer {
                                                               int offset,
                                                               int limit,
                                                               int announcementsPerChallenge,
-                                                              boolean noDomain) throws IllegalAccessException,
-                                                                                ObjectNotFoundException {
+                                                              boolean noDomain) throws IllegalAccessException {
     List<Challenge> challenges = challengeService.getChallengesByFilterAndUser(filter, offset, limit, currentUser);
     List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
-    LOG.info("start mapping challenges");
+    LOG.debug("start mapping challenges");
     for (Challenge challenge : challenges) {
       challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService, challenge, announcementsPerChallenge, noDomain));
     }

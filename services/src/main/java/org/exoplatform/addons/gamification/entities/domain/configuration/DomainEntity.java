@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 Meeds Association
  * contact@meeds.io
@@ -14,27 +14,30 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.*;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 @Entity(name = "GamificationDomain")
 @ExoEntity
 @Table(name = "GAMIFICATION_DOMAIN")
-@NamedQueries({
-    @NamedQuery(name = "GamificationDomain.getAllDomains", query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false"),
-    @NamedQuery(name = "GamificationDomain.getEnabledDomains", query = "SELECT domain FROM GamificationDomain domain  WHERE domain.isDeleted = false AND domain.isEnabled = true "),
-    @NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain where domain.title = :domainTitle"),
-    @NamedQuery(name = "GamificationDomain.findEnabledDomainByTitle", query = "SELECT domain FROM GamificationDomain domain where domain.title = :domainTitle AND domain.isEnabled = true AND domain.isDeleted = false"),
-    @NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle") })
+@NamedQuery(name = "GamificationDomain.getAllDomains", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.isDeleted = false")
+@NamedQuery(name = "GamificationDomain.getEnabledDomains", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.isDeleted = false AND domain.isEnabled = true ")
+@NamedQuery(name = "GamificationDomain.findByIdWithOwners", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.id = :id")
+@NamedQuery(name = "GamificationDomain.findDomainByTitle", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.title = :domainTitle")
+@NamedQuery(name = "GamificationDomain.findEnabledDomainByTitle", query = "SELECT domain FROM GamificationDomain domain LEFT JOIN FETCH domain.owners WHERE domain.title = :domainTitle AND domain.isEnabled = true AND domain.isDeleted = false")
+@NamedQuery(name = "GamificationDomain.deleteDomainByTitle", query = "DELETE FROM GamificationDomain domain WHERE domain.title = :domainTitle")
 public class DomainEntity extends AbstractAuditingEntity implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 6578902752036385060L;
 
   @Id
   @SequenceGenerator(name = "SEQ_GAMIFICATION_DOMAIN_ID", sequenceName = "SEQ_GAMIFICATION_DOMAIN_ID", allocationSize = 1)
@@ -56,8 +59,23 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
   @Column(name = "ENABLED", nullable = false)
   protected boolean         isEnabled;
 
-  public DomainEntity() {
-  }
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "TYPE", nullable = false)
+  protected EntityType      type;
+
+  @Column(name = "BUDGET")
+  protected long            budget;
+
+  @Column(name = "COVER_FILE_ID")
+  protected long            coverFileId;
+
+  @Column(name = "AUDIENCE_ID")
+  protected Long            audienceId;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "GAMIFICATION_DOMAIN_OWNERS", joinColumns = @JoinColumn(name = "DOMAIN_ID"))
+  @Column(name = "IDENTITY_ID")
+  private Set<Long>         owners;
 
   public Long getId() {
     return id;
@@ -107,22 +125,64 @@ public class DomainEntity extends AbstractAuditingEntity implements Serializable
     isEnabled = enabled;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+  public long getBudget() {
+    return budget;
+  }
 
-    DomainEntity domainEntity = (DomainEntity) o;
-    return !(domainEntity.getId() == null || getId() == null) && Objects.equals(getId(), domainEntity.getId());
+  public void setBudget(long budget) {
+    this.budget = budget;
+  }
+
+  public long getCoverFileId() {
+    return coverFileId;
+  }
+
+  public void setCoverFileId(long coverFileId) {
+    this.coverFileId = coverFileId;
+  }
+
+  public Long getAudienceId() {
+    return audienceId;
+  }
+
+  public void setAudienceId(Long audience) {
+    this.audienceId = audience;
+  }
+
+  public Set<Long> getOwners() {
+    return owners;
+  }
+
+  public void setOwners(Set<Long> owners) {
+    this.owners = owners;
+  }
+
+  public EntityType getType() {
+    return type;
+  }
+
+  public void setType(EntityType type) {
+    this.type = type;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(getId());
+    return Objects.hash(budget, coverFileId, description, id, isDeleted, isEnabled, owners, priority, title, type);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    DomainEntity other = (DomainEntity) obj;
+    return Objects.equals(budget, other.budget) && Objects.equals(coverFileId, other.coverFileId)
+        && Objects.equals(description, other.description) && Objects.equals(id, other.id) && isDeleted == other.isDeleted
+        && isEnabled == other.isEnabled && Objects.equals(owners, other.owners) && priority == other.priority
+        && Objects.equals(title, other.title) && type == other.type;
   }
 
   @Override

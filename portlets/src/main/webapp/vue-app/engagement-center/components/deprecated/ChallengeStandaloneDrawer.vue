@@ -1,0 +1,435 @@
+<!--
+This file is part of the Meeds project (https://meeds.io/).
+Copyright (C) 2022 Meeds Association
+contact@meeds.io
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<template>
+  <exo-drawer
+    id="EngagementCenterChallengeDrawer"
+    ref="challengeDrawer"
+    v-model="drawer"
+    class="EngagementCenterDrawer"
+    :right="!$vuetify.rtl"
+    eager
+    @closed="close">
+    <template slot="title">
+      <span class="pb-2"> {{ drawerTitle }} </span>
+    </template>
+    <template slot="content">
+      <v-card-text v-if="challenge">
+        <div
+          v-if="warning"
+          class="alert alert-error v-content mb-4">
+          <i class="uiIconError"></i>
+          {{ warning }}
+        </div>
+        <v-form
+          id="EngagementCenterChallengeDrawerForm"
+          ref="form"
+          v-model="isValidTitle"
+          @submit="
+            $event.preventDefault();
+            $event.stopPropagation();
+          ">
+          <v-textarea
+            id="EngagementCenterChallengeDrawerTitleTextArea"
+            v-model="challenge.title"
+            :disabled="disabledTitleEdit"
+            :placeholder="$t('challenges.label.enterChallengeTitle') "
+            :rules="[rules.length]"
+            name="challengeTitle"
+            class="pl-0 pt-0 EngagementCenter-title"
+            auto-grow
+            rows="1"
+            row-height="13"
+            required
+            autofocus />
+          <v-divider class="my-2" />
+          <span class="subtitle-1"> {{ $t('challenges.label.audienceSpace') }} *</span>
+          <exo-identity-suggester
+            id="EngagementCenterChallengeDrawerIdentitySuggester"
+            ref="challengeSpaceSuggester"
+            v-model="audience"
+            :labels="spaceSuggesterLabels"
+            :include-users="false"
+            :width="220"
+            :disabled="disabledSuggester"
+            name="challengeSpaceAutocomplete"
+            include-spaces
+            only-manager />
+
+          <span class="subtitle-1"> {{ $t('challenges.label.program') }} *</span>
+          <challenge-standalone-domain-suggester
+            id="EngagementCenterChallengeDrawerProgramSuggester"
+            ref="challengeProgram"
+            :labels="programSuggesterLabels"
+            @addProgram="addProgram($event)"
+            @removeProgram="removeProgram($event)" />
+
+          <span class="subtitle-1"> {{ $t('challenges.label.challengeOwners') }} *</span>
+          <challenge-standalone-assignment
+            id="EngagementCenterChallengeDrawerAssignmentSuggester"
+            ref="challengeAssignment"
+            class="my-2"
+            :audience="audience"
+            v-model="challenge.managers"
+            multiple
+            @remove-user="removeManager"
+            @add-item="addManager" />
+
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('challenges.label.ChallengeDates') }} *</span>
+            <challenge-date-picker
+              id="EngagementCenterChallengeDrawerDatePicker"
+              ref="challengeDatePicker"
+              :challenge="challenge"
+              class="challengeDates my-2"
+              @startDateChanged="updateChallengeStartDate($event)"
+              @endDateChanged="updateChallengeEndDate($event)" />
+          </div>
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('challenges.label.reward') }}</span>
+            <v-text-field
+              id="EngagementCenterChallengeDrawerPoints"
+              v-model="challenge.points"
+              :label="$t('challenges.label.points')"
+              :rules="[rules.value]"
+              :placeholder="$t('challenges.label.points')"
+              class="pt-2 points"
+              type="number"
+              outlined
+              required />
+          </div>
+          <div class="challengeDescription py-4 my-2">
+            <engagement-center-description-editor
+              id="EngagementCenterChallengeDrawerDescriptionEditor"
+              v-if="drawer"
+              ref="challengeDescription"
+              v-model="challenge.description"
+              :label="$t('challenges.label.describeYourChallenge')"
+              @validity-updated=" validInput = $event"
+              @addDescription="addDescription($event)" />
+          </div>
+          <div class="mt-4">
+            <span class="subtitle-1"> {{ $t('challenges.label.status') }}</span>
+            <div class="d-flex flex-row px-4">
+              <label class="subtitle-1 text-light-color">{{ $t('challenges.label.enabled') }}</label>
+              <v-switch
+                v-if="drawer"
+                id="engagementCenterChallengeDrawerSwitch"
+                v-model="challenge.enabled"
+                class="mt-0 ms-4" />
+            </div>
+          </div>
+        </v-form>
+      </v-card-text>
+    </template>
+    <template slot="footer">
+      <div class="d-flex mr-2">
+        <v-spacer />
+        <button
+          id="EngagementCenterChallengeDrawerCancelButton"
+          class="ignore-vuetify-classes btn mx-1"
+          @click="close">
+          {{ $t('engagementCenter.button.cancel') }}
+        </button>
+        <button
+          id="EngagementCenterChallengeDrawerSaveButton"
+          :disabled="!disabledSave"
+          class="ignore-vuetify-classes btn btn-primary"
+          @click="SaveChallenge">
+          {{ buttonName }}
+        </button>
+      </div>
+    </template>
+  </exo-drawer>
+</template>
+<script>
+export default {
+  props: {
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    }
+  },
+  computed: {
+    drawerTitle(){
+      return this.challenge && this.challenge.id ? this.$t('challenges.button.editChallenge') : this.$t('challenges.button.addChallenge') ;
+    },
+    spaceSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('challenges.spaces.noDataLabel'),
+        placeholder: this.$t('challenges.spaces.placeholder'),
+      };
+    },
+    disabledSave() {
+      return this.challenge && this.challenge.title && this.challenge.audience && this.challenge.managers.length > 0 && this.challenge.startDate && this.challenge.endDate && this.challenge.program  && this.challenge.description && this.isValidTitle && this.validInput && !this.disabledUpdate;
+    },
+    buttonName() {
+      return this.challenge && this.challenge.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create') ;
+    },
+    programSuggesterLabels() {
+      return {
+        searchPlaceholder: this.$t('challenges.programSuggester.searchPlaceholder'),
+        placeholder: this.$t('challenges.programSuggester.placeholder'),
+        noDataLabel: this.$t('challenges.programSuggester.noDataLabel'),
+      };
+    }
+  },
+  data() {
+    return {
+      rules: {
+        length: (v) => (v && v.length < 50) || this.$t('challenges.label.challengeTitleLengthExceed') ,
+        value: (v) => (v >= 0 && v<= 9999) || this.$t('challenges.label.pointsValidation')
+      },
+      drawer: false,
+      challenge: null,
+      audience: '',
+      isValidTitle: true ,
+      disabledSuggester: false,
+      disabledTitleEdit: false,
+      warning: null,
+      disabledUpdate: false,
+      validInput: true,
+    };
+  },
+  watch: {
+    audience() {
+      if (this.audience && this.audience.id && !this.audience.notToChange) {
+        this.$spaceService.getSpaceMembers(null, 0, 0, null,'manager', this.audience.spaceId).then(managers => {
+          this.challenge.managers = [];
+          const listManagers = [];
+          managers.users.forEach(manager => {
+            const newManager= {
+              id: manager.id,
+              remoteId: manager.username,
+              fullName: manager.fullname,
+              avatarUrl: manager.avatar,
+            };
+            this.$set(this.challenge.managers,this.challenge.managers.length, newManager.id);
+            listManagers.push(newManager);
+          });
+          this.$set(this.challenge,'audience', this.audience.spaceId);
+          const data = {
+            managers: listManagers,
+            space: this.audience,
+          };
+          document.dispatchEvent(new CustomEvent('audienceChanged', {detail: data}));
+        });
+      } else if (this.audience && this.audience.id && this.audience.notToChange){
+        this.audience.notToChange = false ;
+        return;
+      } else {
+        this.challenge.managers= [];
+        document.dispatchEvent(new CustomEvent('audienceChanged'));
+      }
+    },
+  },
+  created() {
+    this.$root.$on('edit-challenge-details', this.open);
+    this.$root.$on('edit-manuel-rule', this.editManuelRule);
+  },
+  methods: {
+    setUp() {
+      const space = this.challenge.space ;
+      const NewAudience = {
+        id: `space:${ space.displayName }` ,
+        profile: {
+          avatarUrl: space.avatarUrl,
+          fullName: space.displayName,
+        },
+        providerId: 'space',
+        remoteId: space.displayName,
+        spaceId: this.challenge.space.id,
+        notToChange: true,
+      };
+      const status= this.getChallengeStatus();
+      if (status === 'STARTED' || status === 'ENDED'){
+        this.$refs.challengeDatePicker.startDate = new Date(this.challenge.startDate);
+        this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
+        this.$refs.challengeDatePicker.disabledStartDate = true;
+        this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
+        this.disabledSuggester = true ;
+      } else {
+        this.$refs.challengeDatePicker.startDate = this.challenge.startDate;
+        this.$refs.challengeDatePicker.endDate = this.challenge.endDate;
+        this.$refs.challengeSpaceSuggester.emitSelectedValue(NewAudience);
+      }
+      if (this.challenge.program) {
+        this.$refs.challengeProgram.broadcast = false;
+        this.$refs.challengeProgram.value = this.challenge.program;
+      }
+      const data = {
+        managers: this.challenge.managers,
+        space: space,
+      };
+      document.dispatchEvent(new CustomEvent('audienceChanged', {detail: data}));
+      this.$refs.challengeAssignment.assigneeObj = this.challenge.managers;
+      this.$set(this.challenge,'audience', space.id);
+    },
+    reset() {
+      this.challenge = {};
+      this.$refs.challengeProgram.broadcast = true;
+      this.$refs.challengeDatePicker.startDate = null;
+      this.$set(this.challenge,'points', 20);
+      this.$refs.challengeDatePicker.endDate = null;
+      this.$refs.challengeDescription.inputVal = null;
+      this.$refs.challengeAssignment.assigneeObj = null;
+      this.$refs.challengeSpaceSuggester.emitSelectedValue( {});
+      this.$refs.challengeDatePicker.disabledStartDate = false;
+      this.$refs.challengeDatePicker.disabledEndDate = false;
+      this.$refs.challengeSpaceSuggester.disabledUnAssign = false;
+      this.disabledSuggester = false ;
+      this.disabledTitleEdit = false ;
+      this.disabledUpdate = false ;
+      this.$refs.challengeAssignment.disabledUnAssign = false;
+      this.$refs.challengeDescription.disabled = false;
+      this.warning = null;
+      this.$refs.challengeProgram.value = null;
+    },
+    open(challenge) {
+      this.challenge = challenge && JSON.parse(JSON.stringify(challenge)) || {
+        points: 20,
+        enabled: true,
+      };
+      this.$nextTick()
+        .then(() => {
+          this.$refs.challengeDrawer.open();
+          this.$nextTick()
+            .then(() => {
+              this.$refs.challengeDescription.initCKEditor();
+              if (this.challenge?.id) {
+                this.setUp();
+              }
+            });
+        });
+    },
+    editManuelRule(rule) {
+      this.$challengesServices.getChallengeById(rule.id)
+        .then(challenge => {
+          this.open(challenge);
+        });
+    },
+    close() {
+      this.reset();
+      this.$refs.challengeDrawer.close();
+    },
+    removeManager(id) {
+      const index = this.challenge.managers && this.challenge.managers.findIndex((manager) => {
+        if (manager && manager.id) {
+          return manager.id === id;
+        } else {
+          return manager === id;
+        }
+      });
+      if (index >= 0) {
+        this.$delete(this.challenge.managers,index, 1);
+      }
+    },
+    addManager(id) {
+      const index = this.challenge.managers && this.challenge.managers.findIndex((manager) => {
+        if (manager && manager.id) {
+          return manager.id === id;
+        } else {
+          return manager === id;
+        }
+      });
+      if (index < 0) {
+        this.$set(this.challenge.managers,this.challenge.managers.length, id);
+      }
+    },
+    addProgram(program) {
+      this.$set(this.challenge,'program', program);
+    },
+    removeProgram() {
+      this.$set(this.challenge,'program', '');
+    },
+    updateChallengeStartDate(value) {
+      if (value) {
+        this.$set(this.challenge,'startDate', value);
+      }
+    },
+    updateChallengeEndDate(value) {
+      if (value) {
+        this.$set(this.challenge,'endDate', value);
+      }
+    },
+    addDescription(value) {
+      if (value) {
+        this.$set(this.challenge,'description', value);
+      }
+    },
+    getChallengeStatus() {
+      const status = {
+        NOTSTARTED: 'NOTSTARTED',
+        STARTED: 'STARTED',
+        ENDED: 'ENDED'
+      };
+      const currentDate = new Date();
+      const startDate = new Date(this.challenge && this.challenge.startDate);
+      const endDate = new Date(this.challenge && this.challenge.endDate);
+      if (startDate.getTime() > currentDate.getTime() && endDate.getTime() > currentDate.getTime()) {
+        return status.NOTSTARTED;
+      } else if ((startDate.getTime()<currentDate.getTime() && endDate.getTime() > currentDate.getTime()) || (this.getFromDate(endDate) ===  this.getFromDate(currentDate))) {
+        return status.STARTED;
+      } else if (endDate.getTime() < currentDate.getTime() && startDate.getTime()< currentDate.getTime()) {
+        return status.ENDED;
+      }
+    },
+    getFromDate(date) {
+      return this.$engagementCenterUtils.getFromDate(date);
+    },
+    SaveChallenge() {
+      if (this.challenge.startDate > this.challenge.endDate){
+        this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeDateError'), 'error');
+        return;
+      }
+      if (this.challenge && this.challenge.id){
+        if ( this.challenge.managers && this.challenge.managers[0].id){
+          this.challenge.managers = this.challenge.managers.map(manager => manager.id);
+        }
+        if ( this.challenge.program && this.challenge.program.id){
+          this.challenge.program = this.challenge.program.title;
+        }
+        this.$refs.challengeDrawer.startLoading();
+        this.$challengesServices.updateChallenge(this.challenge)
+          .then(challenge =>{
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeUpdateSuccess'));
+            this.$root.$emit('challenge-updated', challenge);
+            this.$root.$emit('program-rules-refresh');
+            this.close();
+            this.challenge = {};
+          })
+          .catch(() => {
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeCreateError'), 'error');
+          })
+          .finally(() => this.$refs.challengeDrawer.endLoading());
+      } else {
+        this.$refs.challengeDrawer.startLoading();
+        this.$challengesServices.saveChallenge(this.challenge)
+          .then((challenge) =>{
+            this.$root.$emit('challenge-added', challenge);
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeCreateSuccess'));
+            this.close();
+            this.challenge = {};
+          })
+          .catch(() => {
+            this.$engagementCenterUtils.displayAlert(this.$t('challenges.challengeCreateError'), 'error');
+          })
+          .finally(() => this.$refs.challengeDrawer.endLoading());
+      }
+    },
+  }
+};
+</script>

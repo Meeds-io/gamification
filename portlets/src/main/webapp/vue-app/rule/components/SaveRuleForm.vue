@@ -253,7 +253,7 @@ export default {
       this.dismissCountDown = dismissCountDown;
     },
     createRule(ruleDTO) {
-      this.$RuleServices.createRule(ruleDTO)
+      this.$ruleServices.createRule(ruleDTO)
         .then(() => {
           this.$emit('sucessAdd', this.rule);
         })

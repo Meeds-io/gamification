@@ -16,22 +16,20 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import java.io.StringWriter;
+import java.util.Collections;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.SecurityContext;
-
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
-import org.exoplatform.services.rest.impl.EnvironmentContext;
-import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.security.ConversationState;
-import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.json.JSONWriter;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -46,26 +44,34 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Override
   public void setUp() throws Exception {
     super.setUp();
+    Identity userAclIdentity = new Identity("user", Collections.singleton(new MembershipEntry("/platform/users")));
+    Identity adminAclIdentity = new Identity("root", Collections.singleton(new MembershipEntry(Utils.REWARDING_GROUP)));
+    identityRegistry.register(userAclIdentity);
+    identityRegistry.register(adminAclIdentity);
     registry(getComponentClass());
     ConversationState.setCurrent(null);
   }
 
   @Test
   public void testGetAllRules() throws Exception {
-    String restPath = "/gamification/rules/all";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
-    assertEquals(401, response.getStatus());
-    startSessionAs("root1");
-    response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
+
+    DomainEntity domainEntity = newDomain();
+
+    newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
+    newRule("rule1", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
+
+    startSessionAs("user");
+    ContainerResponse response = getResponse("GET", getURLResource("rules?returnSize=true"), null);
     assertEquals(200, response.getStatus());
-    ConversationState.setCurrent(null);
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&limit=-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&offset=-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("GET", getURLResource("rules?returnSize=true&domainId=" + domainEntity.getId()), null);
+    assertEquals(200, response.getStatus());
   }
 
   /**
@@ -73,18 +79,10 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
    **/
   @Test
   public void testGetActiveRules() throws Exception {
-    String restPath = "/gamification/rules/active";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
+    ContainerResponse response = getResponse("GET", getURLResource("rules/active"), null);
     assertEquals(401, response.getStatus());
     startSessionAs("root1");
-    response = launcher.service("GET", restPath, "", h, null, envctx);
-    assertNotNull(response);
+    response = getResponse("GET", getURLResource("rules/active"), null);
     assertEquals(200, response.getStatus());
     ConversationState.setCurrent(null);
   }
@@ -94,44 +92,33 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
    **/
   @Test
   public void testAddRule() throws Exception {
-    String restPath = "/gamification/rules/add";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    StringWriter writer = new StringWriter();
-    JSONWriter jsonWriter = new JSONWriter(writer);
-    jsonWriter.object()
-              .key("title")
-              .value("foo")
-              .key("event")
-              .value("eventName")
-              .key("area")
-              .value("areaName")
-              .key("description")
-              .value("description")
-              .key("domain")
-              .value(newDomainDTO())
-              .key("type")
-              .value("AUTOMATIC")
-              .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    DomainDTO domainDTO = newDomainDTO();
+    JSONObject domainData = new JSONObject();
+    domainData.put("id", domainDTO.getId());
+    domainData.put("title", domainDTO.getTitle());
+
+    JSONObject data = new JSONObject();
+    data.put("title", "foo");
+    data.put("description", "description");
+    data.put("event", "eventName");
+    data.put("area", domainDTO.getTitle());
+    data.put("type", "AUTOMATIC");
+    data.put("domainDTO", domainData);
+
+    startSessionAs("root10");
+    ContainerResponse response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(401, response.getStatus());
+
     startSessionAs("root1");
-    response = launcher.service("POST", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("description", entity.getDescription());
-    assertEquals("eventName_areaName", entity.getTitle());
-    response = launcher.service("POST", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    assertEquals("foo", entity.getTitle());
+    response = getResponse("POST", getURLResource("rules"), data.toString());
     assertEquals(409, response.getStatus());
+    response = getResponse("POST", getURLResource("rules"), null);
+    assertEquals(400, response.getStatus());
   }
 
   /**
@@ -140,35 +127,19 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Test
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
-    String restPath = "/gamification/rules/delete/" + ruleEntity.getId();
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    StringWriter writer = new StringWriter();
-    JSONWriter jsonWriter = new JSONWriter(writer);
-    jsonWriter.object()
-              .key("id")
-              .value(ruleEntity.getId())
-              .key("title")
-              .value(ruleEntity.getTitle())
-              .key("description")
-              .value(ruleEntity.getDescription())
-              .key("domain")
-              .value(ruleEntity.getDomainEntity().getTitle())
-              .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    startSessionAs("root10");
+    ContainerResponse response = getResponse("DELETE", getURLResource("rules/" + ruleEntity.getId()), null);
     assertEquals(401, response.getStatus());
+
     startSessionAs("root1");
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    response = getResponse("DELETE", getURLResource("rules/-1"), null);
+    assertEquals(400, response.getStatus());
+
+    response = getResponse("DELETE", getURLResource("rules/20000"), null);
+    assertEquals(404, response.getStatus());
+
+    response = getResponse("DELETE", getURLResource("rules/" + ruleEntity.getId()), null);
     assertEquals(200, response.getStatus());
-    ConversationState.setCurrent(null);
   }
 
   /**
@@ -178,43 +149,41 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   @Test
   public void testUpdateRule() throws Exception {
     RuleDTO ruleDTO = newRuleDTO();
-    String restPath = "/gamification/rules/update";
-    EnvironmentContext envctx = new EnvironmentContext();
-    HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-    envctx.put(HttpServletRequest.class, httpRequest);
-    envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-    StringWriter writer = new StringWriter();
-    JSONWriter jsonWriter = new JSONWriter(writer);
-    jsonWriter.object()
-              .key("id")
-              .value(ruleDTO.getId())
-              .key("title")
-              .value(ruleDTO.getTitle())
-              .key("description")
-              .value(ruleDTO.getDescription() + "_test")
-              .key("event")
-              .value(ruleDTO.getTitle())
-              .key("area")
-              .value(ruleDTO.getDomainDTO().getTitle())
-              .key("type")
-              .value(ruleDTO.getType())
-              .key("domain")
-              .value(newDomainDTO())
-              .key("createdDate")
-              .value(ruleDTO.getCreatedDate())
-              .endObject();
-    byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
-    MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-    h.putSingle("content-type", "application/json");
-    h.putSingle("content-length", "" + data.length);
-    ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
+
+    DomainDTO domainDTO = newDomainDTO();
+    JSONObject domainData = new JSONObject();
+    domainData.put("id", domainDTO.getId());
+    domainData.put("title", domainDTO.getTitle());
+
     startSessionAs("root1");
-    response = launcher.service("PUT", restPath, "", h, data, envctx);
-    assertNotNull(response);
+    ContainerResponse response = getResponse("PUT", getURLResource("rules"), null);
+    assertEquals(400, response.getStatus());
+
+    JSONObject data = new JSONObject();
+    data.put("id", 0);
+    data.put("title", ruleDTO.getTitle());
+    data.put("description", ruleDTO.getDescription() + "_test");
+
+    response = getResponse("PUT", getURLResource("rules"), data.toString());
+    assertEquals(404, response.getStatus());
+
+    data = new JSONObject();
+    data.put("id", ruleDTO.getId());
+    data.put("title", ruleDTO.getTitle());
+    data.put("description", ruleDTO.getDescription() + "_test");
+    data.put("event", ruleDTO.getEvent());
+    data.put("area", ruleDTO.getDomainDTO().getTitle());
+    data.put("type", ruleDTO.getType());
+    data.put("domainDTO", domainData);
+    data.put("createdDate", ruleDTO.getCreatedDate());
+
+    response = getResponse("PUT", getURLResource("rules"), data.toString());
     assertEquals(200, response.getStatus());
     RuleDTO entity = (RuleDTO) response.getEntity();
     assertEquals("Description_test", entity.getDescription());
-    ConversationState.setCurrent(null);
+
+    startSessionAs("root10");
+    response = getResponse("PUT", getURLResource("rules"), data.toString());
+    assertEquals(401, response.getStatus());
   }
 }

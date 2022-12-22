@@ -6,6 +6,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_E
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -13,13 +14,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -28,34 +31,34 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class ChallengeServiceImpl implements ChallengeService {
 
-  private static final Log    LOG                = ExoLogger.getExoLogger(ChallengeServiceImpl.class);
+  private static final String CHALLENGE_IS_MANDATORY_MESSAGE = "Challenge is mandatory";
+
+  public static final String  ENGAGEMENT_CENTER_FEATURE_NAME = "engagementCenter";
+
+  private static final Log    LOG                            = ExoLogger.getExoLogger(ChallengeServiceImpl.class);
 
   private ChallengeStorage    challengeStorage;
 
   private SpaceService        spaceService;
 
-  private String              groupOfCreators;
-
-  private static final String CREATORS_GROUP_KEY = "challenge.creator.group";
+  private ExoFeatureService   featureService;
 
   private ListenerService     listenerService;
 
   public ChallengeServiceImpl(ChallengeStorage challengeStorage,
                               SpaceService spaceService,
-                              ListenerService listenerService,
-                              InitParams params) {
+                              ExoFeatureService featureService,
+                              ListenerService listenerService) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
+    this.featureService = featureService;
     this.listenerService = listenerService;
-    if (params != null && params.containsKey(CREATORS_GROUP_KEY)) {
-      this.groupOfCreators = params.getValueParam(CREATORS_GROUP_KEY).getValue();
-    }
   }
 
   @Override
   public Challenge createChallenge(Challenge challenge, String username) throws IllegalAccessException {
     if (challenge == null) {
-      throw new IllegalArgumentException("Challenge is mandatory");
+      throw new IllegalArgumentException(CHALLENGE_IS_MANDATORY_MESSAGE);
     }
     if (challenge.getId() != 0) {
       throw new IllegalArgumentException("challenge id must be equal to 0");
@@ -72,6 +75,10 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   @Override
   public Challenge createChallenge(Challenge challenge) {
+    if (challenge == null) {
+      throw new IllegalArgumentException(CHALLENGE_IS_MANDATORY_MESSAGE);
+    }
+    applyDomainAttributes(challenge, true);
     return challengeStorage.saveChallenge(challenge, Utils.SYSTEM_USERNAME);
   }
 
@@ -80,24 +87,25 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    Challenge challenge = challengeStorage.getChallengeById(challengeId);
+    Challenge challenge = buildChallengeById(challengeId);
     if (challenge == null) {
       return null;
     }
     String idSpace = String.valueOf(challenge.getAudience());
-    if (StringUtils.isBlank(idSpace)) {
-      throw new IllegalArgumentException("space id must not be null or empty");
-    }
-    Space space = spaceService.getSpaceById(idSpace);
-    if (!spaceService.isManager(space, username) && !spaceService.isMember(space, username)) {
-      throw new IllegalAccessException("user is not allowed to access to the challenge");
+    if (StringUtils.isNotBlank(idSpace)) {
+      Space space = spaceService.getSpaceById(idSpace);
+      if (space != null
+          && !spaceService.isMember(space, username)
+          && !Utils.isSuperManager(username)) {
+        throw new IllegalAccessException("user is not allowed to access to the challenge");
+      }
     }
     return challenge;
   }
 
   @Override
   public Challenge getChallengeById(long challengeId) {
-    return challengeStorage.getChallengeById(challengeId);
+    return buildChallengeById(challengeId);
   }
 
   @Override
@@ -105,12 +113,12 @@ public class ChallengeServiceImpl implements ChallengeService {
                                                                          ObjectNotFoundException,
                                                                          IllegalAccessException {
     if (challenge == null) {
-      throw new IllegalArgumentException("Challenge is mandatory");
+      throw new IllegalArgumentException(CHALLENGE_IS_MANDATORY_MESSAGE);
     }
     if (challenge.getId() == 0) {
       throw new IllegalArgumentException("challenge id must not be equal to 0");
     }
-    Challenge oldChallenge = challengeStorage.getChallengeById(challenge.getId());
+    Challenge oldChallenge = buildChallengeById(challenge.getId());
     if (oldChallenge == null) {
       throw new ObjectNotFoundException("challenge is not exist");
     }
@@ -129,10 +137,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   @Override
   public boolean canAddChallenge(org.exoplatform.services.security.Identity identity) {
-    if (groupOfCreators != null) {
-      return identity.isMemberOf(groupOfCreators);
-    }
-    return false;
+    return Utils.isSuperManager(identity.getUserId());
   }
 
   @Override
@@ -140,11 +145,11 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    Challenge challenge = challengeStorage.getChallengeById(challengeId);
+    Challenge challenge = buildChallengeById(challengeId);
     if (challenge == null) {
-      throw new ObjectNotFoundException("challenge is not exist");
+      throw new ObjectNotFoundException("challenge doesn't exist");
     }
-    if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
+    if (!Utils.isChallengeManager(challenge, challenge.getAudience(), username)) {
       throw new IllegalAccessException("User is not allowed to delete challenge with id " + challenge.getId());
     }
     if (Utils.countAnnouncementsByChallenge(challengeId) > 0) {
@@ -156,7 +161,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (endDate.after(currentDate) || endDate.equals(currentDate)) {
       throw new IllegalArgumentException("Challenge does not ended yet");
     }
-    challengeStorage.deleteChallenge(challengeId);
+    challengeStorage.deleteChallenge(challengeId, username);
     try {
       listenerService.broadcast(POST_DELETE_RULE_EVENT, this, challengeId);
     } catch (Exception e) {
@@ -171,7 +176,19 @@ public class ChallengeServiceImpl implements ChallengeService {
       return Collections.emptyList();
     }
     setFilterAudience(challengeFilter, spaceIds);
-    return challengeStorage.findChallengesByFilter(challengeFilter, offset, limit);
+    List<Long> challengesIds = null;
+    if (challengeFilter.isOrderByRealizations()) {
+      challengesIds = challengeStorage.findMostRealizedChallengesIds(challengeFilter.getSpaceIds(), offset, limit);
+    } else {
+      challengesIds = challengeStorage.findChallengesIdsByFilter(challengeFilter, offset, limit);
+    }
+    List<Challenge> challenges = new ArrayList<>();
+
+    for (Long challengeId : challengesIds) {
+      Challenge challenge = getChallengeById(challengeId);
+      challenges.add(challenge);
+    }
+    return challenges;
   }
 
   @Override
@@ -189,6 +206,19 @@ public class ChallengeServiceImpl implements ChallengeService {
     challengeStorage.clearCache();
   }
 
+  @Override
+  public boolean isEngagementCenterEnabled() {
+    return featureService.isActiveFeature(ENGAGEMENT_CENTER_FEATURE_NAME);
+  }
+
+  private Challenge buildChallengeById(long challengeId) {
+    Challenge challenge = challengeStorage.getChallengeById(challengeId);
+    if (challenge != null) {
+      applyDomainAttributes(challenge, false);
+    }
+    return challenge;
+  }
+
   @SuppressWarnings("unchecked")
   private void setFilterAudience(RuleFilter challengeFilter, List<String> spaceIds) {
     List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
@@ -199,7 +229,8 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   private void checkChallengePermissionAndDates(Challenge challenge, String username) throws IllegalAccessException {
-    if (!Utils.isChallengeManager(challenge.getManagers(), challenge.getAudience(), username)) {
+    applyDomainAttributes(challenge, true);
+    if (!Utils.isChallengeManager(challenge, username)) {
       if (challenge.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update challenge with id " + challenge.getId());
       } else {
@@ -213,4 +244,28 @@ public class ChallengeServiceImpl implements ChallengeService {
       throw new IllegalStateException("endDate must be greater than startDate");
     }
   }
+
+  @SuppressWarnings("deprecation")
+  private void applyDomainAttributes(Challenge challenge, boolean throwWhenNotfound) {
+    DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
+    if (domain == null) {
+      if (challenge.getAudience() == 0 && throwWhenNotfound) {
+        // Should be ObjectNotFoundException, but avoid changing API signature
+        throw new IllegalArgumentException("Audience is Mandatory");
+      }
+    } else {
+      challenge.setProgramId(domain.getId());
+      challenge.setProgram(domain.getTitle());
+
+      if (isEngagementCenterEnabled()) {
+        if (CollectionUtils.isEmpty(domain.getOwners())) {
+          challenge.setManagers(Collections.emptyList());
+        } else {
+          challenge.setManagers(new ArrayList<>(domain.getOwners()));
+        }
+        challenge.setAudience(domain.getAudienceId());
+      }
+    }
+  }
+
 }

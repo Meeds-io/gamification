@@ -11,26 +11,26 @@ public interface AnnouncementService {
   /**
    * Retrieves all Announcements by challengeId.
    *
+   * @param challengeId technical identifier of a challenge
    * @param offset Offset
    * @param limit Limit
    * @return A {@link List &lt;Announcement&gt;} object
    * @throws IllegalAccessException when user is not authorized to access
    *           announcement
-   * @throws ObjectNotFoundException when the challenge identified by its
-   *           technical identifier is not found
    */
-  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit) throws IllegalAccessException,
-                                                                                             ObjectNotFoundException;
+  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit) throws IllegalAccessException;
 
   /**
    * Creates a new announcement
    *
    * @param announcement {@link Announcement} object to create
+   * @param templateParams Activity Template params
    * @param username User name accessing announcement
    * @param system check if announcement created by system
    * @return created {@link Announcement} with generated technical identifier
    * @throws IllegalAccessException when user is not authorized to create a
    *           announcement for the designated owner defined in object
+   * @throws ObjectNotFoundException 
    */
   Announcement createAnnouncement(Announcement announcement, Map<String, String> templateParams , String username, boolean system) throws IllegalAccessException,
                                                                               ObjectNotFoundException;
@@ -57,8 +57,9 @@ public interface AnnouncementService {
   Announcement getAnnouncementById(Long announcementId) ;
 
   /**
-   * Retrieves number of all Announcements by challengeId.
-   *
+   * Retrieves number of all Announcements by challenge identifier.
+   * 
+   * @param challengeId Challenge technical identifier
    * @return A {@link Long} number of announcements
    * @throws ObjectNotFoundException when the challenge identified by its
    *           technical identifier is not found

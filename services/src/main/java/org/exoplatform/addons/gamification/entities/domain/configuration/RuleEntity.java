@@ -16,7 +16,7 @@
  */
 package org.exoplatform.addons.gamification.entities.domain.configuration;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.TypeRule;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
 import javax.persistence.*;
@@ -33,7 +33,7 @@ import java.util.Objects;
 @NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type")
 @NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type ")
 @NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type")
-@NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and LOWER(rule.area) = LOWER(:domain)  and rule.type = :type")
+@NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.domainEntity.id = :domainId  and rule.type = :type")
 @NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type")
 @NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type")
 @NamedQuery(name = "Rule.getDomainList", query = "SELECT DISTINCT(rule.area) FROM Rule rule where rule.type = :type ")
@@ -42,6 +42,9 @@ import java.util.Objects;
 @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) ")
 @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ")
 @NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
+@NamedQuery(name = "Rule.getRulesTotalScoreByDomain", query = "SELECT SUM(rule.score) FROM Rule rule where rule.domainEntity.id = :domainId AND rule.isEnabled = true AND rule.isDeleted = false AND (rule.type = 0 OR (rule.type = 1 AND rule.startDate <= :date AND rule.endDate >= :date))")
+@NamedQuery(name = "Rule.getHighestBudgetDomainIds", query = "SELECT rule.domainEntity.id FROM Rule rule WHERE rule.isEnabled = true AND rule.isDeleted = false GROUP BY rule.domainEntity.id ORDER BY SUM(rule.score) DESC")
+@NamedQuery(name = "Rule.getHighestBudgetDomainIdsBySpacesIds", query = "SELECT rule.domainEntity.id FROM Rule rule WHERE rule.isEnabled = true AND rule.isDeleted = false AND (rule.domainEntity.audienceId in (:spacesIds) OR rule.domainEntity.audienceId = null ) GROUP BY rule.domainEntity.id ORDER BY SUM(rule.score) DESC")
 public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -87,7 +90,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
-  protected TypeRule        type;
+  protected EntityType        type;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "CHALLENGE_MANAGER_RULE", joinColumns = @JoinColumn(name = "ID"))
@@ -102,11 +105,11 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     this.managers = managers;
   }
 
-  public TypeRule getType() {
+  public EntityType getType() {
     return type;
   }
 
-  public void setType(TypeRule type) {
+  public void setType( EntityType type) {
     this.type = type;
   }
 

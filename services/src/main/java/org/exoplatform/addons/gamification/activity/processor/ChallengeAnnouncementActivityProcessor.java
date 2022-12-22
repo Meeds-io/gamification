@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -40,7 +40,7 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
 
   private static final Log    LOG                        = ExoLogger.getLogger(ChallengeAnnouncementActivityProcessor.class);
 
-  private static final String APP_URL                    = "/challenges/";
+  private static final String APP_URL                    = "/contributions/challenges/";
 
   private AnnouncementService announcementService;
 
@@ -67,14 +67,13 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
       LOG.error("announcement id must not null");
       return;
     }
-    try {
-      Announcement announcement = announcementService.getAnnouncementById(Long.parseLong(announcementId));
-      if (announcement == null) {
-        throw new ObjectNotFoundException("announcement does not exist");
-      }
-      Map<String, String> params = new HashMap<>();
-
-      Identity identity = identityManager.getIdentity(String.valueOf(announcement.getAssignee()));
+    Announcement announcement = announcementService.getAnnouncementById(Long.parseLong(announcementId));
+    if (announcement == null) {
+      return;
+    }
+    Map<String, String> params = new HashMap<>();
+    Identity identity = identityManager.getIdentity(String.valueOf(announcement.getAssignee()));
+    if (identity != null) {
       params.put("announcementAssigneeUsername", identity.getRemoteId());
       params.put("announcementAssigneeFullName", identity.getProfile().getFullName());
       params.put("announcementChallenge",
@@ -88,8 +87,6 @@ public class ChallengeAnnouncementActivityProcessor extends BaseActivityProcesso
         }
       }
       activity.getTemplateParams().putAll(params);
-    } catch (ObjectNotFoundException e) {
-      LOG.error("Unexpected error", e);
     }
   }
 

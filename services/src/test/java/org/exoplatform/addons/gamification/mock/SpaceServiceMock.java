@@ -19,6 +19,8 @@ package org.exoplatform.addons.gamification.mock;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ListAccessImpl;
 import org.exoplatform.services.security.MembershipEntry;
@@ -41,16 +43,52 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public Space getSpaceByGroupId(String groupId) {
-    throw new UnsupportedOperationException();
+    if (groupId.equals("/spaces/test_space")) {
+      Space space = new Space();
+      space.setId("1");
+      space.setPrettyName("test_space");
+      space.setDisplayName("test space");
+      space.setGroupId("/spaces/test_space");
+      return space;
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
   public Space getSpaceById(String spaceId) {
+    if(!"1".equals(spaceId)){
+      return null;
+    }
     Space space = new Space();
     space.setId("1");
     space.setPrettyName("test_space");
     space.setDisplayName("test space");
     space.setGroupId("/spaces/test_space");
+    space.setManagers(new String[]{"root"});
+    space.setMembers(new String[]{"root10"});
     return space;
+  }
+
+  public boolean isRedactor(Space space, String userId) {
+    return StringUtils.equals(userId, "root");
+  }
+
+  @Override
+  public boolean hasRedactor(Space space) {
+    return "test_space".equals(space.getPrettyName());
+  }
+
+  @Override
+  public boolean canRedactOnSpace(Space space, org.exoplatform.services.security.Identity viewer) {
+    if (viewer == null) {
+      throw new IllegalStateException("User ACL Identity is mandatory");
+    }
+    if (space == null) {
+      throw new IllegalStateException("Space is mandatory");
+    }
+    return !"test_space".equals(space.getPrettyName())
+        || StringUtils.equals(viewer.getUserId(), "root1")
+        || StringUtils.equals(viewer.getUserId(), "root");
   }
 
   public Space getSpaceByUrl(String spaceUrl) {
@@ -197,7 +235,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isMember(Space space, String userId) {
-    return userId.equals("root1") ? true : false;
+    return userId.equals("root1") || userId.equals("root10");
   }
 
   public void setManager(Space space, String userId, boolean isManager) {
@@ -206,7 +244,7 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public boolean isManager(Space space, String userId) {
-    return userId.equals("root1") ? true : false;
+    return userId.equals("root1");
   }
 
   public boolean isOnlyManager(Space space, String userId) {

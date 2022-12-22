@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
@@ -43,31 +44,38 @@ public class ChallengeStorage {
       ruleDTO.setCreatedBy(storedRuleDTO.getCreatedBy());
       ruleDTO.setEvent(storedRuleDTO.getEvent());
     }
+    ruleDTO.setEnabled(challenge.isEnabled());
     ruleDTO.setLastModifiedBy(username);
     ruleDTO = ruleStorage.saveRule(ruleDTO);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }
 
-  public Challenge deleteChallenge(long challengeId) throws ObjectNotFoundException {
-    RuleDTO ruleDTO = ruleStorage.deleteRule(challengeId, true);
+  public Challenge deleteChallenge(long challengeId, String username) throws ObjectNotFoundException {
+    RuleDTO ruleDTO = ruleStorage.deleteRuleById(challengeId, username, true);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
   }
 
-  public List<Challenge> findChallengesByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    List<RuleDTO> rules = ruleStorage.findRulesByFilter(ruleFilter, offset, limit);
-    if (rules.isEmpty()) {
+  public List<Long> findChallengesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
+    ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
+    List<Long> challengesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
+    if (challengesIds.isEmpty()) {
       return Collections.emptyList();
     }
-    return rules.stream().map(EntityMapper::fromRuleToChallenge).collect(Collectors.toList());
+    return challengesIds;
   }
 
   public int countChallengesByFilter(RuleFilter challengeFilter) {
+    challengeFilter.setEntityFilterType(EntityFilterType.MANUAL);
     return ruleStorage.countRulesByFilter(challengeFilter);
   }
 
   public Challenge getChallengeById(Long challengeId) {
     RuleDTO ruleDTO = ruleStorage.findRuleById(challengeId);
     return EntityMapper.fromRuleToChallenge(ruleDTO);
+  }
+
+  public List<Long> findMostRealizedChallengesIds(List<Long> spacesIds, int offset, int limit) {
+    return  ruleStorage.findMostRealizedRuleIds(spacesIds, offset, limit, EntityType.MANUAL);
   }
 
   public void clearCache() {

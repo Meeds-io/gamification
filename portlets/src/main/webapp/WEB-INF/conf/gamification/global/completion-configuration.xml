@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file is part of the Meeds project (https://meeds.io/).
+Copyright (C) 2020 Meeds Association
+contact@meeds.io
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+-->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
+
+    <!-- Rules Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.ManageRulesEndpoint</type>
+  </component>
+    <!-- END -->
+    <!-- Domains Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.ManageDomainsEndpoint</type>
+  </component>
+    <!-- END -->
+    <!-- Badges Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.ManageBadgesEndpoint</type>
+  </component>
+    <!-- END -->
+
+    <!-- Reputation Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.UserReputationEndpoint</type>
+  </component>
+    <!-- END -->
+
+    <!-- Leaderboard Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.LeaderboardEndpoint</type>
+  </component>
+    <!-- END -->
+   <!-- Space Leaderboard Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.SpaceLeaderboardEndpoint</type>
+  </component>
+    <!-- END -->
+
+    <!--  Gamification Informations Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.GamificationInformationsEndpoint</type>
+  </component>
+    <!-- END -->
+
+    <!--  Challenge Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.ChallengeRest</type>
+  </component>
+    <!-- END -->
+    <!-- Announcement API Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
+  </component>
+    <!-- END -->
+ <!-- Gamification API Rest Service -->
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.GamificationRestEndpoint</type>
+  </component>
+    <!-- END -->
+  <component>
+    <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
+    <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
+  </component>
+  <component>
+    <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
+    <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
+  </component>
+  <component>
+    <key>org.exoplatform.addons.gamification.storage.AnnouncementStorage</key>
+    <type>org.exoplatform.addons.gamification.storage.cached.AnnouncementCachedStorage</type>
+  </component>
+  <component>
+    <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
+  </component>
+  <component>
+    <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
+  </component>
+  <component>
+    <key>org.exoplatform.addons.gamification.service.RealizationsService</key>
+    <type>org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl</type>
+  </component>
+  <component>
+    <type>org.exoplatform.addons.gamification.rest.RealizationsRest</type>
+  </component>
+  <component>
+    <type>org.exoplatform.addons.gamification.search.RuleSearchConnector</type>
+    <init-params>
+      <value-param>
+        <name>query.file.path</name>
+        <value>${exo.gamification.rules.es.query.path:war:/conf/gamification/search/rule-search-query.json}</value>
+      </value-param>
+      <properties-param>
+        <name>constructor.params</name>
+        <property name="searchType" value="rule"/>
+        <property name="index" value="rule_alias"/>
+      </properties-param>
+    </init-params>
+  </component>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>challenge.announcement.activity</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityGeneratorListener</type>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+    <component-plugin>
+      <name>ChallengeAnnouncementActivityPreProcessor</name>
+      <set-method>addProcessorPlugin</set-method>
+      <type>org.exoplatform.addons.gamification.activity.processor.ChallengeAnnouncementActivityPreProcessor</type>
+      <init-params>
+        <value-param>
+          <name>priority</name>
+          <description>priority of this processor (lower are executed first)</description>
+          <value>20</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>ChallengeAnnouncementActivityProcessor</name>
+      <set-method>addProcessorPlugin</set-method>
+      <type>org.exoplatform.addons.gamification.activity.processor.ChallengeAnnouncementActivityProcessor</type>
+      <init-params>
+        <value-param>
+          <name>priority</name>
+          <description>priority of this processor (lower are executed first)</description>
+          <value>30</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>AnnouncementActivityUpdaterListener</name>
+      <set-method>addActivityEventListener</set-method>
+      <type>org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityUpdater</type>
+      <description>update announcement activity listener</description>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.commons.api.settings.ExoFeatureService</target-component>
+    <component-plugin>
+      <name>gamification</name>
+      <set-method>addFeaturePlugin</set-method>
+      <type>org.exoplatform.addons.gamification.plugin.GamificationFeaturePlugin</type>
+    </component-plugin>
+  </external-component-plugins>
+  <external-component-plugins>
+    <target-component>org.exoplatform.commons.search.index.IndexingOperationProcessor</target-component>
+    <component-plugin>
+      <name>RuleIndexingServiceConnector</name>
+      <set-method>addConnector</set-method>
+      <type>org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector</type>
+      <description>Rule ElasticSearch Indexing Connector</description>
+      <init-params>
+        <value-param>
+          <name>mapping.file.path</name>
+          <value>${exo.rule.es.mapping.path:jar:/rule-es-mapping.json}</value>
+        </value-param>
+        <properties-param>
+          <name>constructor.params</name>
+          <property name="index_alias" value="rule_alias"/>
+          <property name="index_current" value="rule_v1"/>
+        </properties-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>rule.created</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.addons.gamification.listener.es.RulesESListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.updated</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.addons.gamification.listener.es.RulesESListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.deleted</name>
+      <set-method>addListener</set-method>
+      <type>org.exoplatform.addons.gamification.listener.es.RulesESListener</type>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.commons.upgrade.UpgradeProductService</target-component>
+    <component-plugin>
+      <name>GamificationRuleIndexingUpgradePlugin</name>
+      <set-method>addUpgradePlugin</set-method>
+      <type>org.exoplatform.addons.gamification.upgrade.RuleIndexingUpgradePlugin</type>
+      <description>Index old rules</description>
+      <init-params>
+        <value-param>
+          <name>product.group.id</name>
+          <description>The groupId of the product</description>
+          <value>org.exoplatform.social</value>
+        </value-param>
+        <value-param>
+          <name>plugin.execution.order</name>
+          <description>The plugin execution order</description>
+          <value>10</value>
+        </value-param>
+        <value-param>
+          <name>plugin.upgrade.execute.once</name>
+          <description>Execute this upgrade plugin only once</description>
+          <value>true</value>
+        </value-param>
+        <value-param>
+          <name>plugin.upgrade.async.execution</name>
+          <description>The plugin will be executed in an asynchronous mode</description>
+          <value>true</value>
+        </value-param>
+        <value-param>
+          <name>plugin.upgrade.target.version</name>
+          <description>Target version of the plugin</description>
+          <value>6.4.0</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+</configuration>

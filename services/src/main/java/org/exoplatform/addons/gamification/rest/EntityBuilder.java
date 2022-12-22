@@ -22,14 +22,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
+import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.ChallengeRestEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
 
@@ -49,7 +51,7 @@ public class EntityBuilder {
   public static ChallengeRestEntity fromChallenge(AnnouncementService announcementService,
                                                   Challenge challenge,
                                                   int announcementsPerChallenge,
-                                                  boolean noDomain) throws IllegalAccessException, ObjectNotFoundException {
+                                                  boolean noDomain) throws IllegalAccessException {
     if (challenge == null) {
       return null;
     }
@@ -77,15 +79,42 @@ public class EntityBuilder {
                                    space,
                                    challenge.getStartDate(),
                                    challenge.getEndDate(),
-                                   Utils.toUserInfo(Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
+                                   Utils.toUserInfo(challenge, 
+                                                    Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
                                                                                  Utils.getCurrentUser()),
-                                                    space,
-                                                    challenge.getManagers()),
-                                   Utils.getManagersByIds(challenge.getManagers()),
+                                                    space),
+                                   Utils.getOwners(challenge),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    fromAnnouncementList(challengeAnnouncements),
                                    challenge.getPoints(),
-                                   noDomain ? null : Utils.getDomainByTitle(challenge.getProgram()));
+                                   noDomain ? null : Utils.getChallengeDomainDTO(challenge),
+                                   challenge.isEnabled());
+  }
+
+  public static DomainRestEntity toRestEntity(DomainDTO domain, String username) {
+    if (domain == null) {
+      return null;
+    }
+    return new DomainRestEntity(domain.getId(),
+                                domain.getTitle(),
+                                domain.getDescription(),
+                                domain.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(domain.getAudienceId())) : null,
+                                domain.getPriority(),
+                                domain.getCreatedBy(),
+                                domain.getCreatedDate(),
+                                domain.getLastModifiedBy(),
+                                domain.getLastModifiedDate(),
+                                domain.isEnabled(),
+                                domain.getBudget(),
+                                domain.getType(),
+                                domain.getCoverUrl(),
+                                Utils.getRulesTotalScoreByDomain(domain.getId()),
+                                Utils.getDomainOwnersByIds(domain.getOwners(), domain.getAudienceId()),
+                                Utils.toUserInfo(domain.getId(), username));
+  }
+
+  public static List<DomainRestEntity> toRestEntities(List<DomainDTO> domains, String username) {
+    return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).collect(Collectors.toList());
   }
 
 }

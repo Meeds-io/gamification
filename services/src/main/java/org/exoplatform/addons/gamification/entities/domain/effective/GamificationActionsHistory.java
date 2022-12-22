@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.api.persistence.ExoEntity;
 
@@ -160,27 +161,9 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateDescending",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " ORDER BY g.id DESC"
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAscending",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g"
-        + " WHERE g.earnerType = :type"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " ORDER BY g.id ASC"
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.findRealizationsByDateAndRules",
-    query = "SELECT DISTINCT g FROM GamificationActionsHistory g "
-        + " WHERE g.earnerType = :type"
-        + " AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " AND ((g.ruleId IS NOT NULL AND g.ruleId IN (:ruleIds)) \n"
-        + "      OR (g.actionTitle IS NOT NULL AND g.actionTitle IN (:ruleEventNames))) \n"
-        + " ORDER BY g.id DESC"
+    name = "GamificationActionsHistory.findMostRealizedRuleIds",
+    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type= :type AND (a.domainEntity.audienceId in (:spacesIds) OR a.domainEntity.audienceId = null ) AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
+            "group by a.ruleId order by count(*) DESC"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -237,6 +220,10 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "STATUS", nullable = false)
   private HistoryStatus status;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "TYPE", nullable = false)
+  private EntityType type;
 
   public Long getId() {
     return id;
@@ -364,5 +351,13 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   public void setStatus(HistoryStatus status) {
     this.status = status;
+  }
+
+  public EntityType getType() {
+    return type;
+  }
+
+  public void setType(EntityType type) {
+    this.type = type;
   }
 }

@@ -21,16 +21,7 @@ import org.exoplatform.addons.gamification.listener.AnnouncementActivityGenerato
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdaterTest;
 import org.exoplatform.addons.gamification.listener.GamificationRelationshipListenerTest;
 import org.exoplatform.addons.gamification.listener.RulesESListenerTest;
-import org.exoplatform.addons.gamification.rest.TestAnnouncementRest;
-import org.exoplatform.addons.gamification.rest.TestChallengeRest;
-import org.exoplatform.addons.gamification.rest.TestGamificationRestEndpoint;
-import org.exoplatform.addons.gamification.rest.TestLeaderboardEndpoint;
-import org.exoplatform.addons.gamification.rest.TestManageBadgesEndpoint;
-import org.exoplatform.addons.gamification.rest.TestManageDomainsEndpoint;
-import org.exoplatform.addons.gamification.rest.TestManageRulesEndpoint;
-import org.exoplatform.addons.gamification.rest.TestRealizationsRest;
-import org.exoplatform.addons.gamification.rest.TestSpaceLeaderboardEndpoint;
-import org.exoplatform.addons.gamification.rest.TestUserReputationEndpoint;
+import org.exoplatform.addons.gamification.rest.*;
 import org.exoplatform.addons.gamification.search.RuleSearchConnectorTest;
 import org.exoplatform.addons.gamification.service.AnnouncementServiceTest;
 import org.exoplatform.addons.gamification.service.ChallengeServiceTest;
@@ -42,10 +33,9 @@ import org.exoplatform.addons.gamification.service.configuration.DomainServiceTe
 import org.exoplatform.addons.gamification.service.configuration.RuleServiceTest;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorageTest;
 import org.exoplatform.addons.gamification.storage.ChallengeStorageTest;
+import org.exoplatform.addons.gamification.storage.DomainStorageTest;
 import org.exoplatform.addons.gamification.storage.RealizationsStorageTest;
-import org.exoplatform.addons.gamification.storage.dao.BadgeDAOTest;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAOTest;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAOTest;
+import org.exoplatform.addons.gamification.storage.dao.*;
 import org.exoplatform.addons.gamification.upgrade.RuleIndexingUpgradePluginTest;
 import org.exoplatform.addons.gamification.utils.UtilsTest;
 import org.exoplatform.commons.testing.BaseExoContainerTestSuite;
@@ -90,7 +80,10 @@ import org.junit.runners.Suite.SuiteClasses;
         RuleIndexingUpgradePluginTest.class,
         RuleIndexingServiceConnectorTest.class,
         RulesESListenerTest.class,
-        GamificationRelationshipListenerTest.class
+        GamificationRelationshipListenerTest.class,
+        DomainDAOTest.class,
+        DomainStorageTest.class,
+        TestGamificationInformationsEndpoint.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

@@ -96,6 +96,7 @@ const initialData = () => {
     domain: 'null',
     show: false,
     selectedPeriod: 'ALL',
+    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
   };
 };
 export default {
@@ -124,7 +125,9 @@ export default {
   },
   computed: {
     earnedPointsUrl() {
-      return `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
+      return this.engagementCenterEnabled
+        && `/portal/${eXo.env.portal.portalName}/contributions/programs`
+        || `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
     },
   },
   watch: {
