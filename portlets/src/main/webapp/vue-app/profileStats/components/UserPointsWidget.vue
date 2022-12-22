@@ -21,14 +21,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     mx-0>
     <v-flex
       d-flex
-      xs12
-      my-4>
+      xs12>
       <v-layout
+        v-if="overviewDisplay && !hasZeroPoints"
         row
         wrap
-        mx-2
         align-start
-        px-2>
+        mx-0>
+        <v-flex
+          d-flex>
+          <div>
+            <span class="subtitle-2 profile-card-header text-color">{{ $t('overview.myContributions.points') }}</span>
+          </div>
+        </v-flex>
+      </v-layout>
+      <v-layout
+        v-else-if="!overviewDisplay"
+        row
+        wrap
+        align-start
+        mx-4
+        my-4>
         <v-flex
           d-flex
           xs1>
@@ -44,10 +57,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           xs10
           justify-center>
           <div>
-            <span class="pe-6 text-uppercase subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
+            <span class="pe-6 text-uppercase subtitle-2 profile-card-header text-color">{{ $t('homepage.profileStatus.weeklyPoints') }}</span>
           </div>
         </v-flex>
         <v-flex
+          v-if="!hasZeroPoints"
           class="text-right"
           d-flex
           xs1>
@@ -57,8 +71,32 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-flex>
       </v-layout>
     </v-flex>
-    <div style="margin:auto;">
-      <div id="echartUserPoints" style="width:320px; height:220px; "></div>
+    <v-list
+      v-if="hasZeroPoints"
+      height="180"
+      class="d-flex align-center">
+      <v-list-item>
+        <v-list-item-icon>
+          <v-icon size="65" class="secondary--text me-1">fas fa-chart-pie</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <div class="d-flex flex-grow-0 flex-shrink-1">
+            <span
+              class="align-self-center text-wrap text-left text-break"
+              v-sanitized-html="$t('overview.myContributions.zeroPoints.description', {0: `<a href='${challengesURL}' class='primary--text font-weight-bold' rel='nofollow noreferrer noopener'>${$t('overview.myContributions.zeroPoints.description.this')}</a>`})"></span>
+          </div>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <div
+      v-else
+      :style="parentPieChartDimensions"
+      :class="overviewDisplay ? 'flex' : 'ma-auto'">
+      <div
+        :style="pieChartDimensions"
+        :class="!overviewDisplay && 'mt-6'"
+        class="flex"
+        id="echartUserPoints"></div>
     </div>
   </v-layout>
 </template>
@@ -66,55 +104,84 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 import {getGamificationPointsStats, getGamificationPoints} from '../profilStatsAPI';
 export default {
-
+  props: {
+    overviewDisplay: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       userPoints: 0,
       period: 'WEEK',
-      option: {
+    };
+  },
+  computed: {
+    option() {
+      return {
         title: [{
-          text: 'Total',
-          left: '63%',
+          text: this.$t('overview.myContributions.Total'),
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'normal',
-            fontSize: '16',
+            fontSize: this.overviewDisplay ? '14' : '16',
           },
           subtext: '',
           subtextStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'bold',
-            fontSize: '18',
+            fontSize: this.overviewDisplay ? '14' : '18',
+            lineHeight: 22,
           },
-          top: '40%',
+          left: this.overviewDisplay ? '65%' : '63%',
+          top: this.overviewDisplay && '42%' || '40%',
           textAlign: 'center'
         }],
         tooltip: { 
           trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
+          formatter: '{b} : {c} ({d}%)',
         },
         legend: {
           orient: 'vertical',
-          left: 5,
-          top: 12,
+          left: this.overviewDisplay ? 1 : 5,
+          top: this.overviewDisplay ? 20 : 12,
+          formatter: (name) => {
+            return name.length > 12 ? `${name.substring(0, 12)  }...` : name;
+          },
         },
         series: [
           {
             type: 'pie',
-            radius: ['45%', '88%'],
-            center: ['65%', '50%'],
+            radius: this.overviewDisplay && ['40%', '70%'] || ['45%', '88%'],
+            center: this.overviewDisplay ? ['67%', '50%'] : ['65%', '50%'],
             label: {
               normal: {
                 show: false
               },
 
             },
+            color: ['#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
+              '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
+              '#c9a227', '#ffccd5', '#134d9b', '#E66CDC', '#58D68B', '#5CE6D3', '#f16a27', '#ac1c1e', '#eda3ff', '#1a7431',
+              '#a47e1b', '#ff4d6d', '#62b0de', '#FF97D0', '#92e03a', '#f44336', '#3d6d8a', '#E0A5FF', '#FF9DB8', '#808080']
           }, 
         ]
-      }
-    };
+      };
+    },
+    parentPieChartDimensions() {
+      return this.overviewDisplay ? 'width:100%; height:calc(100% - 34px);' : '';
+    },
+    pieChartDimensions() {
+      return this.overviewDisplay ? 'width:100%; height:100%;' : 'width:320px; height:220px;';
+    },
+    challengesURL() {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
+    },
+    hasZeroPoints() {
+      return this.userPoints === 0;
+    }
   },
   created() {
     this.getGamificationPointsStats();
@@ -122,38 +189,62 @@ export default {
   },
   methods: {
     getGamificationPoints() {
-      getGamificationPoints(this.period).then(
-        (data) => {
-          this.userPoints = data.points;
-          this.option.title[0].subtext = data.points;
-        }      
-      );
+      this.$nextTick().then(()=>{
+        getGamificationPoints(this.period).then(
+          (data) => {
+            this.userPoints = data.points;
+            if (data.points !== 0) {
+              this.$emit('seeAll', true);
+            }
+            this.option.title[0].subtext = data.points;
+          });
+      });
     },
     getGamificationPointsStats() {
-      getGamificationPointsStats(this.period).then(
-        (data) => {
-          this.option.series[0].data = JSON.parse(JSON.stringify(data).split('"label":').join('"name":'));
-          for (let i=0;i<data.length;i++) {
-            const optionSeriesName = this.option.series[0].data[i].name;
-            if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
-              this.option.series[0].data[i].name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
-            } else {
-              this.option.series[0].data[i].name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
-            }
+      return getGamificationPointsStats(this.period).then((data) => {
+        this.option.series[0].data = [];
+        for (let i=0;i<data.length;i++) {
+          const optionSeriesName = data[i].label;
+          let name ;
+          let serie ;
+          if (this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`).includes('exoplatform.gamification.gamificationinformation.domain')){
+            name = optionSeriesName.charAt(0).toUpperCase()+optionSeriesName.slice(1);
+          } else {
+            name = this.$t(`exoplatform.gamification.gamificationinformation.domain.${optionSeriesName.charAt(0).toUpperCase()}${optionSeriesName.slice(1)}`);
           }
-          this.option.legend.data = this.option.series[0].data.name;
-          this.initChart(this.option);
+          if (i > 4) { 
+            serie = {
+              name: this.$t('exoplatform.gamification.gamificationinformation.domain.others'),
+              value: this.option.series[0].data[4].value + data[i].value
+            };
+            this.option.series[0].data[4] = serie;
+          } else {
+            serie = {
+              name,
+              value: data[i].value
+            };
+            this.option.series[0].data.push(serie);
+          }
         }
-      );
+        return this.$nextTick();
+      })
+        .finally(() => this.initChart(this.option));
     },
     toProfileStats() {
       this.$emit('isProfileStats');
     },
     initChart(option) {
-      $(document).ready(function(){
-        const chartContainerId = document.getElementById('echartUserPoints');
-        window.require(['SHARED/eCharts'], echarts => {
-          const chart = echarts.init(chartContainerId);
+      window.require(['SHARED/eCharts'], echarts => {
+        this.$emit('loaded', false);  
+        this.$nextTick().then(() => {
+          const chartContainer = document.getElementById('echartUserPoints');
+          if (!chartContainer) {
+            window.setTimeout(() => {
+              this.initChart(option);
+            }, 200);
+            return;
+          }
+          const chart = echarts.init(chartContainer);
           chart.setOption(option, true);
         });
       });

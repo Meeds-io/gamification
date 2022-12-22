@@ -99,7 +99,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard(g.domainEntity.title,SUM(g.actionScore))"
         + " FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
-        + " GROUP BY  g.domainEntity.title")
+        + " GROUP BY  g.domainEntity.title"
+        + " ORDER BY SUM(g.actionScore) DESC")
 @NamedQuery(
     name = "GamificationActionsHistory.findDomainScoreByUserId",
     query = "SELECT"

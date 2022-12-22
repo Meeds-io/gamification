@@ -1,0 +1,10 @@
+<%
+  import org.exoplatform.commons.api.settings.ExoFeatureService;
+
+  def rcontext = _ctx.getRequestContext();
+  def userName = rcontext.getRemoteUser();
+  def featureService = uicomponent.getApplicationComponent(ExoFeatureService.class);
+%>
+<script type="text/javascript" id="socialHeadScripts">
+  eXo.env.portal.engagementCenterEnabled = <%=featureService.isFeatureActiveForUser("engagementCenter", userName)%>;
+</script>

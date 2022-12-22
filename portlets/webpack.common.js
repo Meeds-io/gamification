@@ -21,6 +21,7 @@ const { VueLoaderPlugin } = require('vue-loader')
 module.exports = {
     context: path.resolve(__dirname, '.'),
     entry: {
+        gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
         rule: './src/main/webapp/vue-app/rule/rule.js',
         badge: './src/main/webapp/vue-app/badge/badge.js',
         domain: './src/main/webapp/vue-app/domain/domain.js',
@@ -30,6 +31,7 @@ module.exports = {
         earnpoints: './src/main/webapp/vue-app/Eagamificationearnpoints/earnpoints.js',
         spaceleaderboard: './src/main/webapp/vue-app/space/spaceleaderboard.js',
         profileStats: './src/main/webapp/vue-app/profileStats/main.js',
+        myContributions: './src/main/webapp/vue-app/myContributions/main.js',
         popularSpaces: './src/main/webapp/vue-app/popularSpaces/main.js',
         usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
         badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
@@ -37,6 +39,11 @@ module.exports = {
         realizations: './src/main/webapp/vue-app/realizations/main.js',
         engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
         challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
+        myReputation: './src/main/webapp/vue-app/myReputation/main.js',
+        myRewards: './src/main/webapp/vue-app/myRewards/main.js',
+        topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
+        challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
+        programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
     },
     plugins: [
       new ESLintPlugin({
