@@ -214,7 +214,7 @@ export default {
           }
           if (i > 4) { 
             serie = {
-              name: this.$t('exoplatform.gamification.gamificationinformation.domain.Autres'),
+              name: this.$t('exoplatform.gamification.gamificationinformation.domain.others'),
               value: this.option.series[0].data[4].value + data[i].value
             };
             this.option.series[0].data[4] = serie;
