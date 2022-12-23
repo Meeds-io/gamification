@@ -187,8 +187,16 @@ export default {
     },
   },
   created() {
+    document.addEventListener('widget-row-click-event', (event) => {
+      if (event) {
+        console.log('challenges reached event');
+        this.$root.$emit('open-winners-drawer', event.detail.id, true);
+      }});
     this.$root.$on('open-challenge-details', this.open);
     this.$root.$on('manuel-rule-detail-drawer', this.displayManuelRule);
+  },  
+  beforeDestroy() {
+    document.removeEventListener('widget-row-click-event');
   },
   methods: {
     displayManuelRule(rule) {

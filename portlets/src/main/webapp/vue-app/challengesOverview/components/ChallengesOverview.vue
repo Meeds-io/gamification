@@ -44,7 +44,7 @@
           class="py-auto"                   
           v-for="(item, index) in listChallenges" 
           :key="index"
-          :redirection-url="`${challengesURL}/${item.challengeId}`">
+          :click-event-param="`${item.challengeId}`">
           <template #icon>
             <v-icon
               color="yellow darken-2"
