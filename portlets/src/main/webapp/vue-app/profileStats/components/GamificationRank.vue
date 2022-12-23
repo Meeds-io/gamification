@@ -67,8 +67,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           justify-center
           align-end>
-          <template v-if="leaderBoardArray[1]">
-            <div class="transparent mx-1 align-center">
+            <div  v-if="leaderBoardArray[1]" class="transparent mx-1 align-center">
               <exo-user-avatar
                 :profile-id="leaderBoardArray[1].remoteId"
                 :size="40"
