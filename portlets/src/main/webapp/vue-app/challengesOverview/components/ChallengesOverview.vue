@@ -35,7 +35,7 @@
     <gamification-overview-widget
       v-else
       :see-all-url="challengesURL"
-      :extra-class="'px-0'">
+      :extra-class="'px-0 mt-1'">
       <template #title>
         {{ $t('gamification.overview.challengesOverviewTitle') }}
       </template>
