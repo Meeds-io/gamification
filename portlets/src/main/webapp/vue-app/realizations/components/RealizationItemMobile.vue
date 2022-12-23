@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-list-content>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ headers[0].text }}</span>
+          <span class="font-weight-bold"> {{ headers[2].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <date-format
@@ -29,7 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row v-if="isAdministrator" class="text-truncate align-center">
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold d-flex"> {{ headers[1].text }}</span>
+          <span class="font-weight-bold d-flex"> {{ headers[3].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <exo-user-avatar
@@ -41,7 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ isAdministrator ? headers[2].text : headers[1].text }}</span>
+          <span class="font-weight-bold"> {{ headers[1].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <v-tooltip bottom>
@@ -57,12 +57,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ isAdministrator ? headers[3].text : headers[2].text }}</span>
+          <span class="font-weight-bold"> {{ headers[0].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <div v-if="isAutomaticType">
             <extension-registry-component
-              v-if="actionValueExtension"
+              v-if="actionValueExtensions"
               :component="extendedActionValueComponent"
               :params="actionValueComponentParams" />
             <a
@@ -76,14 +76,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </a>
           </div>
           <challenge-action-value
-            v-else
             :action-label="actionLabel"
             :action-u-r-l="actionURL" />
         </v-col>
       </v-row>
       <v-row>
         <v-col class="col-sm-4 col-4">
-          <span class="font-weight-bold"> {{ isAdministrator ? headers[4].text : headers[3].text }}</span>
+          <span class="font-weight-bold"> {{ isAdministrator ? headers[6].text : headers[5].text }}</span>
         </v-col>
         <v-col class="col-sm-8 col-8">
           <v-icon
@@ -192,9 +191,6 @@ export default {
       }
       return null;
     },
-  },
-  created() {
-    console.log(this.realization);
   },
   methods: {
     openProgramDetail() {
