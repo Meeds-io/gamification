@@ -67,50 +67,54 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           justify-center
           align-end>
-          <div v-if="(typeof leaderBoardArray[1] != 'undefined')" class="transparent mx-1 align-center">
-            <exo-user-avatar
-              :profile-id="leaderBoardArray[1].remoteId"
-              :size="40"
-              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
-              avatar
-              popover
-              popover-left-position />
-            <v-card-text
-              class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-              style="height: 40px">
-              {{ leaderBoardArray[1].score }}
-            </v-card-text>
-          </div>
-
-          <div v-if="(typeof leaderBoardArray[0] != 'undefined')" class="transparent mx-1 align-center">
-            <exo-user-avatar
-              :profile-id="leaderBoardArray[0].remoteId"
-              :size="40"
-              extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
-              avatar
-              popover
-              popover-left-position />
-            <v-card-text
-              class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-              style="height: 55px">
-              {{ leaderBoardArray[0].score }}
-            </v-card-text>
-          </div>
-
-          <div v-if="(typeof leaderBoardArray[2] != 'undefined')" class="transparent mx-1 align-center">
-            <exo-user-avatar
-              :profile-id="leaderBoardArray[2].remoteId"
-              :size="40"
-              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
-              avatar
-              popover
-              popover-left-position />
-            <v-card-text
-              class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
-              style="height: 25px">
-              {{ leaderBoardArray[2].score }}
-            </v-card-text>
-          </div>
+          <template v-if="leaderBoardArray[1]">
+            <div class="transparent mx-1 align-center">
+              <exo-user-avatar
+                :profile-id="leaderBoardArray[1].remoteId"
+                :size="40"
+                extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+                avatar
+                popover
+                popover-left-position />
+              <v-card-text
+                class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
+                style="height: 40px">
+                {{ leaderBoardArray[1].score }}
+              </v-card-text>
+            </div>
+          </template>
+          <template v-if="leaderBoardArray[0]">
+            <div class="transparent mx-1 align-center">
+              <exo-user-avatar
+                :profile-id="leaderBoardArray[0].remoteId"
+                :size="40"
+                extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+                avatar
+                popover
+                popover-left-position />
+              <v-card-text
+                class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
+                style="height: 55px">
+                {{ leaderBoardArray[0].score }}
+              </v-card-text>
+            </div>
+          </template>
+          <template v-if="leaderBoardArray[2]">
+            <div class="transparent mx-1 align-center">
+              <exo-user-avatar
+                :profile-id="leaderBoardArray[2].remoteId"
+                :size="40"
+                extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+                avatar
+                popover
+                popover-left-position />
+              <v-card-text
+                class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
+                style="height: 25px">
+                {{ leaderBoardArray[2].score }}
+              </v-card-text>
+            </div>
+          </template>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -118,29 +122,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       xs12>
       <v-list height="110">
         <template v-for="item in listBelowPoduim">
-          <v-list-item
-            v-if="(typeof item != 'undefined')"
-            :key="item.remoteId"
-            class="py-0 px-4 mt-n3">
-            <v-card
-              flat
-              min-width="16"
-              v-if="(typeof item != 'undefined')"
-              class="me-2">
-              {{ item.rank }}
-            </v-card>
-            <exo-user-avatar
-              :profile-id="item.remoteId"
-              :size="25"
-              :bold-title="item.socialId === identityId"
-              extra-class="me-0 pa-0 my-0 text-truncate-2"
-              popover-left-position
-              offset-x
-              popover />
-            <v-list-item-action v-if="(typeof item != 'undefined')" class="ml-auto">
-              <span>{{ item.score }}</span>
-            </v-list-item-action>
-          </v-list-item>
+          <template v-if="item">
+            <v-list-item
+              :key="item.remoteId"
+              class="py-0 px-4 mt-n3">
+              <v-card
+                min-width="16"
+                class="me-2"
+                flat>
+                {{ item.rank }}
+              </v-card>
+              <exo-user-avatar
+                :profile-id="item.remoteId"
+                :size="25"
+                :bold-title="item.socialId === identityId"
+                extra-class="me-0 pa-0 my-0 text-truncate-2"
+                popover-left-position
+                offset-x
+                popover />
+              <v-list-item-action v-if="(typeof item != 'undefined')" class="ml-auto">
+                <span>{{ item.score }}</span>
+              </v-list-item-action>
+            </v-list-item>
+          </template>
         </template>
       </v-list>
     </v-flex>
