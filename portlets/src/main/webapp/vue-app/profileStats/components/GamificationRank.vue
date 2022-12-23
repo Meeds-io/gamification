@@ -140,7 +140,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 popover-left-position
                 offset-x
                 popover />
-              <v-list-item-action v-if="(typeof item != 'undefined')" class="ml-auto">
+              <v-list-item-action class="ml-auto">
                 <span>{{ item.score }}</span>
               </v-list-item-action>
             </v-list-item>
