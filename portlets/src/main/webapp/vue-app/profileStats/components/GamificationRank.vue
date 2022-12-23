@@ -122,7 +122,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             v-if="(typeof item != 'undefined')"
             :key="item.remoteId"
             class="py-0 px-4 mt-n3">
-            <span v-if="(typeof item != 'undefined')" class="me-2">{{ item.rank }}</span>
+            <v-card
+              flat
+              min-width="16"
+              v-if="(typeof item != 'undefined')"
+              class="me-2">
+              {{ item.rank }}
+            </v-card>
             <exo-user-avatar
               :profile-id="item.remoteId"
               :size="25"
