@@ -21,7 +21,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     body-classes="hide-scroll decrease-z-index-more"
     right>
     <template slot="title">
-      {{ $t('exoplatform.gamification.badgesByDomain') }}: {{ badge && badge.domainLabel }}
+      <div class="d-flex width-fit-content">
+        {{ $t('exoplatform.gamification.badgesByDomain') }}:
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <div class="ms-1 text-truncate" v-on="on">
+              {{ domainLabel }}
+            </div>
+          </template>
+          <span>{{ domainLabel }}</span>
+        </v-tooltip>
+      </div>
     </template>
     <template slot="content">
       <badges-overview-drawer-item
@@ -40,6 +50,11 @@ export default {
       badge: null,
       badges: [],
     };
+  },
+  computed: {
+    domainLabel() {
+      return this.badge?.domainLabel;
+    },
   },
   created() {
     this.$root.$on('open-badge-drawer', (badge) => {
