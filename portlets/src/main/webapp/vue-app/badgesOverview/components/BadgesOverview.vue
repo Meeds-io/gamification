@@ -30,7 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
     </v-toolbar>
-    <v-card flat :class="isOverviewDisplay ? 'pt-4' : ''">
+    <v-card flat :class="isOverviewDisplay ? 'pt-6' : ''">
       <v-card-text
         :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
         class="mx-auto d-flex justify-center">
