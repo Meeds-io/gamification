@@ -97,8 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </v-card-text>
             </div>
           </template>
-          <template v-if="leaderBoardArray[2]">
-            <div class="transparent mx-1 align-center">
+            <div v-if="leaderBoardArray[2]" class="transparent mx-1 align-center">
               <exo-user-avatar
                 :profile-id="leaderBoardArray[2].remoteId"
                 :size="40"
