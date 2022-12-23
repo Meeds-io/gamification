@@ -81,7 +81,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 {{ leaderBoardArray[1].score }}
               </v-card-text>
             </div>
-          </template>
             <div v-if="leaderBoardArray[0]" class="transparent mx-1 align-center">
               <exo-user-avatar
                 :profile-id="leaderBoardArray[0].remoteId"
