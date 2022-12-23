@@ -67,50 +67,48 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           justify-center
           align-end>
-            <div  v-if="leaderBoardArray[1]" class="transparent mx-1 align-center">
-              <exo-user-avatar
-                :profile-id="leaderBoardArray[1].remoteId"
-                :size="40"
-                extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
-                avatar
-                popover
-                popover-left-position />
-              <v-card-text
-                class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-                style="height: 40px">
-                {{ leaderBoardArray[1].score }}
-              </v-card-text>
-            </div>
-            <div v-if="leaderBoardArray[0]" class="transparent mx-1 align-center">
-              <exo-user-avatar
-                :profile-id="leaderBoardArray[0].remoteId"
-                :size="40"
-                extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
-                avatar
-                popover
-                popover-left-position />
-              <v-card-text
-                class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
-                style="height: 55px">
-                {{ leaderBoardArray[0].score }}
-              </v-card-text>
-            </div>
-          </template>
-            <div v-if="leaderBoardArray[2]" class="transparent mx-1 align-center">
-              <exo-user-avatar
-                :profile-id="leaderBoardArray[2].remoteId"
-                :size="40"
-                extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
-                avatar
-                popover
-                popover-left-position />
-              <v-card-text
-                class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
-                style="height: 25px">
-                {{ leaderBoardArray[2].score }}
-              </v-card-text>
-            </div>
-          </template>
+          <div v-if="leaderBoardArray[1]" class="transparent mx-1 align-center">
+            <exo-user-avatar
+              :profile-id="leaderBoardArray[1].remoteId"
+              :size="40"
+              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+              avatar
+              popover
+              popover-left-position />
+            <v-card-text
+              class="top2 grey lighten-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
+              style="height: 40px">
+              {{ leaderBoardArray[1].score }}
+            </v-card-text>
+          </div>
+          <div v-if="leaderBoardArray[0]" class="transparent mx-1 align-center">
+            <exo-user-avatar
+              :profile-id="leaderBoardArray[0].remoteId"
+              :size="40"
+              extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+              avatar
+              popover
+              popover-left-position />
+            <v-card-text
+              class="top1 yellow darken-1 px-3 py-2 flex d-flex white--text justify-center font-weight-bold"
+              style="height: 55px">
+              {{ leaderBoardArray[0].score }}
+            </v-card-text>
+          </div>
+          <div v-if="leaderBoardArray[2]" class="transparent mx-1 align-center">
+            <exo-user-avatar
+              :profile-id="leaderBoardArray[2].remoteId"
+              :size="40"
+              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+              avatar
+              popover
+              popover-left-position />
+            <v-card-text
+              class="top3 amber darken-1 px-3 pb-1 flex d-flex white--text justify-center font-weight-bold pt-2px"
+              style="height: 25px">
+              {{ leaderBoardArray[2].score }}
+            </v-card-text>
+          </div>
         </v-flex>
       </v-layout>
     </v-flex>
