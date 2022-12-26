@@ -18,8 +18,12 @@ package org.exoplatform.addons.gamification.storage.dao;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -428,7 +432,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
       LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
       Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
-      Date utilToDate = Date.from(sunday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
       query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
            .setParameter(TO_DATE_PARAM_NAME, utilToDate)
            .setParameter(TYPE, type);
