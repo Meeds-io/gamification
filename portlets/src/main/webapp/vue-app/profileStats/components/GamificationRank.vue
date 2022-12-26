@@ -67,7 +67,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           d-flex
           justify-center
           align-end>
-          <div v-if="(typeof leaderBoardArray[1] != 'undefined')" class="transparent mx-1 align-center">
+          <div v-if="leaderBoardArray[1]" class="transparent mx-1 align-center">
             <exo-user-avatar
               :profile-id="leaderBoardArray[1].remoteId"
               :size="40"
@@ -81,8 +81,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               {{ leaderBoardArray[1].score }}
             </v-card-text>
           </div>
-
-          <div v-if="(typeof leaderBoardArray[0] != 'undefined')" class="transparent mx-1 align-center">
+          <div v-if="leaderBoardArray[0]" class="transparent mx-1 align-center">
             <exo-user-avatar
               :profile-id="leaderBoardArray[0].remoteId"
               :size="40"
@@ -96,8 +95,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               {{ leaderBoardArray[0].score }}
             </v-card-text>
           </div>
-
-          <div v-if="(typeof leaderBoardArray[2] != 'undefined')" class="transparent mx-1 align-center">
+          <div v-if="leaderBoardArray[2]" class="transparent mx-1 align-center">
             <exo-user-avatar
               :profile-id="leaderBoardArray[2].remoteId"
               :size="40"
@@ -118,23 +116,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       xs12>
       <v-list height="110">
         <template v-for="item in listBelowPoduim">
-          <v-list-item
-            v-if="(typeof item != 'undefined')"
-            :key="item.remoteId"
-            class="py-0 px-4 mt-n3">
-            <span v-if="(typeof item != 'undefined')" class="me-2">{{ item.rank }}</span>
-            <exo-user-avatar
-              :profile-id="item.remoteId"
-              :size="25"
-              :bold-title="item.socialId === identityId"
-              extra-class="me-0 pa-0 my-0 text-truncate-2"
-              popover-left-position
-              offset-x
-              popover />
-            <v-list-item-action v-if="(typeof item != 'undefined')" class="ml-auto">
-              <span>{{ item.score }}</span>
-            </v-list-item-action>
-          </v-list-item>
+          <template v-if="item">
+            <v-list-item
+              :key="item.remoteId"
+              class="py-0 px-4 mt-n3">
+              <v-card
+                min-width="16"
+                class="me-2"
+                flat>
+                {{ item.rank }}
+              </v-card>
+              <exo-user-avatar
+                :profile-id="item.remoteId"
+                :size="25"
+                :bold-title="item.socialId === identityId"
+                extra-class="me-0 pa-0 my-0 text-truncate-2"
+                popover-left-position
+                offset-x
+                popover />
+              <v-list-item-action class="ml-auto">
+                <span>{{ item.score }}</span>
+              </v-list-item-action>
+            </v-list-item>
+          </template>
         </template>
       </v-list>
     </v-flex>
