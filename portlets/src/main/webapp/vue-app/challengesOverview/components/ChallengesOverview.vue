@@ -84,6 +84,10 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
+    <challenges-details-drawer
+      ref="challengeDetailsDrawer"
+      :is-challenge-id-provided="true"
+      :is-overview-displayed="true" />
   </v-app>
 </template>
 <script>
@@ -111,6 +115,10 @@ export default {
     },
   },
   created() {
+    document.addEventListener('widget-row-click-event', (event) => {
+      if (event) {
+        this.$refs.challengeDetailsDrawer.openDrawerByChallengeId(event.detail);
+      }});
     this.getChallenges();
   },
   methods: {

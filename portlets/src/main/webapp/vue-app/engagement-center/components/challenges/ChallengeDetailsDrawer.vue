@@ -145,6 +145,16 @@ export default {
     announcements: [],
     maxAvatarToShow: 5,
   }),
+  props: {
+    isChallengeIdProvided: {
+      type: Boolean,
+      default: false,
+    },
+    isOverviewDisplayed: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     space() {
       return this.challenge?.space;
@@ -179,19 +189,16 @@ export default {
   },
   watch: {
     challenge() {
-      if (this.challenge) {
-        window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.challenge.id}`);
-      } else {
-        window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
+      if (!this.isOverviewDisplayed) {
+        if (this.challenge) {
+          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.challenge.id}`);
+        } else {
+          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
+        }
       }
     },
   },
   created() {
-    document.addEventListener('widget-row-click-event', (event) => {
-      if (event) {
-        console.log('challenges reached event');
-        this.$root.$emit('open-winners-drawer', event.detail.id, true);
-      }});
     this.$root.$on('open-challenge-details', this.open);
     this.$root.$on('manuel-rule-detail-drawer', this.displayManuelRule);
   },  
@@ -211,8 +218,12 @@ export default {
       this.$challengesServices.getAllAnnouncementsByChallenge(this.challenge?.id, 0, this.maxAvatarToShow)
         .then(announcements => this.announcements = announcements)
         .finally(() => this.$refs.challengeDetails.endLoading());
-
       this.$refs.challengeDetails.open();
+    },
+    openDrawerByChallengeId(challengeId) {
+      this.$challengesServices.getChallengeById(challengeId, 0, this.maxAvatarToShow)
+        .then(challenge => this.challenge = challenge);
+      this.open(this.challenge);
     },
     close() {
       this.$refs.challengeDetails.close();
