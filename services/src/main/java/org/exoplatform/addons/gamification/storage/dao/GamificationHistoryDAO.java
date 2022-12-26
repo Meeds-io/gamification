@@ -428,7 +428,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
       LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
       Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
-      Date utilToDate = Date.from(sunday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
       query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
            .setParameter(TO_DATE_PARAM_NAME, utilToDate)
            .setParameter(TYPE, type);
