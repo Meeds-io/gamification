@@ -136,6 +136,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :audience="audience"
             class="mt-4"
             multiple />
+          <div v-if="isExternalOwner" class="error--text mt-1">
+            {{ $t('programs.label.externalOwner.warning') }}
+          </div>
           <div class="mt-4">
             <div class="d-flex">
               <span class="subtitle-1 me-auto">{{ $t('programs.label.status') }}</span>
@@ -208,7 +211,8 @@ export default {
     disabledSave() {
       return !this.isValidForm
           || !this.audienceId
-          || !this.validDescription;
+          || !this.validDescription
+          || this.isExternalOwner;
     },
     buttonName() {
       return this.program && this.program.id && this.$t('engagementCenter.button.save') || this.$t('engagementCenter.button.create');
@@ -230,7 +234,10 @@ export default {
         length: (v) => (v && v.length < 50) || this.$t('programs.label.TitleLengthExceed'),
         value: (v) => (v >= 0 && v <= 9999) || this.$t('challenges.label.pointsValidation')
       };
-    }
+    },
+    isExternalOwner() {
+      return this.programOwners.some(owner => owner.external);
+    },
   },
   watch: {
     loading() {
