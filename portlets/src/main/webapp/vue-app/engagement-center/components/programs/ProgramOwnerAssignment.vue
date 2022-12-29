@@ -153,6 +153,7 @@ export default {
             remoteId: user.profile.username,
             fullName: user.profile.fullname,
             avatarUrl: user.profile.avatar,
+            external: user.profile.external || user.profile.dataEntity.external === 'true',
           };
           if (!this.multiple){
             this.assigneeObj =[];
