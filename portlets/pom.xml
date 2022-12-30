@@ -50,13 +50,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
-
-    <!-- Application dependencies-->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
   <build>
     <finalName>gamification-portlets</finalName>
