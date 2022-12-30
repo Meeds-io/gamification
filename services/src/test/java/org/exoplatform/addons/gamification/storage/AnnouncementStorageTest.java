@@ -30,13 +30,14 @@ import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.social.core.identity.model.Identity;
+
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,13 +47,18 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AnnouncementStorageTest {
+
+  private static MockedStatic<Utils>        UTILS;
+
+  private static MockedStatic<EntityMapper> ENTITY_MAPPER;
+
+  private static MockedStatic<DomainMapper> DOMAIN_MAPPER;
 
   private GamificationHistoryDAO announcementDAO;
 
@@ -60,14 +66,31 @@ public class AnnouncementStorageTest {
 
   private AnnouncementStorage    announcementStorage;
 
-    @Before
-    public void setUp() throws Exception { // NOSONAR
-        announcementDAO = mock(GamificationHistoryDAO.class);
-        ruleDAO = mock(RuleDAO.class);
-        announcementStorage = new AnnouncementStorage(announcementDAO,ruleDAO);
-    }
+  @BeforeClass
+  public static void initClassContext() {
+    UTILS = mockStatic(Utils.class);
+    ENTITY_MAPPER = mockStatic(EntityMapper.class);
+    DOMAIN_MAPPER = mockStatic(DomainMapper.class);
+  }
 
-    @PrepareForTest({ Utils.class, EntityMapper.class , DomainMapper.class})
+  @AfterClass
+  public static void cleanClassContext() {
+    UTILS.close();
+    ENTITY_MAPPER.close();
+    DOMAIN_MAPPER.close();
+  }
+
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    UTILS.reset();
+    ENTITY_MAPPER.reset();
+    DOMAIN_MAPPER.reset();
+
+    announcementDAO = mock(GamificationHistoryDAO.class);
+    ruleDAO = mock(RuleDAO.class);
+    announcementStorage = new AnnouncementStorage(announcementDAO, ruleDAO);
+  }
+
     @Test
     public void testSaveAnnouncement() {
         Date startDate = new Date(System.currentTimeMillis());
@@ -125,22 +148,20 @@ public class AnnouncementStorageTest {
         announcementFromEntity.setId(newAnnouncementEntity.getId());
 
 
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.mockStatic(EntityMapper.class);
         Identity identity = mock(Identity.class);
         when(ruleDAO.find(anyLong())).thenReturn(challengeEntity);
         when(announcementDAO.create(anyObject())).thenReturn(newAnnouncementEntity);
-        when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
-        when(EntityMapper.toEntity(challenge)).thenReturn(challengeEntity);
-        when(EntityMapper.fromEntity(newAnnouncementEntity)).thenReturn(announcementFromEntity);
-        when(EntityMapper.toEntity(any(Announcement.class), any(RuleEntity.class))).thenReturn(announcementEntity);
+        UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any()))
+             .thenReturn(identity);
+        ENTITY_MAPPER.when(() -> EntityMapper.toEntity(challenge)).thenReturn(challengeEntity);
+        ENTITY_MAPPER.when(() -> EntityMapper.fromEntity(newAnnouncementEntity)).thenReturn(announcementFromEntity);
+        ENTITY_MAPPER.when(() -> EntityMapper.toEntity(any(Announcement.class), any(RuleEntity.class))).thenReturn(announcementEntity);
         DomainDTO domainDTO = new DomainDTO();
         domainDTO.setTitle("gamification");
         DomainEntity domainEntity = new DomainEntity();
         domainEntity.setTitle("gamification");
-        PowerMockito.mockStatic(DomainMapper.class);
-        when(Utils.getEnabledDomainByTitle(any())).thenReturn(domainDTO);
-        when(DomainMapper.domainDTOToDomainEntity(domainDTO)).thenReturn(domainEntity);
+        UTILS.when(() -> Utils.getEnabledDomainByTitle(any())).thenReturn(domainDTO);
+        DOMAIN_MAPPER.when(() -> DomainMapper.domainDTOToDomainEntity(domainDTO)).thenReturn(domainEntity);
 
         Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
 
@@ -151,7 +172,6 @@ public class AnnouncementStorageTest {
         assertEquals(announcementFromEntity, createdAnnouncement);
     }
 
-    @PrepareForTest({ EntityMapper.class })
     @Test
     public void testGetAnnouncementById(){
         Date startDate = new Date(System.currentTimeMillis());
@@ -183,9 +203,8 @@ public class AnnouncementStorageTest {
         announcementFromEntity.setId(announcementEntity.getId());
 
 
-        PowerMockito.mockStatic(EntityMapper.class);
         when(announcementDAO.find(anyLong())).thenReturn(announcementEntity);
-        when(EntityMapper.fromEntity(announcementEntity)).thenReturn(announcementFromEntity);
+        ENTITY_MAPPER.when(() -> EntityMapper.fromEntity(announcementEntity)).thenReturn(announcementFromEntity);
 
         Announcement createdAnnouncement = announcementStorage.getAnnouncementById(1l);
 
@@ -194,7 +213,6 @@ public class AnnouncementStorageTest {
         assertEquals(createdAnnouncement.getId(), 1l);
         assertEquals(announcementFromEntity, createdAnnouncement);
     }
-    @PrepareForTest({ EntityMapper.class })
     @Test
     public void testGetAnnouncementByChallengeId(){
         Date startDate = new Date(System.currentTimeMillis());
@@ -270,9 +288,8 @@ public class AnnouncementStorageTest {
         announcementEntities.add(announcementEntity2);
         announcementEntities.add(announcementEntity3);
 
-        PowerMockito.mockStatic(EntityMapper.class);
         when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt())).thenReturn(announcementEntities);
-        when(EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
+        ENTITY_MAPPER.when(() -> EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
 
         List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(),0,10);
 
