@@ -189,6 +189,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <portlet>
       <portlet-name>myContributions</portlet-name>
+      <display-name>My Contributions</display-name>
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
@@ -303,7 +304,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   
     <portlet>
       <portlet-name>Challenges</portlet-name>
-      <display-name xml:lang="EN">Challenges Application</display-name>
+      <display-name>Challenges Application</display-name>
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
@@ -322,7 +323,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   
     <portlet>
       <portlet-name>ChallengesExtensions</portlet-name>
-      <display-name xml:lang="EN">Challenges Application</display-name>
+      <display-name>Challenges Application</display-name>
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
         <name>portlet-view-dispatched-file-path</name>
@@ -343,7 +344,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet>
     <portlet-name>myReputation</portlet-name>
-    <display-name xml:lang="EN">My Reputation</display-name>
+    <display-name>My Reputation</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
@@ -363,7 +364,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet>
     <portlet-name>myRewards</portlet-name>
-    <display-name xml:lang="EN">My Reputation</display-name>
+    <display-name>My Rewards</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
@@ -383,7 +384,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet>
     <portlet-name>topChallengers</portlet-name>
-    <display-name xml:lang="EN">My Reputation</display-name>
+    <display-name>Top Challengers</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
@@ -403,7 +404,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet>
     <portlet-name>challengesOverview</portlet-name>
-    <display-name xml:lang="EN">My Reputation</display-name>
+    <display-name>Challenges Overview</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
@@ -423,7 +424,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet>
     <portlet-name>programsOverview</portlet-name>
-    <display-name xml:lang="EN">My Reputation</display-name>
+    <display-name>Programs Overview</display-name>
     <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
     <init-param>
       <name>portlet-view-dispatched-file-path</name>
