@@ -31,6 +31,7 @@ import org.exoplatform.addons.gamification.entities.domain.effective.Gamificatio
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -353,7 +354,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     GamificationActionsHistoryDTO ghistory = newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
-    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit).size(),
+    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, new RuleFilter()).size(),
                  limit);
   }
 

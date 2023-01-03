@@ -96,8 +96,9 @@ export default {
   data: () => ({
     search: '',
     challengePerPage: 3,
-    announcementsPerChallenge: 2,
+    announcementsPerChallenge: 10,
     filter: 'STARTED',
+    dateBornsFilter: 'WEEK',
     loading: true,
     displayChallenges: false,
     listChallenges: [],
@@ -128,7 +129,7 @@ export default {
   methods: {
     getChallenges() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.orderByRealizations, this.listRealizations)
+      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.orderByRealizations, this.listRealizations, this.dateBornsFilter)
         .then(result => {
           if (!result) {
             return;

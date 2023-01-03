@@ -9,6 +9,7 @@ import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -87,11 +88,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   @Override
   public List<Announcement> findAllAnnouncementByChallenge(long challengeId,
                                                            int offset,
-                                                           int limit) {
+                                                           int limit,
+                                                           RuleFilter ruleFilter) {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit);
+    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, ruleFilter);
   }
 
   @Override

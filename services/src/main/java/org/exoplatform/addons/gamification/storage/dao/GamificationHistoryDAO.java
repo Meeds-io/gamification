@@ -38,6 +38,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateBornsType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -408,15 +410,34 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
-  public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit) {
-    TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
-                                                                                     GamificationActionsHistory.class);
-    query.setParameter("challengeId", challengeId);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
-    List<GamificationActionsHistory> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
+  public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId,
+                                                                         int offset,
+                                                                         int limit,
+                                                                         RuleFilter ruleFilter) {
+    TypedQuery<GamificationActionsHistory> query = null;
+    if (ruleFilter.getDateBornsType() != null && ruleFilter.getDateBornsType().equals(DateBornsType.WEEK)) {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
+                                                  GamificationActionsHistory.class);
+      LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+      LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+      Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
+      query.setParameter("challengeId", challengeId)
+           .setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
+           .setParameter(TO_DATE_PARAM_NAME, utilToDate);
+      query.setFirstResult(offset);
+      query.setMaxResults(limit);
+      List<GamificationActionsHistory> resultList = query.getResultList();
+      return resultList == null ? Collections.emptyList() : resultList;
+    } else {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
+                                                  GamificationActionsHistory.class);
+      query.setParameter("challengeId", challengeId);
+      query.setFirstResult(offset);
+      query.setMaxResults(limit);
+      List<GamificationActionsHistory> resultList = query.getResultList();
+      return resultList == null ? Collections.emptyList() : resultList;
+    }
   }
 
   public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {

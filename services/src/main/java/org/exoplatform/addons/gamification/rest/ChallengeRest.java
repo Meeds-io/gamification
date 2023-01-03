@@ -30,6 +30,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateBornsType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
@@ -137,7 +138,10 @@ public class ChallengeRest implements ResourceContainer {
       if (challenge == null) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
-      List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit);
+      List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId,
+                                                                                               offset,
+                                                                                               limit,
+                                                                                               new RuleFilter());
       return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList, false)).build();
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);
@@ -234,7 +238,12 @@ public class ChallengeRest implements ResourceContainer {
                                              description = "Excluded challenges Ids", required = false
                                          )
                                          @QueryParam("excludedChallengesIds")
-                                         List<Long>  excludedChallengesIds) {
+                                         List<Long>  excludedChallengesIds,
+                                         @Parameter(description = "Challenge period filtering. Possible values: WEEK, MONTH, YEAR, ALL")
+                                         @Schema(defaultValue = "ALL")
+                                         @DefaultValue("ALL")
+                                         @QueryParam("dateBornsFilter")
+                                         String dateBornsFilter) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -246,6 +255,7 @@ public class ChallengeRest implements ResourceContainer {
     filter.setTerm(term);
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
+    filter.setDateBornsType(DateBornsType.valueOf(dateBornsFilter));
     filter.setOrderByRealizations(orderByRealizations);
     if (excludedChallengesIds != null && !excludedChallengesIds.isEmpty()) {
       filter.setExcludedChallengesIds(excludedChallengesIds);
@@ -293,7 +303,8 @@ public class ChallengeRest implements ResourceContainer {
           challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService,
                                                                 challenge,
                                                                 announcementsPerChallenge,
-                                                                false));
+                                                                false,
+                                                                filter));
         }
         LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
@@ -366,7 +377,7 @@ public class ChallengeRest implements ResourceContainer {
     List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
     LOG.debug("start mapping challenges");
     for (Challenge challenge : challenges) {
-      challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService, challenge, announcementsPerChallenge, noDomain));
+      challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService, challenge, announcementsPerChallenge, noDomain, filter));
     }
     return challengeRestEntities;
   }

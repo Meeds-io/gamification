@@ -1,6 +1,7 @@
 package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 import java.util.List;
@@ -12,13 +13,13 @@ public interface AnnouncementService {
    * Retrieves all Announcements by challengeId.
    *
    * @param challengeId technical identifier of a challenge
-   * @param offset Offset
-   * @param limit Limit
+   * @param offset      Offset
+   * @param limit       Limit
+   * @param ruleFilter
    * @return A {@link List &lt;Announcement&gt;} object
-   * @throws IllegalAccessException when user is not authorized to access
-   *           announcement
+   * @throws IllegalAccessException when user is not authorized to access announcement
    */
-  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit) throws IllegalAccessException;
+  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, RuleFilter ruleFilter) throws IllegalAccessException;
 
   /**
    * Creates a new announcement

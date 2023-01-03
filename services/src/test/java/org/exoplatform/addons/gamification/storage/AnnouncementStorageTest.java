@@ -24,6 +24,7 @@ import org.exoplatform.addons.gamification.entities.domain.effective.Gamificatio
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
@@ -288,10 +289,10 @@ public class AnnouncementStorageTest {
         announcementEntities.add(announcementEntity2);
         announcementEntities.add(announcementEntity3);
 
-        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt())).thenReturn(announcementEntities);
+        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt(),new RuleFilter())).thenReturn(announcementEntities);
         ENTITY_MAPPER.when(() -> EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
 
-        List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(),0,10);
+        List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(),0,10, new RuleFilter());
 
         // Then
         assertNotNull(announcementListByChallenge);
