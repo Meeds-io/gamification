@@ -4,6 +4,7 @@
       <slot name="title"></slot>
     </div>
     <v-list-item
+      @click="clickEvent()"
       :href="redirectionUrl"
       :dense="!normalHeight"
       class="px-0">
@@ -21,6 +22,10 @@
 <script>
 export default {
   props: {
+    isChallengeIdProvided: {
+      type: Boolean,
+      default: false,
+    },
     redirectionUrl: {
       type: String,
       default: () => '',
@@ -29,6 +34,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    clickEventParam: {
+      type: String,
+      default: () => '',
+    },
+  },
+  methods: {
+    clickEvent() {
+      if (this.isChallengeIdProvided) {
+        document.dispatchEvent(new CustomEvent('widget-row-click-event', {detail: this.clickEventParam}));
+      }
+    }
   },
 };
 </script>
