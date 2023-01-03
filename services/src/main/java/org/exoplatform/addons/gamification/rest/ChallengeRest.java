@@ -244,12 +244,6 @@ public class ChallengeRest implements ResourceContainer {
                                          @DefaultValue("ALL")
                                          @QueryParam("dateBornsFilter")
                                          String dateBornsFilter) {
-    if (offset < 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
-    }
-    if (limit <= 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-    }
     String currentUser = Utils.getCurrentUser();
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);

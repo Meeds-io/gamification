@@ -58,7 +58,7 @@ public class EntityBuilder {
       return null;
     }
     List<Announcement> challengeAnnouncements = null;
-    if (announcementsPerChallenge > 0) {
+    if (announcementsPerChallenge != 0 ) {
       challengeAnnouncements =
                              announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, ruleFilter);
     } else {

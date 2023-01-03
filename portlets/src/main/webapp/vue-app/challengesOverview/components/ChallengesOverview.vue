@@ -96,7 +96,7 @@ export default {
   data: () => ({
     search: '',
     challengePerPage: 3,
-    announcementsPerChallenge: 10,
+    announcementsPerChallenge: -1,
     filter: 'STARTED',
     dateBornsFilter: 'WEEK',
     loading: true,
