@@ -44,7 +44,8 @@
           class="py-auto"                   
           v-for="(item, index) in listChallenges" 
           :key="index"
-          :click-event-param="`${item.challengeId}`">
+          :click-event-param="`${item.challengeId}`"
+          :is-challenge-id-provided="true">
           <template #icon>
             <v-icon
               color="yellow darken-2"
@@ -86,7 +87,6 @@
     </gamification-overview-widget>
     <challenges-details-drawer
       ref="challengeDetailsDrawer"
-      :is-challenge-id-provided="true"
       :is-overview-displayed="true" />
   </v-app>
 </template>

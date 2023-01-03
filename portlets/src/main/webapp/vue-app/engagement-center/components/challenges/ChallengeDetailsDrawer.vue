@@ -146,10 +146,6 @@ export default {
     maxAvatarToShow: 5,
   }),
   props: {
-    isChallengeIdProvided: {
-      type: Boolean,
-      default: false,
-    },
     isOverviewDisplayed: {
       type: Boolean,
       default: false,
@@ -221,9 +217,10 @@ export default {
       this.$refs.challengeDetails.open();
     },
     openDrawerByChallengeId(challengeId) {
-      this.$challengesServices.getChallengeById(challengeId, 0, this.maxAvatarToShow)
-        .then(challenge => this.challenge = challenge);
-      this.open(this.challenge);
+      this.$challengesServices.getChallengeById(challengeId)
+        .then(challenge => {
+          this.open(challenge);
+        });
     },
     close() {
       this.$refs.challengeDetails.close();

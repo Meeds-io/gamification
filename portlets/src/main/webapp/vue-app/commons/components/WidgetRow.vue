@@ -22,6 +22,10 @@
 <script>
 export default {
   props: {
+    isChallengeIdProvided: {
+      type: Boolean,
+      default: false,
+    },
     redirectionUrl: {
       type: String,
       default: () => '',
@@ -37,7 +41,9 @@ export default {
   },
   methods: {
     clickEvent() {
-      document.dispatchEvent(new CustomEvent('widget-row-click-event', {detail: this.clickEventParam}));
+      if (this.isChallengeIdProvided) {
+        document.dispatchEvent(new CustomEvent('widget-row-click-event', {detail: this.clickEventParam}));
+      }
     }
   },
 };
