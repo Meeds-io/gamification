@@ -62,6 +62,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
+    <portlet-name>challengesOverview</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <css-path>/skin/css/challenges.css</css-path>
+    <css-priority>1</css-priority>
+  </portlet-skin>
+
+
+  <portlet-skin>
+    <application-name>gamification-portlets</application-name>
     <portlet-name>Realizations</portlet-name>
     <skin-name>Enterprise</skin-name>
     <css-path>/skin/css/gamification.css</css-path>

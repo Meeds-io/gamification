@@ -44,7 +44,8 @@
           class="py-auto"                   
           v-for="(item, index) in listChallenges" 
           :key="index"
-          :redirection-url="`${challengesURL}/${item.challengeId}`">
+          :click-event-param="`${item.challengeId}`"
+          :is-challenge-id-provided="true">
           <template #icon>
             <v-icon
               color="yellow darken-2"
@@ -84,6 +85,9 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
+    <challenges-details-drawer
+      ref="challengeDetailsDrawer"
+      :is-overview-displayed="true" />
   </v-app>
 </template>
 <script>
@@ -111,6 +115,10 @@ export default {
     },
   },
   created() {
+    document.addEventListener('widget-row-click-event', (event) => {
+      if (event) {
+        this.$refs.challengeDetailsDrawer.openDrawerByChallengeId(event.detail);
+      }});
     this.getChallenges();
   },
   methods: {
