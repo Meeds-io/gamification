@@ -30,7 +30,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateBornsType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
@@ -242,14 +242,14 @@ public class ChallengeRest implements ResourceContainer {
                                          @Parameter(description = "Challenge period filtering. Possible values: WEEK, MONTH, YEAR, ALL")
                                          @Schema(defaultValue = "ALL")
                                          @DefaultValue("ALL")
-                                         @QueryParam("dateBornsFilter")
-                                         String dateBornsFilter) {
+                                         @QueryParam("period")
+                                         String period) {
     String currentUser = Utils.getCurrentUser();
     RuleFilter filter = new RuleFilter();
     filter.setTerm(term);
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
-    filter.setDateBornsType(DateBornsType.valueOf(dateBornsFilter));
+    filter.setPeriodType(PeriodType.valueOf(period));
     filter.setOrderByRealizations(orderByRealizations);
     if (excludedChallengesIds != null && !excludedChallengesIds.isEmpty()) {
       filter.setExcludedChallengesIds(excludedChallengesIds);

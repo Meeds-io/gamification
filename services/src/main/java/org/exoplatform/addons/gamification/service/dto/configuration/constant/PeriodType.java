@@ -17,6 +17,6 @@
 
 package org.exoplatform.addons.gamification.service.dto.configuration.constant;
 
-public enum DateBornsType {
+public enum PeriodType {
   WEEK, MONTH, YEAR, ALL
 }

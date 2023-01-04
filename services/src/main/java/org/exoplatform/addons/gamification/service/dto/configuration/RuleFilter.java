@@ -19,7 +19,7 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 import java.io.Serializable;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateBornsType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class RuleFilter implements Serializable {
 
   private DateFilterType    dateFilterType;
 
-  private DateBornsType     dateBornsType;
+  private PeriodType        periodType;
 
   private EntityFilterType  entityFilterType;
 

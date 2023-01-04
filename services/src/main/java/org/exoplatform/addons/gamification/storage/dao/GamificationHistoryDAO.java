@@ -39,7 +39,7 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateBornsType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -415,7 +415,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                          int limit,
                                                                          RuleFilter ruleFilter) {
     TypedQuery<GamificationActionsHistory> query = null;
-    if (ruleFilter.getDateBornsType() != null && ruleFilter.getDateBornsType().equals(DateBornsType.WEEK)) {
+    if (ruleFilter.getPeriodType() != null && ruleFilter.getPeriodType().equals(PeriodType.WEEK)) {
       query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
                                                   GamificationActionsHistory.class);
       LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
