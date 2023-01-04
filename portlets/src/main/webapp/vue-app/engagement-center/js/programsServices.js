@@ -33,10 +33,10 @@ export function retrievePrograms(offset, limit, type, status, query, includeDele
   if (query) {
     formData.append('query', query);
   }
-  if (includeDeleted) {
+  if (includeDeleted != null) {
     formData.append('includeDeleted', includeDeleted);
   }
-  if (sortByBudget) {
+  if (sortByBudget != null) {
     formData.append('sortByBudget', sortByBudget);
   }
 
