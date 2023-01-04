@@ -289,7 +289,7 @@ public class AnnouncementStorageTest {
         announcementEntities.add(announcementEntity2);
         announcementEntities.add(announcementEntity3);
 
-        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt(),new RuleFilter())).thenReturn(announcementEntities);
+        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt(),any())).thenReturn(announcementEntities);
         ENTITY_MAPPER.when(() -> EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
 
         List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(),0,10, new RuleFilter());

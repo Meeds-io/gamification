@@ -32,6 +32,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateBornsType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -39,6 +40,7 @@ import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 public class GamificationHistoryDAOTest extends AbstractServiceTest {
@@ -354,6 +356,17 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     GamificationActionsHistoryDTO ghistory = newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
+    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, new RuleFilter()).size(),
+                 limit);
+  }
+
+  @Test
+  public void testFindAllAnnouncementByChallengeByDate() {
+    GamificationActionsHistoryDTO ghistory = newGamificationActionsHistoryDTO();
+    newGamificationActionsHistoryDTO();
+    newGamificationActionsHistoryDTO();
+    RuleFilter filter = new RuleFilter();
+    filter.setDateBornsType(DateBornsType.WEEK);
     assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, new RuleFilter()).size(),
                  limit);
   }
