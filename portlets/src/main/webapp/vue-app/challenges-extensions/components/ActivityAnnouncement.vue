@@ -49,7 +49,7 @@ export default {
       getSourceLink: () => '#',
       getTitle: activity => {
         const announcementAssigneeUsername = activity && activity.templateParams && activity.templateParams.announcementAssigneeUsername  || '';
-        const announcementAssigneeFullName = activity && activity.templateParams && activity.templateParams.announcementAssigneeFullName  || '';
+        const announcementAssigneeFullName = activity && activity.identity && activity.identity.profile.fullname  || '';
         const title = `<a class="primary--text" href="${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${ announcementAssigneeUsername}">${ announcementAssigneeFullName}</a>`;
 
         return {
