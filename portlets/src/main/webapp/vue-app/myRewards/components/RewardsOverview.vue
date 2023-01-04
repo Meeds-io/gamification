@@ -41,6 +41,25 @@
             <gamification-overview-widget-row class="col col-6 px-0" normal-height>
               <template #title>
                 {{ $t('gamification.overview.rewards.earningsTitle') }}
+                <v-tooltip
+                  z-index="4"
+                  max-width="300px"
+                  bottom>
+                  <template #activator="{ on, attrs }">
+                    <v-btn
+                      height="20px"
+                      width="20px"
+                      icon
+                      absolute
+                      outlined
+                      class="btn mx-2"
+                      v-bind="attrs"
+                      v-on="on">
+                      <v-icon size="10" class="my-auto">fas fa-info</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
+                </v-tooltip>
               </template>
               <template #content>
                 <extension-registry-components
