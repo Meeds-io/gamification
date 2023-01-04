@@ -1,5 +1,5 @@
 <template>
-  <v-list class="py-0">
+  <v-list class="py-0" :disabled="disabled">
     <div v-if="$slots.title" class="subtitle-2">
       <slot name="title"></slot>
     </div>
@@ -23,6 +23,10 @@
 export default {
   props: {
     isChallengeIdProvided: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },
