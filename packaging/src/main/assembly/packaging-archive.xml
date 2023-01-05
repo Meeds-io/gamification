@@ -30,7 +30,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <include>org.exoplatform.addons.gamification:gamification-portlets:war</include>
             </includes>
             <outputFileNameMapping>gamification-portlets.war</outputFileNameMapping>
-            <scope>provided</scope>
             <fileMode>0644</fileMode>
         </dependencySet>
         <dependencySet>
@@ -38,9 +37,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <outputDirectory>/</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <includes>
-                <include>org.exoplatform.addons.gamification:gamification-services*:jar</include>
+              <include>*:*:jar</include>
             </includes>
-            <scope>provided</scope>
             <fileMode>0644</fileMode>
             <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
