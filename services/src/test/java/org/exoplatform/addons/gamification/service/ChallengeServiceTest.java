@@ -43,39 +43,53 @@ import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ChallengeServiceTest {
 
-  @Mock
-  private ChallengeStorage  challengeStorage;
+  private static MockedStatic<Utils> UTILS;
 
   @Mock
-  private SpaceService      spaceService;
+  private ChallengeStorage    challengeStorage;
 
   @Mock
-  private ListenerService   listenerService;
+  private SpaceService        spaceService;
 
   @Mock
-  private ExoFeatureService exoFeatureService;
+  private ListenerService     listenerService;
 
-  private ChallengeService  challengeService;
+  @Mock
+  private ExoFeatureService   exoFeatureService;
+
+  private ChallengeService    challengeService;
+
+  @BeforeClass
+  public static void initClassContext() {
+    UTILS = mockStatic(Utils.class);
+  }
+
+  @AfterClass
+  public static void cleanClassContext() {
+    UTILS.close();
+  }
 
   @Before
   public void setUp() throws Exception { // NOSONAR
+    UTILS.reset();
     challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, exoFeatureService, listenerService);
   }
 
-  @PrepareForTest({ Utils.class })
+
   @Test
   public void testCreateChallenge() throws IllegalAccessException {
     // Given
@@ -123,7 +137,6 @@ public class ChallengeServiceTest {
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
     rootIdentity.setRemoteId("root");
-    PowerMockito.mockStatic(Utils.class);
     Space space = new Space();
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challengeCreated);
@@ -131,15 +144,15 @@ public class ChallengeServiceTest {
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(null, "root"));
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challengeCreated, "root"));
 
-    when(Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(false);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(false);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-    when(Utils.isSuperManager("root")).thenReturn(true);
+    UTILS.when(() -> Utils.isSuperManager("root")).thenReturn(true);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-    when(Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
     challenge.setAudience(0);
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challenge, "root"));
     challenge.setAudience(1L);
-    when(Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
 
     Challenge savedChallenge = challengeService.createChallenge(challenge, "root");
     assertNotNull(savedChallenge);
@@ -150,10 +163,8 @@ public class ChallengeServiceTest {
     assertEquals(2L, savedChallenge.getId());
   }
 
-  @PrepareForTest({ Utils.class })
   @Test
   public void testUpdateChallenge() throws ObjectNotFoundException, IllegalAccessException {
-    PowerMockito.mockStatic(Utils.class);
 
     // Given
     Challenge challenge = new Challenge(1L,
@@ -191,27 +202,25 @@ public class ChallengeServiceTest {
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challenge2);
 
-    when(Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(false);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(false);
     assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(null, "root"));
     assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(new Challenge(), "root"));
-    when(Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
-    when(Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
 
     assertThrows(ObjectNotFoundException.class, () -> challengeService.updateChallenge(challenge, "root"));
     when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge1);
-    when(Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
 
     Challenge challengeUpdated = challengeService.updateChallenge(challenge, "root");
     assertNotNull(challengeUpdated);
     assertEquals("update challenge", challengeUpdated.getTitle());
   }
 
-  @PrepareForTest({ Utils.class })
   @Test
   public void testDeleteChallenge() throws ObjectNotFoundException, IllegalAccessException {
     // Given
-    PowerMockito.mockStatic(Utils.class);
-    when(Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
+    UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
     Challenge challenge = new Challenge(1L,
                                         "update challenge",
                                         "challenge description",
@@ -227,7 +236,7 @@ public class ChallengeServiceTest {
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
-    when(Utils.isSuperManager("root")).thenReturn(true);
+    UTILS.when(() -> Utils.isSuperManager("root")).thenReturn(true);
     Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
     assertNotNull(storedChallenge);
     assertEquals(1L, storedChallenge.getId());
@@ -242,21 +251,22 @@ public class ChallengeServiceTest {
     assertThrows(IllegalAccessException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
     // When
-    when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
-    when(Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
     assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
     // When
-    when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(10).toInstant()));
+    UTILS.when(() -> Utils.parseSimpleDate(challenge.getEndDate()))
+         .thenReturn(Date.from(ZonedDateTime.now().plusDays(10).toInstant()));
     assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
-    when(Utils.countAnnouncementsByChallenge(1l)).thenReturn(0l);
-    when(Utils.parseSimpleDate(challenge.getEndDate())).thenReturn(Date.from(ZonedDateTime.now().plusDays(-10).toInstant()));
+    UTILS.when(() -> Utils.countAnnouncementsByChallenge(1l)).thenReturn(0l);
+    UTILS.when(() -> Utils.parseSimpleDate(challenge.getEndDate()))
+         .thenReturn(Date.from(ZonedDateTime.now().plusDays(-10).toInstant()));
     challengeService.deleteChallenge(challenge.getId(), "root");
   }
 
   @Test
-  @PrepareForTest({ Utils.class })
   public void testGetChallengeById() throws IllegalAccessException {
     assertThrows(IllegalArgumentException.class, () -> challengeService.getChallengeById(0l, "root"));
     Challenge challenge = new Challenge(1l,
@@ -279,8 +289,7 @@ public class ChallengeServiceTest {
     savedChallenge = challengeService.getChallengeById(challenge.getId());
     assertNull(savedChallenge);
     when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
-    PowerMockito.mockStatic(Utils.class);
-    when(Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
+    UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
     assertThrows(IllegalAccessException.class, () -> challengeService.getChallengeById(challenge.getId(), "root"));
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(spaceService.isMember(space, "root")).thenReturn(true);
@@ -292,7 +301,6 @@ public class ChallengeServiceTest {
   }
 
   @Test
-  @PrepareForTest({ Utils.class })
   public void testGetChallengesByFilterAndUser() {
     Challenge challenge = new Challenge(1l,
                                         "Challenge",
@@ -314,8 +322,7 @@ public class ChallengeServiceTest {
     List<Challenge> savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
     assertEquals(0, savedChallenges.size());
     when(spaceService.getMemberSpacesIds("root", 0, -1)).thenReturn(userSpaceIds);
-    PowerMockito.mockStatic(Utils.class);
-    when(Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
+    UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
     when(challengeStorage.findChallengesIdsByFilter(filter, 0, 10)).thenReturn(challengesIds);
 
     savedChallenges = challengeService.getChallengesByFilterAndUser(filter, 0, 10, "root");
