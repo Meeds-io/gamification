@@ -33,7 +33,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import static org.mockito.Mockito.mock;
 
@@ -154,7 +153,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   /**
    * Testing the update of rule with the Media Type
    **/
-  @PrepareForTest({ Utils.class })
   @Test
   public void testUpdateRule() throws Exception {
     RuleDTO ruleDTO = newRuleDTO();
