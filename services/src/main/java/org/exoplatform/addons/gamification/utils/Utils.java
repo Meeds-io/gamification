@@ -19,7 +19,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,8 +54,6 @@ import org.exoplatform.social.rest.api.EntityBuilder;
 import org.exoplatform.social.rest.entity.IdentityEntity;
 import org.exoplatform.web.security.codec.CodecInitializer;
 import org.exoplatform.web.security.security.TokenServiceInitializationException;
-
-import liquibase.repackaged.org.apache.commons.collections4.CollectionUtils;
 
 public class Utils {
 
@@ -355,7 +352,7 @@ public class Utils {
           return toUserInfo(identity);
         }
         return null;
-      }).filter(Objects::nonNull).collect(Collectors.toList());
+      }).filter(Objects::nonNull).toList();
     } catch (Exception e) {
       LOG.error("Error when getting challenge managers {}", e);
       return Collections.emptyList();
@@ -376,7 +373,7 @@ public class Utils {
           return userInfo;
         }
         return null;
-      }).filter(Objects::nonNull).collect(Collectors.toList());
+      }).filter(Objects::nonNull).toList();
     } catch (Exception e) {
       LOG.error("Error when getting challenge managers {}", e);
       return Collections.emptyList();
@@ -533,7 +530,8 @@ public class Utils {
       return true;
     }
     if (isSpaceMember(spaceId, username)
-        && CollectionUtils.containsAny(ownerIds, Long.parseLong(userIdentity.getId()))) {
+        && ownerIds != null
+        && ownerIds.contains(Long.parseLong(userIdentity.getId()))) {
       return true;
     }
     return isSuperManager(username);
