@@ -45,8 +45,6 @@ public class RuleFilter implements Serializable {
 
   private DateFilterType    dateFilterType;
 
-  private PeriodType        periodType;
-
   private EntityFilterType  entityFilterType;
 
   private EntityStatusType  entityStatusType;

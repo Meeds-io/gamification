@@ -31,6 +31,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Announcemen
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -53,14 +54,14 @@ public class EntityBuilder {
                                                   Challenge challenge,
                                                   int announcementsPerChallenge,
                                                   boolean noDomain,
-                                                  RuleFilter ruleFilter) throws IllegalAccessException {
+                                                  PeriodType periodType) throws IllegalAccessException {
     if (challenge == null) {
       return null;
     }
     List<Announcement> challengeAnnouncements = null;
     if (announcementsPerChallenge != 0 ) {
       challengeAnnouncements =
-                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, ruleFilter);
+                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType);
     } else {
       challengeAnnouncements = Collections.emptyList();
     }

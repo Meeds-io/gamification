@@ -141,7 +141,7 @@ public class ChallengeRest implements ResourceContainer {
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId,
                                                                                                offset,
                                                                                                limit,
-                                                                                               new RuleFilter());
+                                                                                               PeriodType.ALL);
       return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList, false)).build();
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);
@@ -249,8 +249,8 @@ public class ChallengeRest implements ResourceContainer {
     filter.setTerm(term);
     filter.setUsername(currentUser);
     filter.setDateFilterType(DateFilterType.valueOf(dateFilterType));
-    filter.setPeriodType(PeriodType.valueOf(period));
     filter.setOrderByRealizations(orderByRealizations);
+    PeriodType periodType = PeriodType.valueOf(period);
     if (excludedChallengesIds != null && !excludedChallengesIds.isEmpty()) {
       filter.setExcludedChallengesIds(excludedChallengesIds);
     }
@@ -298,7 +298,7 @@ public class ChallengeRest implements ResourceContainer {
                                                                 challenge,
                                                                 announcementsPerChallenge,
                                                                 false,
-                                                                filter));
+                                                                periodType));
         }
         LOG.debug("ended mapping challenges");
         return Response.ok(challengeRestEntities).build();
@@ -371,7 +371,7 @@ public class ChallengeRest implements ResourceContainer {
     List<ChallengeRestEntity> challengeRestEntities = new ArrayList<>();
     LOG.debug("start mapping challenges");
     for (Challenge challenge : challenges) {
-      challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService, challenge, announcementsPerChallenge, noDomain, filter));
+      challengeRestEntities.add(EntityBuilder.fromChallenge(announcementService, challenge, announcementsPerChallenge, noDomain, PeriodType.ALL));
     }
     return challengeRestEntities;
   }
