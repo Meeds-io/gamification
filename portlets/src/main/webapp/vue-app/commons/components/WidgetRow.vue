@@ -4,10 +4,10 @@
       <slot name="title"></slot>
     </div>
     <v-list-item
-      @click="clickEvent()"
+      v-on="isChallengeIdProvided ? { click: clickEvent } : {}"
       :href="redirectionUrl"
       :dense="!normalHeight"
-      class="px-0">
+      class="px-0 no-ripple">
       <v-list-item-action-text v-if="$slots.icon" class="me-4">
         <slot name="icon"></slot>
       </v-list-item-action-text>
