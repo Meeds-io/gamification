@@ -21,6 +21,7 @@ import org.exoplatform.addons.gamification.service.configuration.AnnouncementSer
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -324,13 +325,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     announcementList.add(announcement1);
     announcementList.add(announcement2);
     announcementList.add(announcement3);
+    RuleFilter ruleFilter = new RuleFilter();
+    ruleFilter.setPeriodType(PeriodType.ALL);
+    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL)).thenReturn(announcementList);
 
-    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, new RuleFilter())).thenReturn(announcementList);
-
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, new RuleFilter()));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, ruleFilter));
 
     List<Announcement> newAnnouncementList = null;
-    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, new RuleFilter());
+    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, ruleFilter);
     assertNotNull(newAnnouncementList);
     assertEquals(announcementList, newAnnouncementList);
   }

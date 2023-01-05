@@ -413,9 +413,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId,
                                                                          int offset,
                                                                          int limit,
-                                                                         RuleFilter ruleFilter) {
+                                                                         PeriodType periodType) {
     TypedQuery<GamificationActionsHistory> query = null;
-    if (ruleFilter.getPeriodType() != null && ruleFilter.getPeriodType().equals(PeriodType.WEEK)) {
+    if (periodType != null && periodType.equals(PeriodType.WEEK)) {
       query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
                                                   GamificationActionsHistory.class);
       LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));

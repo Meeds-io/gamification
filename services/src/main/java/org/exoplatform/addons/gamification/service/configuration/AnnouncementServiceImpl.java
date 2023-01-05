@@ -4,12 +4,14 @@ import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIV
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -93,7 +95,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, ruleFilter);
+    PeriodType periodType = null;
+    if (!Objects.isNull(ruleFilter.getPeriodType())) {
+      periodType = ruleFilter.getPeriodType();
+    }
+    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, periodType);
   }
 
   @Override
