@@ -216,12 +216,6 @@ export default {
         .finally(() => this.$refs.challengeDetails.endLoading());
       this.$refs.challengeDetails.open();
     },
-    openDrawerByChallengeId(challengeId) {
-      this.$challengesServices.getChallengeById(challengeId)
-        .then(challenge => {
-          this.open(challenge);
-        });
-    },
     close() {
       this.$refs.challengeDetails.close();
       this.challenge = null;
