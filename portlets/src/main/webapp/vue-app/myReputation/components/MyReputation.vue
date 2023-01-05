@@ -100,11 +100,14 @@ export default {
     loading() {
       return this.loadingBadges || this.loadingKudos;
     },
+    isExternal() {
+      return eXo.env.portal.isExternal === 'true';
+    },
     emptyKudosSummaryText() {
-      return this.$t('gamification.overview.reputationKudosSummary', {
+      return !this.isExternal && this.$t('gamification.overview.reputationKudosSummary', {
         0: `<a class="primary--text font-weight-bold" href="javascript:void(0)" onclick="document.dispatchEvent(new CustomEvent('${this.emptyKudosActionName}'))">`,
         1: '</a>',
-      });
+      }) || this.$t('gamification.overview.reputationKudosSummaryForExternal');
     },
     emptyBadgesSummaryText() {
       return this.$t('gamification.overview.reputationBadgesSummary');

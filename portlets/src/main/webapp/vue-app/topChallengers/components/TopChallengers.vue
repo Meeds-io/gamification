@@ -17,7 +17,7 @@
   <v-app>
     <gamification-overview-widget
       :loading="loading"
-      :see-all-url="peopleURL">
+      :see-all-url="!isExternal && peopleURL || ''">
       <template #title>
         {{ $t('gamification.overview.topChallengersTitle') }}
       </template>
