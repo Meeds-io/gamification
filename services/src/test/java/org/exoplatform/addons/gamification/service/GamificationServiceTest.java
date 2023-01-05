@@ -20,12 +20,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GamificationServiceTest extends AbstractServiceTest {
 
   @Test
