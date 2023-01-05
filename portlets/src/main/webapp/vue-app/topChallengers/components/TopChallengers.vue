@@ -23,8 +23,9 @@
       </template>
       <template #content>
         <gamification-overview-widget-row
-          class="my-auto"
-          v-show="displayPlaceholder">
+          v-show="displayPlaceholder"
+          disabled
+          class="my-auto">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>

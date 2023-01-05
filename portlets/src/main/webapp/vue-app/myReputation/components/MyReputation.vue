@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="d-flex flex-column mx-n4" />
           </template>
         </gamification-overview-widget-row>
-        <gamification-overview-widget-row v-if="!kudosDisplayed && !loading">
+        <gamification-overview-widget-row v-if="!kudosDisplayed && !loading" :disabled="isExternal">
           <template #title>
             <div class="mb-6">
               {{ $t('gamification.myReputation.KudosTitleNoData') }}
@@ -64,8 +64,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </gamification-overview-widget-row>
       <gamification-overview-widget-row
+        v-show="!badgesDisplayed && !loading"
         class="my-auto"
-        v-show="!badgesDisplayed && !loading">
+        disabled>
         <template #title>
           <div class="mb-6 mt-3 position-relative">
             {{ $t('gamification.myReputation.badgesTitle') }}
