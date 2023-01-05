@@ -31,24 +31,26 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AnnouncementServiceTest extends BaseExoTestCase {
+
+  private static MockedStatic<Utils> UTILS;
+
   private AnnouncementStorage announcementStorage;
 
   private ChallengeService    challengeService;
@@ -61,9 +63,20 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
   private IdentityManager     identityManager;
 
+  @BeforeClass
+  public static void initClassContext() {
+    UTILS = mockStatic(Utils.class);
+  }
+
+  @AfterClass
+  public static void cleanClassContext() {
+    UTILS.close();
+  }
+
   @Before
   public void setUp() throws Exception { // NOSONAR
     super.setUp();
+    UTILS.reset();
     announcementStorage = mock(AnnouncementStorage.class);
     challengeService = mock(ChallengeService.class);
     spaceService = mock(SpaceService.class);
@@ -75,7 +88,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                       listenerService);
   }
 
-  @PrepareForTest({ Utils.class, EntityMapper.class })
   @Test
   public void testCreateAnnouncement() throws ObjectNotFoundException, IllegalAccessException {
     Challenge challenge = new Challenge(1,
@@ -142,11 +154,11 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
     when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
-    PowerMockito.mockStatic(Utils.class);
 
     Identity identity = mock(Identity.class);
     when(identity.isEnable()).thenReturn(true);
-    when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
+    UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any()))
+         .thenReturn(identity);
     when(identity.getId()).thenReturn("1");
 
     Map<String, String> templateParams = new HashMap<>();
@@ -163,13 +175,15 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertThrows(IllegalArgumentException.class,
                  () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", false));
 
-    when(Utils.canAnnounce(any(), anyString())).thenReturn(false);
+    UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
+         .thenReturn(false);
     assertThrows(ObjectNotFoundException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
     when(identityManager.getIdentity("1")).thenReturn(identity);
     assertThrows(IllegalAccessException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root", false));
-    when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
+         .thenReturn(true);
 
     Announcement newAnnouncement = null;
     newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root", false);
@@ -177,7 +191,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertEquals(1l, newAnnouncement.getId());
   }
 
-  @PrepareForTest({ Utils.class, EntityMapper.class })
   @Test
   public void testUpdateAnnouncement() throws ObjectNotFoundException, IllegalAccessException {
     Challenge challenge = new Challenge(1,
@@ -240,12 +253,13 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
     when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.saveAnnouncement(createdAnnouncement)).thenReturn(editedAnnouncement);
-    PowerMockito.mockStatic(Utils.class);
-    when(Utils.canAnnounce(any(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
+         .thenReturn(true);
     Identity identity = mock(Identity.class);
     when(identity.isEnable()).thenReturn(true);
     when(identity.getId()).thenReturn("1");
-    when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
+    UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any()))
+         .thenReturn(identity);
     when(announcementStorage.getAnnouncementById(1L)).thenReturn(createdAnnouncement);
 
     Announcement newAnnouncement = null;
