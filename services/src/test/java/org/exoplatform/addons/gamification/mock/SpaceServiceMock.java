@@ -617,12 +617,11 @@ public class SpaceServiceMock implements SpaceService {
   }
 
   public void setPortletsPrefsRequired(PortletPreferenceRequiredPlugin portletPrefsRequiredPlugin) {
-    throw new UnsupportedOperationException();
-
+    // Nothing to do
   }
 
   public String[] getPortletsPrefsRequired() {
-    throw new UnsupportedOperationException();
+    return new String[0];
   }
 
   public ListAccess<Space> getVisitedSpaces(String remoteId, String appId) {
