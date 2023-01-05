@@ -32,7 +32,6 @@ import org.exoplatform.services.security.MembershipEntry;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 public class TestManageRulesEndpoint extends AbstractServiceTest {
 
@@ -145,7 +144,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
   /**
    * Testing the update of rule with the Media Type
    **/
-  @PrepareForTest({ Utils.class })
   @Test
   public void testUpdateRule() throws Exception {
     RuleDTO ruleDTO = newRuleDTO();
