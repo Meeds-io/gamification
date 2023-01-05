@@ -213,6 +213,9 @@ public class RuleServiceImpl implements RuleService {
     if (username == null) {
       throw new IllegalArgumentException(USERNAME_IS_MANDATORY_MESSAGE);
     }
+    if (ruleDTO.getId() == null || ruleDTO.getId() == 0) {
+      throw new ObjectNotFoundException("Rule with id 0 doesn't exist");
+    }
     RuleDTO oldRule = ruleStorage.findRuleById(ruleDTO.getId());
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule does not exist");

@@ -32,31 +32,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <dependencies>
         <dependency>
-            <groupId>org.exoplatform.addons.gamification</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>gamification-portlets</artifactId>
             <type>war</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.exoplatform.addons.gamification</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>gamification-services</artifactId>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                    <include>**/*.conf</include>
-                    <include>**/*.sh</include>
-                </includes>
-            </resource>
-        </resources>
         <finalName>gamification</finalName>
         <plugins>
             <plugin>

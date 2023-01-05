@@ -21,28 +21,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
         xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
-    <component>
-        <key>org.exoplatform.services.naming.InitialContextInitializer</key>
-        <type>org.exoplatform.commons.InitialContextInitializer2</type>
-        <init-params>
-            <properties-param>
-                <name>default-properties</name>
-                <description>Default initial context properties</description>
-                <property name="java.naming.factory.initial"
-                          value="org.exoplatform.services.naming.SimpleContextFactory"/>
-            </properties-param>
-        </init-params>
-    </component>
-
-    <component>
-        <key>org.exoplatform.commons.api.settings.ExoFeatureService</key>
-        <type>org.exoplatform.settings.impl.ExoFeatureServiceImpl</type>
-    </component>
-
-    <component>
-        <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
-    </component>
-
     <!-- Badges Service Layer-->
     <component>
         <key>org.exoplatform.addons.gamification.service.configuration.BadgeService</key>
@@ -77,15 +55,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.web.security.codec.CodecInitializer</type>
-        <init-params>
-            <value-param>
-                <name>gatein.conf.dir</name>
-                <value>jar:/conf</value>
-            </value-param>
-        </init-params>
-    </component>
-    <component>
         <key>org.exoplatform.social.core.space.spi.SpaceService</key>
         <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
     </component>
@@ -108,18 +77,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
-    </component>
-    <component>
-        <type>org.exoplatform.services.rest.impl.ProvidersRegistry</type>
-    </component>
-    <component>
-        <type>org.exoplatform.services.rest.impl.RequestHandlerImpl</type>
-    </component>
-    <component>
-        <type>org.exoplatform.services.rest.impl.RequestDispatcher</type>
-    </component>
-    <component>
-        <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
@@ -218,10 +175,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <key>org.exoplatform.services.jdbc.DataSourceProvider</key>
         <type>org.exoplatform.services.jdbc.impl.DataSourceProviderImpl</type>
-    </component>
-
-    <component>
-        <type>org.exoplatform.services.rest.impl.ResourceBinder</type>
     </component>
 
     <component>
