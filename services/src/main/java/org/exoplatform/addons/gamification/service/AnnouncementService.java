@@ -1,7 +1,6 @@
 package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
