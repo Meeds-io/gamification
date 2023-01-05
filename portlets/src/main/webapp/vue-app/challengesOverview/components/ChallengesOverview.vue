@@ -88,6 +88,7 @@
     <challenges-details-drawer
       ref="challengeDetailsDrawer"
       :is-overview-displayed="true" />
+    <challenge-winners-details />
   </v-app>
 </template>
 <script>
@@ -117,7 +118,10 @@ export default {
   created() {
     document.addEventListener('widget-row-click-event', (event) => {
       if (event) {
-        this.$refs.challengeDetailsDrawer.openDrawerByChallengeId(event.detail);
+        this.$challengesServices.getChallengeById(event.detail)
+          .then(challenge => {
+            this.$refs.challengeDetailsDrawer.open(challenge);
+          });
       }});
     this.getChallenges();
   },
