@@ -390,6 +390,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <name>portlet-view-dispatched-file-path</name>
       <value>/html/topChallengers/index.html</value>
     </init-param>
+     <init-param>
+      <name>prefetch.resource.rest</name>
+       <value><![CDATA[/portal/rest/gamification/leaderboard/rank/all?loadCapacity=false&period=WEEK]]></value>
+     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
     <supports>
