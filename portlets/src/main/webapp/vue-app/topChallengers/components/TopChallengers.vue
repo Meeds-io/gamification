@@ -17,14 +17,15 @@
   <v-app>
     <gamification-overview-widget
       :loading="loading"
-      :see-all-url="peopleURL">
+      :see-all-url="!isExternal && peopleURL || ''">
       <template #title>
         {{ $t('gamification.overview.topChallengersTitle') }}
       </template>
       <template #content>
         <gamification-overview-widget-row
-          class="my-auto"
-          v-show="!rankDisplayed && !loading">
+          v-show="displayPlaceholder"
+          disabled
+          class="my-auto">
           <template #icon>
             <v-icon color="secondary" size="55px">fas fa-trophy</v-icon>
           </template>
@@ -32,7 +33,7 @@
             <span v-sanitized-html="$t('gamification.overview.topChallengersSummary')"></span>
           </template>
         </gamification-overview-widget-row>
-        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed">
+        <gamification-overview-widget-row class="my-auto" v-show="rankDisplayed && !isExternal">
           <template #content>
             <gamification-rank :is-overview-display="true" />
           </template>
@@ -50,6 +51,12 @@ export default {
   computed: {
     peopleURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/people`;
+    },
+    isExternal() {
+      return eXo.env.portal.isExternal === 'true';
+    },
+    displayPlaceholder() {
+      return (this.isExternal || !this.rankDisplayed) && !this.loading;
     }
   },
   created() {
