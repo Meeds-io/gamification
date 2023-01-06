@@ -16,11 +16,15 @@
  */
 import ChallengesOverview from './components/ChallengesOverview.vue';
 import ChallengeDetailsDrawer from '../engagement-center/components/challenges/ChallengeDetailsDrawer.vue';
+import WinnersDrawer from '../engagement-center/components/challenges/WinnersDrawer.vue';
+import AvatarsList from '../engagement-center/components/common/AvatarsList.vue';
 import * as challengesServices from '../engagement-center/js/challengesServices.js';
 
 const components = {
   'gamification-overview-challenges': ChallengesOverview,
   'challenges-details-drawer': ChallengeDetailsDrawer,
+  'challenge-winners-details': WinnersDrawer,
+  'engagement-center-avatars-list': AvatarsList,
 };
 
 if (!Vue.prototype.$challengesServices) {
