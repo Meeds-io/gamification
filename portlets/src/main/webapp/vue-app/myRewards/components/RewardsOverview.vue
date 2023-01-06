@@ -46,7 +46,7 @@
                   max-width="300px"
                   bottom>
                   <template #activator="{ on, attrs }">
-                  <v-btn
+                    <v-btn
                       height="18px"
                       width="18px"
                       icon
