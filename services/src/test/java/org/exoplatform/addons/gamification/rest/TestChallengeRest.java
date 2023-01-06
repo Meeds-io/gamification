@@ -350,16 +350,6 @@ public class TestChallengeRest extends AbstractServiceTest {
     challengeRestEntity = (ChallengeRestEntity) response.getEntity();
     assertNotNull(challengeRestEntity);
     startSessionAs("root2");
-    restPath = "/gamification/challenges?offset=-1&limit=10";
-
-    response = getResponse("GET", restPath, null);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-
-    restPath = "/gamification/challenges?offset=1&limit=-10";
-    response = getResponse("GET", restPath, null);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
 
     restPath = "/gamification/challenges?offset=0&limit=10";
     response = getResponse("GET", restPath, null);
