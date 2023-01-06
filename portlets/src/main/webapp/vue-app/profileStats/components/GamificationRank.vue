@@ -71,7 +71,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <exo-user-avatar
               :profile-id="leaderBoardArray[1].remoteId"
               :size="40"
-              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
               popover
               popover-left-position />
@@ -85,7 +85,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <exo-user-avatar
               :profile-id="leaderBoardArray[0].remoteId"
               :size="40"
-              extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+              extra-class="ml-2 me-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
               popover
               popover-left-position />
@@ -99,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <exo-user-avatar
               :profile-id="leaderBoardArray[2].remoteId"
               :size="40"
-              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1"
+              extra-class="me-2 ml-2 pa-0 mt-0 mb-1 rounded-circle elevation-1 d-inline-block"
               avatar
               popover
               popover-left-position />
