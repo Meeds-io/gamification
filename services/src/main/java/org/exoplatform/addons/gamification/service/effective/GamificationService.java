@@ -37,6 +37,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -289,6 +290,10 @@ public class GamificationService {
     }
     if (!actorIdentity.isEnable()) {
       LOG.warn("Actor {} has earned some points but is marked as disabled", actor);
+      return null;
+    }
+    if (Utils.isUserMemberOfGroupOrUser(actorIdentity.getRemoteId(), Utils.BLACK_LIST_GROUP)) {
+      LOG.debug("Actor {} cannot earn points since has been blacklisted", actor);
       return null;
     }
 

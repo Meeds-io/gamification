@@ -40,10 +40,12 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.resources.ResourceBundleService;
 import org.exoplatform.services.security.Authenticator;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.IdentityRegistry;
+import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
@@ -68,9 +70,7 @@ public class Utils {
   public static final DateTimeFormatter SIMPLE_DATE_FORMATTER       = DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
                                                                                        .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = {
-      ',', ';', '\n'
-  };
+  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS  = { ',', ';', '\n' };
 
   public static final String            POST_CREATE_RULE_EVENT      = "rule.created";
 
@@ -95,6 +95,8 @@ public class Utils {
   public static final String            REWARDING_GROUP             = "/platform/rewarding";
 
   public static final String            ADMINS_GROUP                = "/platform/administrators";
+
+  public static final String            BLACK_LIST_GROUP            = "/leaderboard-blacklist-users";
 
   private static final String           IDENTITIES_REST_PATH        = "/v1/social/identities";                                   // NOSONAR
 
@@ -319,8 +321,7 @@ public class Utils {
       if (domain == null) {
         return Collections.emptyList();
       } else {
-        Set<Long> owners = domain.getOwners() == null ? new HashSet<>()
-                                                      : new HashSet<>(domain.getOwners());
+        Set<Long> owners = domain.getOwners() == null ? new HashSet<>() : new HashSet<>(domain.getOwners());
         if (domain.getAudienceId() > 0) {
           SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
           Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
@@ -529,9 +530,7 @@ public class Utils {
     if (isSpaceManager(spaceId, username)) {
       return true;
     }
-    if (isSpaceMember(spaceId, username)
-        && ownerIds != null
-        && ownerIds.contains(Long.parseLong(userIdentity.getId()))) {
+    if (isSpaceMember(spaceId, username) && ownerIds != null && ownerIds.contains(Long.parseLong(userIdentity.getId()))) {
       return true;
     }
     return isSuperManager(username);
@@ -662,6 +661,29 @@ public class Utils {
       return false;
     }
     return spaceService.isMember(space, userId);
+  }
+
+  public static boolean isUserMemberOfGroupOrUser(String username, String permissionExpression) {
+    if (StringUtils.isBlank(permissionExpression)) {
+      throw new IllegalArgumentException("Permission expression is mandatory");
+    }
+    if (StringUtils.isBlank(username)) {
+      return false;
+    }
+    org.exoplatform.services.security.Identity identity = getUserAclIdentity(username);
+    if (identity == null) {
+      return false;
+    }
+    MembershipEntry membership = null;
+    if (permissionExpression.contains(":")) {
+      String[] permissionExpressionParts = permissionExpression.split(":");
+      membership = new MembershipEntry(permissionExpressionParts[1], permissionExpressionParts[0]);
+    } else if (permissionExpression.contains("/")) {
+      membership = new MembershipEntry(permissionExpression, MembershipEntry.ANY_TYPE);
+    } else {
+      return StringUtils.equals(username, permissionExpression);
+    }
+    return identity.isMemberOf(membership);
   }
 
 }
