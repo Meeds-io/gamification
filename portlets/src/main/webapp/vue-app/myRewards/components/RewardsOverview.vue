@@ -40,26 +40,24 @@
           <div class="d-flex flex-grow-1" v-else>
             <gamification-overview-widget-row class="col col-6 px-0" normal-height>
               <template #title>
-                {{ $t('gamification.overview.rewards.earningsTitle') }}
-                <v-tooltip
-                  z-index="4"
-                  max-width="300px"
-                  bottom>
-                  <template #activator="{ on, attrs }">
-                    <v-btn
-                      height="18px"
-                      width="18px"
-                      icon
-                      absolute
-                      outlined
-                      class="primary--text mx-1"
-                      v-bind="attrs"
-                      v-on="on">
-                      <v-icon size="18" class="my-auto">fas fa-info-circle</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
-                </v-tooltip>
+                <div class="d-flex">
+                  {{ $t('gamification.overview.rewards.earningsTitle') }}
+                  <v-tooltip
+                    z-index="4"
+                    max-width="300px"
+                    bottom>
+                    <template #activator="{ on, attrs }">
+                      <v-icon
+                        size="18"
+                        class="primary--text mx-2"
+                        v-bind="attrs"
+                        v-on="on">
+                        fas fa-info-circle
+                      </v-icon>
+                    </template>
+                    <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
+                  </v-tooltip>
+                </div>
               </template>
               <template #content>
                 <extension-registry-components
