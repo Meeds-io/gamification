@@ -74,7 +74,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                           <boolean>${exo.gamification.portalConfig.metadata.override:true}</boolean>
                         </field>
                         <field name="importMode">
-                          <string>${exo.gamification.portalConfig.metadata.importmode:insert}</string>
+                          <string>${exo.gamification.portalConfig.metadata.importmode:merge}</string>
                         </field>
                     </object>
                 </object-param>
