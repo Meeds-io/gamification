@@ -102,7 +102,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <container id="overviewPage" template="system:/groovy/portal/webui/container/UIVRowContainer.gtmpl">
           <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
           <container id="overviewBannerContainer" template="system:/groovy/portal/webui/container/UIVColContainer.gtmpl"
-                     cssClass="col-12 pt-0">
+                     cssClass="col-12">
             <access-permissions>*:/platform/users;*:/platform/externals</access-permissions>
             <portlet-application>
               <portlet>
