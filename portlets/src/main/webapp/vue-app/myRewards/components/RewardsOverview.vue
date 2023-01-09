@@ -47,15 +47,15 @@
                   bottom>
                   <template #activator="{ on, attrs }">
                     <v-btn
-                      height="20px"
-                      width="20px"
+                      height="18px"
+                      width="18px"
                       icon
                       absolute
                       outlined
-                      class="btn mx-2"
+                      class="primary--text mx-1"
                       v-bind="attrs"
                       v-on="on">
-                      <v-icon size="10" class="my-auto">fas fa-info</v-icon>
+                      <v-icon size="18" class="my-auto">fas fa-info-circle</v-icon>
                     </v-btn>
                   </template>
                   <span>{{ $t('gamification.overview.rewards.earningsTooltip') }}</span>
