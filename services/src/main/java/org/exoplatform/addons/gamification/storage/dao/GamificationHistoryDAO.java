@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
@@ -408,13 +409,31 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
-  public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit) {
-    TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
-                                                                                     GamificationActionsHistory.class);
+  public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId,
+                                                                         int offset,
+                                                                         int limit,
+                                                                         PeriodType periodType) {
+    TypedQuery<GamificationActionsHistory> query = null;
+    if (periodType != null && periodType.equals(PeriodType.WEEK)) {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
+                                                  GamificationActionsHistory.class);
+      LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+      LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+      Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+      Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
+      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
+           .setParameter(TO_DATE_PARAM_NAME, utilToDate);
+    } else {
+      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
+                                                  GamificationActionsHistory.class);
+    }
     query.setParameter("challengeId", challengeId);
-    query.setFirstResult(offset);
-    query.setMaxResults(limit);
+    if (offset >= 0) {
+      query.setFirstResult(offset);
+    }
+    if (limit >= 0) {
+      query.setMaxResults(limit);
+    }
     List<GamificationActionsHistory> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
   }
