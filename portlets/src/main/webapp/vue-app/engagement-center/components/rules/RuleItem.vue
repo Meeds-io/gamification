@@ -16,22 +16,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <tr>
-    <td>
+    <td class="no-border-bottom">
       <div @click="openRule" class="clickable align-start text-truncate">
         <engagement-center-rule-title :rule="rule" />
       </div>
     </td>
-    <td>
-      <div class="align-center text-capitalize">
-        {{ TypeLabel }}
-      </div>
-    </td>
-    <td>
+    <td cols="2" class="no-border-bottom">
       <div class="align-center">
         {{ rule.score }}
       </div>
     </td>
-    <td v-if="canManageRule" class="align-center">
+    <td v-if="canManageRule" cols="2" class="align-center no-border-bottom">
       <v-menu
         v-model="menu"
         :left="!$vuetify.rtl"
@@ -98,9 +93,6 @@ export default {
   computed: {
     automaticRule() {
       return this.rule?.type === 'AUTOMATIC';
-    },
-    TypeLabel() {
-      return this.automaticRule ? this.$t('programs.details.rule.type.automatic') : this.$t('programs.details.rule.type.manuel') || '-';
     },
   },
   methods: {
