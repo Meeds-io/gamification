@@ -16,15 +16,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div id="engagementCenterProgramDetail" class="pa-5">
-    <div class="py-5">
-      <v-btn icon class="mb-1">
+    <div class="py-5 d-flex">
+      <v-btn icon class="mt-n1 my-auto">
         <v-icon
           size="18"
           @click="backToProgramList()">
           fas fa-arrow-left
         </v-icon>
       </v-btn>
-      <span class="text-header-title ps-1"> {{ programTitle }} : </span><span v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+      <span class="text-header-title ps-1"> {{ programTitle }} </span>
+      <v-spacer />
+      <span class="text-header-title" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
     </div>
     <div class="d-flex flex-grow-1">
       <v-img
@@ -59,8 +61,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-list-item-title class="text-color font-weight-bold">
             {{ $t('programs.details.label.rulesOfProgram') }}
           </v-list-item-title>
-          <v-flex v-if="canManageRule" class="d-flex">
-            <div class="text-no-wrap mt-5">
+          <v-flex v-if="canManageRule" class="d-flex  mt-5">
+            <div class="text-no-wrap my-auto">
               <div
                 class="d-inline-block">
                 <v-btn
@@ -76,7 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </div>
             <div
-              class="ms-auto my-auto">
+              class="ms-auto">
               <engagement-center-rule-filter @filter-applied="applyFilter" />
             </div>
           </v-flex>
@@ -88,6 +90,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :server-items-length="totalSize"
               :no-data-text="$t('programs.details.rules.noRules')"
               :loading="loadingRules"
+              :show-rows-border="false"
               hide-default-footer
               disable-sort>
               <template slot="item" slot-scope="props">
@@ -193,10 +196,9 @@ export default {
     },
     rulesHeaders() {
       return [
-        {text: this.$t('programs.details.rules.action'), align: 'start'},
-        {text: this.$t('programs.details.rules.type'), align: 'center'},
-        {text: this.$t('programs.details.rules.points'), align: 'center'},
-        {text: '', align: 'center', enabled: this.canManageRule},
+        {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
+        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%'},
+        {text: '', align: 'center', enabled: this.canManageRule, width: '15%'},
       ].filter(filter => filter.enabled == null || filter.enabled === true);
     },
     displayFooter() {
