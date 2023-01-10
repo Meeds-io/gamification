@@ -31,7 +31,7 @@ export default {
 <style>
 
   body {
-    font-family: Helvetica, arial, sans-serif!important;
+    background-color: var(--allPagesLightGrey, #f2f2f2) !important;
   }
 
      .UIToolbarContainerDark a.dropdown-toggle {
