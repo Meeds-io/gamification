@@ -104,6 +104,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
       if (standardLeaderboards == null) {
         return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
       }
+      int index = 1;
       for (StandardLeaderboard element : standardLeaderboards) {
         Identity identity = identityManager.getIdentity(element.getEarnerId());
         if (identity == null) {
@@ -118,13 +119,9 @@ public class LeaderboardEndpoint implements ResourceContainer {
         leaderboardInfo.setFullname(identity.getProfile().getFullName());
         leaderboardInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
         leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
-        leaderboardInfo.setRank(gamificationService.getLeaderboardRank(identity.getId(),
-                                                                       Date.from(LocalDate.now()
-                                                                                          .with(DayOfWeek.MONDAY)
-                                                                                          .atStartOfDay(ZoneId.systemDefault())
-                                                                                          .toInstant()),
-                                                                       "all"));
+        leaderboardInfo.setRank(index);
         leaderboardList.add(leaderboardInfo);
+        index ++;
       }
 
       if (identityType.isUser()) {
