@@ -22,17 +22,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <priority>1</priority>
   <page-nodes>
     <node>
+      <name>contributions</name>
+      <label>#{portal.global.contributions}</label>
+      <visibility>SYSTEM</visibility>
+      <page-reference>portal::global::contributions</page-reference>
+    </node>
+    <node>
+      <name>challenges</name>
+      <label>#{portal.global.challenges}</label>
+      <visibility>SYSTEM</visibility>
+      <page-reference>portal::global::contributions</page-reference>
+    </node>
+    <node>
       <name>gamification-earn-points</name>
       <label>#{gamification.intranet.gamificationHelp}</label>
       <visibility>SYSTEM</visibility>
       <page-reference>portal::global::gameficationhelp</page-reference>
-    </node>
-
-    <node>
-      <name>achievements</name>
-      <label>#{gamification.intranet.achievements}</label>
-      <visibility>SYSTEM</visibility>
-      <page-reference>portal::global::achievements</page-reference>
     </node>
   </page-nodes>
 </node-navigation>
