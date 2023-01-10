@@ -188,7 +188,7 @@ public class Utils {
       return false;
     } else {
       org.exoplatform.services.security.Identity identity = getUserAclIdentity(username);
-      return spaceService.canRedactOnSpace(space, identity);
+      return spaceService.canRedactOnSpace(space, identity) && !Utils.isUserMemberOfGroupOrUser(username, Utils.BLACK_LIST_GROUP);
     }
   }
 
