@@ -111,17 +111,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <preferences>
                   <preference>
                     <name>bannerUrl</name>
-                    <value>/meeds/images/banner/overviewBanner.webp</value>
+                    <value>/gamification-portlets/images/banner/overviewBanner.webp</value>
                     <read-only>false</read-only>
                   </preference>
                   <preference>
                     <name>bannerTitle</name>
-                    <value>portal.meeds.overview.title</value>
+                    <value>overview.overviewBanner.title</value>
                     <read-only>false</read-only>
                   </preference>
                   <preference>
                     <name>bannerCaption</name>
-                    <value>portal.meeds.overview.caption</value>
+                    <value>overview.overviewBanner.title</value>
                     <read-only>false</read-only>
                   </preference>
                 </preferences>
