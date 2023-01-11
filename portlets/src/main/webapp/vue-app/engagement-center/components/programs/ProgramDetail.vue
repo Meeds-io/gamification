@@ -151,6 +151,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
+    },
   },
   data() {
     return {
