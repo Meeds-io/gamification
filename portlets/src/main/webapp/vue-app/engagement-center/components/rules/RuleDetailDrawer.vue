@@ -2,7 +2,8 @@
   <exo-drawer
     id="ruleDetailDrawer"
     ref="ruleDetailDrawer"
-    :right="!$vuetify.rtl">
+    :right="!$vuetify.rtl"
+    @closed="close">
     <template #title>
       <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
     </template>
@@ -12,16 +13,19 @@
           <v-icon size="60" class="align-start primary--text">{{ actionIcon }}</v-icon>
           <div class="mb-4 ms-4">
             <div class="font-weight-bold mx-0 mt-0 mb-2">{{ ruleTitle }}</div>
-            <div class="font-weight-bold tertiary--text">{{ rule.score }} {{ $t('challenges.label.points') }}</div>
+            <div class="font-weight-bold tertiary--text">{{ ruleScore }} {{ $t('challenges.label.points') }}</div>
           </div>
         </div>
         <div class="d-flex flex-row pt-3">
           <span v-sanitized-html="rule.description"></span>
         </div>
-        <div class="d-flex flex-row pt-3">
+        <div class="pt-3">
           <img
             :src="program.coverUrl"
             width="50"><span class="font-weight-bold my-auto ms-1">{{ program.title }}</span>
+        </div>
+        <div v-if="!automaticRule" class="pt-5">
+          <v-icon class="px-3 primary--text">fas fa-calendar-day</v-icon><span class="my-auto ms-1" v-sanitized-html="DateInfo"></span>
         </div>
       </v-card-text>
     </template>
@@ -31,19 +35,28 @@
 <script>
 export default {
   props: {
-    program: {
-      type: Object,
-      default: () => null,
-    },
     actionValueExtensions: {
       type: Object,
       default: function() {
         return null;
       },
     },
+    isOverviewDisplayed: {
+      type: Boolean,
+      default: false,
+    },
+    tabName: {
+      type: String,
+      default: null
+    },
+    tab: {
+      type: Number,
+      default: () => 0,
+    },
   },
   data: () => ({
     rule: {},
+    program: {},
     drawer: false,
   }),
   computed: {
@@ -70,22 +83,68 @@ export default {
       }
       return null;
     },
+    automaticRule() {
+      return this.rule?.type === 'AUTOMATIC';
+    },
     actionIcon() {
-      return this.actionValueExtension?.icon;
+      return this.automaticRule ? this.actionValueExtension?.icon : 'fas fa-trophy';
+    },
+    ruleScore() {
+      return this.rule?.score || this.rule?.points;
+    },
+    DateInfo() {
+      const startDate = new Date(this.rule?.startDate);
+      const endDate = new Date(this.rule?.endDate);
+      if (endDate < new Date()) {
+        return this.$t('rule.detail.challengeEnded');
+      } else if (startDate > new Date()) {
+        const days = Math.round((startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        return this.$t('rule.detail.challengeOpenIn', {0: days});
+      } else {
+        const days = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        return this.$t('rule.detail.challengeEndIn', {0: days});
+      }
+    }
+  },
+  watch: {
+    rule() {
+      if (!this.isOverviewDisplayed && this.tab === 1) {
+        if (this.rule?.id) {
+          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges/${this.rule.id}`);
+        } else {
+          window.history.replaceState('challenges', this.$t('challenges.challenges'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`);
+        }
+      }
     },
   },
   created() {
     this.$root.$on('rule-detail-drawer', (rule) => {
       this.rule = rule;
+      this.program = rule?.domainDTO || rule?.program;
       if (this.$refs.ruleDetailDrawer) {
         this.$refs.ruleDetailDrawer.open();
+      }
+    });
+    document.addEventListener('rule-detail-drawer', event => {
+      if (event && event.detail) {
+        this.rule = event.detail;
+        this.program = this.rule?.domainDTO || this.rule?.program;
+        if (this.$refs.ruleDetailDrawer) {
+          this.$refs.ruleDetailDrawer.open();
+        }
       }
     });
   },
   methods: {
     close() {
       this.$refs.ruleDetailDrawer.close();
+      this.rule = {};
     },
+    open() {
+      if (this.$refs.ruleDetailDrawer){
+        this.$refs.ruleDetailDrawer.open();
+      }
+    }
   }
 };
 </script>

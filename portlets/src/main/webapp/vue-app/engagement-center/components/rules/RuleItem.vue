@@ -26,7 +26,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         {{ rule.score }}
       </div>
     </td>
-    <td v-if="canManageRule" cols="2" class="align-center no-border-bottom">
+    <td
+      v-if="canManageRule"
+      cols="2"
+      class="align-center no-border-bottom">
       <v-menu
         v-model="menu"
         :left="!$vuetify.rtl"
@@ -107,11 +110,7 @@ export default {
       }
     },
     openRule() {
-      if (this.automaticRule) {
-        this.$root.$emit('rule-detail-drawer', this.rule);
-      } else {
-        this.$root.$emit('manuel-rule-detail-drawer', this.rule);
-      }
+      this.$root.$emit('rule-detail-drawer', this.rule);
     },
     deleteRule() {
       this.$emit('delete-rule', this.rule);
