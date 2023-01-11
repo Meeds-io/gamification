@@ -103,14 +103,6 @@ export default {
     automaticRule() {
       return this.rule?.type === 'AUTOMATIC';
     },
-    extendedActionValueComponent() {
-      return this.actionValueExtension && {
-        componentName: 'action-value',
-        componentOptions: {
-          vueComponent: this.actionValueExtension.vueComponent,
-        },
-      } || null;
-    },
     actionValueExtension() {
       if (this.actionValueExtensions) {
         return Object.values(this.actionValueExtensions)
