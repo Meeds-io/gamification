@@ -97,6 +97,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <engagement-center-rule-item
                   :rule="props.item"
                   :can-manage-rule="canManageRule"
+                  :action-value-extensions="actionValueExtensions"
                   @delete-rule="confirmDelete" />
               </template>
               <template v-if="displayFooter" #footer="{props}">
@@ -149,6 +150,12 @@ export default {
     isAdministrator: {
       type: Boolean,
       default: false,
+    },
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
     },
   },
   data() {
