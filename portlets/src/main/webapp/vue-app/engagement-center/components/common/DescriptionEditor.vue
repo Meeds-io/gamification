@@ -161,6 +161,7 @@ export default {
         toolbar,
         toolbarLocation: 'bottom',
         autoGrow_onStartup: true,
+        pasteFilter: 'p; a[!href]; strong; i', 
         on: {
           change: evt => this.inputVal = evt.editor?.getData() || '',
           destroy: () => this.inputVal = '',
