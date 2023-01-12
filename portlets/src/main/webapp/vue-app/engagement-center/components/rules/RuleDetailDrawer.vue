@@ -16,16 +16,16 @@
             <div class="font-weight-bold tertiary--text">{{ ruleScore }} {{ $t('challenges.label.points') }}</div>
           </div>
         </div>
-        <div class="d-flex flex-row pt-3">
+        <div class="d-flex flex-row pt-3 rich-editor-content">
           <span v-sanitized-html="rule.description"></span>
         </div>
-        <div class="pt-3">
+        <div class="d-flex flex-row py-3">
           <img
-            :src="program.coverUrl"
-            width="50"><span class="font-weight-bold my-auto ms-1">{{ program.title }}</span>
+              :src="program.coverUrl"
+              width="50"><span class="font-weight-bold my-auto ms-1">{{ program.title }}</span>
         </div>
-        <div v-if="!automaticRule" class="pt-5">
-          <v-icon class="px-3 primary--text">fas fa-calendar-day</v-icon><span class="my-auto ms-1" v-sanitized-html="DateInfo"></span>
+        <div v-if="!automaticRule" class="d-flex flex-row py-3">
+            <v-icon size="30" class="px-3 primary--text">fas fa-calendar-day</v-icon><span class="my-auto ms-1" v-sanitized-html="DateInfo"></span>
         </div>
       </v-card-text>
     </template>
