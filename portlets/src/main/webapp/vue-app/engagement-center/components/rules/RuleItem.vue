@@ -17,7 +17,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <tr>
     <td class="no-border-bottom">
-      <div @click="openRule" class="clickable align-start text-truncate">
+      <div @click="openRule" class="clickable align-start text-truncate d-flex">
+        <v-icon size="15px" class="primary--text my-auto me-4">
+          {{ actionIcon }}
+        </v-icon>
         <engagement-center-rule-title :rule="rule" />
       </div>
     </td>
@@ -84,6 +87,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    actionValueExtensions: {
+      type: Object,
+      default: function() {
+        return null;
+      },
+    },
   },
   data() {
     return {
@@ -93,6 +102,17 @@ export default {
   computed: {
     automaticRule() {
       return this.rule?.type === 'AUTOMATIC';
+    },
+    actionValueExtension() {
+      if (this.actionValueExtensions) {
+        return Object.values(this.actionValueExtensions)
+          .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
+          .find(extension => extension.match && extension.match(this.rule.event)) || null;
+      }
+      return null;
+    },
+    actionIcon() {
+      return this.automaticRule ? this.actionValueExtension?.icon : 'fas fa-trophy';
     },
   },
   methods: {
