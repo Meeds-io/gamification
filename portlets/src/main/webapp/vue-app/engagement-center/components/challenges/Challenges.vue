@@ -98,9 +98,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :ok-label="$t('challenges.ok')"
       :cancel-label="$t('engagementCenter.button.cancel')"
       @ok="deleteChallenge" />
-    <announce-drawer
-      ref="announceDrawer"
-      :challenge="selectedChallenge" />
   </div>
 </template>
 <script>

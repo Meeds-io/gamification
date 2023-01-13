@@ -20,14 +20,80 @@
           <span v-sanitized-html="rule.description"></span>
         </div>
         <div class="d-flex flex-row py-3">
-          <img
+          <v-img
             :src="program.coverUrl"
-            width="50"><span class="font-weight-bold my-auto ms-1">{{ program.title }}</span>
+            :height="programCoverSize"
+            :width="programCoverSize"
+            :max-height="programCoverSize"
+            :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
         </div>
         <div v-if="!automaticRule" class="d-flex flex-row py-3">
-          <v-icon size="30" class="px-3 primary--text">fas fa-calendar-day</v-icon><span class="my-auto ms-1" v-sanitized-html="DateInfo"></span>
+          <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="DateInfo"></span>
+        </div>
+        <div v-if="!automaticRule && isActiveRule" class="d-flex flex-row py-3">
+          <v-icon size="30" class="primary--text">fas fa-bullhorn</v-icon><span class="font-weight-bold my-auto ms-3">{{ $t('rule.detail.AnnounceYourAchievement') }} </span>
+        </div>
+        <div v-if="!automaticRule && isActiveRule" class="d-flex flex-row pt-3">
+          <v-list-item class="text-truncate px-0">
+            <exo-space-avatar
+              :space-id="spaceId"
+              extra-class="text-truncate"
+              :size="30"
+              avatar />
+            <exo-user-avatar
+              :profile-id="username"
+              :size="25"
+              extra-class="ms-n4 mt-6"
+              avatar />
+            <v-list-item-content class="py-0 accountTitleLabel text-truncate">
+              <v-list-item-title class="font-weight-bold d-flex body-2 mb-0">
+                <exo-space-avatar
+                  :space-id="spaceId"
+                  extra-class="text-truncate"
+                  fullname
+                  bold-title
+                  link-style
+                  username-class />
+              </v-list-item-title>
+              <v-list-item-subtitle class="d-flex flex-row flex-nowrap">
+                <exo-user-avatar
+                  :profile-id="username"
+                  extra-class="text-truncate ms-2 me-1"
+                  fullname
+                  link-style
+                  small-font-size
+                  username-class />
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+
+        <div v-if="!automaticRule && isActiveRule" class="py-3">
+          <engagement-center-description-editor
+            v-model="comment"
+            id="ruleAnnouncement"
+            ref="announcementRichEditor"
+            :placeholder="$t('rule.detail.announceEditor.placeholder')"
+            :autofocus="editorFocus"
+            @validity-updated=" validInput = $event" />
         </div>
       </v-card-text>
+    </template>
+    <template v-if="!automaticRule && isActiveRule" slot="footer">
+      <div class="d-flex mr-2">
+        <v-spacer />
+        <button
+          class="ignore-vuetify-classes btn mx-1"
+          @click="close">
+          {{ $t('rule.detail.label.cancel') }}
+        </button>
+        <button
+          :disabled="announceDisabled"
+          class="ignore-vuetify-classes btn btn-primary"
+          @click="createAnnouncement">
+          {{ $t('rule.detail.label.announce') }}
+        </button>
+      </div>
     </template>
   </exo-drawer>
 </template>
@@ -58,6 +124,12 @@ export default {
     rule: {},
     program: {},
     drawer: false,
+    username: eXo.env.portal.userName,
+    userId: eXo.env.portal.userIdentityId,
+    validInput: true,
+    comment: null,
+    programCoverSize: 35,
+    editorFocus: false
   }),
   computed: {
     ruleTitle() {
@@ -92,18 +164,33 @@ export default {
     ruleScore() {
       return this.rule?.score || this.rule?.points;
     },
+    startDate() {
+      return new Date(this.rule?.startDate);
+    },
+    endDate() {
+      return new Date(this.rule?.endDate);
+    },
+    isActiveRule() {
+      return this.automaticRule || (this.startDate < new Date() && new Date() < this.endDate);
+    },
     DateInfo() {
-      const startDate = new Date(this.rule?.startDate);
-      const endDate = new Date(this.rule?.endDate);
-      if (endDate < new Date()) {
+      if (this.endDate < new Date()) {
         return this.$t('rule.detail.challengeEnded');
-      } else if (startDate > new Date()) {
-        const days = Math.round((startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      } else if (this.startDate > new Date()) {
+        const days = Math.round((this.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeOpenIn', {0: days});
       } else {
-        const days = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.round((this.endDate.getTime() - this.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeEndIn', {0: days});
       }
+    },
+    spaceId() {
+      return this.program?.audienceId;
+    },
+    announceDisabled() {
+      return !this.validInput
+          || !this.comment
+          || !this.comment.length;
     }
   },
   watch: {
@@ -118,11 +205,28 @@ export default {
     },
   },
   created() {
-    this.$root.$on('rule-detail-drawer', (rule) => {
+    this.$root.$on('rule-detail-drawer', (rule, editorFocus) => {
       this.rule = rule;
+      this.editorFocus = editorFocus;
       this.program = rule?.domainDTO || rule?.program;
       if (this.$refs.ruleDetailDrawer) {
         this.$refs.ruleDetailDrawer.open();
+        this.$nextTick()
+          .then(() => {
+            if (!this.automaticRule && this.isActiveRule) {
+              this.$refs.announcementRichEditor.initCKEditor();
+              if (this.editorFocus) {
+                window.setTimeout(() => {
+                  const drawerContentElement = document.querySelector('#ruleDetailDrawer .drawerContent');
+                  drawerContentElement.scrollTo({
+                    top: drawerContentElement.scrollHeight,
+                    behavior: 'smooth',
+                    block: 'start',
+                  });
+                }, 100);
+              }
+            }
+          });
       }
     });
     document.addEventListener('rule-detail-drawer', event => {
@@ -139,12 +243,44 @@ export default {
     close() {
       this.$refs.ruleDetailDrawer.close();
       this.rule = {};
+      this.comment = null;
     },
     open() {
       if (this.$refs.ruleDetailDrawer){
         this.$refs.ruleDetailDrawer.open();
       }
-    }
+    },
+    createAnnouncement() {
+      const announcement = {
+        assignee: this.userId,
+        comment: this.comment,
+        challengeId: this.rule.id,
+        challengeTitle: this.rule.title,
+      };
+
+      this.$refs.ruleDetailDrawer.startLoading();
+      this.$challengesServices.saveAnnouncement(announcement)
+        .then(createdAnnouncement => {
+          this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
+          this.$root.$emit('announcement-added', {detail: {
+            announcement: createdAnnouncement,
+            challengeId: this.rule.id,
+          }});
+          this.close();
+        })
+        .catch(e => {
+          let msg = '';
+          if (e.message === '401' || e.message === '403') {
+            msg = this.$t('challenges.permissionDenied');
+          } else if (e.message  === '406') {
+            msg = this.$t('challenges.challengeNotStartedOrEnded');
+          } else  {
+            msg = this.$t('challenges.announcementErrorSave');
+          }
+          this.$engagementCenterUtils.displayAlert(msg, 'error');
+        })
+        .finally(() => this.$refs.ruleDetailDrawer.endLoading());
+    },
   }
 };
 </script>
