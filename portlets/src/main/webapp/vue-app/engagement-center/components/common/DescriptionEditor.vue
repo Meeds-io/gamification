@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="descriptionId"
     :class="newEditorToolbarEnabled && 'newEditorToolbar' || ''"
     class="activityRichEditor">
-    <div class="py-1 subtitle-1">
+    <div v-if="label" class="py-1 subtitle-1">
       {{ label }}
     </div>
     <div
@@ -36,7 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       rows="10"
       class="d-none"></textarea>
     <div
-      :class="!validLength && 'tooManyChars' || ''"
+      :class="tooManyChars && 'tooManyChars' || ''"
       class="activityCharsCount">
       {{ charsCount }}{{ maxLength > -1 ? ' / ' + maxLength : '' }}
       <i class="uiIconMessageLength"></i>
@@ -63,6 +63,10 @@ export default {
       type: Number,
       default: () => 1300,
     },
+    autofocus: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -87,6 +91,9 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs';
     },
+    tooManyChars() {
+      return this.charsCount > this.maxLength;
+    }
   },
   watch: {
     inputVal: {
@@ -154,6 +161,7 @@ export default {
 
       this.inputVal = this.value || '';
       this.editor = CKEDITOR.instances['descriptionContent'];
+      const self = this;
       $(this.$refs.editor).ckeditor({
         customConfig: '/commons-extension/ckeditorCustom/config.js',
         extraPlugins,
@@ -163,6 +171,16 @@ export default {
         autoGrow_onStartup: true,
         pasteFilter: 'p; a[!href]; strong; i', 
         on: {
+          instanceReady: function () {
+            self.editor = CKEDITOR.instances['descriptionContent'];
+            self.setEditorReady();
+            if (self.autofocus) {
+              setTimeout( function() {
+                self.editor.getSelection().scrollIntoView();
+              }, 0 );
+              window.setTimeout(() => self.setFocus(), 50);
+            }
+          },
           change: evt => this.inputVal = evt.editor?.getData() || '',
           destroy: () => this.inputVal = '',
         }

@@ -113,7 +113,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="btn btnAdd mx-1"
             :disabled="!enableAnnounce"
             :title="showMessage"
-            @click="$root.$emit('open-announcement-drawer', challenge)">
+            @click="$root.$emit('rule-detail-drawer', challenge, true)">
             {{ $t('challenges.button.announce') }}
           </v-btn>
         </div>
