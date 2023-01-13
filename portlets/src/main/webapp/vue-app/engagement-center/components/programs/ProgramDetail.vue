@@ -119,7 +119,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <engagement-center-rule-form-drawer
         :events="events"
         :program="program" />
-      <engagement-center-rule-detail-drawer :program="program" :action-value-extensions="actionValueExtensions" />
       <exo-confirm-dialog
         v-if="confirmDelete"
         ref="deleteRuleConfirmDialog"

@@ -85,7 +85,7 @@
         </gamification-overview-widget-row>
       </template>
     </gamification-overview-widget>
-    <challenges-details-drawer
+    <rule-details-drawer
       ref="challengeDetailsDrawer"
       :is-overview-displayed="true" />
     <challenge-winners-details />
@@ -121,7 +121,7 @@ export default {
       if (event) {
         this.$challengesServices.getChallengeById(event.detail)
           .then(challenge => {
-            this.$refs.challengeDetailsDrawer.open(challenge);
+            document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: challenge }));
           });
       }});
     this.getChallenges();

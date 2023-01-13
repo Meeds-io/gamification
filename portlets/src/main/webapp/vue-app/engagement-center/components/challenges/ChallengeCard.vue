@@ -66,7 +66,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-menu>
               </div>
             </div>
-            <div class="contentChallenge" @click="$root.$emit('open-challenge-details', challenge)">
+            <div class="contentChallenge" @click="$root.$emit('rule-detail-drawer', challenge)">
               <v-list-item-subtitle class="px-5 py-2 ma-5 subtitleChallenge">
                 <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
