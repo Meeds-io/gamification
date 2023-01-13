@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 import java.io.Serializable;
 import java.util.List;
 
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 
 import lombok.AllArgsConstructor;
@@ -65,6 +66,9 @@ public class RuleDTO implements Serializable {
   private EntityType        type;
 
   private List<Long>        managers;
+
+
+  private List<AnnouncementRestEntity> announcements;
 
   public List<Long> getManagers() {
     return managers;
@@ -210,5 +214,13 @@ public class RuleDTO implements Serializable {
 
   public void setEndDate(String endDate) {
     this.endDate = endDate;
+  }
+
+  public List<AnnouncementRestEntity> getAnnouncements() {
+    return announcements;
+  }
+
+  public void setAnnouncements(List<AnnouncementRestEntity> announcements) {
+    this.announcements = announcements;
   }
 }

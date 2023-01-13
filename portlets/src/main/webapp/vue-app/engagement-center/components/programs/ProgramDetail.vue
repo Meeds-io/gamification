@@ -252,7 +252,7 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage)
+      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, true)
         .then((data) => {
 
           this.programRules = data.rules;

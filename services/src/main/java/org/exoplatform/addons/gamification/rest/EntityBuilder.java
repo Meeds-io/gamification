@@ -25,10 +25,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
 import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
+import org.exoplatform.addons.gamification.rest.model.RuleList;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -70,6 +72,12 @@ public class EntityBuilder {
     return fromChallenge(challenge, challengeAnnouncements, false);
   }
 
+  public static RuleDTO fromRule(RuleDTO rule, List<Announcement> challengeAnnouncements) {
+    RuleDTO newRule = rule;
+    newRule.setAnnouncements(fromAnnouncementList(challengeAnnouncements));
+    return newRule;
+  }
+
   public static ChallengeRestEntity fromChallenge(Challenge challenge,
                                                   List<Announcement> challengeAnnouncements,
                                                   boolean noDomain) {
@@ -80,7 +88,7 @@ public class EntityBuilder {
                                    space,
                                    challenge.getStartDate(),
                                    challenge.getEndDate(),
-                                   Utils.toUserInfo(challenge, 
+                                   Utils.toUserInfo(challenge,
                                                     Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
                                                                                  Utils.getCurrentUser())),
                                    Utils.getOwners(challenge),

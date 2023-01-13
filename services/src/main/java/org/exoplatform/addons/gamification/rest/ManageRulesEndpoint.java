@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
+import com.google.javascript.jscomp.DiagnosticType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -24,14 +25,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.rest.model.RuleList;
+import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.log.LogConfigurationInitializer;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -44,6 +51,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/gamification/rules")
@@ -51,18 +59,25 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
 
+  private static final Log LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
+
   private final CacheControl cacheControl;
 
   protected RuleService      ruleService;
 
   protected IdentityManager  identityManager;
 
-  public ManageRulesEndpoint(RuleService ruleService, IdentityManager identityManager) {
+  private AnnouncementService announcementService;
+
+  public ManageRulesEndpoint(RuleService ruleService,
+                             IdentityManager identityManager,
+                             AnnouncementService announcementService) {
     this.cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
     this.ruleService = ruleService;
     this.identityManager = identityManager;
+    this.announcementService = announcementService;
   }
 
   @GET
@@ -80,7 +95,8 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
                            @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
                            @Parameter(description = "term to search rules with") @QueryParam("term") String term,
-                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
+                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize,
+                           @Parameter(description = "If true, this will return the total announcements of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("getAnnouncements") @DefaultValue("false") boolean getAnnouncements) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -106,6 +122,26 @@ public class ManageRulesEndpoint implements ResourceContainer {
     ruleList.setRules(rules);
     ruleList.setOffset(offset);
     ruleList.setLimit(limit);
+    if (getAnnouncements) {
+      List<RuleDTO> ruleAnnouncementsList = new ArrayList<>();
+      try {
+        for (RuleDTO rule : ruleList.getRules()) {
+          if (rule == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+          }
+          List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(rule.getId(),
+                                                                                                   offset,
+                                                                                                   limit,
+                                                                                                   PeriodType.ALL);
+          ruleAnnouncementsList.add(EntityBuilder.fromRule(rule, announcementList));
+        }
+        ruleList.setRules(ruleAnnouncementsList);
+        return Response.ok(ruleList).build();
+      } catch (IllegalAccessException e) {
+        LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", e);
+        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
+      }
+    }
     return Response.ok(ruleList).build();
   }
 
