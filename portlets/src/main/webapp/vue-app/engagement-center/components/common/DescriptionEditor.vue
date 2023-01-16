@@ -36,7 +36,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       rows="10"
       class="d-none"></textarea>
     <div
-      :class="!validLength && 'tooManyChars' || ''"
+      :class="tooManyChars && 'tooManyChars' || ''"
       class="activityCharsCount">
       {{ charsCount }}{{ maxLength > -1 ? ' / ' + maxLength : '' }}
       <i class="uiIconMessageLength"></i>
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       inputVal: '',
-      minLength: 0,
+      minLength: 1,
       disabled: false,
       displayPlaceholder: true,
       editor: null,
@@ -91,6 +91,9 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.name === 'sm' || this.$vuetify.breakpoint.name === 'xs';
     },
+    tooManyChars() {
+      return this.charsCount > this.maxLength;
+    }
   },
   watch: {
     inputVal: {
