@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ This file is part of the Meeds project (https://meeds.io/).
+ 
+ Copyright (C) 2023 Meeds Association contact@meeds.io
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+               xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+  <external-component-plugins>
+    <target-component>org.exoplatform.application.registry.ApplicationRegistryService</target-component>
+    <component-plugin>
+      <name>gamification.portlets.registry</name>
+      <set-method>initListener</set-method>
+      <type>org.exoplatform.application.registry.ApplicationCategoriesPlugins</type>
+      <description>this listener init the portlets are registered in PortletRegister</description>
+      <init-params>
+        <value-param>
+          <name>merge</name>
+          <value>true</value>
+        </value-param>
+        <object-param>
+          <name>contributions</name>
+          <description>description</description>
+          <object type="org.exoplatform.application.registry.ApplicationCategory">
+            <field name="name">
+              <string>Contributions</string>
+            </field>
+            <field name="displayName">
+              <string>Contributions</string>
+            </field>
+            <field name="description">
+              <string>Applications for Contributions</string>
+            </field>
+            <field name="accessPermissions">
+              <collection type="java.util.ArrayList" item-type="java.lang.String">
+                <value>
+                  <string>*:/platform/users</string>
+                </value>
+              </collection>
+            </field>
+            <field name="applications">
+              <collection type="java.util.ArrayList">
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>ProfileStats</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>ProfileStats</string>
+                    </field>
+                    <field name="description">
+                      <string>ProfileStats Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/ProfileStats</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>myContributions</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>My Contributions</string>
+                    </field>
+                    <field name="description">
+                      <string>My Contributions Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/myContributions</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>myReputation</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>My Reputation</string>
+                    </field>
+                    <field name="description">
+                      <string>My Reputation Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/myReputation</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>myRewards</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>My Rewards</string>
+                    </field>
+                    <field name="description">
+                      <string>My Rewards Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/myRewards</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>topChallengers</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>Top Challengers</string>
+                    </field>
+                    <field name="description">
+                      <string>Top Challengers Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/topChallengers</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>challengesOverview</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>Challenges Overview</string>
+                    </field>
+                    <field name="description">
+                      <string>Challenges Overview Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/challengesOverview</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>programsOverview</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>Programs Overview</string>
+                    </field>
+                    <field name="description">
+                      <string>Programs Overview Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/programsOverview</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>PopularSpaces</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>Popular Spaces</string>
+                    </field>
+                    <field name="description">
+                      <string>Popular Spaces Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/PopularSpaces</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>UsersLeaderboard</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>UsersLeaderboard</string>
+                    </field>
+                    <field name="description">
+                      <string>UsersLeaderboard Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>gamification-portlets/UsersLeaderboard</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.application.registry.Application">
+                    <field name="applicationName">
+                      <string>OverviewBanner</string>
+                    </field>
+                    <field name="categoryName">
+                      <string>Contributions</string>
+                    </field>
+                    <field name="displayName">
+                      <string>OverviewBanner</string>
+                    </field>
+                    <field name="description">
+                      <string>OverviewBanner Portlet</string>
+                    </field>
+                    <field name="type">
+                      <string>portlet</string>
+                    </field>
+                    <field name="contentId">
+                      <string>social-portlet/OverviewBanner</string>
+                    </field>
+                    <field name="accessPermissions">
+                      <collection type="java.util.ArrayList" item-type="java.lang.String">
+                        <value>
+                          <string>*:/platform/users</string>
+                        </value>
+                      </collection>
+                    </field>
+                  </object>
+                  </value>
+                </collection>
+              </field>
+            </object>
+        </object-param>
+        </init-params>
+    </component-plugin>
+  </external-component-plugins>
+</configuration>
