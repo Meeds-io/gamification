@@ -174,6 +174,7 @@ export default {
       loadingRules: false,
       deleteConfirmMessage: '',
       filter: 'ENABLED',
+      earnerType: 'USER',
     };
   },
   computed: {
@@ -252,7 +253,8 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, true)
+      console.log('earner type: ', this.earnerType);
+      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, true, this.earnerType)
         .then((data) => {
 
           this.programRules = data.rules;

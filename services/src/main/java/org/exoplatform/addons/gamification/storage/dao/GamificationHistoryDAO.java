@@ -412,20 +412,36 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId,
                                                                          int offset,
                                                                          int limit,
-                                                                         PeriodType periodType) {
+                                                                         PeriodType periodType,
+                                                                         String earnerType) {
+    int earnerTypeParam = 0;
     TypedQuery<GamificationActionsHistory> query = null;
+    if (StringUtils.isNotBlank(earnerType) && !earnerType.equals("ALL")) {
+      earnerTypeParam = earnerType.equals("USER") ? 0 : 1;
+    }
     if (periodType != null && periodType.equals(PeriodType.WEEK)) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
-                                                  GamificationActionsHistory.class);
+      if (!earnerType.equals("ALL")) {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDateByEarnerType",
+                                                    GamificationActionsHistory.class);
+        query.setParameter("earnerType", earnerTypeParam);
+      } else {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
+                                                    GamificationActionsHistory.class);
+      }
       LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
       LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
       Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
       Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
-      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
-           .setParameter(TO_DATE_PARAM_NAME, utilToDate);
+      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate).setParameter(TO_DATE_PARAM_NAME, utilToDate);
     } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
-                                                  GamificationActionsHistory.class);
+      if (!earnerType.equals("ALL")) {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
+                                                    GamificationActionsHistory.class);
+        query.setParameter("earnerType", earnerTypeParam);
+      } else {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
+                                                    GamificationActionsHistory.class);
+      }
     }
     query.setParameter("challengeId", challengeId);
     if (offset >= 0) {

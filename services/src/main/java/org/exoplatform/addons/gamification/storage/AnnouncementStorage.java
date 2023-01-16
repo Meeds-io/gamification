@@ -50,11 +50,12 @@ public class AnnouncementStorage {
     return EntityMapper.fromEntity(announcementEntity);
   }
 
-  public List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit, PeriodType periodType) {
+  public List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit, PeriodType periodType, String earnerType) {
     List<GamificationActionsHistory> announcementEntities = announcementDAO.findAllAnnouncementByChallenge(challengeId,
                                                                                                            offset,
                                                                                                            limit,
-                                                                                                           periodType);
+                                                                                                           periodType,
+                                                                                                           earnerType);
     return EntityMapper.fromAnnouncementEntities(announcementEntities);
   }
 

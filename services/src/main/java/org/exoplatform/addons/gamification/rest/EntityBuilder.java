@@ -61,7 +61,7 @@ public class EntityBuilder {
     List<Announcement> challengeAnnouncements = null;
     if (announcementsPerChallenge != 0 ) {
       challengeAnnouncements =
-                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType);
+                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType, "ALL");
     } else {
       challengeAnnouncements = Collections.emptyList();
     }

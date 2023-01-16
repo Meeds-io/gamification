@@ -325,12 +325,12 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     announcementList.add(announcement1);
     announcementList.add(announcement2);
     announcementList.add(announcement3);
-    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL)).thenReturn(announcementList);
+    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "ALL")).thenReturn(announcementList);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, "ALL"));
 
     List<Announcement> newAnnouncementList = null;
-    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL);
+    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "ALL");
     assertNotNull(newAnnouncementList);
     assertEquals(announcementList, newAnnouncementList);
   }

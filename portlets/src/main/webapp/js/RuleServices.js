@@ -1,4 +1,4 @@
-export function getRules(term, domainId, status, type, offset, limit, getAnnouncements) {
+export function getRules(term, domainId, status, type, offset, limit, getAnnouncements, earnerType) {
   const formData = new FormData();
   if (term) {
     formData.append('term', term);
@@ -20,6 +20,9 @@ export function getRules(term, domainId, status, type, offset, limit, getAnnounc
   }
   if (getAnnouncements !== null) {
     formData.append('getAnnouncements', getAnnouncements);
+  }
+  if (earnerType) {
+    formData.append('type', earnerType);
   }
   const params = new URLSearchParams(formData).toString();
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?returnSize=true&${params}`, {

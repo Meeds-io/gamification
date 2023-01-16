@@ -15,11 +15,12 @@ public interface AnnouncementService {
    * @param challengeId technical identifier of a challenge
    * @param offset      Offset
    * @param limit       Limit
-   * @param periodType
+   * @param periodType  periodType
+   * @param earnerType  earnerType
    * @return A {@link List &lt;Announcement&gt;} object
    * @throws IllegalAccessException when user is not authorized to access announcement
    */
-  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, PeriodType periodType) throws IllegalAccessException;
+  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, PeriodType periodType, String earnerType) throws IllegalAccessException;
 
   /**
    * Creates a new announcement

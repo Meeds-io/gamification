@@ -89,11 +89,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   public List<Announcement> findAllAnnouncementByChallenge(long challengeId,
                                                            int offset,
                                                            int limit,
-                                                           PeriodType periodType) {
+                                                           PeriodType periodType,
+                                                           String earnerType) {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, periodType);
+    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, periodType, earnerType);
   }
 
   @Override

@@ -96,7 +96,8 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
                            @Parameter(description = "term to search rules with") @QueryParam("term") String term,
                            @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize,
-                           @Parameter(description = "If true, this will return the total announcements of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("getAnnouncements") @DefaultValue("false") boolean getAnnouncements) {
+                           @Parameter(description = "If true, this will return the total announcements of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("getAnnouncements") @DefaultValue("false") boolean getAnnouncements,
+                           @Parameter(description = "Earners type filtering, possible values: USER, SPACE, ALL. Default value = ALL.", required = false) @QueryParam("earnerType") @DefaultValue("ALL") String earnerType) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -132,7 +133,8 @@ public class ManageRulesEndpoint implements ResourceContainer {
           List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(rule.getId(),
                                                                                                    offset,
                                                                                                    limit,
-                                                                                                   PeriodType.ALL);
+                                                                                                   PeriodType.ALL,
+                                                                                                   earnerType);
           ruleAnnouncementsList.add(EntityBuilder.fromRule(rule, announcementList));
         }
         ruleList.setRules(ruleAnnouncementsList);

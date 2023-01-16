@@ -142,7 +142,8 @@ public class AnnouncementRest implements ResourceContainer {
       List<Announcement> announcements = announcementService.findAllAnnouncementByChallenge(Long.parseLong(challengeId),
                                                                                             offset,
                                                                                             limit,
-                                                                                            PeriodType.ALL);
+                                                                                            PeriodType.ALL,
+                                                                                            "ALL");
       List<AnnouncementRestEntity> announcementsRestEntities = announcements.stream()
                                                                             .map(EntityMapper::fromAnnouncement)
                                                                             .collect(Collectors.toList());
