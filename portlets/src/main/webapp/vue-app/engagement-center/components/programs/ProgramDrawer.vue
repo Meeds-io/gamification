@@ -322,7 +322,7 @@ export default {
         this.$programsServices.updateProgram(programToSave)
           .then((program) => {
             this.close();
-            this.$root.$emit('program-added', program);
+            this.$root.$emit('program-updated', program);
             this.$engagementCenterUtils.displayAlert(this.$t('programs.programUpdateSuccess'));
           })
           .catch(() => {

@@ -30,6 +30,7 @@ import NoResultFound from './components/common/NoResultFound.vue';
 
 import Programs from './components/programs/Programs.vue';
 import ProgramCard from './components/programs/ProgramCard.vue';
+import ProgramMenu from './components/programs/ProgramMenu.vue';
 import ProgramDrawer from './components/programs/ProgramDrawer.vue';
 import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
@@ -68,6 +69,7 @@ const components = {
   'engagement-center': EngagementCenter,
   'engagement-center-programs': Programs,
   'engagement-center-program-card': ProgramCard,
+  'engagement-center-program-menu': ProgramMenu,
   'engagement-center-program-drawer': ProgramDrawer,
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,

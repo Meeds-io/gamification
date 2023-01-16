@@ -66,7 +66,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <engagement-center-program-card
             :program="program"
             :is-administrator="isAdministrator"
-            @delete-program="confirmDelete"
             class="mx-2" />
         </v-col>
       </v-row>
@@ -104,9 +103,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-else-if="displayNoSearchResult && isStatusDisabled" 
       :info="$t('program.filter.noResults')"
       class="mt-11" />
-    <engagement-center-program-drawer
-      ref="programDrawer"
-      :is-administrator="isAdministrator" />
     <engagement-center-program-owners-drawer ref="ownersDetails" />
   </div>
 </template>
@@ -183,6 +179,8 @@ export default {
     promises.push(this.retrievePrograms());
     this.$root.$on('program-load-more', this.loadMore);
     this.$root.$on('program-added', this.refreshPrograms);
+    this.$root.$on('program-updated', this.refreshPrograms);
+    this.$root.$on('delete-program', this.confirmDelete);
     Promise.all(promises)
       .finally(() => this.$root.$applicationLoaded());
   },

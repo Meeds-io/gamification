@@ -37,7 +37,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         min-height="70"
         min-width="70"
         max-height="140"
-        class="primary--text border-color" />
+        class="primary--text border-color">
+        <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
+      </v-img>
     </div>
     <div class="pt-5">
       <v-list-item two-line class="px-0">
@@ -132,7 +134,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 
 <script>
-
 export default {
   props: {
     program: {
@@ -219,11 +220,18 @@ export default {
   created() {
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
+    this.$root.$on('program-deleted', this.backToProgramList);
+    this.$root.$on('program-updated', this.programUpdated);
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
   },
   methods: {
+    programUpdated(program) {
+      if (program.id === this.program.id) {
+        this.program = program;
+      }
+    },
     applyFilter(filter) {
       this.filter = filter;
       this.retrieveProgramRules();
