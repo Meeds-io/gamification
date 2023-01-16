@@ -79,7 +79,7 @@
         </div>
       </v-card-text>
     </template>
-    <template slot="footer">
+    <template v-if="!automaticRule && isActiveRule" slot="footer">
       <div class="d-flex mr-2">
         <v-spacer />
         <button
