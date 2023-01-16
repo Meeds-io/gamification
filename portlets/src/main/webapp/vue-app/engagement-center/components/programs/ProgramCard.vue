@@ -32,49 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         min-width="70"
         max-height="120"
         class="primary--text">
-        <v-menu
-          v-if="showActionsMenu"
-          v-model="showMenu"
-          :left="!$vuetify.rtl"
-          :right="$vuetify.rtl"
-          bottom
-          offset-y
-          attach>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              width="26"
-              height="26"
-              class="pull-right primary ma-2"
-              v-bind="attrs"
-              v-on="on"
-              @blur="closeMenu">
-              <v-icon size="15" color="white">fas fa-ellipsis-v</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense class="pa-0">
-            <v-list-item
-              dense
-              @mousedown="$event.preventDefault()"
-              @click="editProgram">
-              <v-layout class="me-3">
-                <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
-              </v-layout>
-              <v-list-item-title class="d-flex">{{ $t('programs.button.editProgram') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              dense
-              @mousedown="$event.preventDefault()"
-              @click="deleteProgram">
-              <v-layout class="me-3">
-                <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
-              </v-layout>
-              <v-list-item-title class="d-flex">
-                {{ $t('programs.button.deleteProgram') }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
       </v-img>
       <v-list class="pb-0 pt-1" dense>
         <v-list-item class="px-3">
@@ -141,9 +99,6 @@ export default {
     programBudget() {
       return this.program?.rulesTotalScore || 0;
     },
-    showActionsMenu() {
-      return this.isAdministrator || this.program?.userInfo?.canEdit;
-    },
     addedOwnersList() {
       return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
         userName: owner.remoteId
@@ -165,36 +120,10 @@ export default {
       return this.owners?.length;
     }
   },
-  created() {
-    $(document).mousedown(() => {
-      if (this.showMenu) {
-        window.setTimeout(() => {
-          this.showMenu = false;
-        }, 200);
-      }
-    });
-  },
   methods: {
-    editProgram(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      this.$root.$emit('edit-program-details', this.program);
-    },
-    deleteProgram(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      this.$emit('delete-program', this.program);
-    },
     openProgramDetail() {
       this.$root.$emit('open-program-detail', this.program);
       window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
-    },
-    closeMenu() {
-      this.showMenu = false;
     },
   }
 };
