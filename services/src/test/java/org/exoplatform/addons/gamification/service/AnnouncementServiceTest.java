@@ -336,6 +336,60 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   }
 
   @Test
+  public void testGetAnnouncementByChallengeByEarnerType() throws ObjectNotFoundException, IllegalAccessException {
+    identityManager.getOrCreateIdentity("1L", "1L");
+    Space    space    = new Space();
+    space.setId("2L");
+    spaceService.createSpace(space, "1L");
+
+    Challenge challenge = new Challenge(1,
+                                        "new challenge",
+                                        "challenge description",
+                                        1l,
+                                        new Date(System.currentTimeMillis()).toString(),
+                                        new Date(System.currentTimeMillis() + 1).toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification",
+                                        true);
+    Announcement announcement1 = new Announcement(0,
+                                                  challenge.getId(),
+                                                  challenge.getTitle(),
+                                                  2L,
+                                                  "announcement comment",
+                                                  1L,
+                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  null);
+    Announcement announcement2 = new Announcement(1,
+                                                  challenge.getId(),
+                                                  challenge.getTitle(),
+                                                  1L,
+                                                  "announcement comment",
+                                                  1L,
+                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  null);
+    Announcement announcement3 = new Announcement(1,
+                                                  challenge.getId(),
+                                                  challenge.getTitle(),
+                                                  2L,
+                                                  "announcement comment",
+                                                  1L,
+                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  1L);
+    List<Announcement> announcementList = new ArrayList<>();
+    announcementList.add(announcement2);
+    announcementList.add(announcement3);
+    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "USER")).thenReturn(announcementList);
+
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, "USER"));
+
+    List<Announcement> newAnnouncementList = null;
+    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "USER");
+    assertNotNull(newAnnouncementList);
+    assertEquals(announcementList, newAnnouncementList);
+  }
+
+  @Test
   public void testCountAllAnnouncementsByChallenge() throws ObjectNotFoundException {
     Challenge challenge = new Challenge(1,
                                         "new challenge",
