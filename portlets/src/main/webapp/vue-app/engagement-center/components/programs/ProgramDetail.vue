@@ -198,9 +198,8 @@ export default {
     rulesHeaders() {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
-        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%'},
-        {text: '', align: 'center', enabled: this.canManageRule, width: '15%'},
-      ].filter(filter => filter.enabled == null || filter.enabled === true);
+        {text: '', align: 'center', width: '15%'},
+        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%'}];
     },
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;
