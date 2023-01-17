@@ -15,68 +15,81 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <tr>
-    <td class="no-border-bottom">
-      <div @click="openRule" class="clickable align-start text-truncate d-flex">
-        <v-icon size="15px" class="primary--text my-auto me-4">
-          {{ actionIcon }}
-        </v-icon>
-        <engagement-center-rule-title :rule="rule" />
-      </div>
-    </td>
-    <td cols="2" class="no-border-bottom">
-      <div class="align-center">
-        {{ rule.score }}
-      </div>
-    </td>
-    <td
-      v-if="canManageRule"
-      cols="2"
-      class="align-center no-border-bottom">
-      <v-menu
-        v-model="menu"
-        :left="!$vuetify.rtl"
-        :right="$vuetify.rtl"
-        bottom
-        offset-y
-        attach>
-        <template #activator="{ on, attrs }">
-          <v-btn
-            icon
-            small
-            class="me-2"
-            v-bind="attrs"
-            v-on="on"
-            @blur="closeMenu">
-            <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
-          </v-btn>
-        </template>
-        <v-list dense class="pa-0">
-          <v-list-item
-            dense
-            @mousedown="$event.preventDefault()"
-            @click="editRule">
-            <v-layout class="me-3">
-              <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
-            </v-layout>
-            <v-list-item-title class="d-flex">{{ $t('programs.details.rule.button.edit') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            v-if="automaticRule"
-            dense
-            @mousedown="$event.preventDefault()"
-            @click="deleteRule">
-            <v-layout class="me-3">
-              <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
-            </v-layout>
-            <v-list-item-title class="d-flex">
-              {{ $t('programs.details.rule.button.delete') }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </td>
-  </tr>
+  <v-hover v-slot="{ hover }">
+    <tr>
+      <td class="no-border-bottom">
+        <div @click="openRule" class="clickable align-start text-truncate d-flex">
+          <v-icon size="15px" class="primary--text my-auto me-4">
+            {{ actionIcon }}
+          </v-icon>
+          <engagement-center-rule-title :rule="rule" />
+        </div>
+      </td>
+      <td
+        cols="2"
+        class="align-center no-border-bottom">
+        <div v-if="hover" class="d-flex">
+          <div v-if="!automaticRule" class="align-center">
+            <v-btn
+              icon
+              small
+              class="me-2"
+              @click="$root.$emit('rule-detail-drawer', rule, true)">
+              <v-icon size="16">fas fa-bullhorn</v-icon>
+            </v-btn>
+          </div>
+          <v-menu
+            v-if="canManageRule"
+            v-model="menu"
+            :left="!$vuetify.rtl"
+            :right="$vuetify.rtl"
+            bottom
+            offset-y
+            attach>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                icon
+                small
+                class="me-2"
+                v-bind="attrs"
+                v-on="on"
+                @blur="closeMenu">
+                <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
+              </v-btn>
+            </template>
+            <v-list dense class="pa-0">
+              <v-list-item
+                dense
+                @mousedown="$event.preventDefault()"
+                @click="editRule">
+                <v-layout class="me-3">
+                  <v-icon size="13" class="dark-grey-color pb-2px">fas fa-edit</v-icon>
+                </v-layout>
+                <v-list-item-title class="d-flex">{{ $t('programs.details.rule.button.edit') }}</v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                v-if="automaticRule"
+                dense
+                @mousedown="$event.preventDefault()"
+                @click="deleteRule">
+                <v-layout class="me-3">
+                  <v-icon size="13" class="dark-grey-color pb-2px">fas fa-trash-alt</v-icon>
+                </v-layout>
+                <v-list-item-title class="d-flex">
+                  {{ $t('programs.details.rule.button.delete') }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </td>
+      <td cols="2" class="no-border-bottom">
+        <div class="align-center">
+          {{ rule.score }}
+        </div>
+      </td>
+    </tr>
+  </v-hover>
 </template>
 
 <script>
