@@ -22,7 +22,7 @@ export function getRules(term, domainId, status, type, offset, limit, getAnnounc
     formData.append('getAnnouncements', getAnnouncements);
   }
   if (earnerType) {
-    formData.append('type', earnerType);
+    formData.append('earnerType', earnerType);
   }
   const params = new URLSearchParams(formData).toString();
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules?returnSize=true&${params}`, {

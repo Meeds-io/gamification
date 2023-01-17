@@ -414,10 +414,10 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                          int limit,
                                                                          PeriodType periodType,
                                                                          String earnerType) {
-    int earnerTypeParam = 0;
+    IdentityType earnerTypeParam = null;
     TypedQuery<GamificationActionsHistory> query = null;
     if (StringUtils.isNotBlank(earnerType) && !earnerType.equals("ALL")) {
-      earnerTypeParam = earnerType.equals("USER") ? 0 : 1;
+      earnerTypeParam = earnerType.equals("USER") ? IdentityType.USER : IdentityType.SPACE;
     }
     if (periodType != null && periodType.equals(PeriodType.WEEK)) {
       if (!earnerType.equals("ALL")) {
@@ -437,6 +437,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       if (!earnerType.equals("ALL")) {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
                                                     GamificationActionsHistory.class);
+
         query.setParameter("earnerType", earnerTypeParam);
       } else {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
