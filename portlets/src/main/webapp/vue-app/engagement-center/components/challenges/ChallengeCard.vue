@@ -18,12 +18,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div class="engagement-center-card">
     <v-card
       id="engagementCenterChallengeCard"
-      class="mx-auto card cardOfChallenge"
+      class="mx-auto"
+      width="95%"
       height="230"
       max-height="230"
       outlined
       hover>
-      <div class="d-flex flex-column full-height pa-5" @click="$root.$emit('rule-detail-drawer', challenge)">
+      <div class="d-flex flex-column full-height pa-2" @click="$root.$emit('rule-detail-drawer', challenge)">
         <div
           class="d-flex flex-row pb-1">
           <div
@@ -101,20 +102,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div class="font-weight-bold tertiary--text text-subtitle-2 mb-auto">
           {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
         </div>
-        <div class="d-flex">
-          <div class="d-flex flex-row">
+        <div :class="isMobile && 'flex-column'" class="d-flex">
+          <div :class="isMobile && 'py-1'" class="d-flex flex-row">
             <v-icon size="16" class="primary--text ps-1">fas fa-calendar-day</v-icon>
             <span class="my-auto ms-2" v-sanitized-html="DateInfo"></span>
           </div>
-          <div v-if="noParticipationYet && isActiveChallenge" class="pa-2 ml-auto">
-            <p
-              class="text-light-color my-auto pe-3 align-self-end text-no-wrap pt-1">
+          <div
+            v-if="noParticipationYet && isActiveChallenge"
+            :class="!isMobile && 'ms-auto'"
+            class="d-flex flex-row">
+            <span
+              class="text-light-color my-auto pe-3 align-self-end text-no-wrap">
               {{ $t('challenges.label.BeTheFirst') }}
-            </p>
+            </span>
           </div>
           <div
             v-else
-            class="winners winnersAvatarsList d-flex flex-nowrap my-2 pe-3 ms-auto"
+            :class="!isMobile && 'ms-auto'"
+            class="winners winnersAvatarsList d-flex flex-nowrap pe-3"
             @click="
               $event.preventDefault();
               $event.stopPropagation();
@@ -195,6 +200,9 @@ export default {
     isActiveChallenge() {
       return this.startDate < new Date() && new Date() < this.endDate;
     },
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    }
   },
   created() {
     this.$root.$on('announcement-added', this.announcementAdded);
