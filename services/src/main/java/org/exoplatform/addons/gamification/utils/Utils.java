@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -491,12 +492,15 @@ public class Utils {
       userLocale = Locale.ENGLISH;
     }
     try {
-      return resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(), userLocale)
-                                  .getString(messageKey);
+      ResourceBundle resourceBundle = resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(),
+                                                                              userLocale);
+      if (resourceBundle != null && messageKey != null && resourceBundle.containsKey(messageKey)) {
+        return resourceBundle.getString(messageKey);
+      }
     } catch (Exception e) {
-      LOG.warn("Resource bundle key " + messageKey + " not found");
-      return null;
+      LOG.debug("Error retrieving resource bundle key {}", messageKey, e);
     }
+    return null;
   }
 
   public static String escapeIllegalCharacterInMessage(String message) {
