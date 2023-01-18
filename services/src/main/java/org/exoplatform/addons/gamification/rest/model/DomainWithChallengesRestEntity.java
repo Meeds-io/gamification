@@ -54,7 +54,8 @@ public class DomainWithChallengesRestEntity extends DomainDTO {
           domain.getType(),
           domain.getCoverFileId(),
           domain.getCoverUrl(),
-          domain.getOwners());
+          domain.getOwners(),
+          domain.getRulesTotalScore());
   }
 
 }
