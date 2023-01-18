@@ -29,6 +29,8 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.utils.Utils;
 
+import static org.exoplatform.addons.gamification.utils.Utils.getRulesTotalScoreByDomain;
+
 public class DomainMapper {
 
   private DomainMapper() {
@@ -101,6 +103,7 @@ public class DomainMapper {
       domainDTO.setCoverFileId(domainEntity.getCoverFileId());
       domainDTO.setCoverUrl(coverUrl);
       domainDTO.setOwners(domainEntity.getOwners());
+      domainDTO.setRulesTotalScore(getRulesTotalScoreByDomain(domainEntity.getId()));
 
       return domainDTO;
     }
