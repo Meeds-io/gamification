@@ -64,6 +64,8 @@ public class DomainDTO implements Serializable, Cloneable {
 
   private Set<Long>         owners;
 
+  private long              rulesTotalScore;
+
   public DomainDTO(long id, // NOSONAR
                    String title,
                    String description,
@@ -79,7 +81,8 @@ public class DomainDTO implements Serializable, Cloneable {
                    String type,
                    long coverFileId,
                    String coverUrl,
-                   Set<Long> owners) {
+                   Set<Long> owners,
+                   long rulesTotalScore) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -96,6 +99,7 @@ public class DomainDTO implements Serializable, Cloneable {
     this.coverFileId = coverFileId;
     this.coverUrl = coverUrl;
     this.owners = owners;
+    this.rulesTotalScore = rulesTotalScore;
   }
 
   @Override
@@ -115,7 +119,8 @@ public class DomainDTO implements Serializable, Cloneable {
                          type,
                          coverFileId,
                          coverUrl,
-                         owners);
+                         owners,
+                         rulesTotalScore);
   }
 
 }
