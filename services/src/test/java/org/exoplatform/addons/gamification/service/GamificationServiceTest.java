@@ -26,10 +26,30 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GamificationServiceTest extends AbstractServiceTest {
+
+  @Test
+  public void testBuildHistory() {
+    // root11 is not a member of domain audience
+    RuleDTO newRuleDTO = newRuleDTO();
+    GamificationActionsHistory aHistory = gamificationService.build(newRuleDTO, "11", TEST_USER_RECEIVER, TEST_LINK_ACTIVITY);
+    assertNull(aHistory);
+
+    // case of deleted domain
+    DomainDTO domainDTO = newDomainDTO();
+    domainDTO.setDeleted(true);
+    newRuleDTO.setDomainDTO(domainDTO);
+    aHistory = gamificationService.build(newRuleDTO, TEST_USER_SENDER, TEST_USER_RECEIVER, TEST_LINK_ACTIVITY);
+    assertNull(aHistory);
+
+    newRuleDTO = newRuleDTO();
+    aHistory = gamificationService.build(newRuleDTO, TEST_USER_SENDER, TEST_USER_RECEIVER, TEST_LINK_ACTIVITY);
+    assertNotNull(aHistory);
+  }
 
   @Test
   public void testSaveActionHistory() {
