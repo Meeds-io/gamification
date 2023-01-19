@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
@@ -299,6 +300,15 @@ public class GamificationService {
 
     // Build only an entry when a rule enable and exist
     if (ruleDto != null) {
+      DomainDTO domainDTO = ruleDto.getDomainDTO();
+      if (domainDTO != null) {
+        long audienceId = domainDTO.getAudienceId();
+        if (domainDTO.isDeleted() || audienceId == 0
+            || (audienceId > 0 && actorIdentity.isUser() && !Utils.isSpaceMember(audienceId, actorIdentity.getRemoteId()))) {
+          LOG.info("Actor {} cannot earn points since he is not a member of the domain audience", actor);
+          return null;
+        }
+      }
       GamificationActionsHistoryDTO actionsHistoryDTO = new GamificationActionsHistoryDTO();
       actionsHistoryDTO.setActionScore(ruleDto.getScore());
       actionsHistoryDTO.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
