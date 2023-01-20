@@ -30,56 +30,63 @@
         <div v-if="!automaticRule" class="d-flex flex-row py-3">
           <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="DateInfo"></span>
         </div>
-        <div v-if="!automaticRule && isActiveRule" class="d-flex flex-row py-3">
+        <div
+          v-if="!automaticRule && isActiveRule"
+          @click="showEditor"
+          class="d-flex flex-row py-3 clickable">
           <v-icon size="30" class="primary--text">fas fa-bullhorn</v-icon><span class="font-weight-bold my-auto ms-3">{{ $t('rule.detail.AnnounceYourAchievement') }} </span>
         </div>
-        <div v-if="!automaticRule && isActiveRule" class="d-flex flex-row pt-3">
-          <v-list-item class="text-truncate px-0">
-            <exo-space-avatar
-              :space-id="spaceId"
-              extra-class="text-truncate"
-              :size="30"
-              avatar />
-            <exo-user-avatar
-              :profile-id="username"
-              :size="25"
-              extra-class="ms-n4 mt-6"
-              avatar />
-            <v-list-item-content class="py-0 accountTitleLabel text-truncate">
-              <v-list-item-title class="font-weight-bold d-flex body-2 mb-0">
-                <exo-space-avatar
-                  :space-id="spaceId"
-                  extra-class="text-truncate"
-                  fullname
-                  bold-title
-                  link-style
-                  username-class />
-              </v-list-item-title>
-              <v-list-item-subtitle class="d-flex flex-row flex-nowrap">
-                <exo-user-avatar
-                  :profile-id="username"
-                  extra-class="text-truncate ms-2 me-1"
-                  fullname
-                  link-style
-                  small-font-size
-                  username-class />
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-
-        <div v-if="!automaticRule && isActiveRule" class="py-3">
-          <engagement-center-description-editor
-            v-model="comment"
-            id="ruleAnnouncement"
-            ref="announcementRichEditor"
-            :placeholder="$t('rule.detail.announceEditor.placeholder')"
-            :autofocus="editorFocus"
-            @validity-updated=" validInput = $event" />
+        <div v-show="editor">
+          <div v-if="!automaticRule && isActiveRule" class="d-flex flex-row pt-3">
+            <v-list-item class="text-truncate px-0">
+              <exo-space-avatar
+                :space-id="spaceId"
+                extra-class="text-truncate"
+                :size="30"
+                avatar />
+              <exo-user-avatar
+                :profile-id="username"
+                :size="25"
+                extra-class="ms-n4 mt-6"
+                avatar />
+              <v-list-item-content class="py-0 accountTitleLabel text-truncate">
+                <v-list-item-title class="font-weight-bold d-flex body-2 mb-0">
+                  <exo-space-avatar
+                    :space-id="spaceId"
+                    extra-class="text-truncate"
+                    fullname
+                    bold-title
+                    link-style
+                    username-class />
+                </v-list-item-title>
+                <v-list-item-subtitle class="d-flex flex-row flex-nowrap">
+                  <exo-user-avatar
+                    :profile-id="username"
+                    extra-class="text-truncate ms-2 me-1"
+                    fullname
+                    link-style
+                    small-font-size
+                    username-class />
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+          <div v-if="!automaticRule && isActiveRule" class="py-3">
+            <exo-activity-rich-editor
+              v-model="comment"
+              ref="announcementRichEditor"
+              :max-length="MAX_LENGTH"
+              :template-params="templateParams"
+              :placeholder="$t('rule.detail.announceEditor.placeholder')"
+              :tag-enabled="false"
+              ck-editor-type="announcementContent"
+              class="flex"
+              @validity-updated=" validInput = $event" />
+          </div>
         </div>
       </v-card-text>
     </template>
-    <template v-if="!automaticRule && isActiveRule" slot="footer">
+    <template v-if="!automaticRule && isActiveRule && editor" slot="footer">
       <div class="d-flex mr-2">
         <v-spacer />
         <button
@@ -128,8 +135,11 @@ export default {
     userId: eXo.env.portal.userIdentityId,
     validInput: true,
     comment: null,
+    templateParams: {},
     programCoverSize: 35,
-    editorFocus: false
+    MAX_LENGTH: 1300,
+    editorFocus: false,
+    editor: false,
   }),
   computed: {
     ruleTitle() {
@@ -216,14 +226,8 @@ export default {
             if (!this.automaticRule && this.isActiveRule) {
               this.$refs.announcementRichEditor.initCKEditor();
               if (this.editorFocus) {
-                window.setTimeout(() => {
-                  const drawerContentElement = document.querySelector('#ruleDetailDrawer .drawerContent');
-                  drawerContentElement.scrollTo({
-                    top: drawerContentElement.scrollHeight,
-                    behavior: 'smooth',
-                    block: 'start',
-                  });
-                }, 100);
+                this.editor = true;
+                this.setFocus();
               }
             }
           });
@@ -244,6 +248,8 @@ export default {
       this.$refs.ruleDetailDrawer.close();
       this.rule = {};
       this.comment = null;
+      this.editor = false;
+      this.editorFocus = false;
     },
     open() {
       if (this.$refs.ruleDetailDrawer){
@@ -256,6 +262,7 @@ export default {
         comment: this.comment,
         challengeId: this.rule.id,
         challengeTitle: this.rule.title,
+        templateParams: this.templateParams,
       };
 
       this.$refs.ruleDetailDrawer.startLoading();
@@ -281,6 +288,22 @@ export default {
         })
         .finally(() => this.$refs.ruleDetailDrawer.endLoading());
     },
+    showEditor() {
+      this.editor = true;
+      this.editorFocus = true;
+      this.setFocus();
+    },
+    setFocus() {
+      window.setTimeout(() => {
+        const drawerContentElement = document.querySelector('#ruleDetailDrawer .drawerContent');
+        drawerContentElement.scrollTo({
+          top: drawerContentElement.scrollHeight,
+          behavior: 'smooth',
+          block: 'start',
+        });
+        this.$refs.announcementRichEditor.setFocus();
+      }, 100);
+    }
   }
 };
 </script>
