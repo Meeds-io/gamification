@@ -18,6 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-list-item class="pa-0 spaceItem">
     <exo-space-avatar
       :space="space"
+      class="text-truncate"
       subtitle-new-line
       popover> 
       <template slot="subTitle">
@@ -26,7 +27,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </span>
       </template>
     </exo-space-avatar>
-    <v-list-item-action class="ma-0 pe-4 flex-row align-self-center ml-auto" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
+    <v-list-item-action class="ma-0 pe-4 flex-row align-self-center ml-auto flex-shrink-0" :class="displaySecondButton ? 'secondButtonDisplayed' : ''">
       <div v-if="space.isInvited || skeleton" class="invitationButtons">
         <div class="acceptToJoinSpaceButtonParent">
           <v-btn
