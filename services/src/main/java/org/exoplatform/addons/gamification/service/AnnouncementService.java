@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.service;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -20,7 +21,7 @@ public interface AnnouncementService {
    * @return A {@link List &lt;Announcement&gt;} object
    * @throws IllegalAccessException when user is not authorized to access announcement
    */
-  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, PeriodType periodType, String earnerType) throws IllegalAccessException;
+  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, PeriodType periodType, IdentityType earnerType) throws IllegalAccessException;
 
   /**
    * Creates a new announcement

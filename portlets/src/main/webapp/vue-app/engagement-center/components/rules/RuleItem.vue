@@ -18,8 +18,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-hover v-slot="{ hover }">
     <tr>
       <td class="no-border-bottom">
-        <div @click="openRule" class="clickable align-start d-flex">
-          <v-icon size="22" class="primary--text my-auto me-4">
+        <div @click="openRule" class="clickable align-start text-truncate d-flex">
+          <v-icon size="15px" class="primary--text my-auto me-4">
             {{ actionIcon }}
           </v-icon>
           <div class="text-truncate">
@@ -31,8 +31,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <td
         cols="2"
         class="align-center no-border-bottom">
-        <div v-if="hover || isMobile" class="d-flex">
-          <div v-if="!automaticRule" class="align-center d-none d-sm-block">
+        <div v-if="hover" class="d-flex">
+          <div v-if="!automaticRule" class="align-center">
             <v-btn
               icon
               class="me-2"
@@ -51,6 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <template #activator="{ on, attrs }">
               <v-btn
                 icon
+                small
                 class="me-2"
                 v-bind="attrs"
                 v-on="on"
@@ -87,6 +88,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <td class="no-border-bottom d-none d-sm-inline">
         <div class="align-center">
           {{ rule.score }}
+        </div>
+      </td>
+      <td class="no-border-bottom">
+        <div
+          :class="showAllAvatarList && 'AllUsersAvatar'"
+          class="winners winnersAvatarsList d-flex flex-nowrap my-2 justify-center">
+          <engagement-center-avatars-list
+            v-if="haveParticipants"
+            :avatars="ruleWinnerAvatars"
+            :max-avatars-to-show="4"
+            :avatars-count="ruleWinnersCount"
+            :size="27"
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule.id)" />
+          <div v-else>
+            <span>
+              -
+            </span>
+          </div>
         </div>
       </td>
     </tr>
@@ -133,6 +152,13 @@ export default {
     },
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
+    },
+    ruleWinnerAvatars() {
+      console.log('rule', this.rule);
+      return this.rule?.announcements?.filter(announce => announce.assignee)
+        .map(announce => ({
+          userName: announce.assignee
+        })) || [];
     },
     iconSize() {
       return this.isMobile ? 13 : 16;

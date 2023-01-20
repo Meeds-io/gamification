@@ -24,7 +24,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.RuleList;
+import org.exoplatform.addons.gamification.rest.model.RuleRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -53,6 +55,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToRestEntities;
 
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
@@ -96,14 +100,15 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
                            @Parameter(description = "term to search rules with") @QueryParam("term") String term,
                            @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize,
-                           @Parameter(description = "If true, this will return the total announcements of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("getAnnouncements") @DefaultValue("false") boolean getAnnouncements,
-                           @Parameter(description = "Earners type filtering, possible values: USER, SPACE, ALL. Default value = ALL.", required = false) @QueryParam("earnerType") @DefaultValue("ALL") String earnerType) {
+                           @Parameter(description = "Earners type filtering, possible values: USER, SPACE.", required = false) @QueryParam("earnerType") String earnerType,
+                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: Announcements") @QueryParam("expand") String expand) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
     if (limit < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
+    String currentUser = Utils.getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setIncludeDeleted(includeDeleted);
     EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
@@ -115,35 +120,22 @@ public class ManageRulesEndpoint implements ResourceContainer {
       ruleFilter.setDomainId(domainId);
     }
     RuleList ruleList = new RuleList();
-    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
+    List<RuleRestEntity> ruleRestEntities = null;
+    IdentityType userType = null;
+    if (StringUtils.equals(earnerType, "USER")) {
+      userType  = IdentityType.USER;
+    } else if (StringUtils.equals(earnerType, "SPACE")) {
+      userType = IdentityType.SPACE;
+    }
+    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit, userType, expand);
     if (returnSize) {
       int rulesSize = ruleService.countAllRules(ruleFilter);
       ruleList.setSize(rulesSize);
     }
-    ruleList.setRules(rules);
+    ruleRestEntities = ruleListToRestEntities(rules, currentUser);
+    ruleList.setRules(ruleRestEntities);
     ruleList.setOffset(offset);
     ruleList.setLimit(limit);
-    if (getAnnouncements) {
-      List<RuleDTO> ruleAnnouncementsList = new ArrayList<>();
-      try {
-        for (RuleDTO rule : ruleList.getRules()) {
-          if (rule == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-          }
-          List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(rule.getId(),
-                                                                                                   offset,
-                                                                                                   limit,
-                                                                                                   PeriodType.ALL,
-                                                                                                   earnerType);
-          ruleAnnouncementsList.add(EntityBuilder.fromRule(rule, announcementList));
-        }
-        ruleList.setRules(ruleAnnouncementsList);
-        return Response.ok(ruleList).build();
-      } catch (IllegalAccessException e) {
-        LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", e);
-        return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
-      }
-    }
     return Response.ok(ruleList).build();
   }
 

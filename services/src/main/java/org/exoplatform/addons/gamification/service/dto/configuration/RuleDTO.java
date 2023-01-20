@@ -68,7 +68,7 @@ public class RuleDTO implements Serializable {
   private List<Long>        managers;
 
 
-  private List<AnnouncementRestEntity> announcements;
+  private List<Announcement> announcements;
 
   public List<Long> getManagers() {
     return managers;
@@ -216,11 +216,11 @@ public class RuleDTO implements Serializable {
     this.endDate = endDate;
   }
 
-  public List<AnnouncementRestEntity> getAnnouncements() {
+  public List<Announcement> getAnnouncements() {
     return announcements;
   }
 
-  public void setAnnouncements(List<AnnouncementRestEntity> announcements) {
+  public void setAnnouncements(List<Announcement> announcements) {
     this.announcements = announcements;
   }
 }

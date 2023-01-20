@@ -24,14 +24,13 @@ import java.util.Set;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
+import org.exoplatform.addons.gamification.service.dto.configuration.*;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -402,6 +401,20 @@ public class Utils {
     } catch (Exception e) {
       // NOSONAR
       return 0L;
+    }
+  }
+
+  public static List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit, IdentityType earnerType) {
+    AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
+    try {
+      return announcementService.findAllAnnouncementByChallenge(challengeId,
+                                                                offset,
+                                                                limit,
+                                                                PeriodType.ALL,
+                                                                earnerType);
+    } catch (Exception e) {
+      // NOSONAR
+      return null;
     }
   }
 

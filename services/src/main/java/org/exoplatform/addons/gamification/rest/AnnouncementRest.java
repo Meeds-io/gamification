@@ -143,7 +143,7 @@ public class AnnouncementRest implements ResourceContainer {
                                                                                             offset,
                                                                                             limit,
                                                                                             PeriodType.ALL,
-                                                                                            "ALL");
+                                                                                            null);
       List<AnnouncementRestEntity> announcementsRestEntities = announcements.stream()
                                                                             .map(EntityMapper::fromAnnouncement)
                                                                             .collect(Collectors.toList());

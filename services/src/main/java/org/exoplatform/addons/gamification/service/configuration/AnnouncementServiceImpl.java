@@ -5,6 +5,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIV
 import java.util.List;
 import java.util.Map;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -90,7 +91,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                                            int offset,
                                                            int limit,
                                                            PeriodType periodType,
-                                                           String earnerType) {
+                                                           IdentityType earnerType) {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }

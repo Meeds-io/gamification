@@ -175,6 +175,7 @@ export default {
       deleteConfirmMessage: '',
       filter: 'ENABLED',
       earnerType: 'USER',
+      expand: 'Announcements',
     };
   },
   computed: {
@@ -203,7 +204,8 @@ export default {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
         {text: '', align: 'center', width: '15%'},
-        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%', enabled: !this.isMobile}].filter(filter => filter.enabled == null || filter.enabled === true);
+        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%'},
+        {text: this.$t('gamification.overview.label.participants'), align: 'center', width: '25%'}];
     },
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;
@@ -253,9 +255,8 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, true, this.earnerType)
+      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.earnerType, this.expand)
         .then((data) => {
-
           this.programRules = data.rules;
           this.totalSize = data.size || 0;
           return this.$nextTick();

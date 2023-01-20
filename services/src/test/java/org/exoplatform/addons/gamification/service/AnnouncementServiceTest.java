@@ -17,6 +17,7 @@
 
 package org.exoplatform.addons.gamification.service;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -325,12 +326,12 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     announcementList.add(announcement1);
     announcementList.add(announcement2);
     announcementList.add(announcement3);
-    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "ALL")).thenReturn(announcementList);
+    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, null)).thenReturn(announcementList);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, "ALL"));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, null));
 
     List<Announcement> newAnnouncementList = null;
-    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "ALL");
+    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, null);
     assertNotNull(newAnnouncementList);
     assertEquals(announcementList, newAnnouncementList);
   }
@@ -379,12 +380,12 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     List<Announcement> announcementList = new ArrayList<>();
     announcementList.add(announcement2);
     announcementList.add(announcement3);
-    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "USER")).thenReturn(announcementList);
+    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, IdentityType.USER)).thenReturn(announcementList);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, "USER"));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, IdentityType.USER));
 
     List<Announcement> newAnnouncementList = null;
-    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, "USER");
+    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, IdentityType.USER);
     assertNotNull(newAnnouncementList);
     assertEquals(announcementList, newAnnouncementList);
   }

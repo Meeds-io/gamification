@@ -22,10 +22,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
-import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
-import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
-import org.exoplatform.addons.gamification.rest.model.RuleList;
+import org.exoplatform.addons.gamification.rest.model.*;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -61,7 +58,7 @@ public class EntityBuilder {
     List<Announcement> challengeAnnouncements = null;
     if (announcementsPerChallenge != 0 ) {
       challengeAnnouncements =
-                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType, "ALL");
+                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType, null);
     } else {
       challengeAnnouncements = Collections.emptyList();
     }
@@ -74,7 +71,7 @@ public class EntityBuilder {
 
   public static RuleDTO fromRule(RuleDTO rule, List<Announcement> challengeAnnouncements) {
     RuleDTO newRule = rule;
-    newRule.setAnnouncements(fromAnnouncementList(challengeAnnouncements));
+    newRule.setAnnouncements(challengeAnnouncements);
     return newRule;
   }
 
@@ -125,4 +122,39 @@ public class EntityBuilder {
     return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
   }
 
+  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username) {
+    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username)).collect(Collectors.toList());
+  }
+
+  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username) {
+    List<AnnouncementRestEntity> announcementsRestEntities = null;
+    if (rule == null) {
+      return null;
+    }
+    if (rule.getAnnouncements() != null) {
+      announcementsRestEntities = rule.getAnnouncements().stream()
+                                                                   .map(EntityMapper::fromAnnouncement)
+                                                                   .collect(Collectors.toList());
+    }
+    return new RuleRestEntity(rule.getId(),
+                              rule.getTitle(),
+                              rule.getDescription(),
+                              rule.getScore(),
+                              rule.getArea(),
+                              rule.getDomainDTO(),
+                              rule.isEnabled(),
+                              rule.isDeleted(),
+                              rule.getCreatedBy(),
+                              rule.getCreatedDate(),
+                              rule.getLastModifiedBy(),
+                              rule.getEvent(),
+                              rule.getLastModifiedDate(),
+                              rule.getAudience(),
+                              rule.getStartDate(),
+                              rule.getEndDate(),
+                              rule.getType(),
+                              rule.getManagers(),
+                              announcementsRestEntities,
+                              Utils.toUserInfo(rule.getId(), username));
+  }
 }

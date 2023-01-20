@@ -413,17 +413,13 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                          int offset,
                                                                          int limit,
                                                                          PeriodType periodType,
-                                                                         String earnerType) {
-    IdentityType earnerTypeParam = null;
+                                                                         IdentityType earnerType) {
     TypedQuery<GamificationActionsHistory> query = null;
-    if (StringUtils.isNotBlank(earnerType) && !earnerType.equals("ALL")) {
-      earnerTypeParam = earnerType.equals("USER") ? IdentityType.USER : IdentityType.SPACE;
-    }
     if (periodType != null && periodType.equals(PeriodType.WEEK)) {
-      if (!earnerType.equals("ALL")) {
+      if (earnerType != null) {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDateByEarnerType",
                                                     GamificationActionsHistory.class);
-        query.setParameter("earnerType", earnerTypeParam);
+        query.setParameter("earnerType", earnerType);
       } else {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
                                                     GamificationActionsHistory.class);
@@ -434,11 +430,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
       query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate).setParameter(TO_DATE_PARAM_NAME, utilToDate);
     } else {
-      if (!earnerType.equals("ALL")) {
+      if (earnerType != null) {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
                                                     GamificationActionsHistory.class);
 
-        query.setParameter("earnerType", earnerTypeParam);
+        query.setParameter("earnerType", earnerType);
       } else {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
                                                     GamificationActionsHistory.class);

@@ -29,7 +29,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 @Getter
 public class RuleList {
 
-  private List<RuleDTO>                rules;
+  private List<RuleRestEntity>         rules;
 
   private int                          offset;
 

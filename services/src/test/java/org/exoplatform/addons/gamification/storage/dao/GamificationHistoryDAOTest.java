@@ -355,7 +355,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     GamificationActionsHistoryDTO ghistory = newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
-    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, PeriodType.ALL, "ALL").size(),
+    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, PeriodType.ALL, null).size(),
                  limit);
   }
 
@@ -364,7 +364,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     GamificationActionsHistoryDTO ghistory = newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
     newGamificationActionsHistoryDTO();
-    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, PeriodType.WEEK, "ALL").size(),
+    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(ghistory.getRuleId(), offset, limit, PeriodType.WEEK, null).size(),
                  limit);
   }
 

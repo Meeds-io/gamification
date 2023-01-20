@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.List;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
@@ -87,9 +88,11 @@ public interface RuleService {
      * @param ruleFilter {@link RuleFilter} used to filter rules
      * @param offset Offset of result
      * @param limit Limit of result
+     * @param earnerType @link IdentityType} earnerType
+     * @param expand expand of result used to add extra information about rule
      * @return {@link List} of {@link RuleDTO}
      */
-    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) ;
+    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit, IdentityType earnerType, String expand) ;
 
     /**
      * @param ruleFilter {@link RuleFilter} used to count associated rules

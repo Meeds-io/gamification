@@ -218,19 +218,19 @@ public class RuleServiceTest extends AbstractServiceTest {
     ruleService.updateRule(ruleDTO2, "root1");
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10, null , "Announcements").size());
     ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(2, ruleService.getRulesByFilter(ruleFilter,0, 10, null , "Announcements").size());
     ruleFilter.setEntityStatusType(EntityStatusType.ALL);
     DomainDTO domain = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
     ruleFilter.setDomainId(domainId);
-    assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(1, ruleService.getRulesByFilter(ruleFilter,0, 10, null , "Announcements").size());
     ruleFilter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(0, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(0, ruleService.getRulesByFilter(ruleFilter,0, 10, null , "Announcements").size());
     ruleFilter = new RuleFilter();
     ruleFilter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(3, ruleService.getRulesByFilter(ruleFilter,0, 10).size());
+    assertEquals(3, ruleService.getRulesByFilter(ruleFilter,0, 10, null , "Announcements").size());
     assertEquals(3, ruleService.findAllRules(0, 3).size());
   }
 
