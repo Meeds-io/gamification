@@ -15,39 +15,24 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-flex 
-    d-flex 
-    xs12 
+  <v-flex
+    d-flex
+    flex-column
+    xs12
     sm12>
+    <v-toolbar
+      height="64"
+      color="white"
+      flat
+      class="border-box-sizing profile-card-header flex-column flex-shrink-1 flex-grow-0">
+      <div class="text-header-title text-sub-title">
+        {{ title }}
+      </div>
+    </v-toolbar>
     <v-layout 
       row 
       wrap 
       mx-0>
-      <v-flex 
-        d-flex 
-        justify-center
-        pt-4
-        xs12>
-        <v-card
-          flat>
-          <v-list-item>
-            <a :href="profileUrl">
-              <v-list-item-avatar>
-                <img
-                  :src="avatar"
-                  class="ma-auto object-fit-cover">
-              </v-list-item-avatar>
-            </a>
-            <v-list-item-content>
-              <v-list-item-title class="text-uppercase subtitle-1 profile-card-header">
-                <span>
-                  {{ isCurrentUserProfile ? $t('homepage.profileStatus.header') : '' }} {{ firstName }}
-                </span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-card>
-      </v-flex>
       <v-flex d-flex xs12>
         <v-layout
           row
@@ -194,6 +179,11 @@ export default {
       firstLoadingUserPoints: true,
       firstLoadingRank: true,
     };
+  },
+  computed: {
+    title() {
+      return this.isCurrentUserProfile && this.$t('homepage.profileStatus.yourActivity') || this.$t('homepage.profileStatus.myActivity');
+    },
   },
   watch: {
     loadingWidgets(newVal, oldVal) {
