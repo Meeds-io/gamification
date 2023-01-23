@@ -30,13 +30,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         aspect-ratio="1"
         min-height="70"
         min-width="70"
-        max-height="120"
+        max-height="100"
         class="primary--text">
         <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
       </v-img>
       <v-list class="pb-0 pt-1" dense>
         <v-list-item class="px-3">
-          <v-list-item-content class="align-center py-0">
+          <v-list-item-content class="d-flex align-center py-0">
             <v-tooltip bottom>
               <template #activator="{ on, attrs }">
                 <span
