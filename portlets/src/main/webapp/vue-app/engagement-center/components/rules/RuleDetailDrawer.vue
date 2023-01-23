@@ -175,23 +175,23 @@ export default {
       return this.rule?.score || this.rule?.points;
     },
     startDate() {
-      return new Date(this.rule?.startDate);
+      return new Date(this.rule?.startDate).getTime() || 0;
     },
     endDate() {
-      return new Date(this.rule?.endDate);
+      return new Date(this.rule?.endDate).getTime() || 0;
     },
     isActiveRule() {
-      return this.automaticRule || (this.startDate < new Date() && new Date() < this.endDate);
+      return this.automaticRule || (this.startDate <= new Date().getTime() && this.endDate >= new Date().getTime());
     },
     DateInfo() {
-      if (this.endDate < new Date()) {
-        return this.$t('rule.detail.challengeEnded');
-      } else if (this.startDate > new Date()) {
-        const days = Math.round((this.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('rule.detail.challengeOpenIn', {0: days});
-      } else {
-        const days = Math.round((this.endDate.getTime() - this.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      if (this.isActiveRule) {
+        const days = Math.round((this.endDate - this.startDate) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeEndIn', {0: days});
+      } else if (this.endDate < new Date().getTime()) {
+        return this.$t('rule.detail.challengeEnded');
+      } else {
+        const days = Math.round((this.startDate - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        return this.$t('rule.detail.challengeOpenIn', {0: days});
       }
     },
     spaceId() {
