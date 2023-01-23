@@ -175,7 +175,7 @@ export default {
       deleteConfirmMessage: '',
       filter: 'ENABLED',
       earnerType: 'USER',
-      expand: 'Announcements',
+      expand: 'announcements',
     };
   },
   computed: {

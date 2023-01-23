@@ -17,11 +17,14 @@
 
 package org.exoplatform.addons.gamification.rest;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.*;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -67,12 +70,6 @@ public class EntityBuilder {
 
   public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements) {
     return fromChallenge(challenge, challengeAnnouncements, false);
-  }
-
-  public static RuleDTO fromRule(RuleDTO rule, List<Announcement> challengeAnnouncements) {
-    RuleDTO newRule = rule;
-    newRule.setAnnouncements(challengeAnnouncements);
-    return newRule;
   }
 
   public static ChallengeRestEntity fromChallenge(Challenge challenge,
@@ -122,19 +119,29 @@ public class EntityBuilder {
     return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
   }
 
-  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username) {
-    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username)).collect(Collectors.toList());
+  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username, int offset, int limit, IdentityType earnerType, String expand) {
+    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, earnerType, expand)).collect(Collectors.toList());
   }
 
-  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username) {
+  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, int offset, int limit, IdentityType earnerType, String expand) {
     List<AnnouncementRestEntity> announcementsRestEntities = null;
     if (rule == null) {
       return null;
     }
-    if (rule.getAnnouncements() != null) {
-      announcementsRestEntities = rule.getAnnouncements().stream()
-                                                                   .map(EntityMapper::fromAnnouncement)
-                                                                   .collect(Collectors.toList());
+    List<String> expandFields = null;
+    if (StringUtils.isBlank(expand)) {
+      expandFields = Collections.emptyList();
+    } else {
+      expandFields = Arrays.asList(expand.split(","));
+    }
+
+    List<Announcement> announcementList = null;
+    if (expandFields.contains("announcements")) {
+      announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, earnerType);
+    }
+    if (announcementList != null) {
+      announcementsRestEntities =
+          announcementList.stream().map(EntityMapper::fromAnnouncement).collect(Collectors.toList());
     }
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),

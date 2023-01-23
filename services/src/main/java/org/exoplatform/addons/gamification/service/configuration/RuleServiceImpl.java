@@ -25,8 +25,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.rest.EntityBuilder;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -113,12 +111,6 @@ public class RuleServiceImpl implements RuleService {
       RuleDTO rule = findRuleById(ruleId);
       if (rule.isDeleted()) {
         continue;
-      }
-      if (expand != null && expand.equalsIgnoreCase("Announcements")) {
-        List<Announcement> announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, earnerType);
-        rule = EntityBuilder.fromRule(rule, announcementList);
-      } else {
-        rule.setAnnouncements(null);
       }
       rules.add(rule);
     }
