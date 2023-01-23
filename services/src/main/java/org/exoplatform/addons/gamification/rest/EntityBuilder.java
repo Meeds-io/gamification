@@ -120,7 +120,7 @@ public class EntityBuilder {
   }
 
   public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username, int offset, int limit, IdentityType earnerType, String expand) {
-    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, earnerType, expand)).collect(Collectors.toList());
+    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, earnerType, expand)).toList();
   }
 
   public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, int offset, int limit, IdentityType earnerType, String expand) {
@@ -141,7 +141,7 @@ public class EntityBuilder {
     }
     if (announcementList != null) {
       announcementsRestEntities =
-          announcementList.stream().map(EntityMapper::fromAnnouncement).collect(Collectors.toList());
+          announcementList.stream().map(EntityMapper::fromAnnouncement).toList();
     }
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),

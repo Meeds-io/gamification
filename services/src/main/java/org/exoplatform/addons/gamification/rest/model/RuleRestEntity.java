@@ -56,4 +56,28 @@ public class RuleRestEntity implements Cloneable {
 
   private UserInfo                     userInfo;
 
+  @Override
+  public RuleRestEntity clone() { // NOSONAR
+    return new RuleRestEntity(id,
+                              title,
+                              description,
+                              score,
+                              area,
+                              domainDTO,
+                              enabled,
+                              deleted,
+                              createdBy,
+                              createdDate,
+                              lastModifiedBy,
+                              event,
+                              lastModifiedDate,
+                              audience,
+                              startDate,
+                              endDate,
+                              type,
+                              managers,
+                              announcements,
+                              userInfo);
+  }
+
 }
