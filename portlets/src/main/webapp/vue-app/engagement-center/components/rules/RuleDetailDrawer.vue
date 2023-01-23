@@ -16,7 +16,7 @@
             <div class="font-weight-bold tertiary--text">{{ ruleScore }} {{ $t('challenges.label.points') }}</div>
           </div>
         </div>
-        <div class="d-flex flex-row pt-3 rich-editor-content">
+        <div class="d-flex flex-row pt-3 rich-editor-content text-wrap text-left text-break">
           <span v-sanitized-html="rule.description"></span>
         </div>
         <div class="d-flex flex-row py-3">
