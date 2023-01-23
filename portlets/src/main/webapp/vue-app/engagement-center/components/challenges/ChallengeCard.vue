@@ -29,13 +29,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="d-flex flex-row pb-1">
           <div
             class="d-flex flex-row flex-grow-0 flex-shrink-0">
-            <div class="d-flex flex-row my-auto"><v-icon size="20" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
+            <div class="d-flex flex-row my-auto">
+              <v-icon size="20" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
               <div class="font-weight-bold tertiary--text text-subtitle-2 mt-1 ms-2">
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </div>
             </div>
           </div>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <div
             class="d-flex flex-column flex-grow-0 flex-shrink-1">
             <div class="edit">
@@ -88,7 +89,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ challengeTitle }}
           </v-tooltip>
         </div>
-        <div :class="isMobile && 'flex-column ms-1'" class="d-flex">
+        <div class="d-flex flex-column flex-sm-row ms-1 ms-sm-0">
           <engagement-center-avatars-list
             :avatars="winnerAvatars"
             :max-avatars-to-show="3"
@@ -97,8 +98,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             @open-avatars-drawer="openWinnersDrawer" />
           <v-spacer />
           <div
-            v-if="!(noParticipationYet && isActiveChallenge)"
-            :class="!isMobile"
+            v-if="!isChallengeInitialised"
             class="winners winnersAvatarsList d-flex flex-nowrap pe-3"
             @click="
               $event.preventDefault();
@@ -106,7 +106,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             ">
             <v-spacer />
           </div>
-          <div :class="isMobile && 'py-auto'" class="d-flex flex-row">
+          <div class="d-flex flex-row my-auto my-sm-0">
             <v-icon size="16" class="primary--text">fas fa-calendar-day</v-icon>
             <span class="mt-1 ms-2" v-sanitized-html="DateInfo"></span>
           </div>
@@ -181,6 +181,9 @@ export default {
     },
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
+    },
+    isChallengeInitialised() {
+      return this.noParticipationYet && this.isActiveChallenge;
     }
   },
   created() {
