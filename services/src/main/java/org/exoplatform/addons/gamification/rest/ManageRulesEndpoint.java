@@ -16,7 +16,6 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import com.google.javascript.jscomp.DiagnosticType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -27,20 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.RuleList;
 import org.exoplatform.addons.gamification.rest.model.RuleRestEntity;
-import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
-import org.exoplatform.services.log.LogConfigurationInitializer;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -53,7 +46,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToRestEntities;
@@ -62,26 +54,20 @@ import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToR
 @Tag(name = "/gamification/rules", description = "Manages rules")
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
-
-  private static final Log LOG = ExoLogger.getLogger(ManageRulesEndpoint.class);
-
   private final CacheControl cacheControl;
 
   protected RuleService      ruleService;
 
   protected IdentityManager  identityManager;
 
-  private AnnouncementService announcementService;
 
   public ManageRulesEndpoint(RuleService ruleService,
-                             IdentityManager identityManager,
-                             AnnouncementService announcementService) {
+                             IdentityManager identityManager) {
     this.cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
     this.ruleService = ruleService;
     this.identityManager = identityManager;
-    this.announcementService = announcementService;
   }
 
   @GET

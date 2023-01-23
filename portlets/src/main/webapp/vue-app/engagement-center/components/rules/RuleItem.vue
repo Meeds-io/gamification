@@ -154,7 +154,6 @@ export default {
       return this.$vuetify.breakpoint.xsOnly;
     },
     ruleWinnerAvatars() {
-      console.log('rule', this.rule);
       return this.rule?.announcements?.filter(announce => announce.assignee)
         .map(announce => ({
           userName: announce.assignee

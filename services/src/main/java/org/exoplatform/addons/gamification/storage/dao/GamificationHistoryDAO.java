@@ -419,7 +419,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       if (earnerType != null) {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDateByEarnerType",
                                                     GamificationActionsHistory.class);
-        query.setParameter("earnerType", earnerType);
+        query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
       } else {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
                                                     GamificationActionsHistory.class);
@@ -434,7 +434,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
                                                     GamificationActionsHistory.class);
 
-        query.setParameter("earnerType", earnerType);
+        query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
       } else {
         query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
                                                     GamificationActionsHistory.class);

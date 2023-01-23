@@ -57,9 +57,6 @@ export default {
       default: null
     },
   },
-  created() {
-    console.log('avatarsList', this.avatars);
-  },
   computed: {
     avatarsTodisplay() {
       return this.avatars.slice(0, this.maxAvatarsToShow - 1);

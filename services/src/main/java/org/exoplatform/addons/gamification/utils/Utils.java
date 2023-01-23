@@ -414,7 +414,7 @@ public class Utils {
                                                                 earnerType);
     } catch (Exception e) {
       // NOSONAR
-      return null;
+      return Collections.emptyList();
     }
   }
 

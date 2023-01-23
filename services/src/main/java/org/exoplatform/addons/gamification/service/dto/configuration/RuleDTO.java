@@ -19,7 +19,6 @@ package org.exoplatform.addons.gamification.service.dto.configuration;
 import java.io.Serializable;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 
 import lombok.AllArgsConstructor;
