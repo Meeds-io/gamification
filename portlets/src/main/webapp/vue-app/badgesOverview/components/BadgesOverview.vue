@@ -25,7 +25,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       color="white"
       flat
       class="border-box-sizing"
-      :height="isOverviewDisplay ? '50px' : 'auto'">
+      :height="isOverviewDisplay ? '50' : '64'">
       <div class="text-header-title text-sub-title">
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
