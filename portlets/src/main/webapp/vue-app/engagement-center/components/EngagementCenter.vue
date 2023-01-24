@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-spacer />
       </v-toolbar>
     </main>
-    <main v-if="engagementCenterEnabled">
+    <main>
       <v-tabs
         id="engagementCenterTabs"
         v-model="tab"
@@ -69,9 +69,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-tab-item>
       </v-tabs-items>
     </main>
-    <main v-else>
-      <challenges :can-add-challenge="canAddChallenge" />
-    </main>
     <challenge-drawer
       ref="challengeDrawer"
       :is-administrator="isAdministrator" />
@@ -95,7 +92,6 @@ export default {
     },
   },
   data: () => ({
-    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
     initialized: false,
     tab: null,
     earnerId: eXo.env.portal.userIdentityId,

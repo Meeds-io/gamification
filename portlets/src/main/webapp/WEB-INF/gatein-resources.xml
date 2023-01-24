@@ -68,23 +68,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <css-priority>1</css-priority>
   </portlet-skin>
 
-
-  <portlet-skin>
-    <application-name>gamification-portlets</application-name>
-    <portlet-name>Realizations</portlet-name>
-    <skin-name>Enterprise</skin-name>
-    <css-path>/skin/css/gamification.css</css-path>
-    <css-priority>1</css-priority>
-  </portlet-skin>
-
-  <portlet-skin>
-    <application-name>gamification-portlets</application-name>
-    <portlet-name>GamificationManageRules</portlet-name>
-    <skin-name>Enterprise</skin-name>
-    <css-path>/skin/css/gamification.css</css-path>
-    <css-priority>1</css-priority>
-  </portlet-skin>
-
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
     <portlet-name>Challenges</portlet-name>
@@ -148,133 +131,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </portlet>
 
   <portlet>
-    <name>GamificationInformationsboard</name>
-    <module>
-      <depends>
-        <module>GamificationInformations</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>bts_popover</module>
-      </depends>
-    </module>
-  </portlet>
-  <portlet>
-    <name>GamificationManageRules</name>
-    <module>
-      <script>
-        <minify>false</minify>
-        <path>/js/rule.bundle.js</path>
-      </script>
-      <depends>
-        <module>commonVueComponents</module>
-      </depends>
-      <depends>
-        <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>vuetify</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>jquery</module>
-        <as>$</as>
-      </depends>
-    </module>
-  </portlet>
-
-  <portlet>
     <name>GamificationManageBadges</name>
     <module>
       <depends>
         <module>manageBadges</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-    </module>
-  </portlet>
-  <portlet>
-    <name>GamificationManageDomains</name>
-    <module>
-      <depends>
-        <module>manageDomains</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-    </module>
-  </portlet>
-  <portlet>
-    <name>GamificationUserReputation</name>
-    <module>
-      <depends>
-        <module>userReputation</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-    </module>
-  </portlet>
-  <portlet>
-    <name>GamificationLeaderboard</name>
-    <module>
-      <depends>
-        <module>userLeaderboard</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>bts_popover</module>
-      </depends>
-    </module>
-  </portlet>
-  <portlet>
-    <name>GamificationSpaceLeaderboard</name>
-    <module>
-      <depends>
-        <module>spaceLeaderboard</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>bts_popover</module>
-      </depends>
-    </module>
-  </portlet>
-
-  <portlet>
-    <name>GamificationEarnpointsboard</name>
-    <module>
-      <depends>
-        <module>gamificationearnpoints</module>
       </depends>
       <depends>
         <module>vue</module>
@@ -557,140 +417,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
   </module>
   <module>
-    <name>manageDomains</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/domain.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-  </module>
-  <module>
     <name>manageBadges</name>
     <script>
       <minify>false</minify>
       <path>/js/badge.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-  </module>
-  <module>
-    <name>userReputation</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/reputation.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-  </module>
-  <module>
-    <name>userLeaderboard</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/leaderboard.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>bts_popover</module>
-    </depends>
-  </module>
-  <module>
-    <name>spaceLeaderboard</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/spaceleaderboard.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-    <depends>
-      <module>bts_popover</module>
-    </depends>
-  </module>
-  <module>
-    <name>GamificationInformations</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/GamificationInformations.bundle.js</path>
-    </script>
-    <depends>
-      <module>jquery</module>
-      <as>jQuery</as>
-    </depends>
-    <depends>
-      <module>jquery</module>
-      <as>$</as>
-    </depends>
-    <depends>
-      <module>vue</module>
-    </depends>
-    <depends>
-      <module>eXoVueI18n</module>
-    </depends>
-  </module>
-
-  <module>
-    <name>gamificationearnpoints</name>
-    <script>
-      <minify>false</minify>
-      <path>/js/earnpoints.bundle.js</path>
     </script>
     <depends>
       <module>jquery</module>
@@ -766,38 +496,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <module>extensionRegistry</module>
     </depends>
   </module>
-
-  <portlet>
-    <name>Realizations</name>
-    <module>
-      <script>
-        <minify>false</minify>
-        <path>/js/realizations.bundle.js</path>
-      </script>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>vuetify</module>
-      </depends>
-      <depends>
-        <module>commonVueComponents</module>
-      </depends>
-      <depends>
-        <module>realizationComponents</module>
-      </depends>
-      <depends>
-        <module>jquery</module>
-        <as>$</as>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>extensionRegistry</module>
-      </depends>
-    </module>
-  </portlet>
 
   <module>
     <name>gamificationCommon</name>

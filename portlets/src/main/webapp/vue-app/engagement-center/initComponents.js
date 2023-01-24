@@ -51,10 +51,6 @@ import WelcomeMessage from './components/common/WelcomeMessage.vue';
 import RuleActionValue from './components/actionValues/RuleActionValue.vue';
 import ChallengeActionValue from './components/actionValues/ChallengeActionValue.vue';
 
-import ChallengeStandaloneDrawer from './components/deprecated/ChallengeStandaloneDrawer.vue';
-import DomainStandaloneSuggester from './components/deprecated/DomainStandaloneSuggester.vue';
-import StandaloneAssignment from './components/deprecated/StandaloneAssignment.vue';
-
 const components = {
   'challenges': Challenges,
   'challenge-card': ChallengeCard,
@@ -86,9 +82,6 @@ const components = {
   'engagement-center-welcome-message': WelcomeMessage,
   'rule-action-value': RuleActionValue,
   'challenge-action-value': ChallengeActionValue,
-  'challenge-standalone-drawer': ChallengeStandaloneDrawer,
-  'challenge-standalone-domain-suggester': DomainStandaloneSuggester,
-  'challenge-standalone-assignment': StandaloneAssignment,
 };
 
 for (const key in components) {

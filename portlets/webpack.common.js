@@ -19,69 +19,62 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
-    context: path.resolve(__dirname, '.'),
-    entry: {
-        gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
-        rule: './src/main/webapp/vue-app/rule/rule.js',
-        badge: './src/main/webapp/vue-app/badge/badge.js',
-        domain: './src/main/webapp/vue-app/domain/domain.js',
-        reputation: './src/main/webapp/vue-app/reputation/reputation.js',
-        leaderboard: './src/main/webapp/vue-app/leaderboard/leaderboard.js',
-        GamificationInformations: './src/main/webapp/vue-app/IGamificationInformations/GamificationInformations.js',
-        earnpoints: './src/main/webapp/vue-app/Eagamificationearnpoints/earnpoints.js',
-        spaceleaderboard: './src/main/webapp/vue-app/space/spaceleaderboard.js',
-        profileStats: './src/main/webapp/vue-app/profileStats/main.js',
-        myContributions: './src/main/webapp/vue-app/myContributions/main.js',
-        popularSpaces: './src/main/webapp/vue-app/popularSpaces/main.js',
-        usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
-        badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
-        realizationsComponents: './src/main/webapp/vue-app/realizations/initComponents.js',
-        realizations: './src/main/webapp/vue-app/realizations/main.js',
-        engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
-        challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
-        myReputation: './src/main/webapp/vue-app/myReputation/main.js',
-        myRewards: './src/main/webapp/vue-app/myRewards/main.js',
-        topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
-        challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
-        programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
-    },
-    plugins: [
-      new ESLintPlugin({
-        files: [
-          './src/main/webapp/vue-app/*.js',
-          './src/main/webapp/vue-app/*.vue',
-          './src/main/webapp/vue-app/**/*.js',
-          './src/main/webapp/vue-app/**/*.vue',
+  context: path.resolve(__dirname, '.'),
+  entry: {
+    gamificationCommon: './src/main/webapp/vue-app/commons/main.js',
+    badge: './src/main/webapp/vue-app/badge/badge.js',
+    profileStats: './src/main/webapp/vue-app/profileStats/main.js',
+    myContributions: './src/main/webapp/vue-app/myContributions/main.js',
+    popularSpaces: './src/main/webapp/vue-app/popularSpaces/main.js',
+    usersLeaderboard: './src/main/webapp/vue-app/usersLeaderboard/main.js',
+    badgesOverview: './src/main/webapp/vue-app/badgesOverview/main.js',
+    realizationsComponents: './src/main/webapp/vue-app/realizations/initComponents.js',
+    realizations: './src/main/webapp/vue-app/realizations/main.js',
+    engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
+    challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
+    myReputation: './src/main/webapp/vue-app/myReputation/main.js',
+    myRewards: './src/main/webapp/vue-app/myRewards/main.js',
+    topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
+    challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
+    programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
+  },
+  plugins: [
+    new ESLintPlugin({
+      files: [
+        './src/main/webapp/vue-app/*.js',
+        './src/main/webapp/vue-app/*.vue',
+        './src/main/webapp/vue-app/**/*.js',
+        './src/main/webapp/vue-app/**/*.vue',
+      ],
+    }),
+    new VueLoaderPlugin()
+  ],
+  output: {
+    filename: 'js/[name].bundle.js',
+    libraryTarget: 'amd'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
         ],
-      }),
-      new VueLoaderPlugin()
-    ],
-    output: {
-        filename: 'js/[name].bundle.js',
-        libraryTarget: 'amd'
-    },
-    module: {
-        rules: [
-            {
-                test: /\.css$/,
-                use: [
-                    'vue-style-loader',
-                    'css-loader'
-                ],
-            },
-            {
-              test: /\.js$/,
-              exclude: /node_modules/,
-              use: [
-                'babel-loader',
-              ]
-            },
-            {
-              test: /\.vue$/,
-              use: [
-                'vue-loader',
-              ]
-            }
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          'babel-loader',
         ]
-    },
+      },
+      {
+        test: /\.vue$/,
+        use: [
+          'vue-loader',
+        ]
+      }
+    ]
+  },
 };
