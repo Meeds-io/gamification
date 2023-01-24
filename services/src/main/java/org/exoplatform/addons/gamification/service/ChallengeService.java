@@ -77,19 +77,6 @@ public interface ChallengeService {
   void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
-   * Return a boolean that indicates if the current user can add a challenge or
-   * not
-   * 
-   * @param      identity {@link org.exoplatform.services.security.Identity} of
-   *                        user
-   * @return              if the user can add a challenge or not
-   * @deprecated          The Challenge creation is not possible anymore only by
-   *                      a program owner
-   */
-  @Deprecated(forRemoval = true, since = "2022-12-12")
-  boolean canAddChallenge(org.exoplatform.services.security.Identity identity);
-
-  /**
    * Retrieves all challenges by user.
    * 
    * @param challengeFilter {@link RuleFilter} used to filter challenges
@@ -114,12 +101,5 @@ public interface ChallengeService {
    * clear challenges cache.
    */
   void clearUserChallengeCache();
-
-  /**
-   * @return true if engagementCenter Feature is enabled
-   */
-  default boolean isEngagementCenterEnabled() {
-    return false;
-  }
 
 }

@@ -21,28 +21,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.storage.ChallengeStorage;
-import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.api.settings.ExoFeatureService;
-import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.services.listener.ListenerService;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -51,8 +43,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
+import org.exoplatform.addons.gamification.storage.ChallengeStorage;
+import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ChallengeServiceTest {
@@ -67,9 +70,6 @@ public class ChallengeServiceTest {
 
   @Mock
   private ListenerService     listenerService;
-
-  @Mock
-  private ExoFeatureService   exoFeatureService;
 
   private ChallengeService    challengeService;
 
@@ -86,7 +86,7 @@ public class ChallengeServiceTest {
   @Before
   public void setUp() throws Exception { // NOSONAR
     UTILS.reset();
-    challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, exoFeatureService, listenerService);
+    challengeService = new ChallengeServiceImpl(challengeStorage, spaceService, listenerService);
   }
 
 
@@ -144,11 +144,11 @@ public class ChallengeServiceTest {
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(null, "root"));
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challengeCreated, "root"));
 
-    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(false);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(false);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
     UTILS.when(() -> Utils.isSuperManager("root")).thenReturn(true);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
     challenge.setAudience(0);
     assertThrows(IllegalArgumentException.class, () -> challengeService.createChallenge(challenge, "root"));
     challenge.setAudience(1L);
@@ -202,10 +202,10 @@ public class ChallengeServiceTest {
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(challengeStorage.saveChallenge(challenge, "root")).thenReturn(challenge2);
 
-    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(false);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(false);
     assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(null, "root"));
     assertThrows(IllegalArgumentException.class, () -> challengeService.updateChallenge(new Challenge(), "root"));
-    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
     UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
 
     assertThrows(ObjectNotFoundException.class, () -> challengeService.updateChallenge(challenge, "root"));
@@ -252,7 +252,7 @@ public class ChallengeServiceTest {
 
     // When
     UTILS.when(() -> Utils.countAnnouncementsByChallenge(1l)).thenReturn(2l);
-    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyLong(), anyString())).thenReturn(true);
+    UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
     assertThrows(IllegalArgumentException.class, () -> challengeService.deleteChallenge(challenge.getId(), "root"));
 
     // When
@@ -288,8 +288,10 @@ public class ChallengeServiceTest {
     assertNull(savedChallenge);
     savedChallenge = challengeService.getChallengeById(challenge.getId());
     assertNull(savedChallenge);
-    when(challengeStorage.getChallengeById(anyLong())).thenReturn(challenge);
-    UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(new DomainDTO());
+    when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
+    DomainDTO domain = new DomainDTO();
+    domain.setAudienceId(challenge.getAudience());
+    UTILS.when(() -> Utils.getChallengeDomainDTO(any())).thenReturn(domain);
     assertThrows(IllegalAccessException.class, () -> challengeService.getChallengeById(challenge.getId(), "root"));
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(spaceService.isMember(space, "root")).thenReturn(true);

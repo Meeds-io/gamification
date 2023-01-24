@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
@@ -137,30 +136,6 @@ public class Utils {
       return ConversationState.getCurrent().getIdentity().getUserId();
     }
     return null;
-  }
-
-  @SuppressWarnings("removal")
-  public static boolean isChallengeManager(Challenge challenge, long spaceId, String username) {
-    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-    if (challengeService.isEngagementCenterEnabled()) {
-      return isChallengeManager(challenge, username);
-    } else {
-      // Kept for backward compatibility
-      org.exoplatform.services.security.Identity currentUser = getUserAclIdentity(username);
-      if (currentUser != null && challengeService.canAddChallenge(currentUser)) {
-        return true;
-      }
-      SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-
-      Identity identity = getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username);
-      if (identity != null) {
-        return isSpaceManager(spaceId, username)
-            || spaceService.isSuperManager(username)
-            || (challenge.getManagers() != null
-                && challenge.getManagers().stream().anyMatch(id -> id == Long.parseLong(identity.getId())));
-      }
-      return false;
-    }
   }
 
   @SuppressWarnings("deprecation")
@@ -315,29 +290,24 @@ public class Utils {
   }
 
   public static List<UserInfo> getOwners(Challenge challenge) {// NOSONAR
-    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-    if (challengeService.isEngagementCenterEnabled()) {
-      DomainDTO domain = getChallengeDomainDTO(challenge);
-      if (domain == null) {
-        return Collections.emptyList();
-      } else {
-        Set<Long> owners = domain.getOwners() == null ? new HashSet<>() : new HashSet<>(domain.getOwners());
-        if (domain.getAudienceId() > 0) {
-          SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-          Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
-          if (space != null) {
-            IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-            String[] managers = space.getManagers();
-            Arrays.stream(managers).map(manager -> {
-              Identity identity = identityManager.getOrCreateUserIdentity(manager);
-              return identity == null || identity.isDeleted() || !identity.isEnable() ? null : Long.parseLong(identity.getId());
-            }).filter(Objects::nonNull).forEach(owners::add);
-          }
-        }
-        return toUserInfo(owners);
-      }
+    DomainDTO domain = getChallengeDomainDTO(challenge);
+    if (domain == null) {
+      return Collections.emptyList();
     } else {
-      return toUserInfo(challenge.getManagers());
+      Set<Long> owners = domain.getOwners() == null ? new HashSet<>() : new HashSet<>(domain.getOwners());
+      if (domain.getAudienceId() > 0) {
+        SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+        Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
+        if (space != null) {
+          IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+          String[] managers = space.getManagers();
+          Arrays.stream(managers).map(manager -> {
+            Identity identity = identityManager.getOrCreateUserIdentity(manager);
+            return identity == null || identity.isDeleted() || !identity.isEnable() ? null : Long.parseLong(identity.getId());
+          }).filter(Objects::nonNull).forEach(owners::add);
+        }
+      }
+      return toUserInfo(owners);
     }
   }
 
@@ -381,32 +351,9 @@ public class Utils {
     }
   }
 
-  public static UserInfo toUserInfo(Challenge challenge, Identity identity, Space space) {
-    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-    if (challengeService.isEngagementCenterEnabled()) {
-      DomainDTO domain = getChallengeDomainDTO(challenge);
-      return toUserInfo(domain == null ? 0 : domain.getId(), identity.getRemoteId());
-    } else {
-      UserInfo userInfo = new UserInfo();
-      userInfo.setAvatarUrl(identity.getProfile().getAvatarUrl());
-      userInfo.setFullName(identity.getProfile().getFullName());
-      userInfo.setRemoteId(identity.getRemoteId());
-      userInfo.setId(identity.getId());
-      String username = identity.getRemoteId();
-      if (space != null) {
-        SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-        boolean isSuperManager = spaceService.isSuperManager(username);
-        boolean isManager = isSuperManager || spaceService.isManager(space, username);
-        boolean isMember = isManager || spaceService.isMember(space, username);
-        boolean isRedactor = isManager || spaceService.isRedactor(space, username);
-        userInfo.setManager(isManager);
-        userInfo.setMember(isMember);
-        userInfo.setRedactor(isRedactor);
-        userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
-        userInfo.setCanEdit(Utils.isChallengeManager(challenge, Long.parseLong(space.getId()), username));
-      }
-      return userInfo;
-    }
+  public static UserInfo toUserInfo(Challenge challenge, Identity identity) {
+    DomainDTO domain = getChallengeDomainDTO(challenge);
+    return toUserInfo(domain == null ? 0 : domain.getId(), identity.getRemoteId());
   }
 
   public static UserInfo toUserInfo(long domainId, String username) {
