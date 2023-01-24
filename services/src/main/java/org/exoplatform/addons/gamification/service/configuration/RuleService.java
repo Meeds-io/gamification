@@ -18,7 +18,6 @@ package org.exoplatform.addons.gamification.service.configuration;
 
 import java.util.List;
 
-import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.commons.ObjectAlreadyExistsException;

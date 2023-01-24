@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
