@@ -102,7 +102,7 @@ public class RuleServiceImpl implements RuleService {
   }
 
   @Override
-  public List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit, IdentityType earnerType, String expand) {
+  public List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) {
     List<Long> rulesIds = ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);
     List<RuleDTO> rules = new ArrayList<>();
     ruleStorage.findRulesIdsByFilter(ruleFilter, offset, limit);

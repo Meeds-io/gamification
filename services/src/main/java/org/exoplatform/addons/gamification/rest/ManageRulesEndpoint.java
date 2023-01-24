@@ -46,6 +46,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToRestEntities;
@@ -86,8 +88,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
                            @Parameter(description = "term to search rules with") @QueryParam("term") String term,
                            @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize,
-                           @Parameter(description = "Earners type filtering, possible values: USER, SPACE.", required = false) @QueryParam("earnerType") String earnerType,
-                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: Announcements") @QueryParam("expand") String expand) {
+                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: userAnnouncements") @QueryParam("expand") String expand) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
@@ -105,20 +106,21 @@ public class ManageRulesEndpoint implements ResourceContainer {
     if (domainId > 0) {
       ruleFilter.setDomainId(domainId);
     }
+    List<String> expandFields = null;
+    if (StringUtils.isBlank(expand)) {
+      expandFields = Collections.emptyList();
+    } else {
+      expandFields = Arrays.asList(expand.split(","));
+    }
     RuleList ruleList = new RuleList();
     List<RuleRestEntity> ruleRestEntities = null;
-    IdentityType userType = null;
-    if (StringUtils.equals(earnerType, "USER")) {
-      userType  = IdentityType.USER;
-    } else if (StringUtils.equals(earnerType, "SPACE")) {
-      userType = IdentityType.SPACE;
-    }
-    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit, userType, expand);
+    List<RuleDTO> rules = null;
+      rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
     if (returnSize) {
       int rulesSize = ruleService.countAllRules(ruleFilter);
       ruleList.setSize(rulesSize);
     }
-    ruleRestEntities = ruleListToRestEntities(rules, currentUser, offset, -1, userType, expand);
+    ruleRestEntities = ruleListToRestEntities(rules, currentUser, offset, -1, expandFields);
     ruleList.setRules(ruleRestEntities);
     ruleList.setOffset(offset);
     ruleList.setLimit(limit);

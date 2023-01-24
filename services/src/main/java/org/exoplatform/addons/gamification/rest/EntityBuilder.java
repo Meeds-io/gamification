@@ -119,25 +119,18 @@ public class EntityBuilder {
     return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
   }
 
-  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username, int offset, int limit, IdentityType earnerType, String expand) {
-    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, earnerType, expand)).toList();
+  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username, int offset, int limit, List<String> expand) {
+    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, expand)).toList();
   }
 
-  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, int offset, int limit, IdentityType earnerType, String expand) {
+  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, int offset, int limit, List<String> expand) {
     List<AnnouncementRestEntity> announcementsRestEntities = null;
     if (rule == null) {
       return null;
     }
-    List<String> expandFields = null;
-    if (StringUtils.isBlank(expand)) {
-      expandFields = Collections.emptyList();
-    } else {
-      expandFields = Arrays.asList(expand.split(","));
-    }
-
     List<Announcement> announcementList = null;
-    if (expandFields.contains("announcements")) {
-      announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, earnerType);
+    if (expand.contains("userAnnouncements")) {
+      announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, IdentityType.USER);
     }
     if (announcementList != null) {
       announcementsRestEntities =

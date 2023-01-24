@@ -88,11 +88,9 @@ public interface RuleService {
      * @param ruleFilter {@link RuleFilter} used to filter rules
      * @param offset Offset of result
      * @param limit Limit of result
-     * @param earnerType @link IdentityType} earnerType
-     * @param expand expand of result used to add extra information about rule
      * @return {@link List} of {@link RuleDTO}
      */
-    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit, IdentityType earnerType, String expand) ;
+    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) ;
 
     /**
      * @param ruleFilter {@link RuleFilter} used to count associated rules
