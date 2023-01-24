@@ -18,18 +18,21 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-hover v-slot="{ hover }">
     <tr>
       <td class="no-border-bottom">
-        <div @click="openRule" class="clickable align-start text-truncate d-flex">
-          <v-icon size="15px" class="primary--text my-auto me-4">
+        <div @click="openRule" class="clickable align-start d-flex">
+          <v-icon size="22" class="primary--text my-auto me-4">
             {{ actionIcon }}
           </v-icon>
-          <engagement-center-rule-title :rule="rule" />
+          <div class="text-truncate">
+            <engagement-center-rule-title :rule="rule" />
+            <span class="d-md-none text-caption text-sub-title">{{ rule.score }} {{ $t('challenges.label.points') }}</span>
+          </div>
         </div>
       </td>
       <td
         cols="2"
         class="align-center no-border-bottom">
-        <div v-if="hover" class="d-flex">
-          <div v-if="!automaticRule" class="align-center">
+        <div v-if="hover || isMobile" class="d-flex">
+          <div v-if="!automaticRule" class="align-center d-none d-sm-block">
             <v-btn
               icon
               small
@@ -48,13 +51,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             attach>
             <template #activator="{ on, attrs }">
               <v-btn
+                :small="!isMobile"
+                :x-small="isMobile"
                 icon
-                small
                 class="me-2"
                 v-bind="attrs"
                 v-on="on"
                 @blur="closeMenu">
-                <v-icon size="16" class="icon-default-color">fas fa-ellipsis-v</v-icon>
+                <v-icon class="icon-default-color">fas fa-ellipsis-v</v-icon>
               </v-btn>
             </template>
             <v-list dense class="pa-0">
@@ -83,7 +87,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-menu>
         </div>
       </td>
-      <td cols="2" class="no-border-bottom">
+      <td class="no-border-bottom d-none d-md-inline">
         <div class="align-center">
           {{ rule.score }}
         </div>
@@ -129,6 +133,9 @@ export default {
     },
     actionIcon() {
       return this.automaticRule ? this.actionValueExtension?.icon : 'fas fa-trophy';
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
     },
   },
   methods: {
