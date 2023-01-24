@@ -30,7 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div
             class="d-flex flex-row flex-grow-0 flex-shrink-0">
             <div class="d-flex flex-row my-auto">
-              <v-icon size="20" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
+              <v-icon size="18" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
               <div class="font-weight-bold tertiary--text text-subtitle-2 mt-1 ms-2">
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </div>
@@ -80,7 +80,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
               <span
-                class="d-flex-inline position-relative text-truncate-2 font-weight-bold text--secondary" 
+                class="d-flex-inline text-center position-relative text-truncate-2 font-weight-bold text-subtitle-1 text--secondary text-break overflow-hidden" 
                 v-bind="attrs"
                 v-on="on">
                 {{ challengeTitle }}
@@ -89,7 +89,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ challengeTitle }}
           </v-tooltip>
         </div>
-        <div class="d-flex flex-column flex-sm-row ms-1 ms-sm-0">
+        <div class="d-flex flex-row ms-1 ms-sm-0">
           <engagement-center-avatars-list
             :avatars="winnerAvatars"
             :max-avatars-to-show="3"
@@ -107,8 +107,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-spacer />
           </div>
           <div class="d-flex flex-row my-auto my-sm-0">
-            <v-icon size="16" class="primary--text">fas fa-calendar-day</v-icon>
-            <span class="mt-1 ms-2" v-sanitized-html="DateInfo"></span>
+            <v-icon size="18" class="primary--text">fas fa-calendar-day</v-icon>
+            <span class="mt-1 ms-2 text-subtitle-2" v-sanitized-html="remainingPeriodLabel"></span>
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export default {
     endDate() {
       return new Date(this.challenge?.endDate);
     },
-    DateInfo() {
+    remainingPeriodLabel() {
       if (this.endDate < new Date()) {
         return this.$t('challenges.label.over');
       } else if (this.startDate > new Date()) {
