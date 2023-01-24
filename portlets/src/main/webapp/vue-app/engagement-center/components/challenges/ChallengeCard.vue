@@ -76,7 +76,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
           </div>
         </div>
-        <div class="my-auto mx-auto">
+        <div class="ma-auto">
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
               <span
