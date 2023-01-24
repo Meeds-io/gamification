@@ -28,7 +28,7 @@
       </option>
     </select>
     <v-icon
-      class="d-sm-none mt-4"
+      class="d-sm-none"
       size="18"
       @click="openBottomMenuFilter">
       fa-filter
