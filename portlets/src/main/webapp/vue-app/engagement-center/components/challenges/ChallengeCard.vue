@@ -98,7 +98,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             @open-avatars-drawer="openWinnersDrawer" />
           <v-spacer />
           <div
-            v-if="!isChallengeInitialised"
+            v-if="!noParticipationYet"
             class="winners winnersAvatarsList d-flex flex-nowrap pe-3"
             @click="
               $event.preventDefault();
@@ -182,9 +182,6 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
     },
-    isChallengeInitialised() {
-      return this.noParticipationYet && this.isActiveChallenge;
-    }
   },
   created() {
     this.$root.$on('announcement-added', this.announcementAdded);
