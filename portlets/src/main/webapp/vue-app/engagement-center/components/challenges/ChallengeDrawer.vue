@@ -17,8 +17,7 @@
 
 -->
 <template>
-  <challenge-program-drawer v-if="engagementCenterEnabled" :is-administrator="isAdministrator" />
-  <challenge-standalone-drawer v-else :is-administrator="isAdministrator" />
+  <challenge-program-drawer :is-administrator="isAdministrator" />
 </template>
 <script>
 export default {
@@ -28,8 +27,5 @@ export default {
       default: false,
     }
   },
-  data: () => ({
-    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
-  }),
 };
 </script>

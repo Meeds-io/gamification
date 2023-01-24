@@ -17,8 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div
     id="descriptionId"
-    :class="newEditorToolbarEnabled && 'newEditorToolbar' || ''"
-    class="activityRichEditor">
+    class="activityRichEditor newEditorToolbar">
     <div v-if="label" class="py-1 subtitle-1">
       {{ label }}
     </div>
@@ -75,7 +74,6 @@ export default {
       disabled: false,
       displayPlaceholder: true,
       editor: null,
-      newEditorToolbarEnabled: eXo.env.portal.editorToolbarEnabled,
     };
   },
   computed: {
@@ -144,20 +142,16 @@ export default {
   },
   methods: {
     initCKEditor() {
+      const removePlugins = 'image,maximize,resize';
       let extraPlugins = 'simpleLink,widget';
-      let removePlugins = 'image,maximize,resize';
       const toolbar = [
         ['Bold', 'Italic', 'BulletedList', 'NumberedList', 'Blockquote'],
       ];
-      if (this.newEditorToolbarEnabled) {
-        extraPlugins = `${extraPlugins},emoji,formatOption`;
-        if (!this.isMobile) {
-          toolbar[0].push('emoji');
-        }
-        toolbar[0].unshift('formatOption');
-      } else {
-        removePlugins = `${removePlugins},emoji,formatOption`;
+      extraPlugins = `${extraPlugins},emoji,formatOption`;
+      if (!this.isMobile) {
+        toolbar[0].push('emoji');
       }
+      toolbar[0].unshift('formatOption');
 
       this.inputVal = this.value || '';
       this.editor = CKEDITOR.instances['descriptionContent'];

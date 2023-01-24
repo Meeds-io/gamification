@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +20,6 @@ import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.storage.ChallengeStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.commons.api.settings.ExoFeatureService;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
@@ -33,25 +31,19 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   private static final String CHALLENGE_IS_MANDATORY_MESSAGE = "Challenge is mandatory";
 
-  public static final String  ENGAGEMENT_CENTER_FEATURE_NAME = "engagementCenter";
-
   private static final Log    LOG                            = ExoLogger.getExoLogger(ChallengeServiceImpl.class);
 
   private ChallengeStorage    challengeStorage;
 
   private SpaceService        spaceService;
 
-  private ExoFeatureService   featureService;
-
   private ListenerService     listenerService;
 
   public ChallengeServiceImpl(ChallengeStorage challengeStorage,
                               SpaceService spaceService,
-                              ExoFeatureService featureService,
                               ListenerService listenerService) {
     this.challengeStorage = challengeStorage;
     this.spaceService = spaceService;
-    this.featureService = featureService;
     this.listenerService = listenerService;
   }
 
@@ -136,11 +128,6 @@ public class ChallengeServiceImpl implements ChallengeService {
   }
 
   @Override
-  public boolean canAddChallenge(org.exoplatform.services.security.Identity identity) {
-    return Utils.isSuperManager(identity.getUserId());
-  }
-
-  @Override
   public void deleteChallenge(Long challengeId, String username) throws IllegalAccessException, ObjectNotFoundException {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
@@ -149,7 +136,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     if (challenge == null) {
       throw new ObjectNotFoundException("challenge doesn't exist");
     }
-    if (!Utils.isChallengeManager(challenge, challenge.getAudience(), username)) {
+    if (!Utils.isChallengeManager(challenge, username)) {
       throw new IllegalAccessException("User is not allowed to delete challenge with id " + challenge.getId());
     }
     if (Utils.countAnnouncementsByChallenge(challengeId) > 0) {
@@ -205,11 +192,6 @@ public class ChallengeServiceImpl implements ChallengeService {
     challengeStorage.clearCache();
   }
 
-  @Override
-  public boolean isEngagementCenterEnabled() {
-    return featureService.isActiveFeature(ENGAGEMENT_CENTER_FEATURE_NAME);
-  }
-
   private Challenge buildChallengeById(long challengeId) {
     Challenge challenge = challengeStorage.getChallengeById(challengeId);
     if (challenge != null) {
@@ -220,7 +202,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
   @SuppressWarnings("unchecked")
   private void setFilterAudience(RuleFilter challengeFilter, List<String> spaceIds) {
-    List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
+    List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
     if (CollectionUtils.isNotEmpty(challengeFilter.getSpaceIds())) {
       userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, challengeFilter.getSpaceIds());
     }
@@ -256,14 +238,12 @@ public class ChallengeServiceImpl implements ChallengeService {
       challenge.setProgramId(domain.getId());
       challenge.setProgram(domain.getTitle());
 
-      if (isEngagementCenterEnabled()) {
-        if (CollectionUtils.isEmpty(domain.getOwners())) {
-          challenge.setManagers(Collections.emptyList());
-        } else {
-          challenge.setManagers(new ArrayList<>(domain.getOwners()));
-        }
-        challenge.setAudience(domain.getAudienceId());
+      if (CollectionUtils.isEmpty(domain.getOwners())) {
+        challenge.setManagers(Collections.emptyList());
+      } else {
+        challenge.setManagers(new ArrayList<>(domain.getOwners()));
       }
+      challenge.setAudience(domain.getAudienceId());
     }
   }
 
