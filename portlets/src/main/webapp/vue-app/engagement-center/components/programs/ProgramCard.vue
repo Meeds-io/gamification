@@ -34,13 +34,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="primary--text">
         <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
       </v-img>
-      <v-list class="pb-0 pt-1" dense>
+      <v-list
+        min-height="70px"
+        class="d-flex py-1"
+        dense>
         <v-list-item class="px-3">
-          <v-list-item-content class="d-flex align-center py-0">
+          <v-list-item-content class="align-center text-wrap text-break py-0">
             <v-tooltip bottom>
               <template #activator="{ on, attrs }">
                 <span
-                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text--secondary" 
+                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text-subtitle-1 text--secondary" 
                   v-bind="attrs"
                   v-on="on">
                   {{ program.title }}
@@ -50,17 +53,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
-          <v-list-item-content class="py-0">
-            <div class="d-flex justify-center">
-              <v-icon size="16" class="pe-2 primary--text">fas fa-trophy</v-icon>
-              <span class="text-light-color" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-            </div>
-          </v-list-item-content>
-        </v-list-item>
       </v-list>
+      <div class="d-flex justify-center pb-4 mt-n2">
+        <v-icon size="18" class="pe-2 primary--text">fas fa-trophy</v-icon>
+        <span class="text-light-color text-caption" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+      </div>
     </div>
-    <div class="d-flex mx-2">
+    <div class="d-flex mb-0 mx-2">
       <div class="pa-1">
         <span class="my-auto caption text-light-color"> {{ this.$t('programs.details.label.hosts') }} </span>
       </div>
