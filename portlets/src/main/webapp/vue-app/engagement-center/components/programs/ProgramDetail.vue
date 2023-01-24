@@ -15,8 +15,8 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div id="engagementCenterProgramDetail" class="pa-5">
-    <div class="py-5 d-flex">
+  <div id="engagementCenterProgramDetail" class="pa-2 pa-md-5">
+    <div class="py-2 py-md-5 d-flex">
       <v-btn icon class="mt-n1 my-auto">
         <v-icon
           size="18"
@@ -26,18 +26,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-btn>
       <span class="text-header-title ps-1"> {{ programTitle }} </span>
       <v-spacer />
-      <span class="text-header-title" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+      <span class="text-header-title d-none d-md-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
     </div>
     <div class="d-flex flex-grow-1">
       <v-img
         :src="programCover"
         :alt="$t('programs.cover.default')"
-        aspect-ratio="1"
+        :min-height="36"
+        :max-height="height"
+        height="auto"
+        min-width="100%"
         width="100%"
-        min-height="70"
-        min-width="70"
-        max-height="140"
-        class="primary--text border-color">
+        class="d-flex primary--text border-color">
         <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
       </v-img>
     </div>
@@ -60,6 +60,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="pt-5">
       <v-list-item two-line class="px-0">
         <v-list-item-content>
+          <span class="text-header-title subtitle-1 d-md-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
           <v-list-item-title class="text-color font-weight-bold">
             {{ $t('programs.details.label.rulesOfProgram') }}
           </v-list-item-title>
@@ -69,6 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 class="d-inline-block">
                 <v-btn
                   class="btn btn-primary"
+                  small
                   @click="openNewRuleForm">
                   <v-icon dark>
                     mdi-plus
@@ -80,7 +82,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               </div>
             </div>
             <div
-              class="ms-auto">
+              class="d-flex ms-auto">
               <engagement-center-rule-filter @filter-applied="applyFilter" />
             </div>
           </v-flex>
@@ -93,6 +95,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :no-data-text="$t('programs.details.rules.noRules')"
               :loading="loadingRules"
               :show-rows-border="false"
+              mobile-breakpoint="0"
               hide-default-footer
               disable-sort>
               <template slot="item" slot-scope="props">
@@ -199,14 +202,20 @@ export default {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
         {text: '', align: 'center', width: '15%'},
-        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%'}];
+        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%', enabled: !this.isMobile}].filter(filter => filter.enabled == null || filter.enabled === true);
     },
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;
     },
     canManageRule() {
       return this.isAdministrator || this.program?.userInfo?.canEdit;
-    }
+    },
+    height() {
+      return this.isMobile ? 70 : 173;
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
   },
   watch: {
     program() {
