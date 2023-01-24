@@ -113,8 +113,8 @@ export function getAllChallengesByUser(term , offset, limit, announcements, doma
   });
 }
 
-export function getAllAnnouncementsByChallenge(challengeId, offset, limit) {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?offset=${offset || 0}&limit=${limit || 10}`, {
+export function getAllAnnouncementsByChallenge(challengeId, earnerType, offset, limit) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/ByChallengeId/${challengeId}?type=${earnerType || ''}&offset=${offset || 0}&limit=${limit || 10}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

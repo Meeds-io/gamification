@@ -17,11 +17,9 @@
 
 package org.exoplatform.addons.gamification.rest;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
@@ -119,7 +117,11 @@ public class EntityBuilder {
     return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
   }
 
-  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules, String username, int offset, int limit, List<String> expand) {
+  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules,
+                                                            String username,
+                                                            int offset,
+                                                            int limit,
+                                                            List<String> expand) {
     return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, expand)).toList();
   }
 
@@ -130,11 +132,14 @@ public class EntityBuilder {
     }
     List<Announcement> announcementList = null;
     if (expand.contains("userAnnouncements")) {
-      announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, IdentityType.USER);
+      try {
+        announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, IdentityType.USER);
+      } catch (IllegalAccessException e) {
+        announcementList = Collections.emptyList();
+      }
     }
     if (announcementList != null) {
-      announcementsRestEntities =
-          announcementList.stream().map(EntityMapper::fromAnnouncement).toList();
+      announcementsRestEntities = announcementList.stream().map(EntityMapper::fromAnnouncement).toList();
     }
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),

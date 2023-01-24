@@ -404,18 +404,12 @@ public class Utils {
     }
   }
 
-  public static List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit, IdentityType earnerType) {
+  public static List<Announcement> findAllAnnouncementByChallenge(Long challengeId,
+                                                                  int offset,
+                                                                  int limit,
+                                                                  IdentityType earnerType) throws IllegalAccessException {
     AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
-    try {
-      return announcementService.findAllAnnouncementByChallenge(challengeId,
-                                                                offset,
-                                                                limit,
-                                                                PeriodType.ALL,
-                                                                earnerType);
-    } catch (Exception e) {
-      // NOSONAR
-      return Collections.emptyList();
-    }
+    return announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit, PeriodType.ALL, earnerType);
   }
 
   public static GamificationService getGamificationService() {

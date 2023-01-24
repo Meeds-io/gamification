@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
-import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.RuleList;
 import org.exoplatform.addons.gamification.rest.model.RuleRestEntity;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -115,7 +114,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
     RuleList ruleList = new RuleList();
     List<RuleRestEntity> ruleRestEntities = null;
     List<RuleDTO> rules = null;
-      rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
+    rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
     if (returnSize) {
       int rulesSize = ruleService.countAllRules(ruleFilter);
       ruleList.setSize(rulesSize);

@@ -23,6 +23,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -115,14 +116,16 @@ public class AnnouncementRest implements ResourceContainer {
           @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
           @ApiResponse(responseCode = "500", description = "Internal server error"), }
   )
-  public Response getAllAnnouncementByChallenge(
-                                                @Context
-                                                Request request,
-                                                @Context
+  public Response getAllAnnouncementByChallenge(@Context
+                                                Request request, @Context
                                                 UriInfo uriInfo,
                                                 @Parameter(description = "id of the challenge", required = true)
                                                 @PathParam("challengeId")
                                                 String challengeId,
+                                                @Parameter(description = "earner type, user or space", required = false)
+                                                @DefaultValue("USER")
+                                                @QueryParam("type")
+                                                String type,
                                                 @Parameter(description = "Offset of result")
                                                 @DefaultValue("0")
                                                 @QueryParam("offset")
@@ -138,12 +141,13 @@ public class AnnouncementRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
     EntityTag eTag = null;
+    IdentityType earnerType = StringUtils.isBlank(type) ? IdentityType.USER : IdentityType.valueOf(type);
     try {
       List<Announcement> announcements = announcementService.findAllAnnouncementByChallenge(Long.parseLong(challengeId),
                                                                                             offset,
                                                                                             limit,
                                                                                             PeriodType.ALL,
-                                                                                            null);
+                                                                                            earnerType);
       List<AnnouncementRestEntity> announcementsRestEntities = announcements.stream()
                                                                             .map(EntityMapper::fromAnnouncement)
                                                                             .collect(Collectors.toList());

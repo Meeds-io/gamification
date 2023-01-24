@@ -18,8 +18,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-hover v-slot="{ hover }">
     <tr>
       <td class="no-border-bottom">
-        <div @click="openRule" class="clickable align-start text-truncate d-flex">
-          <v-icon size="15px" class="primary--text my-auto me-4">
+        <div @click="openRule" class="clickable align-start d-flex">
+          <v-icon size="22" class="primary--text my-auto me-4">
             {{ actionIcon }}
           </v-icon>
           <div class="text-truncate">
@@ -31,8 +31,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <td
         cols="2"
         class="align-center no-border-bottom">
-        <div v-if="hover" class="d-flex">
-          <div v-if="!automaticRule" class="align-center">
+        <div v-if="hover || isMobile" class="d-flex">
+          <div v-if="!automaticRule" class="align-center d-none d-sm-block">
             <v-btn
               icon
               class="me-2"
@@ -51,7 +51,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <template #activator="{ on, attrs }">
               <v-btn
                 icon
-                small
                 class="me-2"
                 v-bind="attrs"
                 v-on="on"
@@ -100,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :max-avatars-to-show="4"
             :avatars-count="ruleWinnersCount"
             :size="27"
-            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule.id)" />
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule.id, earnerType)" />
           <div v-else>
             <span>
               -
@@ -115,6 +114,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
+    earnerType: {
+      type: String,
+      default: '',
+    },
     rule: {
       type: Object,
       default: null,
@@ -153,14 +156,20 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
     },
+    iconSize() {
+      return this.isMobile ? 13 : 16;
+    },
     ruleWinnerAvatars() {
       return this.rule?.announcements?.filter(announce => announce.assignee)
         .map(announce => ({
           userName: announce.assignee
         })) || [];
     },
-    iconSize() {
-      return this.isMobile ? 13 : 16;
+    ruleWinnersCount() {
+      return this.rule?.announcementsCount || this.rule?.announcements.length || 0;
+    },
+    haveParticipants() {
+      return this.ruleWinnersCount !== 0;
     }
   },
   methods: {
