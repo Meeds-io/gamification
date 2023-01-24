@@ -5,8 +5,7 @@
     :left="!$vuetify.rtl"
     :right="$vuetify.rtl"
     bottom
-    offset-y
-    attach>
+    offset-y>
     <template #activator="{ on, attrs }">
       <v-btn
         icon
