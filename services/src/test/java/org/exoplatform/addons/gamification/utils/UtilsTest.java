@@ -224,7 +224,7 @@ public class UtilsTest extends AbstractServiceTest {
                                         true);
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
-    UserInfo userInfo = Utils.toUserInfo(challenge, identity, space);
+    UserInfo userInfo = Utils.toUserInfo(challenge, identity);
     assertNotNull(userInfo);
     assertEquals("root1", userInfo.getRemoteId());
     assertTrue(userInfo.isCanAnnounce());

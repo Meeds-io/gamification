@@ -19,7 +19,6 @@ package org.exoplatform.addons.gamification.rest;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -45,7 +44,7 @@ public class EntityBuilder {
     if (CollectionUtils.isEmpty(announcements)) {
       return Collections.emptyList();
     } else {
-      return announcements.stream().map(EntityMapper::fromAnnouncement).collect(Collectors.toList());
+      return announcements.stream().map(EntityMapper::fromAnnouncement).toList();
     }
   }
 
@@ -83,8 +82,7 @@ public class EntityBuilder {
                                    challenge.getEndDate(),
                                    Utils.toUserInfo(challenge, 
                                                     Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
-                                                                                 Utils.getCurrentUser()),
-                                                    space),
+                                                                                 Utils.getCurrentUser())),
                                    Utils.getOwners(challenge),
                                    Utils.countAnnouncementsByChallenge(challenge.getId()),
                                    fromAnnouncementList(challengeAnnouncements),
@@ -116,7 +114,7 @@ public class EntityBuilder {
   }
 
   public static List<DomainRestEntity> toRestEntities(List<DomainDTO> domains, String username) {
-    return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).collect(Collectors.toList());
+    return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
   }
 
 }
