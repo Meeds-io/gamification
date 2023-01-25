@@ -35,7 +35,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </template>
     </v-expansion-panel-header>
     <v-expansion-panel-content>
-      <v-container>
+      <v-container class="pa-0">
         <v-progress-linear v-if="loading" indeterminate />
         <v-row no-gutters>
           <v-col
