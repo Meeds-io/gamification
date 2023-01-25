@@ -22,13 +22,13 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
-import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
-import org.exoplatform.addons.gamification.rest.model.DomainRestEntity;
+import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.rest.model.*;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -59,7 +59,7 @@ public class EntityBuilder {
     List<Announcement> challengeAnnouncements = null;
     if (announcementsPerChallenge != 0 ) {
       challengeAnnouncements =
-                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType);
+                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType, null);
     } else {
       challengeAnnouncements = Collections.emptyList();
     }
@@ -80,7 +80,7 @@ public class EntityBuilder {
                                    space,
                                    challenge.getStartDate(),
                                    challenge.getEndDate(),
-                                   Utils.toUserInfo(challenge, 
+                                   Utils.toUserInfo(challenge,
                                                     Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
                                                                                  Utils.getCurrentUser())),
                                    Utils.getOwners(challenge),
@@ -117,4 +117,50 @@ public class EntityBuilder {
     return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
   }
 
+  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules,
+                                                            String username,
+                                                            List<String> expand) {
+    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, expand)).toList();
+  }
+
+  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, List<String> expand) {
+    List<AnnouncementRestEntity> announcementsRestEntities = null;
+    if (rule == null) {
+      return null;
+    }
+    List<Announcement> announcementList = null;
+    long announcementCount = 0L;
+    if (expand.contains("userAnnouncements")) {
+      try {
+        announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), 0, 3, IdentityType.USER);
+      } catch (IllegalAccessException e) {
+        announcementList = Collections.emptyList();
+      }
+      announcementCount = Utils.countAnnouncementByChallengeAndEarnerType(rule.getId(), IdentityType.USER);
+    }
+    if (announcementList != null) {
+      announcementsRestEntities = announcementList.stream().map(EntityMapper::fromAnnouncement).toList();
+    }
+    return new RuleRestEntity(rule.getId(),
+                              rule.getTitle(),
+                              rule.getDescription(),
+                              rule.getScore(),
+                              rule.getArea(),
+                              rule.getDomainDTO(),
+                              rule.isEnabled(),
+                              rule.isDeleted(),
+                              rule.getCreatedBy(),
+                              rule.getCreatedDate(),
+                              rule.getLastModifiedBy(),
+                              rule.getEvent(),
+                              rule.getLastModifiedDate(),
+                              rule.getAudience(),
+                              rule.getStartDate(),
+                              rule.getEndDate(),
+                              rule.getType(),
+                              rule.getManagers(),
+                              announcementsRestEntities,
+                              announcementCount,
+                              Utils.toUserInfo(rule.getId(), username));
+  }
 }
