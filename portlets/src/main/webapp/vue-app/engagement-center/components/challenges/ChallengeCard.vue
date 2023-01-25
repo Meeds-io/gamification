@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card
       id="engagementCenterChallengeCard"
       class="mx-auto"
-      width="95%"
+      :width="challengeCardWidth"
       height="230"
       max-height="230"
       outlined
@@ -28,38 +28,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div
           class="d-flex flex-row pb-1">
           <div
-            class="d-flex flex-column flex-grow-0 flex-shrink-0">
-            <v-badge
-              :offset-x="18"
-              :offset-y="18"
-              bottom
-              bordered
-              class="full-width"
-              color="info"
-              overlap>
-              <span slot="badge"><v-icon size="16" class="mt-n2px">fas fa-trophy</v-icon></span>
-              <v-img
-                :src="programCoverURl"
-                :height="45"
-                :width="45"
-                :max-height="45"
-                :max-width="45" />
-            </v-badge>
+            class="d-flex flex-row flex-grow-0 flex-shrink-0">
+            <div class="d-flex flex-row my-auto">
+              <v-icon size="18" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
+              <div class="font-weight-bold tertiary--text text-subtitle-2 mt-1 ms-2">
+                {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
+              </div>
+            </div>
           </div>
-          <div
-            class="d-flex flex-column mx-3 me-auto full-height">
-            <v-tooltip bottom>
-              <template #activator="{ on, attrs }">
-                <span
-                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text-subtitle-2"
-                  v-bind="attrs"
-                  v-on="on">
-                  {{ challengeTitle }}
-                </span>
-              </template>
-              {{ challengeTitle }}
-            </v-tooltip>
-          </div>
+          <v-spacer />
           <div
             class="d-flex flex-column flex-grow-0 flex-shrink-1">
             <div class="edit">
@@ -99,37 +76,39 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </div>
           </div>
         </div>
-        <div class="font-weight-bold tertiary--text text-subtitle-2 mb-auto">
-          {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
+        <div class="ma-auto">
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <span
+                class="d-flex-inline text-center position-relative text-truncate-2 font-weight-bold text-subtitle-1 text--secondary text-break overflow-hidden" 
+                v-bind="attrs"
+                v-on="on">
+                {{ challengeTitle }}
+              </span>
+            </template>
+            {{ challengeTitle }}
+          </v-tooltip>
         </div>
-        <div :class="isMobile && 'flex-column'" class="d-flex">
-          <div :class="isMobile && 'py-1'" class="d-flex flex-row">
-            <v-icon size="16" class="primary--text ps-1">fas fa-calendar-day</v-icon>
-            <span class="my-auto ms-2" v-sanitized-html="DateInfo"></span>
-          </div>
+        <div class="d-flex flex-row ms-1 ms-sm-0">
+          <engagement-center-avatars-list
+            :avatars="winnerAvatars"
+            :max-avatars-to-show="maxAvatarsToShow"
+            :avatars-count="announcementCount"
+            :size="27"
+            @open-avatars-drawer="openWinnersDrawer" />
+          <v-spacer />
           <div
-            v-if="noParticipationYet && isActiveChallenge"
-            :class="!isMobile && 'ms-auto'"
-            class="d-flex flex-row">
-            <span
-              class="text-light-color my-auto pe-3 align-self-end text-no-wrap">
-              {{ $t('challenges.label.BeTheFirst') }}
-            </span>
-          </div>
-          <div
-            v-else
-            :class="!isMobile && 'ms-auto'"
+            v-if="!noParticipationYet"
             class="winners winnersAvatarsList d-flex flex-nowrap pe-3"
             @click="
               $event.preventDefault();
               $event.stopPropagation();
             ">
-            <engagement-center-avatars-list
-              :avatars="winnerAvatars"
-              :max-avatars-to-show="3"
-              :avatars-count="announcementCount"
-              :size="27"
-              @open-avatars-drawer="openWinnersDrawer" />
+            <v-spacer />
+          </div>
+          <div class="d-flex flex-row my-auto my-sm-0">
+            <v-icon size="18" class="primary--text">fas fa-calendar-day</v-icon>
+            <span class="mt-1 ms-2 text-subtitle-2" v-sanitized-html="remainingPeriodLabel"></span>
           </div>
         </div>
       </div>
@@ -180,7 +159,7 @@ export default {
     endDate() {
       return new Date(this.challenge?.endDate);
     },
-    DateInfo() {
+    remainingPeriodLabel() {
       if (this.endDate < new Date()) {
         return this.$t('challenges.label.over');
       } else if (this.startDate > new Date()) {
@@ -201,7 +180,13 @@ export default {
       return this.startDate < new Date() && new Date() < this.endDate;
     },
     isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.breakpoint.xsOnly;
+    },
+    maxAvatarsToShow() {
+      return this.isMobile ? 2 : 3;
+    },
+    challengeCardWidth() {
+      return this.isMobile ? '100%' : '95%';
     }
   },
   created() {
