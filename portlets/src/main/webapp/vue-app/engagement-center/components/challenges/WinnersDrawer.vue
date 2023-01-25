@@ -70,7 +70,6 @@ export default {
   data() {
     return {
       challengeId: false,
-      displayBackIcon: false,
       showLoadMoreButton: false,
       announcementPerPage: 20,
       loading: true,
@@ -97,20 +96,19 @@ export default {
     close() {
       this.$refs.winnersDetails.close();
     },
-    open(challengeId, displayBackIcon) {
+    open(challengeId, earnerType) {
       this.listWinners = [];
       this.challengeId = challengeId;
-      this.displayBackIcon = displayBackIcon;
       this.$refs.winnersDetails.open();
-      this.retrieveAnnouncements();
+      this.retrieveAnnouncements(false, earnerType);
     },
     loadMore() {
       this.retrieveAnnouncements(true);
     },
-    retrieveAnnouncements(append) {
+    retrieveAnnouncements(append, earnerType) {
       this.loading = true;
       const offset = append ? this.announcement.length : 0;
-      this.$challengesServices.getAllAnnouncementsByChallenge(this.challengeId, offset, this.announcementPerPage,).then(announcements => {
+      this.$challengesServices.getAllAnnouncementsByChallenge(this.challengeId, earnerType, offset, this.announcementPerPage).then(announcements => {
         if (announcements.length >= this.announcementPerPage) {
           this.showLoadMoreButton = true;
         } else {

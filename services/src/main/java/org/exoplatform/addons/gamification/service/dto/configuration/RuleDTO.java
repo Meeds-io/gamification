@@ -211,4 +211,5 @@ public class RuleDTO implements Serializable {
   public void setEndDate(String endDate) {
     this.endDate = endDate;
   }
+
 }

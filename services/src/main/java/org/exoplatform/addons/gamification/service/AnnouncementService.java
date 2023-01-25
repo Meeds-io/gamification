@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.service;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -15,11 +16,12 @@ public interface AnnouncementService {
    * @param challengeId technical identifier of a challenge
    * @param offset      Offset
    * @param limit       Limit
-   * @param periodType
+   * @param periodType  periodType
+   * @param earnerType  earnerType
    * @return A {@link List &lt;Announcement&gt;} object
    * @throws IllegalAccessException when user is not authorized to access announcement
    */
-  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, PeriodType periodType) throws IllegalAccessException;
+  List<Announcement> findAllAnnouncementByChallenge(long challengeId, int offset, int limit, PeriodType periodType, IdentityType earnerType) throws IllegalAccessException;
 
   /**
    * Creates a new announcement
@@ -66,5 +68,17 @@ public interface AnnouncementService {
    *           technical identifier is not found
    */
   Long countAllAnnouncementsByChallenge(long challengeId) throws ObjectNotFoundException;
+
+  /**
+   * Retrieves number of all Announcements by challenge identifier.
+   *
+   * @param challengeId Challenge technical identifier
+   * @param earnerType  the earner identity type
+   * @return A {@link Long} number of announcements
+   * @throws ObjectNotFoundException when the challenge identified by its
+   *           technical identifier is not found
+   */
+  Long countAnnouncementsByChallengeAndEarnerType(long challengeId, IdentityType earnerType) throws ObjectNotFoundException;
+
 
 }

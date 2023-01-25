@@ -289,10 +289,10 @@ public class AnnouncementStorageTest {
         announcementEntities.add(announcementEntity2);
         announcementEntities.add(announcementEntity3);
 
-        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(), anyInt(), anyInt(), any())).thenReturn(announcementEntities);
+        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(), anyInt(), anyInt(), any(), any())).thenReturn(announcementEntities);
         ENTITY_MAPPER.when(() -> EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
 
-        List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(), 0, 10, PeriodType.ALL);
+        List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(), 0, 10, PeriodType.ALL, null);
 
         // Then
         assertNotNull(announcementListByChallenge);
