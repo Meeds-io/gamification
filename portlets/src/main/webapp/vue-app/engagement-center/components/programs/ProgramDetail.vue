@@ -165,7 +165,7 @@ export default {
       programRules: [],
       options: {
         page: 1,
-        itemsPerPage: 10,
+        itemsPerPage: 25,
       },
       totalSize: 0,
       loadingRules: false,
