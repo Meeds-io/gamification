@@ -15,8 +15,8 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div id="engagementCenterProgramDetail" class="pa-2 pa-md-5">
-    <div class="py-2 py-md-5 d-flex">
+  <div id="engagementCenterProgramDetail" class="pa-2 pa-sm-5">
+    <div class="py-2 py-sm-5 d-flex">
       <v-btn icon class="mt-n1 my-auto">
         <v-icon
           size="18"
@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </v-btn>
       <span class="text-header-title ps-1"> {{ programTitle }} </span>
       <v-spacer />
-      <span class="text-header-title d-none d-md-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+      <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
     </div>
     <div class="d-flex flex-grow-1">
       <v-img
@@ -60,7 +60,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <div class="pt-5">
       <v-list-item two-line class="px-0">
         <v-list-item-content>
-          <span class="text-header-title subtitle-1 d-md-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+          <span class="text-header-title subtitle-1 d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
           <v-list-item-title class="text-color font-weight-bold">
             {{ $t('programs.details.label.rulesOfProgram') }}
           </v-list-item-title>
@@ -214,7 +214,7 @@ export default {
       return this.isMobile ? 70 : 173;
     },
     isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.breakpoint.xsOnly;
     },
   },
   watch: {

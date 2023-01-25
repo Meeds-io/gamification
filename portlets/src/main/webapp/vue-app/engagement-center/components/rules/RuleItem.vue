@@ -24,7 +24,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-icon>
           <div class="text-truncate">
             <engagement-center-rule-title :rule="rule" />
-            <span class="d-md-none text-caption text-sub-title">{{ rule.score }} {{ $t('challenges.label.points') }}</span>
+            <span class="d-sm-none text-caption text-sub-title">{{ rule.score }} {{ $t('challenges.label.points') }}</span>
           </div>
         </div>
       </td>
@@ -35,10 +35,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <div v-if="!automaticRule" class="align-center d-none d-sm-block">
             <v-btn
               icon
-              small
               class="me-2"
               @click="$root.$emit('rule-detail-drawer', rule, true)">
-              <v-icon size="16">fas fa-bullhorn</v-icon>
+              <v-icon :size="iconSize">fas fa-bullhorn</v-icon>
             </v-btn>
           </div>
           <v-menu
@@ -51,14 +50,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             attach>
             <template #activator="{ on, attrs }">
               <v-btn
-                :small="!isMobile"
-                :x-small="isMobile"
                 icon
                 class="me-2"
                 v-bind="attrs"
                 v-on="on"
                 @blur="closeMenu">
-                <v-icon class="icon-default-color">fas fa-ellipsis-v</v-icon>
+                <v-icon :size="iconSize" class="icon-default-color">fas fa-ellipsis-v</v-icon>
               </v-btn>
             </template>
             <v-list dense class="pa-0">
@@ -87,7 +84,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-menu>
         </div>
       </td>
-      <td class="no-border-bottom d-none d-md-inline">
+      <td class="no-border-bottom d-none d-sm-inline">
         <div class="align-center">
           {{ rule.score }}
         </div>
@@ -135,8 +132,11 @@ export default {
       return this.automaticRule ? this.actionValueExtension?.icon : 'fas fa-trophy';
     },
     isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.breakpoint.xsOnly;
     },
+    iconSize() {
+      return this.isMobile ? 13 : 16;
+    }
   },
   methods: {
     closeMenu() {
