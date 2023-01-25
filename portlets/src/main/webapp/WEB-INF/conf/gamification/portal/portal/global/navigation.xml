@@ -33,11 +33,5 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <visibility>SYSTEM</visibility>
       <page-reference>portal::global::contributions</page-reference>
     </node>
-    <node>
-      <name>gamification-earn-points</name>
-      <label>#{gamification.intranet.gamificationHelp}</label>
-      <visibility>SYSTEM</visibility>
-      <page-reference>portal::global::gameficationhelp</page-reference>
-    </node>
   </page-nodes>
 </node-navigation>

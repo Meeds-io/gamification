@@ -79,13 +79,10 @@ export default {
     loading: false,
     limit: 20,
     achievements: [],
-    engagementCenterEnabled: eXo.env.portal.engagementCenterEnabled,
   }),
   computed: {
     infoUrl() {
-      return this.engagementCenterEnabled
-        && `/portal/${eXo.env.portal.portalName}/contributions/programs`
-        || `/portal/${eXo.env.portal.portalName}/gamification-earn-points`;
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
     },
     hasMore() {
       return this.loading || this.achievements.length >= this.limit;
