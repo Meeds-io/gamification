@@ -119,24 +119,24 @@ public class EntityBuilder {
 
   public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules,
                                                             String username,
-                                                            int offset,
-                                                            int limit,
                                                             List<String> expand) {
-    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, offset, limit, expand)).toList();
+    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, expand)).toList();
   }
 
-  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, int offset, int limit, List<String> expand) {
+  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, List<String> expand) {
     List<AnnouncementRestEntity> announcementsRestEntities = null;
     if (rule == null) {
       return null;
     }
     List<Announcement> announcementList = null;
+    long announcementCount = 0L;
     if (expand.contains("userAnnouncements")) {
       try {
-        announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), offset, limit, IdentityType.USER);
+        announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), 0, 3, IdentityType.USER);
       } catch (IllegalAccessException e) {
         announcementList = Collections.emptyList();
       }
+      announcementCount = Utils.countAnnouncementByChallengeAndEarnerType(rule.getId(), IdentityType.USER);
     }
     if (announcementList != null) {
       announcementsRestEntities = announcementList.stream().map(EntityMapper::fromAnnouncement).toList();
@@ -160,6 +160,7 @@ public class EntityBuilder {
                               rule.getType(),
                               rule.getManagers(),
                               announcementsRestEntities,
+                              announcementCount,
                               Utils.toUserInfo(rule.getId(), username));
   }
 }

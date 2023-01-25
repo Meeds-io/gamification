@@ -63,4 +63,8 @@ public class AnnouncementStorage {
   public Long countAnnouncementsByChallenge(Long challengeId) {
     return announcementDAO.countAnnouncementsByChallenge(challengeId);
   }
+
+  public Long countAnnouncementsByChallengeAndEarnerType(Long challengeId, IdentityType earnerType) {
+    return announcementDAO.countAnnouncementsByChallengeAndEarnerType(challengeId, earnerType);
+  }
 }

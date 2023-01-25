@@ -111,6 +111,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
+  public Long countAnnouncementsByChallengeAndEarnerType(long challengeId, IdentityType earnerType) throws ObjectNotFoundException {
+    if (challengeId <= 0) {
+      throw new IllegalArgumentException("Challenge id has to be positive integer");
+    }
+    Challenge challenge = challengeService.getChallengeById(challengeId);
+    if (challenge == null) {
+      throw new ObjectNotFoundException("challenge does not exist");
+    }
+    return announcementStorage.countAnnouncementsByChallengeAndEarnerType(challengeId, earnerType);
+  }
+
+  @Override
   public Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException {
     if (announcement == null) {
       throw new IllegalArgumentException("announcement is mandatory");

@@ -69,4 +69,16 @@ public interface AnnouncementService {
    */
   Long countAllAnnouncementsByChallenge(long challengeId) throws ObjectNotFoundException;
 
+  /**
+   * Retrieves number of all Announcements by challenge identifier.
+   *
+   * @param challengeId Challenge technical identifier
+   * @param earnerType  the earner identity type
+   * @return A {@link Long} number of announcements
+   * @throws ObjectNotFoundException when the challenge identified by its
+   *           technical identifier is not found
+   */
+  Long countAnnouncementsByChallengeAndEarnerType(long challengeId, IdentityType earnerType) throws ObjectNotFoundException;
+
+
 }

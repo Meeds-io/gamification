@@ -158,6 +158,10 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"
 )
 @NamedQuery(
+    name = "GamificationActionsHistory.countAnnouncementsByChallengeAndEarnerType",
+    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.earnerType = :earnerType"
+)
+@NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallenge",
     query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
 )

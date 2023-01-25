@@ -62,9 +62,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
   private static final String        EARNER_TYPE_PARAM_NAME = "earnerType";
 
-  public static final String         STATUS                 = "status";
-  
-  public static final String         TYPE                   = "type";
+  public static final String         STATUS                  = "status";
+
+  public static final String         TYPE                    = "type";
+
+  private static final String        CHALLENGE_ID_PARAM_NAME = "challengeId";
 
   private final Map<String, Boolean> filterNamedQueries     = new HashMap<>();
 
@@ -409,6 +411,19 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
+  public Long countAnnouncementsByChallengeAndEarnerType(Long challengeId, IdentityType earnerType) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.countAnnouncementsByChallengeAndEarnerType",
+                                                                 Long.class);
+    query.setParameter(CHALLENGE_ID_PARAM_NAME, challengeId);
+    query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
+    try {
+      Long count = query.getSingleResult();
+      return count == null ? 0L : count;
+    } catch (NoResultException e) {
+      return 0L;
+    }
+  }
+
   public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId,
                                                                          int offset,
                                                                          int limit,
@@ -440,7 +455,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                     GamificationActionsHistory.class);
       }
     }
-    query.setParameter("challengeId", challengeId);
+    query.setParameter(CHALLENGE_ID_PARAM_NAME, challengeId);
     if (offset >= 0) {
       query.setFirstResult(offset);
     }

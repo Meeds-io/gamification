@@ -119,7 +119,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
       int rulesSize = ruleService.countAllRules(ruleFilter);
       ruleList.setSize(rulesSize);
     }
-    ruleRestEntities = ruleListToRestEntities(rules, currentUser, offset, -1, expandFields);
+    ruleRestEntities = ruleListToRestEntities(rules, currentUser, expandFields);
     ruleList.setRules(ruleRestEntities);
     ruleList.setOffset(offset);
     ruleList.setLimit(limit);

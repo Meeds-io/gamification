@@ -33,6 +33,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.*;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
@@ -410,6 +411,16 @@ public class Utils {
                                                                   IdentityType earnerType) throws IllegalAccessException {
     AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
     return announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit, PeriodType.ALL, earnerType);
+  }
+
+
+  public static Long countAnnouncementByChallengeAndEarnerType(long challengeId, IdentityType earnerType) {
+    AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
+    try {
+      return announcementService.countAnnouncementsByChallengeAndEarnerType(challengeId, earnerType);
+    } catch (ObjectNotFoundException e) {
+      return 0L;
+    }
   }
 
   public static GamificationService getGamificationService() {

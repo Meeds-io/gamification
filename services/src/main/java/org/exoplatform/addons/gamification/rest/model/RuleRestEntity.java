@@ -54,6 +54,8 @@ public class RuleRestEntity implements Cloneable {
 
   private List<AnnouncementRestEntity> announcements;
 
+  private long                         announcementsCount;
+
   private UserInfo                     userInfo;
 
   @Override
@@ -77,6 +79,7 @@ public class RuleRestEntity implements Cloneable {
                               type,
                               managers,
                               announcements,
+                              announcementsCount,
                               userInfo);
   }
 
