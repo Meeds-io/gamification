@@ -17,12 +17,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-hover v-slot="{ hover }">
     <tr>
-      <td class="no-border-bottom">
-        <div @click="openRule" class="clickable align-start d-flex">
-          <v-icon size="22" class="primary--text my-auto me-4">
-            {{ actionIcon }}
-          </v-icon>
-          <div class="text-truncate">
+      <td class="no-border-bottom ps-0">
+        <div @click="openRule" class="clickable d-flex flex-row ma-auto">
+          <div class="d-flex flex-column col-2 col-sm-1 pa-0">
+            <v-icon size="22" class="primary--text my-auto">
+              {{ actionIcon }}
+            </v-icon>
+          </div>
+          <div class="d-flex flex-column col-10 col-sm-11 pa-0 text-truncate">
             <engagement-center-rule-title :rule="rule" />
             <span class="d-sm-none text-caption text-sub-title">{{ rule.score }} {{ $t('challenges.label.points') }}</span>
           </div>
