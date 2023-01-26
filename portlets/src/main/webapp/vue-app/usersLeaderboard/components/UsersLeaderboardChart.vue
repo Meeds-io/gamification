@@ -88,12 +88,12 @@ export default {
         fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/stats?username=${this.username}`, {
           credentials: 'include',
         })
-          .then(resp => resp && resp.ok && resp.json())
+          .then(resp => resp?.ok && resp.json())
           .then(chartData => {
             this.chartData = chartData;
             chartData.forEach(statData => {
               const domain = this.domains.find(tmpDomain => tmpDomain.title === statData.label);
-              statData.name = domain.label;
+              statData.name = domain?.label || this.$t('exoplatform.gamification.gamificationinformation.domain.others');
             });
             this.$nextTick().then(() => resolve(this.chartData));
           })
