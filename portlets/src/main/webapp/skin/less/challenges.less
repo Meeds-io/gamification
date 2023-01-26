@@ -39,18 +39,6 @@
   }
 }
 
-#announcementDrawer {
-  .titleChallenge {
-    color: @greyColorLighten1Default;
-    font-weight: bold;
-    font-size: 14px !important;
-  }
-  .separator {
-    border-color: @greyColorLighten1Default;
-    border-bottom: 0px !important;
-  }
-}
-
 #winnersDetails {
   .accountTitleWrapper {
     border-bottom: 1px solid @greyColorLighten1Default;
@@ -84,81 +72,6 @@
         font-weight: normal;
       }
     }
-  }
-}
-
-#challengeDetails {
-  .titleChallenge {
-    color: @greyColorLighten1Default;
-    font-weight: bold;
-    font-size: 14px !important;
-  }
-
-  .separation {
-    border-color: @greyColorLighten1Default;
-    border-bottom: 0px !important;
-  }
-
-  .descriptionLabel {
-    color: @greyColorLighten1Default;
-  }
-  .winners{
-    display: flex;
-    .winnersLabel {
-      color: @greyColorLighten1Default;
-      flex: auto;
-      flex-basis: fit-content;
-    }
-    .viewAll{
-      color: @primaryColor ;
-      cursor: pointer;
-    }
-  }
-
-  .description {
-    color: @textColorDefault;
-  }
-
-  .date {
-    color: @baseColorLight;
-    margin-left:  10px ~'; /** orientation=lt */ ';
-    margin-right: 10px ~'; /** orientation=rt */ ';
-  }
-
-  .endDate {
-    .uiIconDueDate {
-      &:before {
-        content: "\ebf2";
-        color: @baseColorLight;
-        font-size: 22px;
-      }
-    }
-  }
-
-  .startDate {
-    .uiIconStartDate {
-      color: @baseColorLight;
-      font-size: 24px;
-      margin-left: -2px;
-
-      &:before {
-        content: "\ebf3";
-      }
-    }
-  }
-
-  .listMangers {
-    padding-left:  12px ~'; /** orientation=lt */ ';
-    padding-right: 12px ~'; /** orientation=rt */ ';
-  }
-
-  .points {
-    color: @darkGrey;
-    font-size: 14px !important;
-  }
-
-  ul li {
-    list-style-type: disc !important;
   }
 }
 
@@ -401,75 +314,6 @@
   }
 }
 
-.assigneeAvatars {
-
-  .AllUsersAvatar {
-    box-shadow: 0 0 2px 1px @greyColor;
-    border-radius: 25px;
-    z-index: 1;
-    background: white;
-  }
-
-  .winnersAvatarsList {
-    padding-left: 18px ~'; /** orientation=lt */ ';
-    padding-right: 18px ~'; /** orientation=rt */ ';
-    .seeMoreAvatars {
-      .seeMoreItem {
-        position: relative;
-
-        &:before {
-          content: "";
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          background: @baseColorMedium;
-          border-radius: 50%;
-          opacity: .5;
-          z-index: 1;
-        }
-
-        .seeMoreAvatarList {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          text-align: center;
-          width: 30px;
-          height: 30px;
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          font-size: 15px;
-          font-weight: bold;
-          z-index: 1;
-        }
-      }
-    }
-    .announcesNumber {
-      color: @primaryColor;
-      cursor: pointer;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .projectManagersAvatar {
-      background-position: center;
-      background-size: cover;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-    }
-  }
-  .winners {
-    width: 60%;
-    .emptyWinners {
-      color: @baseColorLight;
-      cursor: pointer;
-      font-size: 16px;
-    }
-  }
-}
 .EngagementCenterImageSelector{
     .v-image__image {
       filter: brightness(70%);
@@ -514,6 +358,12 @@
     input {
       padding: 0;
     }
+  }
+}
+
+#engagementCenterTabs {
+  .v-slide-group__prev, .v-slide-group__next {
+    display: none;
   }
 }
 
