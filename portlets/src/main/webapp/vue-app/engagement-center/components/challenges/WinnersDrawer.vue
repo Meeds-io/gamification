@@ -82,17 +82,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-row>
       </template>
       <template v-if="showLoadMoreButton" slot="footer">
-        <v-row class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
-          <v-btn
-            v-if="showLoadMoreButton"
-            :loading="loading"
-            :disabled="loading"
-            class="loadMoreButton ma-auto btn"
-            block
-            @click="loadMore">
-            {{ $t('engagementCenter.button.ShowMore') }}
-          </v-btn>
-        </v-row>
+        <div class="text-center">
+          <v-pagination
+            v-model="page"
+            :length="announcementPerPage"
+            circle
+            light
+            flat
+            @input="loadMore" />
+        </div>
       </template>
     </exo-drawer>
   </v-app>
@@ -106,6 +104,7 @@ export default {
       challengeId: false,
       showLoadMoreButton: false,
       announcementPerPage: 7,
+      page: 1,
       loading: true,
       announcement: [],
       listWinners: []
@@ -123,6 +122,10 @@ export default {
   created() {
     this.$root.$on('open-winners-drawer', this.open);
   },
+  computed: {
+    paginationPageCount() {
+      return 0;
+    }},
   methods: {
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
