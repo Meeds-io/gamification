@@ -29,23 +29,57 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
       </template>
       <template slot="content">
-        <exo-user-avatar
+        <v-row 
           v-for="winner in listWinners" 
           :key="winner.user"
-          :profile-id="winner.user"
-          :size="44"
-          extra-class="px-4 py-3 border-bottom-color"
-          bold-title
-          link-style
-          popover>
-          <template slot="subTitle">
-            <a :href="getLinkActivity(winner.activityId)">
-              <relative-date-format
-                class="text-capitalize-first-letter text-light-color text-truncate"
-                :value="winner.createDate" />
-            </a>
-          </template>
-        </exo-user-avatar> 
+          class="mx-auto">
+          <v-col>
+            <exo-user-avatar
+              :profile-id="winner.user"
+              :size="44"
+              extra-class="px-4 py-3"
+              bold-title
+              link-style
+              popover>
+              <template slot="subTitle">
+                <a :href="getLinkActivity(winner.activityId)">
+                  <relative-date-format
+                    class="text-capitalize-first-letter text-light-color text-truncate"
+                    :value="winner.createDate" />
+                </a>
+              </template>
+            </exo-user-avatar>
+          </v-col>
+          <v-col class="d-flex align-center justify-center">
+            <v-tooltip v-if="!winner.noActivityId" bottom>
+              <template #activator="{ on }">
+                <a v-on="on">
+                  <span>
+                    <v-icon
+                      size="16"
+                      color="dark-grey"
+                      @click="redirectToLinkActivity(winner.activityId)">fas fa-eye</v-icon>
+                  </span>
+                </a>
+              </template>
+              <span>{{ $t('program.winner.label.checkActivity') }}</span>
+            </v-tooltip>
+            <v-tooltip v-else bottom>
+              <template #activator="{ on }">
+                <a v-on="on">
+                  <span>
+                    <v-icon
+                      size="16"
+                      color="grey"
+                      class="not-clickable ">fas fa-eye</v-icon>
+                  </span>
+                </a>
+              </template>
+              <span>{{ $t('program.winner.label.noActivity') }}</span>
+              {{ $t('challenges.winners.details') }}
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </template>
       <template v-if="showLoadMoreButton" slot="footer">
         <v-row class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
@@ -71,7 +105,7 @@ export default {
     return {
       challengeId: false,
       showLoadMoreButton: false,
-      announcementPerPage: 20,
+      announcementPerPage: 7,
       loading: true,
       announcement: [],
       listWinners: []
@@ -92,6 +126,9 @@ export default {
   methods: {
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
+    },
+    redirectToLinkActivity(id) {
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
     },
     close() {
       this.$refs.winnersDetails.close();
@@ -120,12 +157,14 @@ export default {
             const announcement = {
               user: announce.assignee,
               activityId: announce.activityId,
-              createDate: announce.createdDate
+              createDate: announce.createdDate,
+              noActivityId: announce.activityId === null,
             };
             this.listWinners.push(announcement);
 
           });
         }
+        console.log(this.listWinners);
       }).finally(() => this.loading = false);
     },
   }
