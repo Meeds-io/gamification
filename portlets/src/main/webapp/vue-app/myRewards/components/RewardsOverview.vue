@@ -163,7 +163,11 @@ export default {
       this.productsLoaded = true;
     },
     init() {
-      document.dispatchEvent(new CustomEvent('exo-wallet-init'));
+      if (!window.walletAPIInitialized) {
+        window.require(['SHARED/WalletAPIBundle'], () => {
+          document.dispatchEvent(new CustomEvent('exo-wallet-init'));
+        });
+      }
     },
     checkUserWalletStatus() {
       this.hasConfiguredWallet = !!window?.walletSettings?.wallet.address;
