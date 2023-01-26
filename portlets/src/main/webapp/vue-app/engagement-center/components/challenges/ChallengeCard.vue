@@ -18,8 +18,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div class="engagement-center-card">
     <v-card
       id="engagementCenterChallengeCard"
-      class="mx-auto pa-2"
-      width="95%"
+      class="mx-auto"
+      :width="isMobile ? '100%' : '95%'"
       height="230"
       max-height="230"
       outlined
@@ -92,7 +92,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div class="d-flex flex-row ms-1 ms-sm-0">
           <engagement-center-avatars-list
             :avatars="winnerAvatars"
-            :max-avatars-to-show="3"
+            :max-avatars-to-show="maxAvatarsToShow"
             :avatars-count="announcementCount"
             :size="27"
             @open-avatars-drawer="openWinnersDrawer" />
@@ -180,7 +180,10 @@ export default {
       return this.startDate < new Date() && new Date() < this.endDate;
     },
     isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.breakpoint.xsOnly;
+    },
+    maxAvatarsToShow() {
+      return this.isMobile ? 2 : 3;
     },
   },
   created() {
