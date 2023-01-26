@@ -55,11 +55,11 @@ import static org.mockito.Mockito.when;
 @PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
 public class AnnouncementStorageTest {
 
-  private GamificationHistoryDAO announcementDAO;
+    private GamificationHistoryDAO announcementDAO;
 
-  private RuleDAO                ruleDAO;
+    private RuleDAO                ruleDAO;
 
-  private AnnouncementStorage    announcementStorage;
+    private AnnouncementStorage    announcementStorage;
 
     @Before
     public void setUp() throws Exception { // NOSONAR
@@ -74,15 +74,15 @@ public class AnnouncementStorageTest {
         Date startDate = new Date(System.currentTimeMillis());
         Date endDate = new Date(System.currentTimeMillis() + 2);
         Challenge challenge = new Challenge(1l,
-                "new challenge",
-                "challenge description",
-                1l,
-                startDate.toString(),
-                endDate.toString(),
-                Collections.emptyList(),
-                10L,
-                "gamification",
-                true);
+                                            "new challenge",
+                                            "challenge description",
+                                            1l,
+                                            startDate.toString(),
+                                            endDate.toString(),
+                                            Collections.emptyList(),
+                                            10L,
+                                            "gamification",
+                                            true);
 
         RuleEntity challengeEntity = new RuleEntity();
         challengeEntity.setDescription(challenge.getDescription());
@@ -93,13 +93,13 @@ public class AnnouncementStorageTest {
 
         Date createDate =  new Date(System.currentTimeMillis() + 1);
         Announcement announcement = new Announcement(0,
-                challenge.getId(),
-                challenge.getTitle(),
-                1L,
-                "announcement comment",
-                1L,
-                createDate.toString(),
-                null);
+                                                     challenge.getId(),
+                                                     challenge.getTitle(),
+                                                     1L,
+                                                     "announcement comment",
+                                                     1L,
+                                                     createDate.toString(),
+                                                     null);
 
         GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
         announcementEntity.setEarnerId(announcement.getAssignee().toString());
@@ -271,8 +271,9 @@ public class AnnouncementStorageTest {
         announcementEntities.add(announcementEntity2);
         announcementEntities.add(announcementEntity3);
 
-        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(), anyInt(), anyInt(), any(), any())).thenReturn(announcementEntities);
-        ENTITY_MAPPER.when(() -> EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
+        PowerMockito.mockStatic(EntityMapper.class);
+        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt(),any(), any())).thenReturn(announcementEntities);
+        when(EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
 
         List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(), 0, 10, PeriodType.ALL, null);
 
@@ -281,4 +282,3 @@ public class AnnouncementStorageTest {
         assertEquals(announcementListByChallenge.size(),3);
     }
 }
-
