@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.rest.model.RuleList;
+import org.exoplatform.addons.gamification.rest.model.RuleRestEntity;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -44,20 +45,25 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToRestEntities;
 
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
 @Produces(MediaType.APPLICATION_JSON)
 public class ManageRulesEndpoint implements ResourceContainer {
-
   private final CacheControl cacheControl;
 
   protected RuleService      ruleService;
 
   protected IdentityManager  identityManager;
 
-  public ManageRulesEndpoint(RuleService ruleService, IdentityManager identityManager) {
+
+  public ManageRulesEndpoint(RuleService ruleService,
+                             IdentityManager identityManager) {
     this.cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
@@ -80,13 +86,15 @@ public class ManageRulesEndpoint implements ResourceContainer {
                            @Parameter(description = "Rules status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
                            @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
                            @Parameter(description = "term to search rules with") @QueryParam("term") String term,
-                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
+                           @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize,
+                           @Parameter(description = "Asking for a full representation of a specific subresource, ex: userAnnouncements") @QueryParam("expand") String expand) {
     if (offset < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
     }
     if (limit < 0) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
     }
+    String currentUser = Utils.getCurrentUser();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setIncludeDeleted(includeDeleted);
     EntityFilterType filterType = StringUtils.isBlank(type) ? EntityFilterType.ALL : EntityFilterType.valueOf(type);
@@ -97,13 +105,22 @@ public class ManageRulesEndpoint implements ResourceContainer {
     if (domainId > 0) {
       ruleFilter.setDomainId(domainId);
     }
+    List<String> expandFields = null;
+    if (StringUtils.isBlank(expand)) {
+      expandFields = Collections.emptyList();
+    } else {
+      expandFields = Arrays.asList(expand.split(","));
+    }
     RuleList ruleList = new RuleList();
-    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
+    List<RuleRestEntity> ruleRestEntities = null;
+    List<RuleDTO> rules = null;
+    rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
     if (returnSize) {
       int rulesSize = ruleService.countAllRules(ruleFilter);
       ruleList.setSize(rulesSize);
     }
-    ruleList.setRules(rules);
+    ruleRestEntities = ruleListToRestEntities(rules, currentUser, expandFields);
+    ruleList.setRules(ruleRestEntities);
     ruleList.setOffset(offset);
     ruleList.setLimit(limit);
     return Response.ok(ruleList).build();

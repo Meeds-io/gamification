@@ -62,9 +62,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
   private static final String        EARNER_TYPE_PARAM_NAME = "earnerType";
 
-  public static final String         STATUS                 = "status";
-  
-  public static final String         TYPE                   = "type";
+  public static final String         STATUS                  = "status";
+
+  public static final String         TYPE                    = "type";
+
+  private static final String        CHALLENGE_ID_PARAM_NAME = "challengeId";
 
   private final Map<String, Boolean> filterNamedQueries     = new HashMap<>();
 
@@ -400,7 +402,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   public Long countAnnouncementsByChallenge(Long challengeId) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.countAnnouncementsByChallenge",
                                                                  Long.class);
-    query.setParameter("challengeId", challengeId);
+    query.setParameter(CHALLENGE_ID_PARAM_NAME, challengeId);
     try {
       Long count = query.getSingleResult();
       return count == null ? 0l : count.longValue();
@@ -409,25 +411,51 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
+  public Long countAnnouncementsByChallengeAndEarnerType(Long challengeId, IdentityType earnerType) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.countAnnouncementsByChallengeAndEarnerType",
+                                                                 Long.class);
+    query.setParameter(CHALLENGE_ID_PARAM_NAME, challengeId);
+    query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
+    try {
+      Long count = query.getSingleResult();
+      return count == null ? 0L : count;
+    } catch (NoResultException e) {
+      return 0L;
+    }
+  }
+
   public List<GamificationActionsHistory> findAllAnnouncementByChallenge(Long challengeId,
                                                                          int offset,
                                                                          int limit,
-                                                                         PeriodType periodType) {
+                                                                         PeriodType periodType,
+                                                                         IdentityType earnerType) {
     TypedQuery<GamificationActionsHistory> query = null;
     if (periodType != null && periodType.equals(PeriodType.WEEK)) {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
-                                                  GamificationActionsHistory.class);
+      if (earnerType != null) {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDateByEarnerType",
+                                                    GamificationActionsHistory.class);
+        query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
+      } else {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
+                                                    GamificationActionsHistory.class);
+      }
       LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
       LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
       Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
       Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
-      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
-           .setParameter(TO_DATE_PARAM_NAME, utilToDate);
+      query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate).setParameter(TO_DATE_PARAM_NAME, utilToDate);
     } else {
-      query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
-                                                  GamificationActionsHistory.class);
+      if (earnerType != null) {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
+                                                    GamificationActionsHistory.class);
+
+        query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
+      } else {
+        query = getEntityManager().createNamedQuery("GamificationActionsHistory.findAllAnnouncementByChallenge",
+                                                    GamificationActionsHistory.class);
+      }
     }
-    query.setParameter("challengeId", challengeId);
+    query.setParameter(CHALLENGE_ID_PARAM_NAME, challengeId);
     if (offset >= 0) {
       query.setFirstResult(offset);
     }

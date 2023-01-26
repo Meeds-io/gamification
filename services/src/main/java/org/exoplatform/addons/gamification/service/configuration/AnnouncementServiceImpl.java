@@ -5,6 +5,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIV
 import java.util.List;
 import java.util.Map;
 
+import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -89,11 +90,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   public List<Announcement> findAllAnnouncementByChallenge(long challengeId,
                                                            int offset,
                                                            int limit,
-                                                           PeriodType periodType) {
+                                                           PeriodType periodType,
+                                                           IdentityType earnerType) {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
-    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, periodType);
+    return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, periodType, earnerType);
   }
 
   @Override
@@ -106,6 +108,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new ObjectNotFoundException("challenge does not exist");
     }
     return announcementStorage.countAnnouncementsByChallenge(challengeId);
+  }
+
+  @Override
+  public Long countAnnouncementsByChallengeAndEarnerType(long challengeId, IdentityType earnerType) throws ObjectNotFoundException {
+    if (challengeId <= 0) {
+      throw new IllegalArgumentException("Challenge id has to be positive integer");
+    }
+    Challenge challenge = challengeService.getChallengeById(challengeId);
+    if (challenge == null) {
+      throw new ObjectNotFoundException("challenge does not exist");
+    }
+    return announcementStorage.countAnnouncementsByChallengeAndEarnerType(challengeId, earnerType);
   }
 
   @Override
