@@ -89,6 +89,24 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           {{ rule.score }}
         </div>
       </td>
+      <td class="no-border-bottom  d-none d-sm-table-cell">
+        <div
+          :class="showAllAvatarList && 'AllUsersAvatar'"
+          class="winners winnersAvatarsList d-flex flex-nowrap my-2 justify-center">
+          <engagement-center-avatars-list
+            v-if="haveParticipants"
+            :avatars="ruleWinnerAvatars"
+            :max-avatars-to-show="4"
+            :avatars-count="ruleWinnersCount"
+            :size="27"
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule.id, earnerType)" />
+          <div v-else>
+            <span>
+              -
+            </span>
+          </div>
+        </div>
+      </td>
     </tr>
   </v-hover>
 </template>
@@ -96,6 +114,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
+    earnerType: {
+      type: String,
+      default: '',
+    },
     rule: {
       type: Object,
       default: null,
@@ -136,6 +158,18 @@ export default {
     },
     iconSize() {
       return this.isMobile ? 13 : 16;
+    },
+    ruleWinnerAvatars() {
+      return this.rule?.announcements?.filter(announce => announce.assignee)
+        .map(announce => ({
+          userName: announce.assignee
+        })) || [];
+    },
+    ruleWinnersCount() {
+      return this.rule?.announcementsCount || this.rule?.announcements.length || 0;
+    },
+    haveParticipants() {
+      return this.ruleWinnersCount !== 0;
     }
   },
   methods: {

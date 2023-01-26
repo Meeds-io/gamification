@@ -141,7 +141,8 @@ public class ChallengeRest implements ResourceContainer {
       List<Announcement> announcementList = announcementService.findAllAnnouncementByChallenge(challengeId,
                                                                                                offset,
                                                                                                limit,
-                                                                                               PeriodType.ALL);
+                                                                                               PeriodType.ALL,
+                                                                                               null);
       return Response.ok(EntityBuilder.fromChallenge(challenge, announcementList, false)).build();
     } catch (IllegalAccessException e) {
       LOG.error("User '{}' attempts to retrieve a challenge by id '{}'", currentUser, challengeId, e);

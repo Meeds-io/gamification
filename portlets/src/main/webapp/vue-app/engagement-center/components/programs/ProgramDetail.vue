@@ -100,6 +100,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               disable-sort>
               <template slot="item" slot-scope="props">
                 <engagement-center-rule-item
+                  :earner-type="earnerType"
                   :rule="props.item"
                   :can-manage-rule="canManageRule"
                   :action-value-extensions="actionValueExtensions"
@@ -174,6 +175,8 @@ export default {
       loadingRules: false,
       deleteConfirmMessage: '',
       filter: 'ENABLED',
+      expand: 'userAnnouncements',
+      earnerType: 'USER',
     };
   },
   computed: {
@@ -202,7 +205,8 @@ export default {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
         {text: '', align: 'center', width: '15%'},
-        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%', enabled: !this.isMobile}].filter(filter => filter.enabled == null || filter.enabled === true);
+        {text: this.$t('programs.details.rules.points'), align: 'center', width: '15%', enabled: !this.isMobile},
+        {text: this.$t('gamification.overview.label.participants'), align: 'center', width: '25%', enabled: !this.isMobile}].filter(filter => filter.enabled == null || filter.enabled === true);
     },
     displayFooter() {
       return this.totalSize > this.options.itemsPerPage;
@@ -252,9 +256,8 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage)
+      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.expand)
         .then((data) => {
-
           this.programRules = data.rules;
           this.totalSize = data.size || 0;
           return this.$nextTick();

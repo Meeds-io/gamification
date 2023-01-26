@@ -29,10 +29,13 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+
+import static org.mockito.Mockito.mock;
 
 public class TestManageRulesEndpoint extends AbstractServiceTest {
 
@@ -57,10 +60,16 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
 
     DomainEntity domainEntity = newDomain();
 
+    org.exoplatform.social.core.identity.model.Identity userIdentity = new org.exoplatform.social.core.identity.model.Identity();
+    userIdentity.setId("1");
+    userIdentity.setProviderId("organization");
+    userIdentity.setRemoteId("root0");
+    org.exoplatform.social.core.identity.model.Identity identity = mock(org.exoplatform.social.core.identity.model.Identity.class);
+    identityManager = mock(IdentityManager.class);
     newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
     newRule("rule1", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
 
-    startSessionAs("user");
+    startSessionAs("root0");
     ContainerResponse response = getResponse("GET", getURLResource("rules?returnSize=true"), null);
     assertEquals(200, response.getStatus());
 
