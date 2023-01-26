@@ -402,7 +402,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   public Long countAnnouncementsByChallenge(Long challengeId) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.countAnnouncementsByChallenge",
                                                                  Long.class);
-    query.setParameter("challengeId", challengeId);
+    query.setParameter(CHALLENGE_ID_PARAM_NAME, challengeId);
     try {
       Long count = query.getSingleResult();
       return count == null ? 0l : count.longValue();
