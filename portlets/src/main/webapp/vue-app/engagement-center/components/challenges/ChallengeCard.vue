@@ -28,37 +28,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div
           class="d-flex flex-row pb-1">
           <div
-            class="d-flex flex-column flex-grow-0 flex-shrink-0">
-            <v-badge
-              :offset-x="18"
-              :offset-y="18"
-              bottom
-              bordered
-              class="full-width"
-              color="info"
-              overlap>
-              <span slot="badge"><v-icon size="16" class="mt-n2px">fas fa-trophy</v-icon></span>
-              <v-img
-                :src="programCoverURl"
-                :height="45"
-                :width="45"
-                :max-height="45"
-                :max-width="45" />
-            </v-badge>
-          </div>
-          <div
-            class="d-flex flex-column mx-3 me-auto full-height">
-            <v-tooltip bottom>
-              <template #activator="{ on, attrs }">
-                <span
-                  class="d-flex-inline position-relative text-truncate-2 font-weight-bold text-subtitle-2"
-                  v-bind="attrs"
-                  v-on="on">
-                  {{ challengeTitle }}
-                </span>
-              </template>
-              {{ challengeTitle }}
-            </v-tooltip>
+            class="d-flex flex-row flex-grow-0 flex-shrink-0">
+            <div class="d-flex flex-row my-auto">
+              <v-icon size="18" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
+              <div class="font-weight-bold text--secondary text-subtitle-2 mt-1 ms-2">
+                {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
+              </div>
+            </div>
           </div>
           <div
             class="d-flex flex-column flex-grow-0 flex-shrink-1">
