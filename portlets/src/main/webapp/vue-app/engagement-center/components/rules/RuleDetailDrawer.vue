@@ -13,7 +13,7 @@
           <v-icon size="60" class="align-start primary--text">{{ actionIcon }}</v-icon>
           <div class="mb-4 ms-4">
             <div class="font-weight-bold mx-0 mt-0 mb-2">{{ ruleTitle }}</div>
-            <div class="font-weight-bold tertiary--text">{{ ruleScore }} {{ $t('challenges.label.points') }}</div>
+            <div class="font-weight-bold text--secondary">{{ ruleScore }} {{ $t('challenges.label.points') }}</div>
           </div>
         </div>
         <div class="d-flex flex-row pt-3 rich-editor-content text-break overflow-hidden">
