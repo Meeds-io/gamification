@@ -64,8 +64,11 @@ export default {
     seeMoreAvatarsToDisplay () {
       return this.avatarsCount >= this.maxAvatarsToShow || null;
     },
-    showMoreAvatarsNumber() {
+    remainingAvatarsCount() {
       return this.avatarsCount - this.maxAvatarsToShow + 1;
+    },
+    showMoreAvatarsNumber() {
+      return this.remainingAvatarsCount > 99 ? 99 : this.remainingAvatarsCount;
     },
   },
   methods: {
