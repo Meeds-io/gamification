@@ -37,6 +37,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       persistent-hint
       hide-selected
       chips
+      cache-items
       dense
       flat
       required
@@ -141,6 +142,9 @@ export default {
       if (!this.domains.length && this.value) {
         this.domains.push(this.value);
       }
+    },
+    includeDeleted() {
+      this.$refs.selectAutoComplete.cachedItems = [];
     },
   },
   created() {
