@@ -61,10 +61,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-col>
         <v-col class="col-sm-8 col-8">
           <div v-if="isAutomaticType">
-            <extension-registry-component
-              v-if="actionValueExtensions"
-              :component="extendedActionValueComponent"
-              :params="actionValueComponentParams" />
+            <rule-action-value
+              v-if="actionValueExtension"
+              :action-label="actionLabel"
+              :action-u-r-l="actionURL"
+              :action-icon="actionIcon" />
             <a
               v-else
               :href="realization.url"
@@ -76,6 +77,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </a>
           </div>
           <challenge-action-value
+            v-else
             :action-label="actionLabel"
             :action-u-r-l="actionURL" />
         </v-col>
@@ -169,20 +171,6 @@ export default {
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
     },
-    extendedActionValueComponent() {
-      return this.actionValueExtension && {
-        componentName: 'action-value',
-        componentOptions: {
-          vueComponent: this.actionValueExtension.vueComponent,
-        },
-      } || null;
-    },
-    actionValueComponentParams() {
-      return this.actionValueExtension && {
-        actionURL: this.actionURL,
-        actionLabel: this.actionLabel
-      } || null;
-    },
     actionValueExtension() {
       if (this.actionValueExtensions) {
         return Object.values(this.actionValueExtensions)
@@ -190,6 +178,9 @@ export default {
           .find(extension => extension.match && extension.match(this.realization.actionLabel)) || null;
       }
       return null;
+    },
+    actionIcon() {
+      return this.actionValueExtension?.icon;
     },
   },
   methods: {
