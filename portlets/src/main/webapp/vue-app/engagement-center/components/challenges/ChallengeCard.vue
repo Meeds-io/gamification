@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             class="d-flex flex-row flex-grow-0 flex-shrink-0">
             <div class="d-flex flex-row my-auto">
               <v-icon size="18" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
-              <div class="font-weight-bold tertiary--text text-subtitle-2 mt-1 ms-2">
+              <div class="font-weight-bold text--secondary text-subtitle-2 mt-1 ms-2">
                 {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
               </div>
             </div>
