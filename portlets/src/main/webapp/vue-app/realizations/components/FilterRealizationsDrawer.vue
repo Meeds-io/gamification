@@ -216,6 +216,7 @@ export default {
     reset() {
       this.programs = [];
       this.grantees = [];
+      this.IncludeDisabledPrograms = false;
     },
     removeGranteeAttendee(attendee) {
       const index = this.grantees.findIndex(addedAttendee => {
