@@ -137,15 +137,13 @@ export default {
   },
   data() {
     return {
-      menu: false
+      menu: false,
+      maxAvatarsToShow: 4,
     };
   },
   computed: {
     automaticRule() {
       return this.rule?.type === 'AUTOMATIC';
-    },
-    maxAvatarsToShow() {
-      return 4;
     },
     actionValueExtension() {
       if (this.actionValueExtensions) {
