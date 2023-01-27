@@ -169,7 +169,7 @@ export default {
         })) || [];
     },
     ruleWinnersCount() {
-      return ( this.rule?.announcementsCount - this.maxAvatarsToShow -1 ) < 100 ? this.rule.announcementsCount : 99 + this.maxAvatarsToShow;
+      return this.rule?.announcementsCount || this.rule?.announcements.length || 0;
     },
     haveParticipants() {
       return this.ruleWinnersCount !== 0;
