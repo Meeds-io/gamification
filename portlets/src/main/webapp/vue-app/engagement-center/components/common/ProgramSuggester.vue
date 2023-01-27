@@ -37,7 +37,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       persistent-hint
       hide-selected
       chips
-      cache-items
       dense
       flat
       required
@@ -99,6 +98,12 @@ export default {
       }),
     },
     includeDeleted: {
+      type: Boolean,
+      default: function() {
+        return false;
+      },
+    },
+    includeDisabled: {
       type: Boolean,
       default: function() {
         return false;
@@ -173,7 +178,7 @@ export default {
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;
           this.domains = [];
-          this.$programsServices.retrievePrograms(0, 10, 'ALL', null, this.searchTerm, this.includeDeleted)
+          this.$programsServices.retrievePrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted)
             .then(data => {
               if (this.onlyOwned) {
                 this.domains = data?.domains.filter(domain => domain?.owners.find(owner => owner.id === eXo.env.portal.userIdentityId));
