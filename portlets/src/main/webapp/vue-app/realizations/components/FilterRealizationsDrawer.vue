@@ -34,7 +34,6 @@
         id="realizationFilter">
         <v-card-text v-if="isAdministrator">
           <span class="subtitle-1">{{ $t('realization.label.filter.grantee') }}</span>
-
           <v-flex class="user-suggester text-truncate">
             <exo-identity-suggester
               ref="granteeAttendeeAutoComplete"
@@ -58,7 +57,8 @@
             ref="programAttendeeAutoComplete"
             v-model="programAttendee"
             :labels="programSuggesterLabels"
-            include-deleted />
+            :include-deleted="IncludeDisabledPrograms"
+            :include-disabled="IncludeDisabledPrograms" />
           <div v-if="programs" class="identitySuggester no-border mt-0">
             <program-attendee-item
               v-for="program in programs"
@@ -66,6 +66,16 @@
               :program="program"
               @remove-attendee="removeProgramAttendee" />
           </div>
+          <v-checkbox
+            v-model="IncludeDisabledPrograms"
+            hide-details
+            @click="changeSelection">
+            <template #label>
+              <span class="text--color subtitle-2 font-weight-normal">
+                {{ $t('realization.label.filter.program.includeDisabledOrRemoved') }}
+              </span>
+            </template>
+          </v-checkbox>
         </v-card-text>
       </form>
     </template>
@@ -122,6 +132,7 @@ export default {
       searchOptions: {
         currentUser: '',
       },
+      IncludeDisabledPrograms: false
     };
   },
   computed: {
@@ -205,6 +216,7 @@ export default {
     reset() {
       this.programs = [];
       this.grantees = [];
+      this.IncludeDisabledPrograms = false;
     },
     removeGranteeAttendee(attendee) {
       const index = this.grantees.findIndex(addedAttendee => {
@@ -224,6 +236,9 @@ export default {
         this.programs.splice(index, 1);
       }
     },
+    changeSelection() {
+      this.programs = [];
+    }
   }
 };
 </script>
