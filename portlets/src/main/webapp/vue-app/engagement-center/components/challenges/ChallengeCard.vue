@@ -89,7 +89,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ challengeTitle }}
           </v-tooltip>
         </div>
-        <div class="d-flex flex-row ms-1 ms-sm-0">
+        <div
+          class="d-flex flex-row ms-1 ms-sm-0"
+          @click="
+            $event.preventDefault();
+            $event.stopPropagation();
+          ">
           <engagement-center-avatars-list
             :avatars="winnerAvatars"
             :max-avatars-to-show="maxAvatarsToShow"
@@ -170,14 +175,8 @@ export default {
         return this.$t('challenges.label.daysLeft', {0: days});
       }
     },
-    programCoverURl() {
-      return this.domain?.coverUrl;
-    },
     noParticipationYet() {
       return this.challenge?.announcementsCount === 0;
-    },
-    isActiveChallenge() {
-      return this.startDate < new Date() && new Date() < this.endDate;
     },
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
@@ -221,7 +220,7 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$root.$emit('open-winners-drawer', this.challenge.id);
+      this.$root.$emit('open-winners-drawer', this.challenge);
     },
     announcementAdded(event) {
       const announcement = event?.detail?.announcement;
