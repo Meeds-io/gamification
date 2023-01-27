@@ -101,7 +101,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :max-avatars-to-show="maxAvatarsToShow"
             :avatars-count="ruleWinnersCount"
             :size="27"
-            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule.id, earnerType)" />
+            @open-avatars-drawer="$root.$emit('open-winners-drawer', rule)" />
           <div v-else>
             <span>
               -
@@ -116,10 +116,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    earnerType: {
-      type: String,
-      default: '',
-    },
     rule: {
       type: Object,
       default: null,
