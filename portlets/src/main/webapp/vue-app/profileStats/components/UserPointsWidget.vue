@@ -85,6 +85,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-list>
     <v-card
       v-else
+      :loading="displayLoadingChart"
       class="flex full-width flex-grow-1"
       flat>
       <div class="d-flex flex-row full-height full-width subtitle-2 text-color">
@@ -136,6 +137,7 @@ export default {
       userPoints: 0,
       period: 'WEEK',
       programLabels: [],
+      loading: true,
       colors: [
         '#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
         '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
@@ -190,17 +192,23 @@ export default {
     challengesURL() {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
+    displayLoadingChart() {
+      return !this.overviewDisplay && this.loading;
+    },
     hasZeroPoints() {
-      return this.userPoints === 0;
+      return this.userPoints === 0 && !this.loading;
     },
   },
   created() {
-    this.getGamificationPointsStats();
-    this.getGamificationPoints();
+    this.loading = true;
+    Promise.all([
+      this.getGamificationPointsStats(),
+      this.getGamificationPoints()
+    ]).finally(() => this.loading = false);
   },
   methods: {
     getGamificationPoints() {
-      this.$nextTick().then(()=>{
+      return this.$nextTick().then(()=>
         getGamificationPoints(this.period).then(
           (data) => {
             this.userPoints = data.points;
@@ -208,8 +216,8 @@ export default {
               this.$emit('seeAll', true);
             }
             this.option.title[0].subtext = data.points;
-          });
-      });
+          })
+      );
     },
     getGamificationPointsStats() {
       return getGamificationPointsStats(this.period)
@@ -253,18 +261,22 @@ export default {
         .finally(() => this.initChart(this.option));
     },
     initChart(option) {
-      window.require(['SHARED/eCharts'], echarts => {
-        this.$emit('loaded', false);  
-        this.$nextTick().then(() => {
-          const chartContainer = document.getElementById('echartUserPoints');
-          if (!chartContainer) {
-            window.setTimeout(() => {
-              this.initChart(option);
-            }, 50);
-            return;
-          }
-          const chart = echarts.init(chartContainer);
-          chart.setOption(option, true);
+      return new Promise((resolve) => {
+        window.require(['SHARED/eCharts'], echarts => {
+          resolve(echarts);
+
+          this.$emit('loaded', false);  
+          this.$nextTick().then(() => {
+            const chartContainer = document.getElementById('echartUserPoints');
+            if (!chartContainer) {
+              window.setTimeout(() => {
+                this.initChart(option);
+              }, 50);
+              return;
+            }
+            const chart = echarts.init(chartContainer);
+            chart.setOption(option, true);
+          });
         });
       });
     },
