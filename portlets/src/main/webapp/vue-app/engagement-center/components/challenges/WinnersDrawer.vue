@@ -133,19 +133,7 @@ export default {
       return this.announcementTotalCount >= this.announcementPerPage;
     },
     announcementPerPage() {
-      if (this.$vuetify.breakpoint.height < '490') {
-        return 4;
-      } else if (this.$vuetify.breakpoint.height < '600' && this.$vuetify.breakpoint.height > '490') {
-        return 5;
-      } else if (this.$vuetify.breakpoint.height < '700' && this.$vuetify.breakpoint.height > '600') {
-        return 6;
-      } else if (this.$vuetify.breakpoint.height < '780' && this.$vuetify.breakpoint.height > '700') {
-        return 7;
-      } else if (this.$vuetify.breakpoint.height < '880' && this.$vuetify.breakpoint.height > '780') {
-        return 8;
-      } else if (this.$vuetify.breakpoint.height > '880') {
-        return 9;
-      } else {return 7;}
+      return Math.round((this.$vuetify.breakpoint.height - 122) / 100);
     },
   },
   methods: {
