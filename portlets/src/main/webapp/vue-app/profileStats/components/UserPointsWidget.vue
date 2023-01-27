@@ -94,9 +94,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :key="program.name"
             bottom>
             <template #activator="{ on }">
-              <div
+              <h6
                 :title="program.name"
-                class="text-truncate-2"
+                class="text-truncate-2 font-weight-light my-1"
                 v-on="on">
                 <div class="d-inline-block">
                   <v-card
@@ -108,7 +108,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     flat />
                 </div>
                 {{ program.name }}
-              </div>
+              </h6>
             </template>
             <span>{{ program.name }}</span>
           </v-tooltip>
