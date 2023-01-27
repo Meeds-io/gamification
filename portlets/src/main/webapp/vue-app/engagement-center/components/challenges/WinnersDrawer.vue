@@ -81,11 +81,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-col>
         </v-row>
       </template>
-      <template v-if="showLoadMoreButton" slot="footer">
+      <template v-if="showPagination" slot="footer">
         <div class="text-center">
           <v-pagination
             v-model="page"
-            :length="announcementPerPage"
+            :length="paginationPageCount"
             circle
             light
             flat
@@ -103,7 +103,7 @@ export default {
     return {
       challengeId: false,
       showLoadMoreButton: false,
-      announcementPerPage: 7,
+      announcementTotalCount: 0,
       page: 1,
       loading: true,
       announcement: [],
@@ -118,14 +118,36 @@ export default {
         this.$refs.winnersDetails.endLoading();
       }
     },
+    announcementPerPage() {
+      this.retrieveAnnouncements();
+    },
   },
   created() {
     this.$root.$on('open-winners-drawer', this.open);
   },
   computed: {
     paginationPageCount() {
-      return 0;
-    }},
+      return Math.ceil(this.announcementTotalCount / this.announcementPerPage);
+    },
+    showPagination() {
+      return this.announcementTotalCount >= this.announcementPerPage;
+    },
+    announcementPerPage() {
+      if (this.$vuetify.breakpoint.height < '490') {
+        return 4;
+      } else if (this.$vuetify.breakpoint.height < '600' && this.$vuetify.breakpoint.height > '490') {
+        return 5;
+      } else if (this.$vuetify.breakpoint.height < '700' && this.$vuetify.breakpoint.height > '600') {
+        return 6;
+      } else if (this.$vuetify.breakpoint.height < '780' && this.$vuetify.breakpoint.height > '700') {
+        return 7;
+      } else if (this.$vuetify.breakpoint.height < '880' && this.$vuetify.breakpoint.height > '780') {
+        return 8;
+      } else if (this.$vuetify.breakpoint.height > '880') {
+        return 9;
+      } else {return 7;}
+    },
+  },
   methods: {
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
@@ -136,25 +158,21 @@ export default {
     close() {
       this.$refs.winnersDetails.close();
     },
-    open(challengeId, earnerType) {
+    open(challengeId, earnerType, announcementsCount) {
+      this.announcementTotalCount = announcementsCount;
       this.listWinners = [];
       this.challengeId = challengeId;
       this.$refs.winnersDetails.open();
-      this.retrieveAnnouncements(false, earnerType);
+      this.retrieveAnnouncements(earnerType);
     },
     loadMore() {
-      this.retrieveAnnouncements(true);
+      this.retrieveAnnouncements();
     },
-    retrieveAnnouncements(append, earnerType) {
+    retrieveAnnouncements(earnerType) {
       this.loading = true;
-      const offset = append ? this.announcement.length : 0;
+      const offset = (this.page - 1) * this.announcementPerPage;
+      this.listWinners = [];
       this.$challengesServices.getAllAnnouncementsByChallenge(this.challengeId, earnerType, offset, this.announcementPerPage).then(announcements => {
-        if (announcements.length >= this.announcementPerPage) {
-          this.showLoadMoreButton = true;
-        } else {
-          this.showLoadMoreButton = false;
-        }
-        this.announcement = append && this.announcement.concat(announcements) || announcements;
         if (announcements.length > 0) {
           announcements.filter(announce => announce.assignee).map(announce => {
             const announcement = {
@@ -164,10 +182,8 @@ export default {
               noActivityId: announce.activityId === null,
             };
             this.listWinners.push(announcement);
-
           });
         }
-        console.log(this.listWinners);
       }).finally(() => this.loading = false);
     },
   }
