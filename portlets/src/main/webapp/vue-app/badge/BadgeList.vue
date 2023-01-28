@@ -328,13 +328,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 /* eslint-disable */
 import Vue from 'vue';
-import moment from 'moment';
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import axios from 'axios';
 
-Vue.prototype.moment = moment;
 Vue.use(BootstrapVue);
 export default {
   props: ['badges','domains'],
