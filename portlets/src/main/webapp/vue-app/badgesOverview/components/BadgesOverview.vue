@@ -33,7 +33,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card flat :class="isOverviewDisplay ? 'pt-6' : ''">
       <v-card-text
         :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
-        class="mx-auto d-flex justify-center">
+        class="d-flex flex-wrap justify-space-between">
         <template v-if="badges && badges.length">
           <badges-overview-item
             v-for="badge in badgesToDisplay"
