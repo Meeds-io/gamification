@@ -191,6 +191,11 @@ public class RuleServiceImpl implements RuleService {
     ruleDTO.setCreatedBy(username);
     ruleDTO.setLastModifiedBy(username);
     DomainDTO domainDTO = Utils.getDomainByTitle(ruleDTO.getArea());
+    long domainId = domainDTO.getId();
+    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
+    if (oldRule != null && !oldRule.isDeleted()) {
+      throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
+    }
     ruleDTO.setDomainDTO(domainDTO);
 
     return createRule(ruleDTO);
@@ -200,12 +205,7 @@ public class RuleServiceImpl implements RuleService {
    * {@inheritDoc}
    */
   @Override
-  public RuleDTO createRule(RuleDTO ruleDTO) throws ObjectAlreadyExistsException {
-    long domainId = ruleDTO.getDomainDTO().getId();
-    RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
-    if (oldRule != null && !oldRule.isDeleted()) {
-      throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
-    }
+  public RuleDTO createRule(RuleDTO ruleDTO) {
     ruleDTO = ruleStorage.saveRule(ruleDTO);
     Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
     return ruleDTO;

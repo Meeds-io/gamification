@@ -62,7 +62,7 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
         rule.setDomainDTO(null);
         rule.setArea("");
         rule.setEnabled(false);
-        ruleService.updateRule(rule, username);
+        ruleService.updateRule(rule);
       }
       for (BadgeDTO badge : badges) {
         badge.setDomainDTO(null);
@@ -74,7 +74,7 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
     case GAMIFICATION_DOMAIN_DISABLE_LISTENER:
       for (RuleDTO rule : rules) {
         rule.setEnabled(false);
-        ruleService.updateRule(rule, username);
+        ruleService.updateRule(rule);
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(false);
@@ -84,7 +84,7 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
     case GAMIFICATION_DOMAIN_ENABLE_LISTENER:
       for (RuleDTO rule : rules) {
         rule.setEnabled(true);
-        ruleService.updateRule(rule, username);
+        ruleService.updateRule(rule);
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(true);
