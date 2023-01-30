@@ -76,12 +76,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>15</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Knowledge</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -112,12 +108,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -149,12 +141,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -183,12 +171,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -217,12 +201,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -251,12 +231,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -285,12 +261,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -322,12 +294,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -357,12 +325,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>10</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -393,12 +357,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>15</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -431,12 +391,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>15</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -462,12 +418,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -494,12 +446,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -525,12 +473,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>15</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -556,12 +500,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>15</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -590,12 +530,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -621,12 +557,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -652,12 +584,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -683,12 +611,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -717,12 +641,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>7</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -748,12 +668,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>5</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -779,12 +695,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>5</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -810,12 +722,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>5</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -841,12 +749,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>5</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -872,12 +776,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>7</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -906,12 +806,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>3</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -937,12 +833,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>1</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Social</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
@@ -971,12 +863,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <value>2</value>
                 </value-param>
                 <value-param>
-                    <name>rule-zone</name>
-                    <value>Attendance</value>
-                </value-param>
-                <value-param>
                     <name>rule-enable</name>
-                    <value>true</value>
+                    <value>false</value>
                 </value-param>
             </init-params>
         </component-plugin>
