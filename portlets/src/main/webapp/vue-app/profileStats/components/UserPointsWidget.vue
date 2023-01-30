@@ -96,7 +96,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             bottom>
             <template #activator="{ on }">
               <h6
-                :title="program.name"
                 class="text-truncate-2 font-weight-light my-1"
                 v-on="on">
                 <div class="d-inline-block">
