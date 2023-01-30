@@ -162,9 +162,8 @@ public interface RuleService {
      * Add Rule to DB
      * @param ruleDTO {@link RuleDTO} to create
      * @return created {@link RuleDTO}
-     * @throws ObjectAlreadyExistsException when rule already already exists
      */
-     RuleDTO createRule (RuleDTO ruleDTO) throws ObjectAlreadyExistsException;
+     RuleDTO createRule (RuleDTO ruleDTO);
 
     /**
      * Update Rule to DB
