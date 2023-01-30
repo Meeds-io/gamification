@@ -15,85 +15,82 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app id="winnersDetails">
-    <exo-drawer
-      ref="winnersDetails"
-      right
-      @closed="close">
-      <template slot="title">
-        <div>
-          <i
-            v-if="back"
-            class="uiIcon uiArrowBAckIcon"
-            @click="close"></i>  <span class="pb-2"> {{ $t('challenges.winners.details') }} </span>
-        </div>
-      </template>
-      <template slot="content">
-        <v-row 
-          v-for="winner in listWinners" 
-          :key="winner.user"
-          class="mx-auto">
-          <v-col>
-            <exo-user-avatar
-              :profile-id="winner.user"
-              :size="44"
-              extra-class="px-4 py-3"
-              bold-title
-              link-style
-              popover>
-              <template slot="subTitle">
-                <a :href="getLinkActivity(winner.activityId)">
-                  <relative-date-format
-                    class="text-capitalize-first-letter text-light-color text-truncate"
-                    :value="winner.createDate" />
-                </a>
-              </template>
-            </exo-user-avatar>
-          </v-col>
-          <v-col class="d-flex align-center justify-center">
-            <v-tooltip v-if="!winner.noActivityId" bottom>
-              <template #activator="{ on }">
-                <a v-on="on">
-                  <span>
-                    <v-icon
-                      size="16"
-                      color="dark-grey"
-                      @click="redirectToLinkActivity(winner.activityId)">fas fa-eye</v-icon>
-                  </span>
-                </a>
-              </template>
-              <span>{{ $t('program.winner.label.checkActivity') }}</span>
-            </v-tooltip>
-            <v-tooltip v-else bottom>
-              <template #activator="{ on }">
-                <a v-on="on">
-                  <span>
-                    <v-icon
-                      size="16"
-                      color="grey"
-                      class="not-clickable ">fas fa-eye</v-icon>
-                  </span>
-                </a>
-              </template>
-              <span>{{ $t('program.winner.label.noActivity') }}</span>
-              {{ $t('challenges.winners.details') }}
-            </v-tooltip>
-          </v-col>
-        </v-row>
-      </template>
-      <template v-if="showPagination" slot="footer">
-        <div class="text-center">
-          <v-pagination
-            v-model="page"
-            :length="paginationPageCount"
-            circle
-            light
-            flat
-            @input="loadMore" />
-        </div>
-      </template>
-    </exo-drawer>
-  </v-app>
+  <exo-drawer
+    id="EngagementCenterWinnersDetails"
+    ref="winnersDetails"
+    right
+    @closed="close">
+    <template slot="title">
+      <div>
+        <i
+          v-if="back"
+          class="uiIcon uiArrowBAckIcon"
+          @click="close"></i>  <span class="pb-2"> {{ $t('challenges.winners.details') }} </span>
+      </div>
+    </template>
+    <template slot="content">
+      <v-list-item
+        v-for="winner in listWinners"
+        :key="winner.user">
+        <v-list-item-content>
+          <exo-user-avatar
+            :profile-id="winner.user"
+            :size="44"
+            bold-title
+            link-style
+            popover>
+            <template slot="subTitle">
+              <a :href="getLinkActivity(winner.activityId)">
+                <relative-date-format
+                  class="text-capitalize-first-letter text-light-color text-truncate"
+                  :value="winner.createDate" />
+              </a>
+            </template>
+          </exo-user-avatar>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-tooltip v-if="!winner.noActivityId" bottom>
+            <template #activator="{ on }">
+              <a v-on="on">
+                <span>
+                  <v-icon
+                    size="16"
+                    color="dark-grey"
+                    @click="redirectToLinkActivity(winner.activityId)">fas fa-eye</v-icon>
+                </span>
+              </a>
+            </template>
+            <span>{{ $t('program.winner.label.checkActivity') }}</span>
+          </v-tooltip>
+          <v-tooltip v-else bottom>
+            <template #activator="{ on }">
+              <a v-on="on">
+                <span>
+                  <v-icon
+                    size="16"
+                    color="grey"
+                    class="not-clickable ">fas fa-eye</v-icon>
+                </span>
+              </a>
+            </template>
+            <span>{{ $t('program.winner.label.noActivity') }}</span>
+            {{ $t('challenges.winners.details') }}
+          </v-tooltip>
+        </v-list-item-action>
+      </v-list-item>
+    </template>
+    <template v-if="showPagination" slot="footer">
+      <div class="text-center">
+        <v-pagination
+          v-model="page"
+          :length="paginationPageCount"
+          circle
+          light
+          flat
+          @input="loadMore" />
+      </div>
+    </template>
+  </exo-drawer>
 </template>
 
 <script>
