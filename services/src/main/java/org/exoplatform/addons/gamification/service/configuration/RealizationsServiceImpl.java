@@ -187,7 +187,7 @@ public class RealizationsServiceImpl implements RealizationsService {
 
     realizations.forEach(ga -> {
       try {
-        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
+        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.title.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionLabel = "-";
 
@@ -198,7 +198,7 @@ public class RealizationsServiceImpl implements RealizationsService {
 
         String ruleTitle = rule == null ? null : rule.getTitle();
         String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
-        actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
+        actionLabel = getI18NMessage(locale, actionLabelKey + ruleTitle);
         if (actionLabel == null && rule != null && actionTitleKey != null) {
           actionLabel = escapeIllegalCharacterInMessage(rule.getTitle());
         } else {
