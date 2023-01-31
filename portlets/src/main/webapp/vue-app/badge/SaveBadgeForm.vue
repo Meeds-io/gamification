@@ -52,8 +52,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <input
                   id="titleInput"
                   v-model="badge.title"
-                  class="form-control"
                   :placeholder="$t('badge.title.placeholder','Enter badge title')"
+                  maxlength="50"
+                  class="form-control"
                   required
                   type="text">
                 </input>
@@ -69,6 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   :max-rows="6"
                   :rows="3"
                   class="form-control"
+                  maxlength="255"
                   :placeholder="$t('badge.description.placeholder','Enter description')">
                     </textarea>
               </div>
