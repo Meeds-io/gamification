@@ -131,7 +131,7 @@ export default {
       return this.announcementTotalCount >= this.announcementPerPage;
     },
     announcementPerPage() {
-      return Math.round((this.$vuetify.breakpoint.height - 122) / 100);
+      return Math.round((this.$vuetify.breakpoint.height - 122) / 70);
     },
   },
   methods: {
