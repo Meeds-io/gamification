@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-list-item
         v-for="winner in listWinners"
         :key="winner.user">
-        <v-list-item-content>
+        <v-list-item-content class="d-inline">
           <exo-user-avatar
             :profile-id="winner.user"
             :size="44"
@@ -104,7 +104,8 @@ export default {
       page: 1,
       loading: true,
       announcement: [],
-      listWinners: []
+      listWinners: [],
+      earnerType: 'USER'
     };
   },
   watch: {
@@ -143,12 +144,12 @@ export default {
     close() {
       this.$refs.winnersDetails.close();
     },
-    open(challengeId, earnerType, announcementsCount) {
-      this.announcementTotalCount = announcementsCount;
+    open(challenge) {
+      this.announcementTotalCount = challenge?.announcementsCount;
       this.listWinners = [];
-      this.challengeId = challengeId;
+      this.challengeId = challenge?.id;
       this.$refs.winnersDetails.open();
-      this.retrieveAnnouncements(earnerType);
+      this.retrieveAnnouncements(this.earnerType);
     },
     loadMore() {
       this.retrieveAnnouncements();

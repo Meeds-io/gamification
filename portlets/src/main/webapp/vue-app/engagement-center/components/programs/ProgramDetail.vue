@@ -108,7 +108,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               disable-sort>
               <template slot="item" slot-scope="props">
                 <engagement-center-rule-item
-                  :earner-type="earnerType"
                   :rule="props.item"
                   :can-manage-rule="canManageRule"
                   :action-value-extensions="actionValueExtensions"
@@ -183,8 +182,7 @@ export default {
       loadingRules: false,
       deleteConfirmMessage: '',
       filter: 'ENABLED',
-      expand: 'userAnnouncements',
-      earnerType: 'USER',
+      expand: 'userAnnouncements'
     };
   },
   computed: {
