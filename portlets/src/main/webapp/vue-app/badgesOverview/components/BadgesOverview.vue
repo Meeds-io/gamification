@@ -30,7 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         {{ $t('exoplatform.gamification.badgesByDomain') }}
       </div>
     </v-toolbar>
-    <v-card flat :class="isOverviewDisplay ? 'pt-6' : ''">
+    <v-card flat>
       <v-card-text
         :class="isOverviewDisplay && 'my-auto pa-0' || 'pt-0'"
         class="d-flex flex-wrap justify-space-between">
@@ -43,7 +43,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div
           v-else
           class="d-flex justify-center"
-          :class="isOverviewDisplay && 'my-auto' || 'py-10'">
+          :class="isOverviewDisplay && 'my-auto' || 'py-4 mx-auto'">
           <span class="emptyBadgesIcon display-3 my-1">
             Ø
           </span>
