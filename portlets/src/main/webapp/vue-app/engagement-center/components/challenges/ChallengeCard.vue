@@ -220,7 +220,7 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$root.$emit('open-winners-drawer', this.challenge.id);
+      this.$root.$emit('open-winners-drawer', this.challenge);
     },
     announcementAdded(event) {
       const announcement = event?.detail?.announcement;
