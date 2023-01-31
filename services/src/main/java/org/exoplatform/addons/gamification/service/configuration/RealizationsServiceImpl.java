@@ -196,29 +196,29 @@ public class RealizationsServiceImpl implements RealizationsService {
 
         DomainDTO domain = Utils.getDomainByTitle(ga.getDomain());
 
-        String ruleTitle = rule == null ? null : rule.getTitle();
+        String ruleTitle = rule == null ? null : rule.getEvent();
         String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
-        actionLabel = getI18NMessage(locale, actionLabelKey + ruleTitle);
+        actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
         if (actionLabel == null && rule != null && actionTitleKey != null) {
-          actionLabel = escapeIllegalCharacterInMessage(rule.getTitle());
+          actionLabel = escapeIllegalCharacterInMessage(rule.getEvent());
         } else {
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
-        String domainDescription = "-";
+        String domainTitle = "-";
         if (ga.getDomain() != null) {
-          domainDescription = getI18NMessage(locale, domainTitleKey + domain.getDescription().replace(" ", ""));
-          if (domainDescription == null) {
-            domainDescription = domain.getDescription();
+          domainTitle = getI18NMessage(locale, domainTitleKey + domain.getTitle().replace(" ", ""));
+          if (domainTitle == null) {
+            domainTitle = domain.getTitle();
           }
         }
-        domainDescription = escapeIllegalCharacterInMessage(domainDescription);
+        domainTitle = escapeIllegalCharacterInMessage(domainTitle);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(Utils.getUserFullName(ga.getEarnerId()));
         sbResult.append(DELIMITER);
         sbResult.append(rule != null ? rule.getType().name() : "-");
         sbResult.append(DELIMITER);
-        sbResult.append(domainDescription);
+        sbResult.append(domainTitle);
         sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);
