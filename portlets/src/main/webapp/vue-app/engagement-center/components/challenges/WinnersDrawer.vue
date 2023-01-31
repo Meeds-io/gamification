@@ -143,6 +143,7 @@ export default {
     },
     close() {
       this.$refs.winnersDetails.close();
+      this.page = 1;
     },
     open(challenge) {
       this.announcementTotalCount = challenge?.announcementsCount;
