@@ -15,121 +15,120 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-navigation-drawer
+  <exo-drawer
+    ref="spaceDrawer"
     v-model="spaceDrawer"
-    absolute
+    class="spaceDrawer"
+    body-classes="hide-scroll decrease-z-index-more"
     right
-    stateless
-    temporary
-    max-height="100vh"
-    class="spaceDrawer">
-    <v-row v-if="spaceDrawer" class="mx-0 title">
-      <v-list-item class="pe-0">
-        <v-list-item-content class="ma-0 pa-0">
-          <template v-if="!showSearch">
-            <span class="spaceDrawerTitle">{{
-              $t("homepage.profileStatus.spaces")
-            }}</span>
-          </template>
-          <template v-else>
-            <v-row>
-              <v-text-field
-                v-model="search"
-                :placeholder="$t(`profile.label.search.connections`)"
-                class="spacesSearch pa-0"
-                single-line
-                solo
-                flat
-                hide-details />
-            </v-row>
-          </template>
-        </v-list-item-content>
-        <v-list-item-action class="ma-0">
-          <template v-if="!showSearch">
-            <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)">
-              <v-icon
-                class="openIconSearch"
-                @click="openSpacesSearch">mdi-filter</v-icon>
-            </a>
-          </template>
-          <template v-else>
-            <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)">
-              <v-icon
-                class="closeIconSearch"
-                @click="closeSpacesSearch">mdi-filter-remove</v-icon>
-            </a>
-          </template>
-        </v-list-item-action>
-        <v-list-item-action class="ma-0">
-          <v-btn
-            icon
-            class="rightIcon"
-            @click="closeDrawer">
-            <v-icon
-              small
-              class="closeIcon"
-              @click="closeDrawer">
-              close
-            </v-icon>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-    </v-row>
-
-    <v-progress-linear
-      v-if="loading"
-      color="primary"
-      height="2" />
-    <v-divider class="my-0" />
-
-    <div class="content">
-      <template v-if="isCurrentUserProfile">
-        <v-row v-if="showSpacesRequests" class="px-4">
-          <v-col>
-            <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
-          </v-col>
-        </v-row>
-        <v-row v-if="showSpacesRequests" class="px-4">
-          <v-col>
-            <v-divider class="my-0" />
-          </v-col>
-        </v-row>
-        <v-row v-if="showSpaces" class="px-4">
-          <v-col>
-            <v-flex
-              d-flex
-              xs12
-              justify-center>
-              <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.spaceList') }}</span>
-              <v-btn
-                fab
-                depressed
-                dark
-                height="20"
-                width="20"
-                class="mb-1 header-badge-color"
-                @click="openSpace()">
-                <span class="white--text caption">{{ spacesSize }}</span>
-              </v-btn>
-            </v-flex>
-            <template>
-              <space-drawer-items
-                v-for="space in filteredSpaces"
-                :key="space.id"
-                :space="space"
-                @removeLeavedSpace="removeLeftSpace"
-                @closeDrawer="closeDrawer" />
+    @closed="$emit('closed')">
+    <template #content>
+      <v-row v-if="spaceDrawer" class="mx-0 title">
+        <v-list-item class="pe-0">
+          <v-list-item-content class="ma-0 pa-0">
+            <template v-if="!showSearch">
+              <span class="spaceDrawerTitle">{{
+                $t("homepage.profileStatus.spaces")
+              }}</span>
             </template>
-          </v-col>
-        </v-row>
-      </template>
+            <template v-else>
+              <v-row>
+                <v-text-field
+                  v-model="search"
+                  :placeholder="$t(`profile.label.search.connections`)"
+                  class="spacesSearch pa-0"
+                  single-line
+                  solo
+                  flat
+                  hide-details />
+              </v-row>
+            </template>
+          </v-list-item-content>
+          <v-list-item-action class="ma-0">
+            <template v-if="!showSearch">
+              <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)">
+                <v-icon
+                  class="openIconSearch"
+                  @click="openSpacesSearch">mdi-filter</v-icon>
+              </a>
+            </template>
+            <template v-else>
+              <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)">
+                <v-icon
+                  class="closeIconSearch"
+                  @click="closeSpacesSearch">mdi-filter-remove</v-icon>
+              </a>
+            </template>
+          </v-list-item-action>
+          <v-list-item-action class="ma-0">
+            <v-btn
+              icon
+              class="rightIcon"
+              @click="close">
+              <v-icon
+                small
+                class="closeIcon"
+                @click="close">
+                close
+              </v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+      </v-row>
 
-      <template v-if="!isCurrentUserProfile">
-        <v-row class="px-4">
+      <v-progress-linear
+        v-if="loading"
+        color="primary"
+        height="2" />
+      <v-divider class="my-0" />
+
+      <div class="content overflow-hidden">
+        <template v-if="isCurrentUserProfile">
+          <v-row v-if="showSpacesRequests" class="px-4">
+            <v-col>
+              <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
+            </v-col>
+          </v-row>
+          <v-row v-if="showSpacesRequests" class="px-4">
+            <v-col>
+              <v-divider class="my-0" />
+            </v-col>
+          </v-row>
+          <v-row v-if="showSpaces" class="px-4">
+            <v-col>
+              <v-flex
+                d-flex
+                xs12
+                justify-center>
+                <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ $t('homepage.profileStatus.spaceList') }}</span>
+                <v-btn
+                  fab
+                  depressed
+                  dark
+                  height="20"
+                  width="20"
+                  class="mb-1 header-badge-color"
+                  @click="openSpace()">
+                  <span class="white--text caption">{{ spacesSize }}</span>
+                </v-btn>
+              </v-flex>
+              <template>
+                <space-drawer-items
+                  v-for="space in filteredSpaces"
+                  :key="space.id"
+                  :space="space"
+                  @removeLeavedSpace="removeLeftSpace"
+                  @closeDrawer="close" />
+              </template>
+            </v-col>
+          </v-row>
+        </template>
+
+        <v-row v-if="!isCurrentUserProfile" class="px-4">
           <v-col>
             <template v-if="showSpaces">
               <v-list
-                v-if="spacesSuggestionsList.length > 0 && suggestionsType !== 'people' && !this.showSearch"
+                v-if="spacesSuggestionsList.length > 0 && suggestionsType !== 'people' && !showSearch"
                 dense
                 class="py-4">
                 <v-flex
@@ -147,7 +146,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       mt-n2
                       justify-center>
                       <div>
-                        <span class="pe-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ this.$t('homepage.profileStatus.SuggestionsSpaces') }}</span>
+                        <span class="pe-2 text-uppercase spaceRequestedTitle subtitle-2 profile-card-header">{{ $t('homepage.profileStatus.SuggestionsSpaces') }}</span>
                         <v-btn
                           fab
                           depressed
@@ -167,7 +166,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   :space-suggestion="spaceSuggestion"
                   :spaces-suggestions-list="spacesSuggestionsList" />
               </v-list>
-              <v-row v-if="spacesSuggestionsList.length > 0 && !this.showSearch" class="px-4">
+              <v-row v-if="spacesSuggestionsList.length > 0 && !showSearch" class="px-4">
                 <v-col>
                   <v-divider class="my-0" />
                 </v-col>
@@ -177,7 +176,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 d-flex
                 xs12
                 justify-center>
-                <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ this.$t('homepage.profileStatus.commonSpaceList') }}</span>
+                <span class="pe-2 text-uppercase spaceListTitle subtitle-2 profile-card-header" @click="openSpace()">{{ $t('homepage.profileStatus.commonSpaceList') }}</span>
                 <v-btn
                   fab
                   depressed
@@ -195,23 +194,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </template>
           </v-col>
         </v-row>
-      </template>
 
-      <template v-if="!showSpaces">
-        <v-row class="d-flex text-center noSpaceYetBlock my-12">
-          <div class="ma-auto noSpaceYet">
-            <p class="noSpaceYetIcons">
-              <v-icon>fa-users</v-icon>
-            </p>
-            <p class="title font-weight-bold">
-              {{ isCurrentUserProfile ? $t('homepage.profileStatus.noSpaces') : $t('homepage.profileStatus.noCommonSpaces') }}
-            </p>
-          </div>
-        </v-row>
-      </template>
-    </div>
+        <template v-if="!showSpaces">
+          <v-row class="d-flex text-center noSpaceYetBlock my-12">
+            <div class="ma-auto noSpaceYet">
+              <p class="noSpaceYetIcons">
+                <v-icon>fa-users</v-icon>
+              </p>
+              <p class="title font-weight-bold">
+                {{ isCurrentUserProfile ? $t('homepage.profileStatus.noSpaces') : $t('homepage.profileStatus.noCommonSpaces') }}
+              </p>
+            </div>
+          </v-row>
+        </template>
+      </div>
+    </template>
 
-    <template v-if="showSpaces && showLoadMoreSpaces">
+    <template v-if="showSpaces && showLoadMoreSpaces" #footer>
       <v-divider class="my-0" />
       <v-row class="mx-0 loadMoreButton">
         <v-col>
@@ -224,7 +223,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-col>
       </v-row>
     </template>
-  </v-navigation-drawer>
+  </exo-drawer>
 </template>
 
 <script>
@@ -232,10 +231,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 import {getSpacesOfUser, getCommonsSpaces, getSuggestionsSpace} from '../profilStatsAPI';
 export default {
   props: {
-    spaceDrawer: {
-      type: Boolean,
-      default: false,
-    },
     suggestionsType: {
       type: String,
       default: 'all',
@@ -258,6 +253,7 @@ export default {
       spaces: [],
       spacesSuggestionsList: [],
       commonsSpaces: [],
+      spaceDrawer: false,
       SpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
       offset: 0,
       spaceSize: 0,
@@ -315,24 +311,17 @@ export default {
       return this.spaceRequests > 0 && !this.showSearch;
     },
   },
-  watch: {
-    spaceDrawer() {
-      if (this.spaceDrawer) {
-        this.loading = true;
-        Promise.resolve(this.init())
-          .then(() => this.loading = false);
-        $('body').addClass('hide-scroll');
-        this.$nextTick().then(() => {
-          $('#profile-stats-portlet .v-overlay').click(() => {
-            this.closeDrawer();
-          });
-        });
-      } else {
-        $('body').removeClass('hide-scroll');
-      }
-    },
-  },
   methods: {
+    open() {
+      this.$refs.spaceDrawer.open();
+      this.loading = true;
+      Promise.resolve(this.init())
+        .then(() => this.loading = false);
+    },
+    close() {
+      this.showSearch = false;
+      this.$refs.spaceDrawer.close();
+    },
     init() {
       this.limitToFetch = this.limit;
       if (this.isCurrentUserProfile){
@@ -345,10 +334,6 @@ export default {
             }
           });
       }
-    },
-    closeDrawer() {
-      this.$emit('closeDrawer');
-      this.showSearch = false;
     },
     getMySpaces() {
       this.firstLoadingSpaces = false;
