@@ -144,9 +144,6 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.getRulesTotalScoreByDomain(domainId);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
     if (username == null) {
@@ -163,13 +160,10 @@ public class RuleServiceImpl implements RuleService {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
     ruleDTO = ruleStorage.deleteRuleById(ruleId, username);
-    Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, this, ruleDTO);
+    Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, ruleDTO, username);
     return ruleDTO;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public RuleDTO createRule(RuleDTO ruleDTO, String username) throws IllegalAccessException, ObjectAlreadyExistsException {
     if (ruleDTO == null) {
@@ -191,23 +185,14 @@ public class RuleServiceImpl implements RuleService {
     if (oldRule != null && !oldRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
-
-    return createRule(ruleDTO);
+    return createRuleAndBroadcast(ruleDTO, username);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public RuleDTO createRule(RuleDTO ruleDTO) {
-    ruleDTO = ruleStorage.saveRule(ruleDTO);
-    Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, this, ruleDTO.getId());
-    return ruleDTO;
+    return createRuleAndBroadcast(ruleDTO, null);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public RuleDTO updateRule(RuleDTO ruleDTO, String username) throws ObjectNotFoundException, IllegalAccessException {
     if (username == null) {
@@ -225,12 +210,15 @@ public class RuleServiceImpl implements RuleService {
     }
     ruleDTO.setCreatedBy(username);
     ruleDTO.setLastModifiedBy(username);
-
-    return updateRule(ruleDTO);
+    return updateRuleAndBroadcast(ruleDTO, username);
   }
 
   @Override
   public RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
+    return updateRuleAndBroadcast(ruleDTO, null);
+  }
+
+  private RuleDTO updateRuleAndBroadcast(RuleDTO ruleDTO, String username) throws ObjectNotFoundException {
     if (ruleDTO.getId() == null || ruleDTO.getId() == 0 || ruleStorage.findRuleById(ruleDTO.getId()) == null) {
       throw new ObjectNotFoundException("Rule id is mandatory");
     }
@@ -244,9 +232,13 @@ public class RuleServiceImpl implements RuleService {
     }
     ruleDTO.setLastModifiedDate(Utils.toRFC3339Date(new Date()));
     ruleDTO = ruleStorage.saveRule(ruleDTO);
+    Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, ruleDTO.getId(), username);
+    return ruleDTO;
+  }
 
-    Utils.broadcastEvent(listenerService, POST_UPDATE_RULE_EVENT, this, ruleDTO.getId());
-
+  private RuleDTO createRuleAndBroadcast(RuleDTO ruleDTO, String username) {
+    ruleDTO = ruleStorage.saveRule(ruleDTO);
+    Utils.broadcastEvent(listenerService, POST_CREATE_RULE_EVENT, ruleDTO.getId(), username);
     return ruleDTO;
   }
 }

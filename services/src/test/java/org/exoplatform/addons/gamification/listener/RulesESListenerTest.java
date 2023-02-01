@@ -44,12 +44,12 @@ public class RulesESListenerTest extends AbstractServiceTest {
     RuleDTO rule = newRuleDTO();
     RulesESListener rulesESListener = new RulesESListener(getContainer(), indexingService, ruleService);
 
-    Event event = new Event<>(Utils.POST_CREATE_RULE_EVENT, null, rule.getId());
+    Event event = new Event<>(Utils.POST_CREATE_RULE_EVENT, rule.getId(), null);
     rulesESListener.onEvent(event);
     verify(indexingService, times(1)).reindex(anyString(), anyString());
     verify(indexingService, times(0)).unindex(anyString(), anyString());
 
-    event = new Event<>(Utils.POST_DELETE_RULE_EVENT, this, rule.getId());
+    event = new Event<>(Utils.POST_DELETE_RULE_EVENT, rule.getId(), null);
     rulesESListener.onEvent(event);
     verify(indexingService, times(1)).reindex(anyString(), anyString());
     verify(indexingService, times(1)).unindex(anyString(), anyString());

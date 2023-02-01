@@ -1,6 +1,6 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.*;
 
 import java.util.List;
 import java.util.Map;
@@ -16,14 +16,10 @@ import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
-
-  private static final Log    LOG = ExoLogger.getLogger(AnnouncementServiceImpl.class);
 
   private AnnouncementStorage announcementStorage;
 
@@ -46,7 +42,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   @Override
   public Announcement createAnnouncement(Announcement announcement,
                                          Map<String, String> templateParams,
-                                         String currentUser,
+                                         String username,
                                          boolean system) throws IllegalArgumentException,
                                                          ObjectNotFoundException,
                                                          IllegalAccessException {
@@ -69,19 +65,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new ObjectNotFoundException("Assignee with id " + assignee + " does not exist");
     }
 
-    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()), currentUser)) {
-      throw new IllegalAccessException("user " + currentUser + " is not allowed to announce challenge on  space with id "
+    if (!Utils.canAnnounce(String.valueOf(challenge.getAudience()), username)) {
+      throw new IllegalAccessException("user " + username + " is not allowed to announce challenge on  space with id "
           + challenge.getAudience());
     }
-    Identity creatorIdentity = identityManager.getOrCreateUserIdentity(currentUser);
-    announcement.setCreator(Long.parseLong(creatorIdentity.getId()));
+    Identity creatorIdentity = identityManager.getOrCreateUserIdentity(username);
+    long creatorId = Long.parseLong(creatorIdentity.getId());
+    announcement.setCreator(creatorId);
     announcement = announcementStorage.saveAnnouncement(announcement);
+    broadcastEvent(listenerService, POST_CREATE_ANNOUNCEMENT_EVENT, announcement, creatorId);
+
     if (!system) {
-      try {
-        listenerService.broadcast(ANNOUNCEMENT_ACTIVITY_EVENT, this, EntityMapper.toAnnouncementActivity(announcement, templateParams));
-      } catch (Exception e) {
-        LOG.error("Unexpected error", e);
-      }
+      broadcastEvent(listenerService, ANNOUNCEMENT_ACTIVITY_EVENT, this, EntityMapper.toAnnouncementActivity(announcement, templateParams));
     }
     return getAnnouncementById(announcement.getId());
   }
@@ -140,7 +135,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     if (oldAnnouncement == null) {
       throw new ObjectNotFoundException("Announcement does not exist");
     }
-    return announcementStorage.saveAnnouncement(announcement);
+    Announcement savedAnnouncement = announcementStorage.saveAnnouncement(announcement);
+    broadcastEvent(listenerService, POST_UPDATE_ANNOUNCEMENT_EVENT, announcement, announcement.getCreator());
+    return savedAnnouncement;
   }
 
   @Override
