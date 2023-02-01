@@ -108,6 +108,22 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   }
 
   /**
+   * Find all gamification entries by earnerId and by type
+   *
+   * @param earnerId : the userId used in projection
+   * @param type : The Type of action
+   * @return list of objects of type GamificationActionsHistory
+   */
+  public List<GamificationActionsHistory> findActionsHistoryByEarnerIdAndByType(String earnerId, EntityType type) {
+    TypedQuery<GamificationActionsHistory> query =
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByEarnerIdAndByType",
+                                                                                     GamificationActionsHistory.class);
+    query.setParameter(TYPE, type);
+    query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
+    return query.getResultList();
+  }
+
+  /**
    * Find all gamification entries by domain
    * 
    * @param earnerType : {@link IdentityType} USER or SPACE

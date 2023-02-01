@@ -52,6 +52,10 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status <> :status ORDER BY g.createdDate DESC"
 )
 @NamedQuery(
+        name = "GamificationActionsHistory.findActionsHistoryByEarnerIdAndByType",
+        query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.type = :type"
+)
+@NamedQuery(
     name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"

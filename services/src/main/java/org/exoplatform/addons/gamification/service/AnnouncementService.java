@@ -1,5 +1,6 @@
 package org.exoplatform.addons.gamification.service;
 
+import org.apache.ecs.html.S;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
@@ -57,7 +58,15 @@ public interface AnnouncementService {
    *
    */
 
-  Announcement getAnnouncementById(Long announcementId) ;
+  Announcement getAnnouncementById(Long announcementId) ; 
+  
+  /**
+   * Retrieves a announcements by earnerId.
+   *
+   * @param earnerId : the userId used in projection
+   * @return A {@link List &lt;Announcement&gt;} object
+   */
+  List<Announcement> getAnnouncementsByEarnerId(String earnerId);
 
   /**
    * Retrieves number of all Announcements by challenge identifier.

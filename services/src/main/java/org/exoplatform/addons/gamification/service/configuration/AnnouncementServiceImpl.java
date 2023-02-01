@@ -5,6 +5,7 @@ import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIV
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ecs.html.S;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.ChallengeService;
@@ -96,6 +97,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
     return announcementStorage.findAllAnnouncementByChallenge(challengeId, offset, limit, periodType, earnerType);
+  }
+
+  @Override
+  public List<Announcement> getAnnouncementsByEarnerId(String earnerId) {
+    return announcementStorage.getAnnouncementsByEarnerId(earnerId);
   }
 
   @Override

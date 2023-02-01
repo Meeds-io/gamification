@@ -18,13 +18,21 @@ package org.exoplatform.addons.gamification.listener.social.profile;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.core.storage.api.ActivityStorage;
+import org.exoplatform.social.core.storage.cache.CachedActivityStorage;
+
+import java.util.Collections;
+import java.util.List;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
 
@@ -32,12 +40,21 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     protected IdentityManager identityManager;
     protected SpaceService spaceService;
     protected GamificationService gamificationService;
+    protected AnnouncementService announcementService;
+    protected ActivityStorage activityStorage;
 
-    public GamificationProfileListener() {
-        this.ruleService = CommonsUtils.getService(RuleService.class);
-        this.identityManager = CommonsUtils.getService(IdentityManager.class);
-        this.spaceService = CommonsUtils.getService(SpaceService.class);
-        this.gamificationService = CommonsUtils.getService(GamificationService.class);
+    public GamificationProfileListener(RuleService ruleService,
+                                       IdentityManager identityManager,
+                                       SpaceService spaceService,
+                                       GamificationService gamificationService,
+                                       AnnouncementService announcementService,
+                                       ActivityStorage activityStorage) {
+      this.ruleService = ruleService;
+      this.identityManager = identityManager;
+      this.spaceService = spaceService;
+      this.gamificationService = gamificationService;
+      this.announcementService = announcementService;
+      this.activityStorage = activityStorage;
     }
 
     @Override
@@ -82,7 +99,8 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
 
     @Override
     public void contactSectionUpdated(ProfileLifeCycleEvent event) {
-
+        String userId = event.getProfile().getIdentity().getId();
+        this.clearUserActivitiesCache(userId);
     }
 
     @Override
@@ -112,5 +130,11 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
                 event.getProfile().getUrl());
     }
 
-
+    private void clearUserActivitiesCache(String userId) {
+      List<Announcement> announcements = announcementService.getAnnouncementsByEarnerId(userId);
+      if (CollectionUtils.isEmpty(announcements)) {
+        return;
+      }
+      announcements.forEach(announcement -> ((CachedActivityStorage) activityStorage).clearActivityCached(String.valueOf(announcement.getActivityId())));
+    }
 }
