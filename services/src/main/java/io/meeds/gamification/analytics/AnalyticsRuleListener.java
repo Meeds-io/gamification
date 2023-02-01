@@ -66,7 +66,7 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
     statisticData.setModule(STATISTICS_GAMIFICATION_MODULE);
     statisticData.setSubModule(STATISTICS_RULE_SUBMODULE);
     switch (event.getEventName()) {
-    case POST_DELETE_RULE_EVENT: {
+    case POST_CREATE_RULE_EVENT: {
       statisticData.setOperation(STATISTICS_CREATE_RULE_OPERATION);
       break;
     }
@@ -74,7 +74,7 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
       statisticData.setOperation(STATISTICS_UPDATE_RULE_OPERATION);
       break;
     }
-    case POST_CREATE_RULE_EVENT: {
+    case POST_DELETE_RULE_EVENT: {
       statisticData.setOperation(STATISTICS_DELETE_RULE_OPERATION);
       break;
     }

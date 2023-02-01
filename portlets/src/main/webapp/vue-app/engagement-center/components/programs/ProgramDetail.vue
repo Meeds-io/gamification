@@ -207,6 +207,9 @@ export default {
     programId() {
       return this.program?.id;
     },
+    spaceId() {
+      return this.program?.space?.id;
+    },
     rulesHeaders() {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
@@ -243,6 +246,27 @@ export default {
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
+  },
+  mounted() {
+    if (this.programId) {
+      document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+        detail: {
+          module: 'gamification',
+          subModule: 'program',
+          userId: eXo.env.portal.userIdentityId,
+          userName: eXo.env.portal.userName,
+          spaceId: this.spaceId || 0,
+          operation: 'viewProgram',
+          timestamp: Date.now(),
+          parameters: {
+            programId: this.programId,
+            programTitle: this.programTitle,
+            programBudget: this.programBudget,
+            programType: this.program.type,
+          },
+        }
+      }));
+    }
   },
   methods: {
     programUpdated(program) {

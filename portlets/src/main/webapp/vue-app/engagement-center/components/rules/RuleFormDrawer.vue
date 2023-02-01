@@ -19,7 +19,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     ref="ruleFormDrawer"
     right
     v-model="drawer"
-    body-classes="hide-scroll decrease-z-index-more">
+    body-classes="hide-scroll decrease-z-index-more"
+    @opened="collectRuleVisit">
     <template slot="title">
       {{ drawerTitle }}
     </template>
@@ -230,10 +231,12 @@ export default {
       window.setTimeout(() => {
         if (this.$refs.ruleTitle) {
           this.$refs.ruleTitle.focus();
+          if (this.$refs.ruleDescription) {
+            this.$refs.ruleDescription.initCKEditor();
+          }
         }
       }, 200);
       this.$nextTick().then(() => {
-        this.$refs.ruleDescription.initCKEditor();
         this.$root.$emit('rule-form-drawer-opened', this.rule);
         this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
       });
@@ -292,6 +295,34 @@ export default {
             this.saving = false;
             this.$refs.ruleFormDrawer.endLoading();
           });
+      }
+    },
+    collectRuleVisit() {
+      if (this.rule?.id) {
+        document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+          detail: {
+            module: 'gamification',
+            subModule: 'rule',
+            userId: eXo.env.portal.userIdentityId,
+            userName: eXo.env.portal.userName,
+            spaceId: this.rule.domainDTO?.audienceId || 0,
+            operation: 'viewRule',
+            timestamp: Date.now(),
+            parameters: {
+              ruleId: this.rule.id,
+              ruleTitle: this.rule.title,
+              ruleDescription: this.rule.description,
+              ruleBudget: this.rule.score || 0,
+              ruleType: this.rule.type,
+              ruleEvent: this.rule.event,
+              programId: this.rule.domainDTO?.id,
+              programTitle: this.rule.domainDTO?.title,
+              programType: this.rule.domainDTO?.type,
+              programBudget: this.rule.domainDTO?.rulesTotalScore || 0,
+              drawer: 'ruleDetail',
+            },
+          }
+        }));
       }
     },
     displayAlert(message, type) {
