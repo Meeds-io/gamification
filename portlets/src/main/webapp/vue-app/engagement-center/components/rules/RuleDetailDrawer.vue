@@ -3,7 +3,8 @@
     id="ruleDetailDrawer"
     ref="ruleDetailDrawer"
     :right="!$vuetify.rtl"
-    @closed="close">
+    @closed="close"
+    @opened="collectRuleVisit">
     <template #title>
       <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
     </template>
@@ -303,7 +304,40 @@ export default {
         });
         this.$refs.announcementRichEditor.setFocus();
       }, 100);
-    }
+    },
+    collectRuleVisit() {
+      if (this.rule?.id) {
+        document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+          detail: {
+            module: 'gamification',
+            subModule: 'rule',
+            userId: eXo.env.portal.userIdentityId,
+            userName: eXo.env.portal.userName,
+            spaceId: this.rule.domainDTO?.audienceId || 0,
+            operation: 'viewRule',
+            timestamp: Date.now(),
+            parameters: {
+              ruleId: this.rule.id,
+              ruleTitle: this.rule.title,
+              ruleDescription: this.rule.description,
+              ruleBudget: this.rule.score || 0,
+              ruleType: this.rule.type,
+              ruleEvent: this.rule.event,
+              programId: this.rule.domainDTO?.id,
+              programTitle: this.rule.domainDTO?.title,
+              programType: this.rule.domainDTO?.type,
+              programBudget: this.rule.domainDTO?.rulesTotalScore || 0,
+              drawer: 'ruleDetail',
+              portalName: eXo.env.portal.portalName,
+              portalUri: eXo.env.server.portalBaseURL,
+              pageUrl: window.location.pathname,
+              pageTitle: eXo.env.portal.pageTitle,
+              pageUri: eXo.env.portal.selectedNodeUri,
+            },
+          }
+        }));
+      }
+    },
   }
 };
 </script>

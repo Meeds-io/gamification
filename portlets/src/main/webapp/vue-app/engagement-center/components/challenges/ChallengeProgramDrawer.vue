@@ -275,6 +275,11 @@ export default {
               programType: this.challenge.program?.type,
               programBudget: this.challenge.program?.rulesTotalScore || 0,
               drawer: 'challengeDetail',
+              portalName: eXo.env.portal.portalName,
+              portalUri: eXo.env.server.portalBaseURL,
+              pageUrl: window.location.pathname,
+              pageTitle: eXo.env.portal.pageTitle,
+              pageUri: eXo.env.portal.selectedNodeUri,
             },
           }
         }));

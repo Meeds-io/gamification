@@ -263,6 +263,11 @@ export default {
             programTitle: this.programTitle,
             programBudget: this.programBudget,
             programType: this.program.type,
+            portalName: eXo.env.portal.portalName,
+            portalUri: eXo.env.server.portalBaseURL,
+            pageUrl: window.location.pathname,
+            pageTitle: eXo.env.portal.pageTitle,
+            pageUri: eXo.env.portal.selectedNodeUri,
           },
         }
       }));

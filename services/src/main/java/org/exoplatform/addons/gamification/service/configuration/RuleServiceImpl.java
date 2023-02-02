@@ -58,6 +58,24 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.findRuleById(id);
   }
 
+  @Override
+  public RuleDTO findRuleById(long id, String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (StringUtils.isBlank(username)) {
+      throw new IllegalAccessException("Username is mandatory");
+    }
+    RuleDTO rule = findRuleById(id);
+    if (rule == null) {
+      throw new ObjectNotFoundException("Username is mandatory");
+    }
+    if (!Utils.isRuleManager(rule, username)
+        && (!rule.isEnabled()
+            || rule.getDomainDTO() == null
+            || !Utils.isSpaceMember(rule.getDomainDTO().getAudienceId(), username))) {
+      throw new IllegalAccessException("Username is mandatory");
+    }
+    return rule;
+  }
+
   public List<RuleDTO> findEnabledRulesByEvent(String event) throws IllegalArgumentException {
     if (StringUtils.isBlank(event)) {
       throw new IllegalArgumentException("Rule event is mandatory");
