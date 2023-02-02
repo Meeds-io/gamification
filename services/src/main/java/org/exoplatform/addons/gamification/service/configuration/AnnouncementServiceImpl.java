@@ -99,6 +99,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
+  public List<Announcement> getAnnouncementsByEarnerId(String earnerId) {
+    return announcementStorage.getAnnouncementsByEarnerId(earnerId);
+  }
+
+  @Override
   public Long countAllAnnouncementsByChallenge(long challengeId) throws ObjectNotFoundException {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
