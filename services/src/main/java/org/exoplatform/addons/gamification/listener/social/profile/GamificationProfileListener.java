@@ -27,117 +27,115 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileLifeCycleEvent;
 import org.exoplatform.social.core.profile.ProfileListenerPlugin;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.core.storage.api.ActivityStorage;
 import org.exoplatform.social.core.storage.cache.CachedActivityStorage;
 import java.util.List;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
 
-    protected RuleService ruleService;
-    protected IdentityManager identityManager;
-    protected SpaceService spaceService;
-    protected GamificationService gamificationService;
-    protected AnnouncementService announcementService;
-    private CachedActivityStorage cachedActivityStorage;
+  protected RuleService         ruleService;
 
+  protected IdentityManager     identityManager;
 
-    public GamificationProfileListener(RuleService ruleService,
-                                       IdentityManager identityManager,
-                                       SpaceService spaceService,
-                                       GamificationService gamificationService,
-                                       AnnouncementService announcementService,
-                                       CachedActivityStorage cachedActivityStorage) {
-      this.ruleService = ruleService;
-      this.identityManager = identityManager;
-      this.spaceService = spaceService;
-      this.gamificationService = gamificationService;
-      this.announcementService = announcementService;
-      this.cachedActivityStorage = cachedActivityStorage;
+  protected SpaceService        spaceService;
+
+  protected GamificationService gamificationService;
+
+  protected AnnouncementService announcementService;
+
+  private ActivityStorage       activityStorage;
+
+  public GamificationProfileListener(RuleService ruleService,
+                                     IdentityManager identityManager,
+                                     SpaceService spaceService,
+                                     GamificationService gamificationService,
+                                     AnnouncementService announcementService,
+                                     ActivityStorage activityStorage) {
+    this.ruleService = ruleService;
+    this.identityManager = identityManager;
+    this.spaceService = spaceService;
+    this.gamificationService = gamificationService;
+    this.announcementService = announcementService;
+    this.activityStorage = activityStorage;
+  }
+
+  @Override
+  public void avatarUpdated(ProfileLifeCycleEvent event) {
+
+    Long lastUpdate = event.getProfile().getAvatarLastUpdated();
+    String identityId = event.getProfile().getIdentity().getId();
+
+    // Do not reward a user when he update his avatar, reward user only when he add
+    // an avatar for the first time
+    if (lastUpdate != null) {
+      return;
+    }
+    gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
+                                      identityId,
+                                      identityId,
+                                      event.getProfile().getUrl());
+  }
+
+  @Override
+  public void bannerUpdated(ProfileLifeCycleEvent event) {
+
+    Long lastUpdate = event.getProfile().getBannerLastUpdated();
+    String identityId = event.getProfile().getIdentity().getId();
+
+    // Do not reward a user when he update his banner, reward user only when he add
+    // a banner for the first time
+    if (lastUpdate != null) {
+      return;
     }
 
-    @Override
-    public void avatarUpdated(ProfileLifeCycleEvent event) {
+    gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
+                                      identityId,
+                                      identityId,
+                                      event.getProfile().getUrl());
+  }
 
-        Long lastUpdate = event.getProfile().getAvatarLastUpdated();
-        String identityId = event.getProfile().getIdentity().getId();
-        
-        // Do not reward a user when he update his avatar, reward user only when he add
-        // an avatar for the first time
-        if (lastUpdate != null) {
-            return;
-        }
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
-                identityId,
-                identityId,
-                event.getProfile().getUrl());
+  @Override
+  public void basicInfoUpdated(ProfileLifeCycleEvent event) {
+
+  }
+
+  @Override
+  public void contactSectionUpdated(ProfileLifeCycleEvent event) {
+    String userId = event.getProfile().getIdentity().getId();
+    this.clearUserActivitiesCache(userId);
+  }
+
+  @Override
+  public void experienceSectionUpdated(ProfileLifeCycleEvent event) {
+
+  }
+
+  @Override
+  public void headerSectionUpdated(ProfileLifeCycleEvent event) {
+
+  }
+
+  @Override
+  public void createProfile(ProfileLifeCycleEvent event) {
+
+  }
+
+  @Override
+  public void aboutMeUpdated(ProfileLifeCycleEvent event) {
+
+    String identityId = event.getProfile().getIdentity().getId();
+
+    gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
+                                      identityId,
+                                      identityId,
+                                      event.getProfile().getUrl());
+  }
+
+  private void clearUserActivitiesCache(String userId) {
+    List<Announcement> announcements = announcementService.getAnnouncementsByEarnerId(userId);
+    if (CollectionUtils.isEmpty(announcements)) {
+      return;
     }
-
-    @Override
-    public void bannerUpdated(ProfileLifeCycleEvent event) {
-
-        Long lastUpdate = event.getProfile().getBannerLastUpdated();
-        String identityId = event.getProfile().getIdentity().getId();
-
-        // Do not reward a user when he update his banner, reward user only when he add
-        // a banner for the first time
-        if (lastUpdate != null) {
-            return;
-        }
-
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
-                identityId,
-                identityId,
-                event.getProfile().getUrl());
-    }
-
-    @Override
-    public void basicInfoUpdated(ProfileLifeCycleEvent event) {
-
-    }
-
-    @Override
-    public void contactSectionUpdated(ProfileLifeCycleEvent event) {
-      String userId = event.getProfile().getIdentity().getId();
-      this.clearUserActivitiesCache(userId);
-    }
-
-    @Override
-    public void experienceSectionUpdated(ProfileLifeCycleEvent event) {
-
-    }
-
-    @Override
-    public void headerSectionUpdated(ProfileLifeCycleEvent event) {
-
-    }
-
-    @Override
-    public void createProfile(ProfileLifeCycleEvent event) {
-
-
-    }
-
-    @Override
-    public void aboutMeUpdated(ProfileLifeCycleEvent event) {
-        
-        String identityId = event.getProfile().getIdentity().getId();
-        
-        gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
-                identityId,
-                identityId,
-                event.getProfile().getUrl());
-    }
-
-    private void clearUserActivitiesCache(String userId) {
-      List<Announcement> announcements = announcementService.getAnnouncementsByEarnerId(userId);
-      if (CollectionUtils.isEmpty(announcements)) {
-        return;
-      }
-      announcements.forEach(announcement -> clearCache(String.valueOf(announcement.getActivityId())));
-    }
-
-    private void clearCache(String activityId) {
-      if (cachedActivityStorage != null) {
-        cachedActivityStorage.clearActivityCached(activityId);
-      }
-    }
+    announcements.forEach(announcement -> ((CachedActivityStorage) activityStorage).clearActivityCached(String.valueOf(announcement.getActivityId())));
+  }
 }
