@@ -190,13 +190,11 @@ public class RuleServiceImpl implements RuleService {
     }
     ruleDTO.setCreatedBy(username);
     ruleDTO.setLastModifiedBy(username);
-    DomainDTO domainDTO = Utils.getDomainByTitle(ruleDTO.getArea());
-    long domainId = domainDTO.getId();
+    long domainId = ruleDTO.getDomainDTO().getId();
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
     if (oldRule != null && !oldRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
-    ruleDTO.setDomainDTO(domainDTO);
 
     return createRule(ruleDTO);
   }

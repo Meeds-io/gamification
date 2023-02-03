@@ -277,14 +277,11 @@ public class Utils {
   public static boolean isRuleManager(RuleDTO rule, String username) {
     DomainService domainService = CommonsUtils.getService(DomainService.class);
     long programId;
-    if (StringUtils.isBlank(rule.getArea())) {
+    DomainDTO domainDTO = rule.getDomainDTO();
+    if (domainDTO == null) {
       return false;
     } else {
-      DomainDTO domain = domainService.getDomainByTitle(rule.getArea());
-      if (domain == null) {
-        return false;
-      }
-      programId = domain.getId();
+      programId = domainDTO.getId();
     }
     return domainService.isDomainOwner(programId, getUserAclIdentity(username));
   }
