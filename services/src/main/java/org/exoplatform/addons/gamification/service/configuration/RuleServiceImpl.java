@@ -61,7 +61,7 @@ public class RuleServiceImpl implements RuleService {
   @Override
   public RuleDTO findRuleById(long id, String username) throws IllegalAccessException, ObjectNotFoundException {
     if (StringUtils.isBlank(username)) {
-      throw new IllegalAccessException("Username is mandatory");
+      throw new IllegalAccessException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     RuleDTO rule = findRuleById(id);
     if (rule == null) {
