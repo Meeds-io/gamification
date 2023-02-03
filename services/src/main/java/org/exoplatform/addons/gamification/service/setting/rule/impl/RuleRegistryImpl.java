@@ -109,6 +109,9 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
           ruleDto.setEvent(ruleConfig.getEvent());
           ruleDto.setLastModifiedBy("Gamification");
           ruleDto.setCreatedBy("Gamification");
+          if (ruleConfig.getZone() != null) {
+            ruleDto.setArea(ruleConfig.getZone());
+          }
           ruleDto.setDeleted(false);
           ruleDto.setDescription(ruleConfig.getDescription());
           CommonsUtils.getService(RuleService.class).createRule(ruleDto);
