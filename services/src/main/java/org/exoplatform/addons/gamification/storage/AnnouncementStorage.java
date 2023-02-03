@@ -7,6 +7,7 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
@@ -49,6 +50,13 @@ public class AnnouncementStorage {
   public Announcement getAnnouncementById(long announcementId) {
     GamificationActionsHistory announcementEntity = this.announcementDAO.find(announcementId);
     return EntityMapper.fromEntity(announcementEntity);
+  }
+
+  public List<Announcement> getAnnouncementsByEarnerId(String earnerId) {
+    List<GamificationActionsHistory> announcementEntities =
+                                                          this.announcementDAO.findActionsHistoryByEarnerIdAndByType(earnerId,
+                                                                                                                     EntityType.MANUAL);
+    return EntityMapper.fromAnnouncementEntities(announcementEntities);
   }
 
   public List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit, PeriodType periodType, IdentityType earnerType) {
