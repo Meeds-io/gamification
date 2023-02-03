@@ -57,7 +57,15 @@ public interface AnnouncementService {
    *
    */
 
-  Announcement getAnnouncementById(Long announcementId) ;
+  Announcement getAnnouncementById(Long announcementId) ; 
+  
+  /**
+   * Retrieves all announcements by earnerId.
+   *
+   * @param earnerId : the userId used in projection
+   * @return A {@link List &lt;Announcement&gt;} object
+   */
+  List<Announcement> getAnnouncementsByEarnerId(String earnerId);
 
   /**
    * Retrieves number of all Announcements by challenge identifier.
