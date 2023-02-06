@@ -103,8 +103,8 @@ public class RuleStorage {
     return RuleMapper.rulesToRuleDTOs(ruleDAO.getActiveRules());
   }
 
-  public List<RuleDTO> getAllRulesByDomain(String domain) {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRulesByDomain(domain));
+  public List<RuleDTO> getAllRulesByDomain(long domainId) {
+    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRulesByDomain(domainId));
   }
 
   public List<RuleDTO> getAllRulesWithNullDomain() {
@@ -113,10 +113,6 @@ public class RuleStorage {
 
   public List<String> getAllEvents() {
     return ruleDAO.getAllEvents();
-  }
-
-  public List<String> getDomainListFromRules() {
-    return ruleDAO.getDomainList();
   }
 
   public long getRulesTotalScoreByDomain(long domainId) {

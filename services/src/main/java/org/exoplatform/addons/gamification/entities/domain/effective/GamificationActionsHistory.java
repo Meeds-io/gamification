@@ -58,7 +58,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.createdDate >= :date  AND g.domain = :domain AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId"
+        + " FROM GamificationActionsHistory g WHERE g.createdDate >= :date  AND g.domainEntity.id = :domainId AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId"
         + "     ORDER BY total DESC"
 )
 @NamedQuery(
@@ -70,7 +70,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findAllActionsHistoryByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.domain = :domain AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
+        + " FROM GamificationActionsHistory g WHERE g.domainEntity.id = :domainId AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionHistoryByDateByEarnerId",
@@ -88,7 +88,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g" + " WHERE g.createdDate >= :date" + "     AND g.domain = :domain"
+        + " FROM GamificationActionsHistory g" + " WHERE g.createdDate >= :date" + "     AND g.domainEntity.id = :domainId"
         + "     AND g.earnerType = :earnerType" + "     GROUP BY  g.earnerId" + "     ORDER BY total DESC"
 )
 @NamedQuery(
@@ -107,8 +107,8 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findDomainScoreByUserId",
     query = "SELECT"
-        + " new org.exoplatform.addons.gamification.service.effective.ProfileReputation(g.domain,SUM(g.actionScore))"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     GROUP BY  g.domain"
+        + " new org.exoplatform.addons.gamification.service.effective.ProfileReputation(g.domainEntity.id,SUM(g.actionScore))"
+        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     GROUP BY  g.domainEntity.id"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreBetweenDate",
@@ -125,7 +125,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate",
     query = "SELECT SUM(g.actionScore) as total"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.domain = :domain"
+        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.domainEntity.id = :domainId"
         + "     AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
 )
 @NamedQuery(
@@ -144,17 +144,12 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.getAllPointsByDomain",
     query = "SELECT g"
-        + " FROM GamificationActionsHistory g" + " WHERE g.domain = :domain "
+        + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity.id = :domainId "
 )
 @NamedQuery(
     name = "GamificationActionsHistory.getAllPointsWithNullDomain",
     query = "SELECT g"
         + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity IS NULL "
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.getDomainList",
-    query = "SELECT g.domain"
-        + " FROM GamificationActionsHistory g" + "     GROUP BY  g.domain"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.countAnnouncementsByChallenge",
@@ -205,9 +200,6 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   @Column(name = "ACTION_TITLE", nullable = false)
   private String            actionTitle;
-
-  @Column(name = "DOMAIN", nullable = false)
-  private String            domain;
 
   @Column(name = "CONTEXT", nullable = true)
   private String            context;
@@ -283,14 +275,6 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   public void setActionTitle(String actionTitle) {
     this.actionTitle = actionTitle;
-  }
-
-  public String getDomain() {
-    return domain;
-  }
-
-  public void setDomain(String domain) {
-    this.domain = domain;
   }
 
   public String getContext() {

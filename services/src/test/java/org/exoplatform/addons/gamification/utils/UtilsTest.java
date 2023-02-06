@@ -27,6 +27,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.*;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.junit.Test;
 
@@ -242,33 +243,11 @@ public class UtilsTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetEnabledDomainByTitle() {
-    DomainDTO domain = newDomainDTO();
-    DomainDTO savedDomain = Utils.getEnabledDomainByTitle(null);
-    assertNull(savedDomain);
-    savedDomain = Utils.getEnabledDomainByTitle("");
-    assertNull(savedDomain);
-    savedDomain = Utils.getEnabledDomainByTitle(domain.getTitle());
-    assertNotNull(savedDomain);
-  }
-
-  @Test
   public void testGetRuleById() {
     RuleDTO rule = newRuleDTO();
     RuleDTO savedRule = Utils.getRuleById(0);
     assertNull(savedRule);
     savedRule = Utils.getRuleById(rule.getId());
-    assertNotNull(savedRule);
-    assertEquals(rule.getTitle(), savedRule.getTitle());
-  }
-
-  @Test
-  public void testGetRuleByTitle() {
-
-    RuleEntity rule = newRule(GAMIFICATION_DEFAULT_DATA_PREFIX + "test", "domain");
-    RuleDTO savedRule = Utils.getRuleByTitle("");
-    assertNull(savedRule);
-    savedRule = Utils.getRuleByTitle("test_domain");
     assertNotNull(savedRule);
     assertEquals(rule.getTitle(), savedRule.getTitle());
   }

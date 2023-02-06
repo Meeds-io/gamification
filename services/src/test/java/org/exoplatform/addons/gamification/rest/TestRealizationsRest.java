@@ -320,7 +320,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
   public void testUpdateRealizations() throws Exception {
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     String restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.EDITED
-        + "&actionLabel=newLabel&points=100&domain=" + gHistory.getDomain();
+        + "&actionLabel=newLabel&points=100";
 
     ContainerResponse response = getResponse("PUT", getURLResource(restPath), null);
 
@@ -331,7 +331,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(HistoryStatus.EDITED.name(), realizations.getStatus());
 
     restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.REJECTED
-        + "&actionLabel=&points=0&domain=";
+        + "&actionLabel=&points=0";
 
     response = getResponse("PUT", getURLResource(restPath), null);
     assertNotNull(response);

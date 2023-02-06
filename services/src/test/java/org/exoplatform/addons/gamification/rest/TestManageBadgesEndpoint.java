@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,8 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+
+import static org.jgroups.util.Util.assertNotNull;
 
 public class TestManageBadgesEndpoint extends AbstractServiceTest {
 
@@ -58,142 +62,69 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
    * Testing get All badges
    **/
   @Test
-  public void testGetAllBadges() {
-
-    try {
-      String restPath = "/gamification/badges/all";
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-      ContainerResponse response = launcher.service("GET", restPath, "", h, null, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-      LOG.info("List of badges is OK ", BadgeEntity.class, response.getStatus());
-    } catch (Exception e) {
-      LOG.error("Cannot get list of badges", e);
-    }
-
+  public void testGetAllBadges() throws Exception {
+    ContainerResponse response = getResponse("GET", getURLResource("badges/all"), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
   }
 
   /**
    * Testing the add of a new badge with the Media Type
    **/
   @Test
-  public void testAddBadge() {
+  public void testAddBadge() throws Exception {
+    DomainDTO domainDTO = newDomainDTO();
+    JSONObject domainData = new JSONObject();
+    domainData.put("id", domainDTO.getId());
+    domainData.put("title", domainDTO.getTitle());
 
-    try {
-      String restPath = "/gamification/badges/add";
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      StringWriter writer = new StringWriter();
-      JSONWriter jsonWriter = new JSONWriter(writer);
-      jsonWriter.object()
-                .key("title")
-                .value("foo")
-                .key("description")
-                .value("description")
-                .key("domain")
-                .value("social")
-                .endObject();
-      byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
-      MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-      h.putSingle("content-type", "application/json");
-      h.putSingle("content-length", "" + data.length);
-      ContainerResponse response = launcher.service("POST", restPath, "", h, data, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-      BadgeDTO entity = (BadgeDTO) response.getEntity();
-      assertEquals("foo", entity.getTitle());
-      assertEquals("description", entity.getDescription());
-      assertEquals("social", entity.getDomain());
-      LOG.info("Adding of badges is OK ", BadgeEntity.class, response.getStatus());
-    } catch (Exception e) {
-      LOG.error("Cannot add badges", e);
-    }
+    JSONObject data = new JSONObject();
+    data.put("title", "foo");
+    data.put("description", "description");
+    data.put("domainDTO", domainData);
 
+    ContainerResponse response = getResponse("POST", getURLResource("/badges/add"), data.toString());
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    BadgeDTO entity = (BadgeDTO) response.getEntity();
+    assertEquals("foo", entity.getTitle());
+    assertEquals("description", entity.getDescription());
+    assertEquals(GAMIFICATION_DOMAIN, entity.getDomainDTO().getTitle());
   }
 
   /**
    * Testing the add of delete of badge with the Media Type
    **/
   @Test
-  public void testDeleteBadge() {
-    try {
-      BadgeEntity badgeEntity = newBadge();
-      String restPath = "/gamification/badges/delete/" + badgeEntity.getId();
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "DELETE", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      StringWriter writer = new StringWriter();
-      JSONWriter jsonWriter = new JSONWriter(writer);
-      jsonWriter.object()
-                .key("id")
-                .value(badgeEntity.getId())
-                .key("title")
-                .value(badgeEntity.getTitle())
-                .key("description")
-                .value(badgeEntity.getDescription())
-                .key("domain")
-                .value(badgeEntity.getDomain())
-                .endObject();
-      byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
-      MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-      h.putSingle("content-type", "application/json");
-      h.putSingle("content-length", "" + data.length);
-      ContainerResponse response = launcher.service("DELETE", restPath, "", h, data, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-      LOG.info("Delete of badges is OK ", BadgeEntity.class, response.getStatus());
-    } catch (Exception e) {
-      LOG.error("Cannot delete the list of badges", e);
-    }
-
+  public void testDeleteBadge() throws Exception {
+    BadgeEntity badgeEntity = newBadge();
+    ContainerResponse response = getResponse("DELETE", getURLResource("badges/delete/" + badgeEntity.getId()), null);
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
   }
 
   /**
    * Testing the add of delete of badge with the Media Type
    **/
   @Test
-  public void testUpdateBadge() {
+  public void testUpdateBadge() throws Exception {
+    BadgeEntity badgeEntity = newBadge();
+    DomainDTO domainDTO = newDomainDTO();
+    JSONObject domainData = new JSONObject();
+    domainData.put("id", domainDTO.getId());
+    domainData.put("title", domainDTO.getTitle());
 
-    try {
-      BadgeEntity badgeEntity = newBadge();
-      Map<String, Object> ssResults = new HashMap<String, Object>();
-      getContainer().registerComponentInstance("ManageBadgesEndpoint", ManageBadgesEndpoint.class);
-      String restPath = "/gamification/badges/update";
-      EnvironmentContext envctx = new EnvironmentContext();
-      HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "PUT", null);
-      envctx.put(HttpServletRequest.class, httpRequest);
-      envctx.put(SecurityContext.class, new MockSecurityContext("root"));
-      StringWriter writer = new StringWriter();
-      JSONWriter jsonWriter = new JSONWriter(writer);
-      jsonWriter.object()
-                .key("id")
-                .value(badgeEntity.getId())
-                .key("title")
-                .value(badgeEntity.getTitle())
-                .key("description")
-                .value(badgeEntity.getDescription() + "_test")
-                .key("domain")
-                .value(badgeEntity.getDomain())
-                .endObject();
-      byte[] data = writer.getBuffer().toString().getBytes("UTF-8");
-      MultivaluedMap<String, String> h = new MultivaluedMapImpl();
-      h.putSingle("content-type", "application/json");
-      h.putSingle("content-length", "" + data.length);
-      ContainerResponse response = launcher.service("PUT", restPath, "", h, data, envctx);
-      assertNotNull(response);
-      assertEquals(200, response.getStatus());
-      BadgeDTO entity = (BadgeDTO) response.getEntity();
-      assertEquals(entity.getDescription(), "Description_test");
-      LOG.info("Adding of badges is OK ", BadgeEntity.class, response.getStatus());
-    } catch (Exception e) {
-      LOG.error("Cannot add badges", e);
-    }
+    JSONObject data = new JSONObject();
+    data.put("id", badgeEntity.getId());
+    data.put("title", badgeEntity.getTitle());
+    data.put("description", badgeEntity.getDescription() + "_test");
+    data.put("domainDTO", domainData);
+
+    ContainerResponse response = getResponse("PUT", getURLResource("badges/update"), data.toString());
+
+    assertNotNull(response);
+    assertEquals(200, response.getStatus());
+    BadgeDTO entity = (BadgeDTO) response.getEntity();
+    assertEquals(entity.getDescription(), "Description_test");
   }
 }

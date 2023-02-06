@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
@@ -48,9 +49,12 @@ public class RuleDAOTest extends AbstractServiceTest {
   public void testFindEnabledRulesByEvent() {
     assertEquals(ruleDAO.findAll().size(), 0);
     assertEquals(ruleDAO.findEnabledRulesByEvent("rule1").size(), 0);
-    RuleEntity r1 = newRule("rule1", "domain1");
-    RuleEntity r2 = newRule("rule1", "domain2");
-    RuleEntity r3 = newRule("rule1", "domain3");
+    DomainEntity firstDomain = newDomain("firstDomain");
+    DomainEntity secondDomain = newDomain("secondDomain");
+    DomainEntity thirdDomain = newDomain("thirdDomain");
+    RuleEntity r1 = newRule("rule1", firstDomain.getId());
+    RuleEntity r2 = newRule("rule1", secondDomain.getId());
+    RuleEntity r3 = newRule("rule1", thirdDomain.getId());
     assertEquals(ruleDAO.findEnabledRulesByEvent("rule1").size(), 3);
     r1.setEnabled(false);
     ruleDAO.update(r1);
@@ -84,19 +88,24 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testGetAllRulesByDomain() {
     assertEquals(ruleDAO.findAll().size(), 0);
-    newRule("rule1", "domain1");
-    newRule("rule2", "domain1");
-    newRule("rule3", "domain2");
-    assertEquals(ruleDAO.getAllRulesByDomain("domain1").size(), 2);
-    assertEquals(ruleDAO.getAllRulesByDomain("domain2").size(), 1);
+    DomainEntity firstDomain = newDomain("firstDomain");
+    DomainEntity secondDomain = newDomain("secondDomain");
+    newRule("rule1", firstDomain.getId());
+    newRule("rule2", firstDomain.getId());
+    newRule("rule3", secondDomain.getId());
+    assertEquals(ruleDAO.getAllRulesByDomain(firstDomain.getId()).size(), 2);
+    assertEquals(ruleDAO.getAllRulesByDomain(secondDomain.getId()).size(), 1);
   }
 
   @Test
   public void testGetAllRulesWithNullDomain() {
     assertEquals(ruleDAO.findAll().size(), 0);
-    RuleEntity r1 = newRule("rule1", "domain1");
-    RuleEntity r2 = newRule("rule1", "domain2");
-    RuleEntity r3 = newRule("rule1", "domain3");
+    DomainEntity firstDomain = newDomain("firstDomain");
+    DomainEntity secondDomain = newDomain("secondDomain");
+    DomainEntity thirdDomain = newDomain("thirdDomain");
+    RuleEntity r1 = newRule("rule1", firstDomain.getId());
+    RuleEntity r2 = newRule("rule1", secondDomain.getId());
+    RuleEntity r3 = newRule("rule1", thirdDomain.getId());
     assertEquals(ruleDAO.getAllRulesWithNullDomain().size(), 0);
     r1.setDomainEntity(null);
     ruleDAO.update(r1);
@@ -104,39 +113,37 @@ public class RuleDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomainList() {
-    assertEquals(ruleDAO.findAll().size(), 0);
-    newRule("rule1", "domain1");
-    newRule("rule2", "domain2");
-    newRule("rule3", "domain2");
-    assertEquals(ruleDAO.getDomainList().size(), 2);
-  }
-
-  @Test
   public void testGetAllEvents() {
     assertEquals(ruleDAO.findAll().size(), 0);
-    newRule("rule1", "domain1");
-    newRule("rule1", "domain2");
-    newRule("rule2", "domain3");
+    DomainEntity domainEntity = newDomain();
+    newRule("rule1", domainEntity.getId());
+    newRule("rule1", domainEntity.getId());
+    newRule("rule2", domainEntity.getId());
     assertEquals(ruleDAO.getAllEvents().size(), 2);
   }
 
   @Test
   public void testGetAllRules() {
     assertEquals(ruleDAO.getAllRules().size(), 0);
-    newRule("rule1", "domain1");
-    assertEquals(ruleDAO.getAllRules().size(), 1);
-    newRule("rule1", "domain2");
-    assertEquals(ruleDAO.getAllRules().size(), 2);
-    newRule("rule2", "domain3");
-    assertEquals(ruleDAO.getAllRules().size(), 3);
+    DomainEntity domainEntity = newDomain("domain1");
+    DomainEntity domainEntity2 = newDomain("domain2");
+    DomainEntity domainEntity3 = newDomain("domain3");
+    newRule("rule1", domainEntity.getId());
+    assertEquals(1, ruleDAO.getAllRules().size());
+    newRule("rule1", domainEntity2.getId());
+    assertEquals(2, ruleDAO.getAllRules().size());
+    newRule("rule2", domainEntity3.getId());
+    assertEquals(3, ruleDAO.getAllRules().size());
   }
 
   @Test
   public void testFindHighestBudgetDomainIds() {
-    RuleEntity r1 = newRule("rule1", "domain1");
-    RuleEntity r2 = newRule("rule2", "domain1");
-    RuleEntity r3 = newRule("rule3", "domain2");
+    DomainEntity firstDomain = newDomain("firstDomain");
+    DomainEntity secondDomain = newDomain("secondDomain");
+    DomainEntity thirdDomain = newDomain("thirdDomain");
+    RuleEntity r1 = newRule("rule1", firstDomain.getId());
+    RuleEntity r2 = newRule("rule2", firstDomain.getId());
+    RuleEntity r3 = newRule("rule3", secondDomain.getId());
     r1.setScore(Integer.parseInt(TEST__SCORE) * 2);
     r2.setScore(Integer.parseInt(TEST__SCORE));
     r3.setScore(Integer.parseInt(TEST__SCORE));
@@ -162,15 +169,17 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testFindRulesIdsByFilter() {
     RuleFilter filter = new RuleFilter();
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity3 = newDomain();
     filter.setDateFilterType(DateFilterType.ALL);
     assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
+    RuleEntity ruleEntity1 = newRule("rule1", domainEntity1.getId());
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
-    filter.setSpaceIds(Collections.singletonList(1l));
+    filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    newRule("rule2", "domain1", 1l);
+    newRule("rule2", domainEntity1.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    newRule("rule3", "domain3", 1l);
+    newRule("rule3", domainEntity3.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setDateFilterType(DateFilterType.STARTED);
     filter.setEntityFilterType(EntityFilterType.MANUAL);
@@ -180,17 +189,16 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityNotStarted.setScore(Integer.parseInt(TEST__SCORE));
     ruleEntityNotStarted.setTitle("ruleEntityNotStarted");
     ruleEntityNotStarted.setDescription("ruleEntityNotStarted Description");
-    ruleEntityNotStarted.setArea("domain1");
     ruleEntityNotStarted.setEnabled(true);
     ruleEntityNotStarted.setDeleted(false);
     ruleEntityNotStarted.setEvent("ruleEntityNotStarted");
     ruleEntityNotStarted.setCreatedBy(TEST_USER_SENDER);
     ruleEntityNotStarted.setLastModifiedBy(TEST_USER_SENDER);
     ruleEntityNotStarted.setLastModifiedDate(new Date());
-    ruleEntityNotStarted.setDomainEntity(newDomain("domain1"));
+    ruleEntityNotStarted.setDomainEntity(domainEntity1);
     ruleEntityNotStarted.setType(EntityType.MANUAL);
-    ruleEntityNotStarted.setAudience(1l);
-    ruleEntityNotStarted.setManagers(Collections.singletonList(1l));
+    ruleEntityNotStarted.setAudience(1L);
+    ruleEntityNotStarted.setManagers(Collections.singletonList(1L));
     ruleEntityNotStarted.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         + 10 * MILLIS_IN_A_DAY))));
     ruleEntityNotStarted.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
@@ -203,17 +211,16 @@ public class RuleDAOTest extends AbstractServiceTest {
     ruleEntityEnded.setScore(Integer.parseInt(TEST__SCORE));
     ruleEntityEnded.setTitle("ruleEntityEnded");
     ruleEntityEnded.setDescription("ruleEntityEnded Description");
-    ruleEntityEnded.setArea("domain1");
     ruleEntityEnded.setEnabled(true);
     ruleEntityEnded.setDeleted(false);
     ruleEntityEnded.setEvent("ruleEntityEnded");
     ruleEntityEnded.setCreatedBy(TEST_USER_SENDER);
     ruleEntityEnded.setLastModifiedBy(TEST_USER_SENDER);
     ruleEntityEnded.setLastModifiedDate(new Date());
-    ruleEntityEnded.setDomainEntity(newDomain("domain1"));
+    ruleEntityEnded.setDomainEntity(domainEntity1);
     ruleEntityEnded.setType(EntityType.MANUAL);
-    ruleEntityEnded.setAudience(1l);
-    ruleEntityEnded.setManagers(Collections.singletonList(1l));
+    ruleEntityEnded.setAudience(1L);
+    ruleEntityEnded.setManagers(Collections.singletonList(1L));
     ruleEntityEnded.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         - 2 * MILLIS_IN_A_DAY))));
     ruleEntityEnded.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()

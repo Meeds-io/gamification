@@ -33,7 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
@@ -68,11 +70,10 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
   @GET
   @Path("history/all")
   @RolesAllowed("users")
-  public Response getAllLeadersByRank(@Context
-  UriInfo uriInfo, @QueryParam("capacity")
-  String capacity, @QueryParam("providerId")
-  String providerId, @QueryParam("remoteId")
-  String remoteId) {
+  public Response getAllLeadersByRank(@Context UriInfo uriInfo,
+                                      @QueryParam("capacity") String capacity,
+                                      @QueryParam("providerId") String providerId,
+                                      @QueryParam("remoteId") String remoteId) {
 
     if (StringUtils.isBlank(providerId)) {
       return Response.status(400).entity("identity 'providerId' parameter is mandatory").build();
@@ -141,7 +142,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       // Set Date-Hours-Minutes GMT Format of the creation
       gamificationHistoryInfo.setCreatedDate(element.getCreatedDate().toGMTString());
       // Set Domain
-      gamificationHistoryInfo.setDomain(element.getDomain());
+      gamificationHistoryInfo.setDomain(DomainMapper.domainEntityToDomainDTO(element.getDomainEntity()));
       // Set Global Score
       gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
       // Set event id
@@ -187,7 +188,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     String         actionTitle;
 
-    String         domain;
+    DomainDTO      domainDTO;
 
     String         context;
 
@@ -271,12 +272,12 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       this.actionTitle = actionTitle;
     }
 
-    public String getDomain() {
-      return domain;
+    public DomainDTO getDomainDTO() {
+      return domainDTO;
     }
 
-    public void setDomain(String domain) {
-      this.domain = domain;
+    public void setDomain(DomainDTO domainDTO) {
+      this.domainDTO = domainDTO;
     }
 
     public String getContext() {

@@ -67,7 +67,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   public void testFindAllActionsHistoryByDateByDomain() {
     assertEquals(
                  gamificationHistoryDAO
-                                       .findAllActionsHistoryByDateByDomain(IdentityType.USER, fromDate, GAMIFICATION_DOMAIN)
+                                       .findAllActionsHistoryByDateByDomain(IdentityType.USER, fromDate, 1L)
                                        .size(),
                  0);
     GamificationActionsHistory gHistory = newGamificationActionsHistory();
@@ -76,7 +76,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO
                                                                       .findAllActionsHistoryByDateByDomain(IdentityType.USER,
                                                                                                            fromDate,
-                                                                                                           GAMIFICATION_DOMAIN);
+                                                                                                           1L);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3L);
@@ -91,14 +91,14 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindAllActionsHistoryByDomain() {
     assertEquals(
-                 gamificationHistoryDAO.findAllActionsHistoryByDomain(IdentityType.USER, GAMIFICATION_DOMAIN).size(),
+                 gamificationHistoryDAO.findAllActionsHistoryByDomain(IdentityType.USER, 1L).size(),
                  0);
     GamificationActionsHistory gHistory = newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO
                                                                       .findAllActionsHistoryByDomain(IdentityType.USER,
-                                                                                                     GAMIFICATION_DOMAIN);
+                                                                                                     1L);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3);
@@ -170,7 +170,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindActionsHistoryByDateByDomain() {
     assertEquals(gamificationHistoryDAO
-                                       .findActionsHistoryByDateByDomain(fromDate, IdentityType.USER, GAMIFICATION_DOMAIN, limit)
+                                       .findActionsHistoryByDateByDomain(fromDate, IdentityType.USER, 1L, limit)
                                        .size(),
                  0);
     newGamificationActionsHistory();
@@ -178,7 +178,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     newGamificationActionsHistory();
     List<StandardLeaderboard> leaderboardList = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate,
                                                                                                         IdentityType.USER,
-                                                                                                        GAMIFICATION_DOMAIN,
+                                                                                                        1L,
                                                                                                         limit);
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_SENDER);
@@ -200,11 +200,11 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllPointsByDomain() {
-    assertEquals(gamificationHistoryDAO.getAllPointsByDomain(GAMIFICATION_DOMAIN).size(), 0);
+    assertEquals(gamificationHistoryDAO.getAllPointsByDomain(1L).size(), 0);
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.getAllPointsByDomain(GAMIFICATION_DOMAIN).size(), limit);
+    assertEquals(gamificationHistoryDAO.getAllPointsByDomain(1L).size(), limit);
   }
 
   @Test
@@ -286,7 +286,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   @Test
   public void testFindUserReputationScoreByDomainBetweenDate() {
     assertEquals(gamificationHistoryDAO.findUserReputationScoreByDomainBetweenDate(TEST_USER_SENDER,
-                                                                                   GAMIFICATION_DOMAIN,
+                                                                                   1L,
                                                                                    fromDate,
                                                                                    toDate),
                  0);
@@ -294,7 +294,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     newGamificationActionsHistory();
     newGamificationActionsHistory();
     assertEquals(gamificationHistoryDAO.findUserReputationScoreByDomainBetweenDate(TEST_USER_SENDER,
-                                                                                   GAMIFICATION_DOMAIN,
+                                                                                   1L,
                                                                                    fromDate,
                                                                                    toDate),
                  Integer.parseInt(TEST__SCORE) * 3);
@@ -330,15 +330,6 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
     assertEquals(leaderboardList.size(), 1);
     assertEquals(leaderboardList.get(0).getEarnerId(), TEST_USER_SENDER);
     assertEquals(leaderboardList.get(0).getReputationScore(), Integer.parseInt(TEST__SCORE) * 3);
-  }
-
-  @Test
-  public void testGetDomainList() {
-    assertEquals(gamificationHistoryDAO.getDomainList().size(), 0);
-    newGamificationActionsHistory();
-    newGamificationActionsHistory();
-    newGamificationActionsHistory();
-    assertEquals(gamificationHistoryDAO.getDomainList().size(), 1);
   }
 
   @Test

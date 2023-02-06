@@ -45,11 +45,11 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
     }
 
-    public BadgeEntity findBadgeByTitleAndDomain(String badgeTitle, String domain) throws PersistenceException {
+    public BadgeEntity findBadgeByTitleAndDomain(String badgeTitle, long domainId) throws PersistenceException {
 
         TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findBadgeByTitleAndDomain", BadgeEntity.class)
                 .setParameter("badgeTitle", badgeTitle)
-                .setParameter("domain", domain);
+                .setParameter("domainId", domainId);
 
         try {
             return query.getSingleResult();
@@ -59,22 +59,23 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
 
     }
 
-    public List<BadgeEntity> findBadgesByDomain(String domain) throws PersistenceException {
+    public List<BadgeEntity> findBadgesByDomain(long domainId) throws PersistenceException {
 
-        TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findBadgeByDomain", BadgeEntity.class)
-                .setParameter("badgeDomain", domain);
+      TypedQuery<BadgeEntity> query =
+                                    getEntityManager().createNamedQuery("GamificationBadge.findBadgeByDomain", BadgeEntity.class)
+                                                      .setParameter("domainId", domainId);
 
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return Collections.emptyList();
-        }
+      try {
+        return query.getResultList();
+      } catch (NoResultException e) {
+        return Collections.emptyList();
+      }
 
     }
-    public List<BadgeEntity> findEnabledBadgesByDomain(String domain) throws PersistenceException {
+    public List<BadgeEntity> findEnabledBadgesByDomain(long domainId) throws PersistenceException {
 
         TypedQuery<BadgeEntity> query = getEntityManager().createNamedQuery("GamificationBadge.findEnabledBadgeByDomain", BadgeEntity.class)
-                .setParameter("badgeDomain", domain);
+                .setParameter("domainId", domainId);
 
         try {
             return query.getResultList();
@@ -105,17 +106,5 @@ public class BadgeDAO extends GenericDAOJPAImpl<BadgeEntity, Long> {
         } catch (NoResultException e) {
           return Collections.emptyList();
         }
-
-    }
-
-    public List<String>  getDomainList() throws PersistenceException {
-        TypedQuery<String> query = getEntityManager().createNamedQuery("GamificationBadge.getDomainList", String.class);
-
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-          return Collections.emptyList();
-        }
-
     }
 }

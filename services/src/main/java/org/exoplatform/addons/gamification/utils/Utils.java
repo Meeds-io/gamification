@@ -212,14 +212,6 @@ public class Utils {
     return space;
   }
 
-  public static DomainDTO getEnabledDomainByTitle(String domainTitle) {
-    if (domainTitle == null || domainTitle.isEmpty()) {
-      return null;
-    }
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return domainService.findEnabledDomainByTitle(domainTitle);
-  }
-
   public static DomainDTO getDomainByTitle(String domainTitle) {
     if (domainTitle == null || domainTitle.isEmpty()) {
       return null;
@@ -238,16 +230,10 @@ public class Utils {
 
   @SuppressWarnings("deprecation")
   public static DomainDTO getChallengeDomainDTO(Challenge challenge) {
-    DomainDTO domain;
     if (challenge.getProgramId() > 0) {
-      domain = Utils.getDomainDTOById(challenge.getProgramId());
-    } else {
-      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());// NOSONAR
-                                                                     // kept for
-                                                                     // backward
-                                                                     // compatibility
+      return Utils.getDomainDTOById(challenge.getProgramId());
     }
-    return domain;
+    return null;
   }
 
   public static DomainEntity getDomainById(long domainId) {

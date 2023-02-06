@@ -44,7 +44,6 @@ public class RuleMapper {
     rule.setScore(ruleDTO.getScore());
     rule.setTitle(ruleDTO.getTitle());
     rule.setDescription(ruleDTO.getDescription());
-    rule.setArea(ruleDTO.getArea());
     rule.setEnabled(ruleDTO.isEnabled());
     rule.setDeleted(ruleDTO.isDeleted());
     rule.setEvent(ruleDTO.getEvent());
@@ -88,7 +87,6 @@ public class RuleMapper {
       rule.setScore(ruleEntity.getScore());
       rule.setTitle(ruleEntity.getTitle());
       rule.setDescription(ruleEntity.getDescription());
-      rule.setArea(ruleEntity.getArea());
       rule.setEnabled(ruleEntity.isEnabled());
       rule.setDeleted(ruleEntity.isDeleted());
       rule.setEvent(ruleEntity.getEvent());

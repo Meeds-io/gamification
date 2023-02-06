@@ -57,14 +57,6 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     }
   }
 
-  public DomainEntity findEnabledDomainByTitle(String domainTitle) {
-    TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findEnabledDomainByTitle",
-                                                                         DomainEntity.class);
-    query.setParameter(DOMAIN_TITLE, domainTitle);
-    List<DomainEntity> domainEntities = query.getResultList();
-    return !domainEntities.isEmpty() ? domainEntities.get(0) : null;
-  }
-
   public DomainEntity getDomainByTitle(String domainTitle) {
     TypedQuery<DomainEntity> query = getEntityManager().createNamedQuery("GamificationDomain.findDomainByTitle",
                                                                          DomainEntity.class);

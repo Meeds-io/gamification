@@ -145,7 +145,7 @@ public class EntityMapper {
     announcementEntity.setActionScore(ruleEntity.getScore());
     announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
     announcementEntity.setDomainEntity(domainEntity);
-    announcementEntity.setDomain(domainEntity.getTitle());
+    announcementEntity.setDomainEntity(domainEntity);
     announcementEntity.setObjectId("");
     announcementEntity.setType(ruleEntity.getType());
     return announcementEntity;
@@ -197,7 +197,6 @@ public class EntityMapper {
     rule.setDescription(challenge.getDescription());
     rule.setDeleted(false);
     DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
-    rule.setArea(domain == null ? null : domain.getTitle());
     rule.setDomainDTO(domain);
     if (challenge.getAudience() > 0) {
       rule.setAudience(challenge.getAudience());

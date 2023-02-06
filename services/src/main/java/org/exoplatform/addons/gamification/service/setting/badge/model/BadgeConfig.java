@@ -51,12 +51,6 @@ public class BadgeConfig extends BaseComponentPlugin {
             description = descriptionParam.getValue();
         }
 
-        ValueParam domainParam = params.getValueParam("badge-domain");
-
-        if (domainParam != null) {
-            domain = domainParam.getValue();
-        }
-
         ValueParam iconParam = params.getValueParam("badge-icon");
 
         if (iconParam != null) {

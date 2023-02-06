@@ -28,25 +28,6 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 public class DomainDAOTest extends AbstractServiceTest {
 
   @Test
-  public void testGetDomainByTitle() {
-    assertNull(domainDAO.getDomainByTitle(GAMIFICATION_DOMAIN));
-    newDomain();
-    assertNotNull(domainDAO.getDomainByTitle(GAMIFICATION_DOMAIN));
-  }
-
-  @Test
-  public void testFindEnabledDomainByTitle() {
-    assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    DomainEntity domainEntity = newDomain();
-    assertNotNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    domainEntity.setEnabled(false);
-    DomainEntity updatedEntity = domainDAO.update(domainEntity);
-    assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    assertEquals(domainEntity, updatedEntity);
-    assertEquals(domainEntity.hashCode(), updatedEntity.hashCode());
-  }
-
-  @Test
   public void testGetEnabledDomains() {
     assertEquals(0, domainDAO.getEnabledDomains().size());
     newDomain("domain1");

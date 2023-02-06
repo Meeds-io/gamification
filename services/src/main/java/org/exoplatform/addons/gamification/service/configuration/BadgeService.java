@@ -85,23 +85,22 @@ public class BadgeService {
     /**
      * Find a BadgeEntity by title
      * @param badgeTitle : badge title
-     * @param domain : badge domain
+     * @param domainId : badge domain id
      * @return an instance BadgeDTO
      */
-    public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, String domain) {
+    public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, long domainId) {
 
-        try {
-            //--- Get Entity from DB
-            BadgeEntity entity = badgeStorage.findBadgeByTitleAndDomain(badgeTitle,domain);
-            //--- Convert Entity to DTO
-            if (entity != null) {
-                return BadgeMapper.badgeToBadgeDTO(entity);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
+      try {
+        // --- Get Entity from DB
+        BadgeEntity entity = badgeStorage.findBadgeByTitleAndDomain(badgeTitle, domainId);
+        // --- Convert Entity to DTO
+        if (entity != null) {
+          return BadgeMapper.badgeToBadgeDTO(entity);
         }
-        return null;
+      } catch (Exception e) {
+        LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
+      }
+      return null;
 
     }
 
@@ -128,10 +127,7 @@ public class BadgeService {
      */
     public BadgeDTO addBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
       BadgeEntity badgeEntity = null;
-      if (badgeDTO.getDomainDTO() != null) {
-        badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
-      }
-      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomain());
+      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomainDTO().getId());
       if (badgeEntity == null) {
         if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
           badgeDTO.setEnabled(false);
@@ -159,10 +155,7 @@ public class BadgeService {
      */
     public BadgeDTO updateBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
       BadgeEntity badgeEntity = null;
-      if (badgeDTO.getDomainDTO() != null) {
-        badgeDTO.setDomain(badgeDTO.getDomainDTO().getTitle());
-      }
-      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomain());
+      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomainDTO().getId());
       if (badgeEntity != null
           && badgeDTO.getId() != null
           && badgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
@@ -190,32 +183,32 @@ public class BadgeService {
       }
     }
 
-    public List<BadgeDTO> findBadgesByDomain(String badgeDomain) {
+    public List<BadgeDTO> findBadgesByDomain(long domainId) {
 
         try {
             //--- load all Rules
-            List<BadgeEntity> badges = badgeStorage.findBadgesByDomain(badgeDomain);
+            List<BadgeEntity> badges = badgeStorage.findBadgesByDomain(domainId);
             if (badges != null) {
                 return BadgeMapper.badgesToBadgeDTOs(badges);
             }
 
         } catch (Exception e) {
-            LOG.error("Error to find badges within domain {}", badgeDomain, e);
+            LOG.error("Error to find badges within domain id {}", domainId, e);
         }
         return Collections.emptyList();
     }
 
-    public List<BadgeDTO> findEnabledBadgesByDomain(String badgeDomain) {
+    public List<BadgeDTO> findEnabledBadgesByDomain(long badgeDomainId) {
 
         try {
             //--- load all Rules
-            List<BadgeEntity> badges = badgeStorage.findEnabledBadgesByDomain(badgeDomain);
+            List<BadgeEntity> badges = badgeStorage.findEnabledBadgesByDomain(badgeDomainId);
             if (badges != null) {
                 return BadgeMapper.badgesToBadgeDTOs(badges);
             }
 
         } catch (Exception e) {
-            LOG.error("Error to find badges within domain {}", badgeDomain, e);
+            LOG.error("Error to find badges within domain id {}", badgeDomainId, e);
         }
         return Collections.emptyList();
     }
@@ -237,14 +230,5 @@ public class BadgeService {
             throw (e);
         }
         return Collections.emptyList();
-    }
-
-
-    /**
-     * Get all Domains from Rules from DB
-     * @return String list
-     */
-    public List<String> getDomainListFromBadges() {
-        return badgeStorage.getDomainList();
     }
 }

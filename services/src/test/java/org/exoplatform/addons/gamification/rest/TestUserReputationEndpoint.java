@@ -93,7 +93,7 @@ public class TestUserReputationEndpoint extends AbstractServiceTest {
 
   @Test
   public void testGetOtherBadges() throws Exception {
-    newBadgeWithScore(160);
+    newBadgeWithScore();
     String restPath = "/gamification/reputation/otherBadges";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
