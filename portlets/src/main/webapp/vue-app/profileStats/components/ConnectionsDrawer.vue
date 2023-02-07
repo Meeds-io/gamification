@@ -6,59 +6,38 @@
     body-classes="hide-scroll decrease-z-index-more"
     right
     @closed="$emit('closed')">
-    <template #content>
-      <v-row v-if="connectionsDrawer" class="mx-0 title">
-        <v-list-item class="pe-0">
-          <v-list-item-content class="ma-0 pa-0">
-            <template v-if="!showSearch">
-              <span class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
-            </template>
-            <template v-else>
-              <v-row>
-                <v-text-field
-                  v-model="search"
-                  :placeholder="$t(`profile.label.search.connections`)"
-                  class="connectionsSearch pa-0"
-                  single-line
-                  solo
-                  flat
-                  hide-details />
-              </v-row>
-            </template>
-          </v-list-item-content>
-          <v-list-item-action class="ma-0">
-            <template v-if="!showSearch">
-              <v-icon size="20" @click="openConnectionSearch">mdi-filter</v-icon>
-            </template>
-            <template v-else>
-              <v-icon size="20" @click="closeConnectionSearch">mdi-filter-remove</v-icon>
-            </template>
-          </v-list-item-action>
-          <v-list-item-action class="ma-0">
-            <v-btn
-              icon
-              class="rightIcon"
-              @click="closeDrawer">
-              <v-icon
-                class="closeIcon"
-                size="20">
-                close
-              </v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
+    <template #title>
+      <span v-if="!showSearch" class="connectionsDrawerTitle">{{ $t("homepage.profileStatus.connections") }}</span>
+      <v-row v-else>
+        <v-text-field
+          v-model="search"
+          :placeholder="$t(`profile.label.search.connections`)"
+          class="connectionsSearch pa-0 my-n2"
+          single-line
+          solo
+          flat
+          hide-details />
       </v-row>
-
-      <v-progress-linear
-        v-if="loading"
-        color="primary"
-        height="2" />
-      <v-divider class="my-0" />
-
-      <div class="content overflow-hidden">
+    </template>
+    <template #titleIcons>
+      <v-btn
+        v-if="!showSearch"
+        icon
+        @click="openConnectionSearch">
+        <v-icon size="20">mdi-filter</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
+        icon
+        @click="closeConnectionSearch">
+        <v-icon size="20">mdi-filter-remove</v-icon>
+      </v-btn>
+    </template>
+    <template #content>
+      <div class="overflow-hidden">
         <div v-if="isCurrentUserProfile">
           <div v-if="showConnectionRequests && !showSearch">
-            <v-row class="connectionsRequests px-4">
+            <v-row class="connectionsRequests px-2">
               <v-col class="pb-0">
                 <connections-requests @invitationReplied="refreshConnections" @shouldShowRequests="updateRequestsSize" />
               </v-col>
@@ -78,7 +57,7 @@
         </div>
         <div v-else>
           <div v-if="showSuggestions && !showSearch">
-            <v-row class="peopleSuggestions px-4">
+            <v-row class="peopleSuggestions px-2">
               <v-col>
                 <v-row class="align-center">
                   <v-col>
@@ -96,13 +75,13 @@
             </v-row>
           </div>
         </div>
-        <v-row v-if="isCurrentUserProfile && showConnectionRequests && !showSearch || !isCurrentUserProfile && showSuggestions && !showSearch" class="px-4">
+        <v-row v-if="isCurrentUserProfile && showConnectionRequests && !showSearch || !isCurrentUserProfile && showSuggestions && !showSearch" class="px-2">
           <v-col class="pb-0">
             <v-divider class="my-0" />
           </v-col>
         </v-row>
-        <v-row class="connectionsList px-4">
-          <v-col class="py-1">
+        <v-row class="ma-0 px-2">
+          <v-col class="py-1 px-0">
             <div v-if="showConnections">
               <v-row align="center">
                 <v-col>
@@ -122,7 +101,6 @@
             <div v-if="isCurrentUserProfile">
               <div
                 v-if="showConnections"
-                class="connectionsItems"
                 :class="(showMore ? 'showMore ' : '').concat(showConnectionRequests && !showSearch ? 'requestsNotEmpty' : '')">
                 <people-list-item
                   v-for="person in filteredConnections"
@@ -159,17 +137,13 @@
       </div>
     </template>
 
-    <template #footer>
-      <v-row v-if="isCurrentUserProfile && connections && showMore" class="loadMoreFooterAction mx-0">
-        <v-col>
-          <v-btn
-            class="loadMoreBtn"
-            block
-            @click="getConnections(connections.length)">
-            {{ $t('homepage.loadMore') }}
-          </v-btn>
-        </v-col>
-      </v-row>
+    <template v-if="isCurrentUserProfile && connections && showMore" #footer>
+      <v-btn
+        class="text-uppercase caption ma-auto btn"
+        block
+        @click="loadNextPage">
+        {{ $t('homepage.loadMore') }}
+      </v-btn>
     </template>
   </exo-drawer>
 </template>
@@ -201,9 +175,8 @@ export default {
       search: null,
       PROFILE_URI: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/`,
       receivedInvitationsUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/connexions/receivedInvitations`,
-      loading: false,
       connexionsSize: 0,
-      limit: 20,
+      limit: 10,
       peopleSuggestionsList: [],
     };
   },
@@ -240,14 +213,18 @@ export default {
   },
   methods: {
     open() {
+      this.$refs.connectionsDrawer.startLoading();
       this.$refs.connectionsDrawer.open();
-      this.loading = true;
-      Promise.resolve(this.init())
-        .then(() => this.loading = false);
+      this.init().finally(() => this.$refs.connectionsDrawer.endLoading());
     },
     close() {
       this.showSearch = false;
       this.$refs.connectionsDrawer.close();
+    },
+    loadNextPage() {
+      this.limit += 10;
+      this.$refs.connectionsDrawer.startLoading();
+      this.init().finally(() => this.$refs.connectionsDrawer.endLoading());
     },
     init() {
       if (this.isCurrentUserProfile) {
@@ -258,13 +235,14 @@ export default {
       }
     },
     getConnections(offset, limit) {
-      return getUserConnections('', offset, limit >= 0 ? limit : this.limit).then(data => {
-        this.connexionsSize = data.size;
-        this.connections.push(...data.users);
-        this.connections.forEach(connection => {
-          connection.profileLink = this.PROFILE_URI + connection.username;
+      return getUserConnections('', offset, limit >= 0 ? limit : this.limit)
+        .then(data => {
+          this.connexionsSize = data.size;
+          this.connections.push(...data.users);
+          this.connections.forEach(connection => {
+            connection.profileLink = this.PROFILE_URI + connection.username;
+          });
         });
-      });
     },
     refreshConnections(connection) {
       this.connections.unshift(connection);
