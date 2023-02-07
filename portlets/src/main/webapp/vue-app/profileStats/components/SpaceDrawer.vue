@@ -22,79 +22,49 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     body-classes="hide-scroll decrease-z-index-more"
     right
     @closed="$emit('closed')">
-    <template #content>
-      <v-row v-if="spaceDrawer" class="mx-0 title">
-        <v-list-item class="pe-0">
-          <v-list-item-content class="ma-0 pa-0">
-            <template v-if="!showSearch">
-              <span class="spaceDrawerTitle">{{
-                $t("homepage.profileStatus.spaces")
-              }}</span>
-            </template>
-            <template v-else>
-              <v-row>
-                <v-text-field
-                  v-model="search"
-                  :placeholder="$t(`profile.label.search.connections`)"
-                  class="spacesSearch pa-0"
-                  single-line
-                  solo
-                  flat
-                  hide-details />
-              </v-row>
-            </template>
-          </v-list-item-content>
-          <v-list-item-action class="ma-0">
-            <template v-if="!showSearch">
-              <a v-exo-tooltip.left.body="$t(`profile.label.search.openSearch`)">
-                <v-icon
-                  class="openIconSearch"
-                  @click="openSpacesSearch">mdi-filter</v-icon>
-              </a>
-            </template>
-            <template v-else>
-              <a v-exo-tooltip.bottom.body="$t(`profile.label.search.closeSearch`)">
-                <v-icon
-                  class="closeIconSearch"
-                  @click="closeSpacesSearch">mdi-filter-remove</v-icon>
-              </a>
-            </template>
-          </v-list-item-action>
-          <v-list-item-action class="ma-0">
-            <v-btn
-              icon
-              class="rightIcon"
-              @click="close">
-              <v-icon
-                small
-                class="closeIcon"
-                @click="close">
-                close
-              </v-icon>
-            </v-btn>
-          </v-list-item-action>
-        </v-list-item>
+    <template #title>
+      <span v-if="!showSearch" class="spaceDrawerTitle">{{ $t("homepage.profileStatus.spaces") }}</span>
+      <v-row v-else>
+        <v-text-field
+          v-model="search"
+          :placeholder="$t(`profile.label.search.connections`)"
+          class="spacesSearch pa-0 my-n2"
+          single-line
+          solo
+          flat
+          hide-details />
       </v-row>
-
-      <v-progress-linear
-        v-if="loading"
-        color="primary"
-        height="2" />
-      <v-divider class="my-0" />
-
-      <div class="content overflow-hidden">
+    </template>
+    <template #titleIcons>
+      <v-btn
+        v-if="!showSearch"
+        :title="$t(`profile.label.search.openSearch`)"
+        icon
+        @click="openSpacesSearch">
+        <v-icon size="20">mdi-filter</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
+        :title="$t(`profile.label.search.closeSearch`)"
+        icon
+        @click="closeSpacesSearch">
+        <v-icon size="20">mdi-filter-remove</v-icon>
+      </v-btn>
+    </template>
+    <template #content>
+      <div class="overflow-hidden">
         <template v-if="isCurrentUserProfile">
-          <v-row v-if="showSpacesRequests" class="px-4">
+          <v-row v-if="showSpacesRequests" class="px-4 ma-0">
             <v-col>
               <spaces-requests @invitationReplied="refreshSpaces" @showRequestsSpace="updateRequestsSize" />
             </v-col>
           </v-row>
-          <v-row v-if="showSpacesRequests" class="px-4">
+          <v-row v-if="showSpacesRequests" class="px-4 ma-0">
             <v-col>
               <v-divider class="my-0" />
             </v-col>
           </v-row>
-          <v-row v-if="showSpaces" class="px-4">
+          <v-row v-if="showSpaces" class="px-4 ma-0">
             <v-col>
               <v-flex
                 d-flex
@@ -124,7 +94,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-row>
         </template>
 
-        <v-row v-if="!isCurrentUserProfile" class="px-4">
+        <v-row v-if="!isCurrentUserProfile" class="px-4 ma-0">
           <v-col>
             <template v-if="showSpaces">
               <v-list
@@ -166,7 +136,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   :space-suggestion="spaceSuggestion"
                   :spaces-suggestions-list="spacesSuggestionsList" />
               </v-list>
-              <v-row v-if="spacesSuggestionsList.length > 0 && !showSearch" class="px-4">
+              <v-row v-if="spacesSuggestionsList.length > 0 && !showSearch" class="px-4 ma-0">
                 <v-col>
                   <v-divider class="my-0" />
                 </v-col>
@@ -209,25 +179,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </template>
       </div>
     </template>
-
     <template v-if="showSpaces && showLoadMoreSpaces" #footer>
-      <v-divider class="my-0" />
-      <v-row class="mx-0 loadMoreButton">
-        <v-col>
-          <v-btn
-            class="text-uppercase caption ma-auto btn"
-            block
-            @click="loadNextPage">
-            {{ $t('spacesList.button.showMore') }}
-          </v-btn>
-        </v-col>
-      </v-row>
+      <v-btn
+        class="text-uppercase caption ma-auto btn"
+        block
+        @click="loadNextPage">
+        {{ $t('spacesList.button.showMore') }}
+      </v-btn>
     </template>
   </exo-drawer>
 </template>
 
 <script>
-
 import {getSpacesOfUser, getCommonsSpaces, getSuggestionsSpace} from '../profilStatsAPI';
 export default {
   props: {
@@ -254,13 +217,11 @@ export default {
       spacesSuggestionsList: [],
       commonsSpaces: [],
       spaceDrawer: false,
-      SpaceUrl: `${ eXo.env.portal.context }/${ eXo.env.portal.portalName }/spaces`,
       offset: 0,
       spaceSize: 0,
       commonsSpaceSize: 0,
       limit: 10,
       limitToFetch: 0,
-      loading: false,
       showSearch: false,
       firstLoadingSpaces: true,
       search: null,
@@ -313,10 +274,9 @@ export default {
   },
   methods: {
     open() {
+      this.$refs.spaceDrawer.startLoading();
       this.$refs.spaceDrawer.open();
-      this.loading = true;
-      Promise.resolve(this.init())
-        .then(() => this.loading = false);
+      this.init().finally(() => this.$refs.spaceDrawer.endLoading());
     },
     close() {
       this.showSearch = false;
@@ -337,20 +297,22 @@ export default {
     },
     getMySpaces() {
       this.firstLoadingSpaces = false;
-      return getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
-        this.spaces = data.spaces;
-        this.spaceSize = data.size;
-      });
+      return getSpacesOfUser(this.offset, this.limitToFetch)
+        .then(data => {
+          this.spaces = data.spaces;
+          this.spaceSize = data.size;
+        });
     },
     getCommonsSpaces() {
       this.firstLoadingSpaces = false;
-      return getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
-        this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
-        this.commonsSpaceSize = data.size;
-      });
+      return getCommonsSpaces(this.offset, this.limitToFetch)
+        .then(data => {
+          this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
+          this.commonsSpaceSize = data.size;
+        });
     },
     openSpace() {
-      window.location.href =  `${this.SpaceUrl}`;
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces`;
     },
     updateRequestsSize(spacesRequestsSize) {
       this.spaceRequests = spacesRequestsSize;
@@ -369,16 +331,20 @@ export default {
       if (this.isCurrentUserProfile) {
         if (this.limitToFetch <= this.spaceSize) {
           this.limitToFetch = this.limitToFetch += this.limit;
-          getSpacesOfUser(this.offset, this.limitToFetch).then(data => {
-            this.spaces = data.spaces;
-          });
+          this.$refs.spaceDrawer.startLoading();
+          return getSpacesOfUser(this.offset, this.limitToFetch)
+            .then(data => this.spaces = data.spaces)
+            .finally(() => this.$refs.spaceDrawer.endLoading());
         }
       } else if (this.limitToFetch <= this.commonsSpaceDefaultSize) {
         this.limitToFetch = this.limitToFetch += this.limit;
-        getCommonsSpaces(this.offset, this.limitToFetch).then(data => {
-          this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
-          this.commonsSpaceSize = data.size;
-        });
+        this.$refs.spaceDrawer.startLoading();
+        return getCommonsSpaces(this.offset, this.limitToFetch)
+          .then(data => {
+            this.commonsSpaces = data.spaces.slice(0, this.limitToFetch);
+            this.commonsSpaceSize = data.size;
+          })
+          .finally(() => this.$refs.spaceDrawer.endLoading());
       }
     },
     initSpaceSuggestionsList() {
