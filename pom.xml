@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <parent>
         <artifactId>addons-parent-pom</artifactId>
         <groupId>io.meeds.addons</groupId>
-        <version>18-M06</version>
+        <version>18-devx-SNAPSHOT</version>
     </parent>
 
     <groupId>io.meeds.gamification</groupId>
@@ -50,9 +50,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <!-- **************************************** -->
         <!-- Dependencies versions                    -->
         <!-- **************************************** -->
-        <io.meeds.social.version>7.0.x-exo-SNAPSHOT</io.meeds.social.version>
-        <io.meeds.platform-ui.version>7.0.x-exo-SNAPSHOT</io.meeds.platform-ui.version>
-        <addon.meeds.analytics.version>7.0.x-exo-SNAPSHOT</addon.meeds.analytics.version>
+        <io.meeds.social.version>7.0.x-devx-SNAPSHOT</io.meeds.social.version>
+        <io.meeds.platform-ui.version>7.0.x-devx-SNAPSHOT</io.meeds.platform-ui.version>
+        <addon.meeds.analytics.version>7.0.x-devx-SNAPSHOT</addon.meeds.analytics.version>
 
         <!-- Sonar properties -->
         <sonar.organization>meeds-io</sonar.organization>
