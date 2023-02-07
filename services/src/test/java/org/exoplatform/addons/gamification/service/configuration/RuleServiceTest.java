@@ -114,12 +114,14 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRulesByDomain() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
     assertEquals(ruleDAO.findAll().size(), 0);
-    newRule("rule1", 1L);
-    newRule("rule2", 1L);
-    newRule("rule3", 2L);
-    assertEquals(ruleService.getAllRulesByDomain(1L).size(), 2);
-    assertEquals(ruleService.getAllRulesByDomain(2L).size(), 1);
+    newRule("rule1", domainEntity1.getId());
+    newRule("rule2", domainEntity1.getId());
+    newRule("rule3", domainEntity2.getId());
+    assertEquals(2, ruleService.getAllRulesByDomain(domainEntity1.getId()).size());
+    assertEquals(1, ruleService.getAllRulesByDomain(domainEntity2.getId()).size());
     assertThrows(IllegalArgumentException.class, () -> ruleService.getAllRulesByDomain(0));
   }
 

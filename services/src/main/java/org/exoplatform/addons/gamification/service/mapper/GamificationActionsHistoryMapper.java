@@ -74,6 +74,7 @@ public class GamificationActionsHistoryMapper {
     GamificationActionsHistory gHistoryEntity = new GamificationActionsHistory();
     gHistoryEntity.setId(gamificationActionsHistoryDTO.getId());
     gHistoryEntity.setDomainEntity(DomainMapper.domainDTOToDomainEntity(gamificationActionsHistoryDTO.getDomainDTO()));
+    gHistoryEntity.setDomain(gamificationActionsHistoryDTO.getDomainDTO().getTitle());
     gHistoryEntity.setActionTitle(gamificationActionsHistoryDTO.getActionTitle());
     gHistoryEntity.setActionScore(gamificationActionsHistoryDTO.getActionScore());
     gHistoryEntity.setGlobalScore(gamificationActionsHistoryDTO.getGlobalScore());

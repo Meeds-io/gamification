@@ -294,7 +294,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected RuleEntity newRule(String name, long domainId) {
-
     DomainEntity domainEntity = domainDAO.find(domainId);
     RuleEntity rule = ruleDAO.findRuleByEventAndDomain(name, domainId);
     if (rule == null) {
@@ -309,28 +308,20 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setLastModifiedBy(TEST_USER_SENDER);
       rule.setLastModifiedDate(new Date());
       rule.setDomainEntity(domainEntity);
-      if (entityType != null) {
-        rule.setType(entityType);
-        rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-                + 2 * MILLIS_IN_A_DAY))));
-        rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-                - 2 * MILLIS_IN_A_DAY))));
-      } else {
-        rule.setType(EntityType.AUTOMATIC);
-      }
+      rule.setType(EntityType.AUTOMATIC);
       rule.setManagers(Collections.emptyList());
       rule = ruleDAO.create(rule);
     }
     return rule;
   }
 
-  protected RuleEntity newRule(String name, String domain, Long audience) {
-    DomainEntity domainEntity = newDomain(domain);
-    RuleEntity challenge = ruleDAO.findRuleByTitle(name + "_" + domain);
+  protected RuleEntity newManualRule(String name, long domainId) {
+    DomainEntity domainEntity = domainDAO.find(domainId);
+    RuleEntity challenge = ruleDAO.findRuleByEventAndDomain(name, domainId);
     if (challenge == null) {
       challenge = new RuleEntity();
       challenge.setScore(Integer.parseInt(TEST__SCORE));
-      challenge.setTitle(name + "_" + domain);
+      challenge.setTitle(name);
       challenge.setDescription("Description");
       challenge.setEnabled(true);
       challenge.setDeleted(false);
@@ -340,12 +331,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       challenge.setLastModifiedDate(new Date());
       challenge.setDomainEntity(domainEntity);
       challenge.setType(EntityType.MANUAL);
-      challenge.setAudience(audience);
-      challenge.setManagers(Collections.singletonList(1l));
+      challenge.setManagers(Collections.singletonList(1L));
       challenge.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-          + 2 * MILLIS_IN_A_DAY))));
+              + 2 * MILLIS_IN_A_DAY))));
       challenge.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
-          - 2 * MILLIS_IN_A_DAY))));
+              - 2 * MILLIS_IN_A_DAY))));
       challenge = ruleDAO.create(challenge);
       restartTransaction();
     }
@@ -439,7 +429,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return domain;
   }
 
-  protected BadgeEntity newBadge() {
+  protected BadgeEntity newBadge(long domainId) {
+    DomainEntity domainEntity = domainDAO.find(domainId);
     BadgeEntity badge = new BadgeEntity();
     badge.setTitle(BADGE_NAME);
     badge.setDescription("Description");
@@ -451,7 +442,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     badge.setCreatedDate(new Date());
     badge.setLastModifiedBy(TEST_USER_SENDER);
     badge.setLastModifiedDate(new Date());
-    badge.setDomainEntity(newDomain());
+    badge.setDomainEntity(domainEntity);
     badge = badgeStorage.create(badge);
     return badge;
   }
@@ -473,7 +464,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     return badge;
   }
 
-  protected BadgeEntity newBadge(String name, String domain) {
+  protected BadgeEntity newBadge(String name, long domainId) {
+    DomainEntity domainEntity = domainDAO.find(domainId);
     BadgeEntity badge = new BadgeEntity();
     badge.setTitle(name);
     badge.setDescription("Description");
@@ -485,16 +477,16 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     badge.setCreatedDate(new Date());
     badge.setLastModifiedBy(TEST_USER_SENDER);
     badge.setLastModifiedDate(new Date());
-    badge.setDomainEntity(newDomain(domain));
+    badge.setDomainEntity(domainEntity);
     badge = badgeStorage.create(badge);
     return badge;
   }
 
-  protected GamificationActionsHistory newGamificationActionsHistory() {
-    RuleEntity rule = newRule();
+  protected GamificationActionsHistory newGamificationActionsHistory(String ruleName, long domainId) {
+    RuleEntity rule = newRule(ruleName, domainId);
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
-    gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_SENDER);
     gHistory.setEarnerId(TEST_USER_SENDER);
@@ -504,7 +496,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setGlobalScore(rule.getScore());
     gHistory.setRuleId(1L);
     gHistory.setCreatedBy("gamification");
-    gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
     gHistory.setType(rule.getType());
@@ -517,6 +508,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(earnerId);
     gHistory.setEarnerId(earnerId);
@@ -533,36 +525,13 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     restartTransaction();
     return gHistory;
   }
-
-  protected GamificationActionsHistory newGamificationActionsHistoryByRuleByStatus(RuleEntity rule,
-                                                                                   HistoryStatus status,
-                                                                                   String earnerId) {
-    GamificationActionsHistory gHistory = new GamificationActionsHistory();
-    gHistory.setStatus(status);
-    gHistory.setDomainEntity(rule.getDomainEntity());
-    gHistory.setDomainEntity(rule.getDomainEntity());
-    gHistory.setReceiver(earnerId);
-    gHistory.setEarnerId(earnerId);
-    gHistory.setEarnerType(IdentityType.USER);
-    gHistory.setActionTitle(rule.getTitle());
-    gHistory.setActionScore(rule.getScore());
-    gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(1L);
-    gHistory.setCreatedBy("gamification");
-    gHistory.setDomainEntity(newDomain());
-    gHistory.setObjectId("objectId");
-    gHistory.setCreatedDate(fromDate);
-    gHistory.setType(rule.getType());
-    gHistory = gamificationHistoryDAO.create(gHistory);
-    restartTransaction();
-    return gHistory;
-  }
   
   protected GamificationActionsHistory newGamificationActionsHistoryWithRuleId(String actionTitle, Long ruleId) {
     RuleEntity rule = ruleDAO.find(ruleId);
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_SENDER);
     gHistory.setEarnerId(TEST_USER_SENDER);
@@ -585,6 +554,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(status);
     gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_SENDER);
     gHistory.setEarnerId(TEST_USER_SENDER);
@@ -607,6 +577,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_SENDER);
     gHistory.setEarnerId(earnerId);
@@ -631,6 +602,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     GamificationActionsHistory gHistory = new GamificationActionsHistory();
     gHistory.setStatus(HistoryStatus.ACCEPTED);
     gHistory.setDomainEntity(rule.getDomainEntity());
+    gHistory.setDomain(rule.getDomainEntity().getTitle());
     gHistory.setDomainEntity(rule.getDomainEntity());
     gHistory.setReceiver(TEST_USER_SENDER);
     gHistory.setEarnerId(TEST_USER_SENDER);
@@ -649,7 +621,8 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected GamificationActionsHistoryDTO newGamificationActionsHistoryDTO() {
-    return GamificationActionsHistoryMapper.fromEntity(newGamificationActionsHistory());
+    DomainEntity domainEntity = newDomain();
+    return GamificationActionsHistoryMapper.fromEntity(newGamificationActionsHistory("rule", domainEntity.getId()));
   }
 
   protected RuleDTO newRuleDTO() {
@@ -669,7 +642,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   }
 
   protected BadgeDTO newBadgeDTO() {
-    return BadgeMapper.badgeToBadgeDTO(newBadge());
+    return BadgeMapper.badgeToBadgeDTO(newBadge(1L));
   }
 
   public void compareHistory(GamificationActionsHistory h1, GamificationActionsHistory h2) {

@@ -399,14 +399,6 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     return query.getResultList();
   }
 
-  public List<GamificationActionsHistory> getAllPointsWithNullDomain() {
-    TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.getAllPointsWithNullDomain",
-                                                                                     GamificationActionsHistory.class);
-    return query.getResultList();
-
-  }
-
   public Long countAnnouncementsByChallenge(Long challengeId) {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("GamificationActionsHistory.countAnnouncementsByChallenge",
                                                                  Long.class);

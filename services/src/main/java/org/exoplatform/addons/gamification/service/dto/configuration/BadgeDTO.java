@@ -191,7 +191,6 @@ public class BadgeDTO implements Serializable {
                 ", endValidityDate='" + endValidityDate + '\'' +
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
-                ", zone='" + domainDTO.getTitle() + '\'' +
                 ", createdBy=" + createdBy +
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +

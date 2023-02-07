@@ -16,17 +16,8 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.SecurityContext;
-
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,9 +27,6 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.ContainerResponse;
-import org.exoplatform.services.rest.impl.EnvironmentContext;
-import org.exoplatform.services.rest.impl.MultivaluedMapImpl;
-import org.exoplatform.services.test.mock.MockHttpServletRequest;
 
 import static org.jgroups.util.Util.assertNotNull;
 
@@ -83,7 +71,7 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
     data.put("description", "description");
     data.put("domainDTO", domainData);
 
-    ContainerResponse response = getResponse("POST", getURLResource("/badges/add"), data.toString());
+    ContainerResponse response = getResponse("POST", getURLResource("badges/add"), data.toString());
     assertNotNull(response);
     assertEquals(200, response.getStatus());
     BadgeDTO entity = (BadgeDTO) response.getEntity();
@@ -97,7 +85,7 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
    **/
   @Test
   public void testDeleteBadge() throws Exception {
-    BadgeEntity badgeEntity = newBadge();
+    BadgeEntity badgeEntity = newBadge(1L);
     ContainerResponse response = getResponse("DELETE", getURLResource("badges/delete/" + badgeEntity.getId()), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -108,7 +96,7 @@ public class TestManageBadgesEndpoint extends AbstractServiceTest {
    **/
   @Test
   public void testUpdateBadge() throws Exception {
-    BadgeEntity badgeEntity = newBadge();
+    BadgeEntity badgeEntity = newBadge(1L);
     DomainDTO domainDTO = newDomainDTO();
     JSONObject domainData = new JSONObject();
     domainData.put("id", domainDTO.getId());

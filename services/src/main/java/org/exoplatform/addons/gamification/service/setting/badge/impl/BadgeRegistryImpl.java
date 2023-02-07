@@ -93,7 +93,6 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
     BadgeDTO badgeDTO = new BadgeDTO();
     badgeDTO.setTitle(badgeConfig.getTitle());
     badgeDTO.setDescription(badgeConfig.getDescription());
-    badgeDTO.setDomainDTO(domainService.getDomainByTitle(badgeConfig.getDomain()));
     badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
     badgeDTO.setNeededScore(badgeConfig.getNeededScore());
     badgeDTO.setEnabled(badgeConfig.isEnable());

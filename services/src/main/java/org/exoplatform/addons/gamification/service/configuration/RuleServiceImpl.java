@@ -126,7 +126,7 @@ public class RuleServiceImpl implements RuleService {
   }
 
   public List<RuleDTO> getAllRulesByDomain(long domainId) throws IllegalArgumentException {
-    if (domainId < 0) {
+    if (domainId <= 0) {
       throw new IllegalArgumentException("Domain id must be positive");
     }
     return ruleStorage.getAllRulesByDomain(domainId);

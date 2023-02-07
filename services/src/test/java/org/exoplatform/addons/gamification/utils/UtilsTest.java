@@ -17,7 +17,6 @@
 
 package org.exoplatform.addons.gamification.utils;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
 import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static org.exoplatform.addons.gamification.utils.Utils.TYPE;
 import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
@@ -175,7 +174,8 @@ public class UtilsTest extends AbstractServiceTest {
   public void testGetUserGlobalScore() {
     Long userScore = Utils.getUserGlobalScore("");
     assertEquals(0, (long) userScore);
-    newGamificationActionsHistory();
+    DomainEntity domainEntity = newDomain();
+    newGamificationActionsHistory("rule", domainEntity.getId());
     userScore = Utils.getUserGlobalScore(TEST_USER_SENDER);
     assertNotEquals(0, (long) userScore);
   }
@@ -194,7 +194,8 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testCountAnnouncementsByChallenge() throws ObjectNotFoundException {
-    RuleEntity ruleEntity = newRule("challenge1", "domain", 1l);
+    DomainEntity domainEntity = newDomain();
+    RuleEntity ruleEntity = newRule("challenge1", domainEntity.getId());
     newGamificationActionsHistoryWithRuleId("annoucement 1", ruleEntity.getId());
     newGamificationActionsHistoryWithRuleId("annoucement 2", ruleEntity.getId());
     assertEquals((Long) 2l, announcementService.countAllAnnouncementsByChallenge(ruleEntity.getId()));

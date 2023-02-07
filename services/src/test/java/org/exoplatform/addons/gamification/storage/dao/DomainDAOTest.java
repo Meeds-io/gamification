@@ -96,7 +96,7 @@ public class DomainDAOTest extends AbstractServiceTest {
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(1, domainDAO.getDomainsByFilter(offset, 10, filter).size());
+    assertEquals(2, domainDAO.getDomainsByFilter(offset, 10, filter).size());
     filter.setEntityStatusType(EntityStatusType.DISABLED);
     assertEquals(0, domainDAO.getDomainsByFilter(offset, 10, filter).size());
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);

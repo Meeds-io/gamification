@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
@@ -26,46 +27,55 @@ public class BadgeDAOTest extends AbstractServiceTest {
   @Test
   public void testFindBadgeByTitle() {
     assertNull(badgeStorage.findBadgeByTitle(BADGE_NAME));
-    newBadge();
+    newBadge(1L);
     assertNotNull(badgeStorage.findBadgeByTitle(BADGE_NAME));
   }
 
   @Test
   public void testFindBadgesByDomain() {
-    assertEquals(badgeStorage.findBadgesByDomain(1L).size(), 0);
-    newBadge();
-    assertEquals(badgeStorage.findBadgesByDomain(1L).size(), 1);
+    DomainEntity domainEntity = newDomain();
+    assertEquals(badgeStorage.findBadgesByDomain(domainEntity.getId()).size(), 0);
+    newBadge(domainEntity.getId());
+    assertEquals(badgeStorage.findBadgesByDomain(domainEntity.getId()).size(), 1);
   }
 
   @Test
   public void testFindEnabledBadgesByDomain() {
-    assertEquals(badgeStorage.findEnabledBadgesByDomain(1L).size(), 0);
-    BadgeEntity badgeEntity = newBadge();
-    assertEquals(badgeStorage.findEnabledBadgesByDomain(1L).size(), 1);
+    DomainEntity domainEntity = newDomain();
+    assertEquals(badgeStorage.findEnabledBadgesByDomain(domainEntity.getId()).size(), 0);
+    BadgeEntity badgeEntity = newBadge(domainEntity.getId());
+    assertEquals(badgeStorage.findEnabledBadgesByDomain(domainEntity.getId()).size(), 1);
     badgeEntity.setEnabled(false);
     badgeStorage.update(badgeEntity);
-    assertEquals(badgeStorage.findEnabledBadgesByDomain(1L).size(), 0);
+    assertEquals(badgeStorage.findEnabledBadgesByDomain(domainEntity.getId()).size(), 0);
   }
 
   @Test
   public void testGetAllBadges() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
     assertEquals(badgeStorage.getAllBadges().size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain1");
-    newBadge("badge3", "domain2");
-    newBadge("badge4", "domain2");
-    newBadge("badge5", "domain2");
+    newBadge("badge1", domainEntity1.getId());
+    newBadge("badge2", domainEntity1.getId());
+    newBadge("badge3", domainEntity2.getId());
+    newBadge("badge4", domainEntity2.getId());
+    newBadge("badge5", domainEntity2.getId());
     assertEquals(badgeStorage.getAllBadges().size(), 5);
   }
 
   @Test
   public void testGetAllBadgesWithNullDomain() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
+    DomainEntity domainEntity3 = newDomain();
+    DomainEntity domainEntity4 = newDomain();
+    DomainEntity domainEntity5 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain2");
-    newBadge("badge3", "domain3");
-    newBadge("badge4", "domain4");
-    newBadge("badge5", "domain5");
+    newBadge("badge1", domainEntity1.getId());
+    newBadge("badge2", domainEntity2.getId());
+    newBadge("badge3", domainEntity3.getId());
+    newBadge("badge4", domainEntity4.getId());
+    newBadge("badge5", domainEntity5.getId());
     assertEquals(badgeStorage.findAll().size(), 5);
     assertEquals(badgeStorage.getAllBadgesWithNullDomain().size(), 0);
     BadgeEntity badge_ = badgeStorage.findBadgeByTitle("badge1");

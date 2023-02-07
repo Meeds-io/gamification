@@ -36,7 +36,7 @@ public class ProfileReputation implements Serializable {
         return domainId;
     }
 
-    public void setDomainId(long domain) {
+    public void setDomainId(long domainId) {
         this.domainId = domainId;
     }
 

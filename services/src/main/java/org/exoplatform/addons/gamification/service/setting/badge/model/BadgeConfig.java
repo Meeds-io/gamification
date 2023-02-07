@@ -27,8 +27,6 @@ public class BadgeConfig extends BaseComponentPlugin {
 
     private String description;
 
-    private String domain;
-
     private String icon;
 
     private int neededScore;
@@ -77,10 +75,6 @@ public class BadgeConfig extends BaseComponentPlugin {
     @Override
     public String getDescription() {
         return description;
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     public String getIcon() {

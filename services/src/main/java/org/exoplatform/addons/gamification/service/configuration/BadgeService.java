@@ -33,103 +33,114 @@ import java.util.List;
 
 public class BadgeService {
 
-    private static final Log LOG = ExoLogger.getLogger(BadgeService.class);
+  private static final Log LOG = ExoLogger.getLogger(BadgeService.class);
 
-    protected final BadgeDAO badgeStorage;
-    public BadgeService() {
-        this.badgeStorage = CommonsUtils.getService(BadgeDAO.class);
-    }
+  protected final BadgeDAO badgeStorage;
 
-    /**
-     * Find a BadgeEntity by title
-     * @param badgeTitle : badge title
-     * @return an instance BadgeDTO
-     */
-    public BadgeDTO findBadgeByTitle(String badgeTitle) {
+  public BadgeService() {
+    this.badgeStorage = CommonsUtils.getService(BadgeDAO.class);
+  }
 
-        try {
-            //--- Get Entity from DB
-            BadgeEntity entity = badgeStorage.findBadgeByTitle(badgeTitle);
-            //--- Convert Entity to DTO
-            if (entity != null) {
-                return BadgeMapper.badgeToBadgeDTO(entity);
-            }
+  /**
+   * Find a BadgeEntity by title
+   *
+   * @param badgeTitle : badge title
+   * @return an instance BadgeDTO
+   */
+  public BadgeDTO findBadgeByTitle(String badgeTitle) {
 
-        } catch (Exception e) {
-            LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
-        }
-        return null;
-
-    }
-    /**
-     * Find a BadgeEntity by id
-     * @param badgeId : badge id
-     * @return an instance BadgeDTO
-     */
-    public BadgeDTO findBadgeById(Long badgeId) {
-
-        try {
-            //--- Get Entity from DB
-            BadgeEntity entity = badgeStorage.find(badgeId);
-            //--- Convert Entity to DTO
-            if (entity != null) {
-                return BadgeMapper.badgeToBadgeDTO(entity);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find Badge entity with id : {}", badgeId, e.getMessage());
-        }
-        return null;
-
-    }
-    /**
-     * Find a BadgeEntity by title
-     * @param badgeTitle : badge title
-     * @param domainId : badge domain id
-     * @return an instance BadgeDTO
-     */
-    public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, long domainId) {
-
-      try {
-        // --- Get Entity from DB
-        BadgeEntity entity = badgeStorage.findBadgeByTitleAndDomain(badgeTitle, domainId);
-        // --- Convert Entity to DTO
-        if (entity != null) {
-          return BadgeMapper.badgeToBadgeDTO(entity);
-        }
-      } catch (Exception e) {
-        LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
+    try {
+      // --- Get Entity from DB
+      BadgeEntity entity = badgeStorage.findBadgeByTitle(badgeTitle);
+      // --- Convert Entity to DTO
+      if (entity != null) {
+        return BadgeMapper.badgeToBadgeDTO(entity);
       }
-      return null;
 
+    } catch (Exception e) {
+      LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
     }
+    return null;
 
-    /**
-     * Return all badges within the DB
-     * @return a list of BadgeDTO
-     */
-    public List<BadgeDTO> getAllBadges() {
-      // --- load all Rules
-      List<BadgeEntity> badges = badgeStorage.getAllBadges();
-      if (CollectionUtils.isNotEmpty(badges)) {
-        return BadgeMapper.badgesToBadgeDTOs(badges);
-      } else {
-        return Collections.emptyList();
+  }
+
+  /**
+   * Find a BadgeEntity by id
+   *
+   * @param badgeId : badge id
+   * @return an instance BadgeDTO
+   */
+  public BadgeDTO findBadgeById(Long badgeId) {
+
+    try {
+      // --- Get Entity from DB
+      BadgeEntity entity = badgeStorage.find(badgeId);
+      // --- Convert Entity to DTO
+      if (entity != null) {
+        return BadgeMapper.badgeToBadgeDTO(entity);
       }
+
+    } catch (Exception e) {
+      LOG.error("Error to find Badge entity with id : {}", badgeId, e.getMessage());
     }
+    return null;
 
+  }
 
-    /**
-     * Add Badge to DB
-     * @param badgeDTO : an object of type RuleDTO
-     * @return BadgeDTO object
-     * @throws ObjectAlreadyExistsException when badge already exists
-     */
-    public BadgeDTO addBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
-      BadgeEntity badgeEntity = null;
+  /**
+   * Find a BadgeEntity by title
+   *
+   * @param badgeTitle : badge title
+   * @param domainId : badge domain id
+   * @return an instance BadgeDTO
+   */
+  public BadgeDTO findBadgeByTitleAndDomain(String badgeTitle, long domainId) {
+
+    try {
+      // --- Get Entity from DB
+      BadgeEntity entity = badgeStorage.findBadgeByTitleAndDomain(badgeTitle, domainId);
+      // --- Convert Entity to DTO
+      if (entity != null) {
+        return BadgeMapper.badgeToBadgeDTO(entity);
+      }
+    } catch (Exception e) {
+      LOG.error("Error to find Badge entity with title : {}", badgeTitle, e.getMessage());
+    }
+    return null;
+
+  }
+
+  /**
+   * Return all badges within the DB
+   *
+   * @return a list of BadgeDTO
+   */
+  public List<BadgeDTO> getAllBadges() {
+    // --- load all Rules
+    List<BadgeEntity> badges = badgeStorage.getAllBadges();
+    if (CollectionUtils.isNotEmpty(badges)) {
+      return BadgeMapper.badgesToBadgeDTOs(badges);
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  /**
+   * Add Badge to DB
+   *
+   * @param badgeDTO : an object of type RuleDTO
+   * @return BadgeDTO object
+   * @throws ObjectAlreadyExistsException when badge already exists
+   */
+  public BadgeDTO addBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
+    BadgeEntity badgeEntity = null;
+    if (badgeDTO.getDomainDTO() == null) {
+      badgeDTO.setEnabled(false);
+      badgeEntity = badgeStorage.create(BadgeMapper.badgeDTOToBadge(badgeDTO));
+    } else {
       badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomainDTO().getId());
       if (badgeEntity == null) {
-        if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
+        if (!badgeDTO.getDomainDTO().isEnabled()) {
           badgeDTO.setEnabled(false);
         }
         badgeEntity = badgeStorage.create(BadgeMapper.badgeDTOToBadge(badgeDTO));
@@ -144,91 +155,92 @@ public class BadgeService {
       } else {
         throw new ObjectAlreadyExistsException("Badge already exists");
       }
-      return BadgeMapper.badgeToBadgeDTO(badgeEntity);
     }
+    return BadgeMapper.badgeToBadgeDTO(badgeEntity);
+  }
 
-    /**
-     * Update Badge to DB
-     * @param badgeDTO : an instance of type BadgeDTO
-     * @return BadgeDTO object
-     * @throws ObjectAlreadyExistsException when badge already exists
-     */
-    public BadgeDTO updateBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
-      BadgeEntity badgeEntity = null;
-      badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomainDTO().getId());
-      if (badgeEntity != null
-          && badgeDTO.getId() != null
-          && badgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
-        throw new ObjectAlreadyExistsException("Badge with same title and domain already exist");
+  /**
+   * Update Badge to DB
+   *
+   * @param badgeDTO : an instance of type BadgeDTO
+   * @return BadgeDTO object
+   * @throws ObjectAlreadyExistsException when badge already exists
+   */
+  public BadgeDTO updateBadge(BadgeDTO badgeDTO) throws ObjectAlreadyExistsException {
+    BadgeEntity badgeEntity = null;
+    badgeEntity = badgeStorage.findBadgeByTitleAndDomain(badgeDTO.getTitle(), badgeDTO.getDomainDTO().getId());
+    if (badgeEntity != null && badgeDTO.getId() != null && badgeEntity.getId().longValue() != badgeDTO.getId().longValue()) {
+      throw new ObjectAlreadyExistsException("Badge with same title and domain already exist");
+    }
+    if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
+      badgeDTO.setEnabled(false);
+    }
+    badgeEntity = badgeStorage.update(BadgeMapper.badgeDTOToBadge(badgeDTO));
+    return BadgeMapper.badgeToBadgeDTO(badgeEntity);
+  }
+
+  /**
+   * Delete a BadgeEntity using the id
+   *
+   * @param id : badge id
+   * @throws ObjectNotFoundException when badge doesn't exist
+   */
+  public void deleteBadge(Long id) throws ObjectNotFoundException {
+    BadgeEntity badgeEntity = badgeStorage.find(id);
+    if (badgeEntity != null) {
+      badgeEntity.setDeleted(true);
+      badgeStorage.update(badgeEntity);
+    } else {
+      throw new ObjectNotFoundException("Badge with id " + id + " not Found");
+    }
+  }
+
+  public List<BadgeDTO> findBadgesByDomain(long domainId) {
+
+    try {
+      // --- load all Rules
+      List<BadgeEntity> badges = badgeStorage.findBadgesByDomain(domainId);
+      if (badges != null) {
+        return BadgeMapper.badgesToBadgeDTOs(badges);
       }
-      if (badgeDTO.getDomainDTO() == null || !badgeDTO.getDomainDTO().isEnabled()) {
-        badgeDTO.setEnabled(false);
+
+    } catch (Exception e) {
+      LOG.error("Error to find badges within domain id {}", domainId, e);
+    }
+    return Collections.emptyList();
+  }
+
+  public List<BadgeDTO> findEnabledBadgesByDomain(long badgeDomainId) {
+
+    try {
+      // --- load all Rules
+      List<BadgeEntity> badges = badgeStorage.findEnabledBadgesByDomain(badgeDomainId);
+      if (badges != null) {
+        return BadgeMapper.badgesToBadgeDTOs(badges);
       }
-      badgeEntity = badgeStorage.update(BadgeMapper.badgeDTOToBadge(badgeDTO));
-      return BadgeMapper.badgeToBadgeDTO(badgeEntity);
-    }
 
-    /**
-     * Delete a BadgeEntity using the id
-     * @param id : badge id
-     * @throws ObjectNotFoundException when badge doesn't exist
-     */
-    public void deleteBadge(Long id) throws ObjectNotFoundException {
-      BadgeEntity badgeEntity = badgeStorage.find(id);
-      if (badgeEntity != null) {
-        badgeEntity.setDeleted(true);
-        badgeStorage.update(badgeEntity);
-      } else {
-        throw new ObjectNotFoundException("Badge with id " + id + " not Found");
+    } catch (Exception e) {
+      LOG.error("Error to find badges within domain id {}", badgeDomainId, e);
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * Get all Rules by with null DomainDTO from DB
+   *
+   * @return RuleDTO list
+   */
+  public List<BadgeDTO> getAllBadgesWithNullDomain() {
+    try {
+      List<BadgeEntity> rules = badgeStorage.getAllBadgesWithNullDomain();
+      if (rules != null) {
+        return BadgeMapper.badgesToBadgeDTOs(rules);
       }
+
+    } catch (Exception e) {
+      LOG.error("Error to find Badges", e);
+      throw (e);
     }
-
-    public List<BadgeDTO> findBadgesByDomain(long domainId) {
-
-        try {
-            //--- load all Rules
-            List<BadgeEntity> badges = badgeStorage.findBadgesByDomain(domainId);
-            if (badges != null) {
-                return BadgeMapper.badgesToBadgeDTOs(badges);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find badges within domain id {}", domainId, e);
-        }
-        return Collections.emptyList();
-    }
-
-    public List<BadgeDTO> findEnabledBadgesByDomain(long badgeDomainId) {
-
-        try {
-            //--- load all Rules
-            List<BadgeEntity> badges = badgeStorage.findEnabledBadgesByDomain(badgeDomainId);
-            if (badges != null) {
-                return BadgeMapper.badgesToBadgeDTOs(badges);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find badges within domain id {}", badgeDomainId, e);
-        }
-        return Collections.emptyList();
-    }
-
-
-    /**
-     * Get all Rules by with null DomainDTO from DB
-     * @return RuleDTO list
-     */
-    public List<BadgeDTO> getAllBadgesWithNullDomain() {
-        try {
-            List<BadgeEntity> rules =  badgeStorage.getAllBadgesWithNullDomain();
-            if (rules != null) {
-                return BadgeMapper.badgesToBadgeDTOs(rules);
-            }
-
-        } catch (Exception e) {
-            LOG.error("Error to find Badges",e);
-            throw (e);
-        }
-        return Collections.emptyList();
-    }
+    return Collections.emptyList();
+  }
 }

@@ -147,11 +147,6 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
         + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity.id = :domainId "
 )
 @NamedQuery(
-    name = "GamificationActionsHistory.getAllPointsWithNullDomain",
-    query = "SELECT g"
-        + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity IS NULL "
-)
-@NamedQuery(
     name = "GamificationActionsHistory.countAnnouncementsByChallenge",
     query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"
 )
@@ -200,6 +195,9 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   @Column(name = "ACTION_TITLE", nullable = false)
   private String            actionTitle;
+
+  @Column(name = "DOMAIN", nullable = false)
+  private String            domain;
 
   @Column(name = "CONTEXT", nullable = true)
   private String            context;
@@ -275,6 +273,14 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   public void setActionTitle(String actionTitle) {
     this.actionTitle = actionTitle;
+  }
+
+  public String getDomain() {
+    return domain;
+  }
+
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 
   public String getContext() {

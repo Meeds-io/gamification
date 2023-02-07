@@ -18,6 +18,8 @@ package org.exoplatform.addons.gamification.rest;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.services.security.MembershipEntry;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +49,8 @@ public class TestGamificationInformationsEndpoint extends AbstractServiceTest { 
 
   @Test
   public void testGetAllLeadersByRank() throws Exception {
-    newGamificationActionsHistory();
+    DomainEntity domainEntity = newDomain();
+    newGamificationActionsHistory("rule", domainEntity.getId());
     startSessionAs("root");
     ContainerResponse response = getResponse("GET", REST_PATH + "/history/all", null);
     assertNotNull(response);

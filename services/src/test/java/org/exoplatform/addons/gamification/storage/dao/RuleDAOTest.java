@@ -153,12 +153,13 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testExcludRuleIds() {
     RuleFilter filter = new RuleFilter();
+    DomainEntity domainEntity = newDomain();
     filter.setDateFilterType(DateFilterType.ALL);
-    RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
+    RuleEntity ruleEntity1 = newRule("rule1", domainEntity.getId());
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
-    filter.setSpaceIds(Collections.singletonList(1l));
+    filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    newRule("rule2", "domain1", 1l);
+    newRule("rule2", domainEntity.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     List<Long> excludedIds = new ArrayList<>();
     excludedIds.add(ruleEntity1.getId());
@@ -173,13 +174,13 @@ public class RuleDAOTest extends AbstractServiceTest {
     DomainEntity domainEntity3 = newDomain();
     filter.setDateFilterType(DateFilterType.ALL);
     assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    RuleEntity ruleEntity1 = newRule("rule1", domainEntity1.getId());
+    RuleEntity ruleEntity1 = newManualRule("rule1", domainEntity1.getId());
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
     filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    newRule("rule2", domainEntity1.getId());
+    newManualRule("rule2", domainEntity1.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    newRule("rule3", domainEntity3.getId());
+    newManualRule("rule3", domainEntity3.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setDateFilterType(DateFilterType.STARTED);
     filter.setEntityFilterType(EntityFilterType.MANUAL);
@@ -232,14 +233,16 @@ public class RuleDAOTest extends AbstractServiceTest {
   @Test
   public void testCountRulesByFilter() {
     RuleFilter filter = new RuleFilter();
+    DomainEntity domainEntity = newDomain();
+    DomainEntity domainEntity2 = newDomain();
     assertEquals(0, ruleDAO.countRulesByFilter(filter));
-    RuleEntity ruleEntity1 = newRule("rule1", "domain1", 1l);
+    RuleEntity ruleEntity1 = newRule("rule1", domainEntity.getId());
     filter.setDomainId(ruleEntity1.getDomainEntity().getId());
-    filter.setSpaceIds(Collections.singletonList(1l));
+    filter.setSpaceIds(Collections.singletonList(1L));
     assertEquals(1, ruleDAO.countRulesByFilter(filter));
-    newRule("rule2", "domain1", 1l);
+    newRule("rule2", domainEntity.getId());
     assertEquals(2, ruleDAO.countRulesByFilter(filter));
-    newRule("rule3", "domain3", 1l);
+    newRule("rule3", domainEntity2.getId());
     assertEquals(2, ruleDAO.countRulesByFilter(filter));
   }
 

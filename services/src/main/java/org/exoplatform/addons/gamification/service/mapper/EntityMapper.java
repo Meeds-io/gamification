@@ -145,7 +145,7 @@ public class EntityMapper {
     announcementEntity.setActionScore(ruleEntity.getScore());
     announcementEntity.setGlobalScore(Utils.getUserGlobalScore(String.valueOf(announcement.getAssignee())));
     announcementEntity.setDomainEntity(domainEntity);
-    announcementEntity.setDomainEntity(domainEntity);
+    announcementEntity.setDomain(domainEntity.getTitle());
     announcementEntity.setObjectId("");
     announcementEntity.setType(ruleEntity.getType());
     return announcementEntity;
