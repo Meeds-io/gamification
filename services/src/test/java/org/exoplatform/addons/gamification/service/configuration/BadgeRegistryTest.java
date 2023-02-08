@@ -45,7 +45,6 @@ public class BadgeRegistryTest extends AbstractServiceTest {
     String title = "Test Bagde1";
     addValueParam(initParams, "badge-title", title);
     addValueParam(initParams, "badge-description", "Badge description");
-    addValueParam(initParams, "badge-domain", "Development");
     addValueParam(initParams, "badge-icon", "notExisting");
     addValueParam(initParams, "badge-neededScore", "20");
     addValueParam(initParams, "badge-enable", "true");
@@ -65,7 +64,6 @@ public class BadgeRegistryTest extends AbstractServiceTest {
     String title = "Test Bagde1";
     addValueParam(initParams, "badge-title", title);
     addValueParam(initParams, "badge-description", "Badge description");
-    addValueParam(initParams, "badge-domain", "Development");
     addValueParam(initParams, "badge-icon", "notExisting");
     addValueParam(initParams, "badge-neededScore", "20");
     addValueParam(initParams, "badge-enable", "true");

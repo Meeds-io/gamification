@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.rest.model.RealizationList;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,7 +110,8 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     List<GamificationActionsHistoryRestEntity> realizations = realizationList.getRealizations();
     assertEquals(0, realizations.size());
     // add new realization
-    newGamificationActionsHistory();
+    DomainEntity domainEntity = newDomain();
+    newGamificationActionsHistory("rule", domainEntity.getId());
     response = getResponse("GET", getURLResource(restPath), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
@@ -146,8 +148,9 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
 
     // add new realization
     List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    DomainEntity domainEntity = newDomain();
     for (int i = 0; i < limit * 2; i++) {
-      createdActionHistories.add(newGamificationActionsHistory());
+      createdActionHistories.add(newGamificationActionsHistory("rule", domainEntity.getId()));
     }
     Collections.reverse(createdActionHistories);
 
@@ -180,8 +183,9 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
 
     // add new realization
     List<GamificationActionsHistory> createdActionHistories = new ArrayList<>();
+    DomainEntity domainEntity = newDomain();
     for (int i = 0; i < limit * 2; i++) {
-      createdActionHistories.add(newGamificationActionsHistory());
+      createdActionHistories.add(newGamificationActionsHistory("rule", domainEntity.getId()));
     }
 
     response = getResponse("GET", getURLResource(restPath), null);
@@ -287,9 +291,9 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
   @Test
   public void testGetReport() throws Exception {
     startSessionAs("root1");
-
-    GamificationActionsHistory history1 = newGamificationActionsHistory();
-    GamificationActionsHistory history2 = newGamificationActionsHistory();
+    DomainEntity domainEntity = newDomain();
+    GamificationActionsHistory history1 = newGamificationActionsHistory("rule", domainEntity.getId());
+    GamificationActionsHistory history2 = newGamificationActionsHistory("rule", domainEntity.getId());
     String restPath = "realizations/api/allRealizations?fromDate=" + FROM_DATE + "&toDate=" + TO_DATE + "&earnerIds=1"
         + "&returnType=" + XLSX_TYPE;
 
@@ -320,7 +324,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
   public void testUpdateRealizations() throws Exception {
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     String restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.EDITED
-        + "&actionLabel=newLabel&points=100&domain=" + gHistory.getDomain();
+        + "&actionLabel=newLabel&points=100";
 
     ContainerResponse response = getResponse("PUT", getURLResource(restPath), null);
 
@@ -331,7 +335,7 @@ public class TestRealizationsRest extends AbstractServiceTest { // NOSONAR
     assertEquals(HistoryStatus.EDITED.name(), realizations.getStatus());
 
     restPath = "realizations/api/updateRealizations?realizationId=" + gHistory.getId() + "&status=" + HistoryStatus.REJECTED
-        + "&actionLabel=&points=0&domain=";
+        + "&actionLabel=&points=0";
 
     response = getResponse("PUT", getURLResource(restPath), null);
     assertNotNull(response);

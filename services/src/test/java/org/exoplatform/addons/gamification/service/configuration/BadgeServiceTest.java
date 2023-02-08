@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.service.configuration;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.mapper.BadgeMapper;
 
@@ -32,8 +33,9 @@ public class BadgeServiceTest extends AbstractServiceTest {
 
   @Test
   public void testFindBadgeByTitle() {
+    DomainEntity domainEntity = newDomain();
     assertNull(badgeService.findBadgeByTitle(BADGE_NAME));
-    BadgeEntity badge = newBadge();
+    BadgeEntity badge = newBadge(domainEntity.getId());
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);
     assertNotNull(badge_);
     assertEquals(badge.getTitle(), badge_.getTitle());
@@ -41,20 +43,26 @@ public class BadgeServiceTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllBadges() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
+    DomainEntity domainEntity3 = newDomain();
+    DomainEntity domainEntity4 = newDomain();
+    DomainEntity domainEntity5 = newDomain();
     assertEquals(badgeService.getAllBadges().size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain2");
-    newBadge("badge3", "domain3");
-    newBadge("badge4", "domain4");
-    newBadge("badge5", "domain5");
+    newBadge("badge1", domainEntity1.getId());
+    newBadge("badge2", domainEntity2.getId());
+    newBadge("badge3", domainEntity3.getId());
+    newBadge("badge4", domainEntity4.getId());
+    newBadge("badge5", domainEntity5.getId());
     assertEquals(badgeService.getAllBadges().size(), 5);
   }
 
   @Test
   public void testFindBadge() {
-    BadgeEntity badgeEntity = newBadge("badge1", "domain1");
+    DomainEntity domainEntity = newDomain();
+    BadgeEntity badgeEntity = newBadge("badge1", domainEntity.getId());
     assertNotNull(badgeService.findBadgeById(badgeEntity.getId()));
-    assertNotNull(badgeService.findBadgeByTitleAndDomain("badge1", "domain1"));
+    assertNotNull(badgeService.findBadgeByTitleAndDomain("badge1", domainEntity.getId()));
   }
 
   @Test
@@ -88,7 +96,8 @@ public class BadgeServiceTest extends AbstractServiceTest {
 
   @Test
   public void testUpdateBadge() throws ObjectAlreadyExistsException {
-    BadgeEntity badge = newBadge();
+    DomainEntity domainEntity = newDomain();
+    BadgeEntity badge = newBadge(domainEntity.getId());
     badge.setDescription("Desc_2");
     badgeService.updateBadge(BadgeMapper.badgeToBadgeDTO(badge));
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);
@@ -99,7 +108,7 @@ public class BadgeServiceTest extends AbstractServiceTest {
   @Test
   public void testDeleteBadge() throws ObjectNotFoundException {
     assertNull(badgeService.findBadgeByTitle(BADGE_NAME));
-    BadgeEntity badge = newBadge();
+    BadgeEntity badge = newBadge(1L);
     BadgeDTO badge_ = badgeService.findBadgeByTitle(BADGE_NAME);
     assertNotNull(badge_);
     badgeService.deleteBadge(badge.getId());
@@ -109,44 +118,53 @@ public class BadgeServiceTest extends AbstractServiceTest {
 
   @Test
   public void testFindBadgesByDomain() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
-    assertEquals(badgeService.findBadgesByDomain("domain1").size(), 0);
-    assertEquals(badgeService.findBadgesByDomain("domain2").size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain1");
-    newBadge("badge3", "domain1");
-    newBadge("badge4", "domain2");
-    newBadge("badge5", "domain2");
-    assertEquals(badgeService.findBadgesByDomain("domain1").size(), 3);
-    assertEquals(badgeService.findBadgesByDomain("domain2").size(), 2);
+    assertEquals(badgeService.findBadgesByDomain(1L).size(), 0);
+    assertEquals(badgeService.findBadgesByDomain(2L).size(), 0);
+    newBadge("badge1", domainEntity1.getId());
+    newBadge("badge2", domainEntity1.getId());
+    newBadge("badge3", domainEntity1.getId());
+    newBadge("badge4", domainEntity2.getId());
+    newBadge("badge5", domainEntity2.getId());
+    assertEquals(badgeService.findBadgesByDomain(domainEntity1.getId()).size(), 3);
+    assertEquals(badgeService.findBadgesByDomain(domainEntity2.getId()).size(), 2);
   }
 
   @Test
   public void testFindEnabledBadgesByDomain() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
-    assertEquals(badgeService.findEnabledBadgesByDomain("domain1").size(), 0);
-    assertEquals(badgeService.findEnabledBadgesByDomain("domain2").size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain1");
-    newBadge("badge3", "domain1");
-    newBadge("badge4", "domain2");
-    newBadge("badge5", "domain2");
-    assertEquals(badgeService.findEnabledBadgesByDomain("domain1").size(), 3);
-    assertEquals(badgeService.findEnabledBadgesByDomain("domain2").size(), 2);
+    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity1.getId()).size(), 0);
+    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity2.getId()).size(), 0);
+    newBadge("badge1", domainEntity1.getId());
+    newBadge("badge2", domainEntity1.getId());
+    newBadge("badge3", domainEntity1.getId());
+    newBadge("badge4", domainEntity2.getId());
+    newBadge("badge5", domainEntity2.getId());
+    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity1.getId()).size(), 3);
+    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity2.getId()).size(), 2);
     BadgeEntity badge_ = badgeStorage.findBadgeByTitle("badge1");
     badge_.setEnabled(false);
     badgeStorage.update(badge_);
-    assertEquals(badgeService.findEnabledBadgesByDomain("domain1").size(), 2);
+    assertEquals(badgeService.findEnabledBadgesByDomain(domainEntity1.getId()).size(), 2);
   }
 
   @Test
   public void testGetAllBadgesWithNullDomain() {
+    DomainEntity domainEntity1 = newDomain();
+    DomainEntity domainEntity2 = newDomain();
+    DomainEntity domainEntity3 = newDomain();
+    DomainEntity domainEntity4 = newDomain();
+    DomainEntity domainEntity5 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain2");
-    newBadge("badge3", "domain3");
-    newBadge("badge4", "domain4");
-    newBadge("badge5", "domain5");
+    newBadge("badge1", domainEntity1.getId());
+    newBadge("badge2", domainEntity2.getId());
+    newBadge("badge3", domainEntity3.getId());
+    newBadge("badge4", domainEntity4.getId());
+    newBadge("badge5", domainEntity5.getId());
     assertEquals(badgeStorage.findAll().size(), 5);
     try {
       assertEquals(badgeService.getAllBadgesWithNullDomain().size(), 0);
@@ -157,18 +175,5 @@ public class BadgeServiceTest extends AbstractServiceTest {
     } catch (Exception e) {
       fail("Error when getting the list of badges with null domain", e);
     }
-
-  }
-
-  @Test
-  public void testGetDomainListFromBadges() {
-    assertEquals(badgeStorage.findAll().size(), 0);
-    newBadge("badge1", "domain1");
-    newBadge("badge2", "domain1");
-    newBadge("badge3", "domain2");
-    newBadge("badge4", "domain2");
-    newBadge("badge5", "domain2");
-    assertEquals(badgeStorage.findAll().size(), 5);
-    assertEquals(badgeService.getDomainListFromBadges().size(), 2);
   }
 }

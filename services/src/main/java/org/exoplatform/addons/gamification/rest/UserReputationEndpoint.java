@@ -109,7 +109,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 userReputationScore = gamificationService.findReputationByEarnerId(actorId);
 
-                userRank = gamificationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), "all");
+                userRank = gamificationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
                 
                 reputation.put("score", userReputationScore);
 
@@ -260,7 +260,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
            for (ProfileReputation rep : reputationLis) {
                // Compute won badge
-               buildLatestWonBadge(rep.getDomain(), rep.getScore(), allBadges);
+               buildLatestWonBadge(rep.getDomainId(), rep.getScore(), allBadges);
            }
 
         }
@@ -269,11 +269,11 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     }
 
-    private void buildLatestWonBadge(String domain, long score, JSONArray userBadges) {
+    private void buildLatestWonBadge(long domainId, long score, JSONArray userBadges) {
 
         try {
             // Get available badge within the solution
-            List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+            List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domainId);
             BadgeDTO badgeDTO = null;
 
             // A badge
@@ -295,7 +295,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 reputation.put("description", badgeDTO.getDescription());
                 reputation.put("id", badgeDTO.getId());
                 reputation.put("title", badgeDTO.getTitle());
-                reputation.put("zone", badgeDTO.getDomain());
+                reputation.put("zone", badgeDTO.getDomainDTO().getTitle());
                 reputation.put("level", index);
                 reputation.put("startScore", badgeDTO.getNeededScore());
                 reputation.put("score", score);
@@ -493,10 +493,10 @@ public class UserReputationEndpoint implements ResourceContainer {
                     .build();
         }
     }
-    private void buildWonBadges(String domain, long score, JSONArray userBadges) {
+    private void buildWonBadges(long domainId, long score, JSONArray userBadges) {
 
         // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domainId);
 
         // A badge
         JSONObject reputation = null;
@@ -515,7 +515,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
                     reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getDomain());
+                    reputation.put("zone", badgeDTO.getDomainDTO().getTitle());
                     reputation.put("level", ++k);
                     reputation.put("startScore", badgeDTO.getNeededScore());
                     reputation.put("endScore", computeBadgeNextLevel(allBadges,i + 1));
@@ -593,7 +593,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             for (ProfileReputation rep : reputationLis) {
                 // Compute won badge
-                buildnextWinBadges(rep.getDomain(), rep.getScore(), allBadges);
+                buildnextWinBadges(rep.getDomainId(), rep.getScore(), allBadges);
             }
         }
         return allBadges;
@@ -625,7 +625,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 for (ProfileReputation rep : reputationLis) {
                     // Compute won badge
-                    buildWonBadges(rep.getDomain(), rep.getScore(), allBadges);
+                    buildWonBadges(rep.getDomainId(), rep.getScore(), allBadges);
 
                 }
 
@@ -644,7 +644,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
             for (ProfileReputation rep : reputationLis) {
                 // Compute won badge
-                buildWonBadges(rep.getDomain(), rep.getScore(), allBadges);
+                buildWonBadges(rep.getDomainId(), rep.getScore(), allBadges);
 
 
             }
@@ -655,10 +655,10 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     }
 
-    private void buildnextWinBadges(String domain, long score, JSONArray userBadges) {
+    private void buildnextWinBadges(long domainId, long score, JSONArray userBadges) {
 
         // Get available badge within the solution
-        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domain);
+        List<BadgeDTO> allBadges = badgeService.findEnabledBadgesByDomain(domainId);
 
         // A badge
         JSONObject reputation = null;
@@ -681,7 +681,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
                     reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getDomain());
+                    reputation.put("zone", badgeDTO.getDomainDTO().getTitle());
                     reputation.put("level", ++k);
 
                     reputation.put("startScore", badgeDTO.getNeededScore());
