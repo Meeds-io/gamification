@@ -89,7 +89,9 @@ export function updateRule(rule) {
     }
   });
 }
-export function createRule(rule) {
+export function createRule(rule, domain) {
+  rule = Object.assign({}, rule);
+  rule.domainDTO = JSON.parse(JSON.stringify(domain));
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/rules`, {
     method: 'POST',
     credentials: 'include',

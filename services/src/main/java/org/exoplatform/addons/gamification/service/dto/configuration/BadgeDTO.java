@@ -30,8 +30,6 @@ public class BadgeDTO implements Serializable {
 
     protected int neededScore;
 
-    protected String domain;
-
     private DomainDTO domainDTO;
 
     private byte[] icon;
@@ -168,15 +166,6 @@ public class BadgeDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public String getDomain() {
-        if(this.domainDTO!=null) return this.domainDTO.getTitle();
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
     public DomainDTO getDomainDTO() {
         return domainDTO;
     }
@@ -202,7 +191,6 @@ public class BadgeDTO implements Serializable {
                 ", endValidityDate='" + endValidityDate + '\'' +
                 ", description='" + description + '\'' +
                 ", icon='" + icon + '\'' +
-                ", zone='" + domain + '\'' +
                 ", createdBy=" + createdBy +
                 ", createdDate=" + createdDate +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +

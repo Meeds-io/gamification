@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.service;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
@@ -73,7 +74,7 @@ public class RealizationsServiceTest {
     GamificationActionsHistoryDTO gHistory = new GamificationActionsHistoryDTO();
     gHistory.setId(1L);
     gHistory.setStatus(HistoryStatus.ACCEPTED.name());
-    gHistory.setDomain("gamification");
+    gHistory.setDomainDTO(new DomainDTO());
     gHistory.setReceiver("1");
     gHistory.setEarnerId("1L");
     gHistory.setEarnerType(IdentityType.USER.name());
@@ -143,13 +144,13 @@ public class RealizationsServiceTest {
     GamificationActionsHistoryDTO rejectedHistory = null;
     // When
     assertThrows(IllegalArgumentException.class,
-                 () -> realizationsService.updateRealizationStatus(null, HistoryStatus.REJECTED, "", 0L, ""));
+                 () -> realizationsService.updateRealizationStatus(null, HistoryStatus.REJECTED, "", 0L));
     assertThrows(ObjectNotFoundException.class,
-                 () -> realizationsService.updateRealizationStatus(2l, HistoryStatus.REJECTED, "", 0L, ""));
+                 () -> realizationsService.updateRealizationStatus(2l, HistoryStatus.REJECTED, "", 0L));
 
     try {
 
-      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED, "new label", 10L, "domain");
+      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED, "new label", 10L);
 
     } catch (ObjectNotFoundException e) {
       fail(e.getMessage());

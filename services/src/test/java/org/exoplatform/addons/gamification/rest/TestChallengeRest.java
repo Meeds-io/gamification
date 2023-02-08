@@ -17,6 +17,7 @@
 
 package org.exoplatform.addons.gamification.rest;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.rest.model.ChallengeRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -77,8 +78,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1L))
               .key("points")
               .value("10")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
@@ -149,8 +150,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("100")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
@@ -182,8 +183,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("100")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
@@ -210,8 +211,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("100")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
@@ -244,8 +245,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("100")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
@@ -276,8 +277,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("10")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();
@@ -330,8 +331,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("10")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("enabled")
               .value(true)
               .key("audience")
@@ -403,8 +404,8 @@ public class TestChallengeRest extends AbstractServiceTest {
               .value(Collections.singletonList(1l))
               .key("points")
               .value("10")
-              .key("program")
-              .value(domain.getTitle())
+              .key("programId")
+              .value(domain.getId())
               .key("audience")
               .value("1")
               .endObject();

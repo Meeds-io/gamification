@@ -17,6 +17,7 @@
 
 package org.exoplatform.addons.gamification.storage;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -40,7 +41,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule.setScore(Integer.parseInt(TEST__SCORE));
     rule.setTitle(RULE_NAME);
     rule.setDescription("Description");
-    rule.setArea(GAMIFICATION_DOMAIN);
     rule.setEnabled(true);
     rule.setDeleted(false);
     rule.setEvent(RULE_NAME);
@@ -103,7 +103,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     manualRule.setScore(Integer.parseInt(TEST__SCORE));
     manualRule.setTitle(RULE_NAME);
     manualRule.setDescription("Description");
-    manualRule.setArea(GAMIFICATION_DOMAIN);
     manualRule.setEnabled(true);
     manualRule.setDeleted(false);
     manualRule.setEvent(RULE_NAME);
@@ -132,10 +131,11 @@ public class RuleStorageTest extends AbstractServiceTest {
   @Test
   public void testGetAllRulesByDomain() {
     assertEquals(ruleStorage.findAllRules().size(), 0);
-    newRule("rule1", "domain");
-    newRule("rule2", "domain");
-    newRule("rule3", "domain");
-    assertEquals(ruleStorage.getAllRulesByDomain("domain").size(), 3);
+    DomainEntity domainEntity = newDomain();
+    newRule("rule1", domainEntity.getId());
+    newRule("rule2", domainEntity.getId());
+    newRule("rule3", domainEntity.getId());
+    assertEquals(ruleStorage.getAllRulesByDomain(domainEntity.getId()).size(), 3);
   }
 
   @Test
@@ -153,18 +153,9 @@ public class RuleStorageTest extends AbstractServiceTest {
   @Test
   public void testGetAllEvents() {
     assertEquals(ruleStorage.findAllRules().size(), 0);
-    newRule("rule1", "domain1");
-    newRule("rule2", "domain2");
+    newRule("rule1", 1L);
+    newRule("rule2", 2L);
     assertEquals(ruleStorage.getAllEvents().size(), 2);
-  }
-
-  @Test
-  public void testGetDomainListFromRules() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
-    newRule("rule1", "domain1");
-    newRule("rule2", "domain2");
-    newRule("rule3", "domain2");
-    assertEquals(ruleStorage.getDomainListFromRules().size(), 2);
   }
 
   @Test
@@ -196,7 +187,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setTitle("rule1");
     rule1.setDescription("Description");
     rule1.setAudience(1l);
-    rule1.setArea(GAMIFICATION_DOMAIN);
     rule1.setEnabled(true);
     rule1.setDeleted(false);
     rule1.setEvent(RULE_NAME);
@@ -212,7 +202,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setTitle("rule2");
     rule2.setDescription("Description");
     rule2.setAudience(1l);
-    rule2.setArea(GAMIFICATION_DOMAIN);
     rule2.setEnabled(true);
     rule2.setDeleted(false);
     rule2.setEvent(RULE_NAME);
@@ -228,7 +217,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule3.setTitle("rule3");
     rule3.setDescription("Description");
     rule3.setAudience(2l);
-    rule3.setArea(GAMIFICATION_DOMAIN);
     rule3.setEnabled(true);
     rule3.setDeleted(false);
     rule3.setEvent(RULE_NAME);
@@ -265,7 +253,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule1.setTitle("rule1");
     rule1.setDescription("Description");
     rule1.setAudience(1l);
-    rule1.setArea(GAMIFICATION_DOMAIN);
     rule1.setEnabled(true);
     rule1.setDeleted(false);
     rule1.setEvent(RULE_NAME);
@@ -281,7 +268,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule2.setTitle("rule2");
     rule2.setDescription("Description");
     rule2.setAudience(1l);
-    rule2.setArea(GAMIFICATION_DOMAIN);
     rule2.setEnabled(true);
     rule2.setDeleted(false);
     rule2.setEvent(RULE_NAME);
@@ -297,7 +283,6 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule3.setTitle("rule3");
     rule3.setDescription("Description");
     rule3.setAudience(2l);
-    rule3.setArea(GAMIFICATION_DOMAIN);
     rule3.setEnabled(true);
     rule3.setDeleted(false);
     rule3.setEvent(RULE_NAME);

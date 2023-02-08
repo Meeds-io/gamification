@@ -280,7 +280,7 @@ export default {
             this.$refs.ruleFormDrawer.endLoading();
           });
       } else {
-        this.$ruleServices.createRule(this.rule)
+        this.$ruleServices.createRule(this.rule, this.program)
           .then(rule => {
             this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
             this.$root.$emit('program-rules-refresh', rule);

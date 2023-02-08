@@ -104,10 +104,10 @@ public interface RuleService {
      List<RuleDTO> getActiveRules();
     /**
      * Get all Rules by Domain from DB
-     * * @param domain : rule's domain param
+     * @param domainId domain id
      * @return RuleDTO list
      */
-    List<RuleDTO> getAllRulesByDomain(String domain);
+    List<RuleDTO> getAllRulesByDomain(long domainId);
 
     /**
      * Get all Rules by with null DomainDTO from DB
@@ -120,13 +120,6 @@ public interface RuleService {
      * @return RuleDTO list
      */
      List<String> getAllEvents();
-
-
-    /**
-     * Get all Domains from Rules from DB
-     * @return String list
-     */
-     List<String> getDomainListFromRules() ;
 
     /**
      *

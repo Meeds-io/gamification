@@ -28,25 +28,6 @@ import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 public class DomainDAOTest extends AbstractServiceTest {
 
   @Test
-  public void testGetDomainByTitle() {
-    assertNull(domainDAO.getDomainByTitle(GAMIFICATION_DOMAIN));
-    newDomain();
-    assertNotNull(domainDAO.getDomainByTitle(GAMIFICATION_DOMAIN));
-  }
-
-  @Test
-  public void testFindEnabledDomainByTitle() {
-    assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    DomainEntity domainEntity = newDomain();
-    assertNotNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    domainEntity.setEnabled(false);
-    DomainEntity updatedEntity = domainDAO.update(domainEntity);
-    assertNull(domainDAO.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    assertEquals(domainEntity, updatedEntity);
-    assertEquals(domainEntity.hashCode(), updatedEntity.hashCode());
-  }
-
-  @Test
   public void testGetEnabledDomains() {
     assertEquals(0, domainDAO.getEnabledDomains().size());
     newDomain("domain1");
@@ -115,7 +96,7 @@ public class DomainDAOTest extends AbstractServiceTest {
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(1, domainDAO.getDomainsByFilter(offset, 10, filter).size());
+    assertEquals(2, domainDAO.getDomainsByFilter(offset, 10, filter).size());
     filter.setEntityStatusType(EntityStatusType.DISABLED);
     assertEquals(0, domainDAO.getDomainsByFilter(offset, 10, filter).size());
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);

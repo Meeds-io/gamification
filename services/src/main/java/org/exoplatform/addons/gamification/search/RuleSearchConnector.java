@@ -263,7 +263,6 @@ public class RuleSearchConnector {
         String title = (String) hitSource.get("title");
         String description = (String) hitSource.get("description");
         long score = parseLong(hitSource, "score");
-        String area = (String) hitSource.get("area");
         Long domainId = parseLong(hitSource, "domainId");
         boolean enabled = Boolean.parseBoolean(String.valueOf(hitSource.get("enabled")));
         String createdBy = (String) hitSource.get("createdBy");
@@ -282,7 +281,6 @@ public class RuleSearchConnector {
         rule.setEvent(event);
         rule.setDomainEntity(Utils.getDomainById(domainId));
         rule.setScore((int) score);
-        rule.setArea(area);
         rule.setEnabled(enabled);
         rule.setAudience(audience);
         rule.setEndDate(endDate);
