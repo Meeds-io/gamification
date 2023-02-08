@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
-import org.exoplatform.addons.gamification.rest.model.GamificationHistoryInfo;
+import org.exoplatform.addons.gamification.rest.model.GamificationInformationRestEntity;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -101,7 +101,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       }
     }
 
-    List<GamificationHistoryInfo> historyList = new ArrayList<>();
+    List<GamificationInformationRestEntity> gamificationInformationRestEntities = new ArrayList<>();
     Identity earnerIdentity = identityManager.getOrCreateIdentity(providerId, remoteId);
     int loadCapacity = 10;
     if (StringUtils.isNotBlank(capacity)) {
@@ -112,7 +112,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
     // filter
     List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
     if (ss == null || ss.isEmpty()) {
-      return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
+      return Response.ok(gamificationInformationRestEntities, MediaType.APPLICATION_JSON).build();
     }
 
     // Build GamificationActionsHistory flow only when the returned list is not
@@ -121,44 +121,44 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       // Load Social identity
       Identity receiverIdentity = identityManager.getIdentity(element.getReceiver());
       Profile profile = receiverIdentity.getProfile();
-      GamificationHistoryInfo gamificationHistoryInfo = new GamificationHistoryInfo();
+      GamificationInformationRestEntity gamificationInformationRestEntity = new GamificationInformationRestEntity();
       // Set SocialIds
-      gamificationHistoryInfo.setSocialId(receiverIdentity.getId());
-      gamificationHistoryInfo.setSpace(StringUtils.equals(receiverIdentity.getProviderId(), SpaceIdentityProvider.NAME));
-      gamificationHistoryInfo.setReceiver(element.getReceiver());
+      gamificationInformationRestEntity.setSocialId(receiverIdentity.getId());
+      gamificationInformationRestEntity.setSpace(StringUtils.equals(receiverIdentity.getProviderId(), SpaceIdentityProvider.NAME));
+      gamificationInformationRestEntity.setReceiver(element.getReceiver());
       // Set username
-      gamificationHistoryInfo.setRemoteId(receiverIdentity.getRemoteId());
+      gamificationInformationRestEntity.setRemoteId(receiverIdentity.getRemoteId());
       // Set FullName
-      gamificationHistoryInfo.setFullname(profile.getFullName());
+      gamificationInformationRestEntity.setFullname(profile.getFullName());
       // Set avatar
-      gamificationHistoryInfo.setAvatarUrl(profile.getAvatarUrl());
+      gamificationInformationRestEntity.setAvatarUrl(profile.getAvatarUrl());
       // Set profile URL
-      gamificationHistoryInfo.setProfileUrl(profile.getUrl());
+      gamificationInformationRestEntity.setProfileUrl(profile.getUrl());
       // Set Final Score
-      gamificationHistoryInfo.setActionScore(element.getActionScore());
+      gamificationInformationRestEntity.setActionScore(element.getActionScore());
       // Set Action Title
-      gamificationHistoryInfo.setActionTitle(element.getActionTitle());
-      gamificationHistoryInfo.setContext(element.getContext());
+      gamificationInformationRestEntity.setActionTitle(element.getActionTitle());
+      gamificationInformationRestEntity.setContext(element.getContext());
       // Set Date-Hours-Minutes GMT Format of the creation
-      gamificationHistoryInfo.setCreatedDate(element.getCreatedDate().toGMTString());
+      gamificationInformationRestEntity.setCreatedDate(element.getCreatedDate().toGMTString());
       // Set Domain
-      gamificationHistoryInfo.setDomain(DomainMapper.domainEntityToDomainDTO(element.getDomainEntity()));
+      gamificationInformationRestEntity.setDomainDTO(DomainMapper.domainEntityToDomainDTO(element.getDomainEntity()));
       // Set Global Score
-      gamificationHistoryInfo.setGlobalScore(element.getGlobalScore());
+      gamificationInformationRestEntity.setGlobalScore(element.getGlobalScore());
       // Set event id
       if (canShowDetails) {
         if (element.getActivityId() != null && element.getActivityId() != 0) {
-          gamificationHistoryInfo.setObjectId("/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("")
+          gamificationInformationRestEntity.setObjectId("/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("")
               + "/activity?id=" + element.getActivityId());
         } else {
-          gamificationHistoryInfo.setObjectId(element.getObjectId());
+          gamificationInformationRestEntity.setObjectId(element.getObjectId());
         }
       }
       // log
-      historyList.add(gamificationHistoryInfo);
+      gamificationInformationRestEntities.add(gamificationInformationRestEntity);
     }
 
-    return Response.ok(historyList, MediaType.APPLICATION_JSON).build();
+    return Response.ok(gamificationInformationRestEntities, MediaType.APPLICATION_JSON).build();
   }
 
   private boolean isCurrentUser(String providerId, String remoteId) {
