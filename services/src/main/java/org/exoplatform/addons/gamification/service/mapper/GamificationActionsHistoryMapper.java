@@ -39,8 +39,8 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getEarnerType().toString(),
                                              gamificationActionsHistoryEntity.getGlobalScore(),
                                              gamificationActionsHistoryEntity.getActionTitle(),
-                                             domainEntity != null ? domainEntity.getTitle()
-                                                                  : gamificationActionsHistoryEntity.getDomain(),
+                                             domainEntity != null ? DomainMapper.domainEntityToDomainDTO(domainEntity) : null,
+                                             gamificationActionsHistoryEntity.getDomain(),
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
@@ -74,8 +74,8 @@ public class GamificationActionsHistoryMapper {
     }
     GamificationActionsHistory gHistoryEntity = new GamificationActionsHistory();
     gHistoryEntity.setId(gamificationActionsHistoryDTO.getId());
-    gHistoryEntity.setDomainEntity(DomainMapper.domainDTOToDomainEntity(Utils.getEnabledDomainByTitle(gamificationActionsHistoryDTO.getDomain())));
-    gHistoryEntity.setDomain(gamificationActionsHistoryDTO.getDomain());
+    gHistoryEntity.setDomainEntity(DomainMapper.domainDTOToDomainEntity(gamificationActionsHistoryDTO.getDomainDTO()));
+    gHistoryEntity.setDomain(gamificationActionsHistoryDTO.getDomainDTO().getTitle());
     gHistoryEntity.setActionTitle(gamificationActionsHistoryDTO.getActionTitle());
     gHistoryEntity.setActionScore(gamificationActionsHistoryDTO.getActionScore());
     gHistoryEntity.setGlobalScore(gamificationActionsHistoryDTO.getGlobalScore());
@@ -130,7 +130,8 @@ public class GamificationActionsHistoryMapper {
       return new GamificationActionsHistoryRestEntity(gHistory.getId(),
                                                       Utils.getIdentityEntity(identityManager, Long.parseLong(gHistory.getEarnerId())),
                                                       rule,
-                                                      Utils.getDomainByTitle(gHistory.getDomain()),
+                                                      gHistory.getDomainDTO(),
+                                                      gHistory.getDomainLabel(),
                                                       gHistory.getActionTitle() != null ? gHistory.getActionTitle()
                                                                                         : Objects.requireNonNull(rule).getTitle(),
                                                       gHistory.getActionScore(),

@@ -51,14 +51,6 @@ public interface DomainService {
   List<DomainDTO> getEnabledDomains();
 
   /**
-   * Find an enabled domain by title
-   * 
-   * @param  domainTitle : domain title
-   * @return             found {@link DomainDTO}
-   */
-  DomainDTO findEnabledDomainByTitle(String domainTitle);
-
-  /**
    * Find a domain by title
    * 
    * @param  domainTitle : domain title

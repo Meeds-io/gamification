@@ -143,10 +143,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<RuleEntity> getAllRulesByDomain(String domain) throws PersistenceException {
+  public List<RuleEntity> getAllRulesByDomain(long domainId) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
-                                                     .setParameter("domain", domain);
+                                                     .setParameter(DOMAIN_ID, domainId);
     query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
@@ -159,17 +159,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<RuleEntity> getAllRulesWithNullDomain() throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesWithNullDomain", RuleEntity.class);
-    query.setParameter("type", EntityType.AUTOMATIC);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-
-  }
-
-  public List<String> getDomainList() throws PersistenceException {
-    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getDomainList", String.class);
     query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();

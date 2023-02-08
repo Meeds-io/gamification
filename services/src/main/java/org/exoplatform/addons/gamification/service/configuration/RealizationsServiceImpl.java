@@ -123,8 +123,7 @@ public class RealizationsServiceImpl implements RealizationsService {
   public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
                                                                HistoryStatus status,
                                                                String actionLabel,
-                                                               Long points,
-                                                               String domain) throws ObjectNotFoundException {
+                                                               Long points) throws ObjectNotFoundException {
 
     if (gHistoryId == null) {
       throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
@@ -140,9 +139,6 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (points != 0) {
       gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
       gHistory.setActionScore(points);
-    }
-    if (!domain.isEmpty()) {
-      gHistory.setDomain(domain);
     }
     gHistory.setStatus(status.name());
     return realizationsStorage.updateRealizationStatus(gHistory);
@@ -194,8 +190,6 @@ public class RealizationsServiceImpl implements RealizationsService {
         RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? Utils.getRuleById(ga.getRuleId())
                                                                      : Utils.getRuleByTitle(ga.getActionTitle());
 
-        DomainDTO domain = Utils.getDomainByTitle(ga.getDomain());
-
         String ruleTitle = rule == null ? null : rule.getEvent();
         String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
         actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
@@ -205,10 +199,10 @@ public class RealizationsServiceImpl implements RealizationsService {
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
         String domainTitle = "-";
-        if (ga.getDomain() != null) {
-          domainTitle = getI18NMessage(locale, domainTitleKey + domain.getTitle().replace(" ", ""));
+        if (ga.getDomainDTO() != null) {
+          domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomainDTO().getTitle().replace(" ", ""));
           if (domainTitle == null) {
-            domainTitle = domain.getTitle();
+            domainTitle = ga.getDomainDTO().getTitle();
           }
         }
         domainTitle = escapeIllegalCharacterInMessage(domainTitle);
