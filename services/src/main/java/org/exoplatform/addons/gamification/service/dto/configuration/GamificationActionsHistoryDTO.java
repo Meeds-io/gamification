@@ -20,6 +20,8 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private DomainDTO  domainDTO;
 
+  private String     domainLabel;
+
   private String     context;
 
   private long       actionScore;
@@ -54,6 +56,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                        long globalScore,
                                        String actionTitle,
                                        DomainDTO domainDTO,
+                                       String domainLabel,
                                        String context,
                                        long actionScore,
                                        String receiver,
@@ -74,6 +77,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
     this.globalScore = globalScore;
     this.actionTitle = actionTitle;
     this.domainDTO = domainDTO;
+    this.domainLabel = domainLabel;
     this.context = context;
     this.actionScore = actionScore;
     this.receiver = receiver;
@@ -101,6 +105,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                              globalScore,
                                              actionTitle,
                                              domainDTO,
+                                             domainLabel,
                                              context,
                                              actionScore,
                                              receiver,

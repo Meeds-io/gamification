@@ -249,18 +249,6 @@ public class GamificationService {
     return gamificationHistoryDAO.findUserReputationScoreBetweenDate(earnerId, fromDate, toDate);
   }
 
-  public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
-  }
-
-  public long findUserReputationScoreByMonth(String earnerId, Date currentMonth) {
-    return gamificationHistoryDAO.findUserReputationScoreByMonth(earnerId, currentMonth);
-  }
-
-  public long findUserReputationScoreByDomainBetweenDate(String earnerId, long domainId, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUserReputationScoreByDomainBetweenDate(earnerId, domainId, fromDate, toDate);
-  }
-
   public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
     return gamificationHistoryDAO.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
   }
@@ -314,7 +302,7 @@ public class GamificationService {
       actionsHistoryDTO.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
       actionsHistoryDTO.setEarnerId(actor);
       actionsHistoryDTO.setEarnerType(actorIdentity.getProviderId());
-      actionsHistoryDTO.setActionTitle(ruleDto.getEvent());
+      actionsHistoryDTO.setActionTitle(ruleDto.getTitle());
       actionsHistoryDTO.setRuleId(ruleDto.getId());
       if (ruleDto.getDomainDTO() != null) {
         actionsHistoryDTO.setDomainDTO(ruleDto.getDomainDTO());

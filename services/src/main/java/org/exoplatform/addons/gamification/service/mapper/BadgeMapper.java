@@ -92,19 +92,6 @@ public class BadgeMapper {
     }
   }
 
-  public List<BadgeEntity> badgeDTOsToBadges(List<BadgeDTO> badgeDTOs) {
-    return badgeDTOs.stream().filter(Objects::nonNull).map(BadgeMapper::badgeDTOToBadge).collect(Collectors.toList());
-  }
-
-  public BadgeEntity badgeFromId(Long id) {
-    if (id == null) {
-      return null;
-    }
-    BadgeEntity badge = new BadgeEntity();
-    badge.setId(id);
-    return badge;
-  }
-
   private static Date parseDate(String dateString) {
     return dateString == null ? null
                               : Date.from(LocalDate.parse(dateString, DATE_FORMATTER)

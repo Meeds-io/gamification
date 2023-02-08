@@ -561,21 +561,6 @@ public class Utils {
     }
   }
 
-  public static List<String> getPermissions(String permission) {
-    List<String> result = new ArrayList<>();
-    if (permission != null) {
-      if (permission.contains(",")) {
-        String[] groups = permission.split(",");
-        for (String group : groups) {
-          result.add(group.trim());
-        }
-      } else {
-        result.add(permission);
-      }
-    }
-    return result;
-  }
-
   public static boolean isSuperManager(String username) {
     org.exoplatform.services.security.Identity aclIdentity = getUserAclIdentity(username);
     return aclIdentity != null && (aclIdentity.isMemberOf(REWARDING_GROUP) || aclIdentity.isMemberOf(ADMINS_GROUP));

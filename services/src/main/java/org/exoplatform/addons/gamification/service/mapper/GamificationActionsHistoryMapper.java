@@ -40,6 +40,7 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getGlobalScore(),
                                              gamificationActionsHistoryEntity.getActionTitle(),
                                              domainEntity != null ? DomainMapper.domainEntityToDomainDTO(domainEntity) : null,
+                                             gamificationActionsHistoryEntity.getDomain(),
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
@@ -130,6 +131,7 @@ public class GamificationActionsHistoryMapper {
                                                       Utils.getIdentityEntity(identityManager, Long.parseLong(gHistory.getEarnerId())),
                                                       rule,
                                                       gHistory.getDomainDTO(),
+                                                      gHistory.getDomainLabel(),
                                                       gHistory.getActionTitle() != null ? gHistory.getActionTitle()
                                                                                         : Objects.requireNonNull(rule).getTitle(),
                                                       gHistory.getActionScore(),

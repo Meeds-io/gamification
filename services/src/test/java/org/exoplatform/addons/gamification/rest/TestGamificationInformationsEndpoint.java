@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.rest.model.GamificationHistoryInfo;
 import org.exoplatform.services.security.MembershipEntry;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,8 +65,7 @@ public class TestGamificationInformationsEndpoint extends AbstractServiceTest { 
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 
-    List<GamificationInformationsEndpoint.GamificationHistoryInfo> gamificationActionsHistoryRestEntities =
-                                                                                                          (List<GamificationInformationsEndpoint.GamificationHistoryInfo>) response.getEntity();
+    List<GamificationHistoryInfo> gamificationActionsHistoryRestEntities = (List<GamificationHistoryInfo>) response.getEntity();
     assertEquals(1, gamificationActionsHistoryRestEntities.size());
   }
 

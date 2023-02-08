@@ -118,18 +118,4 @@ public class RuleMapper {
       return rule;
     }
   }
-
-  public static List<RuleEntity> ruleDTOsToRules(List<RuleDTO> ruleDTOs) {
-    return ruleDTOs.stream().filter(Objects::nonNull).map(RuleMapper::ruleDTOToRule).collect(Collectors.toList());
-  }
-
-  public static RuleEntity ruleFromId(Long id) {
-    if (id == null) {
-      return null;
-    }
-    RuleEntity rule = new RuleEntity();
-    rule.setId(id);
-    return rule;
-  }
-
 }
