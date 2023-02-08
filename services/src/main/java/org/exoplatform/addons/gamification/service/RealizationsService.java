@@ -61,12 +61,11 @@ public interface RealizationsService {
    * @param status status
    * @param actionLabel 
    * @param points 
-   * @param domain 
    * @return {@link GamificationActionsHistoryDTO} identified by its id when found
    * @throws ObjectNotFoundException GamificationActionsHistory identified by its
    *           technical identifier is not found
    */
-  GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status, String actionLabel, Long points, String domain) throws ObjectNotFoundException;
+  GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status, String actionLabel, Long points) throws ObjectNotFoundException;
 
 }
 

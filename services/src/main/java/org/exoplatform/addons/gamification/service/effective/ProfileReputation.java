@@ -20,24 +20,24 @@ import java.io.Serializable;
 
 public class ProfileReputation implements Serializable {
 
-    private String domain;
+    private long domainId;
     private long score;
 
     public ProfileReputation() {
 
     }
 
-    public ProfileReputation(String domain, long score) {
-        this.domain = domain;
+    public ProfileReputation(long domainId, long score) {
+        this.domainId = domainId;
         this.score = score;
     }
 
-    public String getDomain() {
-        return domain;
+    public long getDomainId() {
+        return domainId;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setDomainId(long domainId) {
+        this.domainId = domainId;
     }
 
     public long getScore() {

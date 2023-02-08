@@ -197,7 +197,6 @@ public class EntityMapper {
     rule.setDescription(challenge.getDescription());
     rule.setDeleted(false);
     DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
-    rule.setArea(domain == null ? null : domain.getTitle());
     rule.setDomainDTO(domain);
     if (challenge.getAudience() > 0) {
       rule.setAudience(challenge.getAudience());

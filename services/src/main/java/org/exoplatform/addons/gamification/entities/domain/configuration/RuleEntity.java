@@ -30,18 +30,17 @@ import java.util.Objects;
 @Table(name = "GAMIFICATION_RULE")
 @NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false ORDER BY rule.createdDate desc")
 @NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type")
-@NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.area) = LOWER(:domain) AND rule.isDeleted = false and rule.type = :type")
+@NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity.id = :domainId AND rule.isDeleted = false and rule.type = :type")
 @NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type ")
 @NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type")
 @NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.domainEntity.id = :domainId  and rule.type = :type")
 @NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type")
 @NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type")
-@NamedQuery(name = "Rule.getDomainList", query = "SELECT DISTINCT(rule.area) FROM Rule rule where rule.type = :type ")
 @NamedQuery(name = "Rule.getEventList", query = "SELECT DISTINCT(rule.event) FROM Rule rule where rule.type = :type")
 @NamedQuery(name = "Rule.getRuleIdsByType", query = "SELECT rule.id FROM Rule rule where rule.type = :type")
 @NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) ")
 @NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ")
-@NamedQuery(name = "Rule.getDomainsByUser", query = "SELECT DISTINCT r.area FROM Rule r where r.audience in (:ids)")
+@NamedQuery(name = "Rule.getDomainsIdsByUser", query = "SELECT DISTINCT r.domainEntity.id FROM Rule r where r.audience in (:ids)")
 @NamedQuery(name = "Rule.getRulesTotalScoreByDomain", query = "SELECT SUM(rule.score) FROM Rule rule where rule.domainEntity.id = :domainId AND rule.isEnabled = true AND rule.isDeleted = false AND (rule.type = 0 OR (rule.type = 1 AND rule.startDate <= :date AND rule.endDate >= :date))")
 @NamedQuery(name = "Rule.getHighestBudgetDomainIds", query = "SELECT rule.domainEntity.id FROM Rule rule WHERE rule.isEnabled = true AND rule.isDeleted = false GROUP BY rule.domainEntity.id ORDER BY SUM(rule.score) DESC")
 @NamedQuery(name = "Rule.getHighestBudgetDomainIdsBySpacesIds", query = "SELECT rule.domainEntity.id FROM Rule rule WHERE rule.isEnabled = true AND rule.isDeleted = false AND (rule.domainEntity.audienceId in (:spacesIds) OR rule.domainEntity.audienceId = null ) GROUP BY rule.domainEntity.id ORDER BY SUM(rule.score) DESC")
@@ -62,9 +61,6 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   @Column(name = "SCORE")
   protected int             score;
-
-  @Column(name = "AREA")
-  protected String          area;
 
   @Column(name = "EVENT")
   protected String          event;
@@ -143,14 +139,6 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   public void setScore(int score) {
     this.score = score;
-  }
-
-  public String getArea() {
-    return area;
-  }
-
-  public void setArea(String area) {
-    this.area = area;
   }
 
   public boolean isEnabled() {
@@ -232,7 +220,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     return "Badge{" +
             "title='" + title + '\'' +
             ", score='" + score + '\'' +
-            ", area='" + area + '\'' +
+            ", domainId='" + domainEntity.id + '\'' +
             ", description='" + description + '\'' +
             ", enable='" + isEnabled + '\'' +
             "}";
