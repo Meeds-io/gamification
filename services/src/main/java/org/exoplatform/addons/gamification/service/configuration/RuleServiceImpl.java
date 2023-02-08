@@ -125,11 +125,11 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.getActiveRules();
   }
 
-  public List<RuleDTO> getAllRulesByDomain(String domain) throws IllegalArgumentException {
-    if (StringUtils.isBlank(domain)) {
-      throw new IllegalArgumentException("rule domain is mandatory");
+  public List<RuleDTO> getAllRulesByDomain(long domainId) throws IllegalArgumentException {
+    if (domainId <= 0) {
+      throw new IllegalArgumentException("Domain id must be positive");
     }
-    return ruleStorage.getAllRulesByDomain(domain);
+    return ruleStorage.getAllRulesByDomain(domainId);
   }
 
   public List<RuleDTO> getAllRulesWithNullDomain() {
@@ -138,10 +138,6 @@ public class RuleServiceImpl implements RuleService {
 
   public List<String> getAllEvents() {
     return ruleStorage.getAllEvents();
-  }
-
-  public List<String> getDomainListFromRules() {
-    return ruleStorage.getDomainListFromRules();
   }
 
   public long getRulesTotalScoreByDomain(long domainId) {
@@ -190,13 +186,11 @@ public class RuleServiceImpl implements RuleService {
     }
     ruleDTO.setCreatedBy(username);
     ruleDTO.setLastModifiedBy(username);
-    DomainDTO domainDTO = Utils.getDomainByTitle(ruleDTO.getArea());
-    long domainId = domainDTO.getId();
+    long domainId = ruleDTO.getDomainDTO().getId();
     RuleDTO oldRule = ruleStorage.findRuleByEventAndDomain(ruleDTO.getEvent(), domainId);
     if (oldRule != null && !oldRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
-    ruleDTO.setDomainDTO(domainDTO);
 
     return createRule(ruleDTO);
   }

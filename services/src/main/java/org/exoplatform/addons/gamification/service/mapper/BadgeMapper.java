@@ -49,7 +49,6 @@ public class BadgeMapper {
     badgeDTO.setCreatedDate(formatDate(badgeEntity.getCreatedDate()));
     badgeDTO.setLastModifiedBy(badgeEntity.getLastModifiedBy());
     badgeDTO.setLastModifiedDate(formatDate(badgeEntity.getLastModifiedDate()));
-    badgeDTO.setDomain(badgeEntity.getDomain());
     badgeDTO.setDomainDTO((badgeEntity.getDomainEntity() == null) ? null
                                                                   : DomainMapper.domainEntityToDomainDTO(badgeEntity.getDomainEntity()));
     badgeDTO.setIconFileId(badgeEntity.getIconFileId());
@@ -70,7 +69,6 @@ public class BadgeMapper {
       badge.setTitle(badgeDTO.getTitle());
       badge.setDescription(badgeDTO.getDescription());
       badge.setNeededScore(badgeDTO.getNeededScore());
-      badge.setDomain(badgeDTO.getDomain());
       badge.setIconFileId(badgeDTO.getIconFileId());
       if (badgeDTO.getStartValidityDate() != null) {
         badge.setStartValidityDate(parseDate(badgeDTO.getStartValidityDate()));
@@ -92,19 +90,6 @@ public class BadgeMapper {
       badge.setDomainEntity(DomainMapper.domainDTOToDomainEntity(badgeDTO.getDomainDTO()));
       return badge;
     }
-  }
-
-  public List<BadgeEntity> badgeDTOsToBadges(List<BadgeDTO> badgeDTOs) {
-    return badgeDTOs.stream().filter(Objects::nonNull).map(BadgeMapper::badgeDTOToBadge).collect(Collectors.toList());
-  }
-
-  public BadgeEntity badgeFromId(Long id) {
-    if (id == null) {
-      return null;
-    }
-    BadgeEntity badge = new BadgeEntity();
-    badge.setId(id);
-    return badge;
   }
 
   private static Date parseDate(String dateString) {

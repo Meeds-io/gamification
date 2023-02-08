@@ -79,23 +79,23 @@ public class GamificationService {
     return gamificationHistoryDAO.findActionHistoryByDateByEarnerId(date, earnerId);
   }
 
-  public int getLeaderboardRank(String earnerId, Date date, String domain) {
+  public int getLeaderboardRank(String earnerId, Date date, Long domainId) {
     List<StandardLeaderboard> leaderboard = null;
     Identity identity = identityManager.getIdentity(earnerId); // NOSONAR :
                                                                // profile load
                                                                // is always true
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
     if (date != null) {
-      if (domain.equalsIgnoreCase("all")) {
+      if (domainId == null || domainId <= 0) {
         leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDate(identityType, date);
       } else {
-        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(identityType, date, domain);
+        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(identityType, date, domainId);
       }
     } else {
-      if (domain.equalsIgnoreCase("all")) {
+      if (domainId == null || domainId <= 0) {
         leaderboard = gamificationHistoryDAO.findAllActionsHistoryAgnostic(identityType);
       } else {
-        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(identityType, domain);
+        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(identityType, domainId);
       }
     }
     // Get username
@@ -154,7 +154,7 @@ public class GamificationService {
                    LocalDate.now(),
                    aHistory.getEarnerId(),
                    aHistory.getGlobalScore(),
-                   ruleDto.getArea(),
+                   ruleDto.getDomainDTO().getTitle(),
                    ruleDto.getEvent(),
                    ruleDto.getScore());
         }
@@ -185,7 +185,7 @@ public class GamificationService {
     }
 
     List<StandardLeaderboard> result = null;
-    if (StringUtils.isBlank(filter.getDomain()) || filter.getDomain().equalsIgnoreCase("all")) {
+    if (filter.getDomainId() == null || filter.getDomainId() <= 0) {
       // Compute date
       LocalDate now = LocalDate.now();
       // Check the period
@@ -210,14 +210,14 @@ public class GamificationService {
         Date fromDate = from(now.with(DayOfWeek.MONDAY)
                                 .atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
-        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomain(), limit);
+        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomainId(), limit);
       } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
         Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
                                 .atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
-        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomain(), limit);
+        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomainId(), limit);
       } else {
-        result = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), identityType, limit);
+        result = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomainId(), identityType, limit);
       }
     }
 
@@ -247,18 +247,6 @@ public class GamificationService {
 
   public long findUserReputationScoreBetweenDate(String earnerId, Date fromDate, Date toDate) {
     return gamificationHistoryDAO.findUserReputationScoreBetweenDate(earnerId, fromDate, toDate);
-  }
-
-  public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
-  }
-
-  public long findUserReputationScoreByMonth(String earnerId, Date currentMonth) {
-    return gamificationHistoryDAO.findUserReputationScoreByMonth(earnerId, currentMonth);
-  }
-
-  public long findUserReputationScoreByDomainBetweenDate(String earnerId, String domain, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUserReputationScoreByDomainBetweenDate(earnerId, domain, fromDate, toDate);
   }
 
   public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
@@ -314,10 +302,10 @@ public class GamificationService {
       actionsHistoryDTO.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
       actionsHistoryDTO.setEarnerId(actor);
       actionsHistoryDTO.setEarnerType(actorIdentity.getProviderId());
-      actionsHistoryDTO.setActionTitle(ruleDto.getEvent());
+      actionsHistoryDTO.setActionTitle(ruleDto.getTitle());
       actionsHistoryDTO.setRuleId(ruleDto.getId());
       if (ruleDto.getDomainDTO() != null) {
-        actionsHistoryDTO.setDomain(ruleDto.getDomainDTO().getTitle());
+        actionsHistoryDTO.setDomainDTO(ruleDto.getDomainDTO());
       }
       actionsHistoryDTO.setReceiver(receiver);
       actionsHistoryDTO.setObjectId(objectId);

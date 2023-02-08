@@ -145,7 +145,6 @@ public class EntityBuilder {
                               rule.getTitle(),
                               rule.getDescription(),
                               rule.getScore(),
-                              rule.getArea(),
                               rule.getDomainDTO(),
                               rule.isEnabled(),
                               rule.isDeleted(),

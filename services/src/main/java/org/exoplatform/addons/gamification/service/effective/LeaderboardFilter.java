@@ -24,16 +24,14 @@ public class LeaderboardFilter {
 
   private String       currentUser  = null;
 
-  private String       domain       = "all";
+  private Long         domainId     = null;
 
   private IdentityType identityType = IdentityType.USER;
 
   private Period       period       = Period.WEEK;
 
   public enum Period {
-    ALL,
-    MONTH,
-    WEEK
+    ALL, MONTH, WEEK
   }
 
   public int getLoadCapacity() {
@@ -48,12 +46,12 @@ public class LeaderboardFilter {
     this.loadCapacity = limit;
   }
 
-  public String getDomain() {
-    return domain;
+  public Long getDomainId() {
+    return domainId;
   }
 
-  public void setDomain(String domain) {
-    this.domain = domain;
+  public void setDomainId(Long domainId) {
+    this.domainId = domainId;
   }
 
   public String getPeriod() {

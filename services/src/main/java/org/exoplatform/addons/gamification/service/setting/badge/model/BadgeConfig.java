@@ -27,8 +27,6 @@ public class BadgeConfig extends BaseComponentPlugin {
 
     private String description;
 
-    private String domain;
-
     private String icon;
 
     private int neededScore;
@@ -49,12 +47,6 @@ public class BadgeConfig extends BaseComponentPlugin {
 
         if (descriptionParam != null) {
             description = descriptionParam.getValue();
-        }
-
-        ValueParam domainParam = params.getValueParam("badge-domain");
-
-        if (domainParam != null) {
-            domain = domainParam.getValue();
         }
 
         ValueParam iconParam = params.getValueParam("badge-icon");
@@ -83,10 +75,6 @@ public class BadgeConfig extends BaseComponentPlugin {
     @Override
     public String getDescription() {
         return description;
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     public String getIcon() {

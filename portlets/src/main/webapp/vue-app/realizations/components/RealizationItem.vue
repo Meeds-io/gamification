@@ -17,37 +17,74 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <tr :id="`GamificationRealizationItem${realization.id}`">
     <td>
-      <div v-if="isAutomaticType">
-        <rule-action-value
-          v-if="actionValueExtension"
+      <div class="d-flex">
+        <div v-if="isAutomaticType" class="width-fit-content">
+          <rule-action-value
+            v-if="actionValueExtension"
+            :action-label="actionLabel"
+            :action-u-r-l="actionURL"
+            :action-icon="actionIcon" />
+          <a
+            v-else
+            :href="realization.url"
+            :class="actionLabelClass"
+            class="text-color">
+            <span class="actionDescription">
+              {{ actionLabel }}
+            </span>
+          </a>
+        </div>
+        <challenge-action-value
+          v-else
           :action-label="actionLabel"
           :action-u-r-l="actionURL"
-          :action-icon="actionIcon" />
-        <a
-          v-else
-          :href="realization.url"
-          :class="actionLabelClass"
-          class="text-color">
-          <span class="actionDescription">
-            {{ actionLabel }}
-          </span>
-        </a>
+          class="width-fit-content"/>
+        <v-tooltip
+          v-if="ruleTitleChanged"
+          z-index="4"
+          max-width="300"
+          bottom>
+          <template #activator="{ on, attrs }">
+            <v-icon
+              size="14"
+              class="primary--text ms-1"
+              v-bind="attrs"
+              v-on="on">
+              fas fa-info-circle
+            </v-icon>
+          </template>
+          <span>{{ $t('realization.label.PreviouslyNamed') }}: {{ realizationActionLabel }}</span>
+        </v-tooltip>
       </div>
-      <challenge-action-value
-        v-else
-        :action-label="actionLabel"
-        :action-u-r-l="actionURL" />
     </td>
     <td>
-      <v-tooltip bottom>
-        <template #activator="{ on }">
-          <a v-on="on" @click="openProgramDetail">
-            <div class="text-truncate">{{ programTitle }}
-            </div>
-          </a>
-        </template>
-        <span v-html="programTitle"></span>
-      </v-tooltip>
+      <div class="d-flex">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <a v-on="on" @click="openProgramDetail" class="width-fit-content">
+              <div class="text-truncate">{{ programTitle }}
+              </div>
+            </a>
+          </template>
+          <span v-html="programTitle"></span>
+        </v-tooltip>
+        <v-tooltip
+          v-if="programLabelChanged"
+          z-index="4"
+          max-width="300"
+          bottom>
+          <template #activator="{ on, attrs }">
+            <v-icon
+              size="14"
+              class="primary--text ms-1"
+              v-bind="attrs"
+              v-on="on">
+              fas fa-info-circle
+            </v-icon>
+          </template>
+          <span>{{ $t('realization.label.previouslyNamed') }}: {{ programLabel }}</span>
+        </v-tooltip>
+      </div>
     </td>
     <td class="wrap">
       <v-tooltip bottom>
@@ -214,6 +251,9 @@ export default {
       }
       return this.realization.action.title;
     },
+    eventName() {
+      return this.realization?.action?.event;
+    },
     program() {
       return this.realization?.domain;
     },
@@ -268,7 +308,7 @@ export default {
       if (this.actionValueExtensions) {
         return Object.values(this.actionValueExtensions)
           .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.realization.actionLabel)) || null;
+          .find(extension => extension.match && extension.match(this.eventName)) || null;
       }
       return null;
     },
@@ -278,6 +318,21 @@ export default {
     isAcceptedLabel() {
       return this.isAccepted ? this.$t('realization.label.accepted') : this.$t('realization.label.rejected');
     },
+    realizationActionLabel() {
+      return this.realization?.actionLabel;
+    },
+    ruleTitleChanged() {
+      if (this.isAutomaticType) {
+        return this.realizationActionLabel !== this.eventName && this.realizationActionLabel !== this.actionLabel;
+      }
+      return this.realizationActionLabel !== this.actionLabel;
+    },
+    programLabel() {
+      return this.realization?.domainLabel;
+    },
+    programLabelChanged() {
+      return this.programLabel !== this.programTitle;
+    }
   },
   created() {
     // Workaround to fix closing menu when clicking outside
