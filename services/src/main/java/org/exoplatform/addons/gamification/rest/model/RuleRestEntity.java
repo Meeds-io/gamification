@@ -41,8 +41,6 @@ public class RuleRestEntity implements Cloneable {
 
   protected int                        score;
 
-  protected String                     area;
-
   private DomainDTO                    domainDTO;
 
   protected boolean                    enabled;
@@ -81,7 +79,6 @@ public class RuleRestEntity implements Cloneable {
                               title,
                               description,
                               score,
-                              area,
                               domainDTO,
                               enabled,
                               deleted,

@@ -101,14 +101,6 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  public DomainDTO findEnabledDomainByTitle(String domainTitle) {
-    if (StringUtils.isBlank(domainTitle)) {
-      throw new IllegalArgumentException("domainTitle has to be not null");
-    }
-    return domainStorage.findEnabledDomainByTitle(domainTitle);
-  }
-
-  @Override
   public DomainDTO getDomainByTitle(String domainTitle) {
     if (StringUtils.isBlank(domainTitle)) {
       throw new IllegalArgumentException("domainTitle has to be not null");

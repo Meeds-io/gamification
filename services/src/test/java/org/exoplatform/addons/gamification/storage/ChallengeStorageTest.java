@@ -32,44 +32,44 @@ public class ChallengeStorageTest extends AbstractServiceTest {
 
   @Test
   public void testSaveChallenge() {
-    DomainEntity domain = newDomain();
+    DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
     Challenge challenge = new Challenge(0,
                                         "new challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
-    filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
+    filter.setSpaceIds(Collections.singletonList(1L));
+    assertEquals(0, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
+    assertEquals(1, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
     assertEquals("new challenge", challenge.getTitle());
     challenge.setDescription("challenge description updated");
     challenge = challengeStorage.saveChallenge(challenge, "root");
     assertNotNull(challenge);
     assertEquals("challenge description updated", challenge.getDescription());
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
+    assertEquals(1, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
   }
 
   @Test
   public void testDeleteChallenge() throws ObjectNotFoundException {
-    DomainEntity domain = newDomain();
+    DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
     Challenge challenge = new Challenge(0,
                                         "new challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
 
     challenge = challengeStorage.saveChallenge(challenge, "root");
@@ -85,16 +85,16 @@ public class ChallengeStorageTest extends AbstractServiceTest {
 
   @Test
   public void testGetChallengeById() {
-    DomainEntity domain = newDomain();
+    DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
     Challenge challenge = new Challenge(0,
                                         "new challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
 
     challenge = challengeStorage.saveChallenge(challenge, "root");
@@ -106,53 +106,53 @@ public class ChallengeStorageTest extends AbstractServiceTest {
 
   @Test
   public void testFindChallengesIdsByFilter() {
-    DomainEntity domain = newDomain();
+    DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
     Challenge challenge = new Challenge(0,
                                         "new challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1l));
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
+    assertEquals(0, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 1);
+    assertEquals(1, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 2);
-    filter.setDomainId(100l);
-    assertEquals(challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size(), 0);
+    assertEquals(2, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
+    filter.setDomainId(100L);
+    assertEquals(0, challengeStorage.findChallengesIdsByFilter(filter, 0, 10).size());
 
   }
 
   @Test
   public void testCountChallengesByFilter() {
-    DomainEntity domain = newDomain();
+    DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
     Challenge challenge = new Challenge(0,
                                         "new challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis())),
                                         Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 1)),
                                         Collections.emptyList(),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
     RuleFilter filter = new RuleFilter();
     filter.setDomainId(domain.getId());
     filter.setSpaceIds(Collections.singletonList(1L));
-    assertEquals(challengeStorage.countChallengesByFilter(filter), 0);
+    assertEquals(0, challengeStorage.countChallengesByFilter(filter));
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.countChallengesByFilter(filter), 1);
+    assertEquals(1, challengeStorage.countChallengesByFilter(filter));
     challengeStorage.saveChallenge(challenge, "root");
-    assertEquals(challengeStorage.countChallengesByFilter(filter), 2);
+    assertEquals(2, challengeStorage.countChallengesByFilter(filter));
     filter.setDomainId(100L);
-    assertEquals(challengeStorage.countChallengesByFilter(filter), 0);
+    assertEquals(0, challengeStorage.countChallengesByFilter(filter));
   }
 
 }

@@ -190,7 +190,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
 
       } catch (ObjectAlreadyExistsException e) {
 
-        LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
+        LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomainDTO().getTitle(), e);
 
         return Response.notModified()
                 .cacheControl(cacheControl)
@@ -263,7 +263,7 @@ public class ManageBadgesEndpoint implements ResourceContainer {
       }
         catch (ObjectAlreadyExistsException e) {
 
-          LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomain(), e);
+          LOG.error("Badge with title {} and domain {} already exist", badgeDTO.getTitle(), badgeDTO.getDomainDTO().getTitle(), e);
 
           return Response.notModified()
                   .cacheControl(cacheControl)

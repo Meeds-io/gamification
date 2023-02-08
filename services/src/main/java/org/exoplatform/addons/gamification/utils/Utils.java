@@ -212,14 +212,6 @@ public class Utils {
     return space;
   }
 
-  public static DomainDTO getEnabledDomainByTitle(String domainTitle) {
-    if (domainTitle == null || domainTitle.isEmpty()) {
-      return null;
-    }
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return domainService.findEnabledDomainByTitle(domainTitle);
-  }
-
   public static DomainDTO getDomainByTitle(String domainTitle) {
     if (domainTitle == null || domainTitle.isEmpty()) {
       return null;
@@ -238,16 +230,10 @@ public class Utils {
 
   @SuppressWarnings("deprecation")
   public static DomainDTO getChallengeDomainDTO(Challenge challenge) {
-    DomainDTO domain;
     if (challenge.getProgramId() > 0) {
-      domain = Utils.getDomainDTOById(challenge.getProgramId());
-    } else {
-      domain = Utils.getEnabledDomainByTitle(challenge.getProgram());// NOSONAR
-                                                                     // kept for
-                                                                     // backward
-                                                                     // compatibility
+      return Utils.getDomainDTOById(challenge.getProgramId());
     }
-    return domain;
+    return null;
   }
 
   public static DomainEntity getDomainById(long domainId) {
@@ -277,14 +263,11 @@ public class Utils {
   public static boolean isRuleManager(RuleDTO rule, String username) {
     DomainService domainService = CommonsUtils.getService(DomainService.class);
     long programId;
-    if (StringUtils.isBlank(rule.getArea())) {
+    DomainDTO domainDTO = rule.getDomainDTO();
+    if (domainDTO == null) {
       return false;
     } else {
-      DomainDTO domain = domainService.getDomainByTitle(rule.getArea());
-      if (domain == null) {
-        return false;
-      }
-      programId = domain.getId();
+      programId = domainDTO.getId();
     }
     return domainService.isDomainOwner(programId, getUserAclIdentity(username));
   }
@@ -576,21 +559,6 @@ public class Utils {
     } catch (Exception e) {
       LOG.warn("Error broadcasting event '" + eventName + "' using source '" + source + "' and data " + data, e);
     }
-  }
-
-  public static List<String> getPermissions(String permission) {
-    List<String> result = new ArrayList<>();
-    if (permission != null) {
-      if (permission.contains(",")) {
-        String[] groups = permission.split(",");
-        for (String group : groups) {
-          result.add(group.trim());
-        }
-      } else {
-        result.add(permission);
-      }
-    }
-    return result;
   }
 
   public static boolean isSuperManager(String username) {

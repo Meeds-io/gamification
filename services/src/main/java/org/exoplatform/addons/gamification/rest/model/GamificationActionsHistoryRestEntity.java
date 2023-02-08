@@ -18,6 +18,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private DomainDTO      domain;
 
+  private String         domainLabel;
+
   private String         actionLabel;
 
   private Long           score;
@@ -36,6 +38,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                               IdentityEntity earner,
                                               RuleDTO action,
                                               DomainDTO domain,
+                                              String domainLabel,
                                               String actionLabel,
                                               Long score,
                                               String creator,
@@ -47,6 +50,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.earner = earner;
     this.action = action;
     this.domain = domain;
+    this.domainLabel = domainLabel;
     this.actionLabel = actionLabel;
     this.score = score;
     this.creator = creator;
@@ -62,6 +66,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                                     earner,
                                                     action,
                                                     domain,
+                                                    domainLabel,
                                                     actionLabel,
                                                     score,
                                                     creator,
