@@ -38,8 +38,6 @@ public class RuleDTO implements Serializable {
 
   protected int             score;
 
-  protected String          area;
-
   private DomainDTO         domainDTO;
 
   protected boolean         enabled;
@@ -112,16 +110,6 @@ public class RuleDTO implements Serializable {
 
   public void setScore(int score) {
     this.score = score;
-  }
-
-  public String getArea() {
-    if (this.domainDTO != null)
-      return this.domainDTO.getTitle();
-    return area;
-  }
-
-  public void setArea(String area) {
-    this.area = area;
   }
 
   public DomainDTO getDomainDTO() {

@@ -79,10 +79,6 @@ public class DomainStorage {
     return DomainMapper.domainEntityToDomainDTO(domainEntity);
   }
 
-  public DomainDTO findEnabledDomainByTitle(String domainTitle) {
-    return DomainMapper.domainEntityToDomainDTO(domainDAO.findEnabledDomainByTitle(domainTitle));
-  }
-
   public DomainDTO getDomainByTitle(String domainTitle) {
     return DomainMapper.domainEntityToDomainDTO(domainDAO.getDomainByTitle(domainTitle));
   }
