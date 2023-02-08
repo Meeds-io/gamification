@@ -17,7 +17,6 @@
 
 package org.exoplatform.addons.gamification.utils;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_DEFAULT_DATA_PREFIX;
 import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static org.exoplatform.addons.gamification.utils.Utils.TYPE;
 import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
@@ -27,6 +26,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.*;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.junit.Test;
 
@@ -174,7 +174,8 @@ public class UtilsTest extends AbstractServiceTest {
   public void testGetUserGlobalScore() {
     Long userScore = Utils.getUserGlobalScore("");
     assertEquals(0, (long) userScore);
-    newGamificationActionsHistory();
+    DomainEntity domainEntity = newDomain();
+    newGamificationActionsHistory("rule", domainEntity.getId());
     userScore = Utils.getUserGlobalScore(TEST_USER_SENDER);
     assertNotEquals(0, (long) userScore);
   }
@@ -193,7 +194,8 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testCountAnnouncementsByChallenge() throws ObjectNotFoundException {
-    RuleEntity ruleEntity = newRule("challenge1", "domain", 1l);
+    DomainEntity domainEntity = newDomain();
+    RuleEntity ruleEntity = newRule("challenge1", domainEntity.getId());
     newGamificationActionsHistoryWithRuleId("annoucement 1", ruleEntity.getId());
     newGamificationActionsHistoryWithRuleId("annoucement 2", ruleEntity.getId());
     assertEquals((Long) 2l, announcementService.countAllAnnouncementsByChallenge(ruleEntity.getId()));
@@ -242,33 +244,11 @@ public class UtilsTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetEnabledDomainByTitle() {
-    DomainDTO domain = newDomainDTO();
-    DomainDTO savedDomain = Utils.getEnabledDomainByTitle(null);
-    assertNull(savedDomain);
-    savedDomain = Utils.getEnabledDomainByTitle("");
-    assertNull(savedDomain);
-    savedDomain = Utils.getEnabledDomainByTitle(domain.getTitle());
-    assertNotNull(savedDomain);
-  }
-
-  @Test
   public void testGetRuleById() {
     RuleDTO rule = newRuleDTO();
     RuleDTO savedRule = Utils.getRuleById(0);
     assertNull(savedRule);
     savedRule = Utils.getRuleById(rule.getId());
-    assertNotNull(savedRule);
-    assertEquals(rule.getTitle(), savedRule.getTitle());
-  }
-
-  @Test
-  public void testGetRuleByTitle() {
-
-    RuleEntity rule = newRule(GAMIFICATION_DEFAULT_DATA_PREFIX + "test", "domain");
-    RuleDTO savedRule = Utils.getRuleByTitle("");
-    assertNull(savedRule);
-    savedRule = Utils.getRuleByTitle("test_domain");
     assertNotNull(savedRule);
     assertEquals(rule.getTitle(), savedRule.getTitle());
   }

@@ -91,13 +91,6 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("description", StringEscapeUtils.unescapeHtml(rule.getDescription()));
     fields.put("score", String.valueOf(rule.getScore()));
     DomainEntity domainEntity = rule.getDomainEntity();
-    if (StringUtils.isBlank(rule.getArea())) {
-      if (domainEntity != null) {
-        fields.put("area", domainEntity.getTitle());
-      }
-    } else {
-      fields.put("area", rule.getArea());
-    }
     if (domainEntity != null) {
       fields.put("domainId", String.valueOf(domainEntity.getId()));
     }

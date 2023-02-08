@@ -194,10 +194,7 @@ public class RealizationsRest implements ResourceContainer {
                                      String actionLabel,
                                      @Parameter(description = "new points of realization")
                                      @QueryParam("points")
-                                     Long points,
-                                     @Parameter(description = "new domain of realization")
-                                     @QueryParam("domain")
-                                     String domain) {
+                                     Long points) {
 
     String currentUser = Utils.getCurrentUser();
     try {
@@ -205,8 +202,7 @@ public class RealizationsRest implements ResourceContainer {
           realizationsService.updateRealizationStatus(Long.valueOf(realizationId),
                                                       HistoryStatus.valueOf(status),
                                                       actionLabel,
-                                                      points,
-                                                      domain);
+                                                      points);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO, identityManager)).build();
     } catch (ObjectNotFoundException e) {
       LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
