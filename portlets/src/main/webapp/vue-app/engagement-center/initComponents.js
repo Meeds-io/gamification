@@ -1,7 +1,8 @@
 /**
  *
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+ 
 import Challenges from './components/challenges/Challenges.vue';
 import ChallengeCard from './components/challenges/ChallengeCard.vue';
 import ChallengesList from './components/challenges/ChallengesList.vue';
@@ -90,33 +92,4 @@ const components = {
 
 for (const key in components) {
   Vue.component(key, components[key]);
-}
-import * as  challengesServices from './js/challengesServices';
-
-if (!Vue.prototype.$challengesServices) {
-  window.Object.defineProperty(Vue.prototype, '$challengesServices', {
-    value: challengesServices,
-  });
-}
-import  * as engagementCenterUtils  from './js/engagementCenterUtils';
-
-if (!Vue.prototype.$engagementCenterUtils) {
-  window.Object.defineProperty(Vue.prototype, '$engagementCenterUtils', {
-    value: engagementCenterUtils,
-  });
-}
-
-import  * as programsServices  from './js/programsServices';
-import  * as ruleServices  from '../../js/RuleServices.js';
-
-if (!Vue.prototype.$programsServices) {
-  window.Object.defineProperty(Vue.prototype, '$programsServices', {
-    value: programsServices,
-  });
-}
-
-if (!Vue.prototype.$ruleServices) {
-  window.Object.defineProperty(Vue.prototype, '$ruleServices', {
-    value: ruleServices,
-  });
 }

@@ -523,4 +523,28 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </depends>
   </module>
 
+  <module>
+    <name>analyticsExtensionGamification</name>
+    <load-group>commonAnalyticsVueComponentsGroup</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/gamificationAnalytics.bundle.js</path>
+    </script>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>vuetify</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+  </module>
+
 </gatein-resources>
