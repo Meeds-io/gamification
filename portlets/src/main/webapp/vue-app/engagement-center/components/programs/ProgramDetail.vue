@@ -297,6 +297,32 @@ export default {
       this.backToProgramList();
     });
   },
+  mounted() {
+    if (this.programId) {
+      document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+        detail: {
+          module: 'gamification',
+          subModule: 'program',
+          userId: eXo.env.portal.userIdentityId,
+          userName: eXo.env.portal.userName,
+          spaceId: this.spaceId || 0,
+          operation: 'viewProgram',
+          timestamp: Date.now(),
+          parameters: {
+            programId: this.programId,
+            programTitle: this.programTitle,
+            programBudget: this.programBudget,
+            programType: this.program.type,
+            portalName: eXo.env.portal.portalName,
+            portalUri: eXo.env.server.portalBaseURL,
+            pageUrl: window.location.pathname,
+            pageTitle: eXo.env.portal.pageTitle,
+            pageUri: eXo.env.portal.selectedNodeUri,
+          },
+        }
+      }));
+    }
+  },
   methods: {
     programUpdated(program) {
       if (program.id === this.program.id) {
