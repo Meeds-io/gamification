@@ -40,6 +40,16 @@ public interface RuleService {
     RuleDTO findRuleById (long id);
 
     /**
+     * 
+     * @param id rule technical identifier
+     * @param username user accessing rule
+     * @return {@link RuleDTO}
+     * @throws IllegalAccessException when user doesn't have enough privileges to access rule
+     * @throws ObjectNotFoundException when rule with id isn't enabled or isn't found
+     */
+    RuleDTO findRuleById(long id, String username) throws IllegalAccessException, ObjectNotFoundException;
+
+    /**
      * Find enable RuleEntity by title
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
@@ -177,4 +187,5 @@ public interface RuleService {
     default RuleDTO updateRule(RuleDTO ruleDTO) throws ObjectNotFoundException {
       return null;
     }
+
 }
