@@ -37,6 +37,7 @@ module.exports = {
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',
     challengesOverview: './src/main/webapp/vue-app/challengesOverview/main.js',
     programsOverview: './src/main/webapp/vue-app/programsOverview/main.js',
+    gamificationAnalytics: './src/main/webapp/vue-app/analytics/main.js',
   },
   plugins: [
     new ESLintPlugin({

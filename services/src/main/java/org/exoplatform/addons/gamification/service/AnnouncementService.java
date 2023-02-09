@@ -46,8 +46,18 @@ public interface AnnouncementService {
    * @throws ObjectNotFoundException when the announcement identified by its
    *           technical identifier is not found
    */
-
   Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException;
+
+  /**
+   * Update announcement
+   *
+   * @param announcement {@link Announcement} object to Update
+   * @param broadcast whether to broadcast or not the event of announcement updating
+   * @return a {@link Announcement} Object
+   * @throws ObjectNotFoundException when the announcement identified by its
+   *           technical identifier is not found
+   */
+  Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException;
 
   /**
    * Retrieves a announcement identified by its technical identifier.
