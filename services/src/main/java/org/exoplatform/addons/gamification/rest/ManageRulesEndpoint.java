@@ -16,13 +16,33 @@
  */
 package org.exoplatform.addons.gamification.rest;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToRestEntities;
+import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleToRestEntity;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.rest.model.RuleList;
 import org.exoplatform.addons.gamification.rest.model.RuleRestEntity;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -37,19 +57,12 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
 
-import javax.annotation.security.RolesAllowed;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.CacheControl;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.exoplatform.addons.gamification.rest.EntityBuilder.ruleListToRestEntities;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("/gamification/rules")
 @Tag(name = "/gamification/rules", description = "Manages rules")
@@ -60,7 +73,6 @@ public class ManageRulesEndpoint implements ResourceContainer {
   protected RuleService      ruleService;
 
   protected IdentityManager  identityManager;
-
 
   public ManageRulesEndpoint(RuleService ruleService,
                              IdentityManager identityManager) {
@@ -124,6 +136,38 @@ public class ManageRulesEndpoint implements ResourceContainer {
     ruleList.setOffset(offset);
     ruleList.setLimit(limit);
     return Response.ok(ruleList).build();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Path("{id}")
+  @Operation(summary = "Retrieves the list of available rules", method = "GET")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  public Response getRule(
+                          @Parameter(description = "Rule technical identifier")
+                          @PathParam("id")
+                          long id,
+                          @Parameter(description = "Asking for a full representation of a specific subresource, ex: userAnnouncements", required = false)
+                          @QueryParam("expand")
+                          String expand) {
+    String currentUser = Utils.getCurrentUser();
+    try {
+      RuleDTO rule = ruleService.findRuleById(id, currentUser);
+      String[] expandFieldsArray = StringUtils.split(expand, ",");
+      List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
+      RuleRestEntity ruleEntity = ruleToRestEntity(rule, currentUser, expandFields);
+      return Response.ok(ruleEntity).build();
+    } catch (IllegalAccessException e) {
+      return Response.status(Status.UNAUTHORIZED).build();
+    } catch (ObjectNotFoundException e) {
+      return Response.status(Status.NOT_FOUND).build();
+    }
   }
 
   @GET

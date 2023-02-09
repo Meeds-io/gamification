@@ -181,10 +181,10 @@ public class ChallengeRest implements ResourceContainer {
       challenge = challengeService.updateChallenge(challenge, currentUser);
       return Response.ok(EntityBuilder.fromChallenge(challenge, Collections.emptyList())).build();
     } catch (ObjectNotFoundException e) {
-      LOG.debug("User '{}' attempts to update a not existing challenge '{}'", currentUser, e);
+      LOG.debug("User '{}' attempts to update a not existing challenge '{}'", currentUser, challenge.getId(), e);
       return Response.status(Response.Status.NOT_FOUND).entity("Challenge not found").build();
     } catch (IllegalAccessException e) {
-      LOG.error("User '{}' attempts to update a challenge for owner '{}'", currentUser, e);
+      LOG.error("User '{}' attempts to update a challenge of not owned program '{}'", currentUser, challenge.getProgramId(), e);
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
