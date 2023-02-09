@@ -17,6 +17,7 @@ package org.exoplatform.addons.gamification.listener.es;
 
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnector;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -31,7 +32,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
 @Asynchronous
-public class RulesESListener extends Listener<Object, Long> {
+public class RulesESListener extends Listener<Object, String> {
   private static final Log LOG = ExoLogger.getLogger(RulesESListener.class);
 
   private PortalContainer  container;
@@ -49,14 +50,16 @@ public class RulesESListener extends Listener<Object, Long> {
   }
 
   @Override
-  public void onEvent(Event<Object, Long> event) throws Exception {
+  public void onEvent(Event<Object, String> event) throws Exception {
+    Object object = event.getSource();
+    Long ruleId = getRuleId(object);
+    boolean ruleDeleted = ruleId == null || Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
+
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
-    Long ruleId = event.getData();
-    boolean ruleDeleted = Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
-    RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
     try {
-      if (rule == null || rule.isDeleted() || (!rule.isEnabled() && EntityType.MANUAL != rule.getType())) {
+      RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
+      if (ruleDeleted || rule == null || rule.isDeleted() || (!rule.isEnabled() && EntityType.MANUAL != rule.getType())) {
         LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
         indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
       } else {
@@ -66,5 +69,16 @@ public class RulesESListener extends Listener<Object, Long> {
     } finally {
       RequestLifeCycle.end();
     }
+  }
+
+  private Long getRuleId(Object object) {
+    if (object instanceof Long id) {
+      return id;
+    } else if (object instanceof RuleDTO rule) {
+      return rule.getId();
+    } else if (object instanceof Challenge challenge) {
+      return challenge.getId();
+    }
+    return null;
   }
 }

@@ -18,6 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <exo-drawer
     id="EngagementCenterWinnersDetails"
     ref="winnersDetails"
+    v-model="drawer"
     right
     @closed="close">
     <template slot="title">
@@ -98,6 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
+      drawer: false,
       challengeId: false,
       showLoadMoreButton: false,
       announcementTotalCount: 0,
@@ -117,7 +119,9 @@ export default {
       }
     },
     announcementPerPage() {
-      this.retrieveAnnouncements();
+      if (this.drawer) {
+        this.retrieveAnnouncements();
+      }
     },
   },
   created() {
