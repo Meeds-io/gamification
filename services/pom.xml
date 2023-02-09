@@ -98,6 +98,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Analytics -->
+    <dependency>
+      <groupId>org.exoplatform.addons.analytics</groupId>
+      <artifactId>analytics-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Test Dependencies -->
     <dependency>
       <groupId>org.exoplatform.social</groupId>
