@@ -18,6 +18,10 @@ package org.exoplatform.addons.gamification.rest;
 
 import java.util.Collections;
 
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
@@ -29,14 +33,8 @@ import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
-import org.exoplatform.social.core.manager.IdentityManager;
-import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-
-public class TestManageRulesEndpoint extends AbstractServiceTest {
+public class TestManageRulesEndpoint extends AbstractServiceTest { // NOSONAR
 
   protected Class<?> getComponentClass() {
     return ManageRulesEndpoint.class;
@@ -59,12 +57,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
 
     DomainEntity domainEntity = newDomain();
 
-    org.exoplatform.social.core.identity.model.Identity userIdentity = new org.exoplatform.social.core.identity.model.Identity();
-    userIdentity.setId("1");
-    userIdentity.setProviderId("organization");
-    userIdentity.setRemoteId("root0");
-    org.exoplatform.social.core.identity.model.Identity identity = mock(org.exoplatform.social.core.identity.model.Identity.class);
-    identityManager = mock(IdentityManager.class);
     newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
     newRule("rule1", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
 
@@ -82,9 +74,30 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
   }
 
-  /**
-   * Testing get active rules
-   **/
+  @Test
+  public void testGetRule() throws Exception {
+    DomainEntity domainEntity = newDomain();
+
+    RuleEntity ruleEntity = newRule("rule", domainEntity.getTitle(), true, EntityType.AUTOMATIC);
+
+    String resourceURL = "rules/" + ruleEntity.getId();
+    ContainerResponse response = getResponse("GET", getURLResource(resourceURL), null);
+    assertEquals(401, response.getStatus());
+
+    startSessionAs("root0");
+
+    response = getResponse("GET", getURLResource(resourceURL), null);
+    assertEquals(401, response.getStatus());
+
+    startSessionAs("root1");
+
+    response = getResponse("GET", getURLResource("rules/555"), null);
+    assertEquals(404, response.getStatus());
+
+    response = getResponse("GET", getURLResource(resourceURL), null);
+    assertEquals(200, response.getStatus());
+  }
+
   @Test
   public void testGetActiveRules() throws Exception {
     ContainerResponse response = getResponse("GET", getURLResource("rules/active"), null);
@@ -95,9 +108,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     ConversationState.setCurrent(null);
   }
 
-  /**
-   * Testing the add of a new rule with the Media Type
-   **/
   @Test
   public void testAddRule() throws Exception {
     DomainDTO domainDTO = newDomainDTO();
@@ -129,9 +139,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     assertEquals(400, response.getStatus());
   }
 
-  /**
-   * Testing delete of rule with the Media Type
-   **/
   @Test
   public void testDeleteRule() throws Exception {
     RuleEntity ruleEntity = newRule();
@@ -150,9 +157,6 @@ public class TestManageRulesEndpoint extends AbstractServiceTest {
     assertEquals(200, response.getStatus());
   }
 
-  /**
-   * Testing the update of rule with the Media Type
-   **/
   @Test
   public void testUpdateRule() throws Exception {
     RuleDTO ruleDTO = newRuleDTO();
