@@ -26,6 +26,10 @@ import org.exoplatform.services.security.Identity;
 
 public interface DomainService {
 
+  public static final String GAMIFICATION_DOMAIN_UPDATE_LISTENER  = "gamification.domain.update";
+
+  public static final String GAMIFICATION_DOMAIN_CREATE_LISTENER  = "gamification.domain.create";
+
   public static final String GAMIFICATION_DOMAIN_DELETE_LISTENER  = "exo.gamification.domain.delete";
 
   public static final String GAMIFICATION_DOMAIN_DISABLE_LISTENER = "exo.gamification.domain.disable";
