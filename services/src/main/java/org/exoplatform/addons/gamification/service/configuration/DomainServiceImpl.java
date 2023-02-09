@@ -235,8 +235,14 @@ public class DomainServiceImpl implements DomainService {
   @Override
   public boolean isDomainOwner(long domainId, Identity aclIdentity) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
+    if (userIdentity == null) {
+      return false;
+    }
     DomainDTO domain = domainStorage.getDomainById(domainId);
-    return domain != null && Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
+    if (domain == null) {
+      return false;
+    }
+    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
   private void broadcast(String eventName, DomainDTO domain, String userName) {

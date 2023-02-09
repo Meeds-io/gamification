@@ -17,11 +17,11 @@ package io.meeds.gamification.analytics;
 
 import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
 import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_CREATE_RULE_OPERATION;
+import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_ANNOUNCEMENT_SUBMODULE;
+import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_CREATE_ANNOUNCE_OPERATION;
 import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_GAMIFICATION_MODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_RULE_SUBMODULE;
-import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_UPDATE_RULE_OPERATION;
-import static org.exoplatform.addons.gamification.utils.Utils.addRuleStatisticParameters;
+import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_UPDATE_ANNOUNCE_OPERATION;
+import static org.exoplatform.addons.gamification.utils.Utils.addAnnouncementStatisticParameters;
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
@@ -62,14 +62,14 @@ public class AnalyticsAnnouncementListener extends Listener<Announcement, Long> 
 
     StatisticData statisticData = new StatisticData();
     statisticData.setModule(STATISTICS_GAMIFICATION_MODULE);
-    statisticData.setSubModule(STATISTICS_RULE_SUBMODULE);
+    statisticData.setSubModule(STATISTICS_ANNOUNCEMENT_SUBMODULE);
     switch (event.getEventName()) {
     case POST_CREATE_ANNOUNCEMENT_EVENT: {
-      statisticData.setOperation(STATISTICS_CREATE_RULE_OPERATION);
+      statisticData.setOperation(STATISTICS_CREATE_ANNOUNCE_OPERATION);
       break;
     }
     case POST_UPDATE_ANNOUNCEMENT_EVENT: {
-      statisticData.setOperation(STATISTICS_UPDATE_RULE_OPERATION);
+      statisticData.setOperation(STATISTICS_UPDATE_ANNOUNCE_OPERATION);
       break;
     }
     default:
@@ -78,11 +78,12 @@ public class AnalyticsAnnouncementListener extends Listener<Announcement, Long> 
     String username = userIdentityId == null ? null
                                              : identityManager.getIdentity(String.valueOf(userIdentityId))
                                                               .getRemoteId();
-    addRuleStatisticParameters(identityManager,
-                               spaceService,
-                               rule,
-                               statisticData,
-                               username);
+    addAnnouncementStatisticParameters(identityManager,
+                                       spaceService,
+                                       rule,
+                                       announcement,
+                                       statisticData,
+                                       username);
     addStatisticData(statisticData);
   }
 

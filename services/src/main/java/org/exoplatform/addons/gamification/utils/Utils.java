@@ -9,7 +9,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -128,6 +127,8 @@ public class Utils {
   public static final String            STATISTICS_RULE_EVENT_PARAM          = "ruleEvent";
 
   public static final String            STATISTICS_RULE_SUBMODULE            = "rule";
+
+  public static final String            STATISTICS_ANNOUNCEMENT_SUBMODULE    = "announcement";
 
   public static final String            STATISTICS_ANNOUNCE_ID_PARAM         = "announcementId";
 
@@ -302,7 +303,6 @@ public class Utils {
     return domainService.getDomainById(domainId);
   }
 
-  @SuppressWarnings("deprecation")
   public static DomainDTO getChallengeDomainDTO(Challenge challenge) {
     if (challenge.getProgramId() > 0) {
       return Utils.getDomainDTOById(challenge.getProgramId());

@@ -65,13 +65,13 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO rule = findRuleById(id);
     if (rule == null) {
-      throw new ObjectNotFoundException("Username is mandatory");
+      throw new ObjectNotFoundException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     if (!Utils.isRuleManager(rule, username)
         && (!rule.isEnabled()
             || rule.getDomainDTO() == null
             || !Utils.isSpaceMember(rule.getDomainDTO().getAudienceId(), username))) {
-      throw new IllegalAccessException("Username is mandatory");
+      throw new IllegalAccessException(USERNAME_IS_MANDATORY_MESSAGE);
     }
     return rule;
   }
