@@ -1,7 +1,13 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
-import static org.exoplatform.addons.gamification.utils.Utils.*;
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM;
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ID_TEMPLATE_PARAM;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_ANNOUNCEMENT_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_ANNOUNCEMENT_EVENT;
+import static org.exoplatform.addons.gamification.utils.Utils.broadcastEvent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,19 +17,31 @@ import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
 
+  private static final Log    LOG =
+                                  ExoLogger.getLogger(AnnouncementServiceImpl.class);
+
   private AnnouncementStorage announcementStorage;
 
+  private ActivityManager     activityManager;
+
   private IdentityManager     identityManager;
+
+  private SpaceService        spaceService;
 
   private ChallengeService    challengeService;
 
@@ -31,9 +49,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
                                  ChallengeService challengeService,
+                                 SpaceService spaceService,
                                  IdentityManager identityManager,
+                                 ActivityManager activityManager,
                                  ListenerService listenerService) {
     this.announcementStorage = announcementStorage;
+    this.spaceService = spaceService;
+    this.activityManager = activityManager;
     this.identityManager = identityManager;
     this.challengeService = challengeService;
     this.listenerService = listenerService;
@@ -73,12 +95,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     long creatorId = Long.parseLong(creatorIdentity.getId());
     announcement.setCreator(creatorId);
     announcement = announcementStorage.saveAnnouncement(announcement);
-    broadcastEvent(listenerService, POST_CREATE_ANNOUNCEMENT_EVENT, announcement, creatorId);
-
     if (!system) {
-      broadcastEvent(listenerService, ANNOUNCEMENT_ACTIVITY_EVENT, this, EntityMapper.toAnnouncementActivity(announcement, templateParams));
+      try {
+        announcement = createActivity(challenge, announcement, templateParams);
+      } catch (Exception e) {
+        LOG.warn("Error while creating activity for announcement with challenge with id {} made by user {}",
+                 challenge.getId(),
+                 creatorIdentity.getId(),
+                 e);
+      }
     }
-    return getAnnouncementById(announcement.getId());
+    broadcastEvent(listenerService, POST_CREATE_ANNOUNCEMENT_EVENT, announcement, creatorId);
+    return announcement;
   }
 
   @Override
@@ -111,7 +139,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Long countAnnouncementsByChallengeAndEarnerType(long challengeId, IdentityType earnerType) throws ObjectNotFoundException {
+  public Long countAnnouncementsByChallengeAndEarnerType(long challengeId,
+                                                         IdentityType earnerType) throws ObjectNotFoundException {
     if (challengeId <= 0) {
       throw new IllegalArgumentException("Challenge id has to be positive integer");
     }
@@ -124,6 +153,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   @Override
   public Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException {
+    return updateAnnouncement(announcement, true);
+  }
+
+  @Override
+  public Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException {
     if (announcement == null) {
       throw new IllegalArgumentException("announcement is mandatory");
     }
@@ -136,7 +170,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new ObjectNotFoundException("Announcement does not exist");
     }
     Announcement savedAnnouncement = announcementStorage.saveAnnouncement(announcement);
-    broadcastEvent(listenerService, POST_UPDATE_ANNOUNCEMENT_EVENT, announcement, announcement.getCreator());
+    if (broadcast) {
+      broadcastEvent(listenerService, POST_UPDATE_ANNOUNCEMENT_EVENT, announcement, announcement.getCreator());
+    }
     return savedAnnouncement;
   }
 
@@ -146,5 +182,33 @@ public class AnnouncementServiceImpl implements AnnouncementService {
       throw new IllegalArgumentException("announcement id is mandatory");
     }
     return announcementStorage.getAnnouncementById(announcementId);
+  }
+
+  public Announcement createActivity(Challenge challenge,
+                                     Announcement announcement,
+                                     Map<String, String> templateParams) throws ObjectNotFoundException {
+    if (templateParams == null) {
+      templateParams = new HashMap<>();
+    }
+    Space space = spaceService.getSpaceById(String.valueOf(challenge.getAudience()));
+    if (space == null) {
+      throw new ObjectNotFoundException("space doesn't exists");
+    }
+    Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+    if (spaceIdentity == null) {
+      throw new ObjectNotFoundException("space doesn't exists");
+    }
+    ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
+    activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
+    activity.setTitle(announcement.getComment());
+    activity.setUserId(String.valueOf(announcement.getCreator()));
+    templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
+    templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, challenge.getTitle());
+    Utils.buildActivityParams(activity, templateParams);
+
+    activityManager.saveActivityNoReturn(spaceIdentity, activity);
+    announcement.setActivityId(Long.parseLong(activity.getId()));
+    updateAnnouncement(announcement, false);
+    return announcement;
   }
 }
