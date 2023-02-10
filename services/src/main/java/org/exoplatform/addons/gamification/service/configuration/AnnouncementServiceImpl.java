@@ -208,7 +208,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     activityManager.saveActivityNoReturn(spaceIdentity, activity);
     announcement.setActivityId(Long.parseLong(activity.getId()));
-    updateAnnouncement(announcement, false);
-    return announcement;
+    return updateAnnouncement(announcement, false);
   }
 }
