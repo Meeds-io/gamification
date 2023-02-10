@@ -64,6 +64,10 @@ import org.exoplatform.web.security.security.TokenServiceInitializationException
 
 public class Utils {
 
+  public static final String            ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM = "announcementDescription";
+
+  public static final String            ANNOUNCEMENT_ID_TEMPLATE_PARAM          = "announcementId";
+
   public static final String            ANNOUNCEMENT_ACTIVITY_EVENT          = "challenge.announcement.activity";
 
   public static final long              DEFAULT_COVER_LAST_MODIFIED          = System.currentTimeMillis();

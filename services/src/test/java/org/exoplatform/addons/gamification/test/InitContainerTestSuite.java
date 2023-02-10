@@ -23,7 +23,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import org.exoplatform.addons.gamification.connector.RuleIndexingServiceConnectorTest;
-import org.exoplatform.addons.gamification.listener.AnnouncementActivityGeneratorListenerTest;
 import org.exoplatform.addons.gamification.listener.AnnouncementActivityUpdaterTest;
 import org.exoplatform.addons.gamification.listener.GamificationRelationshipListenerTest;
 import org.exoplatform.addons.gamification.listener.RulesESListenerTest;
@@ -93,7 +92,6 @@ import io.meeds.gamification.analytics.AnalyticsRuleListenerTest;
         TestChallengeRest.class,
         TestAnnouncementRest.class,
         AnnouncementActivityUpdaterTest.class,
-        AnnouncementActivityGeneratorListenerTest.class,
         RuleSearchConnectorTest.class,
         RuleIndexingUpgradePluginTest.class,
         RuleIndexingServiceConnectorTest.class,
