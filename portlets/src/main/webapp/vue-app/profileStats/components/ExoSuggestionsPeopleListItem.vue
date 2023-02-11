@@ -68,14 +68,14 @@ export default {
   },
   methods: {
     connectionRequest(item) {
-      this.$userService.sendConnectionRequest(item.suggestionId).then(
+      this.$userService.connect(item.suggestionId).then(
         ()=> {
           this.peopleSuggestionsList.splice(this.peopleSuggestionsList.indexOf(item),1);
         }
       );
     },
     ignoredConnectionUser(receiverItem) {
-      this.$userService.ignoreSuggestion(receiverItem.username).then(
+      this.$userService.ignore(receiverItem.username).then(
         () => {
           this.peopleSuggestionsList.splice(this.peopleSuggestionsList.indexOf(receiverItem),1);
         }
