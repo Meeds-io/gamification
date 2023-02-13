@@ -81,9 +81,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     @Column(name = "DELETED", nullable = false)
     protected boolean isDeleted;
 
-    public BadgeEntity() {
-    }
-
     public Long getId() {
         return id;
     }
