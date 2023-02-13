@@ -329,7 +329,7 @@ public class RuleSearchConnector {
 
   private List<Long> getManagersList(JSONObject hitSource, String key) {
     JSONArray jsonHits = (JSONArray) hitSource.get(key);
-    if (jsonHits.isEmpty()) {
+    if (jsonHits == null || jsonHits.isEmpty()) {
       return Collections.emptyList();
     } else {
       List<Long> listManagers = new ArrayList<>();
