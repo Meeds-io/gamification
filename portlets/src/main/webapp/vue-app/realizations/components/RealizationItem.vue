@@ -53,7 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               fas fa-info-circle
             </v-icon>
           </template>
-          <span>{{ $t('realization.label.PreviouslyNamed') }}: {{ realizationActionLabel }}</span>
+          <span>{{ $t('realization.label.previouslyNamed') }}: {{ realizationActionLabel }}</span>
         </v-tooltip>
       </div>
     </td>
