@@ -38,8 +38,6 @@ public class DomainCachedStorage extends DomainStorage {
 
   private static final int                               DOMAIN_ID_CONTEXT      = 0;
 
-  private static final int                               DOMAIN_TITLE_CONTEXT   = 1;
-
   private static final int                               ALL_DOMAIN_CONTEXT     = 2;
 
   private static final int                               DOMAIN_ENABLED_CONTEXT = 3;
