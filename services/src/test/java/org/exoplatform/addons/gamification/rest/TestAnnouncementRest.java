@@ -194,7 +194,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     Challenge challenge = new Challenge(0,
                                         "update challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         startDate,
                                         endDate,
                                         Collections.emptyList(),
