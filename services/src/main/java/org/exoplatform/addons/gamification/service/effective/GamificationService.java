@@ -249,6 +249,10 @@ public class GamificationService {
     return gamificationHistoryDAO.findUserReputationScoreBetweenDate(earnerId, fromDate, toDate);
   }
 
+  public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
+    return gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
+  }
+
   public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
     return gamificationHistoryDAO.findAllLeaderboardBetweenDate(earnedType, fromDate, toDate);
   }
