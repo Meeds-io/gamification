@@ -45,7 +45,7 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
                                              objectId,
-                                             gamificationActionsHistoryEntity.getRuleId(),
+                                             gamificationActionsHistoryEntity.getRuleEntity().getId(),
                                              gamificationActionsHistoryEntity.getActivityId(),
                                              gamificationActionsHistoryEntity.getComment(),
                                              gamificationActionsHistoryEntity.getCreator(),
@@ -86,7 +86,7 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setEarnerType(IdentityType.getType(gamificationActionsHistoryDTO.getEarnerType()));
     gHistoryEntity.setContext(gamificationActionsHistoryDTO.getContext());
     gHistoryEntity.setComment(gamificationActionsHistoryDTO.getComment());
-    gHistoryEntity.setRuleId(gamificationActionsHistoryDTO.getRuleId());
+    gHistoryEntity.setRuleEntity(RuleMapper.ruleDTOToRule(Utils.getRuleById(gamificationActionsHistoryDTO.getRuleId())));
     gHistoryEntity.setCreator(gamificationActionsHistoryDTO.getCreator());
     gHistoryEntity.setStatus(HistoryStatus.valueOf(gamificationActionsHistoryDTO.getStatus()));
     gHistoryEntity.setType(gamificationActionsHistoryDTO.getType());
