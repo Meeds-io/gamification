@@ -26,7 +26,6 @@ import java.util.Map;
 import org.picocontainer.Startable;
 
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
 import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
@@ -46,13 +45,9 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
   private FileService                    fileService;
 
-  private DomainService                  domainService;
-
   public BadgeRegistryImpl(FileService fileService,
-                           DomainService domainService,
                            BadgeService badgeService) {
     this.badgesMap = new HashMap<>();
-    this.domainService = domainService;
     this.fileService = fileService;
     this.badgeService = badgeService;
   }
