@@ -171,11 +171,14 @@ export default {
     actionLabelClass() {
       return !this.realization.url && 'defaultCursor' || '';
     },
+    eventName() {
+      return this.realization?.action?.event;
+    },
     actionValueExtension() {
       if (this.actionValueExtensions) {
         return Object.values(this.actionValueExtensions)
           .sort((ext1, ext2) => (ext1.rank || 0) - (ext2.rank || 0))
-          .find(extension => extension.match && extension.match(this.realization.actionLabel)) || null;
+          .find(extension => extension.match && extension.match(this.eventName)) || null;
       }
       return null;
     },
