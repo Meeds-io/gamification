@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           v-else
           :action-label="actionLabel"
           :action-u-r-l="actionURL"
-          class="width-fit-content"/>
+          class="width-fit-content" />
         <v-tooltip
           v-if="ruleTitleChanged"
           z-index="4"
@@ -61,7 +61,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="d-flex">
         <v-tooltip bottom>
           <template #activator="{ on }">
-            <a v-on="on" @click="openProgramDetail" class="width-fit-content">
+            <a
+              v-on="on"
+              @click="openProgramDetail"
+              class="width-fit-content">
               <div class="text-truncate">{{ programTitle }}
               </div>
             </a>
