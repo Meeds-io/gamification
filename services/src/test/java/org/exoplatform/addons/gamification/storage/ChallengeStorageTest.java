@@ -18,6 +18,7 @@
 package org.exoplatform.addons.gamification.storage;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -33,7 +34,8 @@ public class ChallengeStorageTest extends AbstractServiceTest {
   @Test
   public void testSaveChallenge() {
     DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
-    Challenge challenge = new Challenge(0,
+    RuleEntity ruleEntity = newRule();
+    Challenge challenge = new Challenge(ruleEntity.getId(),
                                         "new challenge",
                                         "challenge description",
                                         1L,
@@ -61,7 +63,8 @@ public class ChallengeStorageTest extends AbstractServiceTest {
   @Test
   public void testDeleteChallenge() throws ObjectNotFoundException {
     DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
-    Challenge challenge = new Challenge(0,
+    RuleEntity ruleEntity = newRule();
+    Challenge challenge = new Challenge(ruleEntity.getId(),
                                         "new challenge",
                                         "challenge description",
                                         1L,
@@ -86,7 +89,8 @@ public class ChallengeStorageTest extends AbstractServiceTest {
   @Test
   public void testGetChallengeById() {
     DomainEntity domain = newDomain(GAMIFICATION_DOMAIN);
-    Challenge challenge = new Challenge(0,
+    RuleEntity ruleEntity = newRule();
+    Challenge challenge = new Challenge(ruleEntity.getId(),
                                         "new challenge",
                                         "challenge description",
                                         1L,
