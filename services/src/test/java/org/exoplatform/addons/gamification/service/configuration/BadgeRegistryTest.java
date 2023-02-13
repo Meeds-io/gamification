@@ -34,7 +34,6 @@ public class BadgeRegistryTest extends AbstractServiceTest {
   public void init() throws Exception {
     if (badgeRegistry == null) {
       badgeRegistry = new BadgeRegistryImpl(fileService,
-                                            domainService,
                                             badgeService);
     }
   }

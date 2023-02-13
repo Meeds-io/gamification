@@ -172,23 +172,19 @@ export default {
           document.dispatchEvent(new CustomEvent('listOfRankedConnections', {detail: data.length}));
           const currentUser = eXo.env.portal.profileOwner;
           const index = data.findIndex(item => item.remoteId === currentUser) + 1;
-          for (let i = 0; i < data.length; i++) {
-            this.leaderBoardArray.push(data[i]);
+          for (const element of data) {
+            this.leaderBoardArray.push(element);
           }
-          if (data.length === 6) {
+          if ((data.length === 6) || (data.length > 6 && index < 7)) {
             for (let i = 3; i < 6; i++) {
               this.listBelowPoduim.push(data[i]);
             }
-          } else if (data.length === 3) {
-            for (let i = 0; i < data.length; i++) {
-              this.listBelowPoduim.push(data[i]);
+          } else if (data.length <= 3) {
+            for (const element of data) {
+              this.listBelowPoduim.push(element);
             }
           } else if ((data.length > 3 && data.length < 6) || index === data.length) {
             for (let i = data.length - 3; i < data.length; i++) {
-              this.listBelowPoduim.push(data[i]);
-            }
-          } else if (index < 7) {
-            for (let i = 3; i < 6; i++) {
               this.listBelowPoduim.push(data[i]);
             }
           } else {
@@ -197,9 +193,6 @@ export default {
             }
           }
         });
-    },
-    getUserAvatar(username) {
-      return `/rest/v1/social/users/${username}/avatar`;
     },
     toProfileStats() {
       this.$emit('isProfileStats');
