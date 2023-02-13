@@ -217,7 +217,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "Badge{" +
+    return "Rule{" +
             "title='" + title + '\'' +
             ", score='" + score + '\'' +
             ", domainId='" + domainEntity.id + '\'' +

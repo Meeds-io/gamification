@@ -16,16 +16,9 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
@@ -51,6 +44,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
   private static final String        TO_DATE_PARAM_NAME      = "toDate";
 
   private static final String        FROM_DATE_PARAM_NAME    = "fromDate";
+
+  private static final String        NOW_DATE_PARAM_NAME     = "nowDate";
 
   private static final String        EARNER_ID_PARAM_NAME    = "earnerId";
 
@@ -266,7 +261,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("GamificationActionsHistory.findActionsHistoryByDateByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date).setParameter(EARNER_TYPE_PARAM_NAME, earnerType).setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+    query.setParameter("date", date)
+         .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
+         .setParameter(DOMAIN_ID_PARAM_NAME, domainId);
     query.setMaxResults(limit);
     return query.getResultList();
   }
@@ -477,9 +474,11 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
       Date utilFromDate = Date.from(monday.atStartOfDay(ZoneId.systemDefault()).toInstant());
       Date utilToDate = Date.from(sunday.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
+      Date now = Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
       query.setParameter(FROM_DATE_PARAM_NAME, utilFromDate)
            .setParameter(TO_DATE_PARAM_NAME, utilToDate)
-           .setParameter(TYPE, type);
+           .setParameter(TYPE, type)
+           .setParameter(NOW_DATE_PARAM_NAME, now);
       query.setFirstResult(offset);
       query.setMaxResults(limit);
       resultList = query.getResultList();
