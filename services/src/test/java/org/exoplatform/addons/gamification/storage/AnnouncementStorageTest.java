@@ -105,14 +105,14 @@ public class AnnouncementStorageTest {
         announcementEntity.setEarnerId(announcement.getAssignee().toString());
         announcementEntity.setEarnerType(IdentityType.USER);
         announcementEntity.setCreator(announcement.getCreator());
-        announcementEntity.setRuleId(challenge.getId());
+        announcementEntity.setRuleEntity(challengeEntity);
         announcementEntity.setComment(announcement.getComment());
         announcementEntity.setCreatedDate(createDate);
 
         GamificationActionsHistory newAnnouncementEntity = new GamificationActionsHistory();
         newAnnouncementEntity.setEarnerId(announcement.getAssignee().toString());
         newAnnouncementEntity.setCreator(announcementEntity.getCreator());
-        newAnnouncementEntity.setRuleId(challenge.getId());
+        newAnnouncementEntity.setRuleEntity(challengeEntity);
         newAnnouncementEntity.setComment(announcementEntity.getComment());
         newAnnouncementEntity.setCreatedDate(createDate);
         newAnnouncementEntity.setId(1l);
@@ -122,7 +122,7 @@ public class AnnouncementStorageTest {
         announcementFromEntity.setCreator(newAnnouncementEntity.getCreator());
         announcementFromEntity.setComment(newAnnouncementEntity.getComment());
         announcementFromEntity.setCreatedDate(createDate.toString());
-        announcementFromEntity.setChallengeId(newAnnouncementEntity.getRuleId());
+        announcementFromEntity.setChallengeId(newAnnouncementEntity.getRuleEntity().getId());
         announcementFromEntity.setId(newAnnouncementEntity.getId());
 
 
@@ -169,7 +169,7 @@ public class AnnouncementStorageTest {
         announcementEntity.setEarnerId("1");
         announcementEntity.setEarnerId("1");
         announcementEntity.setCreator(1L);
-        announcementEntity.setRuleId(challengeEntity.getId());
+        announcementEntity.setRuleEntity(challengeEntity);
         announcementEntity.setComment("announcement comment");
         announcementEntity.setCreatedDate(createDate);
 
@@ -179,7 +179,7 @@ public class AnnouncementStorageTest {
         announcementFromEntity.setCreator(announcementEntity.getCreator());
         announcementFromEntity.setComment(announcementEntity.getComment());
         announcementFromEntity.setCreatedDate(createDate.toString());
-        announcementFromEntity.setChallengeId(announcementEntity.getRuleId());
+        announcementFromEntity.setChallengeId(announcementEntity.getRuleEntity().getId());
         announcementFromEntity.setId(announcementEntity.getId());
 
 
@@ -199,12 +199,16 @@ public class AnnouncementStorageTest {
     public void testGetAnnouncementByChallengeId(){
         Date startDate = new Date(System.currentTimeMillis());
         Date endDate = new Date(System.currentTimeMillis() + 1);
+        DomainEntity domainEntity = new DomainEntity();
+        domainEntity.setId(1L);
+        domainEntity.setTitle("domain");
         RuleEntity challengeEntity = new RuleEntity();
+        challengeEntity.setId(1l);
         challengeEntity.setDescription("challenge description");
         challengeEntity.setTitle("new challenge");
         challengeEntity.setStartDate(startDate);
         challengeEntity.setEndDate(endDate);
-        challengeEntity.setId(1l);
+        challengeEntity.setDomainEntity(domainEntity);
 
         Date createDate = new Date(System.currentTimeMillis());
 
@@ -212,7 +216,7 @@ public class AnnouncementStorageTest {
         announcementEntity1.setId(1l);
         announcementEntity1.setEarnerId("1");
         announcementEntity1.setCreator(1L);
-        announcementEntity1.setRuleId(challengeEntity.getId());
+        announcementEntity1.setRuleEntity(challengeEntity);
         announcementEntity1.setComment("announcement comment 1");
         announcementEntity1.setCreatedDate(createDate);
 
@@ -222,15 +226,14 @@ public class AnnouncementStorageTest {
         announcementFromEntity1.setCreator(announcementEntity1.getCreator());
         announcementFromEntity1.setComment(announcementEntity1.getComment());
         announcementFromEntity1.setCreatedDate(createDate.toString());
-        announcementFromEntity1.setChallengeId(announcementEntity1.getRuleId());
+        announcementFromEntity1.setChallengeId(announcementEntity1.getRuleEntity().getId());
         announcementFromEntity1.setId(announcementEntity1.getId());
 
         GamificationActionsHistory announcementEntity2 = new GamificationActionsHistory();
         announcementEntity2.setId(1l);
-        announcementEntity1.setId(1l);
         announcementEntity2.setCreator(1L);
         announcementEntity2.setEarnerId(String.valueOf(1L));
-        announcementEntity1.setRuleId(challengeEntity.getId());
+        announcementEntity2.setRuleEntity(challengeEntity);
         announcementEntity2.setComment("announcement comment 2");
         announcementEntity2.setCreatedDate(createDate);
 
@@ -240,14 +243,14 @@ public class AnnouncementStorageTest {
         announcementFromEntity2.setCreator(announcementEntity2.getCreator());
         announcementFromEntity2.setComment(announcementEntity2.getComment());
         announcementFromEntity2.setCreatedDate(createDate.toString());
-        announcementFromEntity2.setChallengeId(announcementEntity2.getRuleId());
+        announcementFromEntity2.setChallengeId(announcementEntity2.getRuleEntity().getId());
         announcementFromEntity2.setId(announcementEntity2.getId());
 
         GamificationActionsHistory announcementEntity3 = new GamificationActionsHistory();
         announcementEntity3.setId(1l);
         announcementEntity3.setEarnerId("1");
         announcementEntity3.setCreator(1L);
-        announcementEntity3.setRuleId(challengeEntity.getId());
+        announcementEntity3.setRuleEntity(challengeEntity);
         announcementEntity3.setComment("announcement comment 3");
         announcementEntity3.setCreatedDate(createDate);
 
@@ -257,8 +260,7 @@ public class AnnouncementStorageTest {
         announcementFromEntity3.setCreator(announcementEntity3.getCreator());
         announcementFromEntity3.setComment(announcementEntity3.getComment());
         announcementFromEntity3.setCreatedDate(createDate.toString());
-        announcementFromEntity3.setChallengeId(announcementEntity3.getRuleId());
-        announcementFromEntity3.setId(announcementEntity3.getId());
+        announcementFromEntity3.setChallengeId(announcementEntity3.getRuleEntity().getId());
 
         List<Announcement> announcementList = new ArrayList<>();
         announcementList.add(announcementFromEntity1);
