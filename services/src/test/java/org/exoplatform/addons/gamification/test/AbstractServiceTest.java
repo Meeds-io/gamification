@@ -363,6 +363,10 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
       rule.setDomainEntity(newDomain(domain));
       rule.setType(ruleType);
       rule.setManagers(Collections.emptyList());
+      rule.setEndDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+              + 2 * MILLIS_IN_A_DAY))));
+      rule.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
+              - 2 * MILLIS_IN_A_DAY))));
       rule = ruleDAO.create(rule);
     }
     return rule;
@@ -494,7 +498,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(1L);
+    gHistory.setRuleEntity(rule);
     gHistory.setCreatedBy("gamification");
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
@@ -516,7 +520,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(1L);
+    gHistory.setRuleEntity(rule);
     gHistory.setCreatedBy("gamification");
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
@@ -539,11 +543,11 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(actionTitle);
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(rule.getId());
-    gHistory.setCreatedBy("gamification");
+    gHistory.setRuleEntity(rule);
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
     gHistory.setCreatedDate(fromDate);
+    gHistory.setCreatedBy("gamification");
     gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
     return gHistory;
@@ -562,7 +566,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(1L);
+    gHistory.setRuleEntity(rule);
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
@@ -585,7 +589,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(rule.getTitle());
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(1L);
+    gHistory.setRuleEntity(rule);
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");
@@ -610,7 +614,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setActionTitle(actionTitle);
     gHistory.setActionScore(rule.getScore());
     gHistory.setGlobalScore(rule.getScore());
-    gHistory.setRuleId(ruleId);
+    gHistory.setRuleEntity(rule);
     gHistory.setCreatedBy("gamification");
     gHistory.setDomainEntity(newDomain());
     gHistory.setObjectId("objectId");

@@ -321,30 +321,22 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountAnnouncementsByChallenge() {
-    assertEquals(0, (long) gamificationHistoryDAO.countAnnouncementsByChallenge(1L));
-    GamificationActionsHistoryDTO gamificationActionsHistoryDTO = newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    assertEquals((long) gamificationHistoryDAO.countAnnouncementsByChallenge(gamificationActionsHistoryDTO.getRuleId()), limit);
-  }
-
-  @Test
-  public void testFindAllAnnouncementByChallenge() {
-    GamificationActionsHistoryDTO gamificationActionsHistoryDTO = newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(gamificationActionsHistoryDTO.getRuleId(), offset, limit, PeriodType.ALL, null).size(),
-                 limit);
-  }
-
-  @Test
   public void testFindAllAnnouncementByChallengeByDate() {
-    GamificationActionsHistoryDTO gamificationActionsHistoryDTO = newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    assertEquals(gamificationHistoryDAO.findAllAnnouncementByChallenge(gamificationActionsHistoryDTO.getRuleId(), offset, limit, PeriodType.WEEK, null).size(),
-                 limit);
+    DomainEntity domainEntity = newDomain();
+    RuleEntity ruleEntity = newRule("rule", domainEntity.getId());
+    assertEquals(0, (long) gamificationHistoryDAO.countAnnouncementsByChallenge(1L));
+    assertEquals(0,
+            gamificationHistoryDAO.findAllAnnouncementByChallenge(ruleEntity.getId(), offset, limit, PeriodType.ALL, null)
+                    .size());
+    newGamificationActionsHistoryWithRuleId("action history", ruleEntity.getId());
+    newGamificationActionsHistoryWithRuleId("action history 2", ruleEntity.getId());
+    newGamificationActionsHistoryWithRuleId("action history 3", ruleEntity.getId());
+    assertEquals(limit,
+            gamificationHistoryDAO.findAllAnnouncementByChallenge(ruleEntity.getId(), offset, limit, PeriodType.ALL, null)
+                    .size());
+    assertEquals(limit, gamificationHistoryDAO.findAllAnnouncementByChallenge(ruleEntity.getId(), offset, limit, PeriodType.WEEK, null).size());
+    assertEquals(limit, (long) gamificationHistoryDAO.countAnnouncementsByChallenge(ruleEntity.getId()));
+
   }
 
   @Test
@@ -863,8 +855,8 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
     assertNotNull(result);
     assertEquals(2, result.size());
-    assertEquals(Arrays.asList(histories.get(2).getRuleId(), histories.get(1).getRuleId()),
-                 result.stream().collect(Collectors.toList()));
+    assertEquals(Arrays.asList(histories.get(2).getRuleEntity().getId(), histories.get(1).getRuleEntity().getId()),
+                 new ArrayList<>(result));
   }
   
 

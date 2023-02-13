@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.api.persistence.ExoEntity;
@@ -148,32 +149,39 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 )
 @NamedQuery(
     name = "GamificationActionsHistory.countAnnouncementsByChallenge",
-    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"
+    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.countAnnouncementsByChallengeAndEarnerType",
-    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.earnerType = :earnerType"
+    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.earnerType = :earnerType"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallenge",
-    query = "SELECT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
-    query = "SELECT a FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.earnerType = :earnerType order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.earnerType = :earnerType order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
-    query = "SELECT a FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallengeByDateByEarnerType",
-    query = "SELECT a FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate AND a.earnerType = :earnerType order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate AND a.earnerType = :earnerType order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findMostRealizedRuleIds",
-    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type= :type AND (a.domainEntity.audienceId in (:spacesIds) OR a.domainEntity.audienceId = null ) AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
-            "group by a.ruleId order by count(*) DESC"
+    query = "SELECT r.id FROM GamificationActionsHistory a" +
+            " JOIN a.ruleEntity r " +
+            " ON  (r.startDate IS NULL OR r.startDate <= :nowDate)" +
+            " AND (r.endDate IS NULL OR r.endDate >= :nowDate)" +
+            " JOIN a.domainEntity d " +
+            " ON d.audienceId IS NULL OR d.audienceId IN (:spacesIds)" +
+            " WHERE a.type= :type" +
+            " AND a.createdDate >= :fromDate AND a.createdDate < :toDate" +
+            " group by r.id order by count(*) DESC"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -215,8 +223,9 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   @JoinColumn(name = "DOMAIN_ID")
   private DomainEntity      domainEntity;
 
-  @Column(name = "RULE_ID")
-  private Long              ruleId;
+  @ManyToOne
+  @JoinColumn(name = "RULE_ID")
+  private RuleEntity        ruleEntity;
 
   @Column(name = "ACTIVITY_ID")
   private Long              activityId;
@@ -323,12 +332,12 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     this.domainEntity = domainEntity;
   }
 
-  public Long getRuleId() {
-    return ruleId;
+  public RuleEntity getRuleEntity() {
+    return ruleEntity;
   }
 
-  public void setRuleId(Long ruleId) {
-    this.ruleId = ruleId;
+  public void setRuleEntity(RuleEntity ruleEntity) {
+    this.ruleEntity = ruleEntity;
   }
 
   public Long getActivityId() {
