@@ -258,7 +258,7 @@ export default {
       this.showSearch = true;
     },
     initPeopleSuggestionsList() {
-      this.$userService.getSuggestionsUsers().then(data => {
+      this.$userService.getUserSuggestions().then(data => {
         this.peopleSuggestionsList = data.items;
           
         // get suggestions from profile owner's connections
