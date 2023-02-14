@@ -171,7 +171,7 @@ export default {
         const days = Math.round((this.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.openIn', {0: days});
       } else {
-        const days = Math.round((this.endDate.getTime() - this.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.daysLeft', {0: days});
       }
     },
