@@ -141,6 +141,7 @@ export default {
     MAX_LENGTH: 1300,
     editorFocus: false,
     editor: false,
+    canAnnounce: false
   }),
   computed: {
     ruleTitle() {
@@ -199,9 +200,7 @@ export default {
       return this.program?.audienceId;
     },
     announceDisabled() {
-      return !this.validInput
-          || !this.comment
-          || !this.comment.length;
+      return !this.validInput || !this.comment || !this.comment.length || this.canAnnounce;
     }
   },
   watch: {
@@ -267,6 +266,7 @@ export default {
       };
 
       this.$refs.ruleDetailDrawer.startLoading();
+      this.canAnnounce = true;
       this.$challengesServices.saveAnnouncement(announcement)
         .then(createdAnnouncement => {
           this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
@@ -287,7 +287,10 @@ export default {
           }
           this.$engagementCenterUtils.displayAlert(msg, 'error');
         })
-        .finally(() => this.$refs.ruleDetailDrawer.endLoading());
+        .finally(() => {
+          this.$refs.ruleDetailDrawer.endLoading();
+          this.canAnnounce = false;
+        });
     },
     showEditor() {
       this.editor = true;
