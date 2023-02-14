@@ -34,6 +34,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <set-method>addListener</set-method>
         <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
       </component-plugin>
+      <component-plugin>
+        <name>exo.gamification.domain.enable</name>
+        <set-method>addListener</set-method>
+        <type>org.exoplatform.addons.gamification.listener.gamification.domain.GamificationDomainListener</type>
+      </component-plugin>
       <component-plugin profiles="analytics">
         <name>exo.gamification.domain.delete</name>
         <set-method>addListener</set-method>
