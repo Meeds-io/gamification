@@ -167,7 +167,7 @@ export default {
     remainingPeriodLabel() {
       if (this.endDate < new Date()) {
         return this.$t('challenges.label.over');
-      } else if (this.startDate > new Date()) {
+      } else if (this.startDate.getTime() > new Date().getTime()) {
         const days = Math.round((this.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.openIn', {0: days});
       } else {
