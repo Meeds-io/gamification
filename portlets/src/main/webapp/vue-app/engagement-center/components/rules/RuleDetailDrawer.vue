@@ -186,7 +186,7 @@ export default {
     },
     DateInfo() {
       if (this.isActiveRule) {
-        const days = Math.round((this.endDate - this.startDate) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.endDate - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeEndIn', {0: days});
       } else if (this.endDate < new Date().getTime()) {
         return this.$t('rule.detail.challengeEnded');
