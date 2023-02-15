@@ -36,7 +36,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-container class="pa-0">
-        <v-progress-linear v-if="loading" indeterminate />
         <v-row no-gutters>
           <v-col
             v-for="challenge in challenges"
@@ -53,8 +52,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-row>
         <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
           <v-btn
-            :loading="loading"
-            :disabled="loading"
             class="loadMoreButton ma-auto mt-4 btn"
             block
             @click="$root.$emit('challenge-load-more', domain.id)">
@@ -79,10 +76,6 @@ export default {
       default: function() {
         return {};
       },
-    },
-    loading: {
-      type: Boolean,
-      default: false
     },
     canEditChallenge: {
       type: Boolean,
