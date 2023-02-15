@@ -90,17 +90,18 @@
     <template v-if="!automaticRule && isActiveRule && editor" slot="footer">
       <div class="d-flex mr-2">
         <v-spacer />
-        <button
+        <v-btn
           class="ignore-vuetify-classes btn mx-1"
           @click="close">
           {{ $t('rule.detail.label.cancel') }}
-        </button>
-        <button
-          :disabled="announceDisabled"
+        </v-btn>
+        <v-btn
+          :loading="sending"
+          :disabled="btnDisabled"
           class="ignore-vuetify-classes btn btn-primary"
           @click="createAnnouncement">
           {{ $t('rule.detail.label.announce') }}
-        </button>
+        </v-btn>
       </div>
     </template>
   </exo-drawer>
@@ -141,7 +142,7 @@ export default {
     MAX_LENGTH: 1300,
     editorFocus: false,
     editor: false,
-    canAnnounce: false
+    sending: false
   }),
   computed: {
     ruleTitle() {
@@ -199,8 +200,8 @@ export default {
     spaceId() {
       return this.program?.audienceId;
     },
-    announceDisabled() {
-      return !this.validInput || !this.comment || !this.comment.length || this.canAnnounce;
+    btnDisabled() {
+      return !this.validInput || !this.comment || !this.comment.length;
     }
   },
   watch: {
@@ -213,6 +214,15 @@ export default {
         }
       }
     },
+    watch: {
+      sending() {
+        if (this.sending) {
+          this.$refs.ruleDetailDrawer.startLoading();
+        } else {
+          this.$refs.ruleDetailDrawer.endLoading();
+        }
+      }
+    }
   },
   created() {
     this.$root.$on('rule-detail-drawer', (rule, editorFocus) => {
@@ -264,9 +274,7 @@ export default {
         challengeTitle: this.rule.title,
         templateParams: this.templateParams,
       };
-
-      this.$refs.ruleDetailDrawer.startLoading();
-      this.canAnnounce = true;
+      this.sending = true;
       this.$challengesServices.saveAnnouncement(announcement)
         .then(createdAnnouncement => {
           this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
@@ -288,8 +296,7 @@ export default {
           this.$engagementCenterUtils.displayAlert(msg, 'error');
         })
         .finally(() => {
-          this.$refs.ruleDetailDrawer.endLoading();
-          this.canAnnounce = false;
+          this.sending = false;
         });
     },
     showEditor() {
