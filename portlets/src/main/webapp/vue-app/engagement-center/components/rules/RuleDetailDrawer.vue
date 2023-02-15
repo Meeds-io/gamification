@@ -90,17 +90,18 @@
     <template v-if="!automaticRule && isActiveRule && editor" slot="footer">
       <div class="d-flex mr-2">
         <v-spacer />
-        <button
-          class="ignore-vuetify-classes btn mx-1"
+        <v-btn
+          class="btn me-2"
           @click="close">
           {{ $t('rule.detail.label.cancel') }}
-        </button>
-        <button
-          :disabled="announceDisabled"
-          class="ignore-vuetify-classes btn btn-primary"
+        </v-btn>
+        <v-btn
+          :loading="sending"
+          :disabled="btnDisabled"
+          class="btn btn-primary"
           @click="createAnnouncement">
           {{ $t('rule.detail.label.announce') }}
-        </button>
+        </v-btn>
       </div>
     </template>
   </exo-drawer>
@@ -141,6 +142,7 @@ export default {
     MAX_LENGTH: 1300,
     editorFocus: false,
     editor: false,
+    sending: false
   }),
   computed: {
     ruleTitle() {
@@ -198,10 +200,8 @@ export default {
     spaceId() {
       return this.program?.audienceId;
     },
-    announceDisabled() {
-      return !this.validInput
-          || !this.comment
-          || !this.comment.length;
+    btnDisabled() {
+      return !this.validInput || !this.comment || !this.comment.length;
     }
   },
   watch: {
@@ -214,6 +214,15 @@ export default {
         }
       }
     },
+    watch: {
+      sending() {
+        if (this.sending) {
+          this.$refs.ruleDetailDrawer.startLoading();
+        } else {
+          this.$refs.ruleDetailDrawer.endLoading();
+        }
+      }
+    }
   },
   created() {
     this.$root.$on('rule-detail-drawer', (rule, editorFocus) => {
@@ -265,8 +274,7 @@ export default {
         challengeTitle: this.rule.title,
         templateParams: this.templateParams,
       };
-
-      this.$refs.ruleDetailDrawer.startLoading();
+      this.sending = true;
       this.$challengesServices.saveAnnouncement(announcement)
         .then(createdAnnouncement => {
           this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
@@ -287,7 +295,9 @@ export default {
           }
           this.$engagementCenterUtils.displayAlert(msg, 'error');
         })
-        .finally(() => this.$refs.ruleDetailDrawer.endLoading());
+        .finally(() => {
+          this.sending = false;
+        });
     },
     showEditor() {
       this.editor = true;
