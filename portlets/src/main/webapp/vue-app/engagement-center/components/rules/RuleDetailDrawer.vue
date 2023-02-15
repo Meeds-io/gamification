@@ -91,14 +91,14 @@
       <div class="d-flex mr-2">
         <v-spacer />
         <v-btn
-          class="ignore-vuetify-classes btn mx-1"
+          class="btn me-2"
           @click="close">
           {{ $t('rule.detail.label.cancel') }}
         </v-btn>
         <v-btn
           :loading="sending"
           :disabled="btnDisabled"
-          class="ignore-vuetify-classes btn btn-primary"
+          class="btn btn-primary"
           @click="createAnnouncement">
           {{ $t('rule.detail.label.announce') }}
         </v-btn>
