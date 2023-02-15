@@ -183,16 +183,16 @@ export default {
       return new Date(this.rule?.endDate).getTime() || 0;
     },
     isActiveRule() {
-      return this.automaticRule || (this.startDate <= new Date().getTime() && this.endDate >= new Date().getTime());
+      return this.automaticRule || (this.startDate <= Date.now() && this.endDate >= Date.now());
     },
     DateInfo() {
       if (this.isActiveRule) {
-        const days = Math.round((this.endDate - this.startDate) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.endDate - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeEndIn', {0: days});
-      } else if (this.endDate < new Date().getTime()) {
+      } else if (this.endDate < Date.now()) {
         return this.$t('rule.detail.challengeEnded');
       } else {
-        const days = Math.round((this.startDate - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.startDate - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeOpenIn', {0: days});
       }
     },
