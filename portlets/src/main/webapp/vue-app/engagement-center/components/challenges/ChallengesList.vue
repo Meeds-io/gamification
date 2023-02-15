@@ -24,7 +24,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :key="domain.id"
       :domain="domain"
       :challenges="challengesByDomainId[domain.id]"
-      :loading="loading"
       :can-edit-challenge="canEditChallenge" />
   </v-expansion-panels>
 </template>
@@ -42,10 +41,6 @@ export default {
       default: function() {
         return {};
       },
-    },
-    loading: {
-      type: Boolean,
-      default: false,
     },
     canEditChallenge: {
       type: Boolean,
