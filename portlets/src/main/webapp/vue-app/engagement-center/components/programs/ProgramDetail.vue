@@ -49,21 +49,43 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
       </v-img>
     </div>
-    <div class="pt-5">
-      <v-list-item two-line class="px-0">
-        <v-list-item-content>
-          <v-list-item-title class="text-color font-weight-bold">
-            {{ $t('programs.details.label.description') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="text-color pt-4">
-            <div class="d-flex flex-grow-0 flex-shrink-1 pb-5 rich-editor-content">
-              <span
-                class="mt-1 align-self-center text-wrap text-left text-break"
-                v-sanitized-html="programDescription"></span>
+    <div class="d-sm-flex">
+      <div class="me-auto pe-sm-6 pt-5">
+        <v-list-item two-line class="px-0">
+          <v-list-item-content class="pa-0">
+            <div class="text-subtitle-1 text-color font-weight-bold mb-0">
+              {{ $t('programs.details.label.description') }}
             </div>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+            <v-list-item-subtitle class="text-color pt-2">
+              <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
+                <span
+                  class="mt-1 align-self-center text-wrap text-left text-break"
+                  v-sanitized-html="programDescription"></span>
+              </div>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </div>
+      <div class="pt-sm-5 col-sm-3">
+        <div class="text-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
+          {{ $t('programs.details.label.programOwners') }}
+        </div>
+        <engagement-center-avatars-list
+          :avatars="owners"
+          :max-avatars-to-show="3"
+          :avatars-count="ownersCount"
+          :size="25"
+          class="justify-sm-end pt-2"
+          @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+        <div class="text-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+          {{ $t('programs.details.label.audienceSpace') }}
+        </div>
+        <exo-space-avatar
+          :space="space"
+          :size="32"
+          class="justify-end pt-2"
+          popover />
+      </div>
     </div>
     <div class="pt-5">
       <v-list-item two-line class="px-0">
@@ -229,6 +251,28 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
     },
+    space() {
+      return this.program?.space;
+    },
+    spaceManagers() {
+      return this.space?.managers;
+    },
+    spaceManagersList() {
+      return (this.spaceManagers || []).map(owner => ({
+        userName: owner
+      }));
+    },
+    addedOwners() {
+      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+        userName: owner.remoteId
+      }));
+    },
+    owners() {
+      return this.addedOwners.concat(this.spaceManagersList);
+    },
+    ownersCount() {
+      return this.owners?.length;
+    }
   },
   watch: {
     program() {
