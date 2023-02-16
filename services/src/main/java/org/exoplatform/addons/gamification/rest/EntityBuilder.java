@@ -105,6 +105,7 @@ public class EntityBuilder {
                                 domain.getLastModifiedBy(),
                                 domain.getLastModifiedDate(),
                                 domain.isEnabled(),
+                                domain.isDeleted(),
                                 domain.getBudget(),
                                 domain.getType(),
                                 domain.getCoverUrl(),
