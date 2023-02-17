@@ -177,6 +177,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
             " JOIN a.ruleEntity r " +
             " ON  (r.startDate IS NULL OR r.startDate <= :nowDate)" +
             " AND (r.endDate IS NULL OR r.endDate >= :nowDate)" +
+            " AND r.isEnabled = true AND r.isDeleted = false" +
             " JOIN a.domainEntity d " +
             " ON d.audienceId IS NULL OR d.audienceId IN (:spacesIds)" +
             " WHERE a.type= :type" +
