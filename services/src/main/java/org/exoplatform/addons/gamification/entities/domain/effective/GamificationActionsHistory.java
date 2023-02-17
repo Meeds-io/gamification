@@ -109,7 +109,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findDomainScoreByUserId",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.ProfileReputation(g.domainEntity.id,SUM(g.actionScore))"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     GROUP BY  g.domainEntity.id"
+        + " FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.domainEntity IS NOT NULL GROUP BY  g.domainEntity.id"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreBetweenDate",
