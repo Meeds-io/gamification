@@ -67,7 +67,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item-content>
           </v-list-item>
         </div>
-        <div class="pt-sm-5 col-sm-3">
+        <div class="pt-sm-5 px-0 col-sm-3">
           <div class="text-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
             {{ $t('programs.details.label.programOwners') }}
           </div>
@@ -84,7 +84,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <exo-space-avatar
             :space="space"
             :size="32"
-            class="justify-end pt-2"
+            class="d-flex justify-sm-end pt-2"
             popover />
         </div>
       </div>
