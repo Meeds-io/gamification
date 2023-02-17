@@ -114,7 +114,6 @@ export default {
     owners() {
       return this.addedOwnersList.concat(this.spaceManagersList);
     },
-
     ownersCount() {
       return this.owners?.length;
     }
