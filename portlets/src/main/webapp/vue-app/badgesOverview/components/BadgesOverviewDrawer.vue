@@ -79,7 +79,7 @@ export default {
         })
         .then(data => {
           let badges = data || [];
-          badges = badges.filter(tmp => tmp.domain === this.badge.zone);
+          badges = badges.filter(tmp => tmp.domainDTO?.title === this.badge.zone);
           badges.push({
             isCurrent: true,
             neededScore: this.badge.score,
