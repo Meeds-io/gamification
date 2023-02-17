@@ -356,8 +356,13 @@ export default {
       this.$root.$emit('realization-open-edit-drawer', this.realization, this.actionLabel);
     },
     openProgramDetail() {
-      this.$root.$emit('open-program-detail', this.program);
-      window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
+      this.$programsServices.getProgramById(this.program.id)
+        .then(program => {
+          if (program && program.id) {
+            this.$root.$emit('open-program-detail', program);
+            window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
+          }
+        });
     },
   }
 };
