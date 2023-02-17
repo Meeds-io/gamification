@@ -16,153 +16,156 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div id="engagementCenterProgramDetail" class="pa-2 pa-sm-5">
-    <div class="py-2 py-sm-5 d-flex">
-      <v-tooltip bottom>
-        <template #activator="{ on }">
-          <div
-            v-on="on"
-            class="d-flex my-auto clickable"
-            @click="backToProgramList()">
-            <v-icon
-              class="px-3"
-              size="18">
-              fas fa-arrow-left
-            </v-icon>
-            <div class="text-header-title"> {{ programTitle }} </div>
-          </div>
-        </template>
-        <span>{{ $t('programs.details.label.BackToList') }}</span>
-      </v-tooltip>
-      <v-spacer />
-      <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-    </div>
-    <div class="d-flex flex-grow-1">
-      <v-img
-        :src="programCover"
-        :alt="$t('programs.cover.default')"
-        :min-height="36"
-        :max-height="height"
-        height="auto"
-        min-width="100%"
-        width="100%"
-        class="d-flex primary--text border-color">
-        <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
-      </v-img>
-    </div>
-    <div class="d-sm-flex">
-      <div class="me-auto pe-sm-6 pt-5">
-        <v-list-item two-line class="px-0">
-          <v-list-item-content class="pa-0">
-            <div class="text-subtitle-1 text-color font-weight-bold mb-0">
-              {{ $t('programs.details.label.description') }}
+    <div v-if="!isDeleted">
+      <div class="py-2 py-sm-5 d-flex">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
+            <div
+              v-on="on"
+              class="d-flex my-auto clickable"
+              @click="backToProgramList()">
+              <v-icon
+                class="px-3"
+                size="18">
+                fas fa-arrow-left
+              </v-icon>
+              <div class="text-header-title"> {{ programTitle }} </div>
             </div>
-            <v-list-item-subtitle class="text-color pt-2">
-              <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
-                <span
-                  class="mt-1 align-self-center text-wrap text-left text-break"
-                  v-sanitized-html="programDescription"></span>
+          </template>
+          <span>{{ $t('programs.details.label.BackToList') }}</span>
+        </v-tooltip>
+        <v-spacer />
+        <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+      </div>
+      <div class="d-flex flex-grow-1">
+        <v-img
+          :src="programCover"
+          :alt="$t('programs.cover.default')"
+          :min-height="36"
+          :max-height="height"
+          height="auto"
+          min-width="100%"
+          width="100%"
+          class="d-flex primary--text border-color">
+          <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
+        </v-img>
+      </div>
+      <div class="d-sm-flex">
+        <div class="me-auto pe-sm-6 pt-5">
+          <v-list-item two-line class="px-0">
+            <v-list-item-content class="pa-0">
+              <div class="text-subtitle-1 text-color font-weight-bold mb-0">
+                {{ $t('programs.details.label.description') }}
               </div>
+              <v-list-item-subtitle class="text-color pt-2">
+                <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
+                  <span
+                    class="mt-1 align-self-center text-wrap text-left text-break"
+                    v-sanitized-html="programDescription"></span>
+                </div>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+        <div class="pt-sm-5 px-0 col-sm-3">
+          <div class="text-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
+            {{ $t('programs.details.label.programOwners') }}
+          </div>
+          <engagement-center-avatars-list
+            :avatars="owners"
+            :max-avatars-to-show="3"
+            :avatars-count="ownersCount"
+            :size="25"
+            class="justify-sm-end pt-2"
+            @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+          <div class="text-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+            {{ $t('programs.details.label.audienceSpace') }}
+          </div>
+          <exo-space-avatar
+            :space="space"
+            :size="32"
+            class="d-flex justify-sm-end pt-2"
+            popover />
+        </div>
+      </div>
+      <div class="pt-5">
+        <v-list-item two-line class="px-0">
+          <v-list-item-content>
+            <span class="text-header-title subtitle-1 d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+            <v-list-item-title class="text-color font-weight-bold">
+              {{ $t('programs.details.label.rulesOfProgram') }}
+            </v-list-item-title>
+            <v-flex v-if="canManageRule" class="d-flex  mt-5">
+              <div class="text-no-wrap mt-sm-3">
+                <div
+                  class="d-inline-block">
+                  <v-btn
+                    class="btn btn-primary"
+                    small
+                    @click="openNewRuleForm">
+                    <v-icon dark>
+                      mdi-plus
+                    </v-icon>
+                    <span class="ms-2 d-none d-lg-inline subtitle-1">
+                      {{ $t('programs.details.rule.button.addRule') }}
+                    </span>
+                  </v-btn>
+                </div>
+              </div>
+              <div
+                class="d-flex ms-auto">
+                <engagement-center-rule-filter @filter-applied="applyFilter" />
+              </div>
+            </v-flex>
+            <v-list-item-subtitle class="text-color pt-4">
+              <v-data-table
+                :headers="rulesHeaders"
+                :items="programRulesToDisplay"
+                :options.sync="options"
+                :server-items-length="totalSize"
+                :no-data-text="$t('programs.details.rules.noRules')"
+                :loading="loadingRules"
+                :show-rows-border="false"
+                mobile-breakpoint="0"
+                hide-default-footer
+                disable-sort>
+                <template slot="item" slot-scope="props">
+                  <engagement-center-rule-item
+                    :rule="props.item"
+                    :can-manage-rule="canManageRule"
+                    :action-value-extensions="actionValueExtensions"
+                    @delete-rule="confirmDelete" />
+                </template>
+                <template v-if="displayFooter" #footer="{props}">
+                  <v-divider />
+                  <div class="text-center">
+                    <v-pagination
+                      v-model="options.page"
+                      :length="props.pagination.pageCount"
+                      circle
+                      light
+                      flat
+                      @input="retrieveProgramRules" />
+                  </div>
+                </template>
+              </v-data-table>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-      </div>
-      <div class="pt-sm-5 px-0 col-sm-3">
-        <div class="text-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
-          {{ $t('programs.details.label.programOwners') }}
-        </div>
-        <engagement-center-avatars-list
-          :avatars="owners"
-          :max-avatars-to-show="3"
-          :avatars-count="ownersCount"
-          :size="25"
-          class="justify-sm-end pt-2"
-          @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
-        <div class="text-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
-          {{ $t('programs.details.label.audienceSpace') }}
-        </div>
-        <exo-space-avatar
-          :space="space"
-          :size="32"
-          class="d-flex justify-sm-end pt-2"
-          popover />
+        <engagement-center-rule-form-drawer
+          :events="events"
+          :program="program" />
+        <exo-confirm-dialog
+          v-if="confirmDelete"
+          ref="deleteRuleConfirmDialog"
+          :message="deleteConfirmMessage"
+          :title="$t('programs.details.title.confirmDeleteRule')"
+          :ok-label="$t('programs.details.ok.button')"
+          :cancel-label="$t('programs.details.cancel.button')"
+          @ok="deleteRule" />
       </div>
     </div>
-    <div class="pt-5">
-      <v-list-item two-line class="px-0">
-        <v-list-item-content>
-          <span class="text-header-title subtitle-1 d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-          <v-list-item-title class="text-color font-weight-bold">
-            {{ $t('programs.details.label.rulesOfProgram') }}
-          </v-list-item-title>
-          <v-flex v-if="canManageRule" class="d-flex  mt-5">
-            <div class="text-no-wrap mt-sm-3">
-              <div
-                class="d-inline-block">
-                <v-btn
-                  class="btn btn-primary"
-                  small
-                  @click="openNewRuleForm">
-                  <v-icon dark>
-                    mdi-plus
-                  </v-icon>
-                  <span class="ms-2 d-none d-lg-inline subtitle-1">
-                    {{ $t('programs.details.rule.button.addRule') }}
-                  </span>
-                </v-btn>
-              </div>
-            </div>
-            <div
-              class="d-flex ms-auto">
-              <engagement-center-rule-filter @filter-applied="applyFilter" />
-            </div>
-          </v-flex>
-          <v-list-item-subtitle class="text-color pt-4">
-            <v-data-table
-              :headers="rulesHeaders"
-              :items="programRulesToDisplay"
-              :options.sync="options"
-              :server-items-length="totalSize"
-              :no-data-text="$t('programs.details.rules.noRules')"
-              :loading="loadingRules"
-              :show-rows-border="false"
-              mobile-breakpoint="0"
-              hide-default-footer
-              disable-sort>
-              <template slot="item" slot-scope="props">
-                <engagement-center-rule-item
-                  :rule="props.item"
-                  :can-manage-rule="canManageRule"
-                  :action-value-extensions="actionValueExtensions"
-                  @delete-rule="confirmDelete" />
-              </template>
-              <template v-if="displayFooter" #footer="{props}">
-                <v-divider />
-                <div class="text-center">
-                  <v-pagination
-                    v-model="options.page"
-                    :length="props.pagination.pageCount"
-                    circle
-                    light
-                    flat
-                    @input="retrieveProgramRules" />
-                </div>
-              </template>
-            </v-data-table>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <engagement-center-rule-form-drawer
-        :events="events"
-        :program="program" />
-      <exo-confirm-dialog
-        v-if="confirmDelete"
-        ref="deleteRuleConfirmDialog"
-        :message="deleteConfirmMessage"
-        :title="$t('programs.details.title.confirmDeleteRule')"
-        :ok-label="$t('programs.details.ok.button')"
-        :cancel-label="$t('programs.details.cancel.button')"
-        @ok="deleteRule" />
-    </div>
+    <engagement-center-program-deleted v-else @back-to-list="backToProgramList" />
   </div>
 </template>
 
@@ -228,6 +231,12 @@ export default {
     },
     programId() {
       return this.program?.id;
+    },
+    spaceId() {
+      return this.program?.space?.id;
+    },
+    isDeleted() {
+      return this.program?.deleted;
     },
     rulesHeaders() {
       return [

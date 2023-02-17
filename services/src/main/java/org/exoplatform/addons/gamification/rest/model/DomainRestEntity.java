@@ -53,6 +53,8 @@ public class DomainRestEntity {
 
   private boolean        enabled;
 
+  private boolean        deleted;
+
   private Long           budget;
 
   private String         type;
@@ -77,6 +79,7 @@ public class DomainRestEntity {
                           String lastModifiedBy,
                           String lastModifiedDate,
                           boolean enabled,
+                          boolean deleted,
                           Long budget,
                           String type,
                           String coverUrl,
@@ -93,6 +96,7 @@ public class DomainRestEntity {
     this.lastModifiedBy = lastModifiedBy;
     this.lastModifiedDate = lastModifiedDate;
     this.enabled = enabled;
+    this.deleted = deleted;
     this.budget = budget;
     this.type = type;
     this.coverUrl = coverUrl;
