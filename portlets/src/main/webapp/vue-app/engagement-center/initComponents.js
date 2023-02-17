@@ -35,6 +35,7 @@ import ProgramDrawer from './components/programs/ProgramDrawer.vue';
 import ProgramOwnersDrawer from './components/programs/ProgramOwnersDrawer.vue';
 import ProgramDetail from './components/programs/ProgramDetail.vue';
 import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment.vue';
+import ProgramDeleted from './components/programs/ProgramDeleted.vue';
 
 import RuleTitle from './components/rules/RuleTitle.vue';
 import RuleItem from './components/rules/RuleItem.vue';
@@ -69,6 +70,7 @@ const components = {
   'engagement-center-program-owners-drawer': ProgramOwnersDrawer,
   'engagement-center-program-detail': ProgramDetail,
   'engagement-center-program-owner-assignment': ProgramOwnerAssignment,
+  'engagement-center-program-deleted': ProgramDeleted,
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-form-drawer': RuleFormDrawer,
