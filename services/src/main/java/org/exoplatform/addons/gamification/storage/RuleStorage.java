@@ -71,23 +71,14 @@ public class RuleStorage {
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    List<Long> rulesIds;
-    if (StringUtils.isBlank(ruleFilter.getTerm())) {
-      rulesIds = ruleDAO.findRulesIdsByFilter(ruleFilter, offset, limit);
-    } else {
-      rulesIds =
-               ruleSearchConnector.search(ruleFilter, offset, limit).stream().map(RuleEntity::getId).collect(Collectors.toList());
-    }
-    return rulesIds;
+    return ruleDAO.findRulesIdsByFilter(ruleFilter, offset, limit);
   }
 
   public int countRulesByFilter(RuleFilter ruleFilter) {
-    if (ruleFilter == null) {
-      return ruleDAO.count().intValue();
-    } else if (StringUtils.isBlank(ruleFilter.getTerm())) {
+    if (ruleFilter != null) {
       return ruleDAO.countRulesByFilter(ruleFilter);
     } else {
-      return ruleSearchConnector.count(ruleFilter);
+      return ruleDAO.count().intValue();
     }
   }
 

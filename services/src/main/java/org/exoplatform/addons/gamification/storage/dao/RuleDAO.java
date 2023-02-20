@@ -236,6 +236,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private <T> void addQueryFilterParameters(RuleFilter filter, TypedQuery<T> query) {
+    if (StringUtils.isNotBlank(filter.getTerm())) {
+      query.setParameter("term", "%" + StringUtils.lowerCase(filter.getTerm()) + "%");
+    }
     if (filter.getDomainId() > 0) {
       query.setParameter(DOMAIN_ID, filter.getDomainId());
     }
@@ -275,6 +278,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) {
+    if (StringUtils.isNotBlank(filter.getTerm())) {
+      suffixes.add("Term");
+      predicates.add("LOWER(r.title) LIKE :term");
+    }
     if (filter.getDomainId() > 0) {
       suffixes.add("Domain");
       predicates.add("r.domainEntity.id = :domainId");
