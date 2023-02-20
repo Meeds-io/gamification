@@ -41,7 +41,8 @@ import RuleTitle from './components/rules/RuleTitle.vue';
 import RuleItem from './components/rules/RuleItem.vue';
 import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
 import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
-import RuleFilter from './components/rules/RuleFilter.vue';
+import RulesToolbar from './components/rules/RulesToolbar.vue';
+import NoRuleFound from './components/rules/NoRuleFound.vue';
 
 import Assignment from './components/common/Assignment.vue';
 import AvatarsList from './components/common/AvatarsList.vue';
@@ -75,7 +76,8 @@ const components = {
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-form-drawer': RuleFormDrawer,
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
-  'engagement-center-rule-filter': RuleFilter,
+  'engagement-center-rules-toolbar': RulesToolbar,
+  'engagement-center-no-rule-found': NoRuleFound,
   'engagement-center-winners-details': WinnersDrawer,
   'engagement-center-assignment': Assignment,
   'engagement-center-avatars-list': AvatarsList,

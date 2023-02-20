@@ -2,12 +2,9 @@ package org.exoplatform.addons.gamification.storage;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -19,15 +16,12 @@ import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class RuleStorage {
-
-  private RuleSearchConnector    ruleSearchConnector;
-
+  
   private RuleDAO                ruleDAO;
 
   private GamificationHistoryDAO gamificationHistoryDAO;
 
-  public RuleStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, GamificationHistoryDAO gamificationHistoryDAO) {
-    this.ruleSearchConnector = ruleSearchConnector;
+  public RuleStorage(RuleDAO ruleDAO, GamificationHistoryDAO gamificationHistoryDAO) {
     this.ruleDAO = ruleDAO;
     this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
@@ -71,23 +65,14 @@ public class RuleStorage {
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
-    List<Long> rulesIds;
-    if (StringUtils.isBlank(ruleFilter.getTerm())) {
-      rulesIds = ruleDAO.findRulesIdsByFilter(ruleFilter, offset, limit);
-    } else {
-      rulesIds =
-               ruleSearchConnector.search(ruleFilter, offset, limit).stream().map(RuleEntity::getId).collect(Collectors.toList());
-    }
-    return rulesIds;
+    return ruleDAO.findRulesIdsByFilter(ruleFilter, offset, limit);
   }
 
   public int countRulesByFilter(RuleFilter ruleFilter) {
-    if (ruleFilter == null) {
-      return ruleDAO.count().intValue();
-    } else if (StringUtils.isBlank(ruleFilter.getTerm())) {
+    if (ruleFilter != null) {
       return ruleDAO.countRulesByFilter(ruleFilter);
     } else {
-      return ruleSearchConnector.count(ruleFilter);
+      return ruleDAO.count().intValue();
     }
   }
 
