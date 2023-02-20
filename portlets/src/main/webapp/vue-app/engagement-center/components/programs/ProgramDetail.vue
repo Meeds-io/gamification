@@ -95,35 +95,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item-title class="text-color font-weight-bold">
               {{ $t('programs.details.label.rulesOfProgram') }}
             </v-list-item-title>
-            <v-flex v-if="canManageRule" class="d-flex  mt-5">
-              <div class="text-no-wrap mt-sm-3">
-                <div
-                  class="d-inline-block">
-                  <v-btn
-                    class="btn btn-primary"
-                    small
-                    @click="openNewRuleForm">
-                    <v-icon dark>
-                      mdi-plus
-                    </v-icon>
-                    <span class="ms-2 d-none d-lg-inline subtitle-1">
-                      {{ $t('programs.details.rule.button.addRule') }}
-                    </span>
-                  </v-btn>
-                </div>
-              </div>
-              <div
-                class="d-flex ms-auto">
-                <engagement-center-rule-filter @filter-applied="applyFilter" />
-              </div>
-            </v-flex>
+            <engagement-center-rules-toolbar
+              :can-manage-rule="canManageRule"
+              :keyword="keyword"
+              :filter="filter"
+              @keyword-changed="keyword = $event"
+              @filter-changed="filter = $event" />
             <v-list-item-subtitle class="text-color pt-4">
               <v-data-table
                 :headers="rulesHeaders"
                 :items="programRulesToDisplay"
                 :options.sync="options"
                 :server-items-length="totalSize"
-                :no-data-text="$t('programs.details.rules.noRules')"
                 :loading="loadingRules"
                 :show-rows-border="false"
                 mobile-breakpoint="0"
@@ -135,6 +118,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     :can-manage-rule="canManageRule"
                     :action-value-extensions="actionValueExtensions"
                     @delete-rule="confirmDelete" />
+                </template>
+                <template slot="no-data">
+                  <engagement-center-no-rule-found v-if="keyword" @keyword-changed="keyword = $event" />
+                  <span v-else> {{ $t('programs.details.rules.noRules') }}</span>
                 </template>
                 <template v-if="displayFooter" #footer="{props}">
                   <v-divider />
@@ -203,11 +190,15 @@ export default {
         page: 1,
         itemsPerPage: 25,
       },
+      startSearchAfterInMilliseconds: 600,
+      endTypingKeywordTimeout: 50,
+      startTypingKeywordTimeout: 0,
       totalSize: 0,
       loadingRules: false,
       deleteConfirmMessage: '',
       filter: 'ENABLED',
-      expand: 'userAnnouncements'
+      keyword: null,
+      expand: 'userAnnouncements',
     };
   },
   computed: {
@@ -287,6 +278,20 @@ export default {
     options() {
       this.retrieveProgramRules();
     },
+    filter() {
+      this.retrieveProgramRules();
+    },
+    keyword() {
+      if (!this.keyword) {
+        this.retrieveProgramRules();
+        return;
+      }
+      this.startTypingKeywordTimeout = Date.now();
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
+      }
+    },
   },
   created() {
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
@@ -341,7 +346,7 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.expand)
+      return this.$ruleServices.getRules(this.keyword, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.expand)
         .then((data) => {
           this.programRules = data.rules;
           this.totalSize = data.size || 0;
@@ -360,9 +365,6 @@ export default {
       } else if (this.tab === 2) {
         window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
       }
-    },
-    openNewRuleForm(){
-      this.$root.$emit('rule-form-drawer', null);
     },
     confirmDelete(rule) {
       this.selectedRule = rule;
@@ -387,7 +389,17 @@ export default {
         fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
       }
       return fieldLabelI18NValue === fieldLabelI18NKey ? rule?.title : fieldLabelI18NValue;
-    }
+    },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() - this.startTypingKeywordTimeout > this.startSearchAfterInMilliseconds) {
+          this.typing = false;
+          this.retrieveProgramRules();
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
+    },
   }
 };
 </script>
