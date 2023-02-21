@@ -120,6 +120,21 @@ public class RealizationsServiceImpl implements RealizationsService {
 
   @Override
   public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
+                                                               HistoryStatus status) throws ObjectNotFoundException {
+    if (gHistoryId == null) {
+      throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
+    }
+    GamificationActionsHistoryDTO gHistory = realizationsStorage.getRealizationById(gHistoryId);
+
+    if (gHistory == null) {
+      throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
+    }
+    gHistory.setStatus(status.name());
+    return realizationsStorage.updateRealizationStatus(gHistory);
+  }
+
+  @Override
+  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
                                                                HistoryStatus status,
                                                                String actionLabel,
                                                                Long points) throws ObjectNotFoundException {
