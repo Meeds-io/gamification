@@ -154,10 +154,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </div>
     <engagement-center-result-not-found
       v-else
-      @back-to-list="backToProgramList"
       :message-title="$t('programs.details.programDeleted')"
       :button-text="$t('programs.details.programDeleted.explore') "
-      :button-url="programsUrl" />
+      :button-url="programsUrl"
+      @back-to-list="backToProgramList" />
   </div>
 </template>
 
