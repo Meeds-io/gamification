@@ -140,17 +140,21 @@ public class RealizationsServiceTest {
     gHistory2.setStatus(HistoryStatus.REJECTED.name());
     when(realizationsStorage.getRealizationById(1L)).thenReturn(gHistory1);
     when(realizationsStorage.getRealizationById(2L)).thenReturn(null);
-    when(realizationsStorage.updateRealizationStatus(gHistory1)).thenReturn(gHistory2);
+    when(realizationsStorage.updateRealization(gHistory1)).thenReturn(gHistory2);
     GamificationActionsHistoryDTO rejectedHistory = null;
     // When
     assertThrows(IllegalArgumentException.class,
-                 () -> realizationsService.updateRealizationStatus(null, HistoryStatus.REJECTED, "", 0L));
+                 () -> realizationsService.updateRealization(null));
+    GamificationActionsHistoryDTO realization1 = new GamificationActionsHistoryDTO();
+    realization1.setId(2L);
     assertThrows(ObjectNotFoundException.class,
-                 () -> realizationsService.updateRealizationStatus(2l, HistoryStatus.REJECTED, "", 0L));
+                 () -> realizationsService.updateRealization(realization1));
 
     try {
-
-      rejectedHistory = realizationsService.updateRealizationStatus(1L, HistoryStatus.REJECTED, "new label", 10L);
+      gHistory1.setStatus(HistoryStatus.REJECTED.name());
+      gHistory1.setActionTitle("new label");
+      gHistory1.setActionScore(10L);
+      rejectedHistory = realizationsService.updateRealization(gHistory1);
 
     } catch (ObjectNotFoundException e) {
       fail(e.getMessage());
