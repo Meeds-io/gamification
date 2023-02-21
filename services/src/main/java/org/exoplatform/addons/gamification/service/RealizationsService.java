@@ -55,6 +55,17 @@ public interface RealizationsService {
                          Locale locale) throws IllegalAccessException;
 
   /**
+   * Updates realization status.
+   *
+   * @param gHistoryId gHistoryId
+   * @param status status
+   * @return {@link GamificationActionsHistoryDTO} identified by its id when found
+   * @throws ObjectNotFoundException GamificationActionsHistory identified by its
+   *           technical identifier is not found
+   */
+  GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status) throws ObjectNotFoundException;
+  
+  /**
    * Retrieves all Realizations by Date.
    *
    * @param gHistoryId gHistoryId
