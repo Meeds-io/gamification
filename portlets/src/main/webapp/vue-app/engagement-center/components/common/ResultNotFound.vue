@@ -61,6 +61,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         class="text-header-title font-weight-regular" 
         v-sanitized-html="sanitizedHtml"> 
       </p>
+      <p class="text-header-title font-weight-regular">
+        {{ messageInfoTwo }}
+      </p>
       <v-btn
         v-if="buttonText" 
         :href="url"
@@ -71,7 +74,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </span>
       </v-btn>
       <p class="text-header-title font-weight-regular">
-        {{ messageInfoTwo }}
+        {{ messageInfoThree }}
       </p>
     </div>
   </div>
