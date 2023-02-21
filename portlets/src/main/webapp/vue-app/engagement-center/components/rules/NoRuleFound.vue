@@ -18,7 +18,7 @@
       </v-icon>
     </div>
     <div class="d-flex flex-column justify-center align-center py-2">
-      <span class="mx-2 py-3 text-capitalize-first-letter subtitle-1" v-html="noResultsText">
+      <span class="mx-2 py-3 subtitle-1 text-wrap" v-html="noResultsText">
       </span>
     </div>
   </div>
