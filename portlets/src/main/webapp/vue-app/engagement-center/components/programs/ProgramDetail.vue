@@ -165,7 +165,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           @ok="deleteRule" />
       </div>
     </div>
-    <engagement-center-program-deleted v-else @back-to-list="backToProgramList" />
+    <engagement-center-result-not-found
+      v-else
+      :message-title="$t('programs.details.programDeleted')"
+      :button-text="$t('programs.details.programDeleted.explore') "
+      :button-url="programsUrl"
+      @back-to-list="backToProgramList" />
   </div>
 </template>
 
@@ -207,7 +212,8 @@ export default {
       loadingRules: false,
       deleteConfirmMessage: '',
       filter: 'ENABLED',
-      expand: 'userAnnouncements'
+      expand: 'userAnnouncements',
+      programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
     };
   },
   computed: {
