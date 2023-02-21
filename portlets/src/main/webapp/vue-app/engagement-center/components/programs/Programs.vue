@@ -94,7 +94,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :display-back-arrow="false"
           :message-title="$t('challenges.welcomeMessage')"
           :message-info-one="$t('programs.label.welcomeMessageForManager')"
-          :message-info-two="$t('programs.label.seeYouSoon')"
+          :message-info-three="$t('programs.label.seeYouSoon')"
           :button-text="$t('programs.button.addProgram')"
           @button-event="$root.$emit('open-program-drawer')" />
       </div>
