@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.listener;
 
 import org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityUpdater;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
@@ -46,10 +47,13 @@ public class AnnouncementActivityUpdaterTest {
   @Mock
   private AnnouncementService announcementService;
 
+  @Mock
+  private RealizationsService realizationsService;
+
   @Test
   public void testUpdateActivity() throws ObjectNotFoundException {
     AnnouncementActivityUpdater announcementActivityUpdater =
-                                                            new AnnouncementActivityUpdater(activityManager, announcementService);
+                                                            new AnnouncementActivityUpdater(activityManager, announcementService, realizationsService);
 
     Announcement announcement = new Announcement(1l, 1l, "challenge title", 1L, "announcement comment", 1L, new Date().toString(), null);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
