@@ -16,7 +16,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div>
-    <div class="d-flex">
+    <div v-if="displayBackArrow" class="d-flex">
       <v-tooltip bottom>
         <template #activator="{ on }">
           <div 
@@ -49,26 +49,79 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         fas fa-trophy
       </v-icon>
     </div>
-    <div class="d-flex flex-column justify-center align-center py-12">
-      <span class="text-header-title font-weight-regular">
-        {{ $t('programs.details.programDeleted') }}
-      </span>
-      <v-btn
-        class="btn btn-primary mt-8"
-        :href="programListLink">
+    <div class="d-flex flex-column justify-center align-center py-12 col-sm-8 mx-auto">
+      <p class="text-header-title font-weight-regular mb-8">
+        {{ messageTitle }}
+      </p>
+      <p class="text-header-title font-weight-regular">
+        {{ messageInfoOne }}
+      </p>
+      <p 
+        v-if="sanitizedHtml" 
+        class="text-header-title font-weight-regular" 
+        v-sanitized-html="sanitizedHtml"> 
+      </p>
+      <a
+        v-if="buttonText && isButtonUrl" 
+        class="btn btn-primary my-8"
+        :href="url">
         <span class="mx-2 text-capitalize-first-letter subtitle-1">
-          {{ $t('programs.details.programDeleted.explore') }}
+          {{ buttonText }}
+        </span>
+      </a>
+      <v-btn
+        v-if="buttonText && !isButtonUrl" 
+        class="btn btn-primary my-8"
+        @click="$emit('button-event')">
+        <span class="mx-2 text-capitalize-first-letter subtitle-1">
+          {{ buttonText }}
         </span>
       </v-btn>
+      <p class="text-header-title font-weight-regular">
+        {{ messageInfoTwo }}
+      </p>
     </div>
   </div>
 </template>
 <script>
 export default {
-  data() {
-    return {
-      programListLink: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
-    };
+  props: {
+    messageTitle: {
+      type: String,
+      default: ''
+    },
+    messageInfoOne: {
+      type: String,
+      default: ''
+    },
+    messageInfoTwo: {
+      type: String,
+      default: ''
+    },
+    buttonText: {
+      type: String,
+      default: ''
+    },
+    displayBackArrow: {
+      type: Boolean,
+      default: true
+    },
+    sanitizedHtml: {
+      type: String,
+      default: ''
+    },
+    buttonUrl: {
+      type: String,
+      default: ''
+    }
   },
+  computed: {
+    isButtonUrl() {
+      return this.buttonUrl?.length;
+    },
+    url() {
+      return this.buttonUrl;
+    }
+  }
 };
 </script>

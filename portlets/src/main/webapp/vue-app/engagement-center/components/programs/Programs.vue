@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       max-height="64"
       flat
       class="px-4 mt-4">
-      <div class="border-box-sizing clickable">
+      <div v-if="!displayNoSearchResult" class="border-box-sizing clickable">
         <v-btn
           id="engagementCenterAddProgramBtn"
           v-if="canAddProgram"
@@ -88,21 +88,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :ok-label="$t('programs.label.ok.button')"
       :cancel-label="$t('programs.label.cancel.button')"
       @ok="deleteProgram" />
-    <engagement-center-welcome-message
-      v-if="displayNoSearchResult && !isStatusDisabled"
-      class="mx-16 mb-5">
-      <template #content>
-        <div class="mx-4 my-6 dark-grey-color">
-          <p class="align-center font-weight-bold mb-5"> {{ $t('programs.label.welcome') }} </p>
-          <p class="align-center mb-5" v-sanitized-html="welcomeMessage"></p>
-          <p class="align-center"> {{ $t('programs.label.seeYouSoon') }} </p>
+    <div v-if="displayNoSearchResult">
+      <div v-if="isAdministrator">
+        <engagement-center-result-not-found 
+          :display-back-arrow="false"
+          :message-title="$t('challenges.welcomeMessage')"
+          :message-info-one="$t('programs.label.welcomeMessageForManager')"
+          :message-info-two="$t('programs.label.seeYouSoon')"
+          :button-text="$t('programs.button.addProgram')"
+          @button-event="$root.$emit('open-program-drawer')" />
+      </div>
+      <div v-else>
+        <div v-if="!isExternal">
+          <engagement-center-result-not-found 
+            :display-back-arrow="false"
+            :message-title="$t('challenges.welcomeMessage')"
+            :message-info-one="$t('programs.label.welcomeMessageForExternal')" />
         </div>
-      </template>
-    </engagement-center-welcome-message>
-    <engagement-center-no-results
-      v-else-if="displayNoSearchResult && isStatusDisabled" 
-      :info="$t('program.filter.noResults')"
-      class="mt-11" />
+        <div v-else>
+          <engagement-center-result-not-found 
+            :display-back-arrow="false"
+            :message-title="$t('challenges.welcomeMessage')"
+            :button-text="$t('programs.label.joinSpace')"
+            :sanitized-html="welcomeMessage"
+            :button-url="spacesURL" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -110,6 +122,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   props: {
     isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+    isExternal: {
       type: Boolean,
       default: false,
     }
@@ -131,6 +147,7 @@ export default {
       users: [],
       limitToFetch: 0,
       originalLimitToFetch: 0,
+      spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces/`
     };
   },
   computed: {
