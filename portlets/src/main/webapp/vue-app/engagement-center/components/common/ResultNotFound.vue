@@ -63,9 +63,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </p>
       <v-btn
         v-if="buttonText" 
+        :href="url"
         class="btn btn-primary my-8"
-        @click="$emit('button-event')"
-        :href="url">
+        @click="$emit('button-event')">
         <span class="mx-2 text-capitalize-first-letter subtitle-1">
           {{ buttonText }}
         </span>
