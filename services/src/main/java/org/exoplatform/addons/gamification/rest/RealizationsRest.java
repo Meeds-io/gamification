@@ -183,27 +183,29 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response updateRealizations(@Parameter(description = "id of realization", required = true)
-                                     @QueryParam("realizationId")
-                                     String realizationId,
-                                     @Parameter(description = "new status of realization", required = true)
-                                     @QueryParam("status")
-                                     String status,
-                                     @Parameter(description = "new action Label of realization")
-                                     @QueryParam("actionLabel")
-                                     String actionLabel,
-                                     @Parameter(description = "new points of realization")
-                                     @QueryParam("points")
-                                     Long points) {
+  public Response updateRealization(@Parameter(description = "id of realization", required = true) @QueryParam("realizationId") String realizationId,
+                                     @Parameter(description = "new status of realization", required = true) @QueryParam("status") String status,
+                                     @Parameter(description = "new action Label of realization") @QueryParam("actionLabel") String actionLabel,
+                                    @Parameter(description = "new points of realization") @QueryParam("points") Long points) {
 
     String currentUser = Utils.getCurrentUser();
     try {
-      GamificationActionsHistoryDTO gamificationActionsHistoryDTO =
-          realizationsService.updateRealizationStatus(Long.valueOf(realizationId),
-                                                      HistoryStatus.valueOf(status),
-                                                      actionLabel,
-                                                      points);
+      GamificationActionsHistoryDTO realization = realizationsService.getRealizationById(Long.parseLong(realizationId),
+                                                                                         currentUser);
+      if (!actionLabel.isEmpty()) {
+        realization.setActionTitle(actionLabel);
+      }
+      if (points != 0) {
+        realization.setGlobalScore(realization.getGlobalScore() - realization.getActionScore() + points);
+        realization.setActionScore(points);
+      }
+      realization.setStatus(HistoryStatus.valueOf(status).name());
+
+      GamificationActionsHistoryDTO gamificationActionsHistoryDTO = realizationsService.updateRealization(realization);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO, identityManager)).build();
+    } catch (IllegalAccessException e) {
+      LOG.debug("User '{}' doesn't have enough privileges to update realization with id {}", currentUser, realizationId, e);
+      return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (ObjectNotFoundException e) {
       LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
       return Response.status(Response.Status.NOT_FOUND).entity("realization not found").build();
