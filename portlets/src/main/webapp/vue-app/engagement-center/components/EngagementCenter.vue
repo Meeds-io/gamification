@@ -41,8 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <engagement-center-programs
             v-show="!displayProgramDetail"
             id="engagementCenterProgramsTab"
-            :is-administrator="isAdministrator"
-            :is-external="isExternal" />
+            :is-administrator="isAdministrator" />
           <engagement-center-program-detail
             v-if="displayProgramDetail"
             :program="program"
@@ -106,7 +105,6 @@ export default {
     extensionApp: 'engagementCenterActions',
     actionValueExtensionType: 'user-actions',
     actionValueExtensions: {},
-    isExternal: eXo.env.portal.isExternal,
   }),
   watch: {
     tab() {
