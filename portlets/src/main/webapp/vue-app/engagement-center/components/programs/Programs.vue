@@ -99,7 +99,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           @button-event="$root.$emit('open-program-drawer')" />
       </div>
       <div v-else>
-        <div v-if="!isExternal">
+        <div v-if="isExternal">
           <engagement-center-result-not-found 
             :display-back-arrow="false"
             :message-title="$t('challenges.welcomeMessage')"
@@ -110,7 +110,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :display-back-arrow="false"
             :message-title="$t('challenges.welcomeMessage')"
             :button-text="$t('programs.label.joinSpace')"
-            :sanitized-html="welcomeMessage"
+            :message-info-one="$t('programs.label.welcomeMessageForUser')"
+            :message-info-three="$t('programs.label.welcomeMessageTwoForUser')"
             :button-url="spacesURL" />
         </div>
       </div>
@@ -122,10 +123,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   props: {
     isAdministrator: {
-      type: Boolean,
-      default: false,
-    },
-    isExternal: {
       type: Boolean,
       default: false,
     }
@@ -147,7 +144,8 @@ export default {
       users: [],
       limitToFetch: 0,
       originalLimitToFetch: 0,
-      spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces/`
+      spacesURL: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/spaces/`,
+      isExternal: eXo.env.portal.isExternal === 'true',
     };
   },
   computed: {
@@ -177,7 +175,7 @@ export default {
     },
     isStatusDisabled() {
       return this.status === 'DISABLED';
-    }
+    },
   },
   watch: {
     loading() {
