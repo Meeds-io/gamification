@@ -23,7 +23,6 @@ import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -119,43 +118,72 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
-                                                               HistoryStatus status) throws ObjectNotFoundException {
-    if (gHistoryId == null) {
-      throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
+  public GamificationActionsHistoryDTO getRealizationById(long realizationId) {
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("realization id is mandatory");
     }
-    GamificationActionsHistoryDTO gHistory = realizationsStorage.getRealizationById(gHistoryId);
-
-    if (gHistory == null) {
-      throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
-    }
-    gHistory.setStatus(status.name());
-    return realizationsStorage.updateRealizationStatus(gHistory);
+    return realizationsStorage.getRealizationById(realizationId);
   }
 
   @Override
-  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
-                                                               HistoryStatus status,
-                                                               String actionLabel,
-                                                               Long points) throws ObjectNotFoundException {
+  public GamificationActionsHistoryDTO getRealizationById(long realizationId, String username) throws IllegalAccessException {
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("realization id is mandatory");
+    }
+    if (username == null) {
+      throw new IllegalArgumentException("Username is mandatory");
+    }
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    GamificationActionsHistoryDTO realization = realizationsStorage.getRealizationById(realizationId);
+    if (Utils.isSuperManager(username) || realization.getEarnerId().equals(userIdentity.getId())) {
+      return realization;
+    } else {
+      throw new IllegalAccessException("User doesn't have enough privileges to access achievement");
+    }
+  }
 
-    if (gHistoryId == null) {
-      throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
+  @Override
+  public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization,
+                                                         String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (realization == null) {
+      throw new IllegalArgumentException("Realization is mandatory");
     }
-    GamificationActionsHistoryDTO gHistory = realizationsStorage.getRealizationById(gHistoryId);
+    if (username == null) {
+      throw new IllegalArgumentException("Username is mandatory");
+    }
+    long realizationId = realization.getId();
 
-    if (gHistory == null) {
-      throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("Realization id has to be positive integer");
     }
-    if (!actionLabel.isEmpty()) {
-      gHistory.setActionTitle(actionLabel);
+
+    GamificationActionsHistoryDTO storedRealization = realizationsStorage.getRealizationById(realizationId);
+    if (storedRealization == null) {
+      throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
     }
-    if (points != 0) {
-      gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
-      gHistory.setActionScore(points);
+    if (Utils.isSuperManager(username)) {
+      return realizationsStorage.updateRealization(realization);
+    } else {
+      throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
+          + realization.getEarnerId());
     }
-    gHistory.setStatus(status.name());
-    return realizationsStorage.updateRealizationStatus(gHistory);
+  }
+
+  @Override
+  public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization) throws ObjectNotFoundException {
+    if (realization == null) {
+      throw new IllegalArgumentException("Realization is mandatory");
+    }
+    long realizationId = realization.getId();
+
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("Realization id has to be positive integer");
+    }
+    GamificationActionsHistoryDTO storedRealization = realizationsStorage.getRealizationById(realizationId);
+    if (storedRealization == null) {
+      throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
+    }
+    return realizationsStorage.updateRealization(realization);
   }
 
   public InputStream exportXlsx(RealizationsFilter filter,

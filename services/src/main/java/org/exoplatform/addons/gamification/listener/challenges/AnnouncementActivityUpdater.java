@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
@@ -80,11 +81,15 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     if (!StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)) {
       return;
     }
-    long gHistoryId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
+    long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
     try {
-      realizationsService.updateRealizationStatus(gHistoryId, HistoryStatus.REJECTED);
+      GamificationActionsHistoryDTO realization = realizationsService.getRealizationById(realizationId);
+      realization.setStatus(HistoryStatus.REJECTED.name());
+      realization.setActivityId(null);
+      realization.setObjectId(null);
+      realizationsService.updateRealization(realization);
     } catch (ObjectNotFoundException e) {
-      LOG.warn("GamificationActionsHistory with id {} does not exist", gHistoryId, e);
+      LOG.warn("Realization with id {} does not exist", realizationId, e);
     }
   }
 }
