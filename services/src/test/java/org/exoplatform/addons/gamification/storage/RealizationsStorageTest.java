@@ -94,7 +94,7 @@ public class RealizationsStorageTest extends AbstractServiceTest {
     GamificationActionsHistoryDTO gHistory = newGamificationActionsHistoryDTO();
     assertEquals(gHistory.getStatus(), HistoryStatus.ACCEPTED.name());
     gHistory.setStatus(HistoryStatus.REJECTED.name());
-    GamificationActionsHistoryDTO rejectedGHistory = realizationsStorage.updateRealizationStatus(gHistory);
+    GamificationActionsHistoryDTO rejectedGHistory = realizationsStorage.updateRealization(gHistory);
     assertEquals(rejectedGHistory.getStatus(), HistoryStatus.REJECTED.name());
 
   }
