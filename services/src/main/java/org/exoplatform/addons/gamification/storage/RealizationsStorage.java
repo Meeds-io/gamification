@@ -35,7 +35,7 @@ public class RealizationsStorage {
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
   }
 
-  public GamificationActionsHistoryDTO updateRealizationStatus(GamificationActionsHistoryDTO gamificationActionsHistory) {
+  public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO gamificationActionsHistory) {
     GamificationActionsHistory gamificationActionsHistoryEntity =
                                                                 GamificationActionsHistoryMapper.toEntity(gamificationActionsHistory);
     gamificationActionsHistoryEntity = gamificationHistoryDAO.update(gamificationActionsHistoryEntity);

@@ -74,8 +74,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </span>
               </a>
             </template>
-            <span>{{ $t('program.winner.label.noActivity') }}</span>
-            {{ $t('challenges.winners.details') }}
+            <span>{{ noActivityLabel }}</span>
           </v-tooltip>
         </v-list-item-action>
       </v-list-item>
@@ -99,6 +98,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
+      isAutomaticType: false,
       drawer: false,
       challengeId: false,
       showLoadMoreButton: false,
@@ -137,6 +137,9 @@ export default {
     announcementPerPage() {
       return Math.round((this.$vuetify.breakpoint.height - 122) / 70);
     },
+    noActivityLabel() {
+      return this.$t(`program.winner.label.${this.isAutomaticType ? 'noActivity' : 'activityDeleted'}`);
+    }
   },
   methods: {
     getLinkActivity(id) {
@@ -151,6 +154,7 @@ export default {
     },
     open(challenge) {
       this.announcementTotalCount = challenge?.announcementsCount;
+      this.isAutomaticType = challenge.type === 'AUTOMATIC';
       this.listWinners = [];
       this.challengeId = challenge?.id;
       this.$refs.winnersDetails.open();
