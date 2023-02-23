@@ -20,7 +20,6 @@ package org.exoplatform.addons.gamification.storage.cached;
 import java.io.Serializable;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.search.RuleSearchConnector;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
@@ -48,8 +47,8 @@ public class RuleCachedStorage extends RuleStorage {
 
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
 
-  public RuleCachedStorage(RuleDAO ruleDAO, RuleSearchConnector ruleSearchConnector, CacheService cacheService, GamificationHistoryDAO gamificationHistoryDAO) {
-    super(ruleDAO, ruleSearchConnector, gamificationHistoryDAO);
+  public RuleCachedStorage(RuleDAO ruleDAO, CacheService cacheService, GamificationHistoryDAO gamificationHistoryDAO) {
+    super(ruleDAO, gamificationHistoryDAO);
     ExoCache<Serializable, Object> ruleCache = cacheService.getCacheInstance(RULE_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> ruleLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override
