@@ -15,49 +15,41 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-toolbar
-    id="rulesListToolbar"
-    flat>
-    <v-toolbar-title v-if="canManageRule">
+  <div class="d-flex flex align-center mt-4">
+    <template v-if="canManageRule">
       <v-icon
         v-if="menuHeaderChanged"
         @click="changeHeaderMenu">
         fas fa-arrow-left
       </v-icon>
-      <div v-else class="text-no-wrap mt-sm-3">
-        <div
-          class="d-inline-block">
-          <v-btn
-            class="btn btn-primary"
-            small
-            @click="$root.$emit('rule-form-drawer')">
-            <v-icon dark>
-              mdi-plus
-            </v-icon>
-            <span class="ms-2 d-none d-lg-inline subtitle-1">
-              {{ $t('programs.details.rule.button.addRule') }}
-            </span>
-          </v-btn>
-        </div>
-      </div>
-    </v-toolbar-title>
+      <v-btn
+        v-else
+        class="btn btn-primary"
+        small
+        @click="$root.$emit('rule-form-drawer')">
+        <v-icon dark>
+          mdi-plus
+        </v-icon>
+        <span class="ms-2 d-none d-lg-inline subtitle-1">
+          {{ $t('programs.details.rule.button.addRule') }}
+        </span>
+      </v-btn>
+    </template>
     <v-spacer v-if="!isMobile" />
-    <div>
+    <v-card
+      width="220"
+      max-width="100%"
+      flat>
       <v-text-field
-        v-if="!isMobile"
+        v-if="!isMobile || menuHeaderChanged"
         v-model="keyword"
         :placeholder="$t('programs.details.filter.filterRules')"
         prepend-inner-icon="fa-filter"
+        clear-icon="fa-times fa-1x"
         class="pa-0 me-3 my-auto"
-        clearable />
-      <v-text-field
-        v-else-if="isMobile && menuHeaderChanged"
-        v-model="keyword"
-        :placeholder="$t('programs.details.filter.filterRules')"
-        prepend-inner-icon="fa-filter"
-        class="pa-0 ms-3 my-auto"
-        clearable />
-    </div>
+        clearable
+        hide-details />
+    </v-card>
     <v-spacer v-if="isMobile" />
     <v-scale-transition>
       <select
@@ -121,7 +113,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-list>
       </v-sheet>
     </v-bottom-sheet>
-  </v-toolbar>
+  </div>
 </template>
 
 <script>
