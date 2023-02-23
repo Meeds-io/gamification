@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <v-app
     class="Realizations border-box-sizing">
     <div class="d-flex px-7 pt-5" flat>
-      <v-toolbar-title class="d-flex" v-if="!isMobile">
+      <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
         <v-btn class="btn btn-primary export" @click="exportFile()">
           <span class="ms-2 d-none d-lg-inline">
             {{ $t("realization.label.export") }}
@@ -45,10 +45,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
     </div>
-    <engagement-center-no-results
-      v-if="!displaySearchResult"
-      :info="$t('exoplatform.gamification.gamificationinformation.domain.search.noResults')"
-      :info-message="$t('exoplatform.gamification.gamificationinformation.domain.search.noResultsMessage')" />
+    <engagement-center-result-not-found 
+      :display-back-arrow="false"
+      :message-title="$t('challenges.welcomeMessage')"
+      :message-info-one="$t('challenge.realization.noResult.messageOne')"
+      :message-info-two="$t('challenge.realization.noResult.messageTwo')"
+      :button-text="$t('programs.button.addProgram')"
+      :button-url="programsUrl" />
     <v-data-table
       v-if="displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
@@ -164,6 +167,7 @@ export default {
     },
     isMobile: false,
     selected: 'Date',
+    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
   }),
   beforeDestroy () {
     if (typeof window === 'undefined') {return;}
