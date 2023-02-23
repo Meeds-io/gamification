@@ -26,9 +26,7 @@ if (extensionRegistry) {
   }
 }
 
-Vue.use(Vuetify);
-
-const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
+const vuetify = Vue.prototype.vuetifyOptions;
 
 // getting language of user
 const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';

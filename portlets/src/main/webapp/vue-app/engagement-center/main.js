@@ -28,8 +28,7 @@ if (extensionRegistry) {
   }
 }
 
-Vue.use(Vuetify);
-const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
+const vuetify = Vue.prototype.vuetifyOptions;
 
 const appId = 'EngagementCenterApplication';
 
