@@ -287,7 +287,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>preload.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/domains?returnSize=true&limit=3&type=ALL&status=ENABLED]]></value>
+      <value><![CDATA[/portal/rest/gamification/domains?returnSize=true&limit=3&type=ALL&status=ENABLED&includeDeleted=false&sortByBudget=true]]></value>
     </init-param>
     <expiration-cache>-1</expiration-cache>
     <cache-scope>PUBLIC</cache-scope>
