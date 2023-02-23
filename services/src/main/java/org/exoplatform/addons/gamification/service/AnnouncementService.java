@@ -60,6 +60,16 @@ public interface AnnouncementService {
   Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException;
 
   /**
+   * Cancel announcement
+   *
+   * @param announcementId technical identifier of a challenge
+   * @return a {@link Announcement} Object
+   * @throws ObjectNotFoundException when the announcement identified by its
+   *           technical identifier is not found
+   */
+  Announcement cancelAnnouncement(Long announcementId, String username) throws ObjectNotFoundException, IllegalAccessException;
+
+  /**
    * Retrieves a announcement identified by its technical identifier.
    *
    * @param announcementId technical identifier of a challenge

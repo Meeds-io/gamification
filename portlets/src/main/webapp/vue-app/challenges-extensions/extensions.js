@@ -31,3 +31,38 @@ extensionRegistry.registerExtension('ActivityFavoriteIcon', 'activity-favorite-i
   img: '/gamification-portlets/skin/images/challengesAppIcon.png',
 });
 
+extensionRegistry.registerExtension('activity', 'action', {
+  id: 'cancelAnnouncement',
+  labelKey: 'challenges.label.CancelAnnouncement',
+  icon: 'fa-undo-alt',
+  confirmDialog: true,
+  confirmMessageKey: 'challenges.label.confirmCancelAnnouncement',
+  confirmTitleKey: 'engagementCenter.button.Confirmation',
+  confirmOkKey: 'engagementCenter.button.ok',
+  confirmCancelKey: 'engagementCenter.button.cancel',
+  isEnabled: (activity, activityTypeExtension) => {
+    if (activityTypeExtension.canDelete && !activityTypeExtension.canDelete(activity)) {
+      return false;
+    }
+    return activity.type === 'challenges-announcement' && activity.canDelete === 'true';
+  },
+  click: (activity, activityTypeExtension, isActivityDetail) => {
+    document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
+    console.warn(activity.templateParams.announcementId);
+    return Vue.prototype.$challengesServices.cancelAnnouncement(activity.templateParams.announcementId)
+      .then(() => {
+        document.dispatchEvent(new CustomEvent('activity-deleted', {detail: activity.id}));
+        if (isActivityDetail) {
+          setTimeout(() => {
+            if (activity.activityStream.type === 'space') {
+              window.location.href = `${eXo.env.portal.context}/g/${activity.activityStream.space.groupId.replace(/\//g, ':')}`;
+            } else {
+              window.location.href = eXo.env.portal.context;
+            }
+          }, 500);
+        }
+      })
+      .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
+  },
+});
+

@@ -287,9 +287,6 @@ export default {
     canAccept() {
       return this.status === 'REJECTED';
     },
-    isAccepted() {
-      return this.status === 'ACCEPTED';
-    },
     canEdit() {
       return this.realization.action && this.realization.action.type === 'MANUAL';
     },
@@ -319,7 +316,7 @@ export default {
       return this.isAutomaticType ? this.$t('gamification.label.automatic') : this.$t('realization.label.manual');
     },
     isAcceptedLabel() {
-      return this.isAccepted ? this.$t('realization.label.accepted') : this.$t('realization.label.rejected');
+      return this.$t(`realization.label.${this.status.toLowerCase()}`);
     },
     realizationActionLabel() {
       return this.realization?.actionLabel;

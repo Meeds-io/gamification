@@ -84,10 +84,12 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
     try {
       GamificationActionsHistoryDTO realization = realizationsService.getRealizationById(realizationId);
-      realization.setStatus(HistoryStatus.REJECTED.name());
-      realization.setActivityId(null);
-      realization.setObjectId(null);
-      realizationsService.updateRealization(realization);
+      if (!realization.getStatus().equals(HistoryStatus.CANCELED.name())) {
+        realization.setStatus(HistoryStatus.DELETED.name());
+        realization.setActivityId(null);
+        realization.setObjectId(null);
+        realizationsService.updateRealization(realization);
+      }
     } catch (ObjectNotFoundException e) {
       LOG.warn("Realization with id {} does not exist", realizationId, e);
     }

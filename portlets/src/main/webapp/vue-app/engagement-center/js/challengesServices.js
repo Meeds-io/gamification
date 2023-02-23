@@ -143,6 +143,19 @@ export function saveAnnouncement(announcement) {
   });
 }
 
+export function cancelAnnouncement(announcementId) {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/announcement/api/${announcementId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Response code indicates a server error', resp);
+    }
+  });
+}
+
 export function getChallengeById(id) {
   return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/challenges/${id}`, {
     method: 'GET',
