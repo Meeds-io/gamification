@@ -46,11 +46,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </div>
     <engagement-center-result-not-found 
+      v-if="!displaySearchResult"
       :display-back-arrow="false"
       :message-title="$t('challenges.welcomeMessage')"
       :message-info-one="$t('challenge.realization.noResult.messageOne')"
       :message-info-two="$t('challenge.realization.noResult.messageTwo')"
-      :button-text="$t('programs.button.addProgram')"
+      :button-text="$t('programs.details.programDeleted.explore')"
       :button-url="programsUrl" />
     <v-data-table
       v-if="displaySearchResult && !isMobile"
