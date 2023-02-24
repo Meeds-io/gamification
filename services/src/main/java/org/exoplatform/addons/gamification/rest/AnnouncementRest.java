@@ -21,13 +21,9 @@ import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
-import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -109,11 +105,12 @@ public class AnnouncementRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response cancelAnnouncement(@Parameter(description = "Announcement technical identifier", required = true) @PathParam("announcementId") long announcementId) {
+  public Response cancelAnnouncement(@Parameter(description = "Announcement technical identifier", required = true)
+                                     @PathParam("announcementId") long announcementId) {
 
     String currentUser = Utils.getCurrentUser();
     try {
-      Announcement announcement = announcementService.cancelAnnouncement(announcementId, currentUser);
+      Announcement announcement = announcementService.deleteAnnouncement(announcementId, currentUser);
       return Response.ok(EntityMapper.fromAnnouncement(announcement)).build();
     } catch (IllegalAccessException e) {
       LOG.debug("User '{}' doesn't have enough privileges to cancel announcement with id {}", currentUser, announcementId, e);

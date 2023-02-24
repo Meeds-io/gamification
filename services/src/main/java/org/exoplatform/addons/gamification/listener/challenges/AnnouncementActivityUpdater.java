@@ -84,7 +84,7 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
     try {
       GamificationActionsHistoryDTO realization = realizationsService.getRealizationById(realizationId);
-      if (!realization.getStatus().equals(HistoryStatus.CANCELED.name())) {
+      if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
         realization.setStatus(HistoryStatus.DELETED.name());
         realization.setActivityId(null);
         realization.setObjectId(null);

@@ -67,7 +67,7 @@ public interface AnnouncementService {
    * @throws ObjectNotFoundException when the announcement identified by its
    *           technical identifier is not found
    */
-  Announcement cancelAnnouncement(Long announcementId, String username) throws ObjectNotFoundException, IllegalAccessException;
+  Announcement deleteAnnouncement(long announcementId, String username) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
    * Retrieves a announcement identified by its technical identifier.

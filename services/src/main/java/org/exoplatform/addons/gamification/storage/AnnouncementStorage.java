@@ -48,7 +48,7 @@ public class AnnouncementStorage {
     return EntityMapper.fromEntity(announcementEntity);
   }
 
-  public Announcement cancelAnnouncement(Announcement announcement) {
+  public Announcement deleteAnnouncement(Announcement announcement) {
     if (announcement == null) {
       throw new IllegalArgumentException("Announcement argument is null");
     }
