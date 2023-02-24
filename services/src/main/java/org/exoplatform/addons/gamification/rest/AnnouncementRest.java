@@ -5,14 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
@@ -98,6 +91,33 @@ public class AnnouncementRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).build();
+    }
+  }
+
+  @DELETE
+  @Path("{announcementId}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @Operation(summary = "Cancels an existing announcement", method = "DELETE", description = "Cancels an existing announcement")
+  @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
+      @ApiResponse(responseCode = "404", description = "Object not found"),
+      @ApiResponse(responseCode = "400", description = "Invalid query input"),
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response cancelAnnouncement(@Parameter(description = "Announcement technical identifier", required = true)
+                                     @PathParam("announcementId") long announcementId) {
+
+    String currentUser = Utils.getCurrentUser();
+    try {
+      Announcement announcement = announcementService.deleteAnnouncement(announcementId, currentUser);
+      return Response.ok(EntityMapper.fromAnnouncement(announcement)).build();
+    } catch (IllegalAccessException e) {
+      LOG.debug("User '{}' doesn't have enough privileges to cancel announcement with id {}", currentUser, announcementId, e);
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    } catch (ObjectNotFoundException e) {
+      LOG.debug("User '{}' attempts to cancel a not existing announcement '{}'", currentUser, e);
+      return Response.status(Response.Status.NOT_FOUND).entity("announcement not found").build();
     }
   }
 

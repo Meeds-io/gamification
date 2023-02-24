@@ -177,6 +177,26 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
+  public Announcement deleteAnnouncement(long announcementId, String username) throws ObjectNotFoundException,
+                                                                               IllegalAccessException {
+    if (announcementId <= 0) {
+      throw new IllegalArgumentException("Announcement id has to be positive integer");
+    }
+    Announcement announcementToCancel = announcementStorage.getAnnouncementById(announcementId);
+    if (announcementToCancel == null) {
+      throw new ObjectNotFoundException("Announcement does not exist");
+    }
+    Identity identity = identityManager.getOrCreateUserIdentity(username);
+    if (!announcementToCancel.getCreator().equals(Long.parseLong(identity.getId()))) {
+      throw new IllegalAccessException("user " + username + " is not allowed to cancel announcement with id "
+          + announcementToCancel.getId());
+    }
+    String activityId = String.valueOf(announcementToCancel.getActivityId());
+    activityManager.deleteActivity(activityId);
+    return announcementStorage.deleteAnnouncement(announcementToCancel);
+  }
+
+  @Override
   public Announcement getAnnouncementById(Long announcementId) {
     if (announcementId == null || announcementId <= 0) {
       throw new IllegalArgumentException("announcement id is mandatory");
