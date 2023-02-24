@@ -146,7 +146,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ statusIcon }}
           </v-icon>
         </template>
-        <span>{{ isAcceptedLabel }}</span>
+        <span>{{ statusLabel }}</span>
       </v-tooltip>
     </td>
     <td v-if="isAdministrator" class="text-truncate actions align-center">
@@ -287,9 +287,6 @@ export default {
     canAccept() {
       return this.status === 'REJECTED';
     },
-    isAccepted() {
-      return this.status === 'ACCEPTED';
-    },
     canEdit() {
       return this.realization.action && this.realization.action.type === 'MANUAL';
     },
@@ -318,8 +315,8 @@ export default {
     isAutomaticTypeLabel() {
       return this.isAutomaticType ? this.$t('gamification.label.automatic') : this.$t('realization.label.manual');
     },
-    isAcceptedLabel() {
-      return this.isAccepted ? this.$t('realization.label.accepted') : this.$t('realization.label.rejected');
+    statusLabel() {
+      return this.$t(`realization.label.${this.status.toLowerCase()}`);
     },
     realizationActionLabel() {
       return this.realization?.actionLabel;

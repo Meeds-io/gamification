@@ -423,6 +423,70 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   }
 
   @Test
+  public void testCancelAnnouncement() throws ObjectNotFoundException, IllegalAccessException {
+    Identity identity = mock(Identity.class);
+    when(identity.isEnable()).thenReturn(true);
+    UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
+    when(identity.getId()).thenReturn("1");
+    UTILS.when(() -> Utils.canAnnounce(any(), anyString())).thenReturn(true);
+    Identity rootIdentity = new Identity();
+    rootIdentity.setId("1");
+    rootIdentity.setProviderId("organization");
+    rootIdentity.setRemoteId("root");
+    Identity johnIdentity = new Identity();
+    johnIdentity.setId("2");
+    johnIdentity.setProviderId("organization");
+    johnIdentity.setRemoteId("john");
+    when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateUserIdentity("john")).thenReturn(johnIdentity);
+    Challenge challenge = newChallenge();
+    Announcement announcement = new Announcement(0,
+                                                 challenge.getId(),
+                                                 challenge.getTitle(),
+                                                 1L,
+                                                 "announcement comment",
+                                                 1L,
+                                                 new Date(System.currentTimeMillis()).toString(),
+                                                 null);
+    Announcement createdAnnouncement = new Announcement(1,
+                                                        challenge.getId(),
+                                                        challenge.getTitle(),
+
+                                                        1L,
+                                                        "announcement comment",
+                                                        1L,
+                                                        new Date(System.currentTimeMillis()).toString(),
+                                                        1L);
+    Announcement canceledAnnouncement = new Announcement(1,
+                                                         challenge.getId(),
+                                                         challenge.getTitle(),
+                                                         1L,
+                                                         "announcement comment",
+                                                         1L,
+                                                         new Date(System.currentTimeMillis()).toString(),
+                                                         null);
+
+    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    when(identityManager.getIdentity("1")).thenReturn(identity);
+    when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
+    when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
+    when(announcementStorage.deleteAnnouncement(createdAnnouncement)).thenReturn(canceledAnnouncement);
+
+    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", true);
+    assertNotNull(newAnnouncement);
+    assertEquals(1L, newAnnouncement.getId());
+
+    assertThrows(IllegalArgumentException.class, () -> announcementService.deleteAnnouncement(-1L, "root"));
+
+    assertThrows(ObjectNotFoundException.class, () -> announcementService.deleteAnnouncement(500L, "root"));
+
+    assertThrows(IllegalAccessException.class, () -> announcementService.deleteAnnouncement(1L, "john"));
+
+    assertNull(announcementService.deleteAnnouncement(createdAnnouncement.getId(), "root").getActivityId());
+  }
+
+  @Test
   public void testGetAnnouncementByChallenge() throws ObjectNotFoundException, IllegalAccessException {
     Challenge challenge = newChallenge();
     Announcement announcement1 = new Announcement(0,
