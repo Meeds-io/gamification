@@ -8,6 +8,7 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEnt
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
@@ -44,6 +45,19 @@ public class AnnouncementStorage {
     } else {
       announcementEntity = announcementDAO.update(announcementEntity);
     }
+    return EntityMapper.fromEntity(announcementEntity);
+  }
+
+  public Announcement deleteAnnouncement(Announcement announcement) {
+    if (announcement == null) {
+      throw new IllegalArgumentException("Announcement argument is null");
+    }
+    RuleEntity ruleEntity = ruleDAO.find(announcement.getChallengeId());
+    GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement, ruleEntity);
+    announcementEntity.setStatus(HistoryStatus.CANCELED);
+    announcementEntity.setActivityId(null);
+    announcementEntity.setObjectId(null);
+    announcementEntity = announcementDAO.update(announcementEntity);
     return EntityMapper.fromEntity(announcementEntity);
   }
 
