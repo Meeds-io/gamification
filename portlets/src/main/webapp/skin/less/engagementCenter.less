@@ -186,9 +186,6 @@
     .uiIconMessageLength {
       font-size: 14px;
       color: @successColor;
-      &:before {
-        content: "\e910";
-      }
     }
     .labels {
       color : @darkGrey;
@@ -245,10 +242,9 @@
       .uiAddAssignIcon {
         margin-top: -4px !important;
         padding-right: 6px;
-
+        .fa();
+        .fa-plus();
         &:before {
-          content: "\e6c4";
-          color: @greyColorLighten1Default;
           font-size: 15px;
         }
       }
@@ -256,9 +252,9 @@
     .assignChallengeMenu {
       .uiAssignToMeIcon {
         margin-top: -4px;
-
+        .fa();
+        .fa-user();
         &:before {
-          content: "\e6cc";
           padding-right: 6px;
           font-size: 16px;
         }
@@ -290,21 +286,14 @@
         color: @primaryColor;
         font-size: 24px;
         margin-left: -2px;
-
-        &:before {
-          content: "\ebf3";
-        }
       }
     }
     .challengeEndDateCalender {
       max-height: 40px;
-
       .uiIconEndDate {
-        &:before {
-          content: "\ebf2";
-          color: @primaryColor;
-          font-size: 22px;
-        }
+        font-size: 24px;
+        color: @primaryColor;
+        margin-left: -2px;
       }
       .v-picker__actions.v-card__actions {
         border-top: 1px solid @borderColor;
