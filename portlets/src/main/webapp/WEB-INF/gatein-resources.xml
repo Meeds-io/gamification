@@ -70,13 +70,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
   <portlet-skin>
     <application-name>gamification-portlets</application-name>
-    <portlet-name>Challenges</portlet-name>
+    <portlet-name>EngagementCenter</portlet-name>
     <skin-name>Enterprise</skin-name>
-    <css-path>/skin/css/challenges.css</css-path>
+    <css-path>/skin/css/engagementCenter.css</css-path>
   </portlet-skin>
 
   <portlet>
-    <name>Challenges</name>
+    <name>EngagementCenter</name>
     <module>
       <load-group>engagement-center-user-actions</load-group>
       <script>
@@ -104,28 +104,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <depends>
         <module>jquery</module>
         <as>$</as>
-      </depends>
-    </module>
-  </portlet>
-
-  <portlet>
-    <name>ChallengesExtensions</name>
-    <module>
-      <script>
-        <minify>false</minify>
-        <path>/js/challengesExtensions.bundle.js</path>
-      </script>
-      <depends>
-        <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>commonVueComponents</module>
       </depends>
     </module>
   </portlet>
@@ -392,6 +370,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </depends>
     </module>
   </portlet>
+
+  <module>
+    <name>EngagementCenterActivityStreamExtension</name>
+    <load-group>ActivityStreamGRP</load-group>
+    <script>
+      <minify>false</minify>
+      <path>/js/engagementCenterActivityStreamExtension.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+    <depends>
+      <module>eXoVueI18n</module>
+    </depends>
+    <depends>
+      <module>vue</module>
+    </depends>
+    <depends>
+      <module>commonVueComponents</module>
+    </depends>
+  </module>
 
   <module>
     <name>profileStatsBundle</name>
