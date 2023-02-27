@@ -40,11 +40,12 @@ extensionRegistry.registerExtension('activity', 'action', {
   confirmTitleKey: 'engagementCenter.button.Confirmation',
   confirmOkKey: 'engagementCenter.button.ok',
   confirmCancelKey: 'engagementCenter.button.cancel',
+  rank: 50,
   isEnabled: (activity, activityTypeExtension) => {
     if (activityTypeExtension.canDelete && !activityTypeExtension.canDelete(activity)) {
       return false;
     }
-    return activity.type === 'challenges-announcement' && activity.canDelete === 'true';
+    return activity.type === 'challenges-announcement' && activity.canEdit === 'true' && (!activityTypeExtension.canEdit || activityTypeExtension.canEdit(activity));
   },
   click: (activity) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
