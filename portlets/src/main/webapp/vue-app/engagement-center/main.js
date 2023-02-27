@@ -49,10 +49,5 @@ export function init(isAdministrator) {
       vuetify,
       i18n
     }, `#${appId}`, 'EngagementCenter');
-  });
-  Object.keys(window.requirejs.s.contexts._.registry)
-    .filter(definedMofule => definedMofule.includes('engagementCenterActions'))
-    .forEach(module => {
-      window.require([module], app => app.init());
-    });
+  }).finally(() => Vue.prototype.$utils.includeExtensions('engagementCenterActions'));
 }
