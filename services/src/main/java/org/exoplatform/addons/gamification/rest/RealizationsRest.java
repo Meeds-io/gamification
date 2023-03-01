@@ -184,8 +184,8 @@ public class RealizationsRest implements ResourceContainer {
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
   public Response updateRealization(@Parameter(description = "id of realization", required = true) @QueryParam("realizationId") String realizationId,
-                                     @Parameter(description = "new status of realization", required = true) @QueryParam("status") String status,
-                                     @Parameter(description = "new action Label of realization") @QueryParam("actionLabel") String actionLabel,
+                                    @Parameter(description = "new status of realization", required = true) @QueryParam("status") String status,
+                                    @Parameter(description = "new action Label of realization") @QueryParam("actionLabel") String actionLabel,
                                     @Parameter(description = "new points of realization") @QueryParam("points") Long points) {
 
     String currentUser = Utils.getCurrentUser();

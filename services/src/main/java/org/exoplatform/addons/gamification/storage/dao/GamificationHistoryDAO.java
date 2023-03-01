@@ -63,6 +63,12 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
   private static final String        CHALLENGE_ID_PARAM_NAME = "challengeId";
 
+  private static final String        ACTION_TITLE_PARAM_NAME = "actionTitle";
+
+  private static final String        RECEIVER_ID_PARAM_NAME  = "receiverId";
+
+  private static final String        OBJECT_ID_PARAM_NAME    = "objectId";
+
   private final Map<String, Boolean> filterNamedQueries      = new HashMap<>();
 
   /**
@@ -484,6 +490,27 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
       resultList = query.getResultList();
     }
     return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  public GamificationActionsHistory findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                    long domainId,
+                                                                                                    String earnerId,
+                                                                                                    String receiverId,
+                                                                                                    String objectId) {
+    TypedQuery<GamificationActionsHistory> query =
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
+                                                                                     GamificationActionsHistory.class);
+    query.setParameter(ACTION_TITLE_PARAM_NAME, actionTitle);
+    query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
+    query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
+    query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
+    query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {// NOSONAR : normal to not log this and not
+      // rethrow it
+      return null;
+    }
   }
 
   /**

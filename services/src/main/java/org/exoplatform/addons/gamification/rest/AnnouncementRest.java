@@ -102,9 +102,7 @@ public class AnnouncementRest implements ResourceContainer {
   @Operation(summary = "Cancels an existing announcement", method = "DELETE", description = "Cancels an existing announcement")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
       @ApiResponse(responseCode = "404", description = "Object not found"),
-      @ApiResponse(responseCode = "400", description = "Invalid query input"),
-      @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
+      @ApiResponse(responseCode = "401", description = "Unauthorized operation"), })
   public Response cancelAnnouncement(@Parameter(description = "Announcement technical identifier", required = true)
                                      @PathParam("announcementId") long announcementId) {
 
