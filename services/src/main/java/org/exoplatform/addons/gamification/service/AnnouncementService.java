@@ -60,9 +60,10 @@ public interface AnnouncementService {
   Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException;
 
   /**
-   * Cancel announcement
+   * Deletes announcement
    *
-   * @param announcementId technical identifier of a challenge
+   * @param announcementId technical identifier of announcement
+   * @param username Username who want to delete announcement
    * @return a {@link Announcement} Object
    * @throws ObjectNotFoundException when the announcement identified by its
    *           technical identifier is not found

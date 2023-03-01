@@ -184,6 +184,16 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
             " AND a.createdDate >= :fromDate AND a.createdDate < :toDate" +
             " group by r.id order by count(*) DESC"
 )
+
+@NamedQuery(
+    name = "GamificationActionsHistory.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
+    query = "SELECT g FROM GamificationActionsHistory g" +
+            " WHERE g.actionTitle = :actionTitle" +
+            " AND g.domainEntity.id = :domainId" +
+            " AND g.earnerId = :earnerId" +
+            " AND g.receiver = :receiverId" +
+            " AND g.objectId = :objectId"
+)
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 

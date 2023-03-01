@@ -186,6 +186,20 @@ public class RealizationsServiceImpl implements RealizationsService {
     return realizationsStorage.updateRealization(realization);
   }
 
+  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                     long domainId,
+                                                                                                     String earnerId,
+                                                                                                     String receiverId,
+                                                                                                     String objectId) {
+
+    return realizationsStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
+                                                                                             domainId,
+                                                                                             earnerId,
+                                                                                             receiverId,
+                                                                                             objectId);
+  }
+
+  
   public InputStream exportXlsx(RealizationsFilter filter,
                                 Identity identity,
                                 String fileName,
