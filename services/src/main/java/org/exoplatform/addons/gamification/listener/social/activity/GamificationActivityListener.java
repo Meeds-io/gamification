@@ -17,10 +17,9 @@
 package org.exoplatform.addons.gamification.listener.social.activity;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
-import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.EVENT_NAME;
+import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.GENERIC_EVENT_NAME;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -317,7 +316,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put("object", activityUrl);
       gam.put("senderId", senderId);
       gam.put("receiverId", receiverId);
-      listenerService.broadcast(EVENT_NAME, gam, null);
+      listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error("Cannot broadcast gamification event", e);
     }
@@ -334,7 +333,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put("senderId", spacePrettyName);
       gam.put("senderType", SpaceIdentityProvider.NAME);
       gam.put("receiverId", receiverId);
-      listenerService.broadcast(EVENT_NAME, gam, null);
+      listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error("Cannot broadcast gamification event", e);
     }

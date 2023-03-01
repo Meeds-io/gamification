@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -39,6 +40,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -58,14 +60,18 @@ public class GamificationService {
 
   private RuleService                    ruleService;
 
+  private RealizationsService            realizationsService;
+
   public GamificationService(IdentityManager identityManager,
                              SpaceService spaceService,
                              GamificationHistoryDAO gamificationHistoryDAO,
-                             RuleService ruleService) {
+                             RuleService ruleService,
+                             RealizationsService realizationsService) {
     this.gamificationHistoryDAO = gamificationHistoryDAO;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
     this.ruleService = ruleService;
+    this.realizationsService = realizationsService;
   }
 
   /**
@@ -157,6 +163,35 @@ public class GamificationService {
                    ruleDto.getDomainDTO().getTitle(),
                    ruleDto.getEvent(),
                    ruleDto.getScore());
+        }
+      }
+    }
+  }
+
+  public void cancelHistory(String event, String sender, String receiver, String object) {
+    List<RuleDTO> ruleDtos = null;
+    // Get associated rules
+    ruleDtos = ruleService.findEnabledRulesByEvent(event);
+    if (ruleDtos != null) {
+      for (RuleDTO ruleDto : ruleDtos) {
+        GamificationActionsHistoryDTO realization =
+                                                  realizationsService.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(ruleDto.getTitle(),
+                                                                                                                                    ruleDto.getDomainDTO()
+                                                                                                                                           .getId(),
+                                                                                                                                    sender,
+                                                                                                                                    receiver,
+                                                                                                                                    object);
+        if (realization != null) {
+          try {
+            if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
+              realization.setStatus(HistoryStatus.CANCELED.name());
+              realization.setActivityId(null);
+              realization.setObjectId(null);
+              realizationsService.updateRealization(realization);
+            }
+          } catch (ObjectNotFoundException e) {
+            LOG.warn("Realization with id {} does not exist", realization.getId(), e);
+          }
         }
       }
     }
