@@ -34,7 +34,9 @@ import org.exoplatform.social.core.manager.IdentityManager;
 @Asynchronous
 public class GamificationGenericListener extends Listener<Map<String, String>, String> {
 
-  public static final String    EVENT_NAME = "exo.gamification.generic.action";
+  public static final String    GENERIC_EVENT_NAME = "exo.gamification.generic.action";
+
+  public static final String    CANCEL_EVENT_NAME  = "gamification.cancel.kudos.action";
 
   protected PortalContainer     container;
 
@@ -91,7 +93,18 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       if (receiverIdentity == null) {
         throw new IllegalStateException("Can't find identity with receiverId = " + receiverId);
       }
-      gamificationService.createHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), obj);
+      switch (event.getEventName()) {
+      case GENERIC_EVENT_NAME: {
+        gamificationService.createHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), obj);
+        break;
+      }
+      case CANCEL_EVENT_NAME: {
+        gamificationService.cancelHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), obj);
+        break;
+      }
+      default:
+        throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
+      }
     } finally {
       RequestLifeCycle.end();
     }
