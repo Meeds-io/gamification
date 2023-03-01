@@ -42,4 +42,18 @@ public class RealizationsStorage {
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistoryEntity);
   }
 
+  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                     long domainId,
+                                                                                                     String earnerId,
+                                                                                                     String receiverId,
+                                                                                                     String objectId) {
+    GamificationActionsHistory gamificationActionsHistory =
+                                                          gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
+                                                                                                                                                 domainId,
+                                                                                                                                                 earnerId,
+                                                                                                                                                 receiverId,
+                                                                                                                                                 objectId);
+    return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
+  }
+
 }

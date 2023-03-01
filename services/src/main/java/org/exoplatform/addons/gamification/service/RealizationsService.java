@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
@@ -93,6 +92,24 @@ public interface RealizationsService {
    *           technical identifier is not found
    */
   GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization) throws ObjectNotFoundException;
+
+  /**
+   * Retrieves a realization identified by actionTitle, earner identity Id,
+   * receiver identity Id and object Id.
+   *
+   * @param actionTitle action title
+   * @param  domainId technical identifier of domain
+   * @param earnerId earner identity Id
+   * @param receiverId receiver identity Id
+   * @param objectId object Id
+   * @return {@link GamificationActionsHistoryDTO}
+   */
+  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                    long domainId,
+                                                                                                    String earnerId,
+                                                                                                    String receiverId,
+                                                                                                    String objectId);
+
 
 }
 
