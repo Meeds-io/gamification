@@ -494,9 +494,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
   public GamificationActionsHistory findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
                                                                                                     long domainId,
-                                                                                                          String earnerId,
-                                                                                                          String receiverId,
-                                                                                                          String objectId) {
+                                                                                                    String earnerId,
+                                                                                                    String receiverId,
+                                                                                                    String objectId) {
     TypedQuery<GamificationActionsHistory> query =
                                                  getEntityManager().createNamedQuery("GamificationActionsHistory.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
                                                                                      GamificationActionsHistory.class);
@@ -505,7 +505,12 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
-    return query.getSingleResult();
+    try {
+      return query.getSingleResult();
+    } catch (NoResultException e) {// NOSONAR : normal to not log this and not
+      // rethrow it
+      return null;
+    }
   }
 
   /**

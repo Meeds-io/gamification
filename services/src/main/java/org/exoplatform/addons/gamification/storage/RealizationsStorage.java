@@ -53,7 +53,7 @@ public class RealizationsStorage {
                                                                                                                                                  earnerId,
                                                                                                                                                  receiverId,
                                                                                                                                                  objectId);
-    return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
+    return gamificationActionsHistory != null ? GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory) : null;
   }
 
 }
