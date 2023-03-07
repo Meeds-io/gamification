@@ -24,7 +24,8 @@
     class="EngagementCenterDrawer"
     :right="!$vuetify.rtl"
     eager
-    @closed="close">
+    @closed="close"
+    @opened="collectChallengeVisit">
     <template #title>
       <span class="pb-2"> {{ drawerTitle }} </span>
     </template>
@@ -250,6 +251,38 @@ export default {
         return status.STARTED;
       } else if (endDate.getTime() < currentDate.getTime() && startDate.getTime()< currentDate.getTime()) {
         return status.ENDED;
+      }
+    },
+    collectChallengeVisit() {
+      if (this.challenge?.id) {
+        document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+          detail: {
+            module: 'gamification',
+            subModule: 'rule',
+            userId: eXo.env.portal.userIdentityId,
+            userName: eXo.env.portal.userName,
+            spaceId: this.challenge.program?.space?.id || 0,
+            operation: 'viewRule',
+            timestamp: Date.now(),
+            parameters: {
+              ruleId: this.challenge.id,
+              ruleTitle: this.challenge.title,
+              ruleDescription: this.challenge.description,
+              ruleBudget: this.challenge.points || 0,
+              ruleType: 'MANUAL',
+              programId: this.challenge.program?.id,
+              programTitle: this.challenge.program?.title,
+              programType: this.challenge.program?.type,
+              programBudget: this.challenge.program?.rulesTotalScore || 0,
+              drawer: 'challengeDetail',
+              portalName: eXo.env.portal.portalName,
+              portalUri: eXo.env.server.portalBaseURL,
+              pageUrl: window.location.pathname,
+              pageTitle: eXo.env.portal.pageTitle,
+              pageUri: eXo.env.portal.selectedNodeUri,
+            },
+          }
+        }));
       }
     },
     getFromDate(date) {

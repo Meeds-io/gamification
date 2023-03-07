@@ -230,10 +230,12 @@ export default {
       window.setTimeout(() => {
         if (this.$refs.ruleTitle) {
           this.$refs.ruleTitle.focus();
+          if (this.$refs.ruleDescription) {
+            this.$refs.ruleDescription.initCKEditor();
+          }
         }
       }, 200);
       this.$nextTick().then(() => {
-        this.$refs.ruleDescription.initCKEditor();
         this.$root.$emit('rule-form-drawer-opened', this.rule);
         this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
       });

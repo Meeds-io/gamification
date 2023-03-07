@@ -56,13 +56,7 @@ public class ChallengeServiceImpl implements ChallengeService {
       throw new IllegalArgumentException("challenge id must be equal to 0");
     }
     checkChallengePermissionAndDates(challenge, username);
-    challenge = challengeStorage.saveChallenge(challenge, username);
-    try {
-      listenerService.broadcast(POST_CREATE_RULE_EVENT, this, challenge.getId());
-    } catch (Exception e) {
-      LOG.error("Error broadcasting challenge with id {} creation event", challenge.getId(), e);
-    }
-    return challenge;
+    return createChallengeAndBroadcast(challenge, username);
   }
 
   @Override
@@ -71,7 +65,7 @@ public class ChallengeServiceImpl implements ChallengeService {
       throw new IllegalArgumentException(CHALLENGE_IS_MANDATORY_MESSAGE);
     }
     applyDomainAttributes(challenge, true);
-    return challengeStorage.saveChallenge(challenge, Utils.SYSTEM_USERNAME);
+    return createChallengeAndBroadcast(challenge, Utils.SYSTEM_USERNAME);
   }
 
   @Override
@@ -120,7 +114,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                                                            // remaining manager
     challenge = challengeStorage.saveChallenge(challenge, username);
     try {
-      listenerService.broadcast(POST_UPDATE_RULE_EVENT, this, challenge.getId());
+      listenerService.broadcast(POST_UPDATE_RULE_EVENT, challenge, username);
     } catch (Exception e) {
       LOG.error("Error broadcasting challenge with id {} update event", challenge.getId(), e);
     }
@@ -150,7 +144,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
     challengeStorage.deleteChallenge(challengeId, username);
     try {
-      listenerService.broadcast(POST_DELETE_RULE_EVENT, this, challengeId);
+      listenerService.broadcast(POST_DELETE_RULE_EVENT, challenge, username);
     } catch (Exception e) {
       LOG.error("Error broadcasting chanllenge with id {} deletion event", challenge.getId(), e);
     }
@@ -245,6 +239,16 @@ public class ChallengeServiceImpl implements ChallengeService {
       }
       challenge.setAudience(domain.getAudienceId());
     }
+  }
+
+  private Challenge createChallengeAndBroadcast(Challenge challenge, String username) {
+    challenge = challengeStorage.saveChallenge(challenge, username);
+    try {
+      listenerService.broadcast(POST_CREATE_RULE_EVENT, challenge.getId(), username);
+    } catch (Exception e) {
+      LOG.error("Error broadcasting challenge with id {} creation event", challenge.getId(), e);
+    }
+    return challenge;
   }
 
 }

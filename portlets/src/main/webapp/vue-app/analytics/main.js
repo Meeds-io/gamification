@@ -1,7 +1,8 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 Meeds Association
- * contact@meeds.io
+ *
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -14,26 +15,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.exoplatform.addons.gamification.mock;
+import './initComponents.js';
+import './extensions.js';
+import '../engagement-center/services.js';
 
-import org.exoplatform.services.naming.InitialContextInitializer;
-import org.picocontainer.Startable;
+const lang = window.eXo && eXo.env?.portal?.language || 'en';
+const urls = [
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`,
+  `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.addon.Gamification-${lang}.json`
+];
 
-public class DummyDependantComponent implements Startable {
-
-    private final InitialContextInitializer jndiInitializer;
-
-    public DummyDependantComponent(InitialContextInitializer jndiInitializer) {
-        this.jndiInitializer = jndiInitializer;
-    }
-
-    @Override
-    public void start() {
-        // nothing
-    }
-
-    @Override
-    public void stop() {
-        // nothing
-    }
-}
+exoi18n.loadLanguageAsync(lang, urls).then(i18n => {
+  new Vue({i18n}); // NOSONAR used to inject to I18N of Vue inside page apps only
+});

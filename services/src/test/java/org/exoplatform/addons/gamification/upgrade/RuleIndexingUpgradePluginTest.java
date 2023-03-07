@@ -17,14 +17,18 @@
 
 package org.exoplatform.addons.gamification.upgrade;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.api.settings.SettingService;
 import org.exoplatform.commons.search.index.IndexingService;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.ValueParam;
-import org.junit.Test;
-import org.mockito.Mock;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RuleIndexingUpgradePluginTest extends AbstractServiceTest {
 
   @Mock

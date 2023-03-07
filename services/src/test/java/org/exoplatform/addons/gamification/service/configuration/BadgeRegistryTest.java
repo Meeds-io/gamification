@@ -30,8 +30,10 @@ public class BadgeRegistryTest extends AbstractServiceTest {
 
   private BadgeRegistryImpl badgeRegistry;
 
+  @Override
   @Before
-  public void init() throws Exception {
+  public void setUp() throws Exception {
+    super.setUp();
     if (badgeRegistry == null) {
       badgeRegistry = new BadgeRegistryImpl(fileService,
                                             badgeService);
