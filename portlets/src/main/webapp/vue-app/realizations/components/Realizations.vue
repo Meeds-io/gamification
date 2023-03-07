@@ -45,8 +45,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-btn>
       </div>
     </div>
+    <v-progress-linear
+        v-if="loading"
+        indeterminate
+        height="2"
+        color="primary" />
     <engagement-center-result-not-found 
-      v-if="!displaySearchResult"
+      v-else-if="!displaySearchResult"
       :display-back-arrow="false"
       :message-title="$t('challenges.welcomeMessage')"
       :message-info-one="$t('challenge.realization.noResult.messageOne')"
@@ -54,7 +59,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       :button-text="$t('programs.details.programDeleted.explore')"
       :button-url="programsUrl" />
     <v-data-table
-      v-if="displaySearchResult && !isMobile"
+      v-else-if="displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
       :items="realizationsToDisplay"
       :loading="loading"
