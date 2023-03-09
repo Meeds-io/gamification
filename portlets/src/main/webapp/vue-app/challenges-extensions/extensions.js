@@ -38,7 +38,7 @@ extensionRegistry.registerExtension('activity', 'action', {
   confirmDialog: true,
   confirmMessageKey: 'challenges.label.confirmCancelAnnouncement',
   confirmTitleKey: 'engagementCenter.button.Confirmation',
-  confirmOkKey: 'engagementCenter.button.ok',
+  confirmOkKey: 'engagementCenter.button.yes',
   confirmCancelKey: 'engagementCenter.button.cancel',
   rank: 50,
   isEnabled: (activity, activityTypeExtension) => {
