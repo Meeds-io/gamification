@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div
     id="descriptionId"
-    class="activityRichEditor newEditorToolbar">
+    class="activityRichEditor newEditorToolbar richEditor">
     <div v-if="label" class="py-1 subtitle-1">
       {{ label }}
     </div>
@@ -134,7 +134,6 @@ export default {
     }
   },
   created() {
-    CKEDITOR.basePath = '/commons-extension/ckeditor/';
     this.initCKEditor();
   },
   beforeDestroy() {
@@ -142,6 +141,13 @@ export default {
   },
   methods: {
     initCKEditor() {
+      const self = this;
+      window.require(['SHARED/commons-editor', 'SHARED/suggester', 'SHARED/tagSuggester'], function() {
+        CKEDITOR.basePath = '/commons-extension/ckeditor/';
+        self.initCKEditorInstance();
+      });
+    },
+    initCKEditorInstance() {
       const removePlugins = 'image,maximize,resize';
       let extraPlugins = 'simpleLink,widget';
       const toolbar = [

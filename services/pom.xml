@@ -80,18 +80,7 @@
       <artifactId>log4j-api</artifactId>
     </dependency>
 
-    <!-- Portal & Social -->
-    <dependency>
-      <groupId>org.exoplatform.commons</groupId>
-      <artifactId>commons-webui-ext</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <!-- Social -->
-    <dependency>
-      <groupId>org.exoplatform.social</groupId>
-      <artifactId>social-component-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.exoplatform.social</groupId>
       <artifactId>social-component-service</artifactId>
