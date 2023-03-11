@@ -108,7 +108,7 @@
                 <include>usersLeaderboard.less</include>
                 <include>badgesOverview.less</include>
                 <include>gamification.less</include>
-                <include>challenges.less</include>
+                <include>engagementCenter.less</include>
               </includes>
             </configuration>
             <goals>
