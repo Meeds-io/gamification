@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.AbstractAuditingEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.api.persistence.ExoEntity;
@@ -45,17 +46,20 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findAllActionsHistory",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
+        + " FROM GamificationActionsHistory g WHERE g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionsHistoryByEarnerIdSortedByDate",
-    query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status <> :status ORDER BY g.createdDate DESC"
+    query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.status = :status ORDER BY g.createdDate DESC"
 )
+@NamedQuery(
+    name = "GamificationActionsHistory.findActionsHistoryByEarnerIdAndByType",
+    query = "SELECT g FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.type = :type")
 @NamedQuery(
     name = "GamificationActionsHistory.findAllActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.createdDate >= :date  AND g.domain = :domain AND g.earnerType = :earnerType  AND g.status <> :status GROUP BY  g.earnerId"
+        + " FROM GamificationActionsHistory g WHERE g.createdDate >= :date  AND g.domainEntity.id = :domainId AND g.earnerType = :earnerType  AND g.status = :status GROUP BY  g.earnerId"
         + "     ORDER BY total DESC"
 )
 @NamedQuery(
@@ -67,7 +71,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findAllActionsHistoryByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g WHERE g.domain = :domain AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
+        + " FROM GamificationActionsHistory g WHERE g.domainEntity.id = :domainId AND g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionHistoryByDateByEarnerId",
@@ -79,13 +83,13 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
     name = "GamificationActionsHistory.findActionsHistoryByDate",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g  WHERE g.createdDate >= :date  AND g.earnerType = :earnerType AND g.status <> :status GROUP BY  g.earnerId ORDER BY total DESC"
+        + " FROM GamificationActionsHistory g  WHERE g.createdDate >= :date  AND g.earnerType = :earnerType AND g.status = :status GROUP BY  g.earnerId ORDER BY total DESC"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findActionsHistoryByDateByDomain",
     query = "SELECT"
         + " new org.exoplatform.addons.gamification.service.effective.StandardLeaderboard(g.earnerId, SUM(g.actionScore) as total)"
-        + " FROM GamificationActionsHistory g" + " WHERE g.createdDate >= :date" + "     AND g.domain = :domain"
+        + " FROM GamificationActionsHistory g" + " WHERE g.createdDate >= :date" + "     AND g.domainEntity.id = :domainId"
         + "     AND g.earnerType = :earnerType" + "     GROUP BY  g.earnerId" + "     ORDER BY total DESC"
 )
 @NamedQuery(
@@ -104,16 +108,16 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findDomainScoreByUserId",
     query = "SELECT"
-        + " new org.exoplatform.addons.gamification.service.effective.ProfileReputation(g.domain,SUM(g.actionScore))"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     GROUP BY  g.domain"
+        + " new org.exoplatform.addons.gamification.service.effective.ProfileReputation(g.domainEntity.id,SUM(g.actionScore))"
+        + " FROM GamificationActionsHistory g WHERE g.earnerId = :earnerId AND g.domainEntity IS NOT NULL GROUP BY  g.domainEntity.id"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreBetweenDate",
     query = "SELECT SUM(g.actionScore) as total"
-        + " FROM GamificationActionsHistory g  WHERE g.earnerId = :earnerId AND g.status <> :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
+        + " FROM GamificationActionsHistory g  WHERE g.earnerId = :earnerId AND g.status = :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
 )
 @NamedQuery(name = "GamificationActionsHistory.findUsersReputationScoreBetweenDate", query = "SELECT g.earnerId,SUM(g.actionScore) as total"
-    + " FROM GamificationActionsHistory g  WHERE g.earnerId IN :earnersId AND g.status <> :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate GROUP BY g.earnerId")
+    + " FROM GamificationActionsHistory g  WHERE g.earnerId IN :earnersId AND g.status = :status AND g.createdDate >= :fromDate AND g.createdDate < :toDate GROUP BY g.earnerId")
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreByMonth",
     query = "SELECT SUM(g.actionScore) as total"
@@ -122,7 +126,7 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.findUserReputationScoreByDomainBetweenDate",
     query = "SELECT SUM(g.actionScore) as total"
-        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.domain = :domain"
+        + " FROM GamificationActionsHistory g" + " WHERE g.earnerId = :earnerId" + "     AND g.domainEntity.id = :domainId"
         + "     AND g.createdDate >= :fromDate AND g.createdDate < :toDate"
 )
 @NamedQuery(
@@ -141,46 +145,54 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 @NamedQuery(
     name = "GamificationActionsHistory.getAllPointsByDomain",
     query = "SELECT g"
-        + " FROM GamificationActionsHistory g" + " WHERE g.domain = :domain "
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.getAllPointsWithNullDomain",
-    query = "SELECT g"
-        + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity IS NULL "
-)
-@NamedQuery(
-    name = "GamificationActionsHistory.getDomainList",
-    query = "SELECT g.domain"
-        + " FROM GamificationActionsHistory g" + "     GROUP BY  g.domain"
+        + " FROM GamificationActionsHistory g" + " WHERE g.domainEntity.id = :domainId "
 )
 @NamedQuery(
     name = "GamificationActionsHistory.countAnnouncementsByChallenge",
-    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId"
+    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.countAnnouncementsByChallengeAndEarnerType",
-    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.earnerType = :earnerType"
+    query = "SELECT COUNT(a) FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.earnerType = :earnerType"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallenge",
-    query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallengeByEarnerType",
-    query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.earnerType = :earnerType order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.earnerType = :earnerType order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallengeByDate",
-    query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findAllAnnouncementByChallengeByDateByEarnerType",
-    query = "SELECT DISTINCT a FROM GamificationActionsHistory a where a.ruleId = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate AND a.earnerType = :earnerType order by a.id desc"
+    query = "SELECT a FROM GamificationActionsHistory a where a.ruleEntity.id = :challengeId AND a.createdDate >= :fromDate AND a.createdDate < :toDate AND a.earnerType = :earnerType order by a.id desc"
 )
 @NamedQuery(
     name = "GamificationActionsHistory.findMostRealizedRuleIds",
-    query = "SELECT a.ruleId FROM GamificationActionsHistory a where a.type= :type AND (a.domainEntity.audienceId in (:spacesIds) OR a.domainEntity.audienceId = null ) AND a.createdDate >= :fromDate AND a.createdDate < :toDate " +
-            "group by a.ruleId order by count(*) DESC"
+    query = "SELECT r.id FROM GamificationActionsHistory a" +
+            " JOIN a.ruleEntity r " +
+            " ON  (r.startDate IS NULL OR r.startDate <= :nowDate)" +
+            " AND (r.endDate IS NULL OR r.endDate >= :nowDate)" +
+            " AND r.isEnabled = true AND r.isDeleted = false" +
+            " JOIN a.domainEntity d " +
+            " ON d.audienceId IS NULL OR d.audienceId IN (:spacesIds)" +
+            " WHERE a.type= :type" +
+            " AND a.createdDate >= :fromDate AND a.createdDate < :toDate" +
+            " group by r.id order by count(*) DESC"
+)
+
+@NamedQuery(
+    name = "GamificationActionsHistory.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
+    query = "SELECT g FROM GamificationActionsHistory g" +
+            " WHERE g.actionTitle = :actionTitle" +
+            " AND g.domainEntity.id = :domainId" +
+            " AND g.earnerId = :earnerId" +
+            " AND g.receiver = :receiverId" +
+            " AND g.objectId = :objectId"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -222,8 +234,9 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   @JoinColumn(name = "DOMAIN_ID")
   private DomainEntity      domainEntity;
 
-  @Column(name = "RULE_ID")
-  private Long              ruleId;
+  @ManyToOne
+  @JoinColumn(name = "RULE_ID")
+  private RuleEntity        ruleEntity;
 
   @Column(name = "ACTIVITY_ID")
   private Long              activityId;
@@ -330,12 +343,12 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
     this.domainEntity = domainEntity;
   }
 
-  public Long getRuleId() {
-    return ruleId;
+  public RuleEntity getRuleEntity() {
+    return ruleEntity;
   }
 
-  public void setRuleId(Long ruleId) {
-    this.ruleId = ruleId;
+  public void setRuleEntity(RuleEntity ruleEntity) {
+    this.ruleEntity = ruleEntity;
   }
 
   public Long getActivityId() {

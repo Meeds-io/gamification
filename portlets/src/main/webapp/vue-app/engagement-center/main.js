@@ -15,8 +15,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents.js';
+import './services.js';
 import './extensions.js';
-
 
 // get overridden components if exists
 if (extensionRegistry) {
@@ -28,8 +28,7 @@ if (extensionRegistry) {
   }
 }
 
-Vue.use(Vuetify);
-const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
+const vuetify = Vue.prototype.vuetifyOptions;
 
 const appId = 'EngagementCenterApplication';
 

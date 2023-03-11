@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
@@ -27,6 +29,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GamificationServiceTest extends AbstractServiceTest {
 
   @Test
@@ -155,13 +158,13 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                          TEST_LINK_ACTIVITY);
     gamificationService.saveActionHistory(aHistory);
 
-    int rankUser1 = gamificationService.getLeaderboardRank(TEST_USER_SENDER, new Date(), GAMIFICATION_DOMAIN);
-    int rankUser2 = gamificationService.getLeaderboardRank(TEST_USER_RECEIVER, new Date(), GAMIFICATION_DOMAIN);
+    int rankUser1 = gamificationService.getLeaderboardRank(TEST_USER_SENDER, new Date(), 1L);
+    int rankUser2 = gamificationService.getLeaderboardRank(TEST_USER_RECEIVER, new Date(), 1L);
     assertEquals(rankUser1, 1);
     assertEquals(rankUser2, 2);
 
-    int rankSpace2 = gamificationService.getLeaderboardRank(TEST_SPACE2_ID, new Date(), GAMIFICATION_DOMAIN);
-    int rankSpace1 = gamificationService.getLeaderboardRank(TEST_SPACE_ID, new Date(), GAMIFICATION_DOMAIN);
+    int rankSpace2 = gamificationService.getLeaderboardRank(TEST_SPACE2_ID, new Date(), 1L);
+    int rankSpace1 = gamificationService.getLeaderboardRank(TEST_SPACE_ID, new Date(), 1L);
     assertEquals(rankSpace2, 1);
     assertEquals(rankSpace1, 2);
   }

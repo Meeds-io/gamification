@@ -125,17 +125,6 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testFindEnabledDomainByTitle() {
-    assertThrows(IllegalArgumentException.class, () -> domainService.findEnabledDomainByTitle(""));
-
-    assertNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    newDomainDTO(EntityType.MANUAL, GAMIFICATION_DOMAIN, true, Collections.singleton(1L));
-    assertNotNull(domainService.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    newDomainDTO(EntityType.MANUAL, "disabledDomain", false, Collections.singleton(1L));
-    assertNull(domainService.findEnabledDomainByTitle("disabledDomain"));
-  }
-
-  @Test
   public void testCreateDomain() throws Exception {
     assertEquals(0, domainDAO.count().longValue());
     DomainDTO autoDomain = new DomainDTO();
@@ -240,16 +229,6 @@ public class DomainServiceTest extends AbstractServiceTest {
     domainService.deleteDomainById(domain.getId(), adminAclIdentity);
     DomainEntity domainEntity = domainDAO.find(domain.getId());
     assertTrue(domainEntity.isDeleted());
-  }
-
-  @Test
-  public void testGetDomainByTitle() {
-    assertThrows(IllegalArgumentException.class, () -> domainService.getDomainByTitle(""));
-    assertNull(domainService.getDomainByTitle(GAMIFICATION_DOMAIN));
-    newDomain();
-    DomainDTO domain = domainService.getDomainByTitle(GAMIFICATION_DOMAIN);
-    assertNotNull(domain);
-    assertEquals(domain.getTitle(), GAMIFICATION_DOMAIN);
   }
 
   @Test

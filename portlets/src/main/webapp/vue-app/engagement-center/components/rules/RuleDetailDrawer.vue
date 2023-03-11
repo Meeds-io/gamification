@@ -3,7 +3,8 @@
     id="ruleDetailDrawer"
     ref="ruleDetailDrawer"
     :right="!$vuetify.rtl"
-    @closed="close">
+    @closed="close"
+    @opened="collectRuleVisit">
     <template #title>
       <span class="pb-2"> {{ $t('rule.detail.letsSeeWhatToDo') }} </span>
     </template>
@@ -89,17 +90,18 @@
     <template v-if="!automaticRule && isActiveRule && editor" slot="footer">
       <div class="d-flex mr-2">
         <v-spacer />
-        <button
-          class="ignore-vuetify-classes btn mx-1"
+        <v-btn
+          class="btn me-2"
           @click="close">
           {{ $t('rule.detail.label.cancel') }}
-        </button>
-        <button
-          :disabled="announceDisabled"
-          class="ignore-vuetify-classes btn btn-primary"
+        </v-btn>
+        <v-btn
+          :loading="sending"
+          :disabled="btnDisabled"
+          class="btn btn-primary"
           @click="createAnnouncement">
           {{ $t('rule.detail.label.announce') }}
-        </button>
+        </v-btn>
       </div>
     </template>
   </exo-drawer>
@@ -140,6 +142,7 @@ export default {
     MAX_LENGTH: 1300,
     editorFocus: false,
     editor: false,
+    sending: false
   }),
   computed: {
     ruleTitle() {
@@ -181,26 +184,24 @@ export default {
       return new Date(this.rule?.endDate).getTime() || 0;
     },
     isActiveRule() {
-      return this.automaticRule || (this.startDate <= new Date().getTime() && this.endDate >= new Date().getTime());
+      return this.automaticRule || (this.startDate <= Date.now() && this.endDate >= Date.now());
     },
     DateInfo() {
       if (this.isActiveRule) {
-        const days = Math.round((this.endDate - this.startDate) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.endDate - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeEndIn', {0: days});
-      } else if (this.endDate < new Date().getTime()) {
+      } else if (this.endDate < Date.now()) {
         return this.$t('rule.detail.challengeEnded');
       } else {
-        const days = Math.round((this.startDate - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.startDate - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('rule.detail.challengeOpenIn', {0: days});
       }
     },
     spaceId() {
       return this.program?.audienceId;
     },
-    announceDisabled() {
-      return !this.validInput
-          || !this.comment
-          || !this.comment.length;
+    btnDisabled() {
+      return !this.validInput || !this.comment || !this.comment.length;
     }
   },
   watch: {
@@ -213,6 +214,15 @@ export default {
         }
       }
     },
+    watch: {
+      sending() {
+        if (this.sending) {
+          this.$refs.ruleDetailDrawer.startLoading();
+        } else {
+          this.$refs.ruleDetailDrawer.endLoading();
+        }
+      }
+    }
   },
   created() {
     this.$root.$on('rule-detail-drawer', (rule, editorFocus) => {
@@ -264,8 +274,7 @@ export default {
         challengeTitle: this.rule.title,
         templateParams: this.templateParams,
       };
-
-      this.$refs.ruleDetailDrawer.startLoading();
+      this.sending = true;
       this.$challengesServices.saveAnnouncement(announcement)
         .then(createdAnnouncement => {
           this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
@@ -286,7 +295,9 @@ export default {
           }
           this.$engagementCenterUtils.displayAlert(msg, 'error');
         })
-        .finally(() => this.$refs.ruleDetailDrawer.endLoading());
+        .finally(() => {
+          this.sending = false;
+        });
     },
     showEditor() {
       this.editor = true;
@@ -303,7 +314,40 @@ export default {
         });
         this.$refs.announcementRichEditor.setFocus();
       }, 100);
-    }
+    },
+    collectRuleVisit() {
+      if (this.rule?.id) {
+        document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+          detail: {
+            module: 'gamification',
+            subModule: 'rule',
+            userId: eXo.env.portal.userIdentityId,
+            userName: eXo.env.portal.userName,
+            spaceId: this.rule.domainDTO?.audienceId || 0,
+            operation: 'viewRule',
+            timestamp: Date.now(),
+            parameters: {
+              ruleId: this.rule.id,
+              ruleTitle: this.rule.title,
+              ruleDescription: this.rule.description,
+              ruleBudget: this.rule.score || 0,
+              ruleType: this.rule.type,
+              ruleEvent: this.rule.event,
+              programId: this.rule.domainDTO?.id,
+              programTitle: this.rule.domainDTO?.title,
+              programType: this.rule.domainDTO?.type,
+              programBudget: this.rule.domainDTO?.rulesTotalScore || 0,
+              drawer: 'ruleDetail',
+              portalName: eXo.env.portal.portalName,
+              portalUri: eXo.env.server.portalBaseURL,
+              pageUrl: window.location.pathname,
+              pageTitle: eXo.env.portal.pageTitle,
+              pageUri: eXo.env.portal.selectedNodeUri,
+            },
+          }
+        }));
+      }
+    },
   }
 };
 </script>

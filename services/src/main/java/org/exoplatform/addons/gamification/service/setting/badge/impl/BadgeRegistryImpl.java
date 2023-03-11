@@ -26,7 +26,6 @@ import java.util.Map;
 import org.picocontainer.Startable;
 
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
 import org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry;
 import org.exoplatform.addons.gamification.service.setting.badge.model.BadgeConfig;
@@ -46,13 +45,9 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
 
   private FileService                    fileService;
 
-  private DomainService                  domainService;
-
   public BadgeRegistryImpl(FileService fileService,
-                           DomainService domainService,
                            BadgeService badgeService) {
     this.badgesMap = new HashMap<>();
-    this.domainService = domainService;
     this.fileService = fileService;
     this.badgeService = badgeService;
   }
@@ -76,7 +71,7 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
       List<BadgeDTO> badges = badgeService.getAllBadges();
       if (badges.isEmpty()) {
         for (BadgeConfig badge : badgesMap.values()) {
-          createBadge(badge);
+          store(badge);
         }
       }
     } catch (Exception e) {
@@ -89,23 +84,10 @@ public class BadgeRegistryImpl implements Startable, BadgeRegistry {
     // Nothing to stop
   }
 
-  private void createBadge(BadgeConfig badge) {
-    try {
-      BadgeDTO badgeDTO = badgeService.findBadgeByTitleAndDomain(badge.getTitle(), badge.getDomain());
-      if (badgeDTO == null) {
-        store(badge);
-      }
-    } catch (Exception e) {
-      LOG.error("Error when processing Rules ", e);
-    }
-  }
-
   private void store(BadgeConfig badgeConfig) throws ObjectAlreadyExistsException {
     BadgeDTO badgeDTO = new BadgeDTO();
     badgeDTO.setTitle(badgeConfig.getTitle());
     badgeDTO.setDescription(badgeConfig.getDescription());
-    badgeDTO.setDomain(badgeConfig.getDomain());
-    badgeDTO.setDomainDTO(domainService.getDomainByTitle(badgeConfig.getDomain()));
     badgeDTO.setIconFileId(storeIcon(badgeConfig.getIcon()));
     badgeDTO.setNeededScore(badgeConfig.getNeededScore());
     badgeDTO.setEnabled(badgeConfig.isEnable());

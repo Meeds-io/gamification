@@ -35,11 +35,25 @@ public class RealizationsStorage {
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory);
   }
 
-  public GamificationActionsHistoryDTO updateRealizationStatus(GamificationActionsHistoryDTO gamificationActionsHistory) {
+  public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO gamificationActionsHistory) {
     GamificationActionsHistory gamificationActionsHistoryEntity =
                                                                 GamificationActionsHistoryMapper.toEntity(gamificationActionsHistory);
     gamificationActionsHistoryEntity = gamificationHistoryDAO.update(gamificationActionsHistoryEntity);
     return GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistoryEntity);
+  }
+
+  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                     long domainId,
+                                                                                                     String earnerId,
+                                                                                                     String receiverId,
+                                                                                                     String objectId) {
+    GamificationActionsHistory gamificationActionsHistory =
+                                                          gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
+                                                                                                                                                 domainId,
+                                                                                                                                                 earnerId,
+                                                                                                                                                 receiverId,
+                                                                                                                                                 objectId);
+    return gamificationActionsHistory != null ? GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory) : null;
   }
 
 }

@@ -31,254 +31,309 @@ import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.social.core.identity.model.Identity;
+
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.management.*", "javax.xml.*", "org.xml.*" })
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AnnouncementStorageTest {
 
-    private GamificationHistoryDAO announcementDAO;
+  private static MockedStatic<Utils>        UTILS;
 
-    private RuleDAO                ruleDAO;
+  private static MockedStatic<EntityMapper> ENTITY_MAPPER;
 
-    private AnnouncementStorage    announcementStorage;
+  private static MockedStatic<DomainMapper> DOMAIN_MAPPER;
 
-    @Before
-    public void setUp() throws Exception { // NOSONAR
-        announcementDAO = mock(GamificationHistoryDAO.class);
-        ruleDAO = mock(RuleDAO.class);
-        announcementStorage = new AnnouncementStorage(announcementDAO,ruleDAO);
-    }
+  private GamificationHistoryDAO            announcementDAO;
 
-    @PrepareForTest({ Utils.class, EntityMapper.class , DomainMapper.class})
-    @Test
-    public void testSaveAnnouncement() {
-        Date startDate = new Date(System.currentTimeMillis());
-        Date endDate = new Date(System.currentTimeMillis() + 2);
-        Challenge challenge = new Challenge(1l,
-                                            "new challenge",
-                                            "challenge description",
-                                            1l,
-                                            startDate.toString(),
-                                            endDate.toString(),
-                                            Collections.emptyList(),
-                                            10L,
-                                            "gamification",
-                                            true);
+  private RuleDAO                           ruleDAO;
 
-        RuleEntity challengeEntity = new RuleEntity();
-        challengeEntity.setDescription(challenge.getDescription());
-        challengeEntity.setTitle(challenge.getTitle());
-        challengeEntity.setStartDate(startDate);
-        challengeEntity.setEndDate(endDate);
-        challengeEntity.setId(challenge.getId());
+  private AnnouncementStorage               announcementStorage;
 
-        Date createDate =  new Date(System.currentTimeMillis() + 1);
-        Announcement announcement = new Announcement(0,
-                                                     challenge.getId(),
-                                                     challenge.getTitle(),
-                                                     1L,
-                                                     "announcement comment",
-                                                     1L,
-                                                     createDate.toString(),
-                                                     null);
+  @BeforeClass
+  public static void initClassContext() {
+    UTILS = mockStatic(Utils.class);
+    ENTITY_MAPPER = mockStatic(EntityMapper.class);
+    DOMAIN_MAPPER = mockStatic(DomainMapper.class);
+  }
 
-        GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
-        announcementEntity.setEarnerId(announcement.getAssignee().toString());
-        announcementEntity.setEarnerType(IdentityType.USER);
-        announcementEntity.setCreator(announcement.getCreator());
-        announcementEntity.setRuleId(challenge.getId());
-        announcementEntity.setComment(announcement.getComment());
-        announcementEntity.setCreatedDate(createDate);
+  @AfterClass
+  public static void cleanClassContext() {
+    UTILS.close();
+    ENTITY_MAPPER.close();
+    DOMAIN_MAPPER.close();
+  }
 
-        GamificationActionsHistory newAnnouncementEntity = new GamificationActionsHistory();
-        newAnnouncementEntity.setEarnerId(announcement.getAssignee().toString());
-        newAnnouncementEntity.setCreator(announcementEntity.getCreator());
-        newAnnouncementEntity.setRuleId(challenge.getId());
-        newAnnouncementEntity.setComment(announcementEntity.getComment());
-        newAnnouncementEntity.setCreatedDate(createDate);
-        newAnnouncementEntity.setId(1l);
+  @Before
+  public void setUp() throws Exception { // NOSONAR
+    UTILS.reset();
+    ENTITY_MAPPER.reset();
+    DOMAIN_MAPPER.reset();
 
-        Announcement announcementFromEntity = new Announcement();
-        announcementFromEntity.setAssignee(Long.valueOf(newAnnouncementEntity.getEarnerId()));
-        announcementFromEntity.setCreator(newAnnouncementEntity.getCreator());
-        announcementFromEntity.setComment(newAnnouncementEntity.getComment());
-        announcementFromEntity.setCreatedDate(createDate.toString());
-        announcementFromEntity.setChallengeId(newAnnouncementEntity.getRuleId());
-        announcementFromEntity.setId(newAnnouncementEntity.getId());
+    announcementDAO = mock(GamificationHistoryDAO.class);
+    ruleDAO = mock(RuleDAO.class);
+    announcementStorage = new AnnouncementStorage(announcementDAO, ruleDAO);
+  }
 
+  @Test
+  public void testSaveAnnouncement() {
+    Date startDate = new Date(System.currentTimeMillis());
+    Date endDate = new Date(System.currentTimeMillis() + 2);
+    Challenge challenge = new Challenge(1l,
+                                        "new challenge",
+                                        "challenge description",
+                                        1l,
+                                        startDate.toString(),
+                                        endDate.toString(),
+                                        Collections.emptyList(),
+                                        10L,
+                                        "gamification",
+                                        true);
 
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.mockStatic(EntityMapper.class);
-        Identity identity = mock(Identity.class);
-        when(ruleDAO.find(anyLong())).thenReturn(challengeEntity);
-        when(announcementDAO.create(anyObject())).thenReturn(newAnnouncementEntity);
-        when(Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
-        when(EntityMapper.toEntity(challenge)).thenReturn(challengeEntity);
-        when(EntityMapper.fromEntity(newAnnouncementEntity)).thenReturn(announcementFromEntity);
-        when(EntityMapper.toEntity(any(Announcement.class), any(RuleEntity.class))).thenReturn(announcementEntity);
-        DomainDTO domainDTO = new DomainDTO();
-        domainDTO.setTitle("gamification");
-        DomainEntity domainEntity = new DomainEntity();
-        domainEntity.setTitle("gamification");
-        PowerMockito.mockStatic(DomainMapper.class);
-        when(Utils.getEnabledDomainByTitle(any())).thenReturn(domainDTO);
-        when(DomainMapper.domainDTOToDomainEntity(domainDTO)).thenReturn(domainEntity);
+    RuleEntity challengeEntity = new RuleEntity();
+    challengeEntity.setDescription(challenge.getDescription());
+    challengeEntity.setTitle(challenge.getTitle());
+    challengeEntity.setStartDate(startDate);
+    challengeEntity.setEndDate(endDate);
+    challengeEntity.setId(challenge.getId());
 
-        Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
+    Date createDate = new Date(System.currentTimeMillis() + 1);
+    Announcement announcement = new Announcement(0,
+                                                 challenge.getId(),
+                                                 challenge.getTitle(),
+                                                 1L,
+                                                 "announcement comment",
+                                                 1L,
+                                                 createDate.toString(),
+                                                 null);
 
-        // Then
-        assertNotNull(createdAnnouncement);
-        assertEquals(createdAnnouncement.getId(), 1l);
-        announcementFromEntity.setActivityId(createdAnnouncement.getActivityId());
-        assertEquals(announcementFromEntity, createdAnnouncement);
-    }
+    GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
+    announcementEntity.setEarnerId(announcement.getAssignee().toString());
+    announcementEntity.setEarnerType(IdentityType.USER);
+    announcementEntity.setCreator(announcement.getCreator());
+    announcementEntity.setRuleEntity(challengeEntity);
+    announcementEntity.setComment(announcement.getComment());
+    announcementEntity.setCreatedDate(createDate);
 
-    @PrepareForTest({ EntityMapper.class })
-    @Test
-    public void testGetAnnouncementById(){
-        Date startDate = new Date(System.currentTimeMillis());
-        Date endDate = new Date(System.currentTimeMillis() + 1);
-        RuleEntity challengeEntity = new RuleEntity();
-        challengeEntity.setDescription("challenge description");
-        challengeEntity.setTitle("new challenge");
-        challengeEntity.setStartDate(startDate);
-        challengeEntity.setEndDate(endDate);
-        challengeEntity.setId(1l);
+    GamificationActionsHistory newAnnouncementEntity = new GamificationActionsHistory();
+    newAnnouncementEntity.setEarnerId(announcement.getAssignee().toString());
+    newAnnouncementEntity.setCreator(announcementEntity.getCreator());
+    newAnnouncementEntity.setRuleEntity(challengeEntity);
+    newAnnouncementEntity.setComment(announcementEntity.getComment());
+    newAnnouncementEntity.setCreatedDate(createDate);
+    newAnnouncementEntity.setId(1l);
 
-        Date createDate = new Date(System.currentTimeMillis());
-        GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
-        announcementEntity.setId(1l);
-        announcementEntity.setEarnerId("1");
-        announcementEntity.setEarnerId("1");
-        announcementEntity.setCreator(1L);
-        announcementEntity.setRuleId(challengeEntity.getId());
-        announcementEntity.setComment("announcement comment");
-        announcementEntity.setCreatedDate(createDate);
+    Announcement announcementFromEntity = new Announcement();
+    announcementFromEntity.setAssignee(Long.valueOf(newAnnouncementEntity.getEarnerId()));
+    announcementFromEntity.setCreator(newAnnouncementEntity.getCreator());
+    announcementFromEntity.setComment(newAnnouncementEntity.getComment());
+    announcementFromEntity.setCreatedDate(createDate.toString());
+    announcementFromEntity.setChallengeId(newAnnouncementEntity.getRuleEntity().getId());
+    announcementFromEntity.setId(newAnnouncementEntity.getId());
 
-        Announcement announcementFromEntity = new Announcement();
-        announcementFromEntity.setId(announcementEntity.getId());
-        announcementFromEntity.setAssignee(Long.valueOf(announcementEntity.getEarnerId()));
-        announcementFromEntity.setCreator(announcementEntity.getCreator());
-        announcementFromEntity.setComment(announcementEntity.getComment());
-        announcementFromEntity.setCreatedDate(createDate.toString());
-        announcementFromEntity.setChallengeId(announcementEntity.getRuleId());
-        announcementFromEntity.setId(announcementEntity.getId());
+    Identity identity = mock(Identity.class);
+    when(ruleDAO.find(anyLong())).thenReturn(challengeEntity);
+    when(announcementDAO.create(any())).thenReturn(newAnnouncementEntity);
+    UTILS.when(() -> Utils.getIdentityByTypeAndId(any(), any())).thenReturn(identity);
+    ENTITY_MAPPER.when(() -> EntityMapper.toEntity(challenge)).thenReturn(challengeEntity);
+    ENTITY_MAPPER.when(() -> EntityMapper.fromEntity(newAnnouncementEntity)).thenReturn(announcementFromEntity);
+    ENTITY_MAPPER.when(() -> EntityMapper.toEntity(any(Announcement.class), any(RuleEntity.class)))
+                 .thenReturn(announcementEntity);
+    DomainDTO domainDTO = new DomainDTO();
+    domainDTO.setTitle("gamification");
+    DomainEntity domainEntity = new DomainEntity();
+    domainEntity.setTitle("gamification");
+    DOMAIN_MAPPER.when(() -> DomainMapper.domainDTOToDomainEntity(domainDTO)).thenReturn(domainEntity);
 
+    Announcement createdAnnouncement = announcementStorage.saveAnnouncement(announcement);
 
-        PowerMockito.mockStatic(EntityMapper.class);
-        when(announcementDAO.find(anyLong())).thenReturn(announcementEntity);
-        when(EntityMapper.fromEntity(announcementEntity)).thenReturn(announcementFromEntity);
+    // Then
+    assertNotNull(createdAnnouncement);
+    assertEquals(createdAnnouncement.getId(), 1l);
+    announcementFromEntity.setActivityId(createdAnnouncement.getActivityId());
+    assertEquals(announcementFromEntity, createdAnnouncement);
 
-        Announcement createdAnnouncement = announcementStorage.getAnnouncementById(1l);
+    // Cancel announcement
+    // When
+    GamificationActionsHistory gamificationActionsHistory = new GamificationActionsHistory();
+    gamificationActionsHistory.setEarnerId(announcement.getAssignee().toString());
+    gamificationActionsHistory.setCreator(announcementEntity.getCreator());
+    gamificationActionsHistory.setRuleEntity(challengeEntity);
+    gamificationActionsHistory.setComment(announcementEntity.getComment());
+    gamificationActionsHistory.setCreatedDate(createDate);
+    gamificationActionsHistory.setId(1L);
+    gamificationActionsHistory.setActivityId(null);
+    gamificationActionsHistory.setObjectId(null);
 
-        // Then
-        assertNotNull(createdAnnouncement);
-        assertEquals(createdAnnouncement.getId(), 1l);
-        assertEquals(announcementFromEntity, createdAnnouncement);
-    }
-    @PrepareForTest({ EntityMapper.class })
-    @Test
-    public void testGetAnnouncementByChallengeId(){
-        Date startDate = new Date(System.currentTimeMillis());
-        Date endDate = new Date(System.currentTimeMillis() + 1);
-        RuleEntity challengeEntity = new RuleEntity();
-        challengeEntity.setDescription("challenge description");
-        challengeEntity.setTitle("new challenge");
-        challengeEntity.setStartDate(startDate);
-        challengeEntity.setEndDate(endDate);
-        challengeEntity.setId(1l);
+    announcementFromEntity = new Announcement();
+    announcementFromEntity.setAssignee(Long.valueOf(newAnnouncementEntity.getEarnerId()));
+    announcementFromEntity.setCreator(newAnnouncementEntity.getCreator());
+    announcementFromEntity.setComment(newAnnouncementEntity.getComment());
+    announcementFromEntity.setCreatedDate(createDate.toString());
+    announcementFromEntity.setChallengeId(newAnnouncementEntity.getRuleEntity().getId());
+    announcementFromEntity.setId(newAnnouncementEntity.getId());
+    announcementFromEntity.setActivityId(null);
 
-        Date createDate = new Date(System.currentTimeMillis());
+    when(announcementDAO.update(any())).thenReturn(gamificationActionsHistory);
+    ENTITY_MAPPER.when(() -> EntityMapper.fromEntity(gamificationActionsHistory)).thenReturn(announcementFromEntity);
 
-        GamificationActionsHistory announcementEntity1 = new GamificationActionsHistory();
-        announcementEntity1.setId(1l);
-        announcementEntity1.setEarnerId("1");
-        announcementEntity1.setCreator(1L);
-        announcementEntity1.setRuleId(challengeEntity.getId());
-        announcementEntity1.setComment("announcement comment 1");
-        announcementEntity1.setCreatedDate(createDate);
+    Announcement deletedAnnouncement = announcementStorage.deleteAnnouncement(announcement);
 
-        Announcement announcementFromEntity1 = new Announcement();
-        announcementFromEntity1.setId(announcementEntity1.getId());
-        announcementFromEntity1.setAssignee(announcementEntity1.getId());
-        announcementFromEntity1.setCreator(announcementEntity1.getCreator());
-        announcementFromEntity1.setComment(announcementEntity1.getComment());
-        announcementFromEntity1.setCreatedDate(createDate.toString());
-        announcementFromEntity1.setChallengeId(announcementEntity1.getRuleId());
-        announcementFromEntity1.setId(announcementEntity1.getId());
+    // Then
+    assertNotNull(deletedAnnouncement);
+    assertEquals(1L, deletedAnnouncement.getId());
+    assertNull(deletedAnnouncement.getActivityId());
+  }
 
-        GamificationActionsHistory announcementEntity2 = new GamificationActionsHistory();
-        announcementEntity2.setId(1l);
-        announcementEntity1.setId(1l);
-        announcementEntity2.setCreator(1L);
-        announcementEntity2.setEarnerId(String.valueOf(1L));
-        announcementEntity1.setRuleId(challengeEntity.getId());
-        announcementEntity2.setComment("announcement comment 2");
-        announcementEntity2.setCreatedDate(createDate);
+  @Test
+  public void testGetAnnouncementById() {
+    Date startDate = new Date(System.currentTimeMillis());
+    Date endDate = new Date(System.currentTimeMillis() + 1);
+    RuleEntity challengeEntity = new RuleEntity();
+    challengeEntity.setDescription("challenge description");
+    challengeEntity.setTitle("new challenge");
+    challengeEntity.setStartDate(startDate);
+    challengeEntity.setEndDate(endDate);
+    challengeEntity.setId(1l);
 
-        Announcement announcementFromEntity2 = new Announcement();
-        announcementFromEntity2.setId(announcementEntity2.getId());
-        announcementFromEntity2.setAssignee(Long.valueOf(announcementEntity2.getEarnerId()));
-        announcementFromEntity2.setCreator(announcementEntity2.getCreator());
-        announcementFromEntity2.setComment(announcementEntity2.getComment());
-        announcementFromEntity2.setCreatedDate(createDate.toString());
-        announcementFromEntity2.setChallengeId(announcementEntity2.getRuleId());
-        announcementFromEntity2.setId(announcementEntity2.getId());
+    Date createDate = new Date(System.currentTimeMillis());
+    GamificationActionsHistory announcementEntity = new GamificationActionsHistory();
+    announcementEntity.setId(1l);
+    announcementEntity.setEarnerId("1");
+    announcementEntity.setEarnerId("1");
+    announcementEntity.setCreator(1L);
+    announcementEntity.setRuleEntity(challengeEntity);
+    announcementEntity.setComment("announcement comment");
+    announcementEntity.setCreatedDate(createDate);
 
-        GamificationActionsHistory announcementEntity3 = new GamificationActionsHistory();
-        announcementEntity3.setId(1l);
-        announcementEntity3.setEarnerId("1");
-        announcementEntity3.setCreator(1L);
-        announcementEntity3.setRuleId(challengeEntity.getId());
-        announcementEntity3.setComment("announcement comment 3");
-        announcementEntity3.setCreatedDate(createDate);
+    Announcement announcementFromEntity = new Announcement();
+    announcementFromEntity.setId(announcementEntity.getId());
+    announcementFromEntity.setAssignee(Long.valueOf(announcementEntity.getEarnerId()));
+    announcementFromEntity.setCreator(announcementEntity.getCreator());
+    announcementFromEntity.setComment(announcementEntity.getComment());
+    announcementFromEntity.setCreatedDate(createDate.toString());
+    announcementFromEntity.setChallengeId(announcementEntity.getRuleEntity().getId());
+    announcementFromEntity.setId(announcementEntity.getId());
 
-        Announcement announcementFromEntity3 = new Announcement();
-        announcementFromEntity3.setId(announcementEntity3.getId());
-        announcementFromEntity3.setAssignee(Long.valueOf(announcementEntity3.getEarnerId()));
-        announcementFromEntity3.setCreator(announcementEntity3.getCreator());
-        announcementFromEntity3.setComment(announcementEntity3.getComment());
-        announcementFromEntity3.setCreatedDate(createDate.toString());
-        announcementFromEntity3.setChallengeId(announcementEntity3.getRuleId());
-        announcementFromEntity3.setId(announcementEntity3.getId());
+    when(announcementDAO.find(anyLong())).thenReturn(announcementEntity);
+    ENTITY_MAPPER.when(() -> EntityMapper.fromEntity(announcementEntity)).thenReturn(announcementFromEntity);
 
-        List<Announcement> announcementList = new ArrayList<>();
-        announcementList.add(announcementFromEntity1);
-        announcementList.add(announcementFromEntity2);
-        announcementList.add(announcementFromEntity3);
+    Announcement createdAnnouncement = announcementStorage.getAnnouncementById(1l);
 
-        List<GamificationActionsHistory> announcementEntities = new ArrayList<>();
-        announcementEntities.add(announcementEntity1);
-        announcementEntities.add(announcementEntity2);
-        announcementEntities.add(announcementEntity3);
+    // Then
+    assertNotNull(createdAnnouncement);
+    assertEquals(createdAnnouncement.getId(), 1l);
+    assertEquals(announcementFromEntity, createdAnnouncement);
+  }
 
-        PowerMockito.mockStatic(EntityMapper.class);
-        when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),anyInt(),anyInt(),any(), any())).thenReturn(announcementEntities);
-        when(EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
+  @Test
+  public void testGetAnnouncementByChallengeId() {
+    Date startDate = new Date(System.currentTimeMillis());
+    Date endDate = new Date(System.currentTimeMillis() + 1);
+    DomainEntity domainEntity = new DomainEntity();
+    domainEntity.setId(1L);
+    domainEntity.setTitle("domain");
+    RuleEntity challengeEntity = new RuleEntity();
+    challengeEntity.setId(1l);
+    challengeEntity.setDescription("challenge description");
+    challengeEntity.setTitle("new challenge");
+    challengeEntity.setStartDate(startDate);
+    challengeEntity.setEndDate(endDate);
+    challengeEntity.setDomainEntity(domainEntity);
 
-        List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(), 0, 10, PeriodType.ALL, null);
+    Date createDate = new Date(System.currentTimeMillis());
 
-        // Then
-        assertNotNull(announcementListByChallenge);
-        assertEquals(announcementListByChallenge.size(),3);
-    }
+    GamificationActionsHistory announcementEntity1 = new GamificationActionsHistory();
+    announcementEntity1.setId(1l);
+    announcementEntity1.setEarnerId("1");
+    announcementEntity1.setCreator(1L);
+    announcementEntity1.setRuleEntity(challengeEntity);
+    announcementEntity1.setComment("announcement comment 1");
+    announcementEntity1.setCreatedDate(createDate);
+
+    Announcement announcementFromEntity1 = new Announcement();
+    announcementFromEntity1.setId(announcementEntity1.getId());
+    announcementFromEntity1.setAssignee(announcementEntity1.getId());
+    announcementFromEntity1.setCreator(announcementEntity1.getCreator());
+    announcementFromEntity1.setComment(announcementEntity1.getComment());
+    announcementFromEntity1.setCreatedDate(createDate.toString());
+    announcementFromEntity1.setChallengeId(announcementEntity1.getRuleEntity().getId());
+    announcementFromEntity1.setId(announcementEntity1.getId());
+
+    GamificationActionsHistory announcementEntity2 = new GamificationActionsHistory();
+    announcementEntity2.setId(1l);
+    announcementEntity2.setCreator(1L);
+    announcementEntity2.setEarnerId(String.valueOf(1L));
+    announcementEntity2.setRuleEntity(challengeEntity);
+    announcementEntity2.setComment("announcement comment 2");
+    announcementEntity2.setCreatedDate(createDate);
+
+    Announcement announcementFromEntity2 = new Announcement();
+    announcementFromEntity2.setId(announcementEntity2.getId());
+    announcementFromEntity2.setAssignee(Long.valueOf(announcementEntity2.getEarnerId()));
+    announcementFromEntity2.setCreator(announcementEntity2.getCreator());
+    announcementFromEntity2.setComment(announcementEntity2.getComment());
+    announcementFromEntity2.setCreatedDate(createDate.toString());
+    announcementFromEntity2.setChallengeId(announcementEntity2.getRuleEntity().getId());
+    announcementFromEntity2.setId(announcementEntity2.getId());
+
+    GamificationActionsHistory announcementEntity3 = new GamificationActionsHistory();
+    announcementEntity3.setId(1l);
+    announcementEntity3.setEarnerId("1");
+    announcementEntity3.setCreator(1L);
+    announcementEntity3.setRuleEntity(challengeEntity);
+    announcementEntity3.setComment("announcement comment 3");
+    announcementEntity3.setCreatedDate(createDate);
+
+    Announcement announcementFromEntity3 = new Announcement();
+    announcementFromEntity3.setId(announcementEntity3.getId());
+    announcementFromEntity3.setAssignee(Long.valueOf(announcementEntity3.getEarnerId()));
+    announcementFromEntity3.setCreator(announcementEntity3.getCreator());
+    announcementFromEntity3.setComment(announcementEntity3.getComment());
+    announcementFromEntity3.setCreatedDate(createDate.toString());
+    announcementFromEntity3.setChallengeId(announcementEntity3.getRuleEntity().getId());
+
+    List<Announcement> announcementList = new ArrayList<>();
+    announcementList.add(announcementFromEntity1);
+    announcementList.add(announcementFromEntity2);
+    announcementList.add(announcementFromEntity3);
+
+    List<GamificationActionsHistory> announcementEntities = new ArrayList<>();
+    announcementEntities.add(announcementEntity1);
+    announcementEntities.add(announcementEntity2);
+    announcementEntities.add(announcementEntity3);
+
+    when(announcementDAO.findAllAnnouncementByChallenge(anyLong(),
+                                                        anyInt(),
+                                                        anyInt(),
+                                                        any(),
+                                                        any())).thenReturn(announcementEntities);
+    ENTITY_MAPPER.when(() -> EntityMapper.fromAnnouncementEntities(announcementEntities)).thenReturn(announcementList);
+
+    List<Announcement> announcementListByChallenge = announcementStorage.findAllAnnouncementByChallenge(challengeEntity.getId(),
+                                                                                                        0,
+                                                                                                        10,
+                                                                                                        PeriodType.ALL,
+                                                                                                        null);
+
+    // Then
+    assertNotNull(announcementListByChallenge);
+    assertEquals(announcementListByChallenge.size(), 3);
+  }
 }

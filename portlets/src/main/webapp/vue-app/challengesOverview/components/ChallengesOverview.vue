@@ -88,7 +88,6 @@
     <rule-details-drawer
       ref="challengeDetailsDrawer"
       :is-overview-displayed="true" />
-    <challenge-winners-details />
   </v-app>
 </template>
 <script>

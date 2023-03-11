@@ -20,11 +20,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.exoplatform.addons.gamification.service.RealizationsService;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
@@ -120,34 +118,88 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId,
-                                                               HistoryStatus status,
-                                                               String actionLabel,
-                                                               Long points,
-                                                               String domain) throws ObjectNotFoundException {
-
-    if (gHistoryId == null) {
-      throw new IllegalArgumentException("GamificationActionsHistory id is mandatory");
+  public GamificationActionsHistoryDTO getRealizationById(long realizationId) {
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("realization id is mandatory");
     }
-    GamificationActionsHistoryDTO gHistory = realizationsStorage.getRealizationById(gHistoryId);
-
-    if (gHistory == null) {
-      throw new ObjectNotFoundException("GamificationActionsHistory does not exist");
-    }
-    if (!actionLabel.isEmpty()) {
-      gHistory.setActionTitle(actionLabel);
-    }
-    if (points != 0) {
-      gHistory.setGlobalScore(gHistory.getGlobalScore() - gHistory.getActionScore() + points);
-      gHistory.setActionScore(points);
-    }
-    if (!domain.isEmpty()) {
-      gHistory.setDomain(domain);
-    }
-    gHistory.setStatus(status.name());
-    return realizationsStorage.updateRealizationStatus(gHistory);
+    return realizationsStorage.getRealizationById(realizationId);
   }
 
+  @Override
+  public GamificationActionsHistoryDTO getRealizationById(long realizationId, String username) throws IllegalAccessException {
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("realization id is mandatory");
+    }
+    if (username == null) {
+      throw new IllegalArgumentException("Username is mandatory");
+    }
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    GamificationActionsHistoryDTO realization = realizationsStorage.getRealizationById(realizationId);
+    if (Utils.isSuperManager(username) || realization.getEarnerId().equals(userIdentity.getId())) {
+      return realization;
+    } else {
+      throw new IllegalAccessException("User doesn't have enough privileges to access achievement");
+    }
+  }
+
+  @Override
+  public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization,
+                                                         String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (realization == null) {
+      throw new IllegalArgumentException("Realization is mandatory");
+    }
+    if (username == null) {
+      throw new IllegalArgumentException("Username is mandatory");
+    }
+    long realizationId = realization.getId();
+
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("Realization id has to be positive integer");
+    }
+
+    GamificationActionsHistoryDTO storedRealization = realizationsStorage.getRealizationById(realizationId);
+    if (storedRealization == null) {
+      throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
+    }
+    if (Utils.isSuperManager(username)) {
+      return realizationsStorage.updateRealization(realization);
+    } else {
+      throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
+          + realization.getEarnerId());
+    }
+  }
+
+  @Override
+  public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization) throws ObjectNotFoundException {
+    if (realization == null) {
+      throw new IllegalArgumentException("Realization is mandatory");
+    }
+    long realizationId = realization.getId();
+
+    if (realizationId <= 0) {
+      throw new IllegalArgumentException("Realization id has to be positive integer");
+    }
+    GamificationActionsHistoryDTO storedRealization = realizationsStorage.getRealizationById(realizationId);
+    if (storedRealization == null) {
+      throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
+    }
+    return realizationsStorage.updateRealization(realization);
+  }
+
+  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                     long domainId,
+                                                                                                     String earnerId,
+                                                                                                     String receiverId,
+                                                                                                     String objectId) {
+
+    return realizationsStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
+                                                                                             domainId,
+                                                                                             earnerId,
+                                                                                             receiverId,
+                                                                                             objectId);
+  }
+
+  
   public InputStream exportXlsx(RealizationsFilter filter,
                                 Identity identity,
                                 String fileName,
@@ -187,38 +239,36 @@ public class RealizationsServiceImpl implements RealizationsService {
 
     realizations.forEach(ga -> {
       try {
-        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.description.";
+        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.title.";
         String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
         String actionLabel = "-";
 
         RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? Utils.getRuleById(ga.getRuleId())
                                                                      : Utils.getRuleByTitle(ga.getActionTitle());
 
-        DomainDTO domain = Utils.getDomainByTitle(ga.getDomain());
-
-        String ruleTitle = rule == null ? null : rule.getTitle();
+        String ruleTitle = rule == null ? null : rule.getEvent();
         String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
         actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
         if (actionLabel == null && rule != null && actionTitleKey != null) {
-          actionLabel = escapeIllegalCharacterInMessage(rule.getTitle());
+          actionLabel = escapeIllegalCharacterInMessage(rule.getEvent());
         } else {
           actionLabel = escapeIllegalCharacterInMessage(actionLabel);
         }
-        String domainDescription = "-";
-        if (ga.getDomain() != null) {
-          domainDescription = getI18NMessage(locale, domainTitleKey + domain.getDescription().replace(" ", ""));
-          if (domainDescription == null) {
-            domainDescription = domain.getDescription();
+        String domainTitle = "-";
+        if (ga.getDomainDTO() != null) {
+          domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomainDTO().getTitle().replace(" ", ""));
+          if (domainTitle == null) {
+            domainTitle = ga.getDomainDTO().getTitle();
           }
         }
-        domainDescription = escapeIllegalCharacterInMessage(domainDescription);
+        domainTitle = escapeIllegalCharacterInMessage(domainTitle);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
         sbResult.append(Utils.getUserFullName(ga.getEarnerId()));
         sbResult.append(DELIMITER);
         sbResult.append(rule != null ? rule.getType().name() : "-");
         sbResult.append(DELIMITER);
-        sbResult.append(domainDescription);
+        sbResult.append(domainTitle);
         sbResult.append(DELIMITER);
         sbResult.append(actionLabel);
         sbResult.append(DELIMITER);

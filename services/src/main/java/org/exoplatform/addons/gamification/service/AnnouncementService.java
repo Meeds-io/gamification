@@ -46,8 +46,29 @@ public interface AnnouncementService {
    * @throws ObjectNotFoundException when the announcement identified by its
    *           technical identifier is not found
    */
-
   Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException;
+
+  /**
+   * Update announcement
+   *
+   * @param announcement {@link Announcement} object to Update
+   * @param broadcast whether to broadcast or not the event of announcement updating
+   * @return a {@link Announcement} Object
+   * @throws ObjectNotFoundException when the announcement identified by its
+   *           technical identifier is not found
+   */
+  Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException;
+
+  /**
+   * Deletes announcement
+   *
+   * @param announcementId technical identifier of announcement
+   * @param username Username who want to delete announcement
+   * @return a {@link Announcement} Object
+   * @throws ObjectNotFoundException when the announcement identified by its
+   *           technical identifier is not found
+   */
+  Announcement deleteAnnouncement(long announcementId, String username) throws ObjectNotFoundException, IllegalAccessException;
 
   /**
    * Retrieves a announcement identified by its technical identifier.
@@ -57,7 +78,15 @@ public interface AnnouncementService {
    *
    */
 
-  Announcement getAnnouncementById(Long announcementId) ;
+  Announcement getAnnouncementById(Long announcementId) ; 
+  
+  /**
+   * Retrieves all announcements by earnerId.
+   *
+   * @param earnerId : the userId used in projection
+   * @return A {@link List &lt;Announcement&gt;} object
+   */
+  List<Announcement> getAnnouncementsByEarnerId(String earnerId);
 
   /**
    * Retrieves number of all Announcements by challenge identifier.

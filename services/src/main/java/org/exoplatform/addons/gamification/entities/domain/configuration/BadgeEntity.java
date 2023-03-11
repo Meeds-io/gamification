@@ -27,40 +27,19 @@ import java.util.Objects;
 @ExoEntity
 @Table(name = "GAMIFICATION_BADGES")
 @NamedQuery(name = "GamificationBadge.getAllBadges", query = "SELECT badge FROM GamificationBadge badge   WHERE badge.isDeleted = false ORDER BY badge.iconFileId ASC ")
-@NamedQuery(name = "GamificationBadge.findBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE badge.domain = :badgeDomain  ORDER BY badge.neededScore ASC")
-@NamedQuery(name = "GamificationBadge.findEnabledBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE (badge.domain = :badgeDomain) AND (badge.enabled = true) AND badge.isDeleted = false ORDER BY badge.neededScore ASC")
+@NamedQuery(name = "GamificationBadge.findBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE badge.domainEntity.id = :domainId  ORDER BY badge.neededScore ASC")
+@NamedQuery(name = "GamificationBadge.findEnabledBadgeByDomain", query = "SELECT badge FROM GamificationBadge badge WHERE (badge.domainEntity.id = :domainId) AND (badge.enabled = true) AND badge.isDeleted = false ORDER BY badge.neededScore ASC")
 @NamedQuery(name = "GamificationBadge.getEnabledBadges", query = "SELECT badge FROM GamificationBadge badge where badge.enabled = :isEnabled AND badge.isDeleted = false")
 @NamedQuery(name = "GamificationBadge.getValidBadges", query = "SELECT badge FROM GamificationBadge badge where (badge.startValidityDate BETWEEN :stDate AND :edDate) AND (badge.endValidityDate BETWEEN :stDate AND :edDate) AND badge.isDeleted = 0")
 @NamedQuery(name = "GamificationBadge.findBadgeByNeededScore", query = "SELECT badge FROM GamificationBadge badge where badge.neededScore = :neededScore  AND badge.isDeleted = false")
 @NamedQuery(name = "GamificationBadge.findBadgeByTitle", query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle")
-@NamedQuery(name = "GamificationBadge.findBadgeByTitleAndDomain", query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle and badge.domain = :domain")
+@NamedQuery(name = "GamificationBadge.findBadgeByTitleAndDomain", query = "SELECT badge FROM GamificationBadge badge where badge.title = :badgeTitle and badge.domainEntity.id = :domainId")
 @NamedQuery(name = "GamificationBadge.deleteBadgeByTitle", query = "DELETE FROM GamificationBadge badge WHERE badge.title = :badgeTitle")
 @NamedQuery(name = "GamificationBadge.deleteBadgeById", query = "DELETE FROM GamificationBadge badge WHERE badge.id = :badgeId")
 @NamedQuery(name = "GamificationBadge.getAllBadgesWithNullDomain", query = "SELECT badge FROM GamificationBadge badge where badge.domainEntity IS NULL")
-@NamedQuery(name = "GamificationBadge.getDomainList", query = "SELECT badge.domain  FROM GamificationBadge badge GROUP BY badge.domain")
 public class BadgeEntity extends AbstractAuditingEntity implements Serializable {
 
-    private static final long serialVersionUID = 2L;
-
-    public BadgeEntity(Long id, // NOSONAR
-                       String title,
-                       String description,
-                       int neededScore,
-                       long iconFileId,
-                       Date startValidityDate,
-                       Date endValidityDate,
-                       boolean enabled,
-                       String domain) {
-      this.id = id;
-      this.title = title;
-      this.description = description;
-      this.neededScore = neededScore;
-      this.iconFileId = iconFileId;
-      this.startValidityDate = startValidityDate;
-      this.endValidityDate = endValidityDate;
-      this.enabled = enabled;
-      this.domain = domain;
-    }
+    private static final long serialVersionUID = 8412261859526217944L;
 
     @Id
     @SequenceGenerator(name="SEQ_GAMIFICATION_BADGE_ID", sequenceName="SEQ_GAMIFICATION_BADGE_ID", allocationSize = 1)
@@ -94,9 +73,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     @Column(name = "ENABLED", nullable = false)
     protected boolean enabled;
 
-    @Column(name = "DOMAIN", nullable = false)
-    protected String domain;
-
     @ManyToOne
     @JoinColumn(name = "DOMAIN_ID")
     private DomainEntity domainEntity;
@@ -104,9 +80,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
 
     @Column(name = "DELETED", nullable = false)
     protected boolean isDeleted;
-
-    public BadgeEntity() {
-    }
 
     public Long getId() {
         return id;
@@ -164,14 +137,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         this.enabled = enabled;
     }
 
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
     public long getIconFileId() {
         return iconFileId;
     }
@@ -179,7 +144,6 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
     public void setIconFileId(long iconFileId) {
         this.iconFileId = iconFileId;
     }
-
 
     public DomainEntity getDomainEntity() {
         return domainEntity;
@@ -220,7 +184,7 @@ public class BadgeEntity extends AbstractAuditingEntity implements Serializable 
         return "Badge{" +
                 "title='" + title + '\'' +
                 ", needed score='" + neededScore + '\'' +
-                ", zone='" + domain + '\'' +
+                ", zone='" + domainEntity.getTitle() + '\'' +
                 ", iconFileId='" + iconFileId + '\'' +
                 ", start validity date='" + startValidityDate + '\'' +
                 ", end validity date='" + endValidityDate + '\'' +

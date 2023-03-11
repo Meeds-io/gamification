@@ -19,12 +19,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="ChallengesApplication"
     class="challenges-application border-box-sizing"
     :class="classWelcomeMessage"
-    role="main"
-    flat>
+    role="main">
     <v-toolbar
-      color="transparent"
-      flat
-      class="pa-4">
+      flat>
       <div v-if="displayAddChallengeButton" class="border-box-sizing clickable">
         <v-btn
           id="engagementCenterAddChallengeBtn"
@@ -70,27 +67,29 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </select>
       </div>
     </v-toolbar>
-    <engagement-center-welcome-message
-      v-if="displayWelcomeMessage">
-      <template #content>
-        <div class="mx-4 my-6 dark-grey-color">
-          <p class="align-center font-weight-bold mb-5"> {{ $t('challenges.welcomeMessage') }} </p>
-          <p v-if="canAddChallenge" class="align-center"> {{ $t('challenges.welcomeMessageForManager') }} </p>
-          <p v-else class="align-center"> {{ $t('challenges.welcomeMessageForUser') }} </p>
-        </div>
-      </template>
-    </engagement-center-welcome-message>
-    <engagement-center-no-results
-      v-else-if="displayNoSearchResult"
-      :info="$t('challenges.search.noResults')"
-      :info-message="notFoundInfoMessage" />
-    <challenges-list
-      v-else-if="displayChallengesList"
-      :domains="domainsHavingChallenges"
-      :challenges-by-domain-id="challengesByDomainId"
-      :loading="loading"
-      :can-edit-challenge="canAddChallenge"
-      class="pl-2 pt-8" />
+    <v-card flat>
+      <v-progress-linear
+        v-if="loading"
+        indeterminate
+        height="2"
+        color="primary" />
+      <engagement-center-result-not-found 
+        v-else-if="displayWelcomeMessage"
+        :display-back-arrow="false"
+        :message-title="$t('challenges.welcomeMessage')"
+        :message-info-one="$t('challenges.welcomeMessageForRegularUser')" />
+      <engagement-center-result-not-found 
+        v-else-if="displayNoSearchResult"
+        :display-back-arrow="false"
+        :message-title="welcomeMessage"
+        :message-info-one="notFoundInfoMessage" />
+      <challenges-list
+        v-else-if="displayChallengesList"
+        :domains="domainsHavingChallenges"
+        :challenges-by-domain-id="challengesByDomainId"
+        :can-edit-challenge="canAddChallenge"
+        class="pl-2 pt-8" />
+    </v-card>
     <exo-confirm-dialog
       ref="deleteChallengeConfirmDialog"
       :title="$t('challenges.delete')"
@@ -148,6 +147,12 @@ export default {
       } else {
         return this.$t('challenges.search.noResultsMessage');
       }
+    },
+    welcomeMessage() {
+      if (this.filter === 'NOT_STARTED' && this.filter === 'ENDED' && !this.search?.length) {
+        return this.$t('challenges.welcomeMessage');
+      } 
+      return '';
     },
     displayNoSearchResult() {
       return !this.typing && !this.loading && !this.domainsHavingChallenges.length && (this.search?.length || (this.filter === 'NOT_STARTED' || this.filter === 'ENDED'));

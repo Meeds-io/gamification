@@ -16,7 +16,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <v-app
-    class="ms-md-2"
     flat
     dark>
     <v-container pa-0>
@@ -49,17 +48,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </v-container>
     <achievements-drawer ref="achievementsDrawer" :user-points="userPoints" />
     <connections-drawer
-      :connections-drawer="connectionsDrawer"
+      ref="connectionsDrawer"
       :connection-requests="connectionRequests"
       :is-current-user-profile="isCurrentUserProfile"
       :common-connections="commonConnections"
-      @closeDrawer="closeConnectionsDrawer" />
+      @closed="refreshUserDashBord" />
     <space-drawer
-      :space-drawer="spaceDrawer"
+      ref="spaceDrawer"
       :space-requests="spaceRequests"
       :is-current-user-profile="isCurrentUserProfile"
       :commons-space-default-size="commonsSpaceDefaultSize"
-      @closeDrawer="closeSpaceDrawer" />
+      @closed="refreshUserDashBord" />
   </v-app>
 </template>
 <script>
@@ -69,8 +68,6 @@ export default {
     return {
       currentComponent: null,
       isFlipped: false,
-      connectionsDrawer: false,
-      spaceDrawer: false,
       connectionRequests: null,
       spaceRequests: null,
       userDashBordKey: 0,
@@ -115,11 +112,7 @@ export default {
         });
     },
     openConnectionsDrawer() {
-      this.connectionsDrawer = true;
-    },
-    closeConnectionsDrawer() {
-      this.reRenderUserDashBord();
-      this.connectionsDrawer = false;
+      this.$refs.connectionsDrawer.open();
     },
     shouldShowRequests(requests) {
       this.connectionRequests = requests;
@@ -127,15 +120,11 @@ export default {
     showRequestsSpace(spaces) {
       this.spaceRequests = spaces;
     },
-    reRenderUserDashBord() {
+    refreshUserDashBord() {
       this.userDashBordKey += 1;
     },
     openSpaceDrawer() {
-      this.spaceDrawer = true;
-    },
-    closeSpaceDrawer() {
-      this.reRenderUserDashBord();
-      this.spaceDrawer = false;
+      this.$refs.spaceDrawer.open();
     },
   }
 };

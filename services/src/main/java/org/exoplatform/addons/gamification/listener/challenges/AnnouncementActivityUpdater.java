@@ -20,7 +20,10 @@ import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIV
 
 import org.apache.commons.lang.StringUtils;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -42,9 +45,12 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
 
   private AnnouncementService announcementService;
 
-  public AnnouncementActivityUpdater(ActivityManager activityManager, AnnouncementService announcementService) {
+  private RealizationsService realizationsService;
+
+  public AnnouncementActivityUpdater(ActivityManager activityManager, AnnouncementService announcementService, RealizationsService realizationsService) {
     this.activityManager = activityManager;
     this.announcementService = announcementService;
+    this.realizationsService = realizationsService;
   }
 
   @Override
@@ -66,6 +72,26 @@ public class AnnouncementActivityUpdater extends ActivityListenerPlugin {
     if (activity.getTemplateParams().containsKey(ANNOUNCEMENT_COMMENT_PARAM)) {
       activity.getTemplateParams().put(ANNOUNCEMENT_COMMENT_PARAM, null);
       activityManager.updateActivity(activity, false);
+    }
+  }
+
+  @Override
+  public void deleteActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
+    ExoSocialActivity activity = activityLifeCycleEvent.getSource();
+    if (!StringUtils.equals(activity.getType(), ANNOUNCEMENT_ACTIVITY_TYPE)) {
+      return;
+    }
+    long realizationId = Long.parseLong(activity.getTemplateParams().get(ANNOUNCEMENT_ID_PARAM));
+    try {
+      GamificationActionsHistoryDTO realization = realizationsService.getRealizationById(realizationId);
+      if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
+        realization.setStatus(HistoryStatus.DELETED.name());
+        realization.setActivityId(null);
+        realization.setObjectId(null);
+        realizationsService.updateRealization(realization);
+      }
+    } catch (ObjectNotFoundException e) {
+      LOG.warn("Realization with id {} does not exist", realizationId, e);
     }
   }
 }

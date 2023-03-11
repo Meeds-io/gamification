@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
+import org.exoplatform.addons.gamification.service.RealizationsService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -39,6 +40,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.service.mapper.GamificationActionsHistoryMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -58,14 +60,18 @@ public class GamificationService {
 
   private RuleService                    ruleService;
 
+  private RealizationsService            realizationsService;
+
   public GamificationService(IdentityManager identityManager,
                              SpaceService spaceService,
                              GamificationHistoryDAO gamificationHistoryDAO,
-                             RuleService ruleService) {
+                             RuleService ruleService,
+                             RealizationsService realizationsService) {
     this.gamificationHistoryDAO = gamificationHistoryDAO;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
     this.ruleService = ruleService;
+    this.realizationsService = realizationsService;
   }
 
   /**
@@ -79,23 +85,23 @@ public class GamificationService {
     return gamificationHistoryDAO.findActionHistoryByDateByEarnerId(date, earnerId);
   }
 
-  public int getLeaderboardRank(String earnerId, Date date, String domain) {
+  public int getLeaderboardRank(String earnerId, Date date, Long domainId) {
     List<StandardLeaderboard> leaderboard = null;
     Identity identity = identityManager.getIdentity(earnerId); // NOSONAR :
                                                                // profile load
                                                                // is always true
     IdentityType identityType = IdentityType.getType(identity.getProviderId());
     if (date != null) {
-      if (domain.equalsIgnoreCase("all")) {
+      if (domainId == null || domainId <= 0) {
         leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDate(identityType, date);
       } else {
-        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(identityType, date, domain);
+        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDateByDomain(identityType, date, domainId);
       }
     } else {
-      if (domain.equalsIgnoreCase("all")) {
+      if (domainId == null || domainId <= 0) {
         leaderboard = gamificationHistoryDAO.findAllActionsHistoryAgnostic(identityType);
       } else {
-        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(identityType, domain);
+        leaderboard = gamificationHistoryDAO.findAllActionsHistoryByDomain(identityType, domainId);
       }
     }
     // Get username
@@ -154,9 +160,38 @@ public class GamificationService {
                    LocalDate.now(),
                    aHistory.getEarnerId(),
                    aHistory.getGlobalScore(),
-                   ruleDto.getArea(),
+                   ruleDto.getDomainDTO().getTitle(),
                    ruleDto.getEvent(),
                    ruleDto.getScore());
+        }
+      }
+    }
+  }
+
+  public void cancelHistory(String event, String sender, String receiver, String object) {
+    List<RuleDTO> ruleDtos = null;
+    // Get associated rules
+    ruleDtos = ruleService.findEnabledRulesByEvent(event);
+    if (ruleDtos != null) {
+      for (RuleDTO ruleDto : ruleDtos) {
+        GamificationActionsHistoryDTO realization =
+                                                  realizationsService.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(ruleDto.getTitle(),
+                                                                                                                                    ruleDto.getDomainDTO()
+                                                                                                                                           .getId(),
+                                                                                                                                    sender,
+                                                                                                                                    receiver,
+                                                                                                                                    object);
+        if (realization != null) {
+          try {
+            if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
+              realization.setStatus(HistoryStatus.CANCELED.name());
+              realization.setActivityId(null);
+              realization.setObjectId(null);
+              realizationsService.updateRealization(realization);
+            }
+          } catch (ObjectNotFoundException e) {
+            LOG.warn("Realization with id {} does not exist", realization.getId(), e);
+          }
         }
       }
     }
@@ -185,7 +220,7 @@ public class GamificationService {
     }
 
     List<StandardLeaderboard> result = null;
-    if (StringUtils.isBlank(filter.getDomain()) || filter.getDomain().equalsIgnoreCase("all")) {
+    if (filter.getDomainId() == null || filter.getDomainId() <= 0) {
       // Compute date
       LocalDate now = LocalDate.now();
       // Check the period
@@ -210,14 +245,14 @@ public class GamificationService {
         Date fromDate = from(now.with(DayOfWeek.MONDAY)
                                 .atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
-        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomain(), limit);
+        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomainId(), limit);
       } else if (filter.getPeriod().equals(LeaderboardFilter.Period.MONTH.name())) {
         Date fromDate = from(now.with(TemporalAdjusters.firstDayOfMonth())
                                 .atStartOfDay(ZoneId.systemDefault())
                                 .toInstant());
-        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomain(), limit);
+        result = gamificationHistoryDAO.findActionsHistoryByDateByDomain(fromDate, identityType, filter.getDomainId(), limit);
       } else {
-        result = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomain(), identityType, limit);
+        result = gamificationHistoryDAO.findAllActionsHistoryByDomain(filter.getDomainId(), identityType, limit);
       }
     }
 
@@ -251,14 +286,6 @@ public class GamificationService {
 
   public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
     return gamificationHistoryDAO.findUsersReputationScoreBetweenDate(earnersId, fromDate, toDate);
-  }
-
-  public long findUserReputationScoreByMonth(String earnerId, Date currentMonth) {
-    return gamificationHistoryDAO.findUserReputationScoreByMonth(earnerId, currentMonth);
-  }
-
-  public long findUserReputationScoreByDomainBetweenDate(String earnerId, String domain, Date fromDate, Date toDate) {
-    return gamificationHistoryDAO.findUserReputationScoreByDomainBetweenDate(earnerId, domain, fromDate, toDate);
   }
 
   public List<StandardLeaderboard> findAllLeaderboardBetweenDate(IdentityType earnedType, Date fromDate, Date toDate) {
@@ -314,10 +341,10 @@ public class GamificationService {
       actionsHistoryDTO.setGlobalScore(computeTotalScore(actor) + ruleDto.getScore());
       actionsHistoryDTO.setEarnerId(actor);
       actionsHistoryDTO.setEarnerType(actorIdentity.getProviderId());
-      actionsHistoryDTO.setActionTitle(ruleDto.getEvent());
+      actionsHistoryDTO.setActionTitle(ruleDto.getTitle());
       actionsHistoryDTO.setRuleId(ruleDto.getId());
       if (ruleDto.getDomainDTO() != null) {
-        actionsHistoryDTO.setDomain(ruleDto.getDomainDTO().getTitle());
+        actionsHistoryDTO.setDomainDTO(ruleDto.getDomainDTO());
       }
       actionsHistoryDTO.setReceiver(receiver);
       actionsHistoryDTO.setObjectId(objectId);

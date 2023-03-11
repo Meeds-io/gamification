@@ -80,7 +80,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
                                         endDate,
                                         Collections.singletonList(identityId),
                                         10L,
-                                        domain.getTitle(),
+                                        domain.getId(),
                                         true);
     challenge = challengeService.createChallenge(challenge);
     String restPath = "/gamification/announcement/api/addAnnouncement";
@@ -194,7 +194,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     Challenge challenge = new Challenge(0,
                                         "update challenge",
                                         "challenge description",
-                                        1l,
+                                        1L,
                                         startDate,
                                         endDate,
                                         Collections.emptyList(),

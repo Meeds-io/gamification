@@ -16,132 +16,148 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div id="engagementCenterProgramDetail" class="pa-2 pa-sm-5">
-    <div class="py-2 py-sm-5 d-flex">
-      <v-tooltip bottom>
-        <template #activator="{ on }">
-          <div
-            v-on="on"
-            class="d-flex my-auto clickable"
-            @click="backToProgramList()">
-            <v-icon
-              class="px-3"
-              size="18">
-              fas fa-arrow-left
-            </v-icon>
-            <div class="text-header-title"> {{ programTitle }} </div>
-          </div>
-        </template>
-        <span>{{ $t('programs.details.label.BackToList') }}</span>
-      </v-tooltip>
-      <v-spacer />
-      <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-    </div>
-    <div class="d-flex flex-grow-1">
-      <v-img
-        :src="programCover"
-        :alt="$t('programs.cover.default')"
-        :min-height="36"
-        :max-height="height"
-        height="auto"
-        min-width="100%"
-        width="100%"
-        class="d-flex primary--text border-color">
-        <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
-      </v-img>
-    </div>
-    <div class="pt-5">
-      <v-list-item two-line class="px-0">
-        <v-list-item-content>
-          <v-list-item-title class="text-color font-weight-bold">
-            {{ $t('programs.details.label.description') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="text-color pt-4">
-            <div class="d-flex flex-grow-0 flex-shrink-1 pb-5 rich-editor-content">
-              <span
-                class="mt-1 align-self-center text-wrap text-left text-break"
-                v-sanitized-html="programDescription"></span>
-            </div>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </div>
-    <div class="pt-5">
-      <v-list-item two-line class="px-0">
-        <v-list-item-content>
-          <span class="text-header-title subtitle-1 d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
-          <v-list-item-title class="text-color font-weight-bold">
-            {{ $t('programs.details.label.rulesOfProgram') }}
-          </v-list-item-title>
-          <v-flex v-if="canManageRule" class="d-flex  mt-5">
-            <div class="text-no-wrap mt-sm-3">
-              <div
-                class="d-inline-block">
-                <v-btn
-                  class="btn btn-primary"
-                  small
-                  @click="openNewRuleForm">
-                  <v-icon dark>
-                    mdi-plus
-                  </v-icon>
-                  <span class="ms-2 d-none d-lg-inline subtitle-1">
-                    {{ $t('programs.details.rule.button.addRule') }}
-                  </span>
-                </v-btn>
-              </div>
-            </div>
+    <div v-if="!isDeleted">
+      <div class="py-2 py-sm-5 d-flex">
+        <v-tooltip bottom>
+          <template #activator="{ on }">
             <div
-              class="d-flex ms-auto">
-              <engagement-center-rule-filter @filter-applied="applyFilter" />
+              v-on="on"
+              class="d-flex my-auto clickable"
+              @click="backToProgramList()">
+              <v-icon
+                class="px-3"
+                size="18">
+                fas fa-arrow-left
+              </v-icon>
+              <div class="text-header-title"> {{ programTitle }} </div>
             </div>
-          </v-flex>
-          <v-list-item-subtitle class="text-color pt-4">
-            <v-data-table
-              :headers="rulesHeaders"
-              :items="programRulesToDisplay"
-              :options.sync="options"
-              :server-items-length="totalSize"
-              :no-data-text="$t('programs.details.rules.noRules')"
-              :loading="loadingRules"
-              :show-rows-border="false"
-              mobile-breakpoint="0"
-              hide-default-footer
-              disable-sort>
-              <template slot="item" slot-scope="props">
-                <engagement-center-rule-item
-                  :earner-type="earnerType"
-                  :rule="props.item"
-                  :can-manage-rule="canManageRule"
-                  :action-value-extensions="actionValueExtensions"
-                  @delete-rule="confirmDelete" />
-              </template>
-              <template v-if="displayFooter" #footer="{props}">
-                <v-divider />
-                <div class="text-center">
-                  <v-pagination
-                    v-model="options.page"
-                    :length="props.pagination.pageCount"
-                    circle
-                    light
-                    flat
-                    @input="retrieveProgramRules" />
+          </template>
+          <span>{{ $t('programs.details.label.BackToList') }}</span>
+        </v-tooltip>
+        <v-spacer />
+        <span class="text-header-title d-none d-sm-block" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+      </div>
+      <div class="d-flex flex-grow-1">
+        <v-img
+          :src="programCover"
+          :alt="$t('programs.cover.default')"
+          :min-height="36"
+          :max-height="height"
+          height="auto"
+          min-width="100%"
+          width="100%"
+          class="d-flex primary--text border-color">
+          <engagement-center-program-menu :is-administrator="isAdministrator" :program="program" />
+        </v-img>
+      </div>
+      <div class="d-sm-flex">
+        <div class="me-auto pe-sm-6 pt-5">
+          <v-list-item two-line class="px-0">
+            <v-list-item-content class="pa-0">
+              <div class="text-subtitle-1 text-color font-weight-bold mb-0">
+                {{ $t('programs.details.label.description') }}
+              </div>
+              <v-list-item-subtitle class="text-color pt-2">
+                <div class="d-flex flex-grow-0 flex-shrink-1 pb-sm-5 rich-editor-content">
+                  <span
+                    class="mt-1 align-self-center text-wrap text-left text-break"
+                    v-sanitized-html="programDescription"></span>
                 </div>
-              </template>
-            </v-data-table>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <engagement-center-rule-form-drawer
-        :events="events"
-        :program="program" />
-      <exo-confirm-dialog
-        v-if="confirmDelete"
-        ref="deleteRuleConfirmDialog"
-        :message="deleteConfirmMessage"
-        :title="$t('programs.details.title.confirmDeleteRule')"
-        :ok-label="$t('programs.details.ok.button')"
-        :cancel-label="$t('programs.details.cancel.button')"
-        @ok="deleteRule" />
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+        <div class="pt-sm-5 px-0 col-sm-3">
+          <div class="text-color text-subtitle-1 font-weight-bold width-fit-content ms-sm-auto">
+            {{ $t('programs.details.label.programOwners') }}
+          </div>
+          <engagement-center-avatars-list
+            :avatars="owners"
+            :max-avatars-to-show="3"
+            :avatars-count="ownersCount"
+            :size="25"
+            class="justify-sm-end pt-2"
+            @open-avatars-drawer="$root.$emit('open-owners-drawer', owners)" />
+          <div class="text-color text-subtitle-1 font-weight-bold pt-3 width-fit-content ms-sm-auto">
+            {{ $t('programs.details.label.audienceSpace') }}
+          </div>
+          <exo-space-avatar
+            :space="space"
+            :size="32"
+            class="d-flex justify-sm-end pt-2"
+            popover />
+        </div>
+      </div>
+      <div class="pt-5">
+        <v-list-item two-line class="px-0">
+          <v-list-item-content>
+            <span class="text-header-title subtitle-1 d-sm-none mb-5" v-sanitized-html="$t('programs.budget', $t(programBudgetLabel))"></span>
+            <v-list-item-title class="text-color font-weight-bold">
+              {{ $t('programs.details.label.rulesOfProgram') }}
+            </v-list-item-title>
+            <engagement-center-rules-toolbar
+              :can-manage-rule="canManageRule"
+              :keyword="keyword"
+              :filter="filter"
+              @keyword-changed="keyword = $event"
+              @filter-changed="filter = $event" />
+            <v-list-item-subtitle class="text-color pt-4">
+              <v-data-table
+                :headers="rulesHeaders"
+                :items="programRulesToDisplay"
+                :options.sync="options"
+                :server-items-length="totalSize"
+                :loading="loadingRules"
+                :show-rows-border="false"
+                mobile-breakpoint="0"
+                hide-default-footer
+                disable-sort>
+                <template slot="item" slot-scope="props">
+                  <engagement-center-rule-item
+                    :rule="props.item"
+                    :can-manage-rule="canManageRule"
+                    :action-value-extensions="actionValueExtensions"
+                    @delete-rule="confirmDelete" />
+                </template>
+                <template slot="no-data">
+                  <engagement-center-no-rule-found v-if="keyword" @keyword-changed="keyword = $event" />
+                  <span v-else> {{ $t('programs.details.rules.noRules') }}</span>
+                </template>
+                <template v-if="displayFooter" #footer="{props}">
+                  <v-divider />
+                  <div class="text-center">
+                    <v-pagination
+                      v-model="options.page"
+                      :length="props.pagination.pageCount"
+                      circle
+                      light
+                      flat
+                      @input="retrieveProgramRules" />
+                  </div>
+                </template>
+              </v-data-table>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <engagement-center-rule-form-drawer
+          :events="events"
+          :program="program" />
+        <exo-confirm-dialog
+          v-if="confirmDelete"
+          ref="deleteRuleConfirmDialog"
+          :message="deleteConfirmMessage"
+          :title="$t('programs.details.title.confirmDeleteRule')"
+          :ok-label="$t('programs.details.ok.button')"
+          :cancel-label="$t('programs.details.cancel.button')"
+          @ok="deleteRule" />
+      </div>
     </div>
+    <engagement-center-result-not-found
+      v-else
+      :message-title="$t('programs.details.programDeleted')"
+      :button-text="$t('programs.details.programDeleted.explore') "
+      :button-url="programsUrl"
+      @back-to-list="backToProgramList" />
   </div>
 </template>
 
@@ -179,12 +195,16 @@ export default {
         page: 1,
         itemsPerPage: 25,
       },
+      startSearchAfterInMilliseconds: 600,
+      endTypingKeywordTimeout: 50,
+      startTypingKeywordTimeout: 0,
       totalSize: 0,
       loadingRules: false,
       deleteConfirmMessage: '',
       filter: 'ENABLED',
+      keyword: null,
       expand: 'userAnnouncements',
-      earnerType: 'USER',
+      programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
     };
   },
   computed: {
@@ -209,6 +229,12 @@ export default {
     programId() {
       return this.program?.id;
     },
+    spaceId() {
+      return this.program?.space?.id;
+    },
+    isDeleted() {
+      return this.program?.deleted;
+    },
     rulesHeaders() {
       return [
         {text: this.$t('programs.details.rules.action'), align: 'start', width: '70%'},
@@ -228,6 +254,28 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
     },
+    space() {
+      return this.program?.space;
+    },
+    spaceManagers() {
+      return this.space?.managers;
+    },
+    spaceManagersList() {
+      return (this.spaceManagers || []).map(owner => ({
+        userName: owner
+      }));
+    },
+    addedOwners() {
+      return (this.program?.owners || []).filter(owner => owner.domainOwner && !this.program?.space?.managers.includes(owner.remoteId)).map(owner => ({
+        userName: owner.remoteId
+      }));
+    },
+    owners() {
+      return this.addedOwners.concat(this.spaceManagersList);
+    },
+    ownersCount() {
+      return this.owners?.length;
+    }
   },
   watch: {
     program() {
@@ -235,6 +283,20 @@ export default {
     },
     options() {
       this.retrieveProgramRules();
+    },
+    filter() {
+      this.retrieveProgramRules();
+    },
+    keyword() {
+      if (!this.keyword) {
+        this.retrieveProgramRules();
+        return;
+      }
+      this.startTypingKeywordTimeout = Date.now();
+      if (!this.typing) {
+        this.typing = true;
+        this.waitForEndTyping();
+      }
     },
   },
   created() {
@@ -245,6 +307,32 @@ export default {
     window.addEventListener('popstate', () => {
       this.backToProgramList();
     });
+  },
+  mounted() {
+    if (this.programId) {
+      document.dispatchEvent(new CustomEvent('exo-statistic-message', {
+        detail: {
+          module: 'gamification',
+          subModule: 'program',
+          userId: eXo.env.portal.userIdentityId,
+          userName: eXo.env.portal.userName,
+          spaceId: this.spaceId || 0,
+          operation: 'viewProgram',
+          timestamp: Date.now(),
+          parameters: {
+            programId: this.programId,
+            programTitle: this.programTitle,
+            programBudget: this.programBudget,
+            programType: this.program.type,
+            portalName: eXo.env.portal.portalName,
+            portalUri: eXo.env.server.portalBaseURL,
+            pageUrl: window.location.pathname,
+            pageTitle: eXo.env.portal.pageTitle,
+            pageUri: eXo.env.portal.selectedNodeUri,
+          },
+        }
+      }));
+    }
   },
   methods: {
     programUpdated(program) {
@@ -264,7 +352,7 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(null, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.expand)
+      return this.$ruleServices.getRules(this.keyword, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.expand)
         .then((data) => {
           this.programRules = data.rules;
           this.totalSize = data.size || 0;
@@ -283,9 +371,6 @@ export default {
       } else if (this.tab === 2) {
         window.history.replaceState('Engagement Center', this.$t('engagementCenter.label.achievements'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/achievements`);
       }
-    },
-    openNewRuleForm(){
-      this.$root.$emit('rule-form-drawer', null);
     },
     confirmDelete(rule) {
       this.selectedRule = rule;
@@ -310,7 +395,17 @@ export default {
         fieldLabelI18NValue = this.$t(fieldLabelI18NKey);
       }
       return fieldLabelI18NValue === fieldLabelI18NKey ? rule?.title : fieldLabelI18NValue;
-    }
+    },
+    waitForEndTyping() {
+      window.setTimeout(() => {
+        if (Date.now() - this.startTypingKeywordTimeout > this.startSearchAfterInMilliseconds) {
+          this.typing = false;
+          this.retrieveProgramRules();
+        } else {
+          this.waitForEndTyping();
+        }
+      }, this.endTypingKeywordTimeout);
+    },
   }
 };
 </script>

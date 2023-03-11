@@ -89,7 +89,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             {{ challengeTitle }}
           </v-tooltip>
         </div>
-        <div class="d-flex flex-row ms-1 ms-sm-0">
+        <div
+          class="d-flex flex-row ms-1 ms-sm-0"
+          @click="
+            $event.preventDefault();
+            $event.stopPropagation();
+          ">
           <engagement-center-avatars-list
             :avatars="winnerAvatars"
             :max-avatars-to-show="maxAvatarsToShow"
@@ -160,24 +165,18 @@ export default {
       return new Date(this.challenge?.endDate);
     },
     remainingPeriodLabel() {
-      if (this.endDate < new Date()) {
+      if (this.endDate.getTime() < Date.now()) {
         return this.$t('challenges.label.over');
-      } else if (this.startDate > new Date()) {
-        const days = Math.round((this.startDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      } else if (this.startDate.getTime() > Date.now()) {
+        const days = Math.round((this.startDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.openIn', {0: days});
       } else {
-        const days = Math.round((this.endDate.getTime() - this.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        const days = Math.round((this.endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.daysLeft', {0: days});
       }
     },
-    programCoverURl() {
-      return this.domain?.coverUrl;
-    },
     noParticipationYet() {
       return this.challenge?.announcementsCount === 0;
-    },
-    isActiveChallenge() {
-      return this.startDate < new Date() && new Date() < this.endDate;
     },
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
@@ -221,7 +220,7 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$root.$emit('open-winners-drawer', this.challenge.id);
+      this.$root.$emit('open-winners-drawer', this.challenge);
     },
     announcementAdded(event) {
       const announcement = event?.detail?.announcement;

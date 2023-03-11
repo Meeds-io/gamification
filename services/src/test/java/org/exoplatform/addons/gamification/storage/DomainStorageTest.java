@@ -56,21 +56,10 @@ public class DomainStorageTest extends AbstractServiceTest {
     DomainDTO savedDomain = domainStorage.saveDomain(domain);
     assertNotNull(savedDomain);
     assertNotEquals(0, savedDomain.getId());
-    assertNotNull(domainDAO.find(savedDomain.getId()));
 
     domain.setCoverUploadId("1");
     assertThrows(IllegalStateException.class, () ->  domainStorage.saveDomain(domain));
 
-  }
-
-  @Test
-  public void testFindEnabledDomainByTitle() {
-    assertNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    DomainDTO domain = newDomainDTO();
-    assertNotNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
-    domain.setEnabled(false);
-    domainStorage.saveDomain(domain);
-    assertNull(domainStorage.findEnabledDomainByTitle(GAMIFICATION_DOMAIN));
   }
 
   @Test

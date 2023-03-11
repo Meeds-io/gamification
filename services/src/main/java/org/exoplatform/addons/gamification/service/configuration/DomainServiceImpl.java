@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +76,7 @@ public class DomainServiceImpl implements DomainService {
       if (spaceIds.isEmpty()) {
         return Collections.emptyList();
       }
-      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
+      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
       if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
         userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
       }
@@ -101,14 +100,6 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  public DomainDTO findEnabledDomainByTitle(String domainTitle) {
-    if (StringUtils.isBlank(domainTitle)) {
-      throw new IllegalArgumentException("domainTitle has to be not null");
-    }
-    return domainStorage.findEnabledDomainByTitle(domainTitle);
-  }
-
-  @Override
   public DomainDTO getDomainByTitle(String domainTitle) {
     if (StringUtils.isBlank(domainTitle)) {
       throw new IllegalArgumentException("domainTitle has to be not null");
@@ -124,7 +115,7 @@ public class DomainServiceImpl implements DomainService {
       if (spaceIds.isEmpty()) {
         return 0;
       }
-      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).collect(Collectors.toList());
+      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
       if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
         userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
       }
@@ -144,12 +135,16 @@ public class DomainServiceImpl implements DomainService {
     if (!canAddDomain(aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to create a domain");
     }
-    return createDomain(domain, aclIdentity.getUserId());
+    DomainDTO createdDomain = createDomain(domain, aclIdentity.getUserId());
+    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdDomain, aclIdentity.getUserId());
+    return createdDomain;
   }
 
   @Override
   public DomainDTO createDomain(DomainDTO domain) {
-    return createDomain(domain, IdentityConstants.SYSTEM);
+    DomainDTO createdDomain = createDomain(domain, IdentityConstants.SYSTEM);
+    broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdDomain, null);
+    return createdDomain;
   }
 
   @Override
@@ -182,6 +177,8 @@ public class DomainServiceImpl implements DomainService {
       broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, domain, aclIdentity.getUserId());
     } else if (!storedDomain.isEnabled() && domain.isEnabled()) {
       broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, domain, aclIdentity.getUserId());
+    } else {
+      broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, domain, aclIdentity.getUserId());
     }
     return domain;
   }
@@ -238,8 +235,14 @@ public class DomainServiceImpl implements DomainService {
   @Override
   public boolean isDomainOwner(long domainId, Identity aclIdentity) {
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
+    if (userIdentity == null) {
+      return false;
+    }
     DomainDTO domain = domainStorage.getDomainById(domainId);
-    return domain != null && Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
+    if (domain == null) {
+      return false;
+    }
+    return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
   private void broadcast(String eventName, DomainDTO domain, String userName) {

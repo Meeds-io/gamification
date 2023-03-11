@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 
@@ -39,6 +38,25 @@ public interface RealizationsService {
   int countRealizationsByFilter(RealizationsFilter filter, Identity identity) throws IllegalAccessException;
 
   /**
+   * Retrieves a realization identified by its technical identifier.
+   *
+   * @param realizationId technical identifier of a realization
+   * @param username User name accessing realization
+   * @return A {@link GamificationActionsHistoryDTO} object
+   * @throws IllegalAccessException when user is not authorized to access
+   *           realization
+   */
+  GamificationActionsHistoryDTO getRealizationById(long realizationId, String username) throws IllegalAccessException;
+
+  /**
+   * Retrieves a realization identified by its technical identifier.
+   *
+   * @param realizationId technical identifier of a realization
+   * @return A {@link GamificationActionsHistoryDTO} object
+   */
+  GamificationActionsHistoryDTO getRealizationById(long realizationId);
+
+  /**
    * Export realizations found switch filter into an {@link InputStream}
    * containing a file of format XLS
    * 
@@ -55,18 +73,43 @@ public interface RealizationsService {
                          Locale locale) throws IllegalAccessException;
 
   /**
-   * Retrieves all Realizations by Date.
+   * Updates an existing realization
    *
-   * @param gHistoryId gHistoryId
-   * @param status status
-   * @param actionLabel 
-   * @param points 
-   * @param domain 
-   * @return {@link GamificationActionsHistoryDTO} identified by its id when found
-   * @throws ObjectNotFoundException GamificationActionsHistory identified by its
+   * @param realization {@link GamificationActionsHistoryDTO} object to update
+   * @param username User name updating realization
+   * @throws IllegalAccessException when user is not authorized to update the
+   *           realization
+   * @throws ObjectNotFoundException when the realization identified by its
    *           technical identifier is not found
    */
-  GamificationActionsHistoryDTO updateRealizationStatus(Long gHistoryId, HistoryStatus status, String actionLabel, Long points, String domain) throws ObjectNotFoundException;
+  GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization, String username) throws IllegalAccessException, ObjectNotFoundException;
+
+  /**
+   * Updates an existing realization
+   *
+   * @param realization {@link GamificationActionsHistoryDTO} object to update
+   * @throws ObjectNotFoundException when the realization identified by its
+   *           technical identifier is not found
+   */
+  GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization) throws ObjectNotFoundException;
+
+  /**
+   * Retrieves a realization identified by actionTitle, earner identity Id,
+   * receiver identity Id and object Id.
+   *
+   * @param actionTitle action title
+   * @param  domainId technical identifier of domain
+   * @param earnerId earner identity Id
+   * @param receiverId receiver identity Id
+   * @param objectId object Id
+   * @return {@link GamificationActionsHistoryDTO}
+   */
+  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                                    long domainId,
+                                                                                                    String earnerId,
+                                                                                                    String receiverId,
+                                                                                                    String objectId);
+
 
 }
 

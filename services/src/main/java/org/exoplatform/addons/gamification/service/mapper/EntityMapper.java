@@ -97,7 +97,7 @@ public class EntityMapper {
       return null;
     }
     return new Announcement(announcementEntity.getId(),
-                            announcementEntity.getRuleId(),
+                            announcementEntity.getRuleEntity().getId(),
                             announcementEntity.getActionTitle(),
                             Long.parseLong(announcementEntity.getEarnerId()),
                             announcementEntity.getComment(),
@@ -124,7 +124,7 @@ public class EntityMapper {
     Date createDate = Utils.parseRFC3339Date(announcement.getCreatedDate());
     announcementEntity.setComment(announcement.getComment());
     announcementEntity.setCreatedDate(createDate);
-    announcementEntity.setRuleId(announcement.getChallengeId());
+    announcementEntity.setRuleEntity(ruleEntity);
     announcementEntity.setActionTitle(announcement.getChallengeTitle() != null ? announcement.getChallengeTitle()
                                                                                : ruleEntity.getTitle());
     announcementEntity.setCreator(announcement.getCreator());
@@ -197,7 +197,6 @@ public class EntityMapper {
     rule.setDescription(challenge.getDescription());
     rule.setDeleted(false);
     DomainDTO domain = Utils.getChallengeDomainDTO(challenge);
-    rule.setArea(domain == null ? null : domain.getTitle());
     rule.setDomainDTO(domain);
     if (challenge.getAudience() > 0) {
       rule.setAudience(challenge.getAudience());

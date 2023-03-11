@@ -7,6 +7,8 @@ import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
@@ -46,9 +48,29 @@ public class AnnouncementStorage {
     return EntityMapper.fromEntity(announcementEntity);
   }
 
+  public Announcement deleteAnnouncement(Announcement announcement) {
+    if (announcement == null) {
+      throw new IllegalArgumentException("Announcement argument is null");
+    }
+    RuleEntity ruleEntity = ruleDAO.find(announcement.getChallengeId());
+    GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement, ruleEntity);
+    announcementEntity.setStatus(HistoryStatus.CANCELED);
+    announcementEntity.setActivityId(null);
+    announcementEntity.setObjectId(null);
+    announcementEntity = announcementDAO.update(announcementEntity);
+    return EntityMapper.fromEntity(announcementEntity);
+  }
+
   public Announcement getAnnouncementById(long announcementId) {
     GamificationActionsHistory announcementEntity = this.announcementDAO.find(announcementId);
     return EntityMapper.fromEntity(announcementEntity);
+  }
+
+  public List<Announcement> getAnnouncementsByEarnerId(String earnerId) {
+    List<GamificationActionsHistory> announcementEntities =
+                                                          this.announcementDAO.findActionsHistoryByEarnerIdAndByType(earnerId,
+                                                                                                                     EntityType.MANUAL);
+    return EntityMapper.fromAnnouncementEntities(announcementEntities);
   }
 
   public List<Announcement> findAllAnnouncementByChallenge(Long challengeId, int offset, int limit, PeriodType periodType, IdentityType earnerType) {

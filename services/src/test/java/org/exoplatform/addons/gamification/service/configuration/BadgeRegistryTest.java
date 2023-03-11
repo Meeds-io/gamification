@@ -30,11 +30,12 @@ public class BadgeRegistryTest extends AbstractServiceTest {
 
   private BadgeRegistryImpl badgeRegistry;
 
+  @Override
   @Before
-  public void init() throws Exception {
+  public void setUp() throws Exception {
+    super.setUp();
     if (badgeRegistry == null) {
       badgeRegistry = new BadgeRegistryImpl(fileService,
-                                            domainService,
                                             badgeService);
     }
   }
@@ -45,7 +46,6 @@ public class BadgeRegistryTest extends AbstractServiceTest {
     String title = "Test Bagde1";
     addValueParam(initParams, "badge-title", title);
     addValueParam(initParams, "badge-description", "Badge description");
-    addValueParam(initParams, "badge-domain", "Development");
     addValueParam(initParams, "badge-icon", "notExisting");
     addValueParam(initParams, "badge-neededScore", "20");
     addValueParam(initParams, "badge-enable", "true");
@@ -65,7 +65,6 @@ public class BadgeRegistryTest extends AbstractServiceTest {
     String title = "Test Bagde1";
     addValueParam(initParams, "badge-title", title);
     addValueParam(initParams, "badge-description", "Badge description");
-    addValueParam(initParams, "badge-domain", "Development");
     addValueParam(initParams, "badge-icon", "notExisting");
     addValueParam(initParams, "badge-neededScore", "20");
     addValueParam(initParams, "badge-enable", "true");

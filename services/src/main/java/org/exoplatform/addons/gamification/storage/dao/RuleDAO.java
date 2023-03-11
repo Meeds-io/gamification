@@ -143,10 +143,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<RuleEntity> getAllRulesByDomain(String domain) throws PersistenceException {
+  public List<RuleEntity> getAllRulesByDomain(long domainId) throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
-                                                     .setParameter("domain", domain);
+                                                     .setParameter(DOMAIN_ID, domainId);
     query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
@@ -159,17 +159,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<RuleEntity> getAllRulesWithNullDomain() throws PersistenceException {
 
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesWithNullDomain", RuleEntity.class);
-    query.setParameter("type", EntityType.AUTOMATIC);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-
-  }
-
-  public List<String> getDomainList() throws PersistenceException {
-    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getDomainList", String.class);
     query.setParameter("type", EntityType.AUTOMATIC);
     try {
       return query.getResultList();
@@ -247,6 +236,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private <T> void addQueryFilterParameters(RuleFilter filter, TypedQuery<T> query) {
+    if (StringUtils.isNotBlank(filter.getTerm())) {
+      query.setParameter("term", "%" + StringUtils.lowerCase(filter.getTerm()) + "%");
+    }
     if (filter.getDomainId() > 0) {
       query.setParameter(DOMAIN_ID, filter.getDomainId());
     }
@@ -286,6 +278,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) {
+    if (StringUtils.isNotBlank(filter.getTerm())) {
+      suffixes.add("Term");
+      predicates.add("LOWER(r.title) LIKE :term");
+    }
     if (filter.getDomainId() > 0) {
       suffixes.add("Domain");
       predicates.add("r.domainEntity.id = :domainId");

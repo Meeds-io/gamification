@@ -38,8 +38,6 @@ public class DomainCachedStorage extends DomainStorage {
 
   private static final int                               DOMAIN_ID_CONTEXT      = 0;
 
-  private static final int                               DOMAIN_TITLE_CONTEXT   = 1;
-
   private static final int                               ALL_DOMAIN_CONTEXT     = 2;
 
   private static final int                               DOMAIN_ENABLED_CONTEXT = 3;
@@ -60,8 +58,6 @@ public class DomainCachedStorage extends DomainStorage {
       public Object retrieve(CacheKey context, Serializable key) throws Exception {
         if (context.getContext() == DOMAIN_ID_CONTEXT) {
           return DomainCachedStorage.super.getDomainById(context.getId());
-        } else if (context.getContext() == DOMAIN_TITLE_CONTEXT) {
-          return DomainCachedStorage.super.findEnabledDomainByTitle(context.getTitle());
         } else if (context.getContext() == ALL_DOMAIN_CONTEXT) {
           return DomainCachedStorage.super.getDomainsByFilter(context.getDomainFilter(), context.getOffset(), context.getLimit());
         } else if (context.getContext() == DOMAIN_ENABLED_CONTEXT) {
@@ -87,12 +83,6 @@ public class DomainCachedStorage extends DomainStorage {
   @Override
   public DomainDTO getDomainById(Long id) {
     CacheKey key = new CacheKey(DOMAIN_ID_CONTEXT, id);
-    return (DomainDTO) this.domainFutureCache.get(key, key.hashCode());
-  }
-
-  @Override
-  public DomainDTO findEnabledDomainByTitle(String title) {
-    CacheKey key = new CacheKey(DOMAIN_TITLE_CONTEXT, title);
     return (DomainDTO) this.domainFutureCache.get(key, key.hashCode());
   }
 

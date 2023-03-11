@@ -15,53 +15,82 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app id="winnersDetails">
-    <exo-drawer
-      ref="winnersDetails"
-      right
-      @closed="close">
-      <template slot="title">
-        <div>
-          <i
-            v-if="back"
-            class="uiIcon uiArrowBAckIcon"
-            @click="close"></i>  <span class="pb-2"> {{ $t('challenges.winners.details') }} </span>
-        </div>
-      </template>
-      <template slot="content">
-        <exo-user-avatar
-          v-for="winner in listWinners" 
-          :key="winner.user"
-          :profile-id="winner.user"
-          :size="44"
-          extra-class="px-4 py-3 border-bottom-color"
-          bold-title
-          link-style
-          popover>
-          <template slot="subTitle">
-            <a :href="getLinkActivity(winner.activityId)">
-              <relative-date-format
-                class="text-capitalize-first-letter text-light-color text-truncate"
-                :value="winner.createDate" />
-            </a>
-          </template>
-        </exo-user-avatar> 
-      </template>
-      <template v-if="showLoadMoreButton" slot="footer">
-        <v-row class="ml-6 mr-6 mb-6 mt-n4 d-none d-lg-inline">
-          <v-btn
-            v-if="showLoadMoreButton"
-            :loading="loading"
-            :disabled="loading"
-            class="loadMoreButton ma-auto btn"
-            block
-            @click="loadMore">
-            {{ $t('engagementCenter.button.ShowMore') }}
-          </v-btn>
-        </v-row>
-      </template>
-    </exo-drawer>
-  </v-app>
+  <exo-drawer
+    id="EngagementCenterWinnersDetails"
+    ref="winnersDetails"
+    v-model="drawer"
+    right
+    @closed="close">
+    <template slot="title">
+      <div>
+        <i
+          v-if="back"
+          class="uiIcon uiArrowBAckIcon"
+          @click="close"></i>  <span class="pb-2"> {{ $t('challenges.winners.details') }} </span>
+      </div>
+    </template>
+    <template slot="content">
+      <v-list-item
+        v-for="winner in listWinners"
+        :key="winner.user">
+        <v-list-item-content class="d-inline">
+          <exo-user-avatar
+            :profile-id="winner.user"
+            :size="44"
+            bold-title
+            link-style
+            popover>
+            <template slot="subTitle">
+              <a :href="getLinkActivity(winner.activityId)">
+                <relative-date-format
+                  class="text-capitalize-first-letter text-light-color text-truncate"
+                  :value="winner.createDate" />
+              </a>
+            </template>
+          </exo-user-avatar>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-tooltip v-if="!winner.noActivityId" bottom>
+            <template #activator="{ on }">
+              <a v-on="on">
+                <span>
+                  <v-icon
+                    size="16"
+                    color="dark-grey"
+                    @click="redirectToLinkActivity(winner.activityId)">fas fa-eye</v-icon>
+                </span>
+              </a>
+            </template>
+            <span>{{ $t('program.winner.label.checkActivity') }}</span>
+          </v-tooltip>
+          <v-tooltip v-else bottom>
+            <template #activator="{ on }">
+              <a v-on="on">
+                <span>
+                  <v-icon
+                    size="16"
+                    color="grey"
+                    class="not-clickable ">fas fa-eye</v-icon>
+                </span>
+              </a>
+            </template>
+            <span>{{ noActivityLabel }}</span>
+          </v-tooltip>
+        </v-list-item-action>
+      </v-list-item>
+    </template>
+    <template v-if="showPagination" slot="footer">
+      <div class="text-center">
+        <v-pagination
+          v-model="page"
+          :length="paginationPageCount"
+          circle
+          light
+          flat
+          @input="loadMore" />
+      </div>
+    </template>
+  </exo-drawer>
 </template>
 
 <script>
@@ -69,12 +98,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 export default {
   data() {
     return {
+      isAutomaticType: false,
+      drawer: false,
       challengeId: false,
       showLoadMoreButton: false,
-      announcementPerPage: 20,
+      announcementTotalCount: 0,
+      page: 1,
       loading: true,
       announcement: [],
-      listWinners: []
+      listWinners: [],
+      earnerType: 'USER'
     };
   },
   watch: {
@@ -85,45 +118,65 @@ export default {
         this.$refs.winnersDetails.endLoading();
       }
     },
+    announcementPerPage() {
+      if (this.drawer) {
+        this.retrieveAnnouncements();
+      }
+    },
   },
   created() {
     this.$root.$on('open-winners-drawer', this.open);
+  },
+  computed: {
+    paginationPageCount() {
+      return Math.ceil(this.announcementTotalCount / this.announcementPerPage);
+    },
+    showPagination() {
+      return this.announcementTotalCount >= this.announcementPerPage;
+    },
+    announcementPerPage() {
+      return Math.round((this.$vuetify.breakpoint.height - 122) / 70);
+    },
+    noActivityLabel() {
+      return this.$t(`program.winner.label.${this.isAutomaticType ? 'noActivity' : 'activityDeleted'}`);
+    }
   },
   methods: {
     getLinkActivity(id) {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
     },
+    redirectToLinkActivity(id) {
+      window.location.href = `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${id}`;
+    },
     close() {
       this.$refs.winnersDetails.close();
+      this.page = 1;
     },
-    open(challengeId, earnerType) {
+    open(challenge) {
+      this.announcementTotalCount = challenge?.announcementsCount;
+      this.isAutomaticType = challenge.type === 'AUTOMATIC';
       this.listWinners = [];
-      this.challengeId = challengeId;
+      this.challengeId = challenge?.id;
       this.$refs.winnersDetails.open();
-      this.retrieveAnnouncements(false, earnerType);
+      this.retrieveAnnouncements(this.earnerType);
     },
     loadMore() {
-      this.retrieveAnnouncements(true);
+      this.retrieveAnnouncements();
     },
-    retrieveAnnouncements(append, earnerType) {
+    retrieveAnnouncements(earnerType) {
       this.loading = true;
-      const offset = append ? this.announcement.length : 0;
+      const offset = (this.page - 1) * this.announcementPerPage;
+      this.listWinners = [];
       this.$challengesServices.getAllAnnouncementsByChallenge(this.challengeId, earnerType, offset, this.announcementPerPage).then(announcements => {
-        if (announcements.length >= this.announcementPerPage) {
-          this.showLoadMoreButton = true;
-        } else {
-          this.showLoadMoreButton = false;
-        }
-        this.announcement = append && this.announcement.concat(announcements) || announcements;
         if (announcements.length > 0) {
           announcements.filter(announce => announce.assignee).map(announce => {
             const announcement = {
               user: announce.assignee,
               activityId: announce.activityId,
-              createDate: announce.createdDate
+              createDate: announce.createdDate,
+              noActivityId: announce.activityId === null,
             };
             this.listWinners.push(announcement);
-
           });
         }
       }).finally(() => this.loading = false);
