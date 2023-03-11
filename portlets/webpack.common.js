@@ -31,7 +31,7 @@ module.exports = {
     realizationsComponents: './src/main/webapp/vue-app/realizations/initComponents.js',
     realizations: './src/main/webapp/vue-app/realizations/main.js',
     engagementCenter: './src/main/webapp/vue-app/engagement-center/main.js',
-    challengesExtensions: './src/main/webapp/vue-app/challenges-extensions/main.js',
+    engagementCenterActivityStreamExtension: './src/main/webapp/vue-app/engagement-center-activity-stream-extension/main.js',
     myReputation: './src/main/webapp/vue-app/myReputation/main.js',
     myRewards: './src/main/webapp/vue-app/myRewards/main.js',
     topChallengers: './src/main/webapp/vue-app/topChallengers/main.js',

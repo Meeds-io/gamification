@@ -73,7 +73,7 @@
             </v-list-item>
           </div>
           <div v-if="!automaticRule && isActiveRule" class="py-3">
-            <exo-activity-rich-editor
+            <rich-editor
               v-model="comment"
               ref="announcementRichEditor"
               :max-length="MAX_LENGTH"
