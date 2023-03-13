@@ -136,7 +136,9 @@ export default {
       userPoints: 0,
       period: 'WEEK',
       programLabels: [],
+      seriesData: [],
       loading: true,
+      mounted: false,
       colors: [
         '#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
         '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
@@ -156,7 +158,7 @@ export default {
             fontWeight: 'normal',
             fontSize: '16',
           },
-          subtext: '',
+          subtext: `${this.userPoints}`,
           subtextStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
@@ -181,6 +183,7 @@ export default {
               show: false
             },
             color: this.colors,
+            data: this.seriesData,
           },
         ]
       };
@@ -192,10 +195,20 @@ export default {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`;
     },
     displayLoadingChart() {
-      return !this.overviewDisplay && this.loading;
+      return !this.overviewDisplay && !this.initialized;
     },
     hasZeroPoints() {
-      return this.userPoints === 0 && !this.loading;
+      return this.userPoints === 0 && this.initialized;
+    },
+    initialized() {
+      return this.mounted && !this.loading;
+    },
+  },
+  watch: {
+    initialized() {
+      if (this.initialized) {
+        this.$nextTick().then(() => this.initChart(this.option));
+      }
     },
   },
   created() {
@@ -204,6 +217,9 @@ export default {
       this.getGamificationPointsStats(),
       this.getGamificationPoints()
     ]).finally(() => this.loading = false);
+  },
+  mounted() {
+    this.mounted = true;
   },
   methods: {
     getGamificationPoints() {
@@ -214,14 +230,13 @@ export default {
             if (data.points !== 0) {
               this.$emit('seeAll', true);
             }
-            this.option.title[0].subtext = data.points;
           })
       );
     },
     getGamificationPointsStats() {
       return getGamificationPointsStats(this.period)
         .then((data) => {
-          this.option.series[0].data = [];
+          const seriesData = [];
           const programLabels = [];
           for (let i=0;i < data.length; i++) {
             const optionSeriesName = data[i].label;
@@ -235,15 +250,15 @@ export default {
             if (i > 4) {
               serie = {
                 name: this.$t('exoplatform.gamification.gamificationinformation.domain.others'),
-                value: this.option.series[0].data[4].value + data[i].value
+                value: seriesData[4].value + data[i].value
               };
-              this.option.series[0].data[4] = serie;
+              seriesData[4] = serie;
             } else {
               serie = {
                 name,
                 value: data[i].value
               };
-              this.option.series[0].data.push(serie);
+              seriesData.push(serie);
             }
             if (i <= 4) {
               programLabels.push({
@@ -255,9 +270,9 @@ export default {
             }
           }
           this.programLabels = programLabels;
+          this.seriesData = seriesData;
           return this.$nextTick();
-        })
-        .finally(() => this.initChart(this.option));
+        });
     },
     initChart(option) {
       return new Promise((resolve) => {
