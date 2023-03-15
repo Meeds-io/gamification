@@ -20,6 +20,7 @@ import java.util.*;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -61,19 +62,23 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   public List<Long> findHighestBudgetDomainIds(int offset, int limit) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Long.class);
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
     if (offset > 0) {
       query.setFirstResult(offset);
     }
     if (limit > 0) {
       query.setMaxResults(limit);
     }
-    return query.getResultList();
-
+    List<Tuple> result = query.getResultList();
+    if (result == null) {
+      return Collections.emptyList();
+    } else {
+      return result.stream().map(tuple -> tuple.get(0, Long.class)).toList();
+    }
   }
 
   public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Long.class);
+    TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
     if (offset > 0) {
       query.setFirstResult(offset);
@@ -81,7 +86,12 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (limit > 0) {
       query.setMaxResults(limit);
     }
-    return query.getResultList();
+    List<Tuple> result = query.getResultList();
+    if (result == null) {
+      return Collections.emptyList();
+    } else {
+      return result.stream().map(tuple -> tuple.get(0, Long.class)).toList();
+    }
   }
 
   public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {

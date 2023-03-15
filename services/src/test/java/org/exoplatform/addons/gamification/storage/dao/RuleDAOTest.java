@@ -142,12 +142,46 @@ public class RuleDAOTest extends AbstractServiceTest {
     DomainEntity secondDomain = newDomain("secondDomain");
     DomainEntity thirdDomain = newDomain("thirdDomain");
     RuleEntity r1 = newRule("rule1", firstDomain.getId());
+    RuleEntity r2 = newRule("rule2", secondDomain.getId());
+    RuleEntity r3 = newRule("rule3", thirdDomain.getId());
+    r1.setScore(100);
+    ruleDAO.update(r1);
+    r2.setScore(60);
+    ruleDAO.update(r2);
+    r3.setScore(20);
+    ruleDAO.update(r3);
+    assertEquals(firstDomain.getId(), ruleDAO.findHighestBudgetDomainIds(0, 3).get(0));
+    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetDomainIds(0, 3).get(1));
+    assertEquals(thirdDomain.getId(), ruleDAO.findHighestBudgetDomainIds(0, 3).get(2));
+    r1.setEnabled(false);
+    ruleDAO.update(r1);
+    assertEquals(secondDomain.getId(), ruleDAO.findHighestBudgetDomainIds(0, 3).get(0));
+
+    // find highest budget domain Ids by spaces Ids
+    assertTrue(ruleDAO.findHighestBudgetDomainIdsBySpacesIds(new ArrayList<>(Collections.singleton(10L)), 0, 3).isEmpty());
+    assertEquals(secondDomain.getId(),
+                 ruleDAO.findHighestBudgetDomainIdsBySpacesIds(new ArrayList<>(Collections.singleton(1L)), 0, 3).get(0));
+  }
+
+  @Test
+  public void testGetRulesTotalScoreByDomain() {
+    DomainEntity firstDomain = newDomain("firstDomain");
+    DomainEntity secondDomain = newDomain("secondDomain");
+    RuleEntity r1 = newRule("rule1", firstDomain.getId());
     RuleEntity r2 = newRule("rule2", firstDomain.getId());
     RuleEntity r3 = newRule("rule3", secondDomain.getId());
-    r1.setScore(Integer.parseInt(TEST__SCORE) * 2);
-    r2.setScore(Integer.parseInt(TEST__SCORE));
-    r3.setScore(Integer.parseInt(TEST__SCORE));
-    assertEquals(ruleDAO.findHighestBudgetDomainIds(0, 3).get(0), r1.getDomainEntity().getId());
+    r1.setScore(100);
+    ruleDAO.update(r1);
+    r2.setScore(60);
+    ruleDAO.update(r2);
+    r3.setScore(20);
+    ruleDAO.update(r3);
+    assertEquals(160, ruleDAO.getRulesTotalScoreByDomain(firstDomain.getId()));
+    assertEquals(20, ruleDAO.getRulesTotalScoreByDomain(secondDomain.getId()));
+
+    r1.setEnabled(false);
+    ruleDAO.update(r1);
+    assertEquals(60, ruleDAO.getRulesTotalScoreByDomain(firstDomain.getId()));
   }
 
   @Test
