@@ -34,6 +34,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       cols="30"
       rows="10"
       class="d-none"></textarea>
+    <v-progress-circular
+      v-if="!editorReady"
+      :width="3"
+      indeterminate
+      class="loadingRing position-absolute" />
     <div
       :class="tooManyChars && 'tooManyChars' || ''"
       class="activityCharsCount">
@@ -94,16 +99,9 @@ export default {
     }
   },
   watch: {
-    inputVal: {
-      immediate: true,
-      handler(val) {
-        if (val!== '') {
-          if (this.displayPlaceholder) {
-            this.displayPlaceholder = false;
-          }
-        } else {
-          this.displayPlaceholder = true;
-        }
+    inputVal(val) {
+      this.computePlaceHolderVisibility();
+      if (this.editorReady) {
         this.$emit('input', val);
       }
     },
@@ -112,6 +110,7 @@ export default {
     },
     editorReady() {
       if (this.editorReady) {
+        this.computePlaceHolderVisibility();
         this.$emit('ready');
       } else {
         this.$emit('unloaded');
@@ -195,10 +194,14 @@ export default {
       this.displayPlaceholder = false;
       this.setFocus();
     },
-    initCKEditorData: function (message) {
+    initCKEditorData: function(message) {
       this.inputVal = message || '';
-      if (this.editor) {
-        this.editor.setData(this.inputVal);
+      try {
+        if (this.editor) {
+          this.editor.setData(this.inputVal);
+        }
+      } catch (e) {
+        // When CKEditor not initialized or is detroying
       }
     },
     setEditorReady: function() {
@@ -212,6 +215,9 @@ export default {
           this.$nextTick().then(() => this.editor.focus());
         }, 200);
       }
+    },
+    computePlaceHolderVisibility() {
+      this.displayPlaceholder = this.editor?.status === 'ready' && !this.inputVal && !this.inputVal.trim();
     },
   }
 };
