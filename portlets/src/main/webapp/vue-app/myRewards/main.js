@@ -31,10 +31,8 @@ export function init() {
         i18n,
         vuetify: Vue.prototype.vuetifyOptions,
       }, `#${appId}`, 'My Rewards');
-    });
-  Object.keys(window.requirejs.s.contexts._.registry)
-    .filter(definedMofule => definedMofule.includes('WalletAPIBundle') || definedMofule.includes('PerkStoreOverviewAPI'))
-    .forEach(module => {
-      window.require([module], app => app.init());
+    }).finally(() => {
+      Vue.prototype.$utils.includeExtensions('WalletAPIBundle');
+      Vue.prototype.$utils.includeExtensions('PerkStoreOverviewAPI');
     });
 }
