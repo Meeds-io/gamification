@@ -199,6 +199,9 @@ public class RealizationsServiceImpl implements RealizationsService {
                                                                                              objectId);
   }
 
+  public List<GamificationActionsHistoryDTO> getRealizationsByObjectId(String objectId) {
+    return realizationsStorage.getRealizationsByObjectId(objectId);
+  }
   
   public InputStream exportXlsx(RealizationsFilter filter,
                                 Identity identity,

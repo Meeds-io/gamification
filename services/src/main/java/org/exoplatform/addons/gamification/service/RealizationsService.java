@@ -104,12 +104,19 @@ public interface RealizationsService {
    * @param objectId object Id
    * @return {@link GamificationActionsHistoryDTO}
    */
-  public GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
-                                                                                                    long domainId,
-                                                                                                    String earnerId,
-                                                                                                    String receiverId,
-                                                                                                    String objectId);
+  GamificationActionsHistoryDTO findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(String actionTitle,
+                                                                                              long domainId,
+                                                                                              String earnerId,
+                                                                                              String receiverId,
+                                                                                              String objectId);
 
+  /**
+   * Retrieves the list of realizations identified by object Id.
+   *
+   * @param objectId object Id
+   * @return A {@link List &lt;GamificationActionsHistoryDTO&gt;} object
+   */
+  List<GamificationActionsHistoryDTO> getRealizationsByObjectId(String objectId);
 
 }
 

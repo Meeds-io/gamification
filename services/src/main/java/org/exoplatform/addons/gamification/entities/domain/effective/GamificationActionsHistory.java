@@ -194,6 +194,12 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
             " AND g.receiver = :receiverId" +
             " AND g.objectId = :objectId"
 )
+
+@NamedQuery(
+    name = "GamificationActionsHistory.getRealizationsByObjectId",
+    query = "SELECT g FROM GamificationActionsHistory g" +
+            " WHERE g.objectId = :objectId"
+)
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 

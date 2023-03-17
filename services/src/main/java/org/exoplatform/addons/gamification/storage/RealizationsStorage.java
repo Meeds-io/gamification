@@ -56,4 +56,9 @@ public class RealizationsStorage {
     return gamificationActionsHistory != null ? GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory) : null;
   }
 
+  public List<GamificationActionsHistoryDTO> getRealizationsByObjectId(String objectId) {
+    List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.getRealizationsByObjectId(objectId);
+    return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
+  }
+
 }

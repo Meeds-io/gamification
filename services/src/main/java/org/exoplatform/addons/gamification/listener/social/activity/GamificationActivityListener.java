@@ -17,8 +17,10 @@
 package org.exoplatform.addons.gamification.listener.social.activity;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.DELETE_EVENT_NAME;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.GENERIC_EVENT_NAME;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,6 +142,19 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   @Override
+  public void deleteActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
+    ExoSocialActivity activity = activityLifeCycleEvent.getSource();
+    String activityUrl = getActivityUrl(activity);
+    markActivityGamificationHistoryAsDeleted(activityUrl);
+    Arrays.stream(activity.getReplyToId()).forEach(commentId -> {
+      String commentUrl = LinkProvider.getSingleActivityUrl(activity.getId() + "#comment-" + commentId);
+      markActivityGamificationHistoryAsDeleted(commentUrl);
+      commentUrl = LinkProvider.getSingleActivityUrl(activity.getId() + "&commentId=" + commentId);
+      markActivityGamificationHistoryAsDeleted(commentUrl);
+    });
+  }
+
+  @Override
   public void saveComment(ActivityLifeCycleEvent event) {
 
     // Target Activity
@@ -184,6 +199,15 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   public void updateComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
     // Waiting for spec to be implemented
+  }
+
+  @Override
+  public void deleteComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
+    ExoSocialActivity activity = activityLifeCycleEvent.getSource();
+    String activityUrl = getActivityUrl(activity);
+    markActivityGamificationHistoryAsDeleted(activityUrl);
+    activityUrl = LinkProvider.getSingleActivityUrl(activity.getParentId() + "#comment-" + activity.getId());
+    markActivityGamificationHistoryAsDeleted(activityUrl);
   }
 
   @Override
@@ -334,6 +358,16 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put("senderType", SpaceIdentityProvider.NAME);
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error("Cannot broadcast gamification event", e);
+    }
+  }
+
+  private void markActivityGamificationHistoryAsDeleted(String activityUrl) {
+    try {
+      Map<String, String> gam = new HashMap<>();
+      gam.put("object", activityUrl);
+      listenerService.broadcast(DELETE_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error("Cannot broadcast gamification event", e);
     }

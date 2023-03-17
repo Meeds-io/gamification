@@ -513,6 +513,18 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
+  public List<GamificationActionsHistory> getRealizationsByObjectId(String objectId) {
+    TypedQuery<GamificationActionsHistory> query =
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.getRealizationsByObjectId",
+                                                                                     GamificationActionsHistory.class);
+    query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
+    try {
+      return query.getResultList();
+    } catch (NoResultException e) {
+      return Collections.emptyList();
+    }
+  }
+
   /**
    * Find realizations by filter with offset, limit.
    * 

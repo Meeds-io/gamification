@@ -197,6 +197,23 @@ public class GamificationService {
     }
   }
 
+  public void deleteHistory(String object) {
+    List<GamificationActionsHistoryDTO> realizations = realizationsService.getRealizationsByObjectId(object);
+    realizations.forEach(realization -> {
+      try {
+        if (!HistoryStatus.DELETED.name().equals(realization.getStatus())
+            && !HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
+          realization.setStatus(HistoryStatus.DELETED.name());
+          realization.setActivityId(null);
+          realization.setObjectId(null);
+          realizationsService.updateRealization(realization);
+        }
+      } catch (ObjectNotFoundException e) {
+        LOG.warn("Realization with id {} does not exist", realization.getId(), e);
+      }
+    });
+  }
+
   public GamificationActionsHistory findLatestActionHistoryByEarnerId(String earnerId) {
     List<GamificationActionsHistory> entities = gamificationHistoryDAO.findActionsHistoryByEarnerId(earnerId, 1);
     // Return the first element since the underluing API returns entities
