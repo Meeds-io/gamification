@@ -103,7 +103,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final String          TEST_SPACE2_ID      = "152";
 
   /* Receiver */
-  protected static final String          TEST_USER_RECEIVER  = "55";
+  protected static final String          TEST_USER_RECEIVER  = "10";
 
   /* Sender */
   protected static final String          TEST_USER_SENDER    = "1";

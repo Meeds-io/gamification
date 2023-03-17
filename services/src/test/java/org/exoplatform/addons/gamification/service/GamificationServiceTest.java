@@ -16,9 +16,13 @@
  */
 package org.exoplatform.addons.gamification.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -106,8 +110,10 @@ public class GamificationServiceTest extends AbstractServiceTest {
     assertEquals(global, aHistory.getActionScore() + aHistory1.getActionScore());
   }
 
+  @Test
   public void testLeaderboardRank() {
-    RuleDTO ruleDTO = newRuleDTO();
+    DomainDTO domainDTO = newDomainDTO();
+    RuleDTO ruleDTO = newRuleDTO(RULE_NAME, domainDTO.getId());
     GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
@@ -161,17 +167,20 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                          TEST_LINK_ACTIVITY);
     gamificationService.saveActionHistory(aHistory);
 
-    int rankUser1 = gamificationService.getLeaderboardRank(TEST_USER_SENDER, new Date(), 1L);
-    int rankUser2 = gamificationService.getLeaderboardRank(TEST_USER_RECEIVER, new Date(), 1L);
-    assertEquals(rankUser1, 1);
-    assertEquals(rankUser2, 2);
+    Date date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    int rankSpace2 = gamificationService.getLeaderboardRank(TEST_SPACE2_ID, new Date(), 1L);
-    int rankSpace1 = gamificationService.getLeaderboardRank(TEST_SPACE_ID, new Date(), 1L);
-    assertEquals(rankSpace2, 1);
-    assertEquals(rankSpace1, 2);
+    int rankUser1 = gamificationService.getLeaderboardRank(TEST_USER_SENDER, date, domainDTO.getId());
+    int rankUser2 = gamificationService.getLeaderboardRank(TEST_USER_RECEIVER, date, domainDTO.getId());
+    assertEquals(1, rankUser1);
+    assertEquals(2, rankUser2);
+
+    int rankSpace2 = gamificationService.getLeaderboardRank(TEST_SPACE2_ID, date, domainDTO.getId());
+    int rankSpace1 = gamificationService.getLeaderboardRank(TEST_SPACE_ID, date, domainDTO.getId());
+    assertEquals(1, rankSpace2);
+    assertEquals(2, rankSpace1);
   }
 
+  @Test
   public void testFindLatestActionHistoryBySocialId() {
       RuleDTO ruleDTO = newRuleDTO();
       GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
@@ -194,6 +203,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
       compareHistory(aHistory2, history);
   }
 
+  @Test
   public void testFindUserReputationBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(gamificationService.findReputationByEarnerId(TEST_USER_SENDER), 0);
@@ -213,6 +223,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
     assertTrue(gamificationService.findReputationByEarnerId(TEST_SPACE_ID) > 0);
   }
 
+  @Test
   public void testBuildDomainScoreByUserId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).size(), 0);
@@ -263,6 +274,36 @@ public class GamificationServiceTest extends AbstractServiceTest {
     filter.setIdentityType(IdentityType.SPACE);
     filteredLeaderboard = gamificationService.filter(filter);
     assertEquals(0, filteredLeaderboard.size());
+  }
+
+  @Test
+  public void testDeleteHistory() {
+    DomainDTO domainDTO = newDomainDTO();
+    RuleDTO ruleDTO = newRuleDTO(RULE_NAME, domainDTO.getId());
+    GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
+            TEST_USER_SENDER,
+            TEST_USER_RECEIVER,
+            TEST_LINK_ACTIVITY);
+    gamificationService.saveActionHistory(aHistory);
+    aHistory = gamificationService.build(ruleDTO,
+            TEST_USER_RECEIVER,
+            TEST_USER_SENDER,
+            TEST_LINK_ACTIVITY);
+    gamificationService.saveActionHistory(aHistory);
+
+    GamificationActionsHistory gamificationActionsHistory = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_SENDER);
+    assertEquals(HistoryStatus.ACCEPTED, gamificationActionsHistory.getStatus());
+
+    gamificationActionsHistory = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_RECEIVER);
+    assertEquals(HistoryStatus.ACCEPTED, gamificationActionsHistory.getStatus());
+
+    gamificationService.deleteHistory(TEST_LINK_ACTIVITY);
+
+    gamificationActionsHistory = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_SENDER);
+    assertEquals(HistoryStatus.DELETED, gamificationActionsHistory.getStatus());
+
+    gamificationActionsHistory = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_RECEIVER);
+    assertEquals(HistoryStatus.DELETED, gamificationActionsHistory.getStatus());
   }
 
 }

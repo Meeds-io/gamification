@@ -233,7 +233,7 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   @Column(name = "RECEIVER", nullable = false)
   private String            receiver;
 
-  @Column(name = "OBJECT_ID", nullable = false)
+  @Column(name = "OBJECT_ID")
   private String            objectId;
 
   @ManyToOne

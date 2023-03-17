@@ -25,6 +25,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.Realization
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -170,6 +171,7 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
+  @ExoTransactional
   public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization) throws ObjectNotFoundException {
     if (realization == null) {
       throw new IllegalArgumentException("Realization is mandatory");
