@@ -26,6 +26,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter;
+import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
+import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
@@ -170,8 +173,6 @@ public class GamificationServiceTest extends AbstractServiceTest {
   }
 
   public void testFindLatestActionHistoryBySocialId() {
-
-    try {
       RuleDTO ruleDTO = newRuleDTO();
       GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
                                                                       TEST_USER_SENDER,
@@ -191,48 +192,77 @@ public class GamificationServiceTest extends AbstractServiceTest {
 
       GamificationActionsHistory history = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_SENDER);
       compareHistory(aHistory2, history);
-    } catch (Exception e) {
-      fail("Error to find last actionHistory entry ", e);
-    }
   }
 
   public void testFindUserReputationBySocialId() {
-    try {
-      RuleDTO ruleDTO = newRuleDTO();
-      assertEquals(gamificationService.findReputationByEarnerId(TEST_USER_SENDER), 0);
-      GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
-                                                                      TEST_USER_SENDER,
-                                                                      TEST_USER_RECEIVER,
-                                                                      TEST_LINK_ACTIVITY);
-      gamificationService.saveActionHistory(aHistory);
+    RuleDTO ruleDTO = newRuleDTO();
+    assertEquals(gamificationService.findReputationByEarnerId(TEST_USER_SENDER), 0);
+    GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
+                                                                    TEST_USER_SENDER,
+                                                                    TEST_USER_RECEIVER,
+                                                                    TEST_LINK_ACTIVITY);
+    gamificationService.saveActionHistory(aHistory);
 
-      aHistory = gamificationService.build(ruleDTO,
-                                           TEST_SPACE_ID,
-                                           TEST_USER_RECEIVER,
-                                           TEST_LINK_ACTIVITY);
-      gamificationService.saveActionHistory(aHistory);
+    aHistory = gamificationService.build(ruleDTO,
+                                         TEST_SPACE_ID,
+                                         TEST_USER_RECEIVER,
+                                         TEST_LINK_ACTIVITY);
+    gamificationService.saveActionHistory(aHistory);
 
-      assertTrue(gamificationService.findReputationByEarnerId(TEST_USER_SENDER) > 0);
-      assertTrue(gamificationService.findReputationByEarnerId(TEST_SPACE_ID) > 0);
-    } catch (Exception e) {
-      fail("error on find user reputation by SocialId", e);
-    }
-
+    assertTrue(gamificationService.findReputationByEarnerId(TEST_USER_SENDER) > 0);
+    assertTrue(gamificationService.findReputationByEarnerId(TEST_SPACE_ID) > 0);
   }
 
   public void testBuildDomainScoreByUserId() {
-    try {
-      RuleDTO ruleDTO = newRuleDTO();
-      assertEquals(gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).size(), 0);
-      GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
-                                                                      TEST_USER_SENDER,
-                                                                      TEST_USER_RECEIVER,
-                                                                      TEST_LINK_ACTIVITY);
-      gamificationService.saveActionHistory(aHistory);
-      assertFalse(gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).isEmpty());
-    } catch (Exception e) {
-      fail("Error to Build Domain Score By UserId ", e);
-    }
+    RuleDTO ruleDTO = newRuleDTO();
+    assertEquals(gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).size(), 0);
+    GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
+                                                                    TEST_USER_SENDER,
+                                                                    TEST_USER_RECEIVER,
+                                                                    TEST_LINK_ACTIVITY);
+    gamificationService.saveActionHistory(aHistory);
+    assertEquals(1, gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).size());
+  }
+
+  public void testFilterByDomainId() {
+    RuleDTO ruleDTO = newRuleDTO();
+    LeaderboardFilter filter = new LeaderboardFilter();
+    filter.setPeriod(Period.ALL.name());
+    filter.setIdentityType(IdentityType.USER);
+    filter.setLoadCapacity(limit);
+    filter.setDomainId(ruleDTO.getDomainDTO().getId());
+    List<StandardLeaderboard> filteredLeaderboard = gamificationService.filter(filter);
+    assertEquals(0, filteredLeaderboard.size());
+
+    GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
+                                                                    TEST_USER_SENDER,
+                                                                    TEST_USER_RECEIVER,
+                                                                    TEST_LINK_ACTIVITY);
+    gamificationService.saveActionHistory(aHistory);
+
+    filteredLeaderboard = gamificationService.filter(filter);
+    assertEquals(1, filteredLeaderboard.size());
+    StandardLeaderboard userLeaderboard = filteredLeaderboard.get(0);
+    assertEquals(TEST_USER_RECEIVER, userLeaderboard.getEarnerId());
+    assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
+
+    filter.setPeriod(Period.WEEK.name());
+    filteredLeaderboard = gamificationService.filter(filter);
+    assertEquals(1, filteredLeaderboard.size());
+    userLeaderboard = filteredLeaderboard.get(0);
+    assertEquals(TEST_USER_RECEIVER, userLeaderboard.getEarnerId());
+    assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
+
+    filter.setPeriod(Period.MONTH.name());
+    filteredLeaderboard = gamificationService.filter(filter);
+    assertEquals(1, filteredLeaderboard.size());
+    userLeaderboard = filteredLeaderboard.get(0);
+    assertEquals(TEST_USER_RECEIVER, userLeaderboard.getEarnerId());
+    assertEquals(ruleDTO.getScore(), userLeaderboard.getReputationScore());
+
+    filter.setIdentityType(IdentityType.SPACE);
+    filteredLeaderboard = gamificationService.filter(filter);
+    assertEquals(0, filteredLeaderboard.size());
   }
 
 }

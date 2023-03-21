@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <v-avatar
             :color="currentUser && 'tertiary' || ''"
             size="32">
-            {{ user.rank }}
+            {{ rank }}
           </v-avatar>
         </div>
         <v-list-item-avatar class="me-4">
@@ -72,6 +72,10 @@ export default {
     domains: {
       type: Array,
       default: () => [],
+    },
+    rank: {
+      type: Number,
+      default: null,
     },
   },
   data: () => ({

@@ -167,11 +167,17 @@ public class LeaderboardEndpoint implements ResourceContainer {
     // Init search criteria
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setDomainId(domainId);
-    if (StringUtils.isNotBlank(period))
+    if (StringUtils.isBlank(period)) {
+      leaderboardFilter.setPeriod(Period.WEEK.name());
+    } else {
       leaderboardFilter.setPeriod(period);
+    }
 
-    if (StringUtils.isNotBlank(capacity))
+    if (StringUtils.isBlank(capacity)) {
+      leaderboardFilter.setLoadCapacity(DEFAULT_LOAD_CAPACITY);
+    } else {
       leaderboardFilter.setLoadCapacity(capacity);
+    }
 
     // hold leaderboard flow
     LeaderboardInfo leaderboardInfo = null;
