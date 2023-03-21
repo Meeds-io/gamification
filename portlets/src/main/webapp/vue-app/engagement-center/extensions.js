@@ -32,7 +32,9 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 10,
     icon: 'fas fa-stream',
     match: (actionLabel) => streamUserActions.includes(actionLabel),
-    getLabel: () => ''
+    getObjectURL: (objectId) => {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${objectId}`;
+    }
   },
 });
 
@@ -42,7 +44,9 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 20,
     icon: 'fas fa-user',
     match: (actionLabel) => profileUserActions.includes(actionLabel),
-    getLabel: () => ''
+    getObjectURL: (objectId) => {
+      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${objectId}`;
+    }
   },
 });
 
@@ -52,6 +56,6 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 30,
     icon: 'fas fa-layer-group',
     match: (actionLabel) => spaceUserActions.includes(actionLabel),
-    getLabel: () => ''
+    getObjectURL: () => null
   },
 });

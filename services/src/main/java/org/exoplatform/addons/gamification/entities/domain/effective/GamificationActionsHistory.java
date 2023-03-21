@@ -192,13 +192,15 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
             " AND g.domainEntity.id = :domainId" +
             " AND g.earnerId = :earnerId" +
             " AND g.receiver = :receiverId" +
-            " AND g.objectId = :objectId"
+            " AND g.objectId = :objectId" +
+            " AND g.objectType = :objectType"
 )
 
 @NamedQuery(
-    name = "GamificationActionsHistory.getRealizationsByObjectId",
+    name = "GamificationActionsHistory.getRealizationsByObjectIdAndObjectType",
     query = "SELECT g FROM GamificationActionsHistory g" +
-            " WHERE g.objectId = :objectId"
+            " WHERE g.objectId = :objectId" +
+            " AND g.objectType = :objectType"
 )
 public class GamificationActionsHistory extends AbstractAuditingEntity implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -235,6 +237,9 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
 
   @Column(name = "OBJECT_ID")
   private String            objectId;
+
+  @Column(name = "OBJECT_TYPE")
+  private String            objectType;
 
   @ManyToOne
   @JoinColumn(name = "DOMAIN_ID")
@@ -340,7 +345,15 @@ public class GamificationActionsHistory extends AbstractAuditingEntity implement
   public void setObjectId(String objectId) {
     this.objectId = objectId;
   }
+  
+  public String getObjectType() {
+    return objectType;
+  }
 
+  public void setObjectType(String objectType) {
+    this.objectType = objectType;
+  }
+  
   public DomainEntity getDomainEntity() {
     return domainEntity;
   }

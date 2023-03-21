@@ -69,6 +69,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
 
   private static final String        OBJECT_ID_PARAM_NAME    = "objectId";
 
+  private static final String        OBJECT_TYPE_PARAM_NAME    = "objectType";
+
   private final Map<String, Boolean> filterNamedQueries      = new HashMap<>();
 
   /**
@@ -496,7 +498,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                                                     long domainId,
                                                                                                     String earnerId,
                                                                                                     String receiverId,
-                                                                                                    String objectId) {
+                                                                                                    String objectId,
+                                                                                                    String objectType) {
     TypedQuery<GamificationActionsHistory> query =
                                                  getEntityManager().createNamedQuery("GamificationActionsHistory.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId",
                                                                                      GamificationActionsHistory.class);
@@ -505,6 +508,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(EARNER_ID_PARAM_NAME, earnerId);
     query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
+    query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
     try {
       return query.getSingleResult();
     } catch (NoResultException e) {// NOSONAR : normal to not log this and not
@@ -513,11 +517,12 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     }
   }
 
-  public List<GamificationActionsHistory> getRealizationsByObjectId(String objectId) {
+  public List<GamificationActionsHistory> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
     TypedQuery<GamificationActionsHistory> query =
-                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.getRealizationsByObjectId",
+                                                 getEntityManager().createNamedQuery("GamificationActionsHistory.getRealizationsByObjectIdAndObjectType",
                                                                                      GamificationActionsHistory.class);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
+    query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
     try {
       return query.getResultList();
     } catch (NoResultException e) {

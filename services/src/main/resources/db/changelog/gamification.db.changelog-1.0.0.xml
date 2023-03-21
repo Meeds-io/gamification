@@ -642,4 +642,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <dropColumn tableName="GAMIFICATION_RULE" columnName="AREA" />
         <dropColumn tableName="GAMIFICATION_BADGES" columnName="DOMAIN" />
     </changeSet>
+    <changeSet  author="exo-gamification" id="1.0.0-56">
+        <addColumn tableName="GAMIFICATION_ACTIONS_HISTORY">
+            <column name="OBJECT_TYPE" type="NVARCHAR(100)">
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

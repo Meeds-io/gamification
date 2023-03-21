@@ -19,6 +19,7 @@ package org.exoplatform.addons.gamification.listener.social.relationship;
 import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
 import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
 
+import org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.relationship.RelationshipEvent;
@@ -43,13 +44,15 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
     gamificationService.createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
                                       sender.getId(),
                                       receiver.getId(),
-                                      "/portal/intranet/profile/" + sender.getRemoteId());
+                                      sender.getRemoteId(),
+                                      GamificationProfileListener.OBJECT_TYPE);
 
     // Reward user who receive a relationship request
     gamificationService.createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
                                       receiver.getId(),
                                       sender.getId(),
-                                      "/portal/intranet/profile/" + receiver.getRemoteId());
+                                      receiver.getRemoteId(),
+                                      GamificationProfileListener.OBJECT_TYPE);
 
   }
 

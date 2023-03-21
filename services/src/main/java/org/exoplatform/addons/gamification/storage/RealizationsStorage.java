@@ -46,18 +46,20 @@ public class RealizationsStorage {
                                                                                                      long domainId,
                                                                                                      String earnerId,
                                                                                                      String receiverId,
-                                                                                                     String objectId) {
+                                                                                                     String objectId,
+                                                                                                     String objectType) {
     GamificationActionsHistory gamificationActionsHistory =
                                                           gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
                                                                                                                                                  domainId,
                                                                                                                                                  earnerId,
                                                                                                                                                  receiverId,
-                                                                                                                                                 objectId);
+                                                                                                                                                 objectId,
+                                                                                                                                                 objectType);
     return gamificationActionsHistory != null ? GamificationActionsHistoryMapper.fromEntity(gamificationActionsHistory) : null;
   }
 
-  public List<GamificationActionsHistoryDTO> getRealizationsByObjectId(String objectId) {
-    List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.getRealizationsByObjectId(objectId);
+  public List<GamificationActionsHistoryDTO> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
+    List<GamificationActionsHistory> gamificationActionsHistoryList = gamificationHistoryDAO.getRealizationsByObjectIdAndObjectType(objectId, objectType);
     return GamificationActionsHistoryMapper.fromEntities(gamificationActionsHistoryList);
   }
 

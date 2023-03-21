@@ -109,7 +109,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static final String          TEST_USER_SENDER    = "1";
 
   /* Link to the activity stream */
-  protected static final String          TEST_LINK_ACTIVITY  = "/portal/intranet//activity?id=245590";
+  protected static final String          ACTIVITY_ID         = "245590";
 
   protected static final String          TEST_GLOBAL_SCORE   = "245590";
 
@@ -501,6 +501,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     gHistory.setRuleEntity(rule);
     gHistory.setCreatedBy("gamification");
     gHistory.setObjectId("objectId");
+    gHistory.setObjectType("objectType");
     gHistory.setCreatedDate(fromDate);
     gHistory.setType(rule.getType());
     gHistory = gamificationHistoryDAO.create(gHistory);
@@ -529,7 +530,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     restartTransaction();
     return gHistory;
   }
-  
+
   protected GamificationActionsHistory newGamificationActionsHistoryWithRuleId(String actionTitle, Long ruleId) {
     RuleEntity rule = ruleDAO.find(ruleId);
     GamificationActionsHistory gHistory = new GamificationActionsHistory();

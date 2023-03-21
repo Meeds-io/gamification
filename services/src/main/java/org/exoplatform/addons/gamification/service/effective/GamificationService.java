@@ -143,7 +143,7 @@ public class GamificationService {
     return gamificationHistoryDAO.create(history);
   }
 
-  public void createHistory(String event, String sender, String receiver, String object) {
+  public void createHistory(String event, String sender, String receiver, String objectId, String objectType) {
     GamificationActionsHistory aHistory = null;
     List<RuleDTO> ruleDtos = null;
     // Get associated rules
@@ -152,7 +152,7 @@ public class GamificationService {
     // Process only when an enable rules are found
     if (ruleDtos != null) {
       for (RuleDTO ruleDto : ruleDtos) {
-        aHistory = build(ruleDto, sender, receiver, object);
+        aHistory = build(ruleDto, sender, receiver, objectId, objectType);
         if (aHistory != null) {
           aHistory = saveActionHistory(aHistory);
           // Gamification simple audit logger
@@ -168,7 +168,7 @@ public class GamificationService {
     }
   }
 
-  public void cancelHistory(String event, String sender, String receiver, String object) {
+  public void cancelHistory(String event, String sender, String receiver, String objectId, String objectType) {
     List<RuleDTO> ruleDtos = null;
     // Get associated rules
     ruleDtos = ruleService.findEnabledRulesByEvent(event);
@@ -180,7 +180,8 @@ public class GamificationService {
                                                                                                                                            .getId(),
                                                                                                                                     sender,
                                                                                                                                     receiver,
-                                                                                                                                    object);
+                                                                                                                                    objectId,
+                                                                                                                                    objectType);
         if (realization != null) {
           try {
             if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
@@ -197,8 +198,9 @@ public class GamificationService {
     }
   }
 
-  public void deleteHistory(String object) {
-    List<GamificationActionsHistoryDTO> realizations = realizationsService.getRealizationsByObjectId(object);
+  public void deleteHistory(String objectId, String objectType) {
+    List<GamificationActionsHistoryDTO> realizations = realizationsService.getRealizationsByObjectIdAndObjectType(objectId,
+                                                                                                                  objectType);
     realizations.forEach(realization -> {
       try {
         if (!HistoryStatus.DELETED.name().equals(realization.getStatus())
@@ -321,7 +323,7 @@ public class GamificationService {
     return gamificationHistoryDAO.findActionsHistoryByEarnerIdSortedByDate(earnerId, limit);
   }
 
-  public GamificationActionsHistory build(RuleDTO ruleDto, String actor, String receiver, String objectId) {
+  public GamificationActionsHistory build(RuleDTO ruleDto, String actor, String receiver, String objectId, String objectType) {
     GamificationActionsHistory aHistory = null;
     // check if the current user is not a bot
     Identity actorIdentity = identityManager.getIdentity(actor);
@@ -365,6 +367,7 @@ public class GamificationService {
       }
       actionsHistoryDTO.setReceiver(receiver);
       actionsHistoryDTO.setObjectId(objectId);
+      actionsHistoryDTO.setObjectType(objectType);
       actionsHistoryDTO.setStatus(HistoryStatus.ACCEPTED.name());
       actionsHistoryDTO.setType(ruleDto.getType());
       return GamificationActionsHistoryMapper.toEntity(actionsHistoryDTO);

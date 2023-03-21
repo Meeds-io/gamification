@@ -68,10 +68,11 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       String senderId = event.getSource().get("senderId");
       String senderType = event.getSource().get("senderType");
       String receiverId = event.getSource().get("receiverId");
-      String obj = event.getSource().get("object");
+      String objectId = event.getSource().get("objectId");
+      String objectType = event.getSource().get("objectType");
 
       if (event.getEventName().equals(DELETE_EVENT_NAME)) {
-        gamificationService.deleteHistory(obj);
+        gamificationService.deleteHistory(objectId, objectType);
       } else {
         Identity senderIdentity = null;
         if (senderType != null) {
@@ -100,11 +101,11 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
         }
         switch (event.getEventName()) {
           case GENERIC_EVENT_NAME: {
-            gamificationService.createHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), obj);
+            gamificationService.createHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), objectId, objectType);
             break;
           }
           case CANCEL_EVENT_NAME: {
-            gamificationService.cancelHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), obj);
+            gamificationService.cancelHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), objectId, objectType);
             break;
           }
           default:

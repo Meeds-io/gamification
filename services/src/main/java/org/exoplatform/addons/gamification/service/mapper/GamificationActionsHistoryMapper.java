@@ -26,13 +26,6 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
-    String objectId = "";
-    if (gamificationActionsHistoryEntity.getActivityId() != null && gamificationActionsHistoryEntity.getActivityId() != 0) {
-      objectId = "/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("") + "/activity?id="
-          + gamificationActionsHistoryEntity.getActivityId();
-    } else {
-      objectId = gamificationActionsHistoryEntity.getObjectId();
-    }
     DomainEntity domainEntity = gamificationActionsHistoryEntity.getDomainEntity();
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
                                              gamificationActionsHistoryEntity.getEarnerId(),
@@ -44,7 +37,8 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
-                                             objectId,
+                                             gamificationActionsHistoryEntity.getObjectId(),
+                                             gamificationActionsHistoryEntity.getObjectType(),
                                              gamificationActionsHistoryEntity.getRuleEntity().getId(),
                                              gamificationActionsHistoryEntity.getActivityId(),
                                              gamificationActionsHistoryEntity.getComment(),
@@ -81,6 +75,7 @@ public class GamificationActionsHistoryMapper {
     gHistoryEntity.setGlobalScore(gamificationActionsHistoryDTO.getGlobalScore());
     gHistoryEntity.setActivityId(gamificationActionsHistoryDTO.getActivityId());
     gHistoryEntity.setObjectId(gamificationActionsHistoryDTO.getObjectId());
+    gHistoryEntity.setObjectType(gamificationActionsHistoryDTO.getObjectType());
     gHistoryEntity.setReceiver(gamificationActionsHistoryDTO.getReceiver());
     gHistoryEntity.setEarnerId(gamificationActionsHistoryDTO.getEarnerId());
     gHistoryEntity.setEarnerType(IdentityType.getType(gamificationActionsHistoryDTO.getEarnerType()));
@@ -140,7 +135,8 @@ public class GamificationActionsHistoryMapper {
                                                       gHistory.getCreatedDate(),
                                                       gHistory.getStatus(),
                                                       spaceName,
-                                                      gHistory.getObjectId());
+                                                      gHistory.getObjectId(),
+                                                      gHistory.getObjectType());
 
     } catch (Exception e) {
       LOG.error("Error while mapping history with id {}", gHistory.getId(), e);

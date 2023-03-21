@@ -239,9 +239,6 @@ export default {
     earner() {
       return this.realization?.earner?.profile;
     },
-    actionURL() {
-      return this.realization?.url;
-    },
     isAutomaticType() {
       return this.realization?.action?.type === 'AUTOMATIC';
     },
@@ -295,6 +292,19 @@ export default {
     },
     actionIcon() {
       return this.actionValueExtension?.icon;
+    },
+    objectId() {
+      return this.realization?.objectId;
+    },
+    objectType() {
+      return this.realization?.objectType;
+    },
+    actionURL() {
+      if (this.objectId && this.objectType) {
+        return this.actionValueExtension?.getObjectURL(this.realization.objectId);
+      } else {
+        return this.objectId ? this.objectId : null;
+      }
     },
     extendedActionValueComponent() {
       return this.actionValueExtension && {

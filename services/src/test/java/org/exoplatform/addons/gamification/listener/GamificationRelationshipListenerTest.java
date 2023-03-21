@@ -23,6 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener;
 import org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -58,11 +59,13 @@ public class GamificationRelationshipListenerTest {
     verify(gamificationService, times(1)).createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
                                                         sender.getId(),
                                                         receiver.getId(),
-                                                        "/portal/intranet/profile/" + sender.getRemoteId());
+                                                        sender.getRemoteId(),
+                                                        GamificationProfileListener.OBJECT_TYPE);
     verify(gamificationService, times(1)).createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
                                                         receiver.getId(),
                                                         sender.getId(),
-                                                        "/portal/intranet/profile/" + receiver.getRemoteId());
+                                                        receiver.getRemoteId(),
+                                                        GamificationProfileListener.OBJECT_TYPE);
   }
 
 }
