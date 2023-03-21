@@ -158,9 +158,9 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
                                                                               StandardLeaderboard.class);
     query.setParameter(DOMAIN_ID_PARAM_NAME, domainId);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
+    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
     query.setMaxResults(limit);
-    return Collections.emptyList();
-
+    return query.getResultList();
   }
 
   /**
