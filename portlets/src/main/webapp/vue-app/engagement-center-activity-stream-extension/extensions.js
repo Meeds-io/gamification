@@ -17,6 +17,11 @@
 
 extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
   id: 'announcement',
+  init: () => {
+    const lang = window.eXo.env.portal.language;
+    const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Challenges-${lang}.json`;
+    return exoi18n.loadLanguageAsync(lang, url);
+  },
   isEnabled: (params) => {
     const activity = params && params.activity;
     return activity.type === 'challenges-announcement';
