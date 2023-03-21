@@ -33,11 +33,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div class="flex-grow-1"></div>
         <div class="align-end selectDomainFilterParent">
           <select
-            v-model="selectedDomain"
+            v-model="selectedDomainId"
             class="selectDomainFilter ignore-vuetify-classes mb-0">
             <users-leaderboard-domain-option
               v-for="domain in domains"
-              :key="domain.title"
+              :key="domain.id"
               :domain="domain" />
           </select>
         </div>
@@ -57,11 +57,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :id="period.value"
           :key="period.value"
           :value="period.value">
-          <v-list>
+          <v-progress-linear v-if="loading" indeterminate />
+          <v-list v-if="!selectionChanged">
             <users-leaderboard-profile
-              v-for="user in users"
-              :key="user.username"
+              v-for="(user, index) in sortedUsers"
+              :key="user.remoteId"
               :user="user"
+              :rank="index + 1"
               :domains="domains" />
             <template v-if="currentRank">
               <v-divider class="ma-0" />
@@ -82,6 +84,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <v-card-actions v-if="canLoadMore">
         <v-spacer />
         <v-btn
+          :loading="loading"
           class="primary--text"
           outlined
           link
@@ -111,8 +114,9 @@ export default {
     pageSize: 10,
     limit: 10,
     currentRank: null,
-    selectedDomain: null,
-    loading: null,
+    selectedDomainId: '0',
+    loading: false,
+    selectionChanged: false,
     selectedPeriod: 'WEEK',
   }),
   computed: {
@@ -120,17 +124,22 @@ export default {
       return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`;
     },
     canLoadMore() {
-      return this.users && this.limit <= this.users.length;
+      return !this.selectionChanged && this.users && this.limit <= this.users.length;
+    },
+    sortedUsers() {
+      return this.users.slice().sort((a, b) => b.score - a.score);
     },
   },
   watch: {
     selectedPeriod(newVal, oldVal) {
       if (oldVal) {
+        this.selectionChanged = true;
         this.refreshBoard();
       }
     },
-    selectedDomain(newVal, oldVal) {
+    selectedDomainId(newVal, oldVal) {
       if (oldVal) {
+        this.selectionChanged = true;
         this.refreshBoard();
       }
     },
@@ -141,6 +150,7 @@ export default {
     },
   },
   created() {
+    this.loading = true;
     this.retrieveDomains()
       .then(this.refreshBoard)
       .then(() => {
@@ -156,25 +166,33 @@ export default {
         }];
         return this.$nextTick();
       })
-      .finally(() => this.$root.$applicationLoaded());
+      .finally(() => {
+        this.loading = false;
+        this.$root.$applicationLoaded();
+      });
   },
   methods: {
     refreshBoard() {
-      const params = `domain=${this.selectedDomain && this.selectedDomain.title || this.selectedDomain || ''}&period=${this.selectedPeriod || 'WEEK'}&capacity=${this.limit}`;
+      const formData = new FormData();
+      if (this.selectedDomainId && this.selectedDomainId !== '0') {
+        formData.append('domainId', this.selectedDomainId);
+      }
+      formData.append('period', this.selectedPeriod || 'WEEK');
+      formData.append('capacity', this.limit);
+      const params = decodeURIComponent(new URLSearchParams(formData).toString());
+
+      this.loading = true;
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/filter?${params}`, {
         credentials: 'include',
       }).then(resp => resp && resp.ok && resp.json())
         .then(data => {
           const currentUser = data && data.find(user => !user.socialId);
-          if (currentUser) {
-            this.currentRank = currentUser.rank;
-          }
-
+          this.currentRank = currentUser?.rank;
           this.users = data && data.filter(user => user.socialId);
-          this.users.sort((a, b) => b.score - a.score);
-          this.users.forEach((user, index) => {
-            user.rank = index + 1;
-          });
+        })
+        .finally(() => {
+          this.loading = false;
+          this.selectionChanged = false;
         });
     },
     retrieveDomains() {
@@ -192,11 +210,12 @@ export default {
             domain.label = translation === domainKey && this.$t(domain.title) || translation;
           });
           const defaultDomain = {
+            id: '0',
             title: 'All',
             label: this.$t('exoplatform.gamification.leaderboard.domain.all'),
           };
           this.domains = [defaultDomain, ...domains];
-          this.selectedDomain = defaultDomain.title;
+          this.selectedDomainId = '0';
         });
     },
     loadNextPage() {
