@@ -120,7 +120,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </init-param>
     <init-param>
       <name>prefetch.resource.rest</name>
-      <value><![CDATA[/portal/rest/gamification/api/v1/domains|/portal/rest/gamification/leaderboard/filter?domain=All&period=WEEK&capacity=10]]></value>
+      <value><![CDATA[/portal/rest/gamification/domains?type=ALL&sortByBudget=true|/portal/rest/gamification/leaderboard/filter?period=WEEK&capacity=10]]></value>
     </init-param>
     <supports>
       <mime-type>text/html</mime-type>
