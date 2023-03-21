@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.storage.dao;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -63,34 +64,36 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public List<Long> findHighestBudgetDomainIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
-    if (offset > 0) {
-      query.setFirstResult(offset);
-    }
-    if (limit > 0) {
-      query.setMaxResults(limit);
-    }
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
     } else {
-      return result.stream().map(tuple -> tuple.get(0, Long.class)).toList();
+      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
+      if (offset > 0) {
+        resultStream = resultStream.skip(offset);
+      }
+      if (limit > 0) {
+        resultStream = resultStream.limit(limit);
+      }
+      return resultStream.toList();
     }
   }
 
   public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
-    if (offset > 0) {
-      query.setFirstResult(offset);
-    }
-    if (limit > 0) {
-      query.setMaxResults(limit);
-    }
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
     } else {
-      return result.stream().map(tuple -> tuple.get(0, Long.class)).toList();
+      Stream<Long> resultStream = result.stream().map(tuple -> tuple.get(0, Long.class));
+      if (offset > 0) {
+        resultStream = resultStream.skip(offset);
+      }
+      if (limit > 0) {
+        resultStream = resultStream.limit(limit);
+      }
+      return resultStream.toList();
     }
   }
 
