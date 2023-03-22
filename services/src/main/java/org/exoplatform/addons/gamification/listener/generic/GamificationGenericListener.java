@@ -28,7 +28,6 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.listener.*;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 @Asynchronous
@@ -68,52 +67,45 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
       String senderId = event.getSource().get("senderId");
       String senderType = event.getSource().get("senderType");
       String receiverId = event.getSource().get("receiverId");
+      String receiverType = event.getSource().get("receiverType");
       String objectId = event.getSource().get("objectId");
       String objectType = event.getSource().get("objectType");
 
       if (event.getEventName().equals(DELETE_EVENT_NAME)) {
         gamificationService.deleteHistory(objectId, objectType);
-      } else {
-        Identity senderIdentity = null;
-        if (senderType != null) {
-          String providerId = IdentityType.getType(senderType).getProviderId();
-          senderIdentity = identityManager.getOrCreateIdentity(providerId, senderId);
-        }
-        if (senderIdentity == null && NumberUtils.isDigits(senderId)) {
-          senderIdentity = identityManager.getIdentity(senderId); // NOSONAR
-        }
-        if (senderIdentity == null) {
-          senderIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, senderId); // NOSONAR
-        }
-        if (senderIdentity == null) {
-          throw new IllegalStateException("Can't find identity with senderId = " + senderId);
-        }
+        return;
+      }
+      Identity senderIdentity = getIdentity(senderType, senderId);
+      Identity receiverIdentity = getIdentity(receiverType, receiverId);
+      switch (event.getEventName()) {
+      case GENERIC_EVENT_NAME -> gamificationService.createHistory(ruleTitle,
+                                                                   senderIdentity.getId(),
+                                                                   receiverIdentity.getId(),
+                                                                   objectId,
+                                                                   objectType);
 
-        Identity receiverIdentity = null;
-        if (NumberUtils.isDigits(receiverId)) {
-          receiverIdentity = identityManager.getIdentity(receiverId); // NOSONAR
-        }
-        if (receiverIdentity == null) {
-          receiverIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, receiverId); // NOSONAR
-        }
-        if (receiverIdentity == null) {
-          throw new IllegalStateException("Can't find identity with receiverId = " + receiverId);
-        }
-        switch (event.getEventName()) {
-          case GENERIC_EVENT_NAME: {
-            gamificationService.createHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), objectId, objectType);
-            break;
-          }
-          case CANCEL_EVENT_NAME: {
-            gamificationService.cancelHistory(ruleTitle, senderIdentity.getId(), receiverIdentity.getId(), objectId, objectType);
-            break;
-          }
-          default:
-            throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
-        }
+      case CANCEL_EVENT_NAME -> gamificationService.cancelHistory(ruleTitle,
+                                                                  senderIdentity.getId(),
+                                                                  receiverIdentity.getId(),
+                                                                  objectId,
+                                                                  objectType);
+
+      default -> throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
       }
     } finally {
       RequestLifeCycle.end();
     }
+  }
+
+  private Identity getIdentity(String identityType, String identityId) {
+    String providerId = IdentityType.getType(identityType).getProviderId();
+    Identity identity = identityManager.getOrCreateIdentity(providerId, identityId);
+    if (identity == null && NumberUtils.isDigits(identityId)) {
+      identity = identityManager.getIdentity(identityId); // NOSONAR
+    }
+    if (identity == null) {
+      throw new IllegalStateException("Can't find identity with identityId = " + identityId);
+    }
+    return identity;
   }
 }

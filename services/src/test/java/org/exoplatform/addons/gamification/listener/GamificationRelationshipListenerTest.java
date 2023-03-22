@@ -16,14 +16,12 @@
  */
 package org.exoplatform.addons.gamification.listener;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.exoplatform.addons.gamification.listener.social.profile.GamificationProfileListener;
 import org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener;
 import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -46,10 +44,8 @@ public class GamificationRelationshipListenerTest {
     GamificationRelationshipListener gamificationRelationshipListener = new GamificationRelationshipListener(gamificationService);
     Identity sender = mock(Identity.class);
     when(sender.getId()).thenReturn("1");
-    when(sender.getRemoteId()).thenReturn("sender");
     Identity receiver = mock(Identity.class);
     when(receiver.getId()).thenReturn("2");
-    when(receiver.getRemoteId()).thenReturn("receiver");
 
     Relationship relationship = new Relationship(sender, receiver);
 
@@ -59,13 +55,12 @@ public class GamificationRelationshipListenerTest {
     verify(gamificationService, times(1)).createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
                                                         sender.getId(),
                                                         receiver.getId(),
-                                                        sender.getRemoteId(),
-                                                        GamificationProfileListener.OBJECT_TYPE);
+                                                        sender.getId(),
+                                                        IDENTITY_OBJECT_TYPE);
     verify(gamificationService, times(1)).createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
                                                         receiver.getId(),
                                                         sender.getId(),
-                                                        receiver.getRemoteId(),
-                                                        GamificationProfileListener.OBJECT_TYPE);
+                                                        receiver.getId(),
+                                                        IDENTITY_OBJECT_TYPE);
   }
-
 }

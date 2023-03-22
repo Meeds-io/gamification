@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <rule-action-value
             v-if="actionValueExtension"
             :action-label="actionLabel"
-            :action-u-r-l="actionURL"
+            :action-u-r-l="realizationLink"
             :action-icon="actionIcon" />
           <a
             v-else
@@ -37,7 +37,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <challenge-action-value
           v-else
           :action-label="actionLabel"
-          :action-u-r-l="actionURL"
+          :action-u-r-l="realizationLink"
           class="width-fit-content" />
         <v-tooltip
           v-if="ruleTitleChanged"
@@ -239,6 +239,9 @@ export default {
     earner() {
       return this.realization?.earner?.profile;
     },
+    realizationLink() {
+      return this.realization?.link;
+    },
     isAutomaticType() {
       return this.realization?.action?.type === 'AUTOMATIC';
     },
@@ -299,12 +302,8 @@ export default {
     objectType() {
       return this.realization?.objectType;
     },
-    actionURL() {
-      if (this.objectId && this.objectType) {
-        return this.actionValueExtension?.getObjectURL(this.realization.objectId);
-      } else {
-        return this.objectId ? this.objectId : null;
-      }
+    getLink() {
+      return this.actionValueExtension?.getLink;
     },
     extendedActionValueComponent() {
       return this.actionValueExtension && {
@@ -353,6 +352,7 @@ export default {
         }, 200);
       }
     });
+    this.retrieveRealizationLink();
   },
   methods: {
     updateRealizations(status) {
@@ -370,6 +370,23 @@ export default {
             window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
           }
         });
+    },
+    retrieveRealizationLink() {
+      if (this.status === 'DELETED' || this.status === 'CANCELED') {
+        this.realization.link = null;
+      }
+      if (!this.objectType && this.objectId) {
+        this.realization.link = this.objectId;
+      }
+      this.$nextTick(() => {
+        if (this.getLink) {
+          const initPromise = this.getLink(this.realization);
+          if (initPromise && initPromise.then) {
+            return initPromise
+              .then(() => this.$nextTick());
+          }
+        }
+      });
     },
   }
 };

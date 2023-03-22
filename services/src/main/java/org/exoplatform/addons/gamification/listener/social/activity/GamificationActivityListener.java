@@ -49,8 +49,6 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private static final String OBJECT_TYPE_PARAM = "objectType";
 
-  public static final String  OBJECT_TYPE_VALUE = "activity";
-
   protected RuleService       ruleService;
 
   protected IdentityManager   identityManager;
@@ -308,8 +306,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   private boolean isDocumentShareActivity(ExoSocialActivity activity) {
-    return activity.getType() != null && (activity.getType().equalsIgnoreCase("files:spaces")
-        || activity.getType().equalsIgnoreCase("DOC_ACTIVITY") || activity.getType().equalsIgnoreCase("contents:spaces"));
+    return activity.getType() != null && (activity.getType().equalsIgnoreCase("files:spaces") || activity.getType().equalsIgnoreCase("DOC_ACTIVITY")
+        || activity.getType().equalsIgnoreCase("contents:spaces"));
   }
 
   private void createActivityGamificationHistoryEntry(String senderId, String receiverId, String ruleTitle, String activityId) {
@@ -317,12 +315,12 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put(OBJECT_ID_PARAM, activityId);
-      gam.put(OBJECT_TYPE_PARAM, OBJECT_TYPE_VALUE);
+      gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       gam.put("senderId", senderId);
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event", e);
+      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT, e);
     }
   }
 
@@ -334,13 +332,13 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put(OBJECT_ID_PARAM, activityId);
-      gam.put(OBJECT_TYPE_PARAM, OBJECT_TYPE_VALUE);
+      gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       gam.put("senderId", spacePrettyName);
       gam.put("senderType", SpaceIdentityProvider.NAME);
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event", e);
+      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT, e);
     }
   }
 
@@ -348,10 +346,10 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     try {
       Map<String, String> gam = new HashMap<>();
       gam.put(OBJECT_ID_PARAM, activityId);
-      gam.put(OBJECT_TYPE_PARAM, OBJECT_TYPE_VALUE);
+      gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       listenerService.broadcast(DELETE_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event", e);
+      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT, e);
     }
   }
 

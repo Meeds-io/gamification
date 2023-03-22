@@ -32,8 +32,8 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 10,
     icon: 'fas fa-stream',
     match: (actionLabel) => streamUserActions.includes(actionLabel),
-    getObjectURL: (objectId) => {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${objectId}`;
+    getLink: (realization) => {
+      Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${realization?.objectId}`);
     }
   },
 });
@@ -44,9 +44,12 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 20,
     icon: 'fas fa-user',
     match: (actionLabel) => profileUserActions.includes(actionLabel),
-    getObjectURL: (objectId) => {
-      return `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${objectId}`;
-    }
+    getLink: (realization) => {
+      if (realization?.objectId && !realization.link) {
+        Vue.prototype.$identityService.getIdentityById(realization?.objectId)
+          .then(identity => Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/profile/${identity.remoteId}`));
+      }
+    },
   },
 });
 
@@ -56,6 +59,5 @@ extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
     rank: 30,
     icon: 'fas fa-layer-group',
     match: (actionLabel) => spaceUserActions.includes(actionLabel),
-    getObjectURL: () => null
   },
 });

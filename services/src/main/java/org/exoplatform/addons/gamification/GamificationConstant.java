@@ -117,5 +117,16 @@ public interface GamificationConstant {
     String GAMIFICATION_DEFAULT_DATA_PREFIX                          = "def_";
 
 
+    //Achievement object types
+    
+    String IDENTITY_OBJECT_TYPE                                       = "identity";
+
+    String ACTIVITY_OBJECT_TYPE                                       = "activity";
+
+    //LOG event error
+
+    String CANNOT_BROADCAST_GAMIFICATION_EVENT                        = "Cannot broadcast gamification event";
+
+
 
 }

@@ -22,11 +22,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.listener.social.activity.GamificationActivityListener;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.HistoryStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
@@ -37,10 +33,10 @@ import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 
-@RunWith(MockitoJUnitRunner.class)
+import static org.exoplatform.addons.gamification.GamificationConstant.ACTIVITY_OBJECT_TYPE;
+
 public class GamificationServiceTest extends AbstractServiceTest {
 
-  @Test
   public void testBuildHistory() {
     // root11 is not a member of domain audience
     RuleDTO newRuleDTO = newRuleDTO();
@@ -48,7 +44,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                                                     "11",
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     assertNull(aHistory);
 
     // case of deleted domain
@@ -59,7 +55,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                          TEST_USER_SENDER,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     assertNull(aHistory);
 
     newRuleDTO = newRuleDTO();
@@ -67,11 +63,10 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                          TEST_USER_SENDER,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     assertNotNull(aHistory);
   }
 
-  @Test
   public void testSaveActionHistory() {
     List<GamificationActionsHistory> histories = gamificationHistoryDAO.findAll();
     assertEquals(histories.size(), 0);
@@ -81,7 +76,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     histories = gamificationHistoryDAO.findAll();
     assertEquals(histories.size(), 1);
@@ -96,7 +91,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                          TEST_SPACE_ID,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     histories = gamificationHistoryDAO.findAll();
     assertEquals(histories.size(), 2);
@@ -108,26 +103,24 @@ public class GamificationServiceTest extends AbstractServiceTest {
     assertEquals(IdentityType.SPACE, gamificationActionsHistory.getEarnerType());
   }
 
-  @Test
   public void testComputeTotalScore() {
     RuleDTO ruleDTO = newRuleDTO();
     GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     GamificationActionsHistory aHistory1 = gamificationService.build(ruleDTO,
                                                                      TEST_USER_SENDER,
                                                                      TEST_USER_RECEIVER,
                                                                      ACTIVITY_ID,
-                                                                     GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                     ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory1);
     long global = gamificationHistoryDAO.getTotalScore(TEST_USER_SENDER);
     assertEquals(global, aHistory.getActionScore() + aHistory1.getActionScore());
   }
 
-  @Test
   public void testLeaderboardRank() {
     DomainDTO domainDTO = newDomainDTO();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, domainDTO.getId());
@@ -135,63 +128,63 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     aHistory = gamificationService.build(ruleDTO,
                                          TEST_USER_SENDER,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     aHistory = gamificationService.build(ruleDTO,
                                          TEST_USER_RECEIVER,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
-    gamificationService.saveActionHistory(aHistory);
-
-    aHistory = gamificationService.build(ruleDTO,
-                                         TEST_SPACE_ID,
-                                         TEST_USER_RECEIVER,
-                                         ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
-    gamificationService.saveActionHistory(aHistory);
-    aHistory = gamificationService.build(ruleDTO,
-                                         TEST_SPACE_ID,
-                                         TEST_USER_RECEIVER,
-                                         ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
-    gamificationService.saveActionHistory(aHistory);
-    aHistory = gamificationService.build(ruleDTO,
-                                         TEST_SPACE_ID,
-                                         TEST_USER_RECEIVER,
-                                         ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
 
     aHistory = gamificationService.build(ruleDTO,
+                                         TEST_SPACE_ID,
+                                         TEST_USER_RECEIVER,
+                                         ACTIVITY_ID,
+                                         ACTIVITY_OBJECT_TYPE);
+    gamificationService.saveActionHistory(aHistory);
+    aHistory = gamificationService.build(ruleDTO,
+                                         TEST_SPACE_ID,
+                                         TEST_USER_RECEIVER,
+                                         ACTIVITY_ID,
+                                         ACTIVITY_OBJECT_TYPE);
+    gamificationService.saveActionHistory(aHistory);
+    aHistory = gamificationService.build(ruleDTO,
+                                         TEST_SPACE_ID,
+                                         TEST_USER_RECEIVER,
+                                         ACTIVITY_ID,
+                                         ACTIVITY_OBJECT_TYPE);
+    gamificationService.saveActionHistory(aHistory);
+
+    aHistory = gamificationService.build(ruleDTO,
                                          TEST_SPACE2_ID,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     aHistory = gamificationService.build(ruleDTO,
                                          TEST_SPACE2_ID,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     aHistory = gamificationService.build(ruleDTO,
                                          TEST_SPACE2_ID,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     aHistory = gamificationService.build(ruleDTO,
                                          TEST_SPACE2_ID,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     Date date = Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
@@ -206,33 +199,31 @@ public class GamificationServiceTest extends AbstractServiceTest {
     assertEquals(2, rankSpace1);
   }
 
-  @Test
   public void testFindLatestActionHistoryBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
     GamificationActionsHistory aHistory = gamificationService.build(ruleDTO,
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     GamificationActionsHistory aHistory1 = gamificationService.build(ruleDTO,
                                                                      TEST_USER_SENDER,
                                                                      TEST_USER_RECEIVER,
                                                                      ACTIVITY_ID,
-                                                                     GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                     ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory1);
     GamificationActionsHistory aHistory2 = gamificationService.build(ruleDTO,
                                                                      TEST_USER_SENDER,
                                                                      TEST_USER_RECEIVER,
                                                                      ACTIVITY_ID,
-                                                                     GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                     ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory2);
 
     GamificationActionsHistory history = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_SENDER);
     compareHistory(aHistory2, history);
   }
 
-  @Test
   public void testFindUserReputationBySocialId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(gamificationService.findReputationByEarnerId(TEST_USER_SENDER), 0);
@@ -240,21 +231,20 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
 
     aHistory = gamificationService.build(ruleDTO,
                                          TEST_SPACE_ID,
                                          TEST_USER_RECEIVER,
                                          ACTIVITY_ID,
-                                         GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                         ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
 
     assertTrue(gamificationService.findReputationByEarnerId(TEST_USER_SENDER) > 0);
     assertTrue(gamificationService.findReputationByEarnerId(TEST_SPACE_ID) > 0);
   }
 
-  @Test
   public void testBuildDomainScoreByUserId() {
     RuleDTO ruleDTO = newRuleDTO();
     assertEquals(gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).size(), 0);
@@ -262,12 +252,11 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     assertEquals(1, gamificationService.buildDomainScoreByIdentityId(TEST_USER_SENDER).size());
   }
 
-  @Test
   public void testFilterByDomainId() {
     RuleDTO ruleDTO = newRuleDTO();
     LeaderboardFilter filter = new LeaderboardFilter();
@@ -282,7 +271,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
                                                                     TEST_USER_SENDER,
                                                                     TEST_USER_RECEIVER,
                                                                     ACTIVITY_ID,
-                                                                    GamificationActivityListener.OBJECT_TYPE_VALUE);
+                                                                    ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
 
     filteredLeaderboard = gamificationService.filter(filter);
@@ -310,7 +299,6 @@ public class GamificationServiceTest extends AbstractServiceTest {
     assertEquals(0, filteredLeaderboard.size());
   }
 
-  @Test
   public void testDeleteHistory() {
     DomainDTO domainDTO = newDomainDTO();
     RuleDTO ruleDTO = newRuleDTO(RULE_NAME, domainDTO.getId());
@@ -318,13 +306,13 @@ public class GamificationServiceTest extends AbstractServiceTest {
             TEST_USER_SENDER,
             TEST_USER_RECEIVER,
             ACTIVITY_ID,
-            GamificationActivityListener.OBJECT_TYPE_VALUE);
+            ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
     aHistory = gamificationService.build(ruleDTO,
             TEST_USER_RECEIVER,
             TEST_USER_SENDER,
             ACTIVITY_ID,
-            GamificationActivityListener.OBJECT_TYPE_VALUE);
+            ACTIVITY_OBJECT_TYPE);
     gamificationService.saveActionHistory(aHistory);
 
     GamificationActionsHistory gamificationActionsHistory =
@@ -334,7 +322,7 @@ public class GamificationServiceTest extends AbstractServiceTest {
     gamificationActionsHistory = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_RECEIVER);
     assertEquals(HistoryStatus.ACCEPTED, gamificationActionsHistory.getStatus());
 
-    gamificationService.deleteHistory(ACTIVITY_ID, GamificationActivityListener.OBJECT_TYPE_VALUE);
+    gamificationService.deleteHistory(ACTIVITY_ID, ACTIVITY_OBJECT_TYPE);
 
     gamificationActionsHistory = gamificationService.findLatestActionHistoryByEarnerId(TEST_USER_SENDER);
     assertEquals(HistoryStatus.DELETED, gamificationActionsHistory.getStatus());

@@ -28,8 +28,6 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceListenerPlugin;
 import org.exoplatform.social.core.space.model.Space;
@@ -144,30 +142,31 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   private void createGamificationHistoryEntry(String username, Space space, String ruleTitle) {
     // Compute user id
-    String senderId = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username).getId();
-    String receiverId = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName()).getId();
-    String spaceURL = "/portal/g/:spaces:" + space.getGroupId().replace("/spaces/", "");
+    String senderId = identityManager.getOrCreateUserIdentity(username).getId();
+    String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
 
     try {
       Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
-      gam.put("object", spaceURL);
+      gam.put("objectId", receiverId);
+      gam.put("objectType", IDENTITY_OBJECT_TYPE);
       gam.put("senderId", senderId);
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event");
+      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT);
     }
 
     try {
       Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
-      gam.put("object", spaceURL);
+      gam.put("objectId", receiverId);
+      gam.put("objectType", IDENTITY_OBJECT_TYPE);
       gam.put("senderId", receiverId);
       gam.put("receiverId", senderId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error("Cannot broadcast gamification event");
+      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT);
     }
   }
 
