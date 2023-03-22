@@ -237,7 +237,9 @@ public class ChallengeServiceImpl implements ChallengeService {
       } else {
         challenge.setManagers(new ArrayList<>(domain.getOwners()));
       }
-      challenge.setAudience(domain.getAudienceId());
+      if (domain.getAudienceId() != 0) {
+        challenge.setAudience(domain.getAudienceId());
+      }  
     }
   }
 
