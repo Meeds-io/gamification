@@ -30,6 +30,8 @@ public class GamificationActionsHistoryDTO implements Cloneable {
 
   private String     objectId;
 
+  private String     objectType;
+
   private Long       ruleId;
 
   private Long       activityId;
@@ -61,6 +63,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                        long actionScore,
                                        String receiver,
                                        String objectId,
+                                       String objectType,
                                        Long ruleId,
                                        Long activityId,
                                        String comment,
@@ -82,6 +85,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
     this.actionScore = actionScore;
     this.receiver = receiver;
     this.objectId = objectId;
+    this.objectType = objectType;
     this.ruleId = ruleId;
     this.activityId = activityId;
     this.comment = comment;
@@ -110,6 +114,7 @@ public class GamificationActionsHistoryDTO implements Cloneable {
                                              actionScore,
                                              receiver,
                                              objectId,
+                                             objectType,
                                              ruleId,
                                              activityId,
                                              comment,

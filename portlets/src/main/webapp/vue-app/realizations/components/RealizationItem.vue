@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <rule-action-value
             v-if="actionValueExtension"
             :action-label="actionLabel"
-            :action-u-r-l="actionURL"
+            :action-u-r-l="realizationLink"
             :action-icon="actionIcon" />
           <a
             v-else
@@ -37,7 +37,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <challenge-action-value
           v-else
           :action-label="actionLabel"
-          :action-u-r-l="actionURL"
+          :action-u-r-l="realizationLink"
           class="width-fit-content" />
         <v-tooltip
           v-if="ruleTitleChanged"
@@ -239,8 +239,8 @@ export default {
     earner() {
       return this.realization?.earner?.profile;
     },
-    actionURL() {
-      return this.realization?.url;
+    realizationLink() {
+      return this.realization?.link;
     },
     isAutomaticType() {
       return this.realization?.action?.type === 'AUTOMATIC';
@@ -296,6 +296,15 @@ export default {
     actionIcon() {
       return this.actionValueExtension?.icon;
     },
+    objectId() {
+      return this.realization?.objectId;
+    },
+    objectType() {
+      return this.realization?.objectType;
+    },
+    getLink() {
+      return this.actionValueExtension?.getLink;
+    },
     extendedActionValueComponent() {
       return this.actionValueExtension && {
         componentName: 'action-value',
@@ -343,6 +352,7 @@ export default {
         }, 200);
       }
     });
+    this.retrieveRealizationLink();
   },
   methods: {
     updateRealizations(status) {
@@ -360,6 +370,18 @@ export default {
             window.history.replaceState('programs', this.$t('engagementCenter.label.programs'), `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs/${this.program.id}`);
           }
         });
+    },
+    retrieveRealizationLink() {
+      if (this.status === 'DELETED' || this.status === 'CANCELED') {
+        this.$set(this.realization, 'link', null);
+      } else if (!this.objectType && this.objectId) {
+        this.$set(this.realization, 'link', this.objectId);
+      } else if (this.getLink) {
+        const linkPromise = this.getLink(this.realization);
+        if (linkPromise?.then) {
+          return linkPromise;
+        }
+      }
     },
   }
 };
