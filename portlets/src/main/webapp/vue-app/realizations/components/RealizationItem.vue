@@ -373,20 +373,15 @@ export default {
     },
     retrieveRealizationLink() {
       if (this.status === 'DELETED' || this.status === 'CANCELED') {
-        this.realization.link = null;
-      }
-      if (!this.objectType && this.objectId) {
-        this.realization.link = this.objectId;
-      }
-      this.$nextTick(() => {
-        if (this.getLink) {
-          const initPromise = this.getLink(this.realization);
-          if (initPromise && initPromise.then) {
-            return initPromise
-              .then(() => this.$nextTick());
-          }
+        this.$set(this.realization, 'link', null);
+      } else if (!this.objectType && this.objectId) {
+        this.$set(this.realization, 'link', this.objectId);
+      } else if (this.getLink) {
+        const linkPromise = this.getLink(this.realization);
+        if (linkPromise?.then) {
+          return linkPromise;
         }
-      });
+      }
     },
   }
 };

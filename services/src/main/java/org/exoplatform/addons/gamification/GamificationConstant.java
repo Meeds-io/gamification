@@ -123,8 +123,6 @@ public interface GamificationConstant {
 
     String ACTIVITY_OBJECT_TYPE                                       = "activity";
 
-    //LOG event error
-
     String CANNOT_BROADCAST_GAMIFICATION_EVENT                        = "Cannot broadcast gamification event";
 
 
