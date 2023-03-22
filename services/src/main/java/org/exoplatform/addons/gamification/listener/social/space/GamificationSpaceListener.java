@@ -144,9 +144,8 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     // Compute user id
     String senderId = identityManager.getOrCreateUserIdentity(username).getId();
     String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
-
+    Map<String, String> gam = new HashMap<>();
     try {
-      Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put("objectId", receiverId);
       gam.put("objectType", IDENTITY_OBJECT_TYPE);
@@ -154,11 +153,10 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, GENERIC_EVENT_NAME, e);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
-
     try {
-      Map<String, String> gam = new HashMap<>();
+      gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put("objectId", receiverId);
       gam.put("objectType", IDENTITY_OBJECT_TYPE);
@@ -166,7 +164,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
       gam.put("receiverId", senderId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, GENERIC_EVENT_NAME, e);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 

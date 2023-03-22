@@ -311,8 +311,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   private void createActivityGamificationHistoryEntry(String senderId, String receiverId, String ruleTitle, String activityId) {
+    Map<String, String> gam = new HashMap<>();
     try {
-      Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
@@ -320,7 +320,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, GENERIC_EVENT_NAME, e);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
@@ -328,8 +328,8 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                                    String receiverId,
                                                    String ruleTitle,
                                                    String activityId) {
+    Map<String, String> gam = new HashMap<>();
     try {
-      Map<String, String> gam = new HashMap<>();
       gam.put("ruleTitle", ruleTitle);
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
@@ -338,18 +338,18 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, GENERIC_EVENT_NAME, e);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
   private void markActivityGamificationHistoryAsDeleted(String activityId) {
+    Map<String, String> gam = new HashMap<>();
     try {
-      Map<String, String> gam = new HashMap<>();
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       listenerService.broadcast(DELETE_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, DELETE_EVENT_NAME, e);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
