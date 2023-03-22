@@ -68,7 +68,7 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
   public void testFindActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId() {
     DomainEntity domainEntity = newDomain();
     newGamificationActionsHistory("rule", domainEntity.getId());
-    assertNotNull(gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId("rule", domainEntity.getId(), TEST_USER_SENDER, TEST_USER_SENDER, "objectId"));
+    assertNotNull(gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId("rule", domainEntity.getId(), TEST_USER_SENDER, TEST_USER_SENDER, "objectId", "objectType"));
   }
 
   @Test
