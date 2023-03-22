@@ -154,7 +154,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
       gam.put("receiverId", receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, GENERIC_EVENT_NAME, e);
     }
 
     try {
@@ -166,7 +166,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
       gam.put("receiverId", senderId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
-      LOG.error(CANNOT_BROADCAST_GAMIFICATION_EVENT);
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, GENERIC_EVENT_NAME, e);
     }
   }
 
