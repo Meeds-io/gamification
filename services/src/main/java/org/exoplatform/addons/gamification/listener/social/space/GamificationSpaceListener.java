@@ -17,6 +17,7 @@
 package org.exoplatform.addons.gamification.listener.social.space;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.GENERIC_EVENT_NAME;
 
 import java.util.HashMap;
@@ -46,11 +47,14 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   protected ListenerService listenerService;
 
-  public GamificationSpaceListener() {
-    this.ruleService = CommonsUtils.getService(RuleService.class);
-    this.identityManager = CommonsUtils.getService(IdentityManager.class);
-    this.spaceService = CommonsUtils.getService(SpaceService.class);
-    this.listenerService = CommonsUtils.getService(ListenerService.class);
+  public GamificationSpaceListener(RuleService ruleService,
+                                   IdentityManager identityManager,
+                                   SpaceService spaceService,
+                                   ListenerService listenerService) {
+    this.ruleService = ruleService;
+    this.identityManager = identityManager;
+    this.spaceService = spaceService;
+    this.listenerService = listenerService;
   }
 
   @Override
@@ -92,6 +96,10 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   @Override
   public void left(SpaceLifeCycleEvent event) {
+    String username = event.getSource();
+    Space space = event.getSpace();
+
+    cancelGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN);
     clearUserChallengeCache();
   }
 
@@ -146,23 +154,51 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put("ruleTitle", ruleTitle);
-      gam.put("objectId", receiverId);
-      gam.put("objectType", IDENTITY_OBJECT_TYPE);
-      gam.put("senderId", senderId);
-      gam.put("receiverId", receiverId);
+      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(OBJECT_ID_PARAM, receiverId);
+      gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
+      gam.put(SENDER_ID, senderId);
+      gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
     try {
       gam = new HashMap<>();
-      gam.put("ruleTitle", ruleTitle);
-      gam.put("objectId", receiverId);
-      gam.put("objectType", IDENTITY_OBJECT_TYPE);
-      gam.put("senderId", receiverId);
-      gam.put("receiverId", senderId);
+      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(OBJECT_ID_PARAM, receiverId);
+      gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
+      gam.put(SENDER_ID, receiverId);
+      gam.put(RECEIVER_ID, senderId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+    }
+  }
+
+  private void cancelGamificationHistoryEntry(String username, Space space, String ruleTitle) {
+    // Compute user id
+    String senderId = identityManager.getOrCreateUserIdentity(username).getId();
+    String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
+    Map<String, String> gam = new HashMap<>();
+    try {
+      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(OBJECT_ID_PARAM, receiverId);
+      gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
+      gam.put(SENDER_ID, senderId);
+      gam.put(RECEIVER_ID, receiverId);
+      listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+    }
+    try {
+      gam = new HashMap<>();
+      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(OBJECT_ID_PARAM, receiverId);
+      gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
+      gam.put(SENDER_ID, receiverId);
+      gam.put(RECEIVER_ID, senderId);
+      listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
