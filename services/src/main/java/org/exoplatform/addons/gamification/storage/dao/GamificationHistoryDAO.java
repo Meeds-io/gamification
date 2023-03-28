@@ -510,7 +510,7 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
     query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
     try {
-      return query.getSingleResult();
+      return query.getResultList().get(0);
     } catch (NoResultException e) {// NOSONAR : normal to not log this and not
       // rethrow it
       return null;
