@@ -32,7 +32,7 @@ import org.exoplatform.social.core.storage.cache.CachedActivityStorage;
 import java.util.List;
 
 public class GamificationProfileListener extends ProfileListenerPlugin {
-
+  
   protected RuleService         ruleService;
 
   protected IdentityManager     identityManager;
@@ -73,7 +73,8 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_AVATAR,
                                       identityId,
                                       identityId,
-                                      event.getProfile().getUrl());
+                                      identityId,
+                                      IDENTITY_OBJECT_TYPE);
   }
 
   @Override
@@ -91,7 +92,8 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_BANNER,
                                       identityId,
                                       identityId,
-                                      event.getProfile().getUrl());
+                                      identityId,
+                                      IDENTITY_OBJECT_TYPE);
   }
 
   @Override
@@ -128,7 +130,8 @@ public class GamificationProfileListener extends ProfileListenerPlugin {
     gamificationService.createHistory(GAMIFICATION_SOCIAL_PROFILE_ADD_ABOUTME,
                                       identityId,
                                       identityId,
-                                      event.getProfile().getUrl());
+                                      identityId,
+                                      IDENTITY_OBJECT_TYPE);
   }
 
   private void clearUserActivitiesCache(String userId) {
