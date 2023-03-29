@@ -20,7 +20,7 @@
       :loading="loading"
       extra-class="px-0">
       <template #title>
-        {{ $t('gamification.overview.programsOverviewTitle') }}
+        <span class="text-truncate">{{ $t('gamification.overview.programsOverviewTitle') }}</span>
       </template>
       <template #content>
         <gamification-overview-widget-row v-show="!programsDisplayed && !loading" class="my-auto mx-4">
