@@ -50,14 +50,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       indeterminate
       height="2"
       color="primary" />
-    <engagement-center-result-not-found 
-      v-else-if="!displaySearchResult"
-      :display-back-arrow="false"
-      :message-title="$t('challenges.welcomeMessage')"
-      :message-info-one="$t('challenge.realization.noResult.messageOne')"
-      :message-info-two="$t('challenge.realization.noResult.messageTwo')"
-      :button-text="$t('programs.details.programDeleted.explore')"
-      :button-url="programsUrl" />
+    <div v-else-if="!displaySearchResult">
+      <engagement-center-result-not-found 
+        v-if="filterActivated"
+        :display-back-arrow="false"
+        :message-info-one="$t('challenge.realization.noFilterResult.messageOne')"
+        :message-info-two="$t('challenge.realization.noFilterResult.messageTwo')"
+        :button-text="$t('challenge.button.resetFilter')"
+        @button-event="reset" />
+      <engagement-center-result-not-found 
+        v-else
+        :display-back-arrow="false"
+        :message-title="$t('challenges.welcomeMessage')"
+        :message-info-one="$t('challenge.realization.noPeriodResult.messageOne')"
+        :message-info-two="$t('challenge.realization.noPeriodResult.messageTwo')"
+        :button-text="$t('programs.details.programDeleted.explore')"
+        :button-url="programsUrl" />
+    </div>
     <v-data-table
       v-else-if="displaySearchResult && !isMobile"
       :headers="realizationsHeaders"
@@ -105,7 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       flat
       class="pa-2 mb-4">
       <v-btn
-        v-if="hasMore"
+        v-if="hasMore && displaySearchResult"
         class="btn"
         :loading="loading"
         :disabled="loading"
@@ -172,6 +181,7 @@ export default {
       minute: 'numeric',
     },
     isMobile: false,
+    filterActivated: false,
     selected: 'Date',
     programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
   }),
@@ -275,6 +285,7 @@ export default {
   watch: {
     selectedPeriod(newValue) {
       if (newValue) {
+        this.filterActivated = false;
         this.fromDate = new Date(newValue.min).toISOString() ;
         this.toDate = new Date(newValue.max).toISOString();
         this.loadRealizations();
@@ -347,6 +358,7 @@ export default {
       this.$root.$emit('realization-open-filter-drawer');
     },
     filterByPrograms(programs, grantees) {
+      this.filterActivated = true;
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
@@ -354,6 +366,12 @@ export default {
     onResize () {
       this.isMobile = window.innerWidth < 1020;
     },
+    reset() {
+      this.searchList = [];
+      this.earnerIds = [];
+      this.loadRealizations();
+      this.$root.$emit('reset-filter-values');
+    }
   }
 };
 </script>

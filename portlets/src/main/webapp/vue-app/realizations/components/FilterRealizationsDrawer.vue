@@ -154,6 +154,7 @@ export default {
   created() {    
     this.$root.$on('realization-open-filter-drawer', this.open);
     this.$root.$on('program-load-more', this.loadMore);
+    this.$root.$on('reset-filter-values', this.reset);
   },
   watch: {
     loading() {
