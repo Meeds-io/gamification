@@ -47,11 +47,14 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   protected ListenerService listenerService;
 
-  public GamificationSpaceListener() {
-    this.ruleService = CommonsUtils.getService(RuleService.class);
-    this.identityManager = CommonsUtils.getService(IdentityManager.class);
-    this.spaceService = CommonsUtils.getService(SpaceService.class);
-    this.listenerService = CommonsUtils.getService(ListenerService.class);
+  public GamificationSpaceListener(RuleService ruleService,
+                                   IdentityManager identityManager,
+                                   SpaceService spaceService,
+                                   ListenerService listenerService) {
+    this.ruleService = ruleService;
+    this.identityManager = identityManager;
+    this.spaceService = spaceService;
+    this.listenerService = listenerService;
   }
 
   @Override
