@@ -109,7 +109,7 @@ public class RealizationsServiceImpl implements RealizationsService {
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     if (Utils.isSuperManager(username) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
-            && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
+        && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
       return realizationsStorage.countRealizationsByFilter(filter);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
@@ -190,16 +190,21 @@ public class RealizationsServiceImpl implements RealizationsService {
                                                                                                      long domainId,
                                                                                                      String earnerId,
                                                                                                      String receiverId,
-                                                                                                     String objectId) {
+                                                                                                     String objectId,
+                                                                                                     String objectType) {
 
     return realizationsStorage.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
                                                                                              domainId,
                                                                                              earnerId,
                                                                                              receiverId,
-                                                                                             objectId);
+                                                                                             objectId,
+                                                                                             objectType);
   }
 
-  
+  public List<GamificationActionsHistoryDTO> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
+    return realizationsStorage.getRealizationsByObjectIdAndObjectType(objectId, objectType);
+  }
+
   public InputStream exportXlsx(RealizationsFilter filter,
                                 Identity identity,
                                 String fileName,

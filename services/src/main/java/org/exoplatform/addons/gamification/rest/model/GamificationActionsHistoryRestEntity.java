@@ -32,7 +32,10 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
 
   private String         space;
 
-  private String         url;
+  private String         objectId;
+
+  private String         objectType;
+
 
   public GamificationActionsHistoryRestEntity(Long id, // NOSONAR
                                               IdentityEntity earner,
@@ -45,7 +48,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                               String createdDate,
                                               String status,
                                               String space,
-                                              String url) {
+                                              String objectId,
+                                              String objectType) {
     this.id = id;
     this.earner = earner;
     this.action = action;
@@ -57,7 +61,8 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
     this.createdDate = createdDate;
     this.status = status;
     this.space = space;
-    this.url = url;
+    this.objectId = objectId;
+    this.objectType = objectType;
   }
 
   @Override
@@ -73,6 +78,7 @@ public class GamificationActionsHistoryRestEntity implements Cloneable {
                                                     createdDate,
                                                     status,
                                                     space,
-                                                    url);
+                                                    objectId,
+                                                    objectType);
   }
 }
