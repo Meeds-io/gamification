@@ -20,10 +20,12 @@
     min-width="290px"
     class="white d-flex flex-column"
     flat>
-    <v-card-title class="subtitle-1 text-sub-title">
+    <v-card-title class="subtitle-1 text-sub-title justify-space-between flex-nowrap">
       <slot name="title"></slot>
-      <v-spacer />
-      <a v-if="seeAllUrl" :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
+      <a 
+        v-if="seeAllUrl" 
+        class="flex-shrink-0" 
+        :href="seeAllUrl"> <h5 class="text-font-size primary--text my-0"> {{ $t('overview.myContributions.seeAll') }} </h5> </a>
     </v-card-title>
     <v-card-text class="d-flex flex-column flex-grow-1" :class="extraClass || ''">
       <slot name="content"></slot>
