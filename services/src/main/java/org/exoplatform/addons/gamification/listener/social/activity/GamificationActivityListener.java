@@ -17,8 +17,7 @@
 package org.exoplatform.addons.gamification.listener.social.activity;
 
 import static org.exoplatform.addons.gamification.GamificationConstant.*;
-import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.DELETE_EVENT_NAME;
-import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.GENERIC_EVENT_NAME;
+import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,10 +43,6 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private static final Log    LOG         = ExoLogger.getLogger(GamificationActivityListener.class);
-
-  private static final String OBJECT_ID_PARAM   = "objectId";
-
-  private static final String OBJECT_TYPE_PARAM = "objectType";
 
   protected RuleService       ruleService;
 
@@ -247,6 +242,40 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   @Override
+  public void deleteLikeActivity(ActivityLifeCycleEvent event) {
+    ExoSocialActivity activity = event.getSource();
+    String userId = event.getUserId();
+    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
+      return;
+    }
+
+    Space space = getSpaceOfActivity(activity);
+    boolean isSpaceActivity = space != null;
+
+    cancelActivityGamificationHistoryEntry(userId,
+                                           activity.getPosterId(),
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM
+                                                           : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_NETWORK_STREAM,
+                                           activity.getId(),
+                                           ACTIVITY_OBJECT_TYPE);
+
+    cancelActivityGamificationHistoryEntry(activity.getPosterId(),
+                                           userId,
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_TARGET
+                                                           : GAMIFICATION_SOCIAL_LIKE_ACTIVITY_TARGET_USER_STREAM,
+                                           activity.getId(),
+                                           ACTIVITY_OBJECT_TYPE);
+
+    if (space != null) {
+      cancelSpaceGamificationHistoryEntry(space.getPrettyName(),
+                                          userId,
+                                          GAMIFICATION_SOCIAL_LIKE_ACTIVITY_SPACE_STREAM,
+                                          activity.getId(),
+                                          ACTIVITY_OBJECT_TYPE);
+    }
+  }
+
+  @Override
   public void likeComment(ActivityLifeCycleEvent event) {
 
     // Target Activity
@@ -294,6 +323,39 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
   }
 
+  @Override
+  public void deleteLikeComment(ActivityLifeCycleEvent event) {
+    ExoSocialActivity activity = event.getSource();
+    String userId = event.getUserId();
+    if (StringUtils.equalsIgnoreCase(activity.getPosterId(), activity.getStreamId())) {
+      return;
+    }
+    Space space = getSpaceOfActivity(activity);
+    boolean isSpaceActivity = space != null;
+
+    cancelActivityGamificationHistoryEntry(activity.getPosterId(),
+                                           userId,
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET
+                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM_TARGET,
+                                           activity.getId(),
+                                           ACTIVITY_OBJECT_TYPE);
+
+    cancelActivityGamificationHistoryEntry(userId,
+                                           activity.getPosterId(),
+                                           isSpaceActivity ? GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM
+                                                           : GAMIFICATION_SOCIAL_LIKE_COMMENT_NETWORK_STREAM,
+                                           activity.getId(),
+                                           ACTIVITY_OBJECT_TYPE);
+
+    if (space != null) {
+      cancelSpaceGamificationHistoryEntry(space.getPrettyName(),
+                                          userId,
+                                          GAMIFICATION_SOCIAL_LIKE_COMMENT_SPACE_STREAM_TARGET,
+                                          activity.getId(),
+                                          ACTIVITY_OBJECT_TYPE);
+    }
+  }
+
   private Space getSpaceOfActivity(ExoSocialActivity activity) {
     if (activity.getParentId() != null) {
       activity = activityManager.getParentActivity(activity);
@@ -313,12 +375,49 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   private void createActivityGamificationHistoryEntry(String senderId, String receiverId, String ruleTitle, String activityId) {
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put("ruleTitle", ruleTitle);
+      gam.put(RULE_TITLE, ruleTitle);
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
-      gam.put("senderId", senderId);
-      gam.put("receiverId", receiverId);
+      gam.put(SENDER_ID, senderId);
+      gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+    }
+  }
+
+  private void cancelActivityGamificationHistoryEntry(String senderId,
+                                                      String receiverId,
+                                                      String ruleTitle,
+                                                      String objectId,
+                                                      String ObjectType) {
+    Map<String, String> gam = new HashMap<>();
+    try {
+      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(OBJECT_ID_PARAM, objectId);
+      gam.put(OBJECT_TYPE_PARAM, ObjectType);
+      gam.put(SENDER_ID, senderId);
+      gam.put(RECEIVER_ID, receiverId);
+      listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
+    } catch (Exception e) {
+      LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
+    }
+  }
+
+  private void cancelSpaceGamificationHistoryEntry(String senderId,
+                                                   String receiverId,
+                                                   String ruleTitle,
+                                                   String objectId,
+                                                   String ObjectType) {
+    Map<String, String> gam = new HashMap<>();
+    try {
+      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(OBJECT_ID_PARAM, objectId);
+      gam.put(OBJECT_TYPE_PARAM, ObjectType);
+      gam.put(SENDER_ID, senderId);
+      gam.put(SENDER_TYPE, SpaceIdentityProvider.NAME);
+      gam.put(RECEIVER_ID, receiverId);
+      listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
@@ -330,12 +429,12 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
                                                    String activityId) {
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put("ruleTitle", ruleTitle);
+      gam.put(RULE_TITLE, ruleTitle);
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
-      gam.put("senderId", spacePrettyName);
-      gam.put("senderType", SpaceIdentityProvider.NAME);
-      gam.put("receiverId", receiverId);
+      gam.put(SENDER_ID, spacePrettyName);
+      gam.put(SENDER_TYPE, SpaceIdentityProvider.NAME);
+      gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
