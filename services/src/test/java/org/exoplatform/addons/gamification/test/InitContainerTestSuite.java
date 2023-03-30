@@ -16,6 +16,7 @@
  */
 package org.exoplatform.addons.gamification.test;
 
+import org.exoplatform.addons.gamification.listener.GamificationSpaceListenerTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -103,6 +104,7 @@ import io.meeds.gamification.analytics.AnalyticsRuleListenerTest;
         AnalyticsAnnouncementListenerTest.class,
         AnalyticsProgramListenerTest.class,
         AnalyticsRuleListenerTest.class,
+        GamificationSpaceListenerTest.class,
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {

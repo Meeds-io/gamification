@@ -125,5 +125,16 @@ public interface GamificationConstant {
 
     String BROADCAST_GAMIFICATION_EVENT_ERROR                         = "Error while broadcasting gamification event: {}";
 
+    String OBJECT_ID_PARAM                                            = "objectId";
+
+    String OBJECT_TYPE_PARAM                                          = "objectType";
+
+    String RULE_TITLE                                                 = "ruleTitle";
+
+    String SENDER_ID                                                  = "senderId";
+    
+    String SENDER_TYPE                                                = "senderType";
+
+    String RECEIVER_ID                                                = "receiverId";
 
 }
