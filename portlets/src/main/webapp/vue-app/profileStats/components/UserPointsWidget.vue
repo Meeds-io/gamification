@@ -114,6 +114,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           </v-tooltip>
         </div>
         <div
+          v-if="show"
           id="echartUserPoints"
           :style="pieChartDimensions"
           class="flex my-auto"></div>
@@ -134,11 +135,14 @@ export default {
   data() {
     return {
       userPoints: 0,
+      widgetWidth: 0,
+      refreshedWidth: 0,
+      refreshing: false,
       period: 'WEEK',
       programLabels: [],
       seriesData: [],
       loading: true,
-      mounted: false,
+      show: false,
       colors: [
         '#4ad66d', '#ffe169', '#ff8fa3', '#20a8ea', '#C155F4', '#F7A35B', '#A0C7FF', '#FD6A6A', '#059d98', '#b7efc5',
         '#dbb42c', '#c9184a', '#1273d4', '#E65ABC', '#00FF56', '#B1F6FF', '#FFFF46', '#26a855', '#f10000', '#208b3a',
@@ -201,13 +205,18 @@ export default {
       return this.userPoints === 0 && this.initialized;
     },
     initialized() {
-      return this.mounted && !this.loading;
+      return this.show && !this.loading;
     },
   },
   watch: {
     initialized() {
       if (this.initialized) {
         this.$nextTick().then(() => this.initChart(this.option));
+      }
+    },
+    widgetWidth(newVal, oldVal) {
+      if (oldVal !== newVal) {
+        this.forceRefreshWidget();
       }
     },
   },
@@ -219,9 +228,36 @@ export default {
     ]).finally(() => this.loading = false);
   },
   mounted() {
-    this.mounted = true;
+    this.widgetWidth = this.$el?.offsetWidth || this.widgetWidth;
+    this.show = true;
+    window.addEventListener('resize', this.onResize, {
+      passive: true,
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize);
   },
   methods: {
+    onResize() {
+      this.widgetWidth = this.$el.offsetWidth;
+    },
+    forceRefreshWidget() {
+      if (this.refreshing) {
+        return;
+      }
+      this.refreshedWidth = this.widgetWidth;
+
+      this.show = false;
+      this.refreshing = true;
+      window.setTimeout(() => {
+        this.refreshing = false;
+        if (this.refreshedWidth === this.widgetWidth) {
+          this.show = true;
+        } else {
+          this.forceRefreshWidget();
+        }
+      }, 200);
+    },
     getGamificationPoints() {
       return this.$nextTick().then(()=>
         getGamificationPoints(this.period).then(
