@@ -28,7 +28,7 @@
             :max-height="programCoverSize"
             :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
         </div>
-        <div v-if="!automaticRule" class="d-flex flex-row py-3">
+        <div v-if="!automaticRule && endDate !== null && startDate != null" class="d-flex flex-row py-3">
           <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="DateInfo"></span>
         </div>
         <div
@@ -178,13 +178,13 @@ export default {
       return this.rule?.score || this.rule?.points;
     },
     startDate() {
-      return new Date(this.rule?.startDate).getTime() || 0;
+      return new Date(this.rule?.startDate).getTime() || null;
     },
     endDate() {
-      return new Date(this.rule?.endDate).getTime() || 0;
+      return new Date(this.rule?.endDate).getTime() || null;
     },
     isActiveRule() {
-      return this.automaticRule || (this.startDate <= Date.now() && this.endDate >= Date.now());
+      return this.automaticRule || (this.startDate === null && this.endDate === null) || (this.startDate <= Date.now() && this.endDate >= Date.now());
     },
     DateInfo() {
       if (this.isActiveRule) {
