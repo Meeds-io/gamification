@@ -233,9 +233,11 @@ export default {
     window.addEventListener('resize', this.onResize, {
       passive: true,
     });
+    document.addEventListener('left-menu-stickiness', this.onResize);
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize);
+    document.removeEventListener('left-menu-stickiness', this.onResize);
   },
   methods: {
     onResize() {
