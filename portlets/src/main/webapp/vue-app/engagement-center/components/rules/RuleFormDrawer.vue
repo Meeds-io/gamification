@@ -19,118 +19,194 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     ref="ruleFormDrawer"
     right
     v-model="drawer"
-    body-classes="hide-scroll decrease-z-index-more">
+    body-classes="hide-scroll decrease-z-index-more"
+    @opened="stepper = 1"
+    @closed="stepper = 0">
     <template slot="title">
       {{ drawerTitle }}
     </template>
     <template slot="content">
-      <v-form
-        ref="RuleForm"
-        class="form-horizontal pt-0 pb-4"
+      <v-stepper
+        v-model="stepper"
+        vertical
         flat
-        @submit="updateRule">
-        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
-          {{ $t('rule.form.label.rules') }}
-        </v-card-text>
-        <v-card-text class="d-flex py-0">
-          <input
-            id="ruleTitle"
-            ref="ruleTitle"
-            v-model="rule.title"
-            :placeholder="$t('rule.form.label.title.placeholder')"
-            type="text"
-            class="ignore-vuetify-classes flex-grow-1"
-            required>
-        </v-card-text>
-        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
-          {{ $t('rule.form.label.event') }}
-        </v-card-text>
-        <v-card-text class="py-0">
-          <v-autocomplete
-            id="EventSelectAutoComplete"
-            ref="EventSelectAutoComplete"
-            v-model="value"
-            :items="eventNames"
-            item-text="label"
-            class="pa-0"
-            filled
-            persistent-hint
-            dense>
-            <template #selection="data">
-              <v-chip
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                :title="data.item && data.item.label || data.item"
-                @click="data.select">
-                {{ data.item && data.item.label || data.item }}
-              </v-chip>
-            </template>
-            <template #item="data">
-              <v-list-item-content v-text="data.item.label" />
-            </template>
-          </v-autocomplete>
-        </v-card-text>
-        <v-card-text v-if="eventExist" class="error--text py-0">
-          {{ $t('rule.form.error.sameEventExist') }}
-        </v-card-text>
-        <v-card-text>
-          <div class="py-2">
-            <engagement-center-description-editor
-              id="ruleDescription"
-              ref="ruleDescription"
-              v-model="rule.description"
-              :label="$t('rule.form.label.description')"
-              :placeholder="$t('rule.form.label.description.placeholder')"
-              @addDescription="addDescription($event)"
-              @validity-updated=" validDescription = $event" />
-          </div>
-        </v-card-text>
-        <div class="d-flex flex-row pa-4">
-          <label class="text-subtitle-1 mt-1 pe-3">{{ $t('rule.form.label.program') }}</label>
-          <v-chip color="primary">
-            <v-avatar left>
-              <v-img :src="programCover" />
-            </v-avatar>
-            <span class="text-truncate">
-              {{ programTitle }}
-            </span>
+        class="ma-0 py-0 me-4">
+        <v-stepper-step
+          :complete="stepper > 1"
+          step="1"
+          class="ma-0">
+          {{ $t('rule.form.label.stepOne') }}
+        </v-stepper-step>
+        <v-stepper-content step="1" class="ps-4 pe-6 mx-0 py-0">
+          <v-form
+            ref="RuleForm"
+            class="form-horizontal pt-0 pb-4"
+            flat
+            @submit="updateRule">
+            <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 py-2">
+              {{ $t('rule.form.label.program') }}
+            </v-card-text>
+            <v-card-text class="d-flex py-0">
+              <v-img
+                :src="program.coverUrl"
+                :height="programCoverSize"
+                :width="programCoverSize"
+                :max-height="programCoverSize"
+                :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
+            </v-card-text>
+            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-1">
+              {{ $t('rule.form.label.rules') }}
+            </v-card-text>
+            <v-card-text class="d-flex py-0">
+              <input
+                id="ruleTitle"
+                ref="ruleTitle"
+                v-model="rule.title"
+                placeholder="Here is the first ever action!"
+                type="text"
+                class="ignore-vuetify-classes flex-grow-1"
+                required>
+            </v-card-text>
+            <v-card-text class="py-0">
+              <engagement-center-description-editor
+                id="ruleDescription"
+                ref="ruleDescription"
+                v-model="rule.description"
+                :label="$t('rule.form.label.description')"
+                :placeholder="$t('rule.form.label.description.placeholder')"
+                :max-length="500"
+                @addDescription="addDescription($event)"
+                @validity-updated=" validDescription = $event" />
+            </v-card-text>
+            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+              {{ $t('rule.form.label.rewards') }}
+            </v-card-text>
+            <div class="d-flex flex-row px-4">
+              <v-text-field
+                v-model="rule.score"
+                class="mt-0 pt-0 me-2"
+                type="number"
+                hide-details
+                outlined
+                dense
+                required />
+              <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
+            </div>
+            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+              {{ $t('rule.form.label.type') }}
+            </v-card-text>
+            <div class="d-flex flex-row px-4 pb-4">
+              <v-btn
+                class="btn me-2 not-clickable"
+                :class="automaticType && 'btn-primary'"
+                @click="setAutomatic">
+                {{ $t('rule.form.label.type.automatic') }}
+              </v-btn>
+              <v-btn
+                class="btn not-clickable"
+                :class="manualType && 'btn-primary'"
+                @click="setManual">
+                {{ $t('rule.form.label.type.declarative') }}
+              </v-btn>
+            </div>
+            <div v-if="automaticType">
+              <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+                {{ $t('rule.form.label.selectEvent') }}
+              </v-card-text>
+              <v-card-text class="py-0">
+                <v-autocomplete
+                  id="EventSelectAutoComplete"
+                  ref="EventSelectAutoComplete"
+                  v-model="value"
+                  :placeholder="$t('rule.form.label.selectEvent.placeholder')"
+                  :items="eventNames"
+                  item-text="label"
+                  class="pa-0"
+                  filled
+                  persistent-hint
+                  dense>
+                  <template #selection="data">
+                    <v-chip
+                      v-bind="data.attrs"
+                      :input-value="data.selected"
+                      :title="data.item && data.item.label || data.item"
+                      @click="data.select">
+                      {{ data.item && data.item.label || data.item }}
+                    </v-chip>
+                  </template>
+                  <template #item="data">
+                    <v-list-item-content v-text="data.item.label" />
+                  </template>
+                </v-autocomplete>
+              </v-card-text>
+              <v-card-text v-if="eventExist" class="error--text py-0">
+                {{ $t('rule.form.error.sameEventExist') }}
+              </v-card-text>
+            </div>
+            <div v-if="ruleId">
+              <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+                {{ $t('rule.form.label.status') }}
+              </v-card-text>
+              <div class="d-flex flex-row px-4">
+                <label class="subtitle-1 text-light-color mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
+                <v-switch
+                  id="allowAttendeeToUpdateRef"
+                  ref="allowAttendeeToUpdateRef"
+                  v-model="rule.enabled"
+                  class="mt-0 ms-4" />
+              </div>
+            </div>
+          </v-form>
+        </v-stepper-content>
+        <v-stepper-step
+          :complete="stepper > 2"
+          step="2"
+          class="ma-0">
+          {{ $t('rule.form.label.stepTwo') }}
+        </v-stepper-step>
+        <v-stepper-content step="2">
+          <v-chip
+            class="ma-2"
+            outlined>
+            {{ $t('rule.form.label.duration') }}
           </v-chip>
-        </div>
-        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
-          {{ $t('rule.form.label.rewards') }}
-        </v-card-text>
-        <div class="d-flex flex-row px-4">
-          <v-text-field
-            v-model="rule.score"
-            class="mt-0 pt-0 me-2"
-            hide-details
-            outlined
-            dense
-            style="max-width: 185px" />
-          <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
-        </div>
-        <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
-          {{ $t('rule.form.label.status') }}
-        </v-card-text>
-        <div class="d-flex flex-row px-4">
-          <label class="subtitle-1 text-light-color mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
-          <v-switch
-            id="allowAttendeeToUpdateRef"
-            ref="allowAttendeeToUpdateRef"
-            v-model="rule.enabled"
-            class="mt-0 ms-4" />
-        </div>
-      </v-form>
+          <v-chip
+            class="ma-2"
+            outlined>
+            {{ $t('rule.form.label.action') }}
+          </v-chip>
+          <v-chip
+            class="ma-2"
+            outlined>
+            {{ $t('rule.form.label.recurrence') }}
+          </v-chip>
+        </v-stepper-content>
+      </v-stepper>
     </template>
     <template slot="footer">
       <div class="d-flex">
         <v-spacer />
         <v-btn
+          v-if="stepper === 2"
+          class="btn me-2"
+          @click="previousStep">
+          {{ $t('rule.form.label.button.back') }}
+        </v-btn>
+        <v-btn
+          v-else
           class="btn me-2"
           @click="close">
           {{ $t('rule.form.label.button.cancel') }}
         </v-btn>
         <v-btn
+          v-if="stepper === 1"
+          :disabled="disableSaveButton"
+          class="btn btn-primary"
+          @click="nextStep">
+          {{ $t('rule.form.label.button.next') }}
+        </v-btn>
+        <v-btn
+          v-else
           :disabled="disableSaveButton"
           class="btn btn-primary"
           @click="updateRule">
@@ -165,6 +241,8 @@ export default {
     eventExist: false,
     validDescription: false,
     validEvent: false,
+    stepper: 0,
+    programCoverSize: 40,
   }),
   computed: {
     eventNames() {
@@ -197,14 +275,26 @@ export default {
     ruleTitleValid() {
       return this.ruleTitle?.length > 0;
     },
+    ruleTypeValid() {
+      return this.manualType || (this.automaticType && this.validEvent);
+    },
     disableSaveButton() {
-      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.validEvent ;
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
     },
     saveButtonLabel() {
       return this.ruleId ? this.$t('rule.form.label.button.update') : this.$t('rule.form.label.button.add');
+    },
+    ruleType() {
+      return this.rule?.type;
+    },
+    automaticType() {
+      return this.ruleType === 'AUTOMATIC';
+    },
+    manualType() {
+      return this.ruleType === 'MANUAL';
     }
   },
   watch: {
@@ -296,11 +386,39 @@ export default {
           });
       }
     },
+    setAutomatic() {
+      if (this.ruleType === 'MANUAL' || !this.ruleType) {
+        this.$set(this.rule,'type', 'AUTOMATIC');
+      } else {
+        this.$set(this.rule,'type', '');
+      }
+    },
+    setManual() {
+      if (this.ruleType === 'AUTOMATIC' || !this.ruleType) {
+        this.$set(this.rule,'type', 'MANUAL');
+      } else {
+        this.$set(this.rule,'type', '');
+      }
+    },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
         message,
         type: type || 'success',
       }}));
+    },
+    nextStep(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      this.stepper++;
+    },
+    previousStep(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      this.stepper--;
     },
   }
 };
