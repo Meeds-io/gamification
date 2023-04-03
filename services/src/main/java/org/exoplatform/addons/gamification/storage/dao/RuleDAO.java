@@ -314,7 +314,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       switch (dateFilterType) {
       case STARTED:
         suffixes.add("StartDateAndEndDate");
-        predicates.add("r.startDate <= :date AND r.endDate >= :date");
+        predicates.add("(r.startDate <= :date AND r.endDate >= :date) OR (r.startDate IS NULL AND r.endDate IS NULL)");
         break;
       case NOT_STARTED:
         suffixes.add("StartDate");
@@ -341,17 +341,17 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
       if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
         suffixes.add("FilterByALL");
-        predicates.add("(r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("((r.startDate IS NULL AND r.endDate IS NULL) OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
       }
     } else {
       switch (filter.getEntityStatusType()) {
       case ENABLED:
         suffixes.add("FilterByEnabled");
-        predicates.add("r.isEnabled = :enabled AND (r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("r.isEnabled = :enabled AND ((r.startDate IS NULL AND r.endDate IS NULL) OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
         break;
       case DISABLED:
         suffixes.add("FilterByDisabled");
-        predicates.add("r.isEnabled = :enabled AND (r.type = 0 OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("r.isEnabled = :enabled AND ((r.startDate IS NULL AND r.endDate IS NULL) OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
         break;
       default:
         break;
