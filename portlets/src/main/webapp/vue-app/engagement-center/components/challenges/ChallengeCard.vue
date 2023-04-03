@@ -111,7 +111,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             ">
             <v-spacer />
           </div>
-          <div class="d-flex flex-row my-auto my-sm-0">
+          <div v-if="!isOpenChallenge" class="d-flex flex-row my-auto my-sm-0">
             <v-icon size="18" class="primary--text">fas fa-calendar-day</v-icon>
             <span class="mt-1 ms-2 text-subtitle-2" v-sanitized-html="remainingPeriodLabel"></span>
           </div>
@@ -157,6 +157,9 @@ export default {
     },
     challengeTitle() {
       return this.challenge?.title;
+    },
+    isOpenChallenge() {
+      return this.challenge?.startDate === null && this.challenge?.endDate === null;
     },
     startDate() {
       return new Date(this.challenge?.startDate);
