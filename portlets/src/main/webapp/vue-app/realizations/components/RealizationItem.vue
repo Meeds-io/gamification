@@ -381,6 +381,8 @@ export default {
         if (linkPromise?.then) {
           return linkPromise;
         }
+      } else if (!this.isAutomaticType) {
+        this.$set(this.realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?id=${this.realization?.objectId}`);
       }
     },
   }

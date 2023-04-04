@@ -14,6 +14,8 @@ import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
 import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.ACTIVITY_OBJECT_TYPE;
+
 public class AnnouncementStorage {
 
   public static final long       MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24; // NOSONAR
@@ -39,6 +41,10 @@ public class AnnouncementStorage {
     }
     if (!announcementEntity.getCreatedDate().after(ruleEntity.getStartDate())) {
       throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
+    }
+    if (announcement.getActivityId() != null) {
+      announcementEntity.setObjectType(ACTIVITY_OBJECT_TYPE);
+      announcementEntity.setObjectId(String.valueOf(announcement.getActivityId()));
     }
     if (announcementEntity.getId() == null) {
       announcementEntity = announcementDAO.create(announcementEntity);
