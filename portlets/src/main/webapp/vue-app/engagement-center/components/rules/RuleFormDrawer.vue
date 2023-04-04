@@ -20,6 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     right
     v-model="drawer"
     body-classes="hide-scroll decrease-z-index-more"
+    allow-expand
     @opened="stepper = 1"
     @closed="stepper = 0">
     <template slot="title">
@@ -35,9 +36,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :complete="stepper > 1"
           step="1"
           class="ma-0">
-          {{ $t('rule.form.label.stepOne') }}
+          <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepOne') }}</span>
         </v-stepper-step>
-        <v-stepper-content step="1" class="ps-4 pe-6 mx-0 py-0">
+        <v-stepper-content step="1" class="ps-4 pe-0 mx-0 py-0">
           <v-form
             ref="RuleForm"
             class="form-horizontal pt-0 pb-4"
@@ -52,7 +53,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :height="programCoverSize"
                 :width="programCoverSize"
                 :max-height="programCoverSize"
-                :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
+                :max-width="programCoverSize" /><span class="my-auto ms-3">{{ program.title }}</span>
             </v-card-text>
             <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-1">
               {{ $t('rule.form.label.rules') }}
@@ -62,8 +63,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 id="ruleTitle"
                 ref="ruleTitle"
                 v-model="rule.title"
-                placeholder="Here is the first ever action!"
+                :placeholder="$t('rule.form.label.rules.placeholder')"
                 type="text"
+                maxlength="50"
                 class="ignore-vuetify-classes flex-grow-1"
                 required>
             </v-card-text>
@@ -162,7 +164,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :complete="stepper > 2"
           step="2"
           class="ma-0">
-          {{ $t('rule.form.label.stepTwo') }}
+          <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
         </v-stepper-step>
         <v-stepper-content step="2">
           <v-chip
