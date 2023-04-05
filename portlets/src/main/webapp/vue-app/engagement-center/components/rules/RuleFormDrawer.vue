@@ -38,16 +38,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="ma-0">
           <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepOne') }}</span>
         </v-stepper-step>
-        <v-stepper-content step="1" class="ps-4 pe-0 mx-0 py-0">
+        <v-stepper-content step="1" class="pe-0 mx-0 py-0">
           <v-form
             ref="RuleForm"
+            v-model="isValidForm"
             class="form-horizontal pt-0 pb-4"
             flat
             @submit="updateRule">
-            <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 py-2">
+            <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
               {{ $t('rule.form.label.program') }}
             </v-card-text>
-            <v-card-text class="d-flex py-0">
+            <v-card-text class="d-flex pa-0">
               <v-img
                 :src="program.coverUrl"
                 :height="programCoverSize"
@@ -55,10 +56,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :max-height="programCoverSize"
                 :max-width="programCoverSize" /><span class="my-auto ms-3">{{ program.title }}</span>
             </v-card-text>
-            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-1">
+            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-1">
               {{ $t('rule.form.label.rules') }}
             </v-card-text>
-            <v-card-text class="d-flex py-0">
+            <v-card-text class="d-flex pa-0">
               <input
                 id="ruleTitle"
                 ref="ruleTitle"
@@ -69,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 class="ignore-vuetify-classes flex-grow-1"
                 required>
             </v-card-text>
-            <v-card-text class="py-0">
+            <v-card-text class="pa-0">
               <engagement-center-description-editor
                 id="ruleDescription"
                 ref="ruleDescription"
@@ -80,12 +81,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 @addDescription="addDescription($event)"
                 @validity-updated=" validDescription = $event" />
             </v-card-text>
-            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
               {{ $t('rule.form.label.rewards') }}
             </v-card-text>
-            <div class="d-flex flex-row px-4">
+            <v-card
+              flat
+              width="120"
+              class="d-flex flex-grow-1">
               <v-text-field
                 v-model="rule.score"
+                :rules="scoreRules"
                 class="mt-0 pt-0 me-2"
                 type="number"
                 hide-details
@@ -93,11 +98,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 dense
                 required />
               <label class="my-auto">{{ $t('rule.form.label.points') }}</label>
-            </div>
-            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
+            </v-card>
+            <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-2">
               {{ $t('rule.form.label.type') }}
             </v-card-text>
-            <div class="d-flex flex-row px-4 pb-4">
+            <div class="d-flex flex-row pb-4">
               <v-btn
                 class="btn me-2 not-clickable"
                 :class="automaticType && 'btn-primary'"
@@ -149,7 +154,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 pb-2">
                 {{ $t('rule.form.label.status') }}
               </v-card-text>
-              <div class="d-flex flex-row px-4">
+              <div class="d-flex flex-row">
                 <label class="subtitle-1 text-light-color mt-1 pe-3">{{ $t('rule.form.label.enabled') }}</label>
                 <v-switch
                   id="allowAttendeeToUpdateRef"
@@ -245,6 +250,10 @@ export default {
     validEvent: false,
     stepper: 0,
     programCoverSize: 40,
+    isValidForm: true,
+    scoreRules: [
+      v => ( v && v <= 10000 ),
+    ],
   }),
   computed: {
     eventNames() {
@@ -281,7 +290,7 @@ export default {
       return this.manualType || (this.automaticType && this.validEvent);
     },
     disableSaveButton() {
-      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid;
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');

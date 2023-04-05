@@ -35,12 +35,14 @@ public class AnnouncementStorage {
     }
     RuleEntity ruleEntity = ruleDAO.find(announcement.getChallengeId());
     GamificationActionsHistory announcementEntity = EntityMapper.toEntity(announcement, ruleEntity);
-    Date nextToEndDate = new Date(ruleEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
-    if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
-      throw new IllegalArgumentException("announcement is not allowed when challenge is ended ");
-    }
-    if (!announcementEntity.getCreatedDate().after(ruleEntity.getStartDate())) {
-      throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
+    if (ruleEntity.getEndDate() != null && ruleEntity.getStartDate() != null) {
+      Date nextToEndDate = new Date(ruleEntity.getEndDate().getTime() + MILLIS_IN_A_DAY);
+      if (!announcementEntity.getCreatedDate().before(nextToEndDate)) {
+        throw new IllegalArgumentException("announcement is not allowed when challenge is ended ");
+      }
+      if (!announcementEntity.getCreatedDate().after(ruleEntity.getStartDate())) {
+        throw new IllegalArgumentException("announcement is not allowed when challenge is not started ");
+      }
     }
     if (announcement.getActivityId() != null) {
       announcementEntity.setObjectType(ACTIVITY_OBJECT_TYPE);
