@@ -314,7 +314,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       switch (dateFilterType) {
       case STARTED:
         suffixes.add("StartDateAndEndDate");
-        predicates.add("r.startDate <= :date AND r.endDate >= :date");
+        predicates.add("(r.startDate <= :date AND r.endDate >= :date) OR (r.startDate IS NULL AND r.endDate IS NULL)");
         break;
       case NOT_STARTED:
         suffixes.add("StartDate");
