@@ -176,11 +176,7 @@ export default {
       this.menu = false;
     },
     editRule() {
-      if (this.automaticRule) {
-        this.$root.$emit('rule-form-drawer', this.rule);
-      } else {
-        this.$root.$emit('edit-manuel-rule', this.rule);
-      }
+      this.$root.$emit('rule-form-drawer', this.rule);
     },
     openRule() {
       this.$root.$emit('rule-detail-drawer', this.rule);
