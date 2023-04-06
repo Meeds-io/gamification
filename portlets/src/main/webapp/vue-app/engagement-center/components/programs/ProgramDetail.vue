@@ -139,9 +139,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <engagement-center-rule-form-drawer
-          :events="events"
-          :program="program" />
         <exo-confirm-dialog
           v-if="confirmDelete"
           ref="deleteRuleConfirmDialog"
@@ -167,10 +164,6 @@ export default {
     program: {
       type: Object,
       default: null
-    },
-    events: {
-      type: Array,
-      default: () => [],
     },
     tab: {
       type: Number,
