@@ -208,8 +208,8 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$challengesServices.getChallengeById(this.challenge?.id)
-        .then(challenge => this.$root.$emit('edit-challenge-details', challenge));
+      this.$ruleServices.getRuleById(this.challenge?.id)
+        .then(rule => this.$root.$emit('rule-form-drawer', rule));
     },
     deleteChallenge(event) {
       if (event) {
