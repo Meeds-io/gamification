@@ -324,6 +324,9 @@ export default {
         enabled: true,
         area: this.programTitle
       };
+      if (!this.program) {
+        this.program = this.rule?.domainDTO;
+      }
       this.eventExist = false;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
