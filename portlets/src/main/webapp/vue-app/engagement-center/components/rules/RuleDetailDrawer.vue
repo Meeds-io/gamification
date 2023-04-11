@@ -28,7 +28,7 @@
             :max-height="programCoverSize"
             :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
         </div>
-        <div v-if="!automaticRule && endDate !== null && startDate != null" class="d-flex flex-row py-3">
+        <div v-if="!automaticRule" class="d-flex flex-row py-3">
           <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="DateInfo"></span>
         </div>
         <div
@@ -178,23 +178,26 @@ export default {
       return this.rule?.score || this.rule?.points;
     },
     startDate() {
-      return new Date(this.rule?.startDate).getTime() || null;
+      return this.rule?.startDate && new Date(this.rule.startDate);
     },
     endDate() {
-      return new Date(this.rule?.endDate).getTime() || null;
+      return this.rule?.endDate && new Date(this.rule.endDate);
     },
     isActiveRule() {
-      return this.automaticRule || (this.startDate === null && this.endDate === null) || (this.startDate <= Date.now() && this.endDate >= Date.now());
+      return this.automaticRule || (this.startDate === null && this.endDate === null)
+                                || (this.startDate?.getTime() <= Date.now() && this.endDate?.getTime() >= Date.now())
+                                || (this.startDate === null && this.endDate?.getTime() >= Date.now())
+                                || (this.startDate?.getTime() <= Date.now() && this.endDate === null);
     },
     DateInfo() {
-      if (this.isActiveRule) {
-        const days = Math.round((this.endDate - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('rule.detail.challengeEndIn', {0: days});
-      } else if (this.endDate < Date.now()) {
-        return this.$t('rule.detail.challengeEnded');
+      if (this.endDate?.getTime() < Date.now()) {
+        return this.$t('challenges.label.over');
+      } else if (this.startDate?.getTime() > Date.now()) {
+        const days = Math.round((this.startDate?.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
+        return this.$t('challenges.label.openIn', {0: days});
       } else {
-        const days = Math.round((this.startDate - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
-        return this.$t('rule.detail.challengeOpenIn', {0: days});
+        const days = Math.round((this.endDate?.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
+        return this.$t('challenges.label.daysLeft', {0: days});
       }
     },
     spaceId() {
