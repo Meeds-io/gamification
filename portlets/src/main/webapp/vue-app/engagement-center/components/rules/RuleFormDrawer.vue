@@ -17,9 +17,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="ruleFormDrawer"
-    right
-    v-model="drawer"
     body-classes="hide-scroll decrease-z-index-more"
+    class="EngagementCenterDrawer"
+    right
     allow-expand
     @opened="stepper = 1"
     @closed="stepper = 0">
@@ -172,22 +172,66 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="ma-0">
           <span class="font-weight-bold dark-grey-color text-subtitle-1">{{ $t('rule.form.label.stepTwo') }}</span>
         </v-stepper-step>
-        <v-stepper-content step="2">
-          <v-chip
-            class="ma-2"
-            outlined>
-            {{ $t('rule.form.label.duration') }}
-          </v-chip>
-          <v-chip
-            class="ma-2"
-            outlined>
-            {{ $t('rule.form.label.action') }}
-          </v-chip>
-          <v-chip
-            class="ma-2"
-            outlined>
-            {{ $t('rule.form.label.recurrence') }}
-          </v-chip>
+        <v-stepper-content step="2" class="pe-0 ma-0 py-0">
+          <div class="ps-7">
+            <v-chip
+              v-if="manualType"
+              class="ma-2"
+              :color="durationCondition && 'primary' || ''"
+              :outlined="!durationCondition"
+              :dark="durationCondition"
+              @click="updateDateCondition">
+              {{ $t('rule.form.label.duration') }}
+            </v-chip>
+            <v-chip
+              class="ma-2"
+              outlined>
+              {{ $t('rule.form.label.action') }}
+            </v-chip>
+            <v-chip
+              class="ma-2"
+              outlined>
+              {{ $t('rule.form.label.recurrence') }}
+            </v-chip>
+          </div>
+          <div v-if="durationCondition">
+            <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
+              {{ $t('rule.form.label.duration.title') }}
+            </v-card-text>
+
+            <v-card-text class="pa-0 flex d-flex challengeDates">
+              <select
+                v-model="durationFilter"
+                class="d-flex flex-grow-1 width-auto ignore-vuetify-classes">
+                <option value="BEFORE">
+                  {{ $t('rule.form.label.before') }}
+                </option>
+                <option value="AFTER">
+                  {{ $t('rule.form.label.after') }}
+                </option>
+              </select>
+              <v-icon color="primary" class="mb-2 px-4">fas fa-calendar-check</v-icon>
+              <date-picker
+                v-if="durationFilter === 'AFTER'"
+                v-model="startDate"
+                :default-value="false"
+                :placeholder="$t('challenges.label.startDate')"
+                :max-value="maximumStartDate"
+                :min-value="minimumStartDate"
+                :disabled="disabledStartDate"
+                class="flex-grow-1 my-auto"
+                @input="updateRuleStartDate" />
+              <date-picker
+                v-else
+                v-model="endDate"
+                :default-value="false"
+                :placeholder="$t('challenges.label.endDate')"
+                :min-value="minimumEndDate"
+                :disabled="disabledEndDate"
+                class="flex-grow-1 my-auto"
+                @input="updateRuleEndDate" />
+            </v-card-text>
+          </div>
         </v-stepper-content>
       </v-stepper>
     </template>
@@ -244,7 +288,6 @@ export default {
     ruleToUpdate: {},
     saving: false,
     eventMapping: [],
-    drawer: false,
     value: '',
     eventExist: false,
     validDescription: false,
@@ -255,8 +298,34 @@ export default {
     scoreRules: [
       v => ( v && v <= 10000 ),
     ],
+    startDate: null,
+    endDate: null,
+    disabledStartDate: false,
+    disabledEndDate: false,
+    durationCondition: false,
+    durationFilter: 'BEFORE'
   }),
   computed: {
+    minimumStartDate() {
+      return new Date();
+    },
+    maximumStartDate() {
+      if (this.endDate){
+        const date = new Date(this.endDate);
+        date.setDate(date.getDate()- 1) ;
+        return date;
+      } else {
+        return null;
+      }
+    },
+    minimumEndDate() {
+      let date = new Date();
+      if (this.startDate){
+        date = new Date(this.startDate);
+      }
+      date.setDate(date.getDate() + 1) ;
+      return date;
+    },
     eventNames() {
       this.events.filter(event => event != null).forEach(event => {
         const eventObject = {};
@@ -290,8 +359,11 @@ export default {
     ruleTypeValid() {
       return this.manualType || (this.automaticType && this.validEvent);
     },
+    durationValid() {
+      return !this.durationCondition || (this.durationCondition && (this.startDate != null || this.endDate != null));
+    },
     disableSaveButton() {
-      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.isValidForm;
+      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.isValidForm;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -307,7 +379,13 @@ export default {
     },
     manualType() {
       return this.ruleType === 'MANUAL';
-    }
+    },
+    ruleStartDate() {
+      return this.rule?.startDate;
+    },
+    ruleEndDate() {
+      return this.rule?.endDate;
+    },
   },
   watch: {
     value: {
@@ -317,6 +395,10 @@ export default {
         this.validEvent = this.value && this.value !== '';
       }
     },
+    durationFilter() {
+      this.startDate = null;
+      this.endDate = null;
+    }
   },
   created() {
     this.$root.$on('rule-form-drawer', (rule) => {
@@ -328,6 +410,9 @@ export default {
       if (!this.program) {
         this.program = this.rule?.domainDTO;
       }
+      this.durationCondition = this.ruleStartDate != null || this.ruleEndDate != null;
+      this.startDate = this.ruleStartDate ? new Date(this.rule?.startDate) : null;
+      this.endDate = this.ruleEndDate ? new Date(this.rule?.endDate) : null;
       this.eventExist = false;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
@@ -370,6 +455,18 @@ export default {
         this.$set(this.rule,'description', value);
       }
     },
+    updateRuleStartDate() {
+      if (this.startDate) {
+        const date = new Date(this.startDate);
+        this.$set(this.rule,'startDate', this.$engagementCenterUtils.getIsoDate(date));
+      }
+    },
+    updateRuleEndDate() {
+      if (this.endDate) {
+        const date = new Date(this.endDate);
+        this.$set(this.rule,'endDate', this.$engagementCenterUtils.getIsoDate(date));
+      }
+    },
     updateRule() {
       this.saving = true;
       this.$refs.ruleFormDrawer.startLoading();
@@ -404,6 +501,11 @@ export default {
     setAutomatic() {
       if (this.ruleType === 'MANUAL' || !this.ruleType) {
         this.$set(this.rule,'type', 'AUTOMATIC');
+        this.durationCondition = false;
+        this.startDate = null;
+        this.endDate = null;
+        this.$set(this.rule,'startDate', null);
+        this.$set(this.rule,'endDate', null);
       } else {
         this.$set(this.rule,'type', '');
       }
@@ -414,6 +516,11 @@ export default {
       } else {
         this.$set(this.rule,'type', '');
       }
+    },
+    updateDateCondition() {
+      this.durationCondition = !this.durationCondition;
+      this.$set(this.rule,'startDate', null);
+      this.$set(this.rule,'endDate', null);
     },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
