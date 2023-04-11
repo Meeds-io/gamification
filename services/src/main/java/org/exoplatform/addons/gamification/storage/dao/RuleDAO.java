@@ -314,7 +314,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       switch (dateFilterType) {
       case STARTED:
         suffixes.add("StartDateAndEndDate");
-        predicates.add("(r.startDate <= :date AND r.endDate >= :date) OR (r.startDate IS NULL AND r.endDate IS NULL)");
+        predicates.add("((r.startDate <= :date AND r.endDate >= :date) OR" +
+                       " (r.startDate IS NULL AND r.endDate IS NULL) OR" +
+                       " (r.startDate IS NULL AND r.endDate >= :date) OR" +
+                       " (r.endDate IS NULL AND r.startDate <= :date))");
         break;
       case NOT_STARTED:
         suffixes.add("StartDate");
@@ -347,11 +350,19 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       switch (filter.getEntityStatusType()) {
       case ENABLED:
         suffixes.add("FilterByEnabled");
-        predicates.add("r.isEnabled = :enabled AND ((r.startDate IS NULL AND r.endDate IS NULL) OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("r.isEnabled = :enabled " +
+                       "AND ((r.startDate IS NULL AND r.endDate IS NULL) OR " +
+                           "(r.startDate <= :date AND r.endDate >= :date AND r.type = 1) OR" +
+                           "(r.startDate IS NULL AND r.endDate >= :date) OR" +
+                           "(r.endDate IS NULL AND r.startDate <= :date))");
         break;
       case DISABLED:
         suffixes.add("FilterByDisabled");
-        predicates.add("r.isEnabled = :enabled AND ((r.startDate IS NULL AND r.endDate IS NULL) OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("r.isEnabled = :enabled " +
+                       "AND ((r.startDate IS NULL AND r.endDate IS NULL) OR " +
+                           "(r.startDate <= :date AND r.endDate >= :date AND r.type = 1) OR" +
+                           "(r.startDate IS NULL AND r.endDate >= :date) OR" +
+                           "(r.endDate IS NULL AND r.startDate <= :date))");
         break;
       default:
         break;
