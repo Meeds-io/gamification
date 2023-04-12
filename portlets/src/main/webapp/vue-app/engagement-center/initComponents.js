@@ -22,8 +22,6 @@ import Challenges from './components/challenges/Challenges.vue';
 import ChallengeCard from './components/challenges/ChallengeCard.vue';
 import ChallengesList from './components/challenges/ChallengesList.vue';
 import DomainChallengesList from './components/challenges/DomainChallengesList.vue';
-import ChallengeDrawer from './components/challenges/ChallengeDrawer.vue';
-import ChallengeProgramDrawer from './components/challenges/ChallengeProgramDrawer.vue';
 import ChallengeDatePicker from './components/challenges/ChallengeDatePicker.vue';
 import WinnersDrawer from './components/challenges/WinnersDrawer.vue';
 import ProgramSuggester from './components/common/ProgramSuggester.vue';
@@ -60,8 +58,6 @@ const components = {
   'challenge-card': ChallengeCard,
   'challenges-list': ChallengesList,
   'domain-challenges-list': DomainChallengesList,
-  'challenge-drawer': ChallengeDrawer,
-  'challenge-program-drawer': ChallengeProgramDrawer,
   'challenge-date-picker': ChallengeDatePicker,
   'program-suggester': ProgramSuggester,
   'engagement-center-no-results': NoResultFound,
