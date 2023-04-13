@@ -17,7 +17,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="ruleFormDrawer"
-    v-model="drawer"
     body-classes="hide-scroll decrease-z-index-more"
     class="EngagementCenterDrawer"
     right
@@ -180,7 +179,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :color="durationCondition && 'primary' || ''"
               :outlined="!durationCondition"
               :dark="durationCondition"
-              @click="durationCondition = !durationCondition">
+              @click="updateDateCondition">
               {{ $t('rule.form.label.duration') }}
             </v-chip>
             <v-chip
@@ -272,10 +271,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    program: {
-      type: Object,
-      default: () => null,
-    },
     events: {
       type: Array,
       default: function() {
@@ -285,10 +280,10 @@ export default {
   },
   data: () => ({
     rule: {},
+    program: {},
     ruleToUpdate: {},
     saving: false,
     eventMapping: [],
-    drawer: false,
     value: '',
     eventExist: false,
     validDescription: false,
@@ -408,9 +403,7 @@ export default {
         enabled: true,
         area: this.programTitle
       };
-      if (!this.program) {
-        this.program = this.rule?.domainDTO;
-      }
+      this.program = this.rule?.domainDTO;
       this.durationCondition = this.ruleStartDate != null || this.ruleEndDate != null;
       this.startDate = this.ruleStartDate ? new Date(this.rule?.startDate) : null;
       this.endDate = this.ruleEndDate ? new Date(this.rule?.endDate) : null;
@@ -502,6 +495,11 @@ export default {
     setAutomatic() {
       if (this.ruleType === 'MANUAL' || !this.ruleType) {
         this.$set(this.rule,'type', 'AUTOMATIC');
+        this.durationCondition = false;
+        this.startDate = null;
+        this.endDate = null;
+        this.$set(this.rule,'startDate', null);
+        this.$set(this.rule,'endDate', null);
       } else {
         this.$set(this.rule,'type', '');
       }
@@ -512,6 +510,11 @@ export default {
       } else {
         this.$set(this.rule,'type', '');
       }
+    },
+    updateDateCondition() {
+      this.durationCondition = !this.durationCondition;
+      this.$set(this.rule,'startDate', null);
+      this.$set(this.rule,'endDate', null);
     },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {
