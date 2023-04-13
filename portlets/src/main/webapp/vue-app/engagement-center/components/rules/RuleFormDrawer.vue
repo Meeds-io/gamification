@@ -17,7 +17,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="ruleFormDrawer"
-    v-model="drawer"
     body-classes="hide-scroll decrease-z-index-more"
     class="EngagementCenterDrawer"
     right
@@ -180,7 +179,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :color="durationCondition && 'primary' || ''"
               :outlined="!durationCondition"
               :dark="durationCondition"
-              @click="durationCondition = !durationCondition">
+              @click="updateDateCondition">
               {{ $t('rule.form.label.duration') }}
             </v-chip>
             <v-chip
@@ -288,7 +287,6 @@ export default {
     ruleToUpdate: {},
     saving: false,
     eventMapping: [],
-    drawer: false,
     value: '',
     eventExist: false,
     validDescription: false,
@@ -502,6 +500,11 @@ export default {
     setAutomatic() {
       if (this.ruleType === 'MANUAL' || !this.ruleType) {
         this.$set(this.rule,'type', 'AUTOMATIC');
+        this.durationCondition = false;
+        this.startDate = null;
+        this.endDate = null;
+        this.$set(this.rule,'startDate', null);
+        this.$set(this.rule,'endDate', null);
       } else {
         this.$set(this.rule,'type', '');
       }
@@ -512,6 +515,11 @@ export default {
       } else {
         this.$set(this.rule,'type', '');
       }
+    },
+    updateDateCondition() {
+      this.durationCondition = !this.durationCondition;
+      this.$set(this.rule,'startDate', null);
+      this.$set(this.rule,'endDate', null);
     },
     displayAlert(message, type) {
       document.dispatchEvent(new CustomEvent('notification-alert', {detail: {

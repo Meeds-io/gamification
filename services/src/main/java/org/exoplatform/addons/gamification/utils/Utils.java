@@ -419,8 +419,10 @@ public class Utils {
 
   public static UserInfo toUserInfo(long domainId, String username) {
     DomainService domainService = CommonsUtils.getService(DomainService.class);
-    DomainDTO domain = domainService.getDomainById(domainId);
-
+    DomainDTO domain = null;
+    if (domainId > 0) {
+      domain = domainService.getDomainById(domainId);
+    }
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
     UserInfo userInfo = new UserInfo();
