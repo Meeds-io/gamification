@@ -344,7 +344,10 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
       if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
         suffixes.add("FilterByALL");
-        predicates.add("((r.startDate IS NULL AND r.endDate IS NULL) OR (r.startDate <= :date AND r.endDate >= :date AND r.type = 1))");
+        predicates.add("((r.startDate IS NULL AND r.endDate IS NULL) OR " +
+                "(r.startDate <= :date AND r.endDate >= :date AND r.type = 1) OR " +
+                "(r.startDate IS NULL AND r.endDate >= :date) OR " +
+                "(r.endDate IS NULL AND r.startDate <= :date))");
       }
     } else {
       switch (filter.getEntityStatusType()) {
