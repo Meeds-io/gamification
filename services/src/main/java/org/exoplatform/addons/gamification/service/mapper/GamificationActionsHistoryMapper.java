@@ -26,6 +26,12 @@ public class GamificationActionsHistoryMapper {
   }
 
   public static GamificationActionsHistoryDTO fromEntity(GamificationActionsHistory gamificationActionsHistoryEntity) {
+    String objectId;
+    if (gamificationActionsHistoryEntity.getActivityId() != null && gamificationActionsHistoryEntity.getActivityId() != 0) {
+      objectId = String.valueOf(gamificationActionsHistoryEntity.getActivityId());
+    } else {
+      objectId = gamificationActionsHistoryEntity.getObjectId();
+    }
     DomainEntity domainEntity = gamificationActionsHistoryEntity.getDomainEntity();
     return new GamificationActionsHistoryDTO(gamificationActionsHistoryEntity.getId(),
                                              gamificationActionsHistoryEntity.getEarnerId(),
@@ -37,7 +43,7 @@ public class GamificationActionsHistoryMapper {
                                              gamificationActionsHistoryEntity.getContext(),
                                              gamificationActionsHistoryEntity.getActionScore(),
                                              gamificationActionsHistoryEntity.getReceiver(),
-                                             gamificationActionsHistoryEntity.getObjectId(),
+                                             objectId,
                                              gamificationActionsHistoryEntity.getObjectType(),
                                              gamificationActionsHistoryEntity.getRuleEntity().getId(),
                                              gamificationActionsHistoryEntity.getActivityId(),
