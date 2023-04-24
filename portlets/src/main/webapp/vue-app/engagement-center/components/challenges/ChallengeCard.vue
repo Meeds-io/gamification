@@ -158,14 +158,14 @@ export default {
     challengeTitle() {
       return this.challenge?.title;
     },
-    isOpenChallenge() {
-      return this.challenge?.startDate === null && this.challenge?.endDate === null;
-    },
     startDate() {
       return this.challenge?.startDate && new Date(this.challenge.startDate);
     },
     endDate() {
       return this.challenge?.endDate && new Date(this.challenge.endDate);
+    },
+    isOpenChallenge() {
+      return this.challenge?.endDate === null && (this.challenge?.startDate === null || this.startDate?.getTime() < Date.now());
     },
     remainingPeriodLabel() {
       if (this.endDate?.getTime() < Date.now()) {
