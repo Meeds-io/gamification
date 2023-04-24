@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         hide-details />
     </v-card>
     <v-spacer v-if="isMobile" />
-    <v-scale-transition>
+    <v-scale-transition v-if="canManageRule">
       <select
         v-model="filter"
         class="width-auto my-auto ignore-vuetify-classes d-none d-sm-inline">
@@ -70,12 +70,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         fa-filter
       </v-icon>
       <v-icon
-        v-else
+        v-else-if="canManageRule"
         @click="openBottomMenuFilter">
         fa-sliders-h
       </v-icon>
     </div>
-    <v-bottom-sheet v-model="bottomMenu" class="pa-0">
+    <v-bottom-sheet
+      v-if="canManageRule"
+      v-model="bottomMenu"
+      class="pa-0">
       <v-sheet class="text-center">
         <v-toolbar
           color="primary"
