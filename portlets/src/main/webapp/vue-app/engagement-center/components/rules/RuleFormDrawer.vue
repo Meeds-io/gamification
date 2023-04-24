@@ -50,11 +50,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </v-card-text>
             <v-card-text class="d-flex pa-0">
               <v-img
-                :src="program.coverUrl"
+                :src="programCover"
                 :height="programCoverSize"
                 :width="programCoverSize"
                 :max-height="programCoverSize"
-                :max-width="programCoverSize" /><span class="my-auto ms-3">{{ program.title }}</span>
+                :max-width="programCoverSize" /><span class="my-auto ms-3">{{ programTitle }}</span>
             </v-card-text>
             <v-card-text class="d-flex flex-grow-1 text-no-wrap text-left text-subtitle-1 px-0 pb-1">
               {{ $t('rule.form.label.rules') }}
@@ -222,7 +222,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 class="flex-grow-1 my-auto"
                 @input="updateRuleStartDate" />
               <date-picker
-                v-else
+                v-else-if="durationFilter === 'BEFORE'"
                 v-model="endDate"
                 :default-value="false"
                 :placeholder="$t('challenges.label.endDate')"
@@ -359,8 +359,14 @@ export default {
     ruleTypeValid() {
       return this.manualType || (this.automaticType && this.validEvent);
     },
+    ruleStartDate() {
+      return this.rule?.startDate;
+    },
+    ruleEndDate() {
+      return this.rule?.endDate;
+    },
     durationValid() {
-      return !this.durationCondition || (this.durationCondition && (this.startDate != null || this.endDate != null));
+      return !this.durationCondition || (this.durationCondition && (this.ruleStartDate != null || this.ruleEndDate != null));
     },
     disableSaveButton() {
       return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.isValidForm;
@@ -379,12 +385,6 @@ export default {
     },
     manualType() {
       return this.ruleType === 'MANUAL';
-    },
-    ruleStartDate() {
-      return this.rule?.startDate;
-    },
-    ruleEndDate() {
-      return this.rule?.endDate;
     },
   },
   watch: {
@@ -411,8 +411,10 @@ export default {
         this.program = this.rule?.domainDTO;
       }
       this.durationCondition = this.ruleStartDate != null || this.ruleEndDate != null;
-      this.startDate = this.ruleStartDate ? new Date(this.rule?.startDate) : null;
-      this.endDate = this.ruleEndDate ? new Date(this.rule?.endDate) : null;
+      this.startDate = this.ruleStartDate ? new Date(this.rule.startDate) : null;
+      this.endDate = this.ruleEndDate ? new Date(this.rule.endDate) : null;
+      this.durationFilter = this.ruleStartDate != null ? 'AFTER' : 'BEFORE';
+      this.durationCondition = this.ruleStartDate != null || this.ruleEndDate != null;
       this.eventExist = false;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
@@ -437,6 +439,8 @@ export default {
       this.$refs.ruleFormDrawer.close();
       this.rule.enabled = true;
       this.rule.event = null;
+      this.startDate = null;
+      this.endDate = null;
       this.$set(this.rule,'title','');
       this.rule.description = '';
       this.value = {};
@@ -459,12 +463,14 @@ export default {
       if (this.startDate) {
         const date = new Date(this.startDate);
         this.$set(this.rule,'startDate', this.$engagementCenterUtils.getIsoDate(date));
+        this.$set(this.rule,'endDate', null);
       }
     },
     updateRuleEndDate() {
       if (this.endDate) {
         const date = new Date(this.endDate);
         this.$set(this.rule,'endDate', this.$engagementCenterUtils.getIsoDate(date));
+        this.$set(this.rule,'startDate', null);
       }
     },
     updateRule() {
