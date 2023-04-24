@@ -78,6 +78,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :label="$t('rule.form.label.description')"
                 :placeholder="$t('rule.form.label.description.placeholder')"
                 :max-length="500"
+                ck-editor-type="rule"
                 @addDescription="addDescription($event)"
                 @validity-updated=" validDescription = $event" />
             </v-card-text>
