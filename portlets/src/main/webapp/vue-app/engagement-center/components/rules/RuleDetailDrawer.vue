@@ -28,11 +28,11 @@
             :max-height="programCoverSize"
             :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
         </div>
-        <div v-if="!automaticRule" class="d-flex flex-row py-3">
+        <div v-if="!automaticRule && !isOpenRule" class="d-flex flex-row py-3">
           <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="DateInfo"></span>
         </div>
         <div
-          v-if="!automaticRule && isActiveRule"
+          v-if="canAnnounce"
           @click="showEditor"
           class="d-flex flex-row py-3 clickable">
           <v-icon size="30" class="primary--text">fas fa-bullhorn</v-icon><span class="font-weight-bold my-auto ms-3">{{ $t('rule.detail.AnnounceYourAchievement') }} </span>
@@ -128,6 +128,10 @@ export default {
       type: Number,
       default: () => 0,
     },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     rule: {},
@@ -183,6 +187,9 @@ export default {
     endDate() {
       return this.rule?.endDate && new Date(this.rule.endDate);
     },
+    isOpenRule() {
+      return this.rule?.endDate === null && (this.rule?.startDate === null || this.startDate?.getTime() < Date.now());
+    },
     isActiveRule() {
       return this.automaticRule || (this.startDate === null && this.endDate === null)
                                 || (this.startDate?.getTime() <= Date.now() && this.endDate?.getTime() >= Date.now())
@@ -205,6 +212,18 @@ export default {
     },
     btnDisabled() {
       return !this.validInput || !this.comment || !this.comment.length;
+    },
+    canManageRule() {
+      return this.isAdministrator || this.program?.userInfo?.canEdit;
+    },
+    enabledRule() {
+      return this.rule?.enabled;
+    },
+    isRuleAccessible() {
+      return this.enabledRule|| this.canManageRule;
+    },
+    canAnnounce() {
+      return !this.automaticRule && this.isActiveRule && this.enabledRule;
     }
   },
   watch: {
@@ -232,7 +251,7 @@ export default {
       this.rule = rule;
       this.editorFocus = editorFocus;
       this.program = rule?.domainDTO || rule?.program;
-      if (this.$refs.ruleDetailDrawer) {
+      if (this.$refs.ruleDetailDrawer && this.isRuleAccessible) {
         this.$refs.ruleDetailDrawer.open();
         this.$nextTick()
           .then(() => {
