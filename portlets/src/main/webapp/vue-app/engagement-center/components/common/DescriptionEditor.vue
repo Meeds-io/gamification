@@ -71,6 +71,10 @@ export default {
       type: Boolean,
       default: false
     },
+    ckEditorType: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return {
@@ -162,7 +166,7 @@ export default {
       this.editor = CKEDITOR.instances['descriptionContent'];
       const self = this;
       $(this.$refs.editor).ckeditor({
-        customConfig: '/commons-extension/ckeditorCustom/config.js',
+        customConfig: `${eXo.env.portal.context}/${eXo.env.portal.rest}/richeditor/configuration?type=${this.ckEditorType || 'default'}&v=${eXo.env.client.assetsVersion}`,
         extraPlugins,
         removePlugins,
         toolbar,
