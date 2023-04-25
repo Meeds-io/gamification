@@ -183,16 +183,30 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               @click="updateDateCondition">
               {{ $t('rule.form.label.duration') }}
             </v-chip>
-            <v-chip
-              class="ma-2"
-              outlined>
-              {{ $t('rule.form.label.action') }}
-            </v-chip>
-            <v-chip
-              class="ma-2"
-              outlined>
-              {{ $t('rule.form.label.recurrence') }}
-            </v-chip>
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <v-chip
+                  class="ma-2"
+                  outlined
+                  v-bind="attrs"
+                  v-on="on">
+                  {{ $t('rule.form.label.action') }}
+                </v-chip>
+              </template>
+              <span>{{ $t('challenges.label.comingSoon') }}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <v-chip
+                  class="ma-2"
+                  outlined
+                  v-bind="attrs"
+                  v-on="on">
+                  {{ $t('rule.form.label.recurrence') }}
+                </v-chip>
+              </template>
+              <span>{{ $t('challenges.label.comingSoon') }}</span>
+            </v-tooltip>
           </div>
           <div v-if="durationCondition">
             <v-card-text class="d-flex flex-grow-1 text-left text-subtitle-1 px-0 py-2">
