@@ -58,7 +58,8 @@
             v-model="programAttendee"
             :labels="programSuggesterLabels"
             :include-deleted="IncludeDisabledPrograms"
-            :include-disabled="IncludeDisabledPrograms" />
+            :include-disabled="IncludeDisabledPrograms"
+            :only-owned="administrationMode" />
           <div v-if="programs" class="identitySuggester no-border mt-0">
             <program-attendee-item
               v-for="program in programs"
@@ -116,6 +117,10 @@
 export default {
   props: {
     isAdministrator: {
+      type: Boolean,
+      default: false,
+    },
+    administrationMode: {
       type: Boolean,
       default: false,
     },

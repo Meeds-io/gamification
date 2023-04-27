@@ -175,7 +175,7 @@ public class RealizationsRest implements ResourceContainer {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @RolesAllowed("administrators")
+  @RolesAllowed("users")
   @Path("updateRealizations")
   @Operation(summary = "Updates an existing realization", method = "PUT", description = "Updates an existing realization")
   @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
@@ -188,10 +188,12 @@ public class RealizationsRest implements ResourceContainer {
                                     @Parameter(description = "new action Label of realization") @QueryParam("actionLabel") String actionLabel,
                                     @Parameter(description = "new points of realization") @QueryParam("points") Long points) {
 
-    String currentUser = Utils.getCurrentUser();
+    Identity currenIdentity = ConversationState.getCurrent().getIdentity();
+    String currentUserName = currenIdentity.getUserId();
+
     try {
       GamificationActionsHistoryDTO realization = realizationsService.getRealizationById(Long.parseLong(realizationId),
-                                                                                         currentUser);
+                                                                                         currenIdentity);
       if (!actionLabel.isEmpty()) {
         realization.setActionTitle(actionLabel);
       }
@@ -201,13 +203,14 @@ public class RealizationsRest implements ResourceContainer {
       }
       realization.setStatus(HistoryStatus.valueOf(status).name());
 
-      GamificationActionsHistoryDTO gamificationActionsHistoryDTO = realizationsService.updateRealization(realization);
+      GamificationActionsHistoryDTO gamificationActionsHistoryDTO = realizationsService.updateRealization(realization,
+                                                                                                          currenIdentity);
       return Response.ok(GamificationActionsHistoryMapper.toRestEntity(gamificationActionsHistoryDTO, identityManager)).build();
     } catch (IllegalAccessException e) {
-      LOG.debug("User '{}' doesn't have enough privileges to update realization with id {}", currentUser, realizationId, e);
+      LOG.debug("User '{}' doesn't have enough privileges to update realization with id {}", currentUserName, realizationId, e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (ObjectNotFoundException e) {
-      LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUser, e);
+      LOG.debug("User '{}' attempts to update a not existing realization '{}'", currentUserName, e);
       return Response.status(Response.Status.NOT_FOUND).entity("realization not found").build();
     }
   }

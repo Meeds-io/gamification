@@ -41,12 +41,12 @@ public interface RealizationsService {
    * Retrieves a realization identified by its technical identifier.
    *
    * @param realizationId technical identifier of a realization
-   * @param username User name accessing realization
+   * @param identity current identity {@link Identity}
    * @return A {@link GamificationActionsHistoryDTO} object
    * @throws IllegalAccessException when user is not authorized to access
    *           realization
    */
-  GamificationActionsHistoryDTO getRealizationById(long realizationId, String username) throws IllegalAccessException;
+  GamificationActionsHistoryDTO getRealizationById(long realizationId, Identity identity) throws IllegalAccessException;
 
   /**
    * Retrieves a realization identified by its technical identifier.
@@ -76,13 +76,13 @@ public interface RealizationsService {
    * Updates an existing realization
    *
    * @param realization {@link GamificationActionsHistoryDTO} object to update
-   * @param username User name updating realization
+   * @param identity current identity {@link Identity}
    * @throws IllegalAccessException when user is not authorized to update the
    *           realization
    * @throws ObjectNotFoundException when the realization identified by its
    *           technical identifier is not found
    */
-  GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization, String username) throws IllegalAccessException, ObjectNotFoundException;
+  GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization, Identity identity) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
    * Updates an existing realization
