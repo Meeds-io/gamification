@@ -42,6 +42,7 @@ public class DomainFilter implements Serializable {
 
   private boolean           sortByBudget;
 
-  private List<Long> spacesIds;
+  private List<Long>        spacesIds;
 
+  private long              ownerId;
 }

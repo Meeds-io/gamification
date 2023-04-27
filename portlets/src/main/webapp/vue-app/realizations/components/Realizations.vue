@@ -17,7 +17,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app
     class="Realizations border-box-sizing">
-    <div class="d-flex px-7 pt-5" flat>
+    <div v-if="!isAdministrator" class="d-flex px-7 pt-5">
+      <v-switch
+        id="realizationAdministrationSwitch"
+        v-model="administrationMode"
+        class="my-0 ms-0 me-n1 pt-0"
+        @change="switchToAdminMode()" />
+      <span class="me-auto text-sub-title ps-3">{{ $t("realization.label.switchAdministration") }}</span>
+    </div>
+    <div class="d-flex px-7" flat>
       <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
         <v-btn class="btn btn-primary export" @click="exportFile()">
           <span class="ms-2 d-none d-lg-inline">
@@ -82,7 +90,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
-          :is-administrator="isAdministrator"
+          :is-administrator="isAdministrator || administrationMode"
           :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
@@ -129,7 +137,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
     <filter-realizations-drawer
-      :is-administrator="isAdministrator"
+      :is-administrator="isAdministrator || administrationMode"
+      :administration-mode="administrationMode"
       @selectionConfirmed="filterByPrograms" />
   </v-app>
 </template>
@@ -156,6 +165,7 @@ export default {
     realizations: [],
     availableSortBy: [],
     searchList: [],
+    ownedPrograms: [],
     earnerIds: [],
     offset: 0,
     limit: 25,
@@ -183,7 +193,8 @@ export default {
     isMobile: false,
     filterActivated: false,
     selected: 'Date',
-    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
+    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
+    administrationMode: false
   }),
   beforeDestroy () {
     if (typeof window === 'undefined') {return;}
@@ -209,7 +220,7 @@ export default {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
-      return this.isAdministrator ?  this.earnerIds : [this.earnerId];
+      return this.isAdministrator || this.administrationMode ?  this.earnerIds : [this.earnerId];
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -262,7 +273,7 @@ export default {
           width: '95',
         },
       ];
-      if (this.isAdministrator) {
+      if (this.isAdministrator || this.administrationMode) {
         realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
           sortable: false,
@@ -332,6 +343,9 @@ export default {
     },
     loadRealizations() {
       this.loading = true;
+      if (this.filterActivated && this.searchList.length === 0 && this.administrationMode) {
+        this.searchList = this.ownedPrograms;
+      }
       return this.getRealizations()
         .finally(() => {
           this.loading = false;
@@ -362,6 +376,21 @@ export default {
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
+    },
+    switchToAdminMode() {
+      if (this.administrationMode) {
+        this.$programsServices.retrievePrograms(0, -1, 'ALL', 'ENABLED', '', false, false, eXo.env.portal.userIdentityId)
+          .then(data => {
+            this.searchList = data.domains.map(program => program.id);
+            this.ownedPrograms = data.domains.map(program => program.id);
+            return this.$nextTick();
+          }).then(() => {
+            this.loadRealizations();
+          });
+      } else {
+        this.searchList = [];
+        this.loadRealizations();
+      }
     },
     onResize () {
       this.isMobile = window.innerWidth < 1020;

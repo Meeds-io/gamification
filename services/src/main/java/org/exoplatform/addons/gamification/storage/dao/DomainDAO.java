@@ -118,6 +118,9 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     if (StringUtils.isNotEmpty(filter.getDomainTitle())) {
       query.setParameter("searchingKey", "%" + filter.getDomainTitle() + "%");
     }
+    if (filter.getOwnerId() > 0) {
+      query.setParameter("ownerId", filter.getOwnerId());
+    }
   }
 
   private void buildPredicates(DomainFilter filter, List<String> suffixes, List<String> predicates) {
@@ -151,6 +154,10 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
       default:
         break;
       }
+    }
+    if (filter.getOwnerId() > 0) {
+      suffixes.add("ByOwnerId");
+      predicates.add(":ownerId member of d.owners");
     }
   }
 
