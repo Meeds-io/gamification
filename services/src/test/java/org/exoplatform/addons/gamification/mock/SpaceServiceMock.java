@@ -124,6 +124,14 @@ public class SpaceServiceMock implements SpaceService {
     }
   }
 
+  public List<String> getManagerSpacesIds(String username, int offset, int limit) {
+    if (username.equals("root1")) {
+      return Collections.singletonList("1");
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
   public ListAccess<Space> getMemberSpacesByFilter(String userId, SpaceFilter spaceFilter) {
     throw new UnsupportedOperationException();
   }
