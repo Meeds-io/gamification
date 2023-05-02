@@ -261,28 +261,13 @@ public class RealizationsServiceImpl implements RealizationsService {
 
     realizations.forEach(ga -> {
       try {
-        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.title.";
-        String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
-        String actionLabel = "-";
 
         RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? Utils.getRuleById(ga.getRuleId())
                                                                      : Utils.getRuleByTitle(ga.getActionTitle());
 
         String ruleTitle = rule == null ? null : rule.getEvent();
-        String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
-        actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
-        if (actionLabel == null && rule != null && actionTitleKey != null) {
-          actionLabel = escapeIllegalCharacterInMessage(rule.getEvent());
-        } else {
-          actionLabel = escapeIllegalCharacterInMessage(actionLabel);
-        }
-        String domainTitle = "-";
-        if (ga.getDomainDTO() != null) {
-          domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomainDTO().getTitle().replace(" ", ""));
-          if (domainTitle == null) {
-            domainTitle = ga.getDomainDTO().getTitle();
-          }
-        }
+        String actionLabel = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
+        String domainTitle = ga.getDomainLabel();
         domainTitle = escapeIllegalCharacterInMessage(domainTitle);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
