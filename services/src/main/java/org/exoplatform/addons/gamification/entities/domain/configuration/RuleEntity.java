@@ -48,7 +48,8 @@ import java.util.Objects;
     " WHERE rule.domainEntity.id = :domainId" +
     " AND rule.isEnabled = true" +
     " AND rule.isDeleted = false" +
-    " AND (rule.type = 0 OR (rule.type = 1 AND rule.startDate <= :date AND rule.endDate >= :date))"
+    " AND ((rule.startDate IS NULL OR rule.startDate <= :date)" +
+    "     AND (rule.endDate IS NULL OR rule.endDate >= :date))"
 )
 @NamedQuery(
  name = "Rule.getHighestBudgetDomainIds",
