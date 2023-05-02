@@ -120,6 +120,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     }
     if (filter.getOwnerId() > 0) {
       query.setParameter("ownerId", filter.getOwnerId());
+      query.setParameter("spacesIds", filter.getSpacesIds());
     }
   }
 
@@ -157,7 +158,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     }
     if (filter.getOwnerId() > 0) {
       suffixes.add("ByOwnerId");
-      predicates.add(":ownerId member of d.owners");
+      predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
     }
   }
 

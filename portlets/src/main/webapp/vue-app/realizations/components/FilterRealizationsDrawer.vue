@@ -211,6 +211,10 @@ export default {
     open() {
       this.$refs.RealizationsFilterDrawer.open();
     },
+    clear() {
+      this.$refs.programAttendeeAutoComplete.clear();
+      this.programs = [];
+    },
     cancel() {
       this.$refs.RealizationsFilterDrawer.close();
       this.reset();
