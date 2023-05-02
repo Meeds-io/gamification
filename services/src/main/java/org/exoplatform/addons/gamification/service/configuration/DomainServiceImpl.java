@@ -71,12 +71,15 @@ public class DomainServiceImpl implements DomainService {
   public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {
     List<DomainDTO> domains = new ArrayList<>();
     List<Long> domainIds;
+    List<String> spaceIds = new ArrayList<>();
+    List<String> managedSpaceIds;
+    List<Long> userSpaceIds;
     if (!Utils.isSuperManager(username)) {
-      List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
+      spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
       if (spaceIds.isEmpty()) {
         return Collections.emptyList();
       }
-      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
+      userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
       if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
         userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
       }
@@ -85,6 +88,19 @@ public class DomainServiceImpl implements DomainService {
     if (domainFilter.isSortByBudget()) {
       domainIds = domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
     } else {
+      if (domainFilter.getOwnerId() > 0) {
+        managedSpaceIds = spaceService.getManagerSpacesIds(username, 0, -1);
+        if (managedSpaceIds.isEmpty()) {
+          return Collections.emptyList();
+        }
+        if (CollectionUtils.isNotEmpty(spaceIds)) {
+          spaceIds.retainAll(managedSpaceIds);
+        } else {
+          spaceIds = managedSpaceIds;
+        }
+        userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
+        domainFilter.setSpacesIds(userSpaceIds);
+      }
       domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
     }
     for (Long domainId : domainIds) {

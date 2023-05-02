@@ -182,20 +182,22 @@ export default {
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;
           this.domains = [];
-          this.$programsServices.retrievePrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted)
+          this.$programsServices.retrievePrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted, false, this.onlyOwned ? eXo.env.portal.userIdentityId : null)
             .then(data => {
-              if (this.onlyOwned) {
-                this.domains = data?.domains.filter(domain => domain?.owners.find(owner => owner.id === eXo.env.portal.userIdentityId));
-              } else {
-                this.domains = data.domains;
-              }
+              this.domains = data.domains;
             });
         }
         this.previousSearchTerm = this.searchTerm;
       } else {
         this.domains = [];
       }
-    }
+    },
+    clear() {
+      this.domains = [];
+      this.value = null;
+      this.loadingSuggestions = 0;
+      this.$refs.selectAutoComplete.cachedItems = [];
+    },
   },
 };
 </script>

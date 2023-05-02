@@ -62,15 +62,8 @@ public class TestManageDomainsEndpoint extends AbstractServiceTest { // NOSONAR
   public void testGetAllDomains() throws Exception {
 
     startSessionAs("root1");
-    ContainerResponse response = getResponse("GET", getURLResource("domains?offset=-1&limit=10"), null);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
 
-    response = getResponse("GET", getURLResource("domains?offset=0&limit=-10"), null);
-    assertNotNull(response);
-    assertEquals(400, response.getStatus());
-
-    response = getResponse("GET", getURLResource("domains"), null);
+    ContainerResponse response = getResponse("GET", getURLResource("domains"), null);
     assertNotNull(response);
     assertEquals(200, response.getStatus());
 

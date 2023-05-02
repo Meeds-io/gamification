@@ -26,6 +26,7 @@ import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
@@ -78,8 +79,12 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     String username = identity.getUserId();
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (Utils.isSuperManager(username) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
-        && filter.getEarnerIds().contains(userIdentity.getId()))) {
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    if (Utils.isSuperManager(username)
+        || (CollectionUtils.isNotEmpty(filter.getDomainIds())
+            && filter.getDomainIds().stream().allMatch(domainId -> domainService.isDomainOwner(domainId, identity)))
+        || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
+            && filter.getEarnerIds().contains(userIdentity.getId()))) {
       return realizationsStorage.getRealizationsByFilter(filter, offset, limit);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
@@ -107,9 +112,14 @@ public class RealizationsServiceImpl implements RealizationsService {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
     }
     String username = identity.getUserId();
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (Utils.isSuperManager(username) || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
-        && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
+    if (Utils.isSuperManager(username)
+        || (CollectionUtils.isNotEmpty(filter.getDomainIds())
+            && filter.getDomainIds().stream().allMatch(domainId -> domainService.isDomainOwner(domainId, identity)))
+        || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
+            && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
       return realizationsStorage.countRealizationsByFilter(filter);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
@@ -126,16 +136,20 @@ public class RealizationsServiceImpl implements RealizationsService {
   }
 
   @Override
-  public GamificationActionsHistoryDTO getRealizationById(long realizationId, String username) throws IllegalAccessException {
+  public GamificationActionsHistoryDTO getRealizationById(long realizationId, Identity identity) throws IllegalAccessException {
     if (realizationId <= 0) {
       throw new IllegalArgumentException("realization id is mandatory");
     }
-    if (username == null) {
-      throw new IllegalArgumentException("Username is mandatory");
+    if (identity == null) {
+      throw new IllegalArgumentException("identity is mandatory");
     }
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    String username = identity.getUserId();
+
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     GamificationActionsHistoryDTO realization = realizationsStorage.getRealizationById(realizationId);
-    if (Utils.isSuperManager(username) || realization.getEarnerId().equals(userIdentity.getId())) {
+    if (Utils.isSuperManager(username) || domainService.isDomainOwner(realization.getDomainDTO().getId(), identity)
+        || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievement");
@@ -144,24 +158,27 @@ public class RealizationsServiceImpl implements RealizationsService {
 
   @Override
   public GamificationActionsHistoryDTO updateRealization(GamificationActionsHistoryDTO realization,
-                                                         String username) throws IllegalAccessException, ObjectNotFoundException {
+                                                         Identity identity) throws IllegalAccessException,
+                                                                            ObjectNotFoundException {
     if (realization == null) {
       throw new IllegalArgumentException("Realization is mandatory");
     }
-    if (username == null) {
-      throw new IllegalArgumentException("Username is mandatory");
+    if (identity == null) {
+      throw new IllegalArgumentException("identity is mandatory");
     }
     long realizationId = realization.getId();
 
     if (realizationId <= 0) {
       throw new IllegalArgumentException("Realization id has to be positive integer");
     }
+    DomainService domainService = CommonsUtils.getService(DomainService.class);
+    String username = identity.getUserId();
 
     GamificationActionsHistoryDTO storedRealization = realizationsStorage.getRealizationById(realizationId);
     if (storedRealization == null) {
       throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
     }
-    if (Utils.isSuperManager(username)) {
+    if (Utils.isSuperManager(username) || domainService.isDomainOwner(realization.getDomainDTO().getId(), identity)) {
       return realizationsStorage.updateRealization(realization);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
@@ -244,28 +261,13 @@ public class RealizationsServiceImpl implements RealizationsService {
 
     realizations.forEach(ga -> {
       try {
-        String actionLabelKey = "exoplatform.gamification.gamificationinformation.rule.title.";
-        String domainTitleKey = "exoplatform.gamification.gamificationinformation.domain.";
-        String actionLabel = "-";
 
         RuleDTO rule = ga.getRuleId() != null && ga.getRuleId() != 0 ? Utils.getRuleById(ga.getRuleId())
                                                                      : Utils.getRuleByTitle(ga.getActionTitle());
 
         String ruleTitle = rule == null ? null : rule.getEvent();
-        String actionTitleKey = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
-        actionLabel = getI18NMessage(locale, actionLabelKey + actionTitleKey);
-        if (actionLabel == null && rule != null && actionTitleKey != null) {
-          actionLabel = escapeIllegalCharacterInMessage(rule.getEvent());
-        } else {
-          actionLabel = escapeIllegalCharacterInMessage(actionLabel);
-        }
-        String domainTitle = "-";
-        if (ga.getDomainDTO() != null) {
-          domainTitle = getI18NMessage(locale, domainTitleKey + ga.getDomainDTO().getTitle().replace(" ", ""));
-          if (domainTitle == null) {
-            domainTitle = ga.getDomainDTO().getTitle();
-          }
-        }
+        String actionLabel = ga.getActionTitle() != null ? ga.getActionTitle() : ruleTitle;
+        String domainTitle = ga.getDomainLabel();
         domainTitle = escapeIllegalCharacterInMessage(domainTitle);
         sbResult.append(ga.getCreatedDate());
         sbResult.append(DELIMITER);
