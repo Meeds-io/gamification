@@ -17,32 +17,42 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-app
     class="Realizations border-box-sizing">
-    <div class="d-flex px-7 pt-5" flat>
-      <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
-        <v-btn class="btn btn-primary export" @click="exportFile()">
-          <span class="ms-2 d-none d-lg-inline">
-            {{ $t("realization.label.export") }}
-          </span>
-        </v-btn>
-      </v-toolbar-title>
-      <v-spacer v-if="!isMobile" />
-      <div class="mt-1 ml-n4 pe-3">
-        <select-period
-          v-model="selectedPeriod"
-          :left="!isMobile"
-          class="mx-2" />
+    <div class="pt-5">
+      <div v-if="!isAdministrator" class="d-flex px-7">
+        <v-switch
+          id="realizationAdministrationSwitch"
+          v-model="administrationMode"
+          class="my-0 ms-0 me-n1 pt-0"
+          @change="switchToAdminMode()" />
+        <span class="me-auto text-sub-title ps-3">{{ $t("realization.label.switchAdministration") }}</span>
       </div>
-      <v-spacer v-if="isMobile" />
-      <div>
-        <v-btn
-          class="btn px-2 mt-1 btn-primary filterTasksSetting"
-          outlined
-          @click="openRealizationsFilterDrawer">
-          <i class="uiIcon uiIcon24x24 settingsIcon primary--text mr-1"></i>
-          <span class="d-none font-weight-regular caption d-sm-inline">
-            {{ $t('profile.label.search.openSearch') }}
-          </span>
-        </v-btn>
+      <div class="d-flex px-7">
+        <v-toolbar-title class="d-flex" v-if="!isMobile && displaySearchResult">
+          <v-btn class="btn btn-primary export" @click="exportFile()">
+            <span class="ms-2 d-none d-lg-inline">
+              {{ $t("realization.label.export") }}
+            </span>
+          </v-btn>
+        </v-toolbar-title>
+        <v-spacer v-if="!isMobile" />
+        <div class="mt-1 ml-n4 pe-3">
+          <select-period
+            v-model="selectedPeriod"
+            :left="!isMobile"
+            class="mx-2" />
+        </div>
+        <v-spacer v-if="isMobile" />
+        <div>
+          <v-btn
+            class="btn px-2 mt-1 btn-primary filterTasksSetting"
+            outlined
+            @click="openRealizationsFilterDrawer">
+            <i class="uiIcon uiIcon24x24 settingsIcon primary--text mr-1"></i>
+            <span class="d-none font-weight-regular caption d-sm-inline">
+              {{ $t('profile.label.search.openSearch') }}
+            </span>
+          </v-btn>
+        </div>
       </div>
     </div>
     <v-progress-linear
@@ -82,7 +92,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <realization-item
           :realization="props.item"
           :date-format="dateFormat"
-          :is-administrator="isAdministrator"
+          :is-administrator="isAdministrator || administrationMode"
           :action-value-extensions="actionValueExtensions"
           @updated="realizationUpdated" />
       </template>
@@ -129,7 +139,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="editRealizationDrawer"
       @updated="realizationUpdated" />
     <filter-realizations-drawer
-      :is-administrator="isAdministrator"
+      ref="filterRealizationDrawer"
+      :is-administrator="isAdministrator || administrationMode"
+      :administration-mode="administrationMode"
       @selectionConfirmed="filterByPrograms" />
   </v-app>
 </template>
@@ -156,6 +168,7 @@ export default {
     realizations: [],
     availableSortBy: [],
     searchList: [],
+    ownedPrograms: [],
     earnerIds: [],
     offset: 0,
     limit: 25,
@@ -183,7 +196,8 @@ export default {
     isMobile: false,
     filterActivated: false,
     selected: 'Date',
-    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
+    programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`,
+    administrationMode: false
   }),
   beforeDestroy () {
     if (typeof window === 'undefined') {return;}
@@ -209,7 +223,7 @@ export default {
       return this.limit < this.totalSize;
     },
     earnerIdToRetrieve() {
-      return this.isAdministrator ?  this.earnerIds : [this.earnerId];
+      return this.isAdministrator || this.administrationMode ?  this.earnerIds : [this.earnerId];
     },
     realizationsToDisplay() {
       return this.realizations.slice(0, this.limit);
@@ -262,7 +276,7 @@ export default {
           width: '95',
         },
       ];
-      if (this.isAdministrator) {
+      if (this.isAdministrator || this.administrationMode) {
         realizationsHeaders.push({
           text: this.$t('realization.label.actions'),
           sortable: false,
@@ -332,6 +346,9 @@ export default {
     },
     loadRealizations() {
       this.loading = true;
+      if (this.filterActivated && this.searchList.length === 0 && this.administrationMode) {
+        this.searchList = this.ownedPrograms;
+      }
       return this.getRealizations()
         .finally(() => {
           this.loading = false;
@@ -347,7 +364,7 @@ export default {
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve);
+      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.searchList);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
@@ -362,6 +379,23 @@ export default {
       this.searchList = programs.map(program => program.id);
       this.earnerIds = grantees.map(grantee => grantee.identity.identityId);
       this.loadRealizations();
+    },
+    switchToAdminMode() {
+      this.realizations = [];
+      if (this.administrationMode) {
+        this.$programsServices.retrievePrograms(0, -1, 'ALL', 'ENABLED', '', false, false, eXo.env.portal.userIdentityId)
+          .then(data => {
+            this.searchList = data.domains.map(program => program.id);
+            this.ownedPrograms = data.domains.map(program => program.id);
+            return this.$nextTick();
+          }).then(() => {
+            this.loadRealizations();
+          });
+      } else {
+        this.searchList = [];
+        this.loadRealizations();
+      }
+      this.$refs.filterRealizationDrawer.clear();
     },
     onResize () {
       this.isMobile = window.innerWidth < 1020;

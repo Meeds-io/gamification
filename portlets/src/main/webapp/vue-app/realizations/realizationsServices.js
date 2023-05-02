@@ -43,8 +43,31 @@ export function getAllRealizations(fromDate, toDate, earnerIds, sortBy, sortDesc
   });
 }
 
-export function exportFile(fromDate, toDate, earnerId) {
-  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?fromDate=${fromDate}&toDate=${toDate}&earnerIds=${earnerId}&returnType=xlsx`, '_blank');
+export function exportFile(fromDate, toDate, earnerIds, domainIds) {
+  const formData = new FormData();
+
+  if (fromDate) {
+    formData.append('fromDate', fromDate);
+  }
+
+  if (toDate) {
+    formData.append('toDate', toDate);
+  }
+  if (earnerIds?.length > 0) {
+    for (const earnerId of earnerIds) {
+      formData.append('earnerIds', earnerId);
+    }
+  }
+  if (domainIds?.length > 0) {
+    for (const element of domainIds) {
+      formData.append('domainIds', element);
+    }
+  }
+  formData.append('returnType', 'xlsx');
+
+  const params = new URLSearchParams(formData).toString();
+
+  window.open(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/realizations/api/allRealizations?${params}`, '_blank');
 }
 
 export function updateRealization( id, status, actionLabel, domain, points) {

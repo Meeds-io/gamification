@@ -113,41 +113,16 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getDomains(@Parameter(description = "Offset of results to retrieve", required = false)
-                             @QueryParam("offset")
-                             @DefaultValue("0")
-                             int offset,
-                             @Parameter(description = "Limit of results to retrieve", required = false)
-                             @QueryParam("limit")
-                             @DefaultValue("0")
-                             int limit,
-                             @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
-                             @QueryParam("type")
-                             @DefaultValue("AUTOMATIC")
-                             String type,
-                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
-                             @QueryParam("status")
-                             @DefaultValue("ENABLED")
-                             String status,
-                             @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false)
-                             @QueryParam("sortByBudget")
-                             @DefaultValue("false") boolean sortByBudget,
-                             @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false)
-                             @QueryParam("includeDeleted")
-                             @DefaultValue("false") boolean includeDeleted,
-                             @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
-                             @QueryParam("returnSize")
-                             @DefaultValue("false")
-                             boolean returnSize,
-                             @Parameter(description = "Term to search.", required = false)
-                             @QueryParam("query")
-                             String query) {
-    if (offset < 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Offset must be 0 or positive").build();
-    }
-    if (limit < 0) {
-      return Response.status(Response.Status.BAD_REQUEST).entity("Limit must be positive").build();
-    }
+  public Response getDomains(@Parameter(description = "Offset of results to retrieve") @QueryParam("offset") @DefaultValue("0") int offset,
+                             @Parameter(description = "Limit of results to retrieve") @QueryParam("limit") @DefaultValue("0") int limit,
+                             @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false) @QueryParam("type") @DefaultValue("AUTOMATIC") String type,
+                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false) @QueryParam("status") @DefaultValue("ENABLED") String status,
+                             @Parameter(description = "owner id") @QueryParam("ownerId") long ownerId,
+                             @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false) @QueryParam("sortByBudget") @DefaultValue("false") boolean sortByBudget,
+                             @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("includeDeleted") @DefaultValue("false") boolean includeDeleted,
+                             @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false) @QueryParam("returnSize") @DefaultValue("false") boolean returnSize,
+                             @Parameter(description = "Term to search.") @QueryParam("query") String query) {
+
     DomainFilter domainFilter = new DomainFilter();
     domainFilter.setSortByBudget(sortByBudget);
     domainFilter.setIncludeDeleted(includeDeleted);
@@ -157,6 +132,9 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     domainFilter.setEntityStatusType(statusType);
     if (StringUtils.isNotEmpty(query)) {
       domainFilter.setDomainTitle(query);
+    }
+    if (ownerId > 0) {
+      domainFilter.setOwnerId(ownerId);
     }
     String currentUser = Utils.getCurrentUser();
     DomainList domainList = new DomainList();

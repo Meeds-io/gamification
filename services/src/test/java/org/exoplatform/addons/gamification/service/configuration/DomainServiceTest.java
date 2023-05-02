@@ -92,6 +92,17 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testGetDomainsByFilter() {
+    DomainFilter filter = new DomainFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, domainService.getDomainsByFilter(filter, "root1", offset, 10).size());
+    newDomain(EntityType.AUTOMATIC, "domain5", true, new HashSet<>());
+    filter.setOwnerId(1);
+    assertEquals(1, domainService.getDomainsByFilter(filter, "root1", offset, 10).size());
+  }
+
+  @Test
   public void testCountAllDomains() {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
