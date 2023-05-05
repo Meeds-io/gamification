@@ -17,7 +17,6 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -66,48 +65,19 @@ public class DomainServiceImpl implements DomainService {
     this.fileService = fileService;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {
-    List<DomainDTO> domains = new ArrayList<>();
+  public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {// NOSONAR
     List<Long> domainIds;
-    List<String> spaceIds = new ArrayList<>();
-    List<String> managedSpaceIds;
-    List<Long> userSpaceIds;
-    if (!Utils.isSuperManager(username)) {
-      spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
-      if (spaceIds.isEmpty()) {
-        return Collections.emptyList();
+    if (computeUserSpaces(domainFilter, username)) {
+      if (domainFilter.isSortByBudget()) {
+        domainIds = domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+      } else {
+        domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
       }
-      userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
-      if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
-        userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
-      }
-      domainFilter.setSpacesIds(userSpaceIds);
-    }
-    if (domainFilter.isSortByBudget()) {
-      domainIds = domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
     } else {
-      if (domainFilter.getOwnerId() > 0) {
-        managedSpaceIds = spaceService.getManagerSpacesIds(username, 0, -1);
-        if (managedSpaceIds.isEmpty()) {
-          return Collections.emptyList();
-        }
-        if (CollectionUtils.isNotEmpty(spaceIds)) {
-          spaceIds.retainAll(managedSpaceIds);
-        } else {
-          spaceIds = managedSpaceIds;
-        }
-        userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
-        domainFilter.setSpacesIds(userSpaceIds);
-      }
-      domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
+      return Collections.emptyList();
     }
-    for (Long domainId : domainIds) {
-      DomainDTO domainDTO = getDomainById(domainId);
-      domains.add(domainDTO);
-    }
-    return domains;
+    return domainIds.stream().map(this::getDomainById).toList();
   }
 
   @Override
@@ -124,20 +94,12 @@ public class DomainServiceImpl implements DomainService {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public int countDomains(DomainFilter domainFilter, String username) {
-    if (!Utils.isSuperManager(username)) {
-      List<String> spaceIds = spaceService.getMemberSpacesIds(username, 0, -1);
-      if (spaceIds.isEmpty()) {
-        return 0;
-      }
-      List<Long> userSpaceIds = spaceIds.stream().map(Long::parseLong).toList();
-      if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
-        userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
-      }
-      domainFilter.setSpacesIds(userSpaceIds);
+    if (computeUserSpaces(domainFilter, username)) {
+      return domainStorage.countDomains(domainFilter);
+    } else {
+      return 0;
     }
-    return domainStorage.countDomains(domainFilter);
   }
 
   @Override
@@ -259,6 +221,31 @@ public class DomainServiceImpl implements DomainService {
       return false;
     }
     return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
+  }
+
+  @SuppressWarnings("unchecked")
+  private boolean computeUserSpaces(DomainFilter domainFilter, String username) {
+    if (domainFilter.getOwnerId() > 0) {
+      List<String> managedSpaceIds = spaceService.getManagerSpacesIds(username, 0, -1);
+      if (managedSpaceIds.isEmpty()) {
+        domainFilter.setSpacesIds(Collections.emptyList());
+      } else {
+        domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
+      }
+    } else {
+      if (!Utils.isSuperManager(username)) {
+        List<String> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1);
+        if (memberSpacesIds.isEmpty()) {
+          return false;
+        }
+        List<Long> userSpaceIds = memberSpacesIds.stream().map(Long::parseLong).toList();
+        if (CollectionUtils.isNotEmpty(domainFilter.getSpacesIds())) {
+          userSpaceIds = (List<Long>) CollectionUtils.intersection(userSpaceIds, domainFilter.getSpacesIds());
+        }
+        domainFilter.setSpacesIds(userSpaceIds);
+      }
+    }
+    return true;
   }
 
   private void broadcast(String eventName, DomainDTO domain, String userName) {
