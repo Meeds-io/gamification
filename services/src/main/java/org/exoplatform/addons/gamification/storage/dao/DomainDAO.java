@@ -38,9 +38,9 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements GenericDAO<DomainEntity, Long> {
 
-  private static final String        QUERY_FILTER_FIND_PREFIX  = "GamificationDomain.findAllDomains";
+  private static final String        QUERY_FILTER_FIND_PREFIX  = "GamificationDomain.findDomains";
 
-  private static final String        QUERY_FILTER_COUNT_PREFIX = "GamificationDomain.countAllDomains";
+  private static final String        QUERY_FILTER_COUNT_PREFIX = "GamificationDomain.countDomains";
 
   public static final String         DOMAIN_TITLE              = "domainTitle";
 
@@ -76,7 +76,7 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     return query.getResultList();
   }
 
-  public int countAllDomains(DomainFilter filter) {
+  public int countDomains(DomainFilter filter) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, true);
     return query.getSingleResult().intValue();
   }
@@ -120,7 +120,9 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
     }
     if (filter.getOwnerId() > 0) {
       query.setParameter("ownerId", filter.getOwnerId());
-      query.setParameter("spacesIds", filter.getSpacesIds());
+      if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
+        query.setParameter("spacesIds", filter.getSpacesIds());
+      }
     }
   }
 
@@ -157,8 +159,13 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
       }
     }
     if (filter.getOwnerId() > 0) {
-      suffixes.add("ByOwnerId");
-      predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
+      if (CollectionUtils.isEmpty(filter.getSpacesIds())) {
+        suffixes.add("ByOwnerId");
+        predicates.add(":ownerId member of d.owners");
+      } else {
+        suffixes.add("ByOwnerOrSpaceIds");
+        predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
+      }
     }
   }
 

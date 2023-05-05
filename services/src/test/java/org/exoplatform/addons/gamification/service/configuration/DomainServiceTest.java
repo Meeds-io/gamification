@@ -22,7 +22,6 @@ import java.io.File;
 import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.exoplatform.social.core.space.model.Space;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
@@ -58,7 +57,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetAllDomains() {
+  public void testGetDomains() {
 
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
@@ -103,7 +102,39 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountAllDomains() {
+  public void testGetDomainsByOwner() {
+    DomainFilter filter = new DomainFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, domainService.getDomainsByFilter(filter, "root10", offset, 10).size());
+    DomainEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
+    filter.setOwnerId(10);
+    assertEquals(0, domainService.getDomainsByFilter(filter, "root10", offset, 10).size());
+
+    domainEntity.setOwners(Collections.singleton(10l));
+    domainDAO.update(domainEntity);
+
+    assertEquals(1, domainService.getDomainsByFilter(filter, "root10", offset, 10).size());
+  }
+
+  @Test
+  public void testCountDomainsByOwner() {
+    DomainFilter filter = new DomainFilter();
+    filter.setEntityFilterType(EntityFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(0, domainService.getDomainsByFilter(filter, "root10", offset, 10).size());
+    DomainEntity domainEntity = newDomain(EntityType.AUTOMATIC, "domain10", true, Collections.emptySet());
+    filter.setOwnerId(10);
+    assertEquals(0, domainService.countDomains(filter, "root10"));
+    
+    domainEntity.setOwners(Collections.singleton(10l));
+    domainDAO.update(domainEntity);
+    
+    assertEquals(1, domainService.countDomains(filter, "root10"));
+  }
+
+  @Test
+  public void testCountDomains() {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
