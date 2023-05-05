@@ -96,7 +96,7 @@ public class DomainStorage {
   }
 
   public int countDomains(DomainFilter domainFilter) {
-    return domainDAO.countAllDomains(domainFilter);
+    return domainDAO.countDomains(domainFilter);
   }
 
   public List<DomainDTO> getEnabledDomains() {
