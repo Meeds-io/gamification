@@ -106,36 +106,36 @@ public class DomainDAOTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountAllDomains() {
+  public void testCountDomains() {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
-    assertEquals(0, domainDAO.countAllDomains(filter));
+    assertEquals(0, domainDAO.countDomains(filter));
     newDomain(EntityType.MANUAL, "domain1", true, null);
     newDomain(EntityType.MANUAL, "domain2", true, null);
     newDomain(EntityType.AUTOMATIC, "domain3", true, null);
     newDomain(EntityType.AUTOMATIC, "domain4", true, null);
-    assertEquals(4, domainDAO.countAllDomains(filter));
+    assertEquals(4, domainDAO.countDomains(filter));
 
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(2, domainDAO.countAllDomains(filter));
+    assertEquals(2, domainDAO.countDomains(filter));
     newDomain(EntityType.AUTOMATIC, "domain5", false, null);
-    assertEquals(2, domainDAO.countAllDomains(filter));
+    assertEquals(2, domainDAO.countDomains(filter));
 
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(2, domainDAO.countAllDomains(filter));
+    assertEquals(2, domainDAO.countDomains(filter));
     newDomain(EntityType.MANUAL, "domain6", false, null);
-    assertEquals(2, domainDAO.countAllDomains(filter));
+    assertEquals(2, domainDAO.countDomains(filter));
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
-    assertEquals(6, domainDAO.countAllDomains(filter));
+    assertEquals(6, domainDAO.countDomains(filter));
     filter.setEntityStatusType(EntityStatusType.DISABLED);
-    assertEquals(2, domainDAO.countAllDomains(filter));
+    assertEquals(2, domainDAO.countDomains(filter));
     filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
-    assertEquals(1, domainDAO.countAllDomains(filter));
+    assertEquals(1, domainDAO.countDomains(filter));
     filter.setEntityFilterType(EntityFilterType.MANUAL);
-    assertEquals(1, domainDAO.countAllDomains(filter));
+    assertEquals(1, domainDAO.countDomains(filter));
 
   }
 

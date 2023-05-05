@@ -107,7 +107,7 @@ public class DomainStorageTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountAllDomains() {
+  public void testCountDomains() {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
@@ -126,7 +126,7 @@ public class DomainStorageTest extends AbstractServiceTest {
     filter.setEntityFilterType(EntityFilterType.MANUAL);
     assertEquals(2, domainStorage.countDomains(filter));
     newDomain(EntityType.MANUAL, "domain6", false, new HashSet<>());
-    assertEquals(2, domainDAO.countAllDomains(filter));
+    assertEquals(2, domainDAO.countDomains(filter));
 
     filter.setEntityStatusType(EntityStatusType.ALL);
     filter.setEntityFilterType(EntityFilterType.ALL);
