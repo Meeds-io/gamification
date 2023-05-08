@@ -125,8 +125,7 @@ public class ManageRulesEndpoint implements ResourceContainer {
     }
     RuleList ruleList = new RuleList();
     List<RuleRestEntity> ruleRestEntities = null;
-    List<RuleDTO> rules = null;
-    rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
+    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, offset, limit);
     if (returnSize) {
       int rulesSize = ruleService.countAllRules(ruleFilter);
       ruleList.setSize(rulesSize);

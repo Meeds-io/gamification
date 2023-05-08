@@ -76,10 +76,6 @@ public class RuleStorage {
     }
   }
 
-  public List<RuleDTO> findAllRules() {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRules());
-  }
-
   public List<Long> findAllRulesIds(int offset, int limit) {
     return ruleDAO.findRulesIdsByFilter(new RuleFilter(), offset, limit);
   }
