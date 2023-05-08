@@ -18,7 +18,6 @@
 package org.exoplatform.addons.gamification.storage.cached;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
@@ -32,14 +31,11 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.cache.CacheService;
 import org.exoplatform.services.cache.ExoCache;
 
-@SuppressWarnings("unchecked")
 public class RuleCachedStorage extends RuleStorage {
 
   private static final int                               RULE_ID_CONTEXT         = 0;
 
   private static final int                               RULE_TITLE_CONTEXT      = 1;
-
-  private static final int                               ALL_RULE_CONTEXT        = 2;
 
   private static final int                               RULES_BY_FILTER_CONTEXT = 3;
 
@@ -57,8 +53,6 @@ public class RuleCachedStorage extends RuleStorage {
           return RuleCachedStorage.super.findRuleById(context.getId());
         } else if (context.getContext() == RULE_TITLE_CONTEXT) {
           return RuleCachedStorage.super.findRuleByTitle(context.getTitle());
-        } else if (context.getContext() == ALL_RULE_CONTEXT) {
-          return RuleCachedStorage.super.findAllRules();
         } else if (context.getContext() == RULES_BY_FILTER_CONTEXT) {
           return RuleCachedStorage.super.findRulesIdsByFilter(context.getRuleFilter(), context.getOffset(), context.getLimit());
         } else {
@@ -80,7 +74,6 @@ public class RuleCachedStorage extends RuleStorage {
       } else {
         this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, ruleDTO.getId()).hashCode());
         this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, ruleDTO.getTitle()).hashCode());
-        this.ruleFutureCache.remove(new CacheKey(ALL_RULE_CONTEXT, 0L).hashCode());
       }
     }
   }
@@ -98,17 +91,10 @@ public class RuleCachedStorage extends RuleStorage {
   }
 
   @Override
-  public List<RuleDTO> findAllRules() {
-    CacheKey key = new CacheKey(ALL_RULE_CONTEXT, 0L);
-    return (List<RuleDTO>) this.ruleFutureCache.get(key, key.hashCode());
-  }
-
-  @Override
   public RuleDTO deleteRuleById(long ruleId, String userId, boolean force) throws ObjectNotFoundException {
     RuleDTO rule = super.deleteRuleById(ruleId, userId, force);
     this.ruleFutureCache.remove(new CacheKey(RULE_ID_CONTEXT, rule.getId()).hashCode());
     this.ruleFutureCache.remove(new CacheKey(RULE_TITLE_CONTEXT, rule.getTitle()).hashCode());
-    this.ruleFutureCache.remove(new CacheKey(ALL_RULE_CONTEXT, 0L).hashCode());
     return rule;
   }
 
