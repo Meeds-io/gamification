@@ -37,13 +37,18 @@ public class RuleServiceImpl implements RuleService {
 
   private static final String USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
-  private final RuleStorage      ruleStorage;
+  private final DomainService   domainService;
 
-  private final ListenerService  listenerService;
+  private final RuleStorage     ruleStorage;
 
-  public RuleServiceImpl(RuleStorage ruleStorage,  ListenerService listenerService) {
-    this.ruleStorage = ruleStorage;
+  private final ListenerService listenerService;
+
+  public RuleServiceImpl(DomainService domainService,
+                         RuleStorage ruleStorage,
+                         ListenerService listenerService) {
+    this.domainService = domainService;
     this.listenerService = listenerService;
+    this.ruleStorage = ruleStorage;
   }
 
   public RuleDTO findEnableRuleByTitle(String ruleTitle) throws IllegalArgumentException {
@@ -55,7 +60,11 @@ public class RuleServiceImpl implements RuleService {
     if (id == 0) {
       throw new IllegalArgumentException("Rule id is mandatory");
     }
-    return ruleStorage.findRuleById(id);
+    RuleDTO rule = ruleStorage.findRuleById(id);
+    if (rule != null && rule.getDomainDTO() != null) {
+      rule.setDomainDTO(domainService.getDomainById(rule.getDomainDTO().getId()));
+    }
+    return rule;
   }
 
   @Override
@@ -87,7 +96,11 @@ public class RuleServiceImpl implements RuleService {
     if (StringUtils.isBlank(ruleTitle)) {
       throw new IllegalArgumentException("rule title is mandatory");
     }
-    return ruleStorage.findRuleByTitle(ruleTitle);
+    RuleDTO rule = ruleStorage.findRuleByTitle(ruleTitle);
+    if (rule != null && rule.getDomainDTO() != null) {
+      rule.setDomainDTO(domainService.getDomainById(rule.getDomainDTO().getId()));
+    }
+    return rule;
   }
 
   public RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId) throws IllegalArgumentException {
@@ -97,11 +110,11 @@ public class RuleServiceImpl implements RuleService {
     if (domainId < 0) {
       throw new IllegalArgumentException("Domain id must be positive");
     }
-    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domainId);
-  }
-
-  public List<RuleDTO> findAllRules() {// NOSONAR
-    return ruleStorage.findAllRules();
+    RuleDTO rule = ruleStorage.findRuleByEventAndDomain(ruleTitle, domainId);
+    if (rule != null && rule.getDomainDTO() != null) {
+      rule.setDomainDTO(domainService.getDomainById(rule.getDomainDTO().getId()));
+    }
+    return rule;
   }
 
   @Override
