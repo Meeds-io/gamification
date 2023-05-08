@@ -25,8 +25,9 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
@@ -144,58 +145,47 @@ public class GamificationService {
   }
 
   public void createHistory(String event, String sender, String receiver, String objectId, String objectType) {
-    GamificationActionsHistory aHistory = null;
     List<RuleDTO> ruleDtos = null;
     // Get associated rules
     ruleDtos = ruleService.findEnabledRulesByEvent(event);
+    if (CollectionUtils.isEmpty(ruleDtos)) {
+      return;
+    }
 
     // Process only when an enable rules are found
-    if (ruleDtos != null) {
-      for (RuleDTO ruleDto : ruleDtos) {
-        aHistory = build(ruleDto, sender, receiver, objectId, objectType);
-        if (aHistory != null) {
-          aHistory = saveActionHistory(aHistory);
-          // Gamification simple audit logger
-          LOG.info("service=gamification operation=add-new-entry parameters=\"date:{},user_social_id:{},global_score:{},domain:{},action_title:{},action_score:{}\"",
-                   LocalDate.now(),
-                   aHistory.getEarnerId(),
-                   aHistory.getGlobalScore(),
-                   ruleDto.getDomainDTO().getTitle(),
-                   ruleDto.getEvent(),
-                   ruleDto.getScore());
-        }
-      }
-    }
+    ruleDtos.stream()
+            .map(ruleDto -> build(ruleDto, sender, receiver, objectId, objectType))
+            .filter(Objects::nonNull)
+            .forEach(this::saveActionHistory);
   }
 
   public void cancelHistory(String event, String sender, String receiver, String objectId, String objectType) {
     List<RuleDTO> ruleDtos = null;
     // Get associated rules
     ruleDtos = ruleService.findEnabledRulesByEvent(event);
-    if (ruleDtos != null) {
-      for (RuleDTO ruleDto : ruleDtos) {
-        GamificationActionsHistoryDTO realization =
-                                                  realizationsService.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(ruleDto.getTitle(),
-                                                                                                                                    ruleDto.getDomainDTO()
-                                                                                                                                           .getId(),
-                                                                                                                                    sender,
-                                                                                                                                    receiver,
-                                                                                                                                    objectId,
-                                                                                                                                    objectType);
-        if (realization != null) {
-          try {
-            if (!HistoryStatus.CANCELED.name().equals(realization.getStatus())) {
-              realization.setStatus(HistoryStatus.CANCELED.name());
-              realization.setActivityId(null);
-              realization.setObjectId(null);
-              realizationsService.updateRealization(realization);
-            }
-          } catch (ObjectNotFoundException e) {
-            LOG.warn("Realization with id {} does not exist", realization.getId(), e);
-          }
-        }
-      }
+    if (CollectionUtils.isEmpty(ruleDtos)) {
+      return;
     }
+    ruleDtos.stream()
+            .map(rule -> realizationsService.findRealizationByActionTitleAndEarnerIdAndReceiverAndObjectId(rule.getTitle(),
+                                                                                                           rule.getDomainDTO()
+                                                                                                               .getId(),
+                                                                                                           sender,
+                                                                                                           receiver,
+                                                                                                           objectId,
+                                                                                                           objectType))
+            .filter(Objects::nonNull)
+            .filter(realization -> !HistoryStatus.CANCELED.name().equals(realization.getStatus()))
+            .forEach(realization -> {
+              try {
+                realization.setStatus(HistoryStatus.CANCELED.name());
+                realization.setActivityId(null);
+                realization.setObjectId(null);
+                realizationsService.updateRealization(realization);
+              } catch (ObjectNotFoundException e) {
+                LOG.warn("Realization with id {} does not exist", realization.getId(), e);
+              }
+            });
   }
 
   public void deleteHistory(String objectId, String objectType) {
@@ -328,15 +318,15 @@ public class GamificationService {
     // check if the current user is not a bot
     Identity actorIdentity = identityManager.getIdentity(actor);
     if (actorIdentity == null || StringUtils.isBlank(actorIdentity.getRemoteId())) {
-      LOG.warn("Actor {} has earned some points but doesn't have a social identity", actor);
+      LOG.debug("Actor {} has earned some points but doesn't have a social identity", actor);
       return null;
     }
     if (actorIdentity.isDeleted()) {
-      LOG.warn("Actor {} has earned some points but is marked as deleted", actor);
+      LOG.debug("Actor {} has earned some points but is marked as deleted", actor);
       return null;
     }
     if (!actorIdentity.isEnable()) {
-      LOG.warn("Actor {} has earned some points but is marked as disabled", actor);
+      LOG.debug("Actor {} has earned some points but is marked as disabled", actor);
       return null;
     }
     if (Utils.isUserMemberOfGroupOrUser(actorIdentity.getRemoteId(), Utils.BLACK_LIST_GROUP)) {
@@ -351,7 +341,7 @@ public class GamificationService {
         long audienceId = domainDTO.getAudienceId();
         if (domainDTO.isDeleted() || audienceId == 0
             || (audienceId > 0 && actorIdentity.isUser() && !Utils.isSpaceMember(audienceId, actorIdentity.getRemoteId()))) {
-          LOG.info("Actor {} cannot earn points since he is not a member of the domain audience", actor);
+          LOG.debug("Actor {} cannot earn points since he is not a member of the domain audience", actor);
           return null;
         }
       }
@@ -392,7 +382,7 @@ public class GamificationService {
       String spacePrettyName = identity.getRemoteId();
       Space space = spaceService.getSpaceByPrettyName(spacePrettyName);
       return space != null && (!Space.HIDDEN.equals(space.getVisibility()) || spaceService.isMember(space, currentUser));
-    }).limit(limit).collect(Collectors.toList());
+    }).limit(limit).toList();
     return result;
   }
 }
