@@ -148,7 +148,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-autocomplete>
               </v-card-text>
               <v-card-text v-if="eventExist" class="error--text py-0">
-                {{ $t('rule.form.error.sameEventExist') }}
+                {{ $t('rule.form.error.sameEventExistsInProgram') }}
               </v-card-text>
             </div>
             <div v-if="ruleId">
@@ -317,7 +317,8 @@ export default {
     disabledStartDate: false,
     disabledEndDate: false,
     durationCondition: false,
-    durationFilter: 'BEFORE'
+    durationFilter: 'BEFORE',
+    programEvents: [],
   }),
   computed: {
     minimumStartDate() {
@@ -361,6 +362,9 @@ export default {
     programTitle() {
       return this.program?.title;
     },
+    programId() {
+      return this.program?.id;
+    },
     ruleTitle() {
       return this.rule?.title;
     },
@@ -383,7 +387,7 @@ export default {
       return !this.durationCondition || (this.durationCondition && (this.ruleStartDate != null || this.ruleEndDate != null));
     },
     disableSaveButton() {
-      return this.saving || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.isValidForm;
+      return this.saving || this.eventExist || !this.ruleTitleValid || !this.validDescription || !this.ruleTypeValid || !this.durationValid || !this.isValidForm;
     },
     drawerTitle() {
       return this.ruleId ? this.$t('rule.form.label.edit') : this.$t('rule.form.label.add');
@@ -415,7 +419,10 @@ export default {
     }
   },
   created() {
-    this.$root.$on('rule-form-drawer', (rule) => {
+    this.$root.$on('rule-form-drawer', this.open);
+  },
+  methods: {
+    open(rule) {
       this.rule = rule && JSON.parse(JSON.stringify(rule)) || {
         score: 20,
         enabled: true,
@@ -445,9 +452,8 @@ export default {
         this.$root.$emit('rule-form-drawer-opened', this.rule);
         this.value = this.eventMapping.find(event => event.name === rule?.event) || '';
       });
-    });
-  },
-  methods: {
+      this.retrieveProgramRules();
+    },
     close() {
       this.$refs.ruleDescription.destroyCKEditor();
       this.$refs.ruleFormDrawer.close();
@@ -459,13 +465,18 @@ export default {
       this.rule.description = '';
       this.value = {};
     },
+    retrieveProgramRules() {
+      return this.$ruleServices.getRules(null, this.programId, 'ENABLED', 'AUTOMATIC', 0, this.events?.length || 10)
+        .then(data => this.programEvents = data && data.rules.map(rule => ({
+          ruleId: rule.id,
+          event: rule.event,
+        })) || []);
+    },
     emitSelectedValue(value) {
       const eventObject = this.eventMapping.find(event => event.label === value);
       if (eventObject) {
         this.$set(this.rule,'event', eventObject.name);
-        if (this.eventExist) {
-          this.eventExist = false;
-        }
+        this.eventExist = this.programEvents.find(programEvent => eventObject.name === programEvent.event && programEvent.ruleId !== this.rule?.id);
       }
     },
     addDescription(value) {
@@ -496,10 +507,9 @@ export default {
             this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
             this.$root.$emit('program-rules-refresh', rule);
             this.close();
-          }).catch(e => {
-            if (e.message === '409') {
-              this.eventExist = true;
-            }}).finally(() => {
+          })
+          .catch(e => this.eventExist = e.message === '409')
+          .finally(() => {
             this.saving = false;
             this.$refs.ruleFormDrawer.endLoading();
           });
@@ -509,10 +519,9 @@ export default {
             this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
             this.$root.$emit('program-rules-refresh', rule);
             this.close();
-          }).catch(e => {
-            if (e.message === '409') {
-              this.eventExist = true;
-            }}).finally(() => {
+          })
+          .catch(e => this.eventExist = e.message === '409')
+          .finally(() => {
             this.saving = false;
             this.$refs.ruleFormDrawer.endLoading();
           });
