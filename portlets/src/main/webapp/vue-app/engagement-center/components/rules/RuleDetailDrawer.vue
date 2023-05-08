@@ -28,8 +28,8 @@
             :max-height="programCoverSize"
             :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
         </div>
-        <div v-if="!automaticRule && !isOpenRule" class="d-flex flex-row py-3">
-          <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="DateInfo"></span>
+        <div v-if="!automaticRule && !isOpenRule && dateInfo" class="d-flex flex-row py-3">
+          <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="dateInfo"></span>
         </div>
         <div
           v-if="canAnnounce"
@@ -196,16 +196,17 @@ export default {
                                 || (this.startDate === null && this.endDate?.getTime() >= Date.now())
                                 || (this.startDate?.getTime() <= Date.now() && this.endDate === null);
     },
-    DateInfo() {
-      if (this.endDate?.getTime() < Date.now()) {
+    dateInfo() {
+      if (this.endDate && this.endDate?.getTime() < Date.now()) {
         return this.$t('challenges.label.over');
-      } else if (this.startDate?.getTime() > Date.now()) {
+      } else if (this.startDate && this.startDate?.getTime() > Date.now()) {
         const days = Math.round((this.startDate?.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.openIn', {0: days});
-      } else {
+      } else if (this.endDate) {
         const days = Math.round((this.endDate?.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) + 1;
         return this.$t('challenges.label.daysLeft', {0: days});
       }
+      return '';
     },
     spaceId() {
       return this.program?.audienceId;
