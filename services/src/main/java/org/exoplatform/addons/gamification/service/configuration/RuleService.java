@@ -74,15 +74,6 @@ public interface RuleService {
      RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId);
 
     /**
-     * Get all Rules from DB
-     * @return RuleDTO list
-     * @deprecated use methods with pagination instead to avoid performance and memory issues
-     * @since Meeds 1.4.0
-     */
-    @Deprecated(since = "Meeds 1.4.0", forRemoval = true)
-    List<RuleDTO> findAllRules(); // NOSONAR
-
-    /**
      * Get all Rules using offset and limit.
      * 
      * @param offset Offset of result
