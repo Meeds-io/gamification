@@ -36,7 +36,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testSaveRule() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = new RuleDTO();
     rule.setScore(Integer.parseInt(TEST__SCORE));
     rule.setTitle(RULE_NAME);
@@ -51,26 +51,26 @@ public class RuleStorageTest extends AbstractServiceTest {
     rule.setDomainDTO(newDomainDTO());
     rule.setType(EntityType.AUTOMATIC);
     ruleStorage.saveRule(rule);
-    assertEquals(ruleStorage.findAllRules().size(), 1);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 1);
   }
 
   @Test
   public void testFindEnableRuleByTitle() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     assertEquals(ruleStorage.findEnableRuleByTitle(rule.getTitle()).getTitle(), rule.getTitle());
   }
 
   @Test
   public void testFindRuleById() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     assertEquals(ruleStorage.findRuleById(rule.getId()).getTitle(), rule.getTitle());
   }
 
   @Test
   public void testFindEnabledRulesByEvent() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     assertEquals(ruleStorage.findEnabledRulesByEvent(rule.getEvent()).size(), 1);
     rule.setEnabled(false);
@@ -80,14 +80,14 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testFindRuleByTitle() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     assertEquals(ruleStorage.findEnableRuleByTitle(rule.getTitle()).getTitle(), rule.getTitle());
   }
 
   @Test
   public void testFindRuleByEventAndDomain() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     long domainId = rule.getDomainDTO().getId();
     assertEquals(ruleStorage.findRuleByEventAndDomain(rule.getEvent(), domainId).getTitle(), rule.getTitle());
@@ -95,7 +95,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testFindAllRules() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule1 = newRuleDTO();
     RuleDTO rule2 = newRuleDTO();
     RuleDTO rule3 = newRuleDTO();
@@ -113,12 +113,12 @@ public class RuleStorageTest extends AbstractServiceTest {
     manualRule.setDomainDTO(newDomainDTO());
     manualRule.setType(EntityType.MANUAL);
     ruleStorage.saveRule(manualRule);
-    assertEquals(ruleStorage.findAllRules().size(), 4);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 4);
   }
 
   @Test
   public void testGetActiveRules() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule1 = newRuleDTO();
     RuleDTO rule2 = newRuleDTO();
     RuleDTO rule3 = newRuleDTO();
@@ -130,7 +130,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRulesByDomain() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     DomainEntity domainEntity = newDomain();
     newRule("rule1", domainEntity.getId());
     newRule("rule2", domainEntity.getId());
@@ -140,7 +140,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllRulesWithNullDomain() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule1 = newRuleDTO();
     RuleDTO rule2 = newRuleDTO();
     RuleDTO rule3 = newRuleDTO();
@@ -152,7 +152,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllEvents() {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     newRule("rule1", 1L);
     newRule("rule2", 2L);
     assertEquals(ruleStorage.getAllEvents().size(), 2);
@@ -160,7 +160,7 @@ public class RuleStorageTest extends AbstractServiceTest {
 
   @Test
   public void testDeleteRule() throws ObjectNotFoundException {
-    assertEquals(ruleStorage.findAllRules().size(), 0);
+    assertEquals(ruleStorage.findAllRulesIds(0, -1).size(), 0);
     RuleDTO rule = newRuleDTO();
     assertEquals(ruleStorage.findRuleById(rule.getId()).getTitle(), rule.getTitle());
     assertFalse(rule.isDeleted());
