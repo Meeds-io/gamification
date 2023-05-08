@@ -17,10 +17,15 @@
 
 package org.exoplatform.addons.gamification.service.configuration;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.Collections;
 import java.util.Date;
 
+import org.junit.Test;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
@@ -28,18 +33,16 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
+import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.MembershipEntry;
-import org.junit.Test;
-
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.test.AbstractServiceTest;
-
-import static org.junit.Assert.assertThrows;
 
 public class RuleServiceTest extends AbstractServiceTest {
+  private final Identity adminAclIdentity =
+                                          new Identity("root1",
+                                                       Collections.singleton(new MembershipEntry("/platform/administrators")));
 
   @Override
   public void setUp() throws Exception {
@@ -101,6 +104,26 @@ public class RuleServiceTest extends AbstractServiceTest {
     newRule();
     assertNotNull(ruleService.findRuleByTitle(RULE_NAME));
     assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByTitle(null));
+  }
+
+  @Test
+  public void testFindRuleAfterDomainAudienceChange() throws IllegalAccessException, ObjectNotFoundException {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    RuleDTO rule = newRuleDTO();
+    assertNotNull(rule);
+    DomainDTO domainDTO = rule.getDomainDTO();
+    assertNotNull(domainDTO);
+
+    assertNotNull(ruleService.findRuleById(rule.getId()));
+    domainDTO.setAudienceId(domainDTO.getAudienceId() + 1);
+    DomainDTO updatedDomainDTO = domainService.updateDomain(domainDTO, adminAclIdentity);
+
+    RuleDTO updatedRuleAudience = ruleService.findRuleById(rule.getId());
+    assertNotNull(updatedRuleAudience);
+    assertNotNull(updatedRuleAudience.getDomainDTO());
+    assertEquals(updatedRuleAudience.getDomainDTO().getId(), domainDTO.getId());
+    assertEquals(updatedRuleAudience.getDomainDTO().getAudienceId(), domainDTO.getAudienceId());
+    assertEquals(updatedRuleAudience.getDomainDTO().getAudienceId(), updatedDomainDTO.getAudienceId());
   }
 
   @Test
