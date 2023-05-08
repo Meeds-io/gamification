@@ -468,8 +468,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     if (limit >= 0) {
       query.setMaxResults(limit);
     }
-    List<GamificationActionsHistory> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
+    List<GamificationActionsHistory> result = query.getResultList();
+    return result == null ? Collections.emptyList() : result;
   }
 
   public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {
@@ -509,12 +509,8 @@ public class GamificationHistoryDAO extends GenericDAOJPAImpl<GamificationAction
     query.setParameter(RECEIVER_ID_PARAM_NAME, receiverId);
     query.setParameter(OBJECT_ID_PARAM_NAME, objectId);
     query.setParameter(OBJECT_TYPE_PARAM_NAME, objectType);
-    try {
-      return query.getResultList().get(0);
-    } catch (NoResultException e) {// NOSONAR : normal to not log this and not
-      // rethrow it
-      return null;
-    }
+    List<GamificationActionsHistory> resultList = query.getResultList();
+    return CollectionUtils.isEmpty(resultList) ? null : resultList.get(0);
   }
 
   public List<GamificationActionsHistory> getRealizationsByObjectIdAndObjectType(String objectId, String objectType) {

@@ -30,7 +30,6 @@ import org.exoplatform.addons.gamification.entities.domain.configuration.DomainE
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
@@ -329,6 +328,10 @@ public class GamificationHistoryDAOTest extends AbstractServiceTest {
 
   @Test
   public void testFindAllAnnouncementByChallengeByDate() {
+    assertEquals(0,
+                 gamificationHistoryDAO.findAllAnnouncementByChallenge(5558l, offset, limit, PeriodType.ALL, null)
+                                       .size());
+
     DomainEntity domainEntity = newDomain();
     RuleEntity ruleEntity = newRule("rule", domainEntity.getId());
     assertEquals(0, (long) gamificationHistoryDAO.countAnnouncementsByChallenge(1L));
