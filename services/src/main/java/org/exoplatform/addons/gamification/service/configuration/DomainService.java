@@ -48,6 +48,17 @@ public interface DomainService {
   List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit);
 
   /**
+   * Gets domain Ids by filter.
+   *
+   * @param  domainFilter {@link DomainFilter} used to filter results
+   * @param  username     User name accessing domains
+   * @param  offset       index of the search
+   * @param  limit        limit of results to return
+   * @return              A {@link List &lt;DomainDTO&gt;} object
+   */
+  List<Long> getDomainIdsByFilter(DomainFilter domainFilter, String username, int offset, int limit);
+
+  /**
    * Return enabled domains within the DB
    *
    * @return A {@link List &lt;DomainDTO&gt;} object
@@ -157,5 +168,15 @@ public interface DomainService {
    *                     else false
    */
   boolean isDomainOwner(long domainId, Identity aclIdentity);
+
+  /**
+   * Check whether user is member of program or not
+   * 
+   * @param  domainId    technical identifier of domain/program
+   * @param  aclIdentity Security identity of user
+   * @return             true if user has enough privileges to see a program,
+   *                     else false
+   */
+  boolean isDomainMember(long domainId, Identity aclIdentity);
 
 }

@@ -67,17 +67,21 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {// NOSONAR
-    List<Long> domainIds;
+    List<Long> domainIds = getDomainIdsByFilter(domainFilter, username, offset, limit);
+    return domainIds.stream().map(this::getDomainById).toList();
+  }
+
+  @Override
+  public List<Long> getDomainIdsByFilter(DomainFilter domainFilter, String username, int offset, int limit) {
     if (computeUserSpaces(domainFilter, username)) {
       if (domainFilter.isSortByBudget()) {
-        domainIds = domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+        return domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
       } else {
-        domainIds = domainStorage.getDomainsByFilter(domainFilter, offset, limit);
+        return domainStorage.getDomainsByFilter(domainFilter, offset, limit);
       }
     } else {
       return Collections.emptyList();
     }
-    return domainIds.stream().map(this::getDomainById).toList();
   }
 
   @Override
@@ -207,7 +211,7 @@ public class DomainServiceImpl implements DomainService {
 
   @Override
   public boolean canAddDomain(Identity aclIdentity) {
-    return aclIdentity != null && Utils.isSuperManager(aclIdentity.getUserId());
+    return aclIdentity != null && Utils.isRewardingManager(aclIdentity.getUserId());
   }
 
   @Override
@@ -223,6 +227,21 @@ public class DomainServiceImpl implements DomainService {
     return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
+  @Override
+  public boolean isDomainMember(long domainId, Identity aclIdentity) {
+    String userName = aclIdentity.getUserId();
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(userName);
+    if (userIdentity == null) {
+      return false;
+    }
+    DomainDTO domain = domainStorage.getDomainById(domainId);
+    if (domain == null) {
+      return false;
+    }
+    return domain.getAudienceId() == 0 || Utils.isSpaceMember(domain.getAudienceId(), userName)
+        || Utils.isRewardingManager(userName);
+  }
+
   @SuppressWarnings("unchecked")
   private boolean computeUserSpaces(DomainFilter domainFilter, String username) {
     if (domainFilter.getOwnerId() > 0) {
@@ -233,7 +252,7 @@ public class DomainServiceImpl implements DomainService {
         domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
       }
     } else {
-      if (!Utils.isSuperManager(username)) {
+      if (!Utils.isRewardingManager(username)) {
         List<String> memberSpacesIds = spaceService.getMemberSpacesIds(username, 0, -1);
         if (memberSpacesIds.isEmpty()) {
           return false;
