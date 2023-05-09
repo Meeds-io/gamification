@@ -39,13 +39,28 @@ public interface DomainService {
   /**
    * Gets domains by filter.
    *
+   * @param  domainFilter           {@link DomainFilter} used to filter results
+   * @param  username               User name accessing domains
+   * @param  offset                 index of the search
+   * @param  limit                  limit of results to return
+   * @return                        A {@link List &lt;DomainDTO&gt;} object
+   * @throws IllegalAccessException when user is not authorized to get another
+   *                                  owner's domains list
+   */
+  List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit) throws IllegalAccessException;
+
+  /**
+   * Gets domain Ids by filter.
+   *
    * @param  domainFilter {@link DomainFilter} used to filter results
    * @param  username     User name accessing domains
    * @param  offset       index of the search
    * @param  limit        limit of results to return
    * @return              A {@link List &lt;DomainDTO&gt;} object
+   * @throws IllegalAccessException when user is not authorized to get another
+   *                                  owner's domains list
    */
-  List<DomainDTO> getDomainsByFilter(DomainFilter domainFilter, String username, int offset, int limit);
+  List<Long> getDomainIdsByFilter(DomainFilter domainFilter, String username, int offset, int limit) throws IllegalAccessException;
 
   /**
    * Return enabled domains within the DB
@@ -127,8 +142,10 @@ public interface DomainService {
    * @param  domainFilter {@link DomainFilter} used to filter domains
    * @param  username     User name accessing domains
    * @return              domains count
+   * @throws IllegalAccessException when user is not authorized to get another
+   *                                  owner's domains list
    */
-  int countDomains(DomainFilter domainFilter, String username);
+  int countDomains(DomainFilter domainFilter, String username) throws IllegalAccessException;
 
   /**
    * Retrieves a cover identified by domain technical identifier.
@@ -157,5 +174,15 @@ public interface DomainService {
    *                     else false
    */
   boolean isDomainOwner(long domainId, Identity aclIdentity);
+
+  /**
+   * Check whether user is member of program or not
+   * 
+   * @param  domainId    technical identifier of domain/program
+   * @param  aclIdentity Security identity of user
+   * @return             true if user has enough privileges to see a program,
+   *                     else false
+   */
+  boolean isDomainMember(long domainId, Identity aclIdentity);
 
 }
