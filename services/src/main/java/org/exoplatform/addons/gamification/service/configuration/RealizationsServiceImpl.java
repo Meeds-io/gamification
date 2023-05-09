@@ -1,7 +1,6 @@
 package org.exoplatform.addons.gamification.service.configuration;
 
 import static org.exoplatform.addons.gamification.utils.Utils.escapeIllegalCharacterInMessage;
-import static org.exoplatform.addons.gamification.utils.Utils.getI18NMessage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -20,25 +20,22 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.exoplatform.addons.gamification.service.RealizationsService;
+import org.exoplatform.addons.gamification.service.dto.configuration.DomainFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RealizationsFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class RealizationsServiceImpl implements RealizationsService {
 
   private static final Log    LOG       = ExoLogger.getLogger(RealizationsServiceImpl.class);
-
-  private RealizationsStorage realizationsStorage;
-
-  private IdentityManager     identityManager;
 
   // Delimiters that must be in the CSV file
   private static final String DELIMITER = ",";
@@ -50,58 +47,55 @@ public class RealizationsServiceImpl implements RealizationsService {
 
   private static final String SHEETNAME = "Achivements Report";
 
-  public RealizationsServiceImpl(RealizationsStorage realizationsStorage, IdentityManager identityManager) {
-    this.realizationsStorage = realizationsStorage;
+  private RealizationsStorage realizationsStorage;
+
+  private IdentityManager     identityManager;
+
+  private DomainService       domainService;
+
+  private SpaceService        spaceService;
+
+  public RealizationsServiceImpl(DomainService domainService,
+                                 IdentityManager identityManager,
+                                 SpaceService spaceService,
+                                 RealizationsStorage realizationsStorage) {
     this.identityManager = identityManager;
+    this.domainService = domainService;
+    this.spaceService = spaceService;
+    this.realizationsStorage = realizationsStorage;
   }
 
   @Override
-  public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter filter,
-                                                                     Identity identity,
+  public List<GamificationActionsHistoryDTO> getRealizationsByFilter(RealizationsFilter realizationFilter,
+                                                                     Identity userAclIdentity,
                                                                      int offset,
                                                                      int limit) throws IllegalAccessException {
-    if (filter == null) {
+    if (realizationFilter == null) {
       throw new IllegalArgumentException("filter is mandatory");
     }
-    if (identity == null) {
+    if (userAclIdentity == null) {
       throw new IllegalArgumentException("identity is mandatory");
     }
-    Date fromDate = filter.getFromDate();
-    Date toDate = filter.getToDate();
-    if (fromDate == null) {
-      throw new IllegalArgumentException("fromDate is mandatory");
-    }
-    if (toDate == null) {
-      throw new IllegalArgumentException("toDate is mandatory");
-    }
-    if (fromDate.after(toDate)) {
-      throw new IllegalArgumentException("Dates parameters are not set correctly");
-    }
-    String username = identity.getUserId();
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    if (Utils.isSuperManager(username)
-        || (CollectionUtils.isNotEmpty(filter.getDomainIds())
-            && filter.getDomainIds().stream().allMatch(domainId -> domainService.isDomainOwner(domainId, identity)))
-        || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
-            && filter.getEarnerIds().contains(userIdentity.getId()))) {
-      return realizationsStorage.getRealizationsByFilter(filter, offset, limit);
-    } else {
-      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
-          + filter.getEarnerIds());
-    }
+    checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
+    computeProgramFilter(realizationFilter, userAclIdentity);
+    return realizationsStorage.getRealizationsByFilter(realizationFilter, offset, limit);
   }
 
   @Override
-  public int countRealizationsByFilter(RealizationsFilter filter, Identity identity) throws IllegalAccessException {
-    if (filter == null) {
+  public int countRealizationsByFilter(RealizationsFilter realizationFilter,
+                                       Identity userAclIdentity) throws IllegalAccessException {
+    if (realizationFilter == null) {
       throw new IllegalArgumentException("filter is mandatory");
     }
-    if (identity == null) {
+    if (userAclIdentity == null) {
       throw new IllegalArgumentException("identity is mandatory");
     }
-    Date fromDate = filter.getFromDate();
-    Date toDate = filter.getToDate();
+    checkDates(realizationFilter.getFromDate(), realizationFilter.getToDate());
+    computeProgramFilter(realizationFilter, userAclIdentity);
+    return realizationsStorage.countRealizationsByFilter(realizationFilter);
+  }
+
+  private void checkDates(Date fromDate, Date toDate) {
     if (fromDate == null) {
       throw new IllegalArgumentException("fromDate is mandatory");
     }
@@ -110,20 +104,6 @@ public class RealizationsServiceImpl implements RealizationsService {
     }
     if (fromDate.after(toDate)) {
       throw new IllegalArgumentException("Dates parameters are not set correctly");
-    }
-    String username = identity.getUserId();
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
-    if (Utils.isSuperManager(username)
-        || (CollectionUtils.isNotEmpty(filter.getDomainIds())
-            && filter.getDomainIds().stream().allMatch(domainId -> domainService.isDomainOwner(domainId, identity)))
-        || (CollectionUtils.isNotEmpty(filter.getEarnerIds()) && filter.getEarnerIds().size() == 1
-            && filter.getEarnerIds().get(0).equals(userIdentity.getId()))) {
-      return realizationsStorage.countRealizationsByFilter(filter);
-    } else {
-      throw new IllegalAccessException("User doesn't have enough privileges to access achievements of user "
-          + filter.getEarnerIds());
     }
   }
 
@@ -143,12 +123,11 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (identity == null) {
       throw new IllegalArgumentException("identity is mandatory");
     }
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
     String username = identity.getUserId();
 
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     GamificationActionsHistoryDTO realization = realizationsStorage.getRealizationById(realizationId);
-    if (Utils.isSuperManager(username) || domainService.isDomainOwner(realization.getDomainDTO().getId(), identity)
+    if (Utils.isRewardingManager(username) || domainService.isDomainOwner(realization.getDomainDTO().getId(), identity)
         || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
@@ -171,14 +150,13 @@ public class RealizationsServiceImpl implements RealizationsService {
     if (realizationId <= 0) {
       throw new IllegalArgumentException("Realization id has to be positive integer");
     }
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
     String username = identity.getUserId();
 
     GamificationActionsHistoryDTO storedRealization = realizationsStorage.getRealizationById(realizationId);
     if (storedRealization == null) {
       throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
     }
-    if (Utils.isSuperManager(username) || domainService.isDomainOwner(realization.getDomainDTO().getId(), identity)) {
+    if (Utils.isRewardingManager(username) || domainService.isDomainOwner(realization.getDomainDTO().getId(), identity)) {
       return realizationsStorage.updateRealization(realization);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
@@ -290,4 +268,63 @@ public class RealizationsServiceImpl implements RealizationsService {
     });
     return sbResult.toString();
   }
+
+  private void computeProgramFilter(RealizationsFilter realizationFilter,
+                                    Identity userAclIdentity) throws IllegalAccessException {
+    String username = userAclIdentity.getUserId();
+
+    if (Utils.isRewardingManager(username)) {
+      return;
+    }
+
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    List<Long> filterDomainIds = realizationFilter.getDomainIds();
+
+    boolean isSelfFilter = CollectionUtils.isNotEmpty(realizationFilter.getEarnerIds())
+        && realizationFilter.getEarnerIds().size() == 1
+        && realizationFilter.getEarnerIds().get(0).equals(userIdentity.getId());
+    boolean isFilterByDomains = CollectionUtils.isNotEmpty(filterDomainIds);
+
+    if (isSelfFilter) {
+      if (isFilterByDomains && !isDomainsMember(filterDomainIds, userAclIdentity)) {
+        throw new IllegalAccessException("User is not member of one or several selected domains :"
+            + filterDomainIds);
+      }
+    } else {
+      if (isFilterByDomains && !isDomainsOwner(filterDomainIds, userAclIdentity)) {
+        throw new IllegalAccessException("User is not owner of one or several selected domains :"
+            + filterDomainIds);
+      } else if (!isFilterByDomains) {
+        List<Long> ownedDomainIds = getOwnedDomainIds(userIdentity);
+        if (CollectionUtils.isEmpty(ownedDomainIds)) {
+          throw new IllegalAccessException("User is not owner of any domain");
+        }
+        realizationFilter.setDomainIds(ownedDomainIds);
+      }
+    }
+  }
+
+  private List<Long> getOwnedDomainIds(org.exoplatform.social.core.identity.model.Identity userIdentity) throws IllegalAccessException {
+    DomainFilter domainFilter = new DomainFilter();
+    domainFilter.setOwnerId(Long.parseLong(userIdentity.getId()));
+    List<String> managedSpaceIds = spaceService.getManagerSpacesIds(userIdentity.getRemoteId(), 0, -1);
+    if (CollectionUtils.isEmpty(managedSpaceIds)) {
+      domainFilter.setSpacesIds(Collections.emptyList());
+    } else {
+      domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
+    }
+    return domainService.getDomainIdsByFilter(domainFilter, userIdentity.getRemoteId(), 0, -1);
+  }
+
+  private boolean isDomainsOwner(List<Long> domainIds, Identity userAclIdentity) {
+    return domainIds.stream()
+                    .allMatch(domainId -> domainService.isDomainOwner(domainId, userAclIdentity));
+  }
+
+  private boolean isDomainsMember(List<Long> domainIds, Identity userAclIdentity) {
+    return domainIds.stream()
+                    .allMatch(domainId -> domainService.isDomainMember(domainId,
+                                                                       userAclIdentity));
+  }
+
 }

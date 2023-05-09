@@ -82,7 +82,7 @@ public class ChallengeServiceImpl implements ChallengeService {
       Space space = spaceService.getSpaceById(idSpace);
       if (space != null
           && !spaceService.isMember(space, username)
-          && !Utils.isSuperManager(username)) {
+          && !Utils.isRewardingManager(username)) {
         throw new IllegalAccessException("user is not allowed to access to the challenge");
       }
     }
