@@ -106,7 +106,9 @@ public class ManageDomainsEndpoint implements ResourceContainer {
   }
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN
+  })
   @RolesAllowed("users")
   @Operation(summary = "Retrieves the list of available domains", method = "GET")
   @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Request fulfilled"),
@@ -137,20 +139,27 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       domainFilter.setOwnerId(ownerId);
     }
     String currentUser = Utils.getCurrentUser();
-    DomainList domainList = new DomainList();
-    List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
-    if (returnSize) {
-      int domainsSize = domainService.countDomains(domainFilter, currentUser);
-      domainList.setDomainsSize(domainsSize);
+    try {
+      DomainList domainList = new DomainList();
+      List<DomainRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
+      if (returnSize) {
+        int domainsSize = domainService.countDomains(domainFilter, currentUser);
+        domainList.setDomainsSize(domainsSize);
+      }
+      domainList.setDomains(domains);
+      domainList.setDomainsOffset(offset);
+      domainList.setDomainsLimit(limit);
+      return Response.ok(domainList).build();
+    } catch (IllegalAccessException e) {
+      LOG.debug("Unauthorized access for user {} while attempting to get domains with filter {}", currentUser, domainFilter);
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
-    domainList.setDomains(domains);
-    domainList.setDomainsOffset(offset);
-    domainList.setDomainsLimit(limit);
-    return Response.ok(domainList).build();
   }
 
   @POST
-  @Produces(MediaType.APPLICATION_JSON)
+  @Produces({
+      MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN
+  })
   @Consumes(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Operation(summary = "Creates a domain", method = "POST")
@@ -168,8 +177,8 @@ public class ManageDomainsEndpoint implements ResourceContainer {
       domainDTO = domainService.createDomain(domainDTO, identity);
       return Response.ok(EntityBuilder.toRestEntity(domainDTO, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("Unauthorized user {} attempts to create a domain", identity.getUserId());
-      return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
+      LOG.debug("Unauthorized user {} attempts to create a domain", identity.getUserId());
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
   }
 
@@ -327,7 +336,7 @@ public class ManageDomainsEndpoint implements ResourceContainer {
     return Response.ok(EntityBuilder.toRestEntity(domain, currentUser)).build();
   }
 
-  private List<DomainRestEntity> getDomainsRestEntitiesByFilter(DomainFilter filter, int offset, int limit, String currentUser) {
+  private List<DomainRestEntity> getDomainsRestEntitiesByFilter(DomainFilter filter, int offset, int limit, String currentUser) throws IllegalAccessException {
     List<DomainDTO> domains = domainService.getDomainsByFilter(filter, currentUser, offset, limit);
     return EntityBuilder.toRestEntities(domains, currentUser);
   }
