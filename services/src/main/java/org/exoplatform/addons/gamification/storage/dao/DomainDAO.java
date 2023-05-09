@@ -127,10 +127,6 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
   }
 
   private void buildPredicates(DomainFilter filter, List<String> suffixes, List<String> predicates) {
-    if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
-      suffixes.add("Audience");
-      predicates.add("(d.audienceId in (:spacesIds) OR d.audienceId IS NULL)");
-    }
     if (filter.getEntityFilterType() != null && filter.getEntityFilterType() != EntityFilterType.ALL) {
       suffixes.add("Type");
       predicates.add("d.type = :type");
@@ -166,6 +162,9 @@ public class DomainDAO extends GenericDAOJPAImpl<DomainEntity, Long> implements 
         suffixes.add("ByOwnerOrSpaceIds");
         predicates.add("(:ownerId member of d.owners OR d.audienceId in (:spacesIds))");
       }
+    } else if (CollectionUtils.isNotEmpty(filter.getSpacesIds())) {
+      suffixes.add("Audience");
+      predicates.add("(d.audienceId in (:spacesIds) OR d.audienceId IS NULL)");
     }
   }
 
