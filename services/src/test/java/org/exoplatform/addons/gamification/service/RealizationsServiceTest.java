@@ -17,7 +17,30 @@
 
 package org.exoplatform.addons.gamification.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.service.configuration.DomainService;
 import org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl;
 import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.GamificationActionsHistoryDTO;
@@ -26,64 +49,59 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.Hi
 import org.exoplatform.addons.gamification.storage.RealizationsStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.IdentityRegistry;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+@RunWith(MockitoJUnitRunner.class)
 public class RealizationsServiceTest {
 
-  protected static final long MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
+  protected static final long                      MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                           // NOSONAR
 
-  protected static final Date fromDate        = new Date();
+  protected static final Date                      fromDate        = new Date();
 
-  protected static final Date toDate          = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
+  protected static final Date                      toDate          = new Date(fromDate.getTime() + MILLIS_IN_A_DAY);
 
-  protected static final int  offset          = 0;
+  protected static final int                       offset          = 0;
 
-  protected static final int  limit           = 3;
+  protected static final int                       limit           = 3;
 
-  private IdentityManager     identityManager;
-
-  @Mock
-  RealizationsStorage         realizationsStorage;
+  private static MockedStatic<ExoContainerContext> CONTAINER_CONTEXT;
 
   @Mock
-  RealizationsService         realizationsService;
+  IdentityManager                                  identityManager;
+
+  @Mock
+  DomainService                                    domainService;
+
+  @Mock
+  SpaceService                                     spaceService;
+
+  @Mock
+  RealizationsStorage                              realizationsStorage;
+
+  @Mock
+  IdentityRegistry                                 identityRegistry;
+
+  RealizationsService                              realizationsService;
+
+  @BeforeClass
+  public static void initClassContext() {
+    CONTAINER_CONTEXT = mockStatic(ExoContainerContext.class);
+  }
+
+  @AfterClass
+  public static void endClassContext() {
+    CONTAINER_CONTEXT.close();
+  }
 
   @Before
   public void setUp() throws Exception { // NOSONAR
-    realizationsStorage = mock(RealizationsStorage.class);
-    identityManager = mock(IdentityManager.class);
-    realizationsService = new RealizationsServiceImpl(realizationsStorage, identityManager);
-  }
-
-  protected GamificationActionsHistoryDTO newGamificationActionsHistory() {
-    GamificationActionsHistoryDTO gHistory = new GamificationActionsHistoryDTO();
-    gHistory.setId(1L);
-    gHistory.setStatus(HistoryStatus.ACCEPTED.name());
-    gHistory.setDomainDTO(new DomainDTO());
-    gHistory.setReceiver("1");
-    gHistory.setEarnerId("1L");
-    gHistory.setEarnerType(IdentityType.USER.name());
-    gHistory.setActionTitle("gamification title");
-    gHistory.setActionScore(10);
-    gHistory.setGlobalScore(10);
-    gHistory.setRuleId(1L);
-    gHistory.setCreatedDate(Utils.toRFC3339Date(fromDate));
-    return gHistory;
+    realizationsService = new RealizationsServiceImpl(domainService, identityManager, spaceService, realizationsStorage);
   }
 
   @SuppressWarnings("deprecation")
@@ -91,12 +109,18 @@ public class RealizationsServiceTest {
   public void testGetRealizationsByFilter() throws IllegalAccessException {
     // Given
     RealizationsFilter filter = new RealizationsFilter();
-    Identity rootIdentity = new Identity("root1");
-    ConversationState.setCurrent(new ConversationState(rootIdentity));
-    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
+    Identity rootAclIdentity = new Identity("root1");
+    org.exoplatform.social.core.identity.model.Identity rootIdentity =
+                                                                     mock(org.exoplatform.social.core.identity.model.Identity.class);
+    when(rootIdentity.getId()).thenReturn("2");
+    when(rootIdentity.getRemoteId()).thenReturn(rootAclIdentity.getUserId());
+
+    ConversationState.setCurrent(new ConversationState(rootAclIdentity));
     List<MembershipEntry> memberships = new ArrayList<MembershipEntry>();
-    memberships.add(membershipentry);
-    rootIdentity.setMemberships(memberships);
+    rootAclIdentity.setMemberships(memberships);
+    CONTAINER_CONTEXT.when(() -> ExoContainerContext.getService(IdentityRegistry.class)).thenReturn(identityRegistry);
+    when(identityRegistry.getIdentity(rootIdentity.getRemoteId())).thenReturn(rootAclIdentity);
+
     GamificationActionsHistoryDTO gHistory1 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory2 = newGamificationActionsHistory();
     GamificationActionsHistoryDTO gHistory3 = newGamificationActionsHistory();
@@ -105,28 +129,51 @@ public class RealizationsServiceTest {
     gamificationActionsHistoryDTOList.add(gHistory2);
     gamificationActionsHistoryDTOList.add(gHistory3);
     when(realizationsStorage.getRealizationsByFilter(filter, offset, limit)).thenReturn(gamificationActionsHistoryDTOList);
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(null, rootIdentity, offset, limit));
+    when(identityManager.getOrCreateUserIdentity(rootAclIdentity.getUserId())).thenReturn(rootIdentity);
+    assertThrows(IllegalArgumentException.class,
+                 () -> realizationsService.getRealizationsByFilter(null, rootAclIdentity, offset, limit));
     assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, null, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
+    assertThrows(IllegalArgumentException.class,
+                 () -> realizationsService.getRealizationsByFilter(filter, rootAclIdentity, offset, limit));
 
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(null, rootIdentity));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(null, rootAclIdentity));
     assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, null));
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, rootIdentity));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, rootAclIdentity));
 
     // When
     filter.setFromDate(toDate);
     filter.setToDate(fromDate);
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.getRealizationsByFilter(filter, rootIdentity, offset, limit));
-    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, rootIdentity));
+    assertThrows(IllegalArgumentException.class,
+                 () -> realizationsService.getRealizationsByFilter(filter, rootAclIdentity, offset, limit));
+    assertThrows(IllegalArgumentException.class, () -> realizationsService.countRealizationsByFilter(filter, rootAclIdentity));
 
     // When
     filter.setFromDate(fromDate);
     filter.setToDate(toDate);
+    assertThrows(IllegalAccessException.class,
+                 () -> realizationsService.getRealizationsByFilter(filter, rootAclIdentity, offset, limit));
+    assertThrows(IllegalAccessException.class, () -> realizationsService.countRealizationsByFilter(filter, rootAclIdentity));
+
+    filter.setEarnerIds(Collections.singletonList(rootIdentity.getId()));
     List<GamificationActionsHistoryDTO> createdGamificationActionsHistoryDTOList =
                                                                                  realizationsService.getRealizationsByFilter(filter,
-                                                                                                                             rootIdentity,
-                                                                                                                              offset,
-                                                                                                                              limit);
+                                                                                                                             rootAclIdentity,
+                                                                                                                             offset,
+                                                                                                                             limit);
+    // Then
+    assertNotNull(createdGamificationActionsHistoryDTOList);
+    assertEquals(3, createdGamificationActionsHistoryDTOList.size());
+
+    MembershipEntry membershipentry = new MembershipEntry("/platform/administrators", "*");
+    memberships.add(membershipentry);
+    rootAclIdentity.setMemberships(memberships);
+    filter.setEarnerIds(null);
+
+    createdGamificationActionsHistoryDTOList =
+                                             realizationsService.getRealizationsByFilter(filter,
+                                                                                         rootAclIdentity,
+                                                                                         offset,
+                                                                                         limit);
     // Then
     assertNotNull(createdGamificationActionsHistoryDTOList);
     assertEquals(3, createdGamificationActionsHistoryDTOList.size());
@@ -162,6 +209,22 @@ public class RealizationsServiceTest {
     // Then
     assertNotNull(rejectedHistory);
     assertEquals(rejectedHistory.getStatus(), HistoryStatus.REJECTED.name());
+  }
+
+  protected GamificationActionsHistoryDTO newGamificationActionsHistory() {
+    GamificationActionsHistoryDTO gHistory = new GamificationActionsHistoryDTO();
+    gHistory.setId(1L);
+    gHistory.setStatus(HistoryStatus.ACCEPTED.name());
+    gHistory.setDomainDTO(new DomainDTO());
+    gHistory.setReceiver("1");
+    gHistory.setEarnerId("1L");
+    gHistory.setEarnerType(IdentityType.USER.name());
+    gHistory.setActionTitle("gamification title");
+    gHistory.setActionScore(10);
+    gHistory.setGlobalScore(10);
+    gHistory.setRuleId(1L);
+    gHistory.setCreatedDate(Utils.toRFC3339Date(fromDate));
+    return gHistory;
   }
 
 }
