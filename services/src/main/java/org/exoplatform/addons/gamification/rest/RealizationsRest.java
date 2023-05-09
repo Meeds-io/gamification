@@ -61,7 +61,7 @@ public class RealizationsRest implements ResourceContainer {
   }
 
   @GET
-  @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel"})
+  @Produces({MediaType.APPLICATION_JSON, "application/vnd.ms-excel", MediaType.TEXT_PLAIN})
   @Path("allRealizations")
   @Operation(
           summary = "Retrieves the list of achievements switch a filter. The returned format can be of type JSON or XLSX", 
@@ -107,7 +107,9 @@ public class RealizationsRest implements ResourceContainer {
                                      @QueryParam("domainIds")
                                      List<Long> domainIds,
                                      @Parameter(description = "If true, this will return the total count of filtered realizations. Possible values = true or false. Default value = false.", required = false)
-                                     @QueryParam("returnSize") @DefaultValue("false") boolean returnSize) {
+                                     @QueryParam("returnSize")
+                                     @DefaultValue("false")
+                                     boolean returnSize) {
     if (StringUtils.isBlank(fromDate) || StringUtils.isBlank(toDate)) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Dates must not be blank").build();
     }
@@ -115,11 +117,11 @@ public class RealizationsRest implements ResourceContainer {
     Identity identity = ConversationState.getCurrent().getIdentity();
     Date dateFrom = Utils.parseRFC3339Date(fromDate);
     Date dateTo = Utils.parseRFC3339Date(toDate);
-    
+
     if (domainIds == null) {
-        domainIds = new ArrayList<>();
-    } 
-    
+      domainIds = new ArrayList<>();
+    }
+
     RealizationsFilter filter = new RealizationsFilter(earnerIds,
                                                        sortField,
                                                        sortDescending,
@@ -152,7 +154,8 @@ public class RealizationsRest implements ResourceContainer {
                                                                                                               offset,
                                                                                                               limit);
         List<GamificationActionsHistoryRestEntity> gamificationActionsHistoryRestEntities =
-                                                                                          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList, identityManager);
+                                                                                          GamificationActionsHistoryMapper.toRestEntities(gActionsHistoryList,
+                                                                                                                                          identityManager);
         RealizationList realizationList = new RealizationList();
         if (returnSize) {
           int realizationsSize = realizationsService.countRealizationsByFilter(filter, identity);
@@ -168,7 +171,7 @@ public class RealizationsRest implements ResourceContainer {
                 identity.getUserId(),
                 earnerIds,
                 e);
-      return Response.status(Response.Status.FORBIDDEN).build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
     }
   }
 

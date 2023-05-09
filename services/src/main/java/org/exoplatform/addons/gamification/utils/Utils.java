@@ -566,7 +566,7 @@ public class Utils {
         && ownerIds.contains(Long.parseLong(userIdentity.getId()))) {
       return true;
     }
-    return isSuperManager(username);
+    return isRewardingManager(username);
   }
 
   public static String buildAttachmentUrl(String domainId, Long lastModifiedDate, String type, boolean isDefault) {
@@ -641,13 +641,13 @@ public class Utils {
     }
   }
 
-  public static boolean isSuperManager(String username) {
+  public static boolean isRewardingManager(String username) {
     org.exoplatform.services.security.Identity aclIdentity = getUserAclIdentity(username);
     return aclIdentity != null && (aclIdentity.isMemberOf(REWARDING_GROUP) || aclIdentity.isMemberOf(ADMINS_GROUP));
   }
 
   public static org.exoplatform.services.security.Identity getUserAclIdentity(String username) {
-    IdentityRegistry identityRegistry = CommonsUtils.getService(IdentityRegistry.class);
+    IdentityRegistry identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
     org.exoplatform.services.security.Identity aclIdentity = identityRegistry.getIdentity(username);
     if (aclIdentity == null) {
       Authenticator authenticator = CommonsUtils.getService(Authenticator.class);

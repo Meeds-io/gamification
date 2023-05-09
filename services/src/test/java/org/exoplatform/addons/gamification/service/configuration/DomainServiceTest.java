@@ -57,7 +57,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomains() {
+  public void testGetDomains() throws IllegalAccessException {
 
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
@@ -91,7 +91,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomainsByFilter() {
+  public void testGetDomainsByFilter() throws IllegalAccessException {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
@@ -102,7 +102,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomainsByOwner() {
+  public void testGetDomainsByOwner() throws IllegalAccessException {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
@@ -118,7 +118,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountDomainsByOwner() {
+  public void testCountDomainsByOwner() throws IllegalAccessException {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
@@ -134,7 +134,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCountDomains() {
+  public void testCountDomains() throws IllegalAccessException {
     DomainFilter filter = new DomainFilter();
     filter.setEntityFilterType(EntityFilterType.ALL);
     filter.setEntityStatusType(EntityStatusType.ENABLED);
@@ -167,7 +167,7 @@ public class DomainServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testCreateDomain() throws Exception {
+  public void testCreateDomain() throws IllegalAccessException {
     assertEquals(0, domainDAO.count().longValue());
     DomainDTO autoDomain = new DomainDTO();
     autoDomain.setTitle(GAMIFICATION_DOMAIN);
