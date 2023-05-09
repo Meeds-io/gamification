@@ -18,7 +18,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <%@ page import="org.exoplatform.services.security.ConversationState" %>
 
 <%
-  boolean isAdministrator = Utils.isSuperManager(ConversationState.getCurrent().getIdentity().getUserId());
+boolean isAdministrator = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
 %>
 
 <div class="VuetifyApp singlePageApplication">
