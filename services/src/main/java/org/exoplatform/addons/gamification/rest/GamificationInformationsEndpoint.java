@@ -85,7 +85,7 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     providerId = IdentityType.getType(providerId).getProviderId();
 
-    boolean isManager = Utils.isSuperManager(remoteId);
+    boolean isManager = Utils.isRewardingManager(remoteId);
     boolean canShowDetails = isManager || isCurrentUser(providerId, remoteId);
 
     if (SpaceIdentityProvider.NAME.equals(providerId)) {

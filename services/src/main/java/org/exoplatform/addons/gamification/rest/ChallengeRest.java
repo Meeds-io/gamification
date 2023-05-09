@@ -323,7 +323,7 @@ public class ChallengeRest implements ResourceContainer {
           @ApiResponse(responseCode = "401", description = "User not authorized to add a challenge") }
   )
   public Response canAddChallenge() {
-    boolean canAddChallenge = Utils.isSuperManager(ConversationState.getCurrent().getIdentity().getUserId());
+    boolean canAddChallenge = Utils.isRewardingManager(ConversationState.getCurrent().getIdentity().getUserId());
     return Response.ok(String.valueOf(canAddChallenge)).build();
   }
 
