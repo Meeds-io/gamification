@@ -141,7 +141,7 @@ public class ChallengeServiceTest {
 
     UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(false);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
-    UTILS.when(() -> Utils.isSuperManager("root")).thenReturn(true);
+    UTILS.when(() -> Utils.isRewardingManager("root")).thenReturn(true);
     assertThrows(IllegalAccessException.class, () -> challengeService.createChallenge(challenge, "root"));
     UTILS.when(() -> Utils.isChallengeManager(any(Challenge.class), anyString())).thenReturn(true);
     challenge.setAudience(0);
@@ -231,7 +231,7 @@ public class ChallengeServiceTest {
     when(spaceService.getSpaceById("1")).thenReturn(space);
     when(spaceService.isManager(space, "root")).thenReturn(true);
     when(challengeStorage.getChallengeById(challenge.getId())).thenReturn(challenge);
-    UTILS.when(() -> Utils.isSuperManager("root")).thenReturn(true);
+    UTILS.when(() -> Utils.isRewardingManager("root")).thenReturn(true);
     Challenge storedChallenge = challengeService.getChallengeById(1L, "root");
     assertNotNull(storedChallenge);
     assertEquals(1L, storedChallenge.getId());
