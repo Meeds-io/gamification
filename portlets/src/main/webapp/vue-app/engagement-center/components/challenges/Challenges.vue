@@ -57,13 +57,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       </div>
     </v-toolbar>
     <v-card flat>
-      <v-progress-linear
-        v-if="loading"
-        indeterminate
-        height="2"
-        color="primary" />
       <engagement-center-result-not-found 
-        v-else-if="displayWelcomeMessage"
+        v-if="displayWelcomeMessage"
         :display-back-arrow="false"
         :message-title="$t('challenges.welcomeMessage')"
         :message-info-one="$t('challenges.welcomeMessageForRegularUser')" />
@@ -102,7 +97,7 @@ export default {
   },
   data: () => ({
     selectedChallenge: null,
-    loading: true,
+    loading: false,
     domains: [],
     domainsWithChallenges: [],
     announcementsPerChallenge: 2,
@@ -221,6 +216,7 @@ export default {
     this.$root.$on('challenge-deleted', this.refreshChallenges);
     this.$root.$on('challenge-load-more', this.loadMore);
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
+    this.$root.$on('program-rules-refresh', this.refreshChallenges);
     const urlPath = document.location.pathname;
     if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/challenges`) > -1) {
       this.challengeIdFromUrl = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
@@ -243,6 +239,14 @@ export default {
 
     Promise.all(promises)
       .finally(() => this.$root.$applicationLoaded());
+  },
+  beforeDestroy() {
+    this.$root.$off('challenge-added', this.pushChallenge);
+    this.$root.$off('challenge-updated', this.refreshChallenges);
+    this.$root.$off('challenge-deleted', this.refreshChallenges);
+    this.$root.$off('challenge-load-more', this.loadMore);
+    this.$root.$off('challenge-delete-confirm', this.confirmDelete);
+    this.$root.$off('program-rules-refresh', this.refreshChallenges);
   },
   methods: {
     pushChallenge(challenge) {
