@@ -80,6 +80,7 @@
               :template-params="templateParams"
               :placeholder="$t('rule.detail.announceEditor.placeholder')"
               :tag-enabled="false"
+              :attachment-enabled="false"
               ck-editor-type="announcementContent"
               class="flex"
               @validity-updated=" validInput = $event" />
