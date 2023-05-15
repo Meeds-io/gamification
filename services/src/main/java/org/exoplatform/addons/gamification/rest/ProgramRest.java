@@ -117,41 +117,41 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getDomains(
-                             @Parameter(description = "Offset of results to retrieve")
-                             @QueryParam("offset")
-                             @DefaultValue("0")
-                             int offset,
-                             @Parameter(description = "Limit of results to retrieve")
-                             @QueryParam("limit")
-                             @DefaultValue("0")
-                             int limit,
-                             @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
-                             @QueryParam("type")
-                             @DefaultValue("ALL")
-                             String type,
-                             @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
-                             @QueryParam("status")
-                             @DefaultValue("ENABLED")
-                             String status,
-                             @Parameter(description = "Whether retrieve owned programs only or not")
-                             @QueryParam("owned")
-                             boolean owned,
-                             @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false)
-                             @QueryParam("sortByBudget")
-                             @DefaultValue("false")
-                             boolean sortByBudget,
-                             @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false)
-                             @QueryParam("includeDeleted")
-                             @DefaultValue("false")
-                             boolean includeDeleted,
-                             @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
-                             @QueryParam("returnSize")
-                             @DefaultValue("false")
-                             boolean returnSize,
-                             @Parameter(description = "Term to search.")
-                             @QueryParam("query")
-                             String query) {
+  public Response getPrograms(
+                              @Parameter(description = "Offset of results to retrieve")
+                              @QueryParam("offset")
+                              @DefaultValue("0")
+                              int offset,
+                              @Parameter(description = "Limit of results to retrieve")
+                              @QueryParam("limit")
+                              @DefaultValue("0")
+                              int limit,
+                              @Parameter(description = "Domains type filtering, possible values: AUTOMATIC, MANUAL and ALL. Default value = AUTOMATIC.", required = false)
+                              @QueryParam("type")
+                              @DefaultValue("ALL")
+                              String type,
+                              @Parameter(description = "Domains status filtering, possible values: ENABLED, DISABLED and ALL. Default value = ENABLED.", required = false)
+                              @QueryParam("status")
+                              @DefaultValue("ENABLED")
+                              String status,
+                              @Parameter(description = "Whether retrieve owned programs only or not")
+                              @QueryParam("owned")
+                              boolean owned,
+                              @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false)
+                              @QueryParam("sortByBudget")
+                              @DefaultValue("false")
+                              boolean sortByBudget,
+                              @Parameter(description = "If true, this will return the filtered domains including deleted domains. Possible values = true or false. Default value = false.", required = false)
+                              @QueryParam("includeDeleted")
+                              @DefaultValue("false")
+                              boolean includeDeleted,
+                              @Parameter(description = "If true, this will return the total count of filtered domains. Possible values = true or false. Default value = false.", required = false)
+                              @QueryParam("returnSize")
+                              @DefaultValue("false")
+                              boolean returnSize,
+                              @Parameter(description = "Term to search.")
+                              @QueryParam("query")
+                              String query) {
 
     ProgramFilter domainFilter = new ProgramFilter();
     domainFilter.setSortByBudget(sortByBudget);
@@ -195,8 +195,9 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response createDomain(@Parameter(description = "Domain object to create", required = true)
-                               ProgramDTO program) {
+  public Response createProgram(
+                                @Parameter(description = "Domain object to create", required = true)
+                                ProgramDTO program) {
     if (program == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Domain object is mandatory").build();
     }
@@ -220,11 +221,12 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response updateDomain(@Parameter(description = "domain id", required = true)
-                               @PathParam("id")
-                               long domainId,
-                               @Parameter(description = "domain object to update", required = true)
-                               ProgramDTO program) {
+  public Response updateProgram(
+                                @Parameter(description = "domain id", required = true)
+                                @PathParam("id")
+                                long domainId,
+                                @Parameter(description = "domain object to update", required = true)
+                                ProgramDTO program) {
     if (program == null) {
       return Response.status(Response.Status.BAD_REQUEST).entity("domain object is mandatory").build();
     }
@@ -248,12 +250,14 @@ public class ProgramRest implements ResourceContainer {
   @RolesAllowed("administrators")
   @Path("{domainId}")
   @Operation(summary = "Deletes an existing domain identified by its id", method = "DELETE")
-  @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "Request fulfilled"),
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Request fulfilled"),
       @ApiResponse(responseCode = "400", description = "Invalid query input"),
       @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
       @ApiResponse(responseCode = "404", description = "Object not found"),
-      @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response deleteDomain(@Parameter(description = "domain id to be deleted", required = true)
+      @ApiResponse(responseCode = "500", description = "Internal server error"),
+  })
+  public Response deleteProgram(@Parameter(description = "domain id to be deleted", required = true)
                                @PathParam("domainId")
                                long domainId) {
     if (domainId <= 0) {
@@ -261,8 +265,8 @@ public class ProgramRest implements ResourceContainer {
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      ProgramDTO program = programService.deleteProgramById(domainId, identity);
-      return Response.ok().entity(program).build();
+      programService.deleteProgramById(domainId, identity);
+      return Response.noContent().build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
     } catch (IllegalAccessException e) {

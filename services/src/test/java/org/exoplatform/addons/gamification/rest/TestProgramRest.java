@@ -159,7 +159,7 @@ public class TestProgramRest extends AbstractServiceTest { // NOSONAR
     startSessionAs("root1");
     response = getResponse("DELETE", getURLResource("programs/" + autoDomain.getId()), null);
     assertNotNull(response);
-    assertEquals(200, response.getStatus());
+    assertEquals(204, response.getStatus());
   }
 
   @Test
