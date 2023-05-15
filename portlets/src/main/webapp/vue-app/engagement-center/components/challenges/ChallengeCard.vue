@@ -65,7 +65,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <v-list-item-title class="editLabel">{{ $t('challenges.edit') }}</v-list-item-title>
                   </v-list-item>
                   <v-list-item
-                    v-if="enableDelete"
+                    v-if="enableEdit"
                     class="editList"
                     @mousedown="$event.preventDefault()"
                     @click="deleteRule">
@@ -139,9 +139,6 @@ export default {
         .map(announce => ({
           userName: announce.assignee
         })) || [];
-    },
-    enableDelete() {
-      return this.enableEdit && !this.announcementCount && this.status === 'Ended';
     },
     enableEdit() {
       return this.challenge?.userInfo?.canEdit;

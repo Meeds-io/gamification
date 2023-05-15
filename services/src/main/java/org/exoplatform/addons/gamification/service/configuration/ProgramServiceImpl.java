@@ -42,7 +42,7 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class ProgramServiceImpl implements ProgramService {
 
-  private static final Log        LOG                                  = ExoLogger.getLogger(ProgramServiceImpl.class);
+  private static final Log        LOG = ExoLogger.getLogger(ProgramServiceImpl.class);
 
   protected final ProgramStorage  programStorage;
 
@@ -67,13 +67,17 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public List<ProgramDTO> getProgramsByFilter(ProgramFilter domainFilter, String username, int offset, int limit) throws IllegalAccessException {// NOSONAR
+  public List<ProgramDTO> getProgramsByFilter(ProgramFilter domainFilter, String username, int offset,
+                                              int limit) throws IllegalAccessException {// NOSONAR
     List<Long> domainIds = getProgramIdsByFilter(domainFilter, username, offset, limit);
     return domainIds.stream().map(this::getProgramById).toList();
   }
 
   @Override
-  public List<Long> getProgramIdsByFilter(ProgramFilter domainFilter, String username, int offset, int limit) throws IllegalAccessException {
+  public List<Long> getProgramIdsByFilter(ProgramFilter domainFilter,
+                                          String username,
+                                          int offset,
+                                          int limit) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
       if (domainFilter.isSortByBudget()) {
         return programStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
@@ -108,17 +112,20 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public ProgramDTO createProgram(ProgramDTO domain, Identity aclIdentity) throws IllegalAccessException {
-    if (domain == null) {
+  public ProgramDTO createProgram(ProgramDTO program, Identity aclIdentity) throws IllegalAccessException {
+    if (program == null) {
       throw new IllegalArgumentException("domain is mandatory");
     }
-    if (domain.getId() != 0) {
+    if (program.getId() != 0) {
       throw new IllegalArgumentException("domain id must be equal to 0");
+    }
+    if (program.isDeleted()) {
+      throw new IllegalArgumentException("domain to create can't be marked as deleted");
     }
     if (!canAddProgram(aclIdentity)) {
       throw new IllegalAccessException("The user is not authorized to create a domain");
     }
-    ProgramDTO createdDomain = createDomain(domain, aclIdentity.getUserId());
+    ProgramDTO createdDomain = createDomain(program, aclIdentity.getUserId());
     broadcast(GAMIFICATION_DOMAIN_CREATE_LISTENER, createdDomain, aclIdentity.getUserId());
     return createdDomain;
   }
@@ -131,49 +138,52 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public ProgramDTO updateProgram(ProgramDTO domain, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    ProgramDTO storedDomain = programStorage.getDomainById(domain.getId());
-    if (storedDomain == null) {
-      throw new ObjectNotFoundException("domain doesn't exist");
+  public ProgramDTO updateProgram(ProgramDTO program, Identity aclIdentity) throws IllegalAccessException,
+                                                                            ObjectNotFoundException {
+    ProgramDTO storedProgram = programStorage.getDomainById(program.getId());
+    if (storedProgram == null) {
+      throw new ObjectNotFoundException("Program doesn't exist");
     }
-    if (!isProgramOwner(domain.getId(), aclIdentity)) {
-      throw new IllegalAccessException("The user is not authorized to update domain " + domain);
+    if (storedProgram.isDeleted()) {
+      throw new ObjectNotFoundException("Program is marked as deleted");
     }
-    if (domain.equals(storedDomain)) {
+    if (aclIdentity == null || !isProgramOwner(program.getId(), aclIdentity.getUserId())) {
+      throw new IllegalAccessException("The user is not authorized to update domain " + program);
+    }
+    if (program.equals(storedProgram)) {
       // No changes so no modifications needed
-      return storedDomain;
-    } else if (storedDomain.isDeleted()) {
-      throw new IllegalAccessException("Domain is already marked as deleted");
+      return storedProgram;
     }
-    domain.setLastModifiedBy(aclIdentity.getUserId());
-    domain.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
+    program.setLastModifiedBy(aclIdentity.getUserId());
+    program.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
 
     // Preserve non modifiable attributes
-    domain.setType(storedDomain.getType());
-    domain.setCreatedBy(storedDomain.getCreatedBy());
-    domain.setCreatedDate(storedDomain.getCreatedDate());
-    domain.setDeleted(storedDomain.isDeleted());
-    domain.setCoverFileId(storedDomain.getCoverFileId());
+    program.setType(storedProgram.getType());
+    program.setCreatedBy(storedProgram.getCreatedBy());
+    program.setCreatedDate(storedProgram.getCreatedDate());
+    program.setDeleted(storedProgram.isDeleted());
+    program.setCoverFileId(storedProgram.getCoverFileId());
 
-    domain = programStorage.saveDomain(domain);
-    if (storedDomain.isEnabled() && !domain.isEnabled()) {
-      broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, domain, aclIdentity.getUserId());
-    } else if (!storedDomain.isEnabled() && domain.isEnabled()) {
-      broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, domain, aclIdentity.getUserId());
+    program = programStorage.saveDomain(program);
+    if (storedProgram.isEnabled() && !program.isEnabled()) {
+      broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, program, aclIdentity.getUserId());
+    } else if (!storedProgram.isEnabled() && program.isEnabled()) {
+      broadcast(GAMIFICATION_DOMAIN_ENABLE_LISTENER, program, aclIdentity.getUserId());
     } else {
-      broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, domain, aclIdentity.getUserId());
+      broadcast(GAMIFICATION_DOMAIN_UPDATE_LISTENER, program, aclIdentity.getUserId());
     }
-    return domain;
+    return program;
   }
 
   @Override
-  public ProgramDTO deleteProgramById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
+  public ProgramDTO deleteProgramById(long domainId, Identity aclIdentity) throws IllegalAccessException,
+                                                                           ObjectNotFoundException {
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
     ProgramDTO domain = programStorage.getDomainById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
     }
-    if (!isProgramOwner(domainId, aclIdentity)) {
+    if (aclIdentity == null || !isProgramOwner(domainId, aclIdentity.getUserId())) {
       throw new IllegalAccessException("The user is not authorized to delete the domain");
     }
     domain.setDeleted(true);
@@ -184,11 +194,30 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public ProgramDTO getProgramById(long domainId) {
-    if (domainId <= 0) {
-      throw new IllegalArgumentException("domain id has to be positive integer");
+  public ProgramDTO getProgramById(long programId, String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (StringUtils.isBlank(username)) {
+      throw new IllegalAccessException("Username is mandatory");
     }
-    return programStorage.getDomainById(domainId);
+    ProgramDTO program = getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("Program doesn't exist");
+    }
+    if (program.isDeleted()) {
+      throw new ObjectNotFoundException("Program has been deleted");
+    }
+    if (!isProgramMember(programId, username)
+        || (!program.isEnabled() && !isProgramOwner(program.getId(), username))) {
+      throw new IllegalAccessException("Program isn't accessible");
+    }
+    return program;
+  }
+
+  @Override
+  public ProgramDTO getProgramById(long programId) {
+    if (programId <= 0) {
+      throw new IllegalArgumentException("Program id is mandatory");
+    }
+    return programStorage.getDomainById(programId);
   }
 
   @Override
@@ -216,31 +245,31 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public boolean isProgramOwner(long domainId, Identity aclIdentity) {
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(aclIdentity.getUserId());
-    if (userIdentity == null) {
+  public boolean isProgramOwner(long domainId, String username) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
     ProgramDTO domain = programStorage.getDomainById(domainId);
-    if (domain == null) {
+    if (domain == null || domain.isDeleted()) {
       return false;
     }
     return Utils.isProgramOwner(domain.getAudienceId(), domain.getOwners(), userIdentity);
   }
 
   @Override
-  public boolean isProgramMember(long domainId, Identity aclIdentity) {
-    String userName = aclIdentity.getUserId();
-    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(userName);
-    if (userIdentity == null) {
+  public boolean isProgramMember(long domainId, String username) {
+    org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
       return false;
     }
-    ProgramDTO domain = programStorage.getDomainById(domainId);
-    if (domain == null) {
+    ProgramDTO program = programStorage.getDomainById(domainId);
+    if (program == null) {
       return false;
     }
-    return domain.getAudienceId() == 0 || Utils.isSpaceMember(domain.getAudienceId(), userName)
-        || Utils.isRewardingManager(userName);
+
+    return Utils.isRewardingManager(username)
+        || Utils.isSpaceMember(program.getAudienceId(), username);
   }
 
   @SuppressWarnings("unchecked")

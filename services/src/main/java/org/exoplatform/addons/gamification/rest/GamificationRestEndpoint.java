@@ -95,7 +95,6 @@ public class GamificationRestEndpoint implements ResourceContainer {
                                        @QueryParam("period")
                                        String period) {
     if (StringUtils.isBlank(userId)) {
-      LOG.warn("Enable to serve request due to bad request parameter «userId»");
       return Response.ok(new GamificationPoints().userId(userId)
                                                  .points(0L)
                                                  .code("2")

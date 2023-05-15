@@ -40,7 +40,6 @@ public interface AnnouncementService {
    * @param  announcement            {@link Announcement} object to create
    * @param  templateParams          Activity Template params
    * @param  username                User name accessing announcement
-   * @param  system                  check if announcement created by system
    * @return                         created {@link Announcement} with generated
    *                                 technical identifier
    * @throws IllegalAccessException  when user is not authorized to create a
@@ -50,30 +49,19 @@ public interface AnnouncementService {
    */
   Announcement createAnnouncement(Announcement announcement,
                                   Map<String, String> templateParams,
-                                  String username,
-                                  boolean system) throws IllegalAccessException, ObjectNotFoundException;
+                                  String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
    * Update announcement
    *
-   * @param  announcement            {@link Announcement} object to Update
+   * @param  announcementId          {@link Announcement} id which references
+   *                                   the {@link RealizationDTO} id
+   * @param  comment                 new user comment
    * @return                         a {@link Announcement} Object
    * @throws ObjectNotFoundException when the announcement identified by its
    *                                   technical identifier is not found
    */
-  Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException;
-
-  /**
-   * Update announcement
-   *
-   * @param  announcement            {@link Announcement} object to Update
-   * @param  broadcast               whether to broadcast or not the event of
-   *                                   announcement updating
-   * @return                         a {@link Announcement} Object
-   * @throws ObjectNotFoundException when the announcement identified by its
-   *                                   technical identifier is not found
-   */
-  Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException;
+  Announcement updateAnnouncementComment(long announcementId, String comment) throws ObjectNotFoundException;
 
   /**
    * Deletes announcement
@@ -95,7 +83,7 @@ public interface AnnouncementService {
    * @return                A {@link Announcement} object
    */
 
-  Announcement getAnnouncementById(Long announcementId);
+  Announcement getAnnouncementById(long announcementId);
 
   /**
    * Retrieves all announcements by earnerId.
@@ -113,7 +101,7 @@ public interface AnnouncementService {
    * @throws ObjectNotFoundException when the {@link RuleDTO} identified by its
    *                                   technical identifier is not found
    */
-  Long countAnnouncements(long ruleId) throws ObjectNotFoundException;
+  int countAnnouncements(long ruleId) throws ObjectNotFoundException;
 
   /**
    * Retrieves number of all Announcements by {@link RuleDTO} identifier.
@@ -124,6 +112,6 @@ public interface AnnouncementService {
    * @throws ObjectNotFoundException when the {@link RuleDTO} identified by its
    *                                   technical identifier is not found
    */
-  Long countAnnouncements(long ruleId, IdentityType earnerType) throws ObjectNotFoundException;
+  int countAnnouncements(long ruleId, IdentityType earnerType) throws ObjectNotFoundException;
 
 }
