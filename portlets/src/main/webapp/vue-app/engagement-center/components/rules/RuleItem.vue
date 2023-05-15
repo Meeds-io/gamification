@@ -96,7 +96,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           :class="showAllAvatarList && 'AllUsersAvatar'"
           class="winners winnersAvatarsList d-flex flex-nowrap my-2 justify-center">
           <engagement-center-avatars-list
-            v-if="haveParticipants"
+            v-if="hasParticipants"
             :avatars="ruleWinnerAvatars"
             :max-avatars-to-show="maxAvatarsToShow"
             :avatars-count="ruleWinnersCount"
@@ -165,9 +165,9 @@ export default {
         })) || [];
     },
     ruleWinnersCount() {
-      return this.rule?.announcementsCount || this.rule?.announcements.length || 0;
+      return this.rule?.announcementsCount || this.rule?.announcements?.length || 0;
     },
-    haveParticipants() {
+    hasParticipants() {
       return this.ruleWinnersCount !== 0;
     },
     enabledRule() {

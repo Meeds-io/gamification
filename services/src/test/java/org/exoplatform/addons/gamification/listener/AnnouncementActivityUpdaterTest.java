@@ -16,27 +16,32 @@
  */
 package org.exoplatform.addons.gamification.listener;
 
-import org.exoplatform.addons.gamification.listener.challenges.AnnouncementActivityUpdater;
+import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.RealizationsService;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.manager.ActivityManager;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.exoplatform.addons.gamification.utils.Utils.ANNOUNCEMENT_ACTIVITY_TYPE;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnnouncementActivityUpdaterTest {
@@ -48,14 +53,22 @@ public class AnnouncementActivityUpdaterTest {
   private AnnouncementService announcementService;
 
   @Mock
-  private RealizationsService realizationsService;
+  private RealizationService  realizationService;
 
   @Test
   public void testUpdateActivity() throws ObjectNotFoundException {
-    AnnouncementActivityUpdater announcementActivityUpdater =
-                                                            new AnnouncementActivityUpdater(activityManager, announcementService, realizationsService);
+    AnnouncementActivityUpdater announcementActivityUpdater = new AnnouncementActivityUpdater(activityManager,
+                                                                                              announcementService,
+                                                                                              realizationService);
 
-    Announcement announcement = new Announcement(1l, 1l, "challenge title", 1L, "announcement comment", 1L, new Date().toString(), null);
+    Announcement announcement = new Announcement(1l,
+                                                 1l,
+                                                 "challenge title",
+                                                 1L,
+                                                 "announcement comment",
+                                                 1L,
+                                                 new Date().toString(),
+                                                 null);
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setType("not announcement activity");
     ActivityLifeCycleEvent activityLifeCycleEvent = new ActivityLifeCycleEvent(ActivityLifeCycleEvent.Type.UPDATE_ACTIVITY,

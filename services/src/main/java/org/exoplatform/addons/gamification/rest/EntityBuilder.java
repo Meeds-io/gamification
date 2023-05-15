@@ -23,130 +23,70 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.rest.model.*;
+import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
+import org.exoplatform.addons.gamification.rest.model.ProgramRestEntity;
+import org.exoplatform.addons.gamification.rest.model.RuleRestEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
+import org.exoplatform.addons.gamification.service.configuration.ProgramService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
-import org.exoplatform.addons.gamification.service.mapper.EntityMapper;
+import org.exoplatform.addons.gamification.service.mapper.AnnouncementBuilder;
 import org.exoplatform.addons.gamification.utils.Utils;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.social.rest.api.RestUtils;
 
 public class EntityBuilder {
+  private static final Log LOG = ExoLogger.getLogger(EntityBuilder.class);
 
-  private EntityBuilder() { // NOSONAR
+  private EntityBuilder() {
+    // Class with static methods
   }
 
   public static List<AnnouncementRestEntity> fromAnnouncementList(List<Announcement> announcements) {
     if (CollectionUtils.isEmpty(announcements)) {
       return Collections.emptyList();
     } else {
-      return announcements.stream().map(EntityMapper::fromAnnouncement).toList();
+      return announcements.stream().map(AnnouncementBuilder::fromAnnouncement).toList();
     }
   }
 
-  public static ChallengeRestEntity fromChallenge(AnnouncementService announcementService,
-                                                  Challenge challenge,
-                                                  int announcementsPerChallenge,
-                                                  boolean noDomain,
-                                                  PeriodType periodType) throws IllegalAccessException {
-    if (challenge == null) {
-      return null;
-    }
-    List<Announcement> challengeAnnouncements = null;
-    if (announcementsPerChallenge != 0 ) {
-      challengeAnnouncements =
-                             announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, announcementsPerChallenge, periodType, null);
-    } else {
-      challengeAnnouncements = Collections.emptyList();
-    }
-    return fromChallenge(challenge, challengeAnnouncements, noDomain);
-  }
-
-  public static ChallengeRestEntity fromChallenge(Challenge challenge, List<Announcement> challengeAnnouncements) {
-    return fromChallenge(challenge, challengeAnnouncements, false);
-  }
-
-  public static ChallengeRestEntity fromChallenge(Challenge challenge,
-                                                  List<Announcement> challengeAnnouncements,
-                                                  boolean noDomain) {
-    Space space = Utils.getSpaceById(String.valueOf(challenge.getAudience()));
-    return new ChallengeRestEntity(challenge.getId(),
-                                   challenge.getTitle(),
-                                   challenge.getDescription(),
-                                   space,
-                                   challenge.getStartDate(),
-                                   challenge.getEndDate(),
-                                   Utils.toUserInfo(challenge,
-                                                    Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME,
-                                                                                 Utils.getCurrentUser())),
-                                   Utils.getOwners(challenge),
-                                   Utils.countAnnouncementsByChallenge(challenge.getId()),
-                                   fromAnnouncementList(challengeAnnouncements),
-                                   challenge.getPoints(),
-                                   noDomain ? null : Utils.getChallengeDomainDTO(challenge),
-                                   challenge.isEnabled());
-  }
-
-  public static DomainRestEntity toRestEntity(DomainDTO domain, String username) {
-    if (domain == null) {
-      return null;
-    }
-    return new DomainRestEntity(domain.getId(),
-                                domain.getTitle(),
-                                domain.getDescription(),
-                                domain.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(domain.getAudienceId())) : null,
-                                domain.getPriority(),
-                                domain.getCreatedBy(),
-                                domain.getCreatedDate(),
-                                domain.getLastModifiedBy(),
-                                domain.getLastModifiedDate(),
-                                domain.isEnabled(),
-                                domain.isDeleted(),
-                                domain.getBudget(),
-                                domain.getType(),
-                                domain.getCoverUrl(),
-                                Utils.getRulesTotalScoreByDomain(domain.getId()),
-                                Utils.getDomainOwnersByIds(domain.getOwners(), domain.getAudienceId()),
-                                Utils.toUserInfo(domain.getId(), username));
-  }
-
-  public static List<DomainRestEntity> toRestEntities(List<DomainDTO> domains, String username) {
-    return domains.stream().map((DomainDTO domainDTO) -> toRestEntity(domainDTO, username)).toList();
-  }
-
-  public static List<RuleRestEntity> ruleListToRestEntities(List<RuleDTO> rules,
-                                                            String username,
-                                                            List<String> expand) {
-    return rules.stream().map((RuleDTO ruleDTO) -> ruleToRestEntity(ruleDTO, username, expand)).toList();
-  }
-
-  public static RuleRestEntity ruleToRestEntity(RuleDTO rule, String username, List<String> expand) {
-    List<AnnouncementRestEntity> announcementsRestEntities = null;
+  public static RuleRestEntity toRestEntity(ProgramService programService,
+                                            AnnouncementService announcementService,
+                                            RuleDTO rule,
+                                            List<String> expandFields,
+                                            int announcementsLimit,
+                                            boolean noDomain,
+                                            PeriodType periodType) {
     if (rule == null) {
       return null;
     }
-    List<Announcement> announcementList = null;
-    long announcementCount = 0L;
-    if (expand.contains("userAnnouncements")) {
-      try {
-        announcementList = Utils.findAllAnnouncementByChallenge(rule.getId(), 0, 3, IdentityType.USER);
-      } catch (IllegalAccessException e) {
-        announcementList = Collections.emptyList();
-      }
-      announcementCount = Utils.countAnnouncementByChallengeAndEarnerType(rule.getId(), IdentityType.USER);
+    boolean expandUserAnnouncements = expandFields != null && expandFields.contains("userAnnouncements");
+    if (expandUserAnnouncements && announcementsLimit <= 0) {
+      announcementsLimit = 3;
     }
-    if (announcementList != null) {
-      announcementsRestEntities = announcementList.stream().map(EntityMapper::fromAnnouncement).toList();
+    List<AnnouncementRestEntity> announcementEntities = null;
+    long announcementsCount = 0;
+    if (periodType != null && announcementsLimit > 0 && rule.getType() == EntityType.MANUAL) {
+      List<Announcement> announcements = getAnnouncements(announcementService, rule, announcementsLimit, periodType);
+      announcementEntities = fromAnnouncementList(announcements);
+      announcementsCount = expandUserAnnouncements ? Utils.countAnnouncementsByRuleIdAndEarnerType(announcementService,
+                                                                                                   rule.getId(),
+                                                                                                   IdentityType.USER)
+                                                   : 0;
     }
+    ProgramDTO program = noDomain ? null : rule.getProgram();
+    UserInfo userInfo = Utils.toUserInfo(programService, rule.getDomainId(), Utils.getCurrentUser());
+
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),
                               rule.getDescription(),
                               rule.getScore(),
-                              rule.getDomainDTO(),
+                              program,
                               rule.isEnabled(),
                               rule.isDeleted(),
                               rule.getCreatedBy(),
@@ -154,13 +94,65 @@ public class EntityBuilder {
                               rule.getLastModifiedBy(),
                               rule.getEvent(),
                               rule.getLastModifiedDate(),
-                              rule.getAudience(),
+                              rule.getAudienceId(),
                               rule.getStartDate(),
                               rule.getEndDate(),
                               rule.getType(),
                               rule.getManagers(),
-                              announcementsRestEntities,
-                              announcementCount,
-                              Utils.toUserInfo(rule.getId(), username));
+                              announcementEntities,
+                              announcementsCount,
+                              userInfo);
   }
+
+  public static ProgramRestEntity toRestEntity(ProgramService programService, ProgramDTO program, String username) {
+    if (program == null) {
+      return null;
+    }
+    return new ProgramRestEntity(program.getId(),
+                                 program.getTitle(),
+                                 program.getDescription(),
+                                 program.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getAudienceId())) : null,
+                                 program.getPriority(),
+                                 program.getCreatedBy(),
+                                 program.getCreatedDate(),
+                                 program.getLastModifiedBy(),
+                                 program.getLastModifiedDate(),
+                                 program.isEnabled(),
+                                 program.isDeleted(),
+                                 program.getBudget(),
+                                 program.getType(),
+                                 program.getCoverUrl(),
+                                 program.getRulesTotalScore(),
+                                 Utils.getProgramOwnersByIds(program.getOwners(), program.getAudienceId()),
+                                 Utils.toUserInfo(programService, program.getId(), username));
+  }
+
+  public static List<ProgramRestEntity> toRestEntities(ProgramService programService, List<ProgramDTO> domains, String username) {
+    return domains.stream().map(program -> toRestEntity(programService, program, username)).toList();
+  }
+
+  public static List<Announcement> getAnnouncements(AnnouncementService announcementService,
+                                                    RuleDTO rule,
+                                                    int limit,
+                                                    PeriodType period) {
+    if (limit > 0) {
+      try {
+        return announcementService.findAnnouncements(rule.getId(),
+                                                     0,
+                                                     limit,
+                                                     period,
+                                                     null,
+                                                     RestUtils.getCurrentUser());
+      } catch (Exception e) {
+        LOG.warn("Error while retrieving announcements list on rule {} for user {}. Returning empty list",
+                 rule.getId(),
+                 Utils.getCurrentUser(),
+                 e);
+        return Collections.emptyList();
+      }
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
 }
