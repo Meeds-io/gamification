@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Announcement implements Cloneable {
+
   private long   id;
 
   private Long   challengeId;

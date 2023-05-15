@@ -30,13 +30,13 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <!-- DOmains Service Layer-->
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.DomainServiceImpl</type>
+        <key>org.exoplatform.addons.gamification.service.configuration.ProgramService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.ProgramServiceImpl</type>
     </component>
     <!-- Domains storage Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.storage.DomainStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.DomainCachedStorage</type>
+        <key>org.exoplatform.addons.gamification.storage.ProgramStorage</key>
+        <type>org.exoplatform.addons.gamification.storage.cached.ProgramCachedStorage</type>
     </component>
 
     <component>
@@ -59,11 +59,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.mock.SpaceServiceMock</type>
     </component>
 
-    <!-- Gamification Effective Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
-    </component>
-
     <!-- Rules Service Layer-->
     <component>
         <key>org.exoplatform.addons.gamification.service.configuration.RuleService</key>
@@ -76,14 +71,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
+        <type>org.exoplatform.addons.gamification.storage.dao.RealizationDAO</type>
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.storage.dao.BadgeDAO</type>
     </component>
 
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.DomainDAO</type>
+        <type>org.exoplatform.addons.gamification.storage.dao.ProgramDAO</type>
     </component>
 
     <component>
@@ -91,11 +86,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </component>
 
     <component>
-        <key>org.exoplatform.addons.gamification.service.RealizationsService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.RealizationsServiceImpl</type>
+        <key>org.exoplatform.addons.gamification.service.RealizationService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.RealizationServiceImpl</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.storage.RealizationsStorage</type>
+        <type>org.exoplatform.addons.gamification.storage.RealizationStorage</type>
     </component>
 
     <component>
@@ -103,7 +98,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <type>org.exoplatform.addons.gamification.storage.cached.AnnouncementCachedStorage</type>
     </component>
     <component>
-        <type>org.exoplatform.addons.gamification.rest.ChallengeRest</type>
+        <type>org.exoplatform.addons.gamification.rest.RuleRest</type>
     </component>
     <component>
         <type>org.exoplatform.addons.gamification.rest.AnnouncementRest</type>
@@ -116,21 +111,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <key>org.exoplatform.addons.gamification.service.AnnouncementService</key>
         <type>org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl</type>
-    </component>
-    <component>
-        <key>org.exoplatform.addons.gamification.service.ChallengeService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.ChallengeServiceImpl</type>
-        <init-params>
-            <value-param>
-                <name>challenge.creator.group</name>
-                <description>groups with membership type have permission to manage challenges</description>
-                <value>${exo.challenges.creators.group:/platform/administrators,/platform/rewarding}</value>
-            </value-param>
-        </init-params>
-    </component>
-
-    <component>
-        <type>org.exoplatform.addons.gamification.storage.ChallengeStorage</type>
     </component>
 
     <component>
@@ -191,6 +171,22 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             </properties-param>
         </init-params>
     </component>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
+        <component-plugin>
+            <name>GamificationManagementChangeLogsPlugin</name>
+            <set-method>addChangeLogsPlugin</set-method>
+            <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
+            <init-params>
+                <values-param>
+                    <name>changelogs</name>
+                    <description>Change logs of Gamification</description>
+                    <value>db/changelog/gamification.db.changelog-1.0.0.xml</value>
+                </values-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 
     <external-component-plugins>
         <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
