@@ -47,7 +47,7 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
   }
 
   @Override
-  public void onEvent(Event<ProgramDTO, String> event) throws Exception {
+  public void onEvent(Event<ProgramDTO, String> event) throws Exception { // NOSONAR
     ProgramDTO program = event.getSource();
     String action = event.getEventName();
     RuleFilter ruleFilter = new RuleFilter();
@@ -57,9 +57,11 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
     switch (action) {
     case GAMIFICATION_DOMAIN_DELETE_LISTENER:
       for (RuleDTO rule : rules) {
-        rule.setProgram(null);
-        rule.setEnabled(false);
-        ruleService.updateRule(rule);
+        if (!rule.isDeleted()) {
+          rule.setProgram(null);
+          rule.setEnabled(false);
+          ruleService.updateRule(rule);
+        }
       }
       for (BadgeDTO badge : badges) {
         badge.setProgram(null);
@@ -69,8 +71,10 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
       break;
     case GAMIFICATION_DOMAIN_DISABLE_LISTENER:
       for (RuleDTO rule : rules) {
-        rule.setEnabled(false);
-        ruleService.updateRule(rule);
+        if (!rule.isDeleted()) {
+          rule.setEnabled(false);
+          ruleService.updateRule(rule);
+        }
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(false);
@@ -79,8 +83,10 @@ public class GamificationDomainListener extends Listener<ProgramDTO, String> {
       break;
     case GAMIFICATION_DOMAIN_ENABLE_LISTENER:
       for (RuleDTO rule : rules) {
-        rule.setEnabled(true);
-        ruleService.updateRule(rule);
+        if (!rule.isDeleted()) {
+          rule.setEnabled(true);
+          ruleService.updateRule(rule);
+        }
       }
       for (BadgeDTO badge : badges) {
         badge.setEnabled(true);

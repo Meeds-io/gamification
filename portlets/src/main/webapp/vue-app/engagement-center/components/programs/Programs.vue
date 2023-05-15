@@ -239,8 +239,8 @@ export default {
     deleteProgram() {
       this.loading = true;
       this.$programService.deleteProgram(this.selectedProgram.id)
-        .then((deletedProgram) => {
-          this.$root.$emit('program-deleted', deletedProgram);
+        .then(() => {
+          this.$root.$emit('program-deleted', this.selectedProgram);
           this.$engagementCenterUtils.displayAlert(this.$t('programs.programDeleteSuccess'));
           this.retrievePrograms();
         })

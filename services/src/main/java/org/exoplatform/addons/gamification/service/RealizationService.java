@@ -188,10 +188,10 @@ public interface RealizationService {
    * @return                    list of cancelled {@link RealizationDTO}
    */
   List<RealizationDTO> cancelRealizations(String event,
-                                         String earnerIdentityId,
-                                         String receiverIdentityId,
-                                         String objectId,
-                                         String objectType);
+                                          String earnerIdentityId,
+                                          String receiverIdentityId,
+                                          String objectId,
+                                          String objectType);
 
   /**
    * Marks all realizations of a given object, generally due to deletion of

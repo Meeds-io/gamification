@@ -209,7 +209,7 @@ public class RealizationServiceImpl implements RealizationService {
     if (storedRealization == null) {
       throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
     }
-    if (Utils.isRewardingManager(username) || programService.isProgramOwner(realization.getProgram().getId(), userAclIdentity)) {
+    if (Utils.isRewardingManager(username) || programService.isProgramOwner(realization.getProgram().getId(), userAclIdentity.getUserId())) {
       return realizationStorage.updateRealization(realization);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
@@ -223,7 +223,6 @@ public class RealizationServiceImpl implements RealizationService {
       throw new IllegalArgumentException("Realization is mandatory");
     }
     long realizationId = realization.getId();
-
     if (realizationId <= 0) {
       throw new IllegalArgumentException("Realization id has to be positive integer");
     }
@@ -379,22 +378,21 @@ public class RealizationServiceImpl implements RealizationService {
   }
 
   @Override
-  public RealizationDTO getRealizationById(long realizationId, Identity identity) throws IllegalAccessException,
+  public RealizationDTO getRealizationById(long realizationId, Identity userAclIdentity) throws IllegalAccessException,
                                                                                   ObjectNotFoundException {
     if (realizationId <= 0) {
       throw new IllegalArgumentException("realization id is mandatory");
     }
-    if (identity == null) {
+    if (userAclIdentity == null) {
       throw new IllegalArgumentException("identity is mandatory");
     }
-    String username = identity.getUserId();
+    String username = userAclIdentity.getUserId();
 
     org.exoplatform.social.core.identity.model.Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
     RealizationDTO realization = realizationStorage.getRealizationById(realizationId);
     if (realization == null) {
       throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
-    } else if (Utils.isRewardingManager(username) || programService.isProgramOwner(realization.getProgram().getId(), identity)
-        || realization.getEarnerId().equals(userIdentity.getId())) {
+    } else if (programService.isProgramOwner(realization.getProgram().getId(), userAclIdentity.getUserId()) || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to access achievement");
@@ -419,7 +417,8 @@ public class RealizationServiceImpl implements RealizationService {
       fileName += formatter.format(new Date());
       File temp;
       if (SystemUtils.IS_OS_UNIX) {
-        FileAttribute<Set<PosixFilePermission>> tempFileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+        FileAttribute<Set<PosixFilePermission>> tempFileAttributes =
+                                                                   PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
         temp = Files.createTempFile(fileName, ".xlsx", tempFileAttributes).toFile();
       } else {
         temp = Files.createTempFile(fileName, ".xlsx").toFile();
@@ -502,12 +501,12 @@ public class RealizationServiceImpl implements RealizationService {
     boolean isFilterByDomains = CollectionUtils.isNotEmpty(filterDomainIds);
 
     if (isSelfFilter) {
-      if (isFilterByDomains && !isDomainsMember(filterDomainIds, userAclIdentity)) {
+      if (isFilterByDomains && !isDomainsMember(filterDomainIds, userAclIdentity.getUserId())) {
         throw new IllegalAccessException("User is not member of one or several selected domains :"
             + filterDomainIds);
       }
     } else {
-      if (isFilterByDomains && !isDomainsOwner(filterDomainIds, userAclIdentity)) {
+      if (isFilterByDomains && !isDomainsOwner(filterDomainIds, userAclIdentity.getUserId())) {
         throw new IllegalAccessException("User is not owner of one or several selected domains :"
             + filterDomainIds);
       } else if (!isFilterByDomains) {
@@ -532,15 +531,14 @@ public class RealizationServiceImpl implements RealizationService {
     return programService.getProgramIdsByFilter(domainFilter, userIdentity.getRemoteId(), 0, -1);
   }
 
-  private boolean isDomainsOwner(List<Long> domainIds, Identity userAclIdentity) {
+  private boolean isDomainsOwner(List<Long> domainIds, String username) {
     return domainIds.stream()
-                    .allMatch(domainId -> programService.isProgramOwner(domainId, userAclIdentity));
+                    .allMatch(domainId -> programService.isProgramOwner(domainId, username));
   }
 
-  private boolean isDomainsMember(List<Long> domainIds, Identity userAclIdentity) {
+  private boolean isDomainsMember(List<Long> domainIds, String username) {
     return domainIds.stream()
-                    .allMatch(domainId -> programService.isProgramMember(domainId,
-                                                                       userAclIdentity));
+                    .allMatch(domainId -> programService.isProgramMember(domainId, username));
   }
 
   private List<StandardLeaderboard> filterAuthorizedSpaces(List<StandardLeaderboard> result,

@@ -18,6 +18,7 @@ package org.exoplatform.addons.gamification.storage.dao;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
+import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityStatusType;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class RuleDAOTest extends AbstractServiceTest {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleEntity ruleEntity = newRule();
     long domainId = ruleEntity.getDomainEntity().getId();
-    assertNotNull(ruleDAO.findRuleByEventAndDomain(ruleEntity.getEvent(), domainId));
+    assertNotNull(ruleDAO.findActiveRuleByEventAndDomain(ruleEntity.getEvent(), domainId));
   }
 
   @Test
@@ -177,6 +178,8 @@ public class RuleDAOTest extends AbstractServiceTest {
     newManualRule("rule3", domainEntity3.getId());
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setDateFilterType(DateFilterType.STARTED);
+    filter.setEntityFilterType(EntityFilterType.AUTOMATIC);
+    assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setEntityFilterType(EntityFilterType.MANUAL);
     assertEquals(2, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
     filter.setDateFilterType(DateFilterType.NOT_STARTED);
@@ -198,8 +201,8 @@ public class RuleDAOTest extends AbstractServiceTest {
         + 2 * MILLIS_IN_A_DAY))));
     ruleDAO.create(ruleEntityNotStarted);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
-    filter.setDateFilterType(DateFilterType.ENDED);
 
+    filter.setDateFilterType(DateFilterType.ENDED);
     RuleEntity ruleEntityEnded = new RuleEntity();
     ruleEntityEnded.setScore(Integer.parseInt(TEST__SCORE));
     ruleEntityEnded.setTitle("ruleEntityEnded");
@@ -216,7 +219,23 @@ public class RuleDAOTest extends AbstractServiceTest {
         - 2 * MILLIS_IN_A_DAY))));
     ruleEntityEnded.setStartDate(Utils.parseSimpleDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis()
         - 5 * MILLIS_IN_A_DAY))));
-    ruleDAO.create(ruleEntityEnded);
+    ruleEntityEnded = ruleDAO.create(ruleEntityEnded);
+    assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    filter.setDateFilterType(DateFilterType.ALL);
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
+    assertEquals(0, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(4, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    ruleEntityEnded.setEnabled(false);
+    ruleDAO.update(ruleEntityEnded);
+
+    filter.setEntityStatusType(EntityStatusType.ENABLED);
+    assertEquals(3, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
+
+    filter.setEntityStatusType(EntityStatusType.DISABLED);
     assertEquals(1, ruleDAO.findRulesIdsByFilter(filter, 0, 10).size());
   }
 

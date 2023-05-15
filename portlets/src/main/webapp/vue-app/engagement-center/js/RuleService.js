@@ -36,9 +36,6 @@ export function getRules(filter) {
   if (filter?.period) {
     formData.append('period', filter.period.toUpperCase());
   }
-  if (filter?.includeDeleted) {
-    formData.append('includeDeleted', 'true');
-  }
   if (filter?.groupByDomain) {
     formData.append('groupByDomain', 'true');
   }
