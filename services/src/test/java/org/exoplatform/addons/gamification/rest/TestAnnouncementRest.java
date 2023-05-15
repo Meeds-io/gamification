@@ -30,8 +30,8 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.exoplatform.addons.gamification.rest.model.AnnouncementRestEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.impl.ContainerResponse;
@@ -68,22 +68,24 @@ public class TestAnnouncementRest extends AbstractServiceTest {
 
   @Test
   public void testCreatAnnouncement() throws Exception {
-    startSessionAs("root1");
-    DomainDTO domain = newDomainDTO();
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
     long identityId = Long.parseLong(identity.getId());
-    Challenge challenge = new Challenge(0,
-                                        "update challenge",
-                                        "challenge description",
-                                        1l,
-                                        startDate,
-                                        endDate,
-                                        Collections.singletonList(identityId),
-                                        10L,
-                                        domain.getId(),
-                                        true);
-    challenge = challengeService.createChallenge(challenge);
-    String restPath = "/gamification/announcement/api/addAnnouncement";
+
+    ConversationState conversationState = startSessionAs("root1");
+    ProgramDTO domain = newProgram();
+    domain.setOwners(Collections.singleton(identityId));
+    programService.updateProgram(domain, conversationState.getIdentity());
+
+    RuleDTO rule = new RuleDTO();
+    rule.setTitle("update challenge");
+    rule.setDescription("challenge description");
+    rule.setStartDate(startDate);
+    rule.setEndDate(endDate);
+    rule.setProgram(domain);
+    rule.setEnabled(true);
+    rule.setScore(10);
+    rule = ruleService.createRule(rule);
+    String restPath = "/gamification/announcements";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "POST", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -94,7 +96,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
               .key("id")
               .value("0")
               .key("challengeId")
-              .value(challenge.getId())
+              .value(rule.getId())
               .key("assignee")
               .value("1")
               .key("challengeTitle")
@@ -123,7 +125,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     startSessionAs("root2");
     response = launcher.service("POST", restPath, "", h, data, envctx);
     assertNotNull(response);
-    assertEquals(403, response.getStatus());
+    assertEquals(401, response.getStatus());
 
     startSessionAs("root1");
     response = launcher.service("POST", restPath, "", h, data, envctx);
@@ -190,28 +192,25 @@ public class TestAnnouncementRest extends AbstractServiceTest {
   @Test
   public void testGetAllAnnouncementByChallenge() throws Exception {
     startSessionAs("root1");
-    DomainDTO domain = newDomainDTO();
-    Challenge challenge = new Challenge(0,
-                                        "update challenge",
-                                        "challenge description",
-                                        1L,
-                                        startDate,
-                                        endDate,
-                                        Collections.emptyList(),
-                                        10L,
-                                        domain.getId(),
-                                        true);
-    challenge = challengeService.createChallenge(challenge);
+    ProgramDTO domain = newProgram();
+    RuleDTO rule = new RuleDTO();
+    rule.setTitle("update challenge");
+    rule.setDescription("challenge description");
+    rule.setStartDate(startDate);
+    rule.setEndDate(endDate);
+    rule.setProgram(domain);
+    rule.setEnabled(true);
+    rule = ruleService.createRule(rule);
     Announcement announcement = new Announcement(0,
-                                                 challenge.getId(),
-                                                 challenge.getTitle(),
+                                                 rule.getId(),
+                                                 rule.getTitle(),
                                                  1L,
                                                  "announcement comment",
                                                  1L,
                                                  date,
                                                  null);
     announcementService.createAnnouncement(announcement, new HashMap<>(), "root1", false);
-    String restPath = "/gamification/announcement/api/ByChallengeId/1?offset=1&limit=-10";
+    String restPath = "/gamification/announcements?ruleId=1&offset=1&limit=-10";
     EnvironmentContext envctx = new EnvironmentContext();
     HttpServletRequest httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -222,7 +221,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/announcement/api/ByChallengeId/1?offset=-1&limit=10";
+    restPath = "/gamification/announcements?ruleId=1&offset=-1&limit=10";
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
@@ -231,16 +230,16 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     assertNotNull(response);
     assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/announcement/api/ByChallengeId/-1?offset=1&limit=10";
+    restPath = "/gamification/announcements?ruleId=-1&offset=1&limit=10";
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);
     envctx.put(SecurityContext.class, new MockSecurityContext("root"));
     response = launcher.service("GET", restPath, "", h, null, envctx);
     assertNotNull(response);
-    assertEquals(500, response.getStatus());
+    assertEquals(400, response.getStatus());
 
-    restPath = "/gamification/announcement/api/ByChallengeId/" + challenge.getId() + "?offset=0&limit=10";
+    restPath = "/gamification/announcements?ruleId=" + rule.getId() + "&offset=0&limit=10";
     envctx = new EnvironmentContext();
     httpRequest = new MockHttpServletRequest(restPath, null, 0, "GET", null);
     envctx.put(HttpServletRequest.class, httpRequest);

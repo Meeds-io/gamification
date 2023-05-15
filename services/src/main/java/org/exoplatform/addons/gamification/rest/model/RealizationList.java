@@ -28,7 +28,7 @@ import lombok.Setter;
 @Getter
 public class RealizationList {
 
-  private List<GamificationActionsHistoryRestEntity> realizations;
+  private List<RealizationRestEntity> realizations;
 
   private int                                        offset;
 

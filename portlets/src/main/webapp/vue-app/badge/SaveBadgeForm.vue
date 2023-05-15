@@ -104,7 +104,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <form id="domainSelectboxGroup">
                 <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
 
-                <select v-model="badge.domainDTO" class="mb-4">
+                <select v-model="badge.program" class="mb-4">
                   <option disabled>
                     {{ this.$t('exoplatform.gamification.selectdomain') }}
                   </option>
@@ -184,7 +184,7 @@ export default {
   },
   computed: {
     isDisabled: function(){
-      return !(this.isNotEmpty(this.badge.neededScore)&&this.isNotEmpty(this.badge.title)&&this.isNotEmpty(this.uploadId)&&this.badge.domainDTO!=null);
+      return !(this.isNotEmpty(this.badge.neededScore)&&this.isNotEmpty(this.badge.title)&&this.isNotEmpty(this.uploadId)&&this.badge.program!=null);
     }
   },
   watch: {

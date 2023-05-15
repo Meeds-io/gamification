@@ -22,25 +22,39 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Entity(name = "Rule")
 @ExoEntity
 @Table(name = "GAMIFICATION_RULE")
-@NamedQuery(name = "Rule.getAllRules", query = "SELECT rule FROM Rule rule WHERE rule.isDeleted = false ORDER BY rule.createdDate desc")
-@NamedQuery(name = "Rule.getEnabledRules", query = "SELECT rule FROM Rule rule where rule.isEnabled = :isEnabled AND rule.isDeleted = false and rule.type = :type")
-@NamedQuery(name = "Rule.getAllRulesByDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity.id = :domainId AND rule.isDeleted = false and rule.type = :type")
-@NamedQuery(name = "Rule.getAllRulesWithNullDomain", query = "SELECT rule FROM Rule rule where rule.domainEntity IS NULL and rule.type = :type ")
-@NamedQuery(name = "Rule.findEnabledRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.isEnabled = true and rule.type = :type")
-@NamedQuery(name = "Rule.findRuleByEventAndDomain", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.domainEntity.id = :domainId  and rule.type = :type")
-@NamedQuery(name = "Rule.findEnabledRulesByEvent", query = "SELECT rule FROM Rule rule where LOWER(rule.event) = LOWER(:event) and rule.isEnabled = true AND rule.isDeleted = false and rule.type = :type")
-@NamedQuery(name = "Rule.findRuleByTitle", query = "SELECT rule FROM Rule rule where LOWER(rule.title) = LOWER(:ruleTitle) and rule.type = :type")
-@NamedQuery(name = "Rule.getEventList", query = "SELECT DISTINCT(rule.event) FROM Rule rule where rule.type = :type")
-@NamedQuery(name = "Rule.getRuleIdsByType", query = "SELECT rule.id FROM Rule rule where rule.type = :type")
-@NamedQuery(name = "Rule.deleteRuleByTitle", query = "DELETE FROM Rule rule WHERE LOWER(rule.title) = LOWER(:ruleTitle) ")
-@NamedQuery(name = "Rule.deleteRuleById", query = "DELETE FROM Rule rule WHERE rule.id = :ruleId ")
-@NamedQuery(name = "Rule.getDomainsIdsByUser", query = "SELECT DISTINCT r.domainEntity.id FROM Rule r where r.audience in (:ids)")
+@NamedQuery(
+  name = "Rule.findRuleByEventAndDomain",
+  query = "SELECT rule FROM Rule rule" +
+    " WHERE LOWER(rule.event) = LOWER(:event)" +
+    " AND rule.domainEntity.id = :domainId" +
+    " AND rule.type = :type"
+)
+@NamedQuery(
+  name = "Rule.findActiveRulesByEvent",
+  query = "SELECT rule FROM Rule rule" +
+    " WHERE LOWER(rule.event) = LOWER(:event)" +
+    " AND rule.isEnabled = true" +
+    " AND rule.isDeleted = false" +
+    " AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    " AND (rule.endDate IS NULL OR rule.endDate >= :date)" +
+    " AND rule.type = :type"
+)
+@NamedQuery(
+  name = "Rule.findRuleByTitle",
+  query = "SELECT rule FROM Rule rule"
+      + " WHERE LOWER(rule.title) = LOWER(:ruleTitle)"
+      + " AND rule.type = :type"
+)
+@NamedQuery(
+  name = "Rule.getEventList",
+  query = "SELECT DISTINCT(rule.event) FROM Rule rule" +
+      " WHERE rule.type = :type"
+)
 @NamedQuery(
  name = "Rule.getRulesTotalScoreByDomain",
  query =
@@ -48,8 +62,8 @@ import java.util.Objects;
     " WHERE rule.domainEntity.id = :domainId" +
     " AND rule.isEnabled = true" +
     " AND rule.isDeleted = false" +
-    " AND ((rule.startDate IS NULL OR rule.startDate <= :date)" +
-    "     AND (rule.endDate IS NULL OR rule.endDate >= :date))"
+    " AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    " AND (rule.endDate IS NULL OR rule.endDate >= :date)"
 )
 @NamedQuery(
  name = "Rule.getHighestBudgetDomainIds",
@@ -60,6 +74,8 @@ import java.util.Objects;
     "  AND domain.isDeleted = false" +
     " WHERE rule.isEnabled = true" +
     "   AND rule.isDeleted = false" +
+    "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    "   AND (rule.endDate IS NULL OR rule.endDate >= :date)" +
     " GROUP BY rule.domainEntity.id " +
     " ORDER BY totalScore DESC"
 )
@@ -73,6 +89,8 @@ import java.util.Objects;
     "  AND (domain.audienceId IS NULL OR domain.audienceId in (:spacesIds))" +
     " WHERE rule.isEnabled = true" +
     "   AND rule.isDeleted = false" +
+    "   AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    "   AND (rule.endDate IS NULL OR rule.endDate >= :date)" +
     " GROUP BY rule.domainEntity.id " +
     " ORDER BY totalScore DESC"
 )
@@ -99,16 +117,13 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "DOMAIN_ID")
-  private DomainEntity      domainEntity;
+  private ProgramEntity      domainEntity;
 
   @Column(name = "ENABLED", nullable = false)
   protected boolean         isEnabled;
 
   @Column(name = "DELETED", nullable = false)
   protected boolean         isDeleted;
-
-  @Column(name = "AUDIENCE_ID")
-  private Long              audience;
 
   @Column(name = "START_DATE")
   private Date              startDate;
@@ -118,20 +133,7 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
 
   @Enumerated(EnumType.ORDINAL)
   @Column(name = "TYPE", nullable = false)
-  protected EntityType        type;
-
-  @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "CHALLENGE_MANAGER_RULE", joinColumns = @JoinColumn(name = "ID"))
-  @Column(name = "MANAGER_ID")
-  private List<Long> managers;
-
-  public List<Long> getManagers() {
-    return managers;
-  }
-
-  public void setManagers(List<Long> managers) {
-    this.managers = managers;
-  }
+  protected EntityType      type;
 
   public EntityType getType() {
     return type;
@@ -177,14 +179,6 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     return isEnabled;
   }
 
-  public Long getAudience() {
-    return audience;
-  }
-
-  public void setAudience(Long audience) {
-    this.audience = audience;
-  }
-
   public Date getStartDate() {
     return startDate;
   }
@@ -205,11 +199,11 @@ public class RuleEntity extends AbstractAuditingEntity implements Serializable {
     isEnabled = enabled;
   }
 
-  public DomainEntity getDomainEntity() {
+  public ProgramEntity getDomainEntity() {
     return domainEntity;
   }
 
-  public void setDomainEntity(DomainEntity domainEntity) {
+  public void setDomainEntity(ProgramEntity domainEntity) {
     this.domainEntity = domainEntity;
   }
 

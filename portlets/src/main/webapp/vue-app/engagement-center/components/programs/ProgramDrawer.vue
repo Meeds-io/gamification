@@ -320,7 +320,7 @@ export default {
         const programToSave = JSON.parse(JSON.stringify(this.program));
         programToSave.owners = this.programOwners?.map(owner => owner.id).filter(id => !!id);
         programToSave.audienceId = this.audienceId;
-        this.$programsServices.updateProgram(programToSave)
+        this.$programService.updateProgram(programToSave)
           .then((program) => {
             this.close();
             this.$root.$emit('program-updated', program);
@@ -334,7 +334,7 @@ export default {
         const programToSave = JSON.parse(JSON.stringify(this.program));
         programToSave.owners = this.programOwners?.map(owner => owner.id).filter(id => !!id);
         programToSave.audienceId = this.audienceId;
-        this.$programsServices.saveProgram(programToSave)
+        this.$programService.saveProgram(programToSave)
           .then((program) => {
             this.$root.$emit('program-added', program);
             this.close();

@@ -17,7 +17,8 @@
 package org.exoplatform.addons.gamification.service.dto.configuration;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 
@@ -38,7 +39,7 @@ public class RuleDTO implements Serializable {
 
   protected int             score;
 
-  private DomainDTO         domainDTO;
+  private ProgramDTO         program;
 
   protected boolean         enabled;
 
@@ -54,23 +55,11 @@ public class RuleDTO implements Serializable {
 
   private String            lastModifiedDate;
 
-  private long              audience;
-
   private String            startDate;
 
   private String            endDate;
 
   private EntityType        type;
-
-  private List<Long>        managers;
-
-  public List<Long> getManagers() {
-    return managers;
-  }
-
-  public void setManagers(List<Long> managers) {
-    this.managers = managers;
-  }
 
   public Long getId() {
     return id;
@@ -112,12 +101,24 @@ public class RuleDTO implements Serializable {
     this.score = score;
   }
 
-  public DomainDTO getDomainDTO() {
-    return domainDTO;
+  public ProgramDTO getProgram() {
+    return program;
   }
 
-  public void setDomainDTO(DomainDTO domainDTO) {
-    this.domainDTO = domainDTO;
+  public void setProgram(ProgramDTO program) {
+    this.program = program;
+  }
+
+  public long getAudienceId() {
+    return program == null ? 0 : program.getAudienceId();
+  }
+
+  public long getDomainId() {
+    return program == null ? 0 : program.getId();
+  }
+
+  public Set<Long> getManagers() {
+    return program == null ? Collections.emptySet() : program.getOwners();
   }
 
   public void setEnabled(boolean enabled) {
@@ -174,14 +175,6 @@ public class RuleDTO implements Serializable {
 
   public void setDeleted(boolean deleted) {
     this.deleted = deleted;
-  }
-
-  public long getAudience() {
-    return audience;
-  }
-
-  public void setAudience(long audience) {
-    this.audience = audience;
   }
 
   public String getStartDate() {

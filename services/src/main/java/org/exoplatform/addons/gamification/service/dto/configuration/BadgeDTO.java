@@ -30,7 +30,7 @@ public class BadgeDTO implements Serializable {
 
     protected int neededScore;
 
-    private DomainDTO domainDTO;
+    private ProgramDTO program;
 
     private byte[] icon;
 
@@ -166,12 +166,12 @@ public class BadgeDTO implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public DomainDTO getDomainDTO() {
-        return domainDTO;
+    public ProgramDTO getProgram() {
+        return program;
     }
 
-    public void setDomainDTO(DomainDTO domainDTO) {
-        this.domainDTO = domainDTO;
+    public void setProgram(ProgramDTO program) {
+        this.program = program;
     }
 
     public boolean isDeleted() {

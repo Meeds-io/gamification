@@ -16,7 +16,7 @@
  */
 package org.exoplatform.addons.gamification.listener.social.relationship;
 
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.relationship.RelationshipEvent;
 import org.exoplatform.social.core.relationship.RelationshipListenerPlugin;
@@ -25,10 +25,10 @@ import static org.exoplatform.addons.gamification.GamificationConstant.*;
 
 public class GamificationRelationshipListener extends RelationshipListenerPlugin {
 
-  protected GamificationService gamificationService;
+  protected RealizationService realizationService;
 
-  public GamificationRelationshipListener(GamificationService gamificationService) {
-    this.gamificationService = gamificationService;
+  public GamificationRelationshipListener(RealizationService realizationService) {
+    this.realizationService = realizationService;
   }
 
   @Override
@@ -39,38 +39,38 @@ public class GamificationRelationshipListener extends RelationshipListenerPlugin
     // Get the request receiver
     Identity receiver = event.getPayload().getReceiver();
 
-    gamificationService.createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
-                                      sender.getId(),
-                                      receiver.getId(),
-                                      sender.getId(),
-                                      IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
+                                          sender.getId(),
+                                          receiver.getId(),
+                                          sender.getId(),
+                                          IDENTITY_OBJECT_TYPE);
 
     // Reward user who receive a relationship request
-    gamificationService.createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
-                                      receiver.getId(),
-                                      sender.getId(),
-                                      receiver.getId(),
-                                      IDENTITY_OBJECT_TYPE);
+    realizationService.createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
+                                          receiver.getId(),
+                                          sender.getId(),
+                                          receiver.getId(),
+                                          IDENTITY_OBJECT_TYPE);
 
   }
 
   @Override
   public void ignored(RelationshipEvent event) {
-
+    // Nothing to gamify
   }
 
   @Override
   public void removed(RelationshipEvent event) {
-
+    // Nothing to gamify
   }
 
   @Override
   public void requested(RelationshipEvent event) {
-
+    // Nothing to gamify
   }
 
   @Override
   public void denied(RelationshipEvent event) {
-
+    // Nothing to gamify
   }
 }

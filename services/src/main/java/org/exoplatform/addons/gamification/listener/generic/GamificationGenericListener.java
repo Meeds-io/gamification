@@ -16,13 +16,16 @@
  */
 package org.exoplatform.addons.gamification.listener.generic;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.*;
+
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
@@ -33,62 +36,59 @@ import org.exoplatform.social.core.manager.IdentityManager;
 @Asynchronous
 public class GamificationGenericListener extends Listener<Map<String, String>, String> {
 
-  public static final String    GENERIC_EVENT_NAME = "exo.gamification.generic.action";
+  public static final String   GENERIC_EVENT_NAME = "exo.gamification.generic.action";
 
-  public static final String    CANCEL_EVENT_NAME  = "gamification.cancel.event.action";
+  public static final String   CANCEL_EVENT_NAME  = "gamification.cancel.event.action";
 
-  public static final String    DELETE_EVENT_NAME  = "gamification.delete.event.action";
+  public static final String   DELETE_EVENT_NAME  = "gamification.delete.event.action";
 
-  protected PortalContainer     container;
+  protected PortalContainer    container;
 
-  protected RuleService         ruleService;
+  protected RuleService        ruleService;
 
-  protected IdentityManager     identityManager;
+  protected IdentityManager    identityManager;
 
-  protected GamificationService gamificationService;
+  protected RealizationService realizationService;
 
   public GamificationGenericListener(PortalContainer container,
                                      RuleService ruleService,
                                      IdentityManager identityManager,
-                                     GamificationService gamificationService) {
+                                     RealizationService realizationService) {
     this.container = container;
     this.ruleService = ruleService;
     this.identityManager = identityManager;
-    this.gamificationService = gamificationService;
+    this.realizationService = realizationService;
   }
 
   @Override
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings("removal")
   public void onEvent(Event<Map<String, String>, String> event) throws Exception {
     ExoContainerContext.setCurrentContainer(container);
     RequestLifeCycle.begin(container);
     try {
-      String ruleTitle = event.getSource().get("ruleTitle");
-      String senderId = event.getSource().get("senderId");
-      String senderType = event.getSource().get("senderType");
-      String receiverId = event.getSource().get("receiverId");
-      String receiverType = event.getSource().get("receiverType");
-      String objectId = event.getSource().get("objectId");
-      String objectType = event.getSource().get("objectType");
-
-      if (event.getEventName().equals(DELETE_EVENT_NAME)) {
-        gamificationService.deleteHistory(objectId, objectType);
-        return;
+      String gamificationEventId = event.getSource().get(EVENT_NAME);
+      if (StringUtils.isBlank(gamificationEventId)) {
+        gamificationEventId = event.getSource().get(RULE_TITLE);
       }
-      Identity senderIdentity = getIdentity(senderType, senderId);
-      Identity receiverIdentity = getIdentity(receiverType, receiverId);
-      switch (event.getEventName()) {
-      case GENERIC_EVENT_NAME -> gamificationService.createHistory(ruleTitle,
-                                                                   senderIdentity.getId(),
-                                                                   receiverIdentity.getId(),
-                                                                   objectId,
-                                                                   objectType);
+      String senderId = event.getSource().get(SENDER_ID);
+      String senderType = event.getSource().get(SENDER_TYPE);
+      String receiverId = event.getSource().get(RECEIVER_ID);
+      String receiverType = event.getSource().get(RECEIVER_TYPE);
+      String objectId = event.getSource().get(OBJECT_ID_PARAM);
+      String objectType = event.getSource().get(OBJECT_TYPE_PARAM);
 
-      case CANCEL_EVENT_NAME -> gamificationService.cancelHistory(ruleTitle,
-                                                                  senderIdentity.getId(),
-                                                                  receiverIdentity.getId(),
-                                                                  objectId,
-                                                                  objectType);
+      switch (event.getEventName()) {
+      case GENERIC_EVENT_NAME -> realizationService.createRealizations(gamificationEventId,
+                                                                       getIdentity(senderType, senderId).getId(),
+                                                                       getIdentity(receiverType, receiverId).getId(),
+                                                                       objectId,
+                                                                       objectType);
+      case DELETE_EVENT_NAME -> realizationService.deleteRealizations(objectId, objectType);
+      case CANCEL_EVENT_NAME -> realizationService.cancelRealizations(gamificationEventId,
+                                                                      getIdentity(senderType, senderId).getId(),
+                                                                      getIdentity(receiverType, receiverId).getId(),
+                                                                      objectId,
+                                                                      objectType);
 
       default -> throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
       }
@@ -108,4 +108,5 @@ public class GamificationGenericListener extends Listener<Map<String, String>, S
     }
     return identity;
   }
+
 }
