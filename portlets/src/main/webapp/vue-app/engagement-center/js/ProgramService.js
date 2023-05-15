@@ -125,9 +125,7 @@ export function deleteProgram(programId) {
     method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
-    if (resp?.ok) {
-      return resp.json();
-    } else {
+    if (!resp?.ok) {
       throw new Error('Response code indicates a server error', resp);
     }
   });
