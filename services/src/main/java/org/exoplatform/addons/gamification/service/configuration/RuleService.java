@@ -56,16 +56,6 @@ public interface RuleService {
      */
      RuleDTO findRuleByTitle (String ruleTitle);
 
-
-     /**
-      * Find a RuleEntity by title
-      * 
-      * @param ruleTitle : rule's title param
-      * @param domainId domain id
-      * @return an instance of RuleDTO
-      */
-     RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId);
-
     /**
      * Get all Rules using offset and limit.
      * 
@@ -96,13 +86,6 @@ public interface RuleService {
      * @return RuleDTO list
      */
      List<String> getAllEvents();
-
-    /**
-     *
-     * @param domainId domain id
-     * @return rules total scores that can be earned
-     */
-     long getRulesTotalScoreByDomain(long domainId);
 
      /**
       * Deletes an existing rule

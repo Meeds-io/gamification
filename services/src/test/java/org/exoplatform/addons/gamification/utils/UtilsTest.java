@@ -174,7 +174,7 @@ public class UtilsTest extends AbstractServiceTest {
     RuleEntity ruleEntity = newRule("challenge1", domainEntity.getId());
     newRealizationEntityWithRuleId("annoucement 1", ruleEntity.getId());
     newRealizationEntityWithRuleId("annoucement 2", ruleEntity.getId());
-    assertEquals((Long) 2l, announcementService.countAnnouncements(ruleEntity.getId()));
+    assertEquals(2, announcementService.countAnnouncements(ruleEntity.getId()));
     assertThrows(ObjectNotFoundException.class, () -> announcementService.countAnnouncements(528l));
   }
 
