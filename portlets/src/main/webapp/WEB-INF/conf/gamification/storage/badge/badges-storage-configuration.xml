@@ -28,10 +28,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <component>
         <type>org.exoplatform.addons.gamification.service.configuration.BadgeService</type>
     </component>
-    <!-- Badge entity Mapper -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.mapper.BadgeMapper</type>
-    </component>
+
     <!-- Gamification Settings : Badge -->
     <component>
         <key>org.exoplatform.addons.gamification.service.setting.badge.BadgeRegistry</key>

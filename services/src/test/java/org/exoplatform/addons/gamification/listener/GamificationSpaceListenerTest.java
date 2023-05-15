@@ -16,28 +16,32 @@
  */
 package org.exoplatform.addons.gamification.listener;
 
-import org.exoplatform.addons.gamification.listener.social.space.GamificationSpaceListener;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import static org.exoplatform.addons.gamification.GamificationConstant.EVENT_NAME;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
+import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.CANCEL_EVENT_NAME;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import org.exoplatform.services.listener.ListenerService;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.manager.IdentityManager;
+import java.util.Map;
+import java.util.Objects;
 
-import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
-import org.exoplatform.social.core.space.spi.SpaceService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Map;
-import java.util.Objects;
-
-import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
-import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.CANCEL_EVENT_NAME;
-import static org.mockito.Mockito.*;
+import org.exoplatform.addons.gamification.listener.social.space.GamificationSpaceListener;
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
+import org.exoplatform.addons.gamification.test.AbstractServiceTest;
+import org.exoplatform.services.listener.ListenerService;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceLifeCycleEvent;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GamificationSpaceListenerTest extends AbstractServiceTest {
@@ -77,9 +81,10 @@ public class GamificationSpaceListenerTest extends AbstractServiceTest {
 
     verify(listenerService,
            times(2)).broadcast(argThat((String name) -> name.equals(CANCEL_EVENT_NAME)),
-                               argThat((Map<String, String> source) -> source.get("ruleTitle")
+                               argThat((Map<String, String> source) -> source.get(EVENT_NAME)
                                                                              .equals(GAMIFICATION_SOCIAL_SPACE_JOIN)),
                                argThat(Objects::isNull));
 
   }
+
 }

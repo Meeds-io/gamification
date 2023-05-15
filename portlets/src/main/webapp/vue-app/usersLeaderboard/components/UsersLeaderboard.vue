@@ -151,7 +151,7 @@ export default {
   },
   created() {
     this.loading = true;
-    this.retrieveDomains()
+    this.retrievePrograms()
       .then(this.refreshBoard)
       .then(() => {
         this.periods = [{
@@ -195,8 +195,8 @@ export default {
           this.selectionChanged = false;
         });
     },
-    retrieveDomains() {
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?type=ALL&sortByBudget=true`, {
+    retrievePrograms() {
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL&sortByBudget=true`, {
         credentials: 'include',
       }).then(resp => resp && resp.ok && resp.json())
         .then(data => {

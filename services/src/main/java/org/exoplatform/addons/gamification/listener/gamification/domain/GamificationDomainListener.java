@@ -16,16 +16,16 @@
  */
 package org.exoplatform.addons.gamification.listener.gamification.domain;
 
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
 
 import java.util.List;
 
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.services.listener.Event;
@@ -33,7 +33,7 @@ import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
-public class GamificationDomainListener extends Listener<DomainDTO, String> {
+public class GamificationDomainListener extends Listener<ProgramDTO, String> {
 
   private static final Log LOG = ExoLogger.getLogger(GamificationDomainListener.class);
 
@@ -47,24 +47,22 @@ public class GamificationDomainListener extends Listener<DomainDTO, String> {
   }
 
   @Override
-  public void onEvent(Event<DomainDTO, String> event) throws Exception {
-    LOG.info("Update Rules related to the edited domain");
-    DomainDTO domain = event.getSource();
-    String username = event.getData();
+  public void onEvent(Event<ProgramDTO, String> event) throws Exception {
+    ProgramDTO domain = event.getSource();
     String action = event.getEventName();
     RuleFilter ruleFilter = new RuleFilter();
     ruleFilter.setDomainId(domain.getId());
-    List<RuleDTO> rules = ruleService.getRulesByFilter(ruleFilter, 0, -1);
+    List<RuleDTO> rules = ruleService.getRules(ruleFilter, 0, -1);
     List<BadgeDTO> badges = badgeService.findBadgesByDomain(domain.getId());
     switch (action) {
     case GAMIFICATION_DOMAIN_DELETE_LISTENER:
       for (RuleDTO rule : rules) {
-        rule.setDomainDTO(null);
+        rule.setProgram(null);
         rule.setEnabled(false);
         ruleService.updateRule(rule);
       }
       for (BadgeDTO badge : badges) {
-        badge.setDomainDTO(null);
+        badge.setProgram(null);
         badge.setEnabled(false);
         badgeService.updateBadge(badge);
       }

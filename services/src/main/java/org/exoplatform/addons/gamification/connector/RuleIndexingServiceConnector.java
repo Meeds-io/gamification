@@ -20,15 +20,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
+import org.exoplatform.addons.gamification.storage.RuleStorage;
+import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.search.domain.Document;
 import org.exoplatform.commons.search.index.impl.ElasticIndexingServiceConnector;
 import org.exoplatform.container.xml.InitParams;
@@ -43,15 +43,15 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
 
   private static final Log   LOG   = ExoLogger.getLogger(RuleIndexingServiceConnector.class);
 
-  private RuleDAO            ruleDAO;
+  private RuleStorage        ruleStorage;
 
   private IdentityManager    identityManager;
 
-  public RuleIndexingServiceConnector(RuleDAO ruleDAO,
+  public RuleIndexingServiceConnector(RuleStorage ruleStorage,
                                       IdentityManager identityManager,
                                       InitParams initParams) {
     super(initParams);
-    this.ruleDAO = ruleDAO;
+    this.ruleStorage = ruleStorage;
     this.identityManager = identityManager;
   }
 
@@ -81,7 +81,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     }
     LOG.debug("Index document for rule with id={}", id);
 
-    RuleEntity rule = ruleDAO.find(Long.valueOf(id));
+    RuleDTO rule = ruleStorage.findRuleById(Long.valueOf(id));
     if (rule == null) {
       throw new IllegalStateException("rule with id '" + id + "' not found");
     }
@@ -90,12 +90,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("title", rule.getTitle());
     fields.put("description", StringEscapeUtils.unescapeHtml(rule.getDescription()));
     fields.put("score", String.valueOf(rule.getScore()));
-    DomainEntity domainEntity = rule.getDomainEntity();
-    if (domainEntity != null) {
-      fields.put("domainId", String.valueOf(domainEntity.getId()));
-    }
     fields.put("event", rule.getEvent());
-    fields.put("audience", String.valueOf(rule.getAudience() != null ? rule.getAudience() : 0));
     fields.put("startDate", toMilliSecondsString(rule.getStartDate()));
     fields.put("endDate", toMilliSecondsString(rule.getEndDate()));
     fields.put("createdBy", getUserIdentityId(rule.getCreatedBy()));
@@ -104,8 +99,20 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("lastModifiedDate", toMilliSecondsString(rule.getLastModifiedDate()));
     fields.put("type", rule.getType().name());
     Document document = new Document(id, null, new Date(System.currentTimeMillis()), Collections.emptySet(), fields);
-    if (CollectionUtils.isNotEmpty(rule.getManagers())) {
-      document.addListField("managers", rule.getManagers().stream().map(String::valueOf).collect(Collectors.toList()));
+
+    ProgramDTO domain = rule.getProgram();
+    if (domain == null) {
+      document.addField("domainId", "");
+      document.addField("audience", "");
+      document.addListField("managers", Collections.emptyList());
+    } else {
+      document.addField("domainId", String.valueOf(domain.getId()));
+      document.addField("audience", String.valueOf(domain.getAudienceId()));
+      if (CollectionUtils.isNotEmpty(domain.getOwners())) {
+        document.addListField("managers", domain.getOwners().stream().map(String::valueOf).toList());
+      } else {
+        document.addListField("managers", Collections.emptyList());
+      }
     }
     return document;
   }
@@ -121,7 +128,7 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     return userIdentityId;
   }
 
-  private String toMilliSecondsString(Date date) {
-    return date != null ? String.valueOf(date.getTime()) : "0";
+  private String toMilliSecondsString(String date) {
+    return date != null ? String.valueOf(Utils.parseSimpleDate(date).getTime()) : "0";
   }
 }

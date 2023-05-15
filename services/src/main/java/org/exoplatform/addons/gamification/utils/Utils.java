@@ -9,12 +9,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,18 +24,13 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.configuration.ProgramService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -68,119 +61,115 @@ public class Utils {
 
   public static final String            ANNOUNCEMENT_ID_TEMPLATE_PARAM          = "announcementId";
 
-  public static final String            ANNOUNCEMENT_ACTIVITY_EVENT          = "challenge.announcement.activity";
+  public static final String            ANNOUNCEMENT_ACTIVITY_EVENT             = "challenge.announcement.activity";
 
-  public static final long              DEFAULT_COVER_LAST_MODIFIED          = System.currentTimeMillis();
+  public static final long              DEFAULT_COVER_LAST_MODIFIED             = System.currentTimeMillis();
 
-  public static final DateTimeFormatter RFC_3339_FORMATTER                   =
+  public static final DateTimeFormatter RFC_3339_FORMATTER                      =
                                                            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER                =
+  public static final DateTimeFormatter SIMPLE_DATE_FORMATTER                   =
                                                               DateTimeFormatter.ofPattern("yyyy-MM-dd['T00:00:00']")
                                                                                .withResolverStyle(ResolverStyle.LENIENT);
 
-  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS           = {
+  private static final char[]           ILLEGAL_MESSAGE_CHARACTERS              = {
       ',', ';', '\n'
   };
 
-  public static final String            STATISTICS_CREATE_PROGRAM_OPERATION  = "createProgram";
+  public static final String            STATISTICS_CREATE_PROGRAM_OPERATION     = "createProgram";
 
-  public static final String            STATISTICS_UPDATE_PROGRAM_OPERATION  = "updateProgram";
+  public static final String            STATISTICS_UPDATE_PROGRAM_OPERATION     = "updateProgram";
 
-  public static final String            STATISTICS_DELETE_PROGRAM_OPERATION  = "deleteProgram";
+  public static final String            STATISTICS_DELETE_PROGRAM_OPERATION     = "deleteProgram";
 
-  public static final String            STATISTICS_CREATE_RULE_OPERATION     = "createRule";
+  public static final String            STATISTICS_CREATE_RULE_OPERATION        = "createRule";
 
-  public static final String            STATISTICS_UPDATE_RULE_OPERATION     = "updateRule";
+  public static final String            STATISTICS_UPDATE_RULE_OPERATION        = "updateRule";
 
-  public static final String            STATISTICS_DELETE_RULE_OPERATION     = "deleteRule";
+  public static final String            STATISTICS_DELETE_RULE_OPERATION        = "deleteRule";
 
-  public static final String            STATISTICS_ENABLE_PROGRAM_OPERATION  = "enableProgram";
+  public static final String            STATISTICS_ENABLE_PROGRAM_OPERATION     = "enableProgram";
 
-  public static final String            STATISTICS_DISABLE_PROGRAM_OPERATION = "disableProgram";
+  public static final String            STATISTICS_DISABLE_PROGRAM_OPERATION    = "disableProgram";
 
-  public static final String            STATISTICS_CREATE_ANNOUNCE_OPERATION = "createAnnouncement";
+  public static final String            STATISTICS_CREATE_ANNOUNCE_OPERATION    = "createAnnouncement";
 
-  public static final String            STATISTICS_UPDATE_ANNOUNCE_OPERATION = "updateAnnouncement";
+  public static final String            STATISTICS_UPDATE_ANNOUNCE_OPERATION    = "updateAnnouncement";
 
-  public static final String            STATISTICS_PROGRAM_ID_PARAM          = "programId";
+  public static final String            STATISTICS_PROGRAM_ID_PARAM             = "programId";
 
-  public static final String            STATISTICS_PROGRAM_TITLE_PARAM       = "programTitle";
+  public static final String            STATISTICS_PROGRAM_TITLE_PARAM          = "programTitle";
 
-  public static final String            STATISTICS_PROGRAM_BUDGET_PARAM      = "programBudget";
+  public static final String            STATISTICS_PROGRAM_BUDGET_PARAM         = "programBudget";
 
-  public static final String            STATISTICS_PROGRAM_TYPE_PARAM        = "programType";
+  public static final String            STATISTICS_PROGRAM_TYPE_PARAM           = "programType";
 
-  public static final String            STATISTICS_PROGRAM_COVERFILEID_PARAM = "programCoverFileId";
+  public static final String            STATISTICS_PROGRAM_COVERFILEID_PARAM    = "programCoverFileId";
 
-  public static final String            STATISTICS_PROGRAM_OWNERS_PARAM      = "programOwners";
+  public static final String            STATISTICS_PROGRAM_OWNERS_PARAM         = "programOwners";
 
-  public static final String            STATISTICS_RULE_ID_PARAM             = "ruleId";
+  public static final String            STATISTICS_RULE_ID_PARAM                = "ruleId";
 
-  public static final String            STATISTICS_RULE_TITLE_PARAM          = "ruleTitle";
+  public static final String            STATISTICS_RULE_TITLE_PARAM             = "ruleTitle";
 
-  public static final String            STATISTICS_RULE_DESCRIPTION_PARAM    = "ruleDescription";
+  public static final String            STATISTICS_RULE_DESCRIPTION_PARAM       = "ruleDescription";
 
-  public static final String            STATISTICS_RULE_SCORE_PARAM          = "ruleBudget";
+  public static final String            STATISTICS_RULE_SCORE_PARAM             = "ruleBudget";
 
-  public static final String            STATISTICS_RULE_TYPE_PARAM           = "ruleType";
+  public static final String            STATISTICS_RULE_TYPE_PARAM              = "ruleType";
 
-  public static final String            STATISTICS_RULE_COVERFILEID_PARAM    = "ruleCoverFileId";
+  public static final String            STATISTICS_RULE_COVERFILEID_PARAM       = "ruleCoverFileId";
 
-  public static final String            STATISTICS_RULE_EVENT_PARAM          = "ruleEvent";
+  public static final String            STATISTICS_RULE_EVENT_PARAM             = "ruleEvent";
 
-  public static final String            STATISTICS_RULE_SUBMODULE            = "rule";
+  public static final String            STATISTICS_RULE_SUBMODULE               = "rule";
 
-  public static final String            STATISTICS_ANNOUNCEMENT_SUBMODULE    = "announcement";
+  public static final String            STATISTICS_ANNOUNCEMENT_SUBMODULE       = "announcement";
 
-  public static final String            STATISTICS_ANNOUNCE_ID_PARAM         = "announcementId";
+  public static final String            STATISTICS_ANNOUNCE_ID_PARAM            = "announcementId";
 
-  public static final String            STATISTICS_ANNOUNCE_ACTIVITY_PARAM   = "announcementActivityId";
+  public static final String            STATISTICS_ANNOUNCE_ACTIVITY_PARAM      = "announcementActivityId";
 
-  public static final String            STATISTICS_ANNOUNCE_ASSIGNEE_PARAM   = "announcementAssignee";
+  public static final String            STATISTICS_ANNOUNCE_ASSIGNEE_PARAM      = "announcementAssignee";
 
-  public static final String            STATISTICS_ANNOUNCE_COMMENT_PARAM    = "announcementComment";
+  public static final String            STATISTICS_ANNOUNCE_COMMENT_PARAM       = "announcementComment";
 
-  public static final String            STATISTICS_PROGRAM_SUBMODULE         = "program";
+  public static final String            STATISTICS_PROGRAM_SUBMODULE            = "program";
 
-  public static final String            STATISTICS_GAMIFICATION_MODULE       = "gamification";
+  public static final String            STATISTICS_GAMIFICATION_MODULE          = "gamification";
 
-  public static final String            POST_CREATE_RULE_EVENT               = "rule.created";
+  public static final String            POST_CREATE_RULE_EVENT                  = "rule.created";
 
-  public static final String            POST_UPDATE_RULE_EVENT               = "rule.updated";
+  public static final String            POST_UPDATE_RULE_EVENT                  = "rule.updated";
 
-  public static final String            POST_DELETE_RULE_EVENT               = "rule.deleted";
+  public static final String            POST_DELETE_RULE_EVENT                  = "rule.deleted";
 
-  public static final String            POST_CREATE_ANNOUNCEMENT_EVENT       = "announcement.created";
+  public static final String            POST_CREATE_ANNOUNCEMENT_EVENT          = "announcement.created";
 
-  public static final String            POST_UPDATE_ANNOUNCEMENT_EVENT       = "announcement.updated";
+  public static final String            POST_UPDATE_ANNOUNCEMENT_EVENT          = "announcement.updated";
 
-  private static GamificationService    gamificationService;
+  public static final String            ANNOUNCEMENT_ACTIVITY_TYPE              = "challenges-announcement";
 
-  private static RuleService            ruleService;
+  public static final String            SYSTEM_USERNAME                         = "SYSTEM";
 
-  public static final String            ANNOUNCEMENT_ACTIVITY_TYPE           = "challenges-announcement";
+  public static final String            BASE_URL_PROGRAMS_REST_API              = "/gamification/programs";
 
-  public static final String            SYSTEM_USERNAME                      = "SYSTEM";
+  public static final String            DEFAULT_IMAGE_REMOTE_ID                 = "default-cover";
 
-  public static final String            BASE_URL_DOMAINS_REST_API            = "/gamification/domains";
+  public static final String            TYPE                                    = "cover";
 
-  public static final String            DEFAULT_IMAGE_REMOTE_ID              = "default-cover";
+  public static final String            REWARDING_GROUP                         = "/platform/rewarding";
 
-  public static final String            TYPE                                 = "cover";
+  public static final String            ADMINS_GROUP                            = "/platform/administrators";
 
-  public static final String            REWARDING_GROUP                      = "/platform/rewarding";
+  public static final String            BLACK_LIST_GROUP                        = "/leaderboard-blacklist-users";
 
-  public static final String            ADMINS_GROUP                         = "/platform/administrators";
+  private static final String           IDENTITIES_REST_PATH                    = "/v1/social/identities";                // NOSONAR
 
-  public static final String            BLACK_LIST_GROUP                     = "/leaderboard-blacklist-users";
+  private static final String           IDENTITIES_EXPAND                       = "all";
 
-  private static final String           IDENTITIES_REST_PATH                 = "/v1/social/identities";                   // NOSONAR
-
-  private static final String           IDENTITIES_EXPAND                    = "all";
-
-  private static final Log              LOG                                  = ExoLogger.getLogger(Utils.class);
+  private static final Log              LOG                                     = ExoLogger.getLogger(Utils.class);
 
   private Utils() { // NOSONAR
   }
@@ -190,9 +179,9 @@ public class Utils {
     return identityManager.getOrCreateIdentity(type, name);
   }
 
-  public static String getUserRemoteId(String id) {
+  public static String getUserRemoteId(String identityId) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    Identity identity = identityManager.getIdentity(id);
+    Identity identity = identityManager.getIdentity(identityId);
     return identity != null ? identity.getRemoteId() : null;
   }
 
@@ -215,24 +204,6 @@ public class Utils {
       return ConversationState.getCurrent().getIdentity().getUserId();
     }
     return null;
-  }
-
-  @SuppressWarnings("deprecation")
-  public static boolean isChallengeManager(Challenge challenge, String username) {
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    long programId = challenge.getProgramId();
-    if (programId == 0) {
-      if (StringUtils.isBlank(challenge.getProgram())) {// NOSONAR
-        return false;
-      } else {
-        DomainDTO domain = domainService.getDomainByTitle(challenge.getProgram());// NOSONAR
-        if (domain == null) {
-          return false;
-        }
-        programId = domain.getId();
-      }
-    }
-    return domainService.isDomainOwner(programId, getUserAclIdentity(username));
   }
 
   public static final boolean canAnnounce(String spaceId, String username) {
@@ -283,7 +254,8 @@ public class Utils {
     if (StringUtils.isBlank(spaceId)) {
       return null;
     }
-    Space space = CommonsUtils.getService(SpaceService.class).getSpaceById(spaceId);
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    Space space = spaceService.getSpaceById(spaceId);
     if (space == null) {
       LOG.warn("space with id {} do not exist", spaceId);
       return null;
@@ -291,84 +263,30 @@ public class Utils {
     return space;
   }
 
-  public static DomainDTO getDomainByTitle(String domainTitle) {
+  public static ProgramDTO getDomainByTitle(ProgramService domainService, String domainTitle) {
     if (domainTitle == null || domainTitle.isEmpty()) {
       return null;
     }
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return domainService.getDomainByTitle(domainTitle);
+    return domainService.getProgramByTitle(domainTitle);
   }
 
-  public static DomainDTO getDomainDTOById(long domainId) {
-    if (domainId <= 0) {
-      return null;
-    }
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    return domainService.getDomainById(domainId);
-  }
-
-  public static DomainDTO getChallengeDomainDTO(Challenge challenge) {
-    if (challenge.getProgramId() > 0) {
-      return Utils.getDomainDTOById(challenge.getProgramId());
-    }
-    return null;
-  }
-
-  public static DomainEntity getDomainById(long domainId) {
-    return DomainMapper.domainDTOToDomainEntity(getDomainDTOById(domainId));
-  }
-
-  public static long getRulesTotalScoreByDomain(long domainId) {
-    if (domainId <= 0) {
-      return 0;
-    }
-    RuleService ruleService = CommonsUtils.getService(RuleService.class);
-    return ruleService.getRulesTotalScoreByDomain(domainId);
-  }
-
-  public static RuleDTO getRuleById(long ruleId) throws IllegalArgumentException {
+  public static RuleDTO getRuleById(RuleService ruleService, long ruleId) throws IllegalArgumentException {
     if (ruleId == 0) {
       return null;
     }
-    RuleService ruleService = CommonsUtils.getService(RuleService.class);
     return ruleService.findRuleById(ruleId);
   }
 
-  public static RuleDTO getRuleByTitle(String title) {
-    return StringUtils.isBlank(title) ? null : getRuleService().findRuleByTitle("def_" + title);
+  public static RuleDTO getRuleByTitle(RuleService ruleService, String title) {
+    return StringUtils.isBlank(title) ? null : ruleService.findRuleByTitle("def_" + title);
   }
 
-  public static boolean isRuleManager(RuleDTO rule, String username) {
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    long programId;
-    DomainDTO domainDTO = rule.getDomainDTO();
-    if (domainDTO == null) {
+  public static boolean isRuleManager(ProgramService programService, RuleDTO rule, String username) {
+    ProgramDTO program = rule.getProgram();
+    if (program == null) {
       return false;
     } else {
-      programId = domainDTO.getId();
-    }
-    return domainService.isDomainOwner(programId, getUserAclIdentity(username));
-  }
-
-  public static List<UserInfo> getOwners(Challenge challenge) {// NOSONAR
-    DomainDTO domain = getChallengeDomainDTO(challenge);
-    if (domain == null) {
-      return Collections.emptyList();
-    } else {
-      Set<Long> owners = domain.getOwners() == null ? new HashSet<>() : new HashSet<>(domain.getOwners());
-      if (domain.getAudienceId() > 0) {
-        SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-        Space space = spaceService.getSpaceById(String.valueOf(domain.getAudienceId()));
-        if (space != null) {
-          IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-          String[] managers = space.getManagers();
-          Arrays.stream(managers).map(manager -> {
-            Identity identity = identityManager.getOrCreateUserIdentity(manager);
-            return identity == null || identity.isDeleted() || !identity.isEnable() ? null : Long.parseLong(identity.getId());
-          }).filter(Objects::nonNull).forEach(owners::add);
-        }
-      }
-      return toUserInfo(owners);
+      return programService.isProgramOwner(program.getId(), getUserAclIdentity(username));
     }
   }
 
@@ -376,52 +294,52 @@ public class Utils {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
-    try {
-      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      return ids.stream().distinct().map(id -> {
-        Identity identity = identityManager.getIdentity(String.valueOf(id));
-        if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-          return toUserInfo(identity);
-        }
-        return null;
-      }).filter(Objects::nonNull).toList();
-    } catch (Exception e) {
-      LOG.error("Error when getting challenge managers {}", e);
-      return Collections.emptyList();
-    }
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    return ids.stream()
+              .distinct()
+              .map(id -> {
+                try {
+                  Identity identity = identityManager.getIdentity(String.valueOf(id));
+                  if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
+                    return toUserInfo(identity);
+                  }
+                } catch (Exception e) {
+                  LOG.warn("Error when getting Identity with id {}. Ignore retrieving identity information", id, e);
+                }
+                return null;
+              })
+              .filter(Objects::nonNull)
+              .toList();
   }
 
   public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids, long spaceId) {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
-    try {
-      IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-      return ids.stream().distinct().map(id -> {
-        Identity identity = identityManager.getIdentity(String.valueOf(id));
-        if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
-          UserInfo userInfo = toUserInfo(identity);
-          userInfo.setDomainOwner(isProgramOwner(spaceId, ids, identity));
-          return userInfo;
-        }
-        return null;
-      }).filter(Objects::nonNull).toList();
-    } catch (Exception e) {
-      LOG.error("Error when getting challenge managers {}", e);
-      return Collections.emptyList();
-    }
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    return ids.stream()
+              .distinct()
+              .map(id -> {
+                try {
+                  Identity identity = identityManager.getIdentity(String.valueOf(id));
+                  if (identity != null && OrganizationIdentityProvider.NAME.equals(identity.getProviderId())) {
+                    UserInfo userInfo = toUserInfo(identity);
+                    userInfo.setDomainOwner(isProgramOwner(spaceId, ids, identity));
+                    return userInfo;
+                  }
+                } catch (Exception e) {
+                  LOG.warn("Error when getting domain owner with id {}. Ignore retrieving identity information", id, e);
+                }
+                return null;
+              })
+              .filter(Objects::nonNull)
+              .toList();
   }
 
-  public static UserInfo toUserInfo(Challenge challenge, Identity identity) {
-    DomainDTO domain = getChallengeDomainDTO(challenge);
-    return toUserInfo(domain == null ? 0 : domain.getId(), identity.getRemoteId());
-  }
-
-  public static UserInfo toUserInfo(long domainId, String username) {
-    DomainService domainService = CommonsUtils.getService(DomainService.class);
-    DomainDTO domain = null;
+  public static UserInfo toUserInfo(ProgramService domainService, long domainId, String username) {
+    ProgramDTO domain = null;
     if (domainId > 0) {
-      domain = domainService.getDomainById(domainId);
+      domain = domainService.getProgramById(domainId);
     }
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getOrCreateUserIdentity(username);
@@ -442,8 +360,8 @@ public class Utils {
         userInfo.setManager(isManager);
         userInfo.setMember(isMember);
         userInfo.setRedactor(isRedactor);
-        userInfo.setCanAnnounce(Utils.canAnnounce(space.getId(), username));
-        userInfo.setCanEdit(Utils.isProgramOwner(spaceId, domain.getOwners(), identity));
+        userInfo.setCanAnnounce(canAnnounce(space.getId(), username));
+        userInfo.setCanEdit(isProgramOwner(spaceId, domain.getOwners(), identity));
       }
     }
     return userInfo;
@@ -458,67 +376,32 @@ public class Utils {
     return userInfo;
   }
 
-  public static Long countAnnouncementsByChallenge(Long challengeId) {
-    AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
+  public static Long countAnnouncementsByRuleIdAndEarnerType(AnnouncementService announcementService,
+                                                             long ruleId,
+                                                             IdentityType earnerType) {
     try {
-      return announcementService.countAllAnnouncementsByChallenge(challengeId);
-    } catch (Exception e) {
-      // NOSONAR
-      return 0L;
-    }
-  }
-
-  public static List<Announcement> findAllAnnouncementByChallenge(Long challengeId,
-                                                                  int offset,
-                                                                  int limit,
-                                                                  IdentityType earnerType) throws IllegalAccessException {
-    AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
-    return announcementService.findAllAnnouncementByChallenge(challengeId, offset, limit, PeriodType.ALL, earnerType);
-  }
-
-  public static Long countAnnouncementByChallengeAndEarnerType(long challengeId, IdentityType earnerType) {
-    AnnouncementService announcementService = CommonsUtils.getService(AnnouncementService.class);
-    try {
-      return announcementService.countAnnouncementsByChallengeAndEarnerType(challengeId, earnerType);
+      return announcementService.countAnnouncements(ruleId, earnerType);
     } catch (ObjectNotFoundException e) {
       return 0L;
     }
   }
 
-  public static GamificationService getGamificationService() {
-    if (gamificationService == null) {
-      gamificationService = CommonsUtils.getService(GamificationService.class);
-    }
-    return gamificationService;
-  }
-
-  public static RuleService getRuleService() {
-    if (ruleService == null) {
-      ruleService = CommonsUtils.getService(RuleService.class);
-    }
-    return ruleService;
-  }
-
-  public static Long getUserGlobalScore(String earnerId) {
-    return StringUtils.isBlank(earnerId) ? 0L : getGamificationService().computeTotalScore(earnerId);
-  }
-
-  public static String getSpaceFromObjectID(String objectID) {
-    if (StringUtils.isBlank(objectID) || !objectID.contains("/portal/g/:spaces:")) {
+  public static String getSpaceFromObjectID(String objectId) {
+    if (StringUtils.isBlank(objectId) || !objectId.contains("/portal/g/:spaces:")) {
       return null;
     }
-    String groupID = objectID.substring(objectID.indexOf(":")).replace(":", "/");
+    String groupID = objectId.substring(objectId.indexOf(":")).replace(":", "/");
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceByGroupId(groupID);
     return space != null ? space.getDisplayName() : null;
   }
 
   public static String getI18NMessage(Locale userLocale, String messageKey) {
-    ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
     if (userLocale == null) {
       userLocale = Locale.ENGLISH;
     }
     try {
+      ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
       ResourceBundle resourceBundle =
                                     resourceBundleService.getResourceBundle(resourceBundleService.getSharedResourceBundleNames(),
                                                                             userLocale);
@@ -589,15 +472,15 @@ public class Utils {
       }
     }
 
-    return new StringBuilder(getBaseURLDomainRest()).append("/")
-                                                    .append(domainId)
-                                                    .append("/")
-                                                    .append(type)
-                                                    .append("?lastModified=")
-                                                    .append(lastModifiedDate)
-                                                    .append("&r=")
-                                                    .append(token)
-                                                    .toString();
+    return new StringBuilder(getBaseURLProgramRest()).append("/")
+                                                     .append(domainId)
+                                                     .append("/")
+                                                     .append(type)
+                                                     .append("?lastModified=")
+                                                     .append(lastModifiedDate)
+                                                     .append("&r=")
+                                                     .append(token)
+                                                     .toString();
 
   }
 
@@ -628,9 +511,9 @@ public class Utils {
     return StringUtils.equals(validToken, token);
   }
 
-  public static String getBaseURLDomainRest() {
+  public static String getBaseURLProgramRest() {
     return "/" + PortalContainer.getCurrentPortalContainerName() + "/" + PortalContainer.getCurrentRestContextName()
-        + BASE_URL_DOMAINS_REST_API;
+        + BASE_URL_PROGRAMS_REST_API;
   }
 
   public static void broadcastEvent(ListenerService listenerService, String eventName, Object source, Object data) {
@@ -706,7 +589,7 @@ public class Utils {
 
   public static void addDomainStatisticParameters(IdentityManager identityManager,
                                                   SpaceService spaceService,
-                                                  DomainDTO domain,
+                                                  ProgramDTO domain,
                                                   StatisticData statisticData,
                                                   String username) {
     if (domain == null) {
@@ -747,7 +630,7 @@ public class Utils {
     statisticData.addParameter(STATISTICS_RULE_SCORE_PARAM, rule.getScore());
     statisticData.addParameter(STATISTICS_RULE_TYPE_PARAM, rule.getType());
 
-    addDomainStatisticParameters(identityManager, spaceService, rule.getDomainDTO(), statisticData, username);
+    addDomainStatisticParameters(identityManager, spaceService, rule.getProgram(), statisticData, username);
   }
 
   public static void addAnnouncementStatisticParameters(IdentityManager identityManager,

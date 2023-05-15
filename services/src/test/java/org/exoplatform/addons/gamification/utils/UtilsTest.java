@@ -19,23 +19,21 @@ package org.exoplatform.addons.gamification.utils;
 
 import static org.exoplatform.addons.gamification.utils.Utils.DEFAULT_IMAGE_REMOTE_ID;
 import static org.exoplatform.addons.gamification.utils.Utils.TYPE;
-import static org.exoplatform.addons.gamification.utils.Utils.getGamificationService;
 import static org.exoplatform.addons.gamification.utils.Utils.isAttachmentTokenValid;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.junit.Test;
 
+import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 import org.exoplatform.services.security.ConversationState;
@@ -159,28 +157,6 @@ public class UtilsTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetRuleService() {
-    RuleService ruleService = Utils.getRuleService();
-    assertNotNull(ruleService);
-  }
-
-  @Test
-  public void testGetGamificationService() {
-    GamificationService gamificationService = getGamificationService();
-    assertNotNull(gamificationService);
-  }
-
-  @Test
-  public void testGetUserGlobalScore() {
-    Long userScore = Utils.getUserGlobalScore("");
-    assertEquals(0, (long) userScore);
-    DomainEntity domainEntity = newDomain();
-    newGamificationActionsHistory("rule", domainEntity.getId());
-    userScore = Utils.getUserGlobalScore(TEST_USER_SENDER);
-    assertNotEquals(0, (long) userScore);
-  }
-
-  @Test
   public void testGetSpaceFromObjectId() {
     String ObjectId = "/portal/g/:spaces:test_space";
     String spaceDisplayName = Utils.getSpaceFromObjectID("test");
@@ -194,17 +170,19 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testCountAnnouncementsByChallenge() throws ObjectNotFoundException {
-    DomainEntity domainEntity = newDomain();
+    ProgramEntity domainEntity = newDomain();
     RuleEntity ruleEntity = newRule("challenge1", domainEntity.getId());
-    newGamificationActionsHistoryWithRuleId("annoucement 1", ruleEntity.getId());
-    newGamificationActionsHistoryWithRuleId("annoucement 2", ruleEntity.getId());
-    assertEquals((Long) 2l, announcementService.countAllAnnouncementsByChallenge(ruleEntity.getId()));
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.countAllAnnouncementsByChallenge(528l));
+    newRealizationEntityWithRuleId("annoucement 1", ruleEntity.getId());
+    newRealizationEntityWithRuleId("annoucement 2", ruleEntity.getId());
+    assertEquals((Long) 2l, announcementService.countAnnouncements(ruleEntity.getId()));
+    assertThrows(ObjectNotFoundException.class, () -> announcementService.countAnnouncements(528l));
   }
 
   @Test
   public void testCreateUser() {
-    String[] spaceMembers = { "root" };
+    String[] spaceMembers = {
+        "root"
+    };
     Space space = new Space();
     space.setId("1");
     space.setPrettyName("test_space");
@@ -214,19 +192,10 @@ public class UtilsTest extends AbstractServiceTest {
     space.setMembers(spaceMembers);
     space.setRedactors(new String[0]);
 
-    Challenge challenge = new Challenge(1,
-                                        "new challenge",
-                                        "challenge description",
-                                        1L,
-                                        new Date(System.currentTimeMillis()).toString(),
-                                        new Date(System.currentTimeMillis() + 1).toString(),
-                                        Collections.emptyList(),
-                                        10L,
-                                        newDomain().getId(),
-                                        true);
+    RuleDTO rule = newRuleDTO();
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
-    UserInfo userInfo = Utils.toUserInfo(challenge, identity);
+    UserInfo userInfo = Utils.toUserInfo(domainService, rule.getProgram().getId(), identity.getRemoteId());
     assertNotNull(userInfo);
     assertEquals("root1", userInfo.getRemoteId());
     assertTrue(userInfo.isCanAnnounce());
@@ -234,21 +203,21 @@ public class UtilsTest extends AbstractServiceTest {
 
   @Test
   public void testGetDomainByTitle() {
-    DomainDTO domain = newDomainDTO();
-    DomainDTO savedDomain = Utils.getDomainByTitle(null);
+    ProgramDTO domain = newProgram();
+    ProgramDTO savedDomain = Utils.getDomainByTitle(domainService, null);
     assertNull(savedDomain);
-    savedDomain = Utils.getDomainByTitle("");
+    savedDomain = Utils.getDomainByTitle(domainService, "");
     assertNull(savedDomain);
-    savedDomain = Utils.getDomainByTitle(domain.getTitle());
+    savedDomain = Utils.getDomainByTitle(domainService, domain.getTitle());
     assertNotNull(savedDomain);
   }
 
   @Test
   public void testGetRuleById() {
     RuleDTO rule = newRuleDTO();
-    RuleDTO savedRule = Utils.getRuleById(0);
+    RuleDTO savedRule = Utils.getRuleById(ruleService, 0);
     assertNull(savedRule);
-    savedRule = Utils.getRuleById(rule.getId());
+    savedRule = Utils.getRuleById(ruleService, rule.getId());
     assertNotNull(savedRule);
     assertEquals(rule.getTitle(), savedRule.getTitle());
   }
@@ -298,34 +267,6 @@ public class UtilsTest extends AbstractServiceTest {
     savedSpace = Utils.getSpaceById("1");
     assertNotNull(savedSpace);
     assertEquals(space.getId(), savedSpace.getId());
-  }
-
-  @Test
-  public void testGetManagersByIds() {
-    Challenge challenge = new Challenge(1,
-            "new challenge",
-            "challenge description",
-            1L,
-            new Date(System.currentTimeMillis()).toString(),
-            new Date(System.currentTimeMillis() + 1).toString(),
-            Collections.emptyList(),
-            10L,
-            1L,
-            true);
-    List<UserInfo> usersInfo = Utils.getOwners(challenge);
-    assertEquals(0, usersInfo.size());
-    challenge = new Challenge(1,
-            "new challenge",
-            "challenge description",
-            1L,
-            new Date(System.currentTimeMillis()).toString(),
-            new Date(System.currentTimeMillis() + 1).toString(),
-            new ArrayList<>(Collections.singleton(1L)),
-            10L,
-            newDomain().getId(),
-            true);
-    usersInfo = Utils.getOwners(challenge);
-    assertEquals(1, usersInfo.size());
   }
 
   @Test

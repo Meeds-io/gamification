@@ -182,7 +182,7 @@ export default {
         if (!this.previousSearchTerm || this.previousSearchTerm !== this.searchTerm) {
           this.loadingSuggestions = 0;
           this.domains = [];
-          this.$programsServices.retrievePrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted, false, this.onlyOwned ? eXo.env.portal.userIdentityId : null)
+          this.$programService.getPrograms(0, 10, 'ALL', this.includeDisabled ? 'ALL' : 'ENABLED', this.searchTerm, this.includeDeleted, false, this.onlyOwned ? eXo.env.portal.userIdentityId : null)
             .then(data => {
               this.domains = data.domains;
             });

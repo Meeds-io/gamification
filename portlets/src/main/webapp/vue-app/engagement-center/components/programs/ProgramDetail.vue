@@ -98,9 +98,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <engagement-center-rules-toolbar
               :can-manage-rule="canManageRule"
               :keyword="keyword"
-              :filter="filter"
               @keyword-changed="keyword = $event"
-              @filter-changed="filter = $event" />
+              @filter-changed="status = $event" />
             <v-list-item-subtitle class="text-color pt-4">
               <v-data-table
                 :headers="rulesHeaders"
@@ -194,7 +193,8 @@ export default {
       totalSize: 0,
       loadingRules: false,
       deleteConfirmMessage: '',
-      filter: 'ENABLED',
+      dateFilter: 'STARTED',
+      status: 'ENABLED',
       keyword: null,
       expand: 'userAnnouncements',
       programsUrl: `${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`
@@ -277,7 +277,7 @@ export default {
     options() {
       this.retrieveProgramRules();
     },
-    filter() {
+    status() {
       this.retrieveProgramRules();
     },
     keyword() {
@@ -295,6 +295,8 @@ export default {
   created() {
     this.$root.$on('challenge-delete-confirm', this.confirmDelete);
     this.$root.$on('program-rules-refresh', this.retrieveProgramRules);
+    this.$root.$on('program-rules-update-status', this.setStatus);
+    this.$root.$on('program-rules-update-date-filter', this.setDateFilter);
     this.$root.$on('program-deleted', this.backToProgramList);
     this.$root.$on('program-updated', this.programUpdated);
     window.addEventListener('popstate', () => {
@@ -333,8 +335,12 @@ export default {
         this.program = program;
       }
     },
-    applyFilter(filter) {
-      this.filter = filter;
+    setStatus(status) {
+      this.status = status;
+      this.retrieveProgramRules();
+    },
+    setDateFilter(dateFilter) {
+      this.dateFilter = dateFilter;
       this.retrieveProgramRules();
     },
     retrieveProgramRules() {
@@ -345,9 +351,21 @@ export default {
       }
       const offset = (page - 1) * itemsPerPage;
       this.loadingRules = true;
-      return this.$ruleServices.getRules(this.keyword, this.programId, this.filter, 'ALL', offset, itemsPerPage, this.expand)
+      return this.$ruleService.getRules({
+        term: this.keyword,
+        domainId: this.programId,
+        status: this.canManageRule && this.status || 'ENABLED',
+        dateFilter: this.canManageRule && 'ALL' || this.dateFilter,
+        offset,
+        limit: itemsPerPage,
+        announcementsLimit: this.announcementsPerChallenge,
+        orderByRealizations: this.orderByRealizations,
+        excludedRuleIds: this.realizedChallenges,
+        expand: this.expand,
+      })
         .then((data) => {
-          this.programRules = data.rules;
+          this.programRules = data.rules || [];
+          this.programRules.forEach(rule => rule.program = this.program);
           this.totalSize = data.size || 0;
           return this.$nextTick();
         })
@@ -372,7 +390,7 @@ export default {
     },
     deleteRule() {
       this.loading = true;
-      this.$ruleServices.deleteRule(this.selectedRule.id)
+      this.$ruleService.deleteRule(this.selectedRule.id)
         .then((deletedRule) => {
           this.$root.$emit('program-rule-deleted', deletedRule);
           this.$engagementCenterUtils.displayAlert(this.$t('programs.details.ruleDeleteSuccess'));

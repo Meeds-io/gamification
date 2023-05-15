@@ -51,15 +51,33 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         hide-details />
     </v-card>
     <v-spacer v-if="isMobile" />
-    <v-scale-transition v-if="canManageRule">
+    <v-scale-transition>
       <select
-        v-model="filter"
-        class="width-auto my-auto ignore-vuetify-classes d-none d-sm-inline">
+        v-if="canManageRule"
+        id="rulesStatusFilter"
+        v-model="status"
+        class="width-auto my-auto ignore-vuetify-classes d-none d-sm-inline"
+        @change="$root.$emit('program-rules-update-status', status)">
         <option
-          v-for="ruleFilter in ruleFilters"
-          :key="ruleFilter.value"
-          :value="ruleFilter.value">
-          {{ ruleFilter.text }}
+          v-for="item in ruleFilters"
+          :key="item.value"
+          :value="item.value">
+          {{ item.text }}
+        </option>
+      </select>
+      <select
+        v-else
+        id="rulesDateFilter"
+        v-model="dateFilter"
+        class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter width-auto"
+        @change="$root.$emit('program-rules-update-date-filter', dateFilter)">
+        <option
+          v-for="item in rulesDateFilter"
+          :key="item.value"
+          :value="item.value">
+          <span class="d-none d-lg-inline">
+            {{ item.text }}
+          </span>
         </option>
       </select>
     </v-scale-transition>
@@ -131,13 +149,11 @@ export default {
       type: String,
       default: null,
     },
-    filter: {
-      type: String,
-      default: null,
-    },
   },
   data: () => ({
     filterToChange: null,
+    status: 'ENABLED',
+    dateFilter: 'STARTED',
     bottomMenu: false,
     menuHeaderChanged: false,
   }),
@@ -152,6 +168,21 @@ export default {
       },{
         text: this.$t('programs.details.filter.disabled'),
         value: 'DISABLED',
+      }];
+    },
+    rulesDateFilter() {
+      return [{
+        text: this.$t('rules.filter.all'),
+        value: 'ALL',
+      },{
+        text: this.$t('rules.filter.active'),
+        value: 'STARTED',
+      },{
+        text: this.$t('rules.filter.upcoming'),
+        value: 'NOT_STARTED',
+      },{
+        text: this.$t('rules.filter.ended'),
+        value: 'ENDED',
       }];
     },
     isMobile() {

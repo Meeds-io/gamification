@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.picocontainer.Startable;
 
-import org.exoplatform.addons.gamification.service.configuration.DomainService;
+import org.exoplatform.addons.gamification.service.configuration.ProgramService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
@@ -46,9 +46,9 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     protected RuleService ruleService;
 
-    protected DomainService domainService;
+    protected ProgramService domainService;
 
-    public RuleRegistryImpl(DomainService domainService) {
+    public RuleRegistryImpl(ProgramService domainService) {
       this.domainService = domainService;
       this.ruleMap = new HashMap<>();
     }
@@ -94,7 +94,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
      * @param ruleConfig
      */
     private void store(RuleConfig ruleConfig, RuleDTO ruleDTO) {
-      domainService = CommonsUtils.getService(DomainService.class);
+      domainService = CommonsUtils.getService(ProgramService.class);
       try {
         if (ruleDTO != null) {
           ruleDTO.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX + ruleConfig.getTitle());
@@ -107,8 +107,6 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
           ruleDto.setScore(ruleConfig.getScore());
           ruleDto.setEnabled(ruleConfig.isEnable());
           ruleDto.setEvent(ruleConfig.getEvent());
-          ruleDto.setLastModifiedBy("Gamification");
-          ruleDto.setCreatedBy("Gamification");
           ruleDto.setDeleted(false);
           ruleDto.setDescription(ruleConfig.getDescription());
           CommonsUtils.getService(RuleService.class).createRule(ruleDto);
