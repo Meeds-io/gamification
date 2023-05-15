@@ -19,7 +19,7 @@ export function getSpaceLeaderBord(period, limit) {
     credentials: 'include',
     method: 'GET',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     }  else {
       throw new Error ('Error when getting users by gamification leaderboard');

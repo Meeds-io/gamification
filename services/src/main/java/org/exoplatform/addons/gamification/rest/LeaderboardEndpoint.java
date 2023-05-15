@@ -28,9 +28,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.addons.gamification.service.effective.*;
 import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter.Period;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -42,7 +42,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-
 
 @Path("/gamification/leaderboard")
 @Produces(MediaType.APPLICATION_JSON)
@@ -59,27 +58,43 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
   protected IdentityManager     identityManager       = null;
 
-  protected GamificationService gamificationService   = null;
+  protected RealizationService  realizationService    = null;
 
   protected RelationshipManager relationshipManager;
 
   protected SpaceService        spaceService;
 
-  public LeaderboardEndpoint() {
-    identityManager = CommonsUtils.getService(IdentityManager.class);
-    gamificationService = CommonsUtils.getService(GamificationService.class);
-    relationshipManager = CommonsUtils.getService(RelationshipManager.class);
-    spaceService = CommonsUtils.getService(SpaceService.class);
+  public LeaderboardEndpoint(IdentityManager identityManager,
+                             RealizationService realizationService,
+                             RelationshipManager relationshipManager,
+                             SpaceService spaceService) {
+    this.identityManager = identityManager;
+    this.realizationService = realizationService;
+    this.relationshipManager = relationshipManager;
+    this.spaceService = spaceService;
   }
 
   @GET
   @Path("rank/all")
   @RolesAllowed("users")
-  public Response getAllLeadersByRank(@Context UriInfo uriInfo,
-                                      @Parameter(description = "Get leaderboard of user or space") @DefaultValue("user") @QueryParam("earnerType") String earnerType,
-                                      @Parameter(description = "Limit of identities to retrieve") @DefaultValue("10") @QueryParam("limit") int limit,
-                                      @Parameter(description = "Period name, possible values: WEEK, MONTH or ALL") @DefaultValue("ALL") @QueryParam("period") String period,
-                                      @Parameter(description = "Get only the top 10 or all") @DefaultValue("true") @QueryParam("loadCapacity") boolean loadCapacity) {
+  public Response getAllLeadersByRank(@Context
+  UriInfo uriInfo,
+                                      @Parameter(description = "Get leaderboard of user or space")
+                                      @DefaultValue("user")
+                                      @QueryParam("earnerType")
+                                      String earnerType,
+                                      @Parameter(description = "Limit of identities to retrieve")
+                                      @DefaultValue("10")
+                                      @QueryParam("limit")
+                                      int limit,
+                                      @Parameter(description = "Period name, possible values: WEEK, MONTH or ALL")
+                                      @DefaultValue("ALL")
+                                      @QueryParam("period")
+                                      String period,
+                                      @Parameter(description = "Get only the top 10 or all")
+                                      @DefaultValue("true")
+                                      @QueryParam("loadCapacity")
+                                      boolean loadCapacity) {
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     IdentityType identityType = IdentityType.getType(earnerType);
     leaderboardFilter.setIdentityType(identityType);
@@ -91,7 +106,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
       }
     }
     leaderboardFilter.setLoadCapacity(limit);
-    if(StringUtils.isBlank(period)) {
+    if (StringUtils.isBlank(period)) {
       period = Period.ALL.name();
     }
     leaderboardFilter.setPeriod(period);
@@ -100,7 +115,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
     List<LeaderboardInfo> leaderboardList = new ArrayList<>();
 
     try {
-      List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+      List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
       if (standardLeaderboards == null) {
         return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).build();
       }
@@ -121,7 +136,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
         leaderboardInfo.setProfileUrl(identity.getProfile().getUrl());
         leaderboardInfo.setRank(index);
         leaderboardList.add(leaderboardInfo);
-        index ++;
+        index++;
       }
 
       if (identityType.isUser()) {
@@ -160,10 +175,14 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @GET
   @Path("filter")
   @RolesAllowed("users")
-  public Response filter(@Context UriInfo uriInfo,
-                         @QueryParam("domainId") Long domainId,
-                         @QueryParam("period") String period,
-                         @QueryParam("capacity") String capacity) {
+  public Response filter(@Context
+  UriInfo uriInfo,
+                         @QueryParam("domainId")
+                         Long domainId,
+                         @QueryParam("period")
+                         String period,
+                         @QueryParam("capacity")
+                         String capacity) {
     // Init search criteria
     LeaderboardFilter leaderboardFilter = new LeaderboardFilter();
     leaderboardFilter.setDomainId(domainId);
@@ -184,7 +203,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
 
     try {
 
-      List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+      List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
       List<LeaderboardInfo> leaderboardInfoList = new ArrayList<>();
       if (standardLeaderboards == null || standardLeaderboards.isEmpty()) {
         return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).build();
@@ -241,7 +260,10 @@ public class LeaderboardEndpoint implements ResourceContainer {
   @GET
   @Path("stats")
   @RolesAllowed("users")
-  public Response stats(@Context UriInfo uriInfo, @QueryParam("username") String userSocialId, @QueryParam("period") String period) {
+  public Response stats(@Context
+  UriInfo uriInfo, @QueryParam("username")
+  String userSocialId, @QueryParam("period")
+  String period) {
     ConversationState conversationState = ConversationState.getCurrent();
     if (conversationState != null) {
       try {
@@ -257,14 +279,16 @@ public class LeaderboardEndpoint implements ResourceContainer {
           break;
         case "MONTH":
           startDate = Date.from(LocalDate.now()
-                                    .with(TemporalAdjusters.firstDayOfMonth())
-                                    .atStartOfDay(ZoneId.systemDefault())
-                                    .toInstant());
+                                         .with(TemporalAdjusters.firstDayOfMonth())
+                                         .atStartOfDay(ZoneId.systemDefault())
+                                         .toInstant());
           break;
         }
 
         // Find user's stats
-        List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(userSocialId, startDate, Calendar.getInstance().getTime());
+        List<PiechartLeaderboard> userStats = realizationService.getStatsByIdentityId(userSocialId,
+                                                                                      startDate,
+                                                                                      Calendar.getInstance().getTime());
 
         return Response.ok(userStats, MediaType.APPLICATION_JSON).build();
 
@@ -291,7 +315,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
   }
 
   private String computeTechnicalId(Identity identity) {
-    if(!SpaceIdentityProvider.NAME.equals(identity.getProviderId())) {
+    if (!SpaceIdentityProvider.NAME.equals(identity.getProviderId())) {
       return null;
     }
     Space space = spaceService.getSpaceByPrettyName(identity.getRemoteId());
@@ -311,7 +335,7 @@ public class LeaderboardEndpoint implements ResourceContainer {
       String earnerIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUser).getId();
       if (!isEarnerInTopTen(earnerIdentity, leaderboardList)) {
         // Get GaamificationScore for current user
-        int rank = gamificationService.getLeaderboardRank(earnerIdentity, date, domainId);
+        int rank = realizationService.getLeaderboardRank(earnerIdentity, date, domainId);
         if (rank > 0) {
           leaderboardInfo = new LeaderboardInfo();
           leaderboardInfo.setRank(rank);

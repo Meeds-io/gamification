@@ -46,11 +46,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter mb-3"
           @change="refreshChallenges">
           <option
-            v-for="filter in challengesFilter"
-            :key="filter.value"
-            :value="filter.value">
+            v-for="dateFilter in rulesDateFilter"
+            :key="dateFilter.value"
+            :value="dateFilter.value">
             <span class="d-none d-lg-inline">
-              {{ filter.text }}
+              {{ dateFilter.text }}
             </span>
           </option>
         </select>
@@ -71,16 +71,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-else-if="displayChallengesList"
         :domains="domainsHavingChallenges"
         :challenges-by-domain-id="challengesByDomainId"
-        :can-edit-challenge="canAddChallenge"
         class="pl-2 pt-8" />
     </v-card>
     <exo-confirm-dialog
-      ref="deleteChallengeConfirmDialog"
+      ref="deleteRuleConfirmDialog"
       :title="$t('challenges.delete')"
       :message="$t('challenges.deleteConfirmMessage')"
       :ok-label="$t('challenges.ok')"
       :cancel-label="$t('engagementCenter.button.cancel')"
-      @ok="deleteChallenge" />
+      @ok="deleteRule" />
   </div>
 </template>
 <script>
@@ -90,10 +89,6 @@ export default {
       type: Number,
       default: null
     },
-    canAddChallenge: {
-      type: Boolean,
-      default: false,
-    }
   },
   data: () => ({
     selectedChallenge: null,
@@ -111,14 +106,11 @@ export default {
     challengeIdFromUrl: null,
   }),
   computed: {
-    displayAddChallengeButton() {
-      return this.canAddChallenge || this.domains?.filter(domain => domain.owners?.filter(owner => Number(owner) === Number(eXo.env.portal.userIdentityId)).length)?.length;
-    },
     classWelcomeMessage() {
       return this.displayWelcomeMessage && 'emptyChallenges' || '';
     },
     domainsHavingChallenges() {
-      return this.domainsWithChallenges.filter(domain => domain.challenges.length > 0);
+      return this.domainsWithChallenges.filter(domain => domain.rules.length > 0);
     },
     displayWelcomeMessage() {
       return !this.typing && !this.loading && !this.domainsHavingChallenges.length && !this.search?.length && (this.filter === 'ALL' || this.filter === 'STARTED');
@@ -147,7 +139,7 @@ export default {
     challengesByDomainId() {
       const challengesByDomainId = {};
       this.domainsHavingChallenges.forEach(domain => {
-        challengesByDomainId[domain.id] = domain.challenges;
+        challengesByDomainId[domain.id] = domain.rules;
       });
       return challengesByDomainId;
     },
@@ -165,7 +157,7 @@ export default {
         return 6;
       }
     },
-    challengesFilter() {
+    rulesDateFilter() {
       return [{
         text: this.$t('challenges.filter.allChallenges'),
         value: 'ALL',
@@ -222,7 +214,7 @@ export default {
       this.challengeIdFromUrl = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
       if (this.providedId) {
         setTimeout(() => {
-          const retrieveChallengePromise = this.$challengesServices.getChallengeById(this.providedId)
+          const retrieveChallengePromise = this.$ruleService.getRuleById(this.providedId)
             .then(challenge => {
               if (challenge?.id) {
                 this.$root.$emit('rule-detail-drawer', challenge);
@@ -263,7 +255,17 @@ export default {
     getChallenges(append, domainId) {
       this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
-      return this.$challengesServices.getAllChallengesByUser(this.search, offset, this.challengePerPage, this.announcementsPerChallenge, domainId, !domainId, this.filter)
+      return this.$ruleService.getRules({
+        term: this.search,
+        domainId,
+        dateFilter: this.filter,
+        status: 'ENABLED',
+        type: 'MANUAL',
+        offset,
+        limit: this.challengePerPage,
+        announcementsLimit: this.announcementsPerChallenge,
+        groupByDomain: !domainId,
+      })
         .then(result => {
           if (!result) {
             return;
@@ -271,38 +273,39 @@ export default {
           this.domains = result;
           if (domainId) {
             const program = this.domainsById[domainId] || {};
-            if (!program.challenges) {
-              program.challenges = [];
+            if (!program.rules) {
+              program.rules = [];
             }
             result.forEach(challenge => challenge.program = program);
             if (append) {
-              program.challenges = this.challengesByDomainId[domainId].concat(result);
+              program.rules = this.challengesByDomainId[domainId].concat(result);
             } else {
-              program.challenges = result || [];
-              if (!program.challengesSize || program.challengesSize < 6) {
-                program.challengesSize = result.length;
+              program.rules = result || [];
+              if (!program.size || program.size < 6) {
+                program.size = result.length;
               }
             }
           } else {
             result.forEach(domain => {
-              if (domain.challenges) {
+              if (domain.rules) {
                 const program = Object.assign({}, domain);
-                delete program.challenges;
-                domain.challenges.forEach(challenge => challenge.program = program);
+                delete program.rules;
+                domain.rules.forEach(challenge => challenge.program = program);
               } else {
-                domain.challenges = [];
+                domain.rules = [];
               }
             });
             this.domainsWithChallenges = result;
           }
         }).finally(() => this.loading = false);
     },
-    deleteChallenge() {
+    deleteRule() {
       this.loading = true;
-      this.$challengesServices.deleteChallenge(this.selectedChallenge.id).then(() =>{
-        this.showAlert('success', this.$t('challenges.deleteSuccess'));
-        this.$root.$emit('challenge-deleted');
-      })
+      this.$ruleService.deleteRule(this.selectedChallenge.id)
+        .then(() =>{
+          this.showAlert('success', this.$t('challenges.deleteSuccess'));
+          this.$root.$emit('challenge-deleted');
+        })
         .catch(e => {
           let msg = '';
           if (e.message === '401' || e.message === '403') {
@@ -318,7 +321,7 @@ export default {
     },
     confirmDelete(challenge) {
       this.selectedChallenge = challenge;
-      this.$refs.deleteChallengeConfirmDialog.open();
+      this.$refs.deleteRuleConfirmDialog.open();
     },
     showAlert(alertType, alertMessage){
       this.$engagementCenterUtils.displayAlert(alertMessage, alertType);

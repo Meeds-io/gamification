@@ -129,12 +129,22 @@ public interface GamificationConstant {
 
     String OBJECT_TYPE_PARAM                                          = "objectType";
 
+    /**
+     * @deprecated this constant name is ambiguous since its name reflect to
+     *             Rule's title but its real reference is to Event name.
+     *             Use EVENT_NAME constant instead.
+     */
+    @Deprecated(forRemoval = true, since = "2.5.0")
     String RULE_TITLE                                                 = "ruleTitle";
+
+    String EVENT_NAME                                                 = "eventId";
 
     String SENDER_ID                                                  = "senderId";
     
     String SENDER_TYPE                                                = "senderType";
 
     String RECEIVER_ID                                                = "receiverId";
+
+    String RECEIVER_TYPE                                              = "receiverType";
 
 }
