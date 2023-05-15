@@ -165,7 +165,7 @@ export default {
   created() {
     this.$root.$on('realization-open-edit-drawer', this.open);
 
-    this.getAllDomains();
+    this.retrievePrograms();
   },
   methods: {
     open(realization, actionLabel) {
@@ -179,11 +179,12 @@ export default {
     close() {
       this.$refs.editRealizationDrawer.close();
     },
-    getAllDomains() {
-      this.$realizationsServices.getAllDomains().then(response => this.domains = response.domains);
+    retrievePrograms() {
+      this.$programService.getPrograms()
+        .then(response => this.domains = response.domains);
     },
     updateRealization() {
-      this.$realizationsServices.updateRealization(this.realizationId, this.status, this.actionLabel, this.program.title, this.points)
+      this.$realizationService.updateRealization(this.realizationId, this.status, this.actionLabel, this.program.title, this.points)
         .then((realization) => {
           this.$emit('updated',realization);
           this.close();

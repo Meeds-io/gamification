@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.GamificationUtils;
 import org.exoplatform.addons.gamification.service.configuration.BadgeService;
 import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.addons.gamification.service.effective.PiechartLeaderboard;
 import org.exoplatform.addons.gamification.service.effective.ProfileReputation;
 import org.exoplatform.commons.file.model.FileItem;
@@ -60,25 +60,25 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     private final CacheControl cacheControl;
 
-    protected GamificationService gamificationService = null;
+    protected final RealizationService realizationService;
 
-    protected IdentityManager identityManager = null;
+    protected final IdentityManager  identityManager;
 
-    protected BadgeService badgeService = null;
+    protected final BadgeService     badgeService;
 
-    public UserReputationEndpoint() {
+    protected final FileService      fileService;
 
-        this.cacheControl = new CacheControl();
-
-        cacheControl.setNoCache(true);
-
-        cacheControl.setNoStore(true);
-
-        gamificationService = CommonsUtils.getService(GamificationService.class);
-
-        identityManager = CommonsUtils.getService(IdentityManager.class);
-
-        badgeService = CommonsUtils.getService(BadgeService.class);
+    public UserReputationEndpoint(RealizationService realizationService,
+                                  IdentityManager identityManager,
+                                  BadgeService badgeService,
+                                  FileService fileService) {
+      this.cacheControl = new CacheControl();
+      cacheControl.setNoCache(true);
+      cacheControl.setNoStore(true);
+      this.realizationService = realizationService;
+      this.identityManager = identityManager;
+      this.badgeService = badgeService;
+      this.fileService = fileService;
     }
 
     @GET
@@ -107,9 +107,9 @@ public class UserReputationEndpoint implements ResourceContainer {
 
                 JSONObject reputation = new JSONObject();
 
-                userReputationScore = gamificationService.findReputationByEarnerId(actorId);
+                userReputationScore = realizationService.getScoreByIdentityId(actorId);
 
-                userRank = gamificationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
+                userRank = realizationService.getLeaderboardRank(actorId, Date.from(LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
                 
                 reputation.put("score", userReputationScore);
 
@@ -137,7 +137,7 @@ public class UserReputationEndpoint implements ResourceContainer {
     if (identity == null) {
       return Response.status(400).entity("Identity not found with id " + identityId).build();
     }
-    List<ProfileReputation> badgesByDomain = gamificationService.buildDomainScoreByIdentityId(earnerId);
+    List<ProfileReputation> badgesByDomain = realizationService.getScorePerDomainByIdentityId(earnerId);
     JSONArray profileBadges = buildProfileBadges(badgesByDomain);
     return Response.ok().cacheControl(cacheControl).entity(profileBadges.toString()).build();
   }
@@ -168,7 +168,7 @@ public class UserReputationEndpoint implements ResourceContainer {
           }
           String actorId = id.getId();
 
-          List<ProfileReputation> badgesByDomain = gamificationService.buildDomainScoreByIdentityId(actorId);
+          List<ProfileReputation> badgesByDomain = realizationService.getScorePerDomainByIdentityId(actorId);
 
           allBadges = buildProfileBadges(badgesByDomain);
 
@@ -245,7 +245,7 @@ public class UserReputationEndpoint implements ResourceContainer {
             return null;
         }
         try {
-            file = CommonsUtils.getService(FileService.class).getFile(avatarId);
+            file = fileService.getFile(avatarId);
         } catch (FileStorageException e) {
             return null;
         }
@@ -295,7 +295,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 reputation.put("description", badgeDTO.getDescription());
                 reputation.put("id", badgeDTO.getId());
                 reputation.put("title", badgeDTO.getTitle());
-                reputation.put("zone", badgeDTO.getDomainDTO().getTitle());
+                reputation.put("zone", badgeDTO.getProgram().getTitle());
                 reputation.put("level", index);
                 reputation.put("startScore", badgeDTO.getNeededScore());
                 reputation.put("score", score);
@@ -362,7 +362,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
+                List<ProfileReputation> badgesByDomain= realizationService.getScorePerDomainByIdentityId(actorId);
 
                 allBadges = buildProfilBadges(badgesByDomain);
 
@@ -417,7 +417,7 @@ public class UserReputationEndpoint implements ResourceContainer {
 
 
                 // Find user's stats
-                List<PiechartLeaderboard> userStats = gamificationService.buildStatsByUser(actorId, null, null);
+                List<PiechartLeaderboard> userStats = realizationService.getStatsByIdentityId(actorId, null, null);
 
                 return Response.ok(userStats, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
 
@@ -470,7 +470,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
+                List<ProfileReputation> badgesByDomain= realizationService.getScorePerDomainByIdentityId(actorId);
 
                 allBadges = buildProfileNextBadges(badgesByDomain);
 
@@ -515,7 +515,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
                     reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getDomainDTO().getTitle());
+                    reputation.put("zone", badgeDTO.getProgram().getTitle());
                     reputation.put("level", ++k);
                     reputation.put("startScore", badgeDTO.getNeededScore());
                     reputation.put("endScore", computeBadgeNextLevel(allBadges,i + 1));
@@ -560,7 +560,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                 String actorId = id.getId();
 
 
-                List<ProfileReputation> badgesByDomain= gamificationService.buildDomainScoreByIdentityId(actorId);
+                List<ProfileReputation> badgesByDomain= realizationService.getScorePerDomainByIdentityId(actorId);
 
                 allBadges = buildallBadges(badgesByDomain,url);
 
@@ -681,7 +681,7 @@ public class UserReputationEndpoint implements ResourceContainer {
                     reputation.put("description", badgeDTO.getDescription());
                     reputation.put("id", badgeDTO.getId());
                     reputation.put("title", badgeDTO.getTitle());
-                    reputation.put("zone", badgeDTO.getDomainDTO().getTitle());
+                    reputation.put("zone", badgeDTO.getProgram().getTitle());
                     reputation.put("level", ++k);
 
                     reputation.put("startScore", badgeDTO.getNeededScore());

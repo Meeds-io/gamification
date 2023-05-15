@@ -28,12 +28,12 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +51,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.configuration.AnnouncementServiceImpl;
+import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
 import org.exoplatform.addons.gamification.service.dto.configuration.AnnouncementActivity;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.PeriodType;
 import org.exoplatform.addons.gamification.storage.AnnouncementStorage;
 import org.exoplatform.addons.gamification.utils.Utils;
@@ -77,7 +79,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   private AnnouncementStorage        announcementStorage;
 
   @Mock
-  private ChallengeService           challengeService;
+  private RuleService                ruleService;
 
   @Mock
   private ListenerService            listenerService;
@@ -108,7 +110,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     super.setUp();
     UTILS.reset();
     announcementService = new AnnouncementServiceImpl(announcementStorage,
-                                                      challengeService,
+                                                      ruleService,
                                                       spaceService,
                                                       identityManager,
                                                       activityManager,
@@ -117,11 +119,11 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
   @Test
   public void testCreateAnnouncement() throws ObjectNotFoundException, IllegalAccessException {
-    Challenge challenge = newChallenge();
+    RuleDTO rule = newRule();
 
     Announcement announcement = new Announcement(0,
-                                                 challenge.getId(),
-                                                 challenge.getTitle(),
+                                                 rule.getId(),
+                                                 rule.getTitle(),
                                                  1L,
                                                  "announcement comment",
                                                  1L,
@@ -129,8 +131,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  null);
 
     Announcement announcementWithoutAssignee = new Announcement(0,
-                                                                challenge.getId(),
-                                                                challenge.getTitle(),
+                                                                rule.getId(),
+                                                                rule.getTitle(),
 
                                                                 null,
                                                                 "announcement comment",
@@ -139,8 +141,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                                 null);
 
     Announcement createdAnnouncement = new Announcement(1,
-                                                        challenge.getId(),
-                                                        challenge.getTitle(),
+                                                        rule.getId(),
+                                                        rule.getTitle(),
 
                                                         1L,
                                                         "announcement comment",
@@ -189,7 +191,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertThrows(ObjectNotFoundException.class,
                  () -> announcementService.createAnnouncement(announcement, templateParams, "root", true));
 
-    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
     assertThrows(IllegalArgumentException.class,
                  () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", true));
 
@@ -203,8 +205,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
          .thenReturn(true);
 
-    Announcement newAnnouncement = null;
-    newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root", true);
+    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root", true);
     assertNotNull(newAnnouncement);
     assertEquals(1l, newAnnouncement.getId());
   }
@@ -216,16 +217,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     String activityId = "9";
     int announcementId = 56;
 
-    Challenge challenge = new Challenge(1234,
-                                        "new challenge",
-                                        "challenge description",
-                                        Long.parseLong(spaceId),
-                                        new Date(System.currentTimeMillis()).toString(),
-                                        new Date(System.currentTimeMillis() + 1).toString(),
-                                        Collections.emptyList(),
-                                        10L,
-                                        2l,
-                                        true);
+    RuleDTO rule = newRule();
 
     Identity userIdentity = new Identity();
     userIdentity.setId(userIdentityId);
@@ -234,8 +226,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     userIdentity.setEnable(true);
 
     Announcement announcement = new Announcement(0,
-                                                 challenge.getId(),
-                                                 challenge.getTitle(),
+                                                 rule.getId(),
+                                                 rule.getTitle(),
                                                  Long.parseLong(userIdentityId),
                                                  "announcement comment",
                                                  1L,
@@ -276,7 +268,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
     Map<String, String> templateParams = new HashMap<>();
 
-    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    when(ruleService.findRuleById(anyLong())).thenReturn(rule);
     UTILS.when(() -> Utils.canAnnounce(any(), anyString())).thenReturn(false);
     when(identityManager.getIdentity("1")).thenReturn(identity);
     UTILS.when(() -> Utils.canAnnounce(any(), anyString())).thenReturn(true);
@@ -285,7 +277,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(spaceService.getSpaceById(spaceId)).thenReturn(space);
     when(identityManager.getOrCreateSpaceIdentity(space.getPrettyName())).thenReturn(spaceIdentity);
     when(identityManager.getIdentity(userIdentity.getId())).thenReturn(userIdentity);
-    when(challengeService.getChallengeById(challenge.getId(), userIdentity.getRemoteId())).thenReturn(challenge);
+    when(ruleService.findRuleById(rule.getId(), userIdentity.getRemoteId())).thenReturn(rule);
     doAnswer(invocation -> {
       ExoSocialActivityImpl activity = invocation.getArgument(1);
       activity.setId(activityId);
@@ -293,8 +285,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
       return null;
     }).when(activityManager).saveActivityNoReturn(any(), any());
     AnnouncementActivity announcementActivity = new AnnouncementActivity(6,
-                                                                         challenge.getId(),
-                                                                         challenge.getTitle(),
+                                                                         rule.getId(),
+                                                                         rule.getTitle(),
                                                                          Long.parseLong(userIdentityId),
                                                                          "announcement comment",
                                                                          Long.parseLong(userIdentityId),
@@ -305,7 +297,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(spaceService.getSpaceById(spaceId)).thenReturn(space);
     when(identityManager.getOrCreateSpaceIdentity(space.getPrettyName())).thenReturn(spaceIdentity);
     when(identityManager.getIdentity(userIdentity.getId())).thenReturn(userIdentity);
-    when(challengeService.getChallengeById(challenge.getId(), userIdentity.getRemoteId())).thenReturn(challenge);
+    when(ruleService.findRuleById(rule.getId(), userIdentity.getRemoteId())).thenReturn(rule);
     doAnswer(invocation -> {
       ExoSocialActivityImpl activity = invocation.getArgument(1);
       activity.setId(activityId);
@@ -330,7 +322,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                              assertEquals(String.valueOf(announcementId),
                                                                           activity.getTemplateParams()
                                                                                   .get(ANNOUNCEMENT_ID_TEMPLATE_PARAM));
-                                                             assertEquals(challenge.getTitle(),
+                                                             assertEquals(rule.getTitle(),
                                                                           activity.getTemplateParams()
                                                                                   .get(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM));
                                                              return true;
@@ -339,10 +331,10 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
   @Test
   public void testUpdateAnnouncement() throws ObjectNotFoundException, IllegalAccessException {
-    Challenge challenge = newChallenge();
+    RuleDTO rule = newRule();
     Announcement announcement = new Announcement(0,
-                                                 challenge.getId(),
-                                                 challenge.getTitle(),
+                                                 rule.getId(),
+                                                 rule.getTitle(),
 
                                                  1L,
                                                  "announcement comment",
@@ -350,16 +342,16 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  new Date(System.currentTimeMillis()).toString(),
                                                  null);
     Announcement createdAnnouncement = new Announcement(1,
-                                                        challenge.getId(),
-                                                        challenge.getTitle(),
+                                                        rule.getId(),
+                                                        rule.getTitle(),
                                                         1L,
                                                         "announcement comment",
                                                         1L,
                                                         new Date(System.currentTimeMillis()).toString(),
                                                         null);
     Announcement editedAnnouncement = new Announcement(1,
-                                                       challenge.getId(),
-                                                       challenge.getTitle(),
+                                                       rule.getId(),
+                                                       rule.getTitle(),
                                                        1L,
                                                        "announcement comment",
                                                        1L,
@@ -399,10 +391,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
          .thenReturn(identity);
     when(announcementStorage.getAnnouncementById(1L)).thenReturn(createdAnnouncement);
 
-    Announcement newAnnouncement = null;
-    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
     when(identityManager.getIdentity("1")).thenReturn(identity);
-    newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", true);
+    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", true);
     assertNotNull(newAnnouncement);
     newAnnouncement.setActivityId(1L);
 
@@ -432,26 +423,27 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Identity rootIdentity = new Identity();
     rootIdentity.setId("1");
     rootIdentity.setProviderId("organization");
-    rootIdentity.setRemoteId("root");
+    String username = "root";
+    rootIdentity.setRemoteId(username);
     Identity johnIdentity = new Identity();
     johnIdentity.setId("2");
     johnIdentity.setProviderId("organization");
     johnIdentity.setRemoteId("john");
-    when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
-    when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateIdentity("organization", username)).thenReturn(rootIdentity);
+    when(identityManager.getOrCreateUserIdentity(username)).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("john")).thenReturn(johnIdentity);
-    Challenge challenge = newChallenge();
+    RuleDTO rule = newRule();
     Announcement announcement = new Announcement(0,
-                                                 challenge.getId(),
-                                                 challenge.getTitle(),
+                                                 rule.getId(),
+                                                 rule.getTitle(),
                                                  1L,
                                                  "announcement comment",
                                                  1L,
                                                  new Date(System.currentTimeMillis()).toString(),
                                                  null);
     Announcement createdAnnouncement = new Announcement(1,
-                                                        challenge.getId(),
-                                                        challenge.getTitle(),
+                                                        rule.getId(),
+                                                        rule.getTitle(),
 
                                                         1L,
                                                         "announcement comment",
@@ -459,55 +451,55 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                         new Date(System.currentTimeMillis()).toString(),
                                                         1L);
     Announcement canceledAnnouncement = new Announcement(1,
-                                                         challenge.getId(),
-                                                         challenge.getTitle(),
+                                                         rule.getId(),
+                                                         rule.getTitle(),
                                                          1L,
                                                          "announcement comment",
                                                          1L,
                                                          new Date(System.currentTimeMillis()).toString(),
                                                          null);
 
-    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    when(ruleService.findRuleById(rule.getId(), username)).thenReturn(rule);
     when(identityManager.getIdentity("1")).thenReturn(identity);
     when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
     when(announcementStorage.deleteAnnouncement(createdAnnouncement)).thenReturn(canceledAnnouncement);
 
-    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", true);
+    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), username, true);
     assertNotNull(newAnnouncement);
     assertEquals(1L, newAnnouncement.getId());
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.deleteAnnouncement(-1L, "root"));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.deleteAnnouncement(-1L, username));
 
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.deleteAnnouncement(500L, "root"));
+    assertThrows(ObjectNotFoundException.class, () -> announcementService.deleteAnnouncement(500L, username));
 
     assertThrows(IllegalAccessException.class, () -> announcementService.deleteAnnouncement(1L, "john"));
 
-    assertNull(announcementService.deleteAnnouncement(createdAnnouncement.getId(), "root").getActivityId());
+    assertNull(announcementService.deleteAnnouncement(createdAnnouncement.getId(), username).getActivityId());
   }
 
   @Test
   public void testGetAnnouncementByChallenge() throws ObjectNotFoundException, IllegalAccessException {
-    Challenge challenge = newChallenge();
+    RuleDTO rule = newRule();
     Announcement announcement1 = new Announcement(0,
-                                                  challenge.getId(),
-                                                  challenge.getTitle(),
+                                                  rule.getId(),
+                                                  rule.getTitle(),
                                                   1L,
                                                   "announcement comment",
                                                   1L,
                                                   new Date(System.currentTimeMillis()).toString(),
                                                   null);
     Announcement announcement2 = new Announcement(1,
-                                                  challenge.getId(),
-                                                  challenge.getTitle(),
+                                                  rule.getId(),
+                                                  rule.getTitle(),
                                                   1L,
                                                   "announcement comment",
                                                   1L,
                                                   new Date(System.currentTimeMillis()).toString(),
                                                   null);
     Announcement announcement3 = new Announcement(1,
-                                                  challenge.getId(),
-                                                  challenge.getTitle(),
+                                                  rule.getId(),
+                                                  rule.getTitle(),
                                                   1L,
                                                   "announcement comment",
                                                   1L,
@@ -517,12 +509,18 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     announcementList.add(announcement1);
     announcementList.add(announcement2);
     announcementList.add(announcement3);
-    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, null)).thenReturn(announcementList);
+    when(announcementStorage.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null)).thenReturn(announcementList);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, null));
+    String username = "demo";
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, null, null));
+    assertThrows(ObjectNotFoundException.class, () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
 
-    List<Announcement> newAnnouncementList = null;
-    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, null);
+    when(ruleService.findRuleById(rule.getId(), username)).thenThrow(new IllegalAccessException());
+    assertThrows(IllegalAccessException.class, () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
+
+    reset(ruleService);
+    when(ruleService.findRuleById(rule.getId(), username)).thenReturn(rule);
+    List<Announcement> newAnnouncementList = announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username);
     assertNotNull(newAnnouncementList);
     assertEquals(announcementList, newAnnouncementList);
   }
@@ -534,18 +532,20 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     space.setId("2L");
     spaceService.createSpace(space, "1L");
 
-    Challenge challenge = newChallenge();
+    RuleDTO rule = newRule();
+    when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
+
     Announcement announcement2 = new Announcement(1,
-                                                  challenge.getId(),
-                                                  challenge.getTitle(),
+                                                  rule.getId(),
+                                                  rule.getTitle(),
                                                   1L,
                                                   "announcement comment",
                                                   1L,
                                                   new Date(System.currentTimeMillis()).toString(),
                                                   null);
     Announcement announcement3 = new Announcement(1,
-                                                  challenge.getId(),
-                                                  challenge.getTitle(),
+                                                  rule.getId(),
+                                                  rule.getTitle(),
                                                   2L,
                                                   "announcement comment",
                                                   1L,
@@ -554,27 +554,26 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     List<Announcement> announcementList = new ArrayList<>();
     announcementList.add(announcement2);
     announcementList.add(announcement3);
-    when(announcementStorage.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, IdentityType.USER)).thenReturn(announcementList);
+    when(announcementStorage.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, IdentityType.USER)).thenReturn(announcementList);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAllAnnouncementByChallenge(0, 0, 10, PeriodType.ALL, IdentityType.USER));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, IdentityType.USER, null));
 
-    List<Announcement> newAnnouncementList = null;
-    newAnnouncementList = announcementService.findAllAnnouncementByChallenge(challenge.getId(), 0, 10, PeriodType.ALL, IdentityType.USER);
-    assertNotNull(newAnnouncementList);
-    assertEquals(announcementList, newAnnouncementList);
+    List<Announcement> announcements = announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, IdentityType.USER, "root");
+    assertNotNull(announcements);
+    assertEquals(announcementList, announcements);
   }
 
   @Test
   public void testCountAllAnnouncementsByChallenge() throws ObjectNotFoundException {
-    Challenge challenge = newChallenge();
+    RuleDTO rule = newRule();
 
-    when(announcementStorage.countAnnouncementsByChallenge(challenge.getId())).thenReturn(10l);
+    when(announcementStorage.countAnnouncements(rule.getId())).thenReturn(10l);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.countAllAnnouncementsByChallenge(0l));
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.countAllAnnouncementsByChallenge(challenge.getId()));
-    when(challengeService.getChallengeById(anyLong())).thenReturn(challenge);
+    assertThrows(IllegalArgumentException.class, () -> announcementService.countAnnouncements(0l));
+    assertThrows(ObjectNotFoundException.class, () -> announcementService.countAnnouncements(rule.getId()));
+    when(ruleService.findRuleById(anyLong())).thenReturn(rule);
 
-    Long count = announcementService.countAllAnnouncementsByChallenge(challenge.getId());
+    Long count = announcementService.countAnnouncements(rule.getId());
     assertEquals(10l, (long) count);
   }
 
@@ -597,18 +596,21 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     assertEquals(announcement.getId(), savedAnnouncement.getId());
   }
 
-  @SuppressWarnings("removal")
-  private Challenge newChallenge() {
-    return new Challenge(1,
-                         "new challenge",
-                         "challenge description",
-                         1l,
-                         new Date(System.currentTimeMillis()).toString(),
-                         new Date(System.currentTimeMillis() + 1).toString(),
-                         Collections.emptyList(),
-                         10L,
-                         "gamification",
-                         true);
+  private RuleDTO newRule() {
+    RuleDTO rule = new RuleDTO();
+    rule.setId(1l);
+    rule.setTitle("new challenge");
+    rule.setDescription("challenge description");
+    rule.setStartDate(new Date(System.currentTimeMillis()).toString());
+    rule.setEndDate(new Date(System.currentTimeMillis() + 1).toString());
+    rule.setProgram(newProgram());
+    rule.setEnabled(true);
+    rule.setScore(10);
+    return rule;
+  }
+
+  private ProgramDTO newProgram() {
+    return new ProgramDTO(1, "gamification", null, 0, 1l, null, null, null, null, true, true, 0, null, 0, null, null, 0);
   }
 
 }

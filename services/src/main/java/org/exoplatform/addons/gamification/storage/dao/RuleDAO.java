@@ -16,7 +16,12 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.persistence.NoResultException;
@@ -26,6 +31,7 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
@@ -34,36 +40,20 @@ import org.exoplatform.addons.gamification.service.dto.configuration.constant.En
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.commons.api.persistence.GenericDAO;
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
   private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
 
   private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
-  
-  private static final String  DOMAIN_ID                 = "domainId";
 
-  private static final Log     LOG                       = ExoLogger.getLogger(RuleDAO.class);
+  private static final String  DOMAIN_ID                 = "domainId";
 
   private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
-  public RuleEntity findEnableRuleByTitle(String ruleTitle) throws PersistenceException {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRuleByTitle", RuleEntity.class)
-                                                     .setParameter("ruleTitle", ruleTitle);
-    query.setParameter("type", EntityType.AUTOMATIC);
-    try {
-      List<RuleEntity> ruleEntities = query.getResultList();
-      return !ruleEntities.isEmpty() ? ruleEntities.get(0) : null;
-    } catch (NoResultException e) {
-      return null;
-    }
-
-  }
-
   public List<Long> findHighestBudgetDomainIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
+    query.setParameter("date", Calendar.getInstance().getTime());
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
@@ -82,6 +72,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
+    query.setParameter("date", Calendar.getInstance().getTime());
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
@@ -97,10 +88,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<RuleEntity> findEnabledRulesByEvent(String event) throws PersistenceException {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findEnabledRulesByEvent", RuleEntity.class)
-                                                     .setParameter("event", event);
-    query.setParameter("type", EntityType.AUTOMATIC);
+  public List<RuleEntity> findActiveRulesByEvent(String event) throws PersistenceException {
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findActiveRulesByEvent", RuleEntity.class)
+                                                     .setParameter("event", event)
+                                                     .setParameter("type", EntityType.AUTOMATIC)
+                                                     .setParameter("date", Calendar.getInstance().getTime());
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -132,53 +124,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     } catch (NoResultException e) {
       return null;
     }
-
-  }
-
-  public List<RuleEntity> getAllRules() throws PersistenceException {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRules", RuleEntity.class);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-  }
-
-  public List<RuleEntity> getActiveRules() {
-    try {
-      TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getEnabledRules", RuleEntity.class)
-                                                       .setParameter("isEnabled", true);
-      query.setParameter("type", EntityType.AUTOMATIC);
-      return query.getResultList();
-    } catch (PersistenceException e) {
-      LOG.error("Error : Unable to fetch active rules", e);
-      return Collections.emptyList();
-    }
-  }
-
-  public List<RuleEntity> getAllRulesByDomain(long domainId) throws PersistenceException {
-
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesByDomain", RuleEntity.class)
-                                                     .setParameter(DOMAIN_ID, domainId);
-    query.setParameter("type", EntityType.AUTOMATIC);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-
-  }
-
-  public List<RuleEntity> getAllRulesWithNullDomain() throws PersistenceException {
-
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.getAllRulesWithNullDomain", RuleEntity.class);
-    query.setParameter("type", EntityType.AUTOMATIC);
-    try {
-      return query.getResultList();
-    } catch (NoResultException e) {
-      return Collections.emptyList();
-    }
-
   }
 
   public long getRulesTotalScoreByDomain(long domainId) throws PersistenceException {
@@ -200,18 +145,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
   }
 
-  public List<String> getRuleEventsByType(EntityType ruleType) {
-    TypedQuery<String> query = getEntityManager().createNamedQuery("Rule.getEventList", String.class);
-    query.setParameter("type", ruleType);
-    return query.getResultList();
-  }
-
-  public List<Long> getRuleIdsByType(EntityType ruleType) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRuleIdsByType", Long.class);
-    query.setParameter("type", ruleType);
-    return query.getResultList();
-  }
-  
   public List<Long> findRulesIdsByFilter(RuleFilter filter, int offset, int limit) {
     TypedQuery<Long> query = buildQueryFromFilter(filter, Long.class, false);
     if (offset > 0) {
@@ -248,7 +181,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     return query;
   }
 
-  private <T> void addQueryFilterParameters(RuleFilter filter, TypedQuery<T> query) {
+  private <T> void addQueryFilterParameters(RuleFilter filter, TypedQuery<T> query) { // NOSONAR
     if (StringUtils.isNotBlank(filter.getTerm())) {
       query.setParameter("term", "%" + StringUtils.lowerCase(filter.getTerm()) + "%");
     }
@@ -258,110 +191,18 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
     }
-    DateFilterType dateFilterType = filter.getDateFilterType ();
-    if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
+    if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
+      query.setParameter("excludedIds", filter.getExcludedRuleIds());
+    }
+    EntityStatusType entityStatusType = filter.getEntityStatusType();
+    DateFilterType dateFilterType = filter.getDateFilterType();
+    if ((dateFilterType != null && dateFilterType != DateFilterType.ALL)
+        || (entityStatusType != null && entityStatusType != EntityStatusType.ALL)) {
       query.setParameter("date", Calendar.getInstance().getTime());
     }
     EntityFilterType entityFilterType = filter.getEntityFilterType();
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
       query.setParameter("filterType", EntityType.valueOf(filter.getEntityFilterType().name()));
-    }
-    if (filter.getExcludedChallengesIds() != null && CollectionUtils.isNotEmpty(filter.getExcludedChallengesIds())) {
-      query.setParameter("excludedIds", filter.getExcludedChallengesIds());
-    }
-    EntityStatusType entityStatusType = filter.getEntityStatusType();
-    if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
-      if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
-        query.setParameter("date", Calendar.getInstance().getTime());
-      }
-    } else {
-      switch (filter.getEntityStatusType()) {
-      case ENABLED:
-        query.setParameter("enabled", true);
-        query.setParameter("date", Calendar.getInstance().getTime());
-        break;
-      case DISABLED:
-        query.setParameter("enabled", false);
-        query.setParameter("date", Calendar.getInstance().getTime());
-        break;
-      default:
-        break;
-      }
-    }
-  }
-
-  private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) {
-    if (StringUtils.isNotBlank(filter.getTerm())) {
-      suffixes.add("Term");
-      predicates.add("LOWER(r.title) LIKE :term");
-    }
-    if (filter.getDomainId() > 0) {
-      suffixes.add("Domain");
-      predicates.add("r.domainEntity.id = :domainId");
-    }
-    if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
-      suffixes.add("Audience");
-      predicates.add("(r.audience in (:ids) OR r.audience IS NULL)");
-    }
-    if (filter.getExcludedChallengesIds() != null && CollectionUtils.isNotEmpty(filter.getExcludedChallengesIds())) {
-      suffixes.add("ExcludeIds");
-      predicates.add("r.id NOT IN :excludedIds");
-    }
-    if (filter.getDateFilterType() != null) {
-      DateFilterType dateFilterType = filter.getDateFilterType();
-      suffixes.add("Enabled");
-      predicates.add("r.isEnabled = true");
-      switch (dateFilterType) {
-      case STARTED:
-        suffixes.add("StartDateAndEndDate");
-        predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
-                       " AND (r.endDate IS NULL OR r.endDate >= :date))");
-        break;
-      case NOT_STARTED:
-        suffixes.add("StartDate");
-        predicates.add("r.startDate > :date");
-        break;
-      case ENDED:
-        suffixes.add("EndDate");
-        predicates.add("r.endDate < :date");
-        break;
-      default:
-        break;
-      }
-    }
-    EntityFilterType entityFilterType = filter.getEntityFilterType();
-    if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
-      suffixes.add("FilterType");
-      predicates.add("r.type = :filterType");
-    }
-    if (!filter.isIncludeDeleted()) {
-      suffixes.add("ExcludeDeleted");
-      predicates.add("r.isDeleted = false");
-    }
-    EntityStatusType entityStatusType = filter.getEntityStatusType();
-    if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
-      if (filter.getEntityFilterType() != EntityFilterType.MANUAL) {
-        suffixes.add("FilterByALL");
-        predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
-                       " AND (r.endDate IS NULL OR r.endDate >= :date))");
-      }
-    } else {
-      switch (filter.getEntityStatusType()) {
-      case ENABLED:
-        suffixes.add("FilterByEnabled");
-        predicates.add("r.isEnabled = :enabled" +
-                       " AND ((r.startDate IS NULL OR r.startDate <= :date)" +
-                       " AND (r.endDate IS NULL OR r.endDate >= :date))");
-        break;
-      case DISABLED:
-        suffixes.add("FilterByDisabled");
-        predicates.add("r.isEnabled = :enabled" +
-                       " AND ((r.startDate IS NULL OR r.startDate <= :date)" +
-                       " AND (r.endDate IS NULL OR r.endDate >= :date))");
-        break;
-      default:
-        break;
-      }
     }
   }
 
@@ -370,7 +211,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (suffixes.isEmpty()) {
       queryName = count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX;
     } else {
-      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + "By" + StringUtils.join(suffixes, "By");
+      queryName = (count ? QUERY_FILTER_COUNT_PREFIX : QUERY_FILTER_FIND_PREFIX) + "By" + StringUtils.join(suffixes, "And");
     }
     return queryName;
   }
@@ -381,7 +222,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     String queryContent;
     if (predicates.isEmpty()) {
-      queryContent = querySelect ;
+      queryContent = querySelect;
     } else {
       queryContent = querySelect + " WHERE " + StringUtils.join(predicates, " AND ");
     }
@@ -390,4 +231,100 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     }
     return queryContent;
   }
+
+  private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) { // NOSONAR
+    if (StringUtils.isNotBlank(filter.getTerm())) {
+      suffixes.add("Term");
+      predicates.add("LOWER(r.title) LIKE :term");
+    }
+    if (filter.getDomainId() > 0) {
+      suffixes.add("Domain");
+      predicates.add("r.domainEntity.id = :domainId");
+    }
+    if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
+      suffixes.add("Audience");
+      predicates.add("(r.domainEntity.audienceId in (:ids) OR r.domainEntity.audienceId IS NULL)");
+    }
+    if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
+      suffixes.add("ExcludeIds");
+      predicates.add("r.id NOT IN :excludedIds");
+    }
+    if (!filter.isIncludeDeleted()) {
+      suffixes.add("ExcludeDeleted");
+      predicates.add("r.isDeleted = false");
+    }
+
+    DateFilterType dateFilterType = filter.getDateFilterType();
+    EntityStatusType entityStatusType = filter.getEntityStatusType();
+    EntityFilterType entityFilterType = filter.getEntityFilterType();
+
+    applyDateFilter(suffixes, predicates, dateFilterType);
+    applyTypeFilter(suffixes, predicates, entityFilterType);
+    applyStatusFilter(suffixes, predicates, entityStatusType, dateFilterType == null || dateFilterType == DateFilterType.ALL);
+  }
+
+  private void applyTypeFilter(List<String> suffixes, List<String> predicates, EntityFilterType entityFilterType) {
+    if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
+      suffixes.add("Type");
+      predicates.add("r.type = :filterType");
+    }
+  }
+
+  private void applyDateFilter(List<String> suffixes, List<String> predicates, DateFilterType dateFilterType) {
+    if (dateFilterType == null || dateFilterType == DateFilterType.ALL) {
+      return;
+    }
+    switch (dateFilterType) {
+    case STARTED:
+      suffixes.add("StartDateAndEndDate");
+      predicates.add("((r.startDate IS NULL OR r.startDate <= :date)" +
+          " AND (r.endDate IS NULL OR r.endDate >= :date))");
+      break;
+    case NOT_STARTED:
+      suffixes.add("StartDate");
+      predicates.add("r.startDate > :date");
+      break;
+    case ENDED:
+      suffixes.add("EndDate");
+      predicates.add("r.endDate < :date");
+      break;
+    default:
+      break;
+    }
+  }
+
+  private void applyStatusFilter(List<String> suffixes,
+                                 List<String> predicates,
+                                 EntityStatusType entityStatusType,
+                                 boolean applyDateFilter) {
+    if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
+      return;
+    }
+    boolean filterEnabledRules = entityStatusType == EntityStatusType.ENABLED;
+    suffixes.add(filterEnabledRules ? "StatusEnabled" : "StatusDisabled");
+
+    if (applyDateFilter) {
+      switch (entityStatusType) {
+      case ENABLED:
+        predicates.add("r.isEnabled = true");
+        predicates.add("(r.startDate IS NULL OR r.startDate <= :date)");
+        predicates.add("(r.endDate IS NULL OR r.endDate >= :date)");
+        break;
+      case DISABLED:
+        predicates.add("""
+            (
+              r.isEnabled = false
+              OR (r.startDate IS NOT NULL AND r.startDate > :date)
+              OR (r.endDate IS NOT NULL AND r.endDate < :date)
+            )
+            """);
+        break;
+      default:
+        break;
+      }
+    } else {
+      predicates.add("r.isEnabled = " + filterEnabledRules);
+    }
+  }
+
 }

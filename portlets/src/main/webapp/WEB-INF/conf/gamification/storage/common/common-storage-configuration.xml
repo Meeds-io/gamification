@@ -23,11 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
     <!-- Gamification Action History storage (JPA) -->
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO</type>
-    </component>
-    <!-- Gamification Effective Service -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.effective.GamificationService</type>
+        <type>org.exoplatform.addons.gamification.storage.dao.RealizationDAO</type>
     </component>
 
     <!-- Gamification storage layour (Liquebase initializer) -->
