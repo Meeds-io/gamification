@@ -14,7 +14,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.exoplatform.addons.gamification.service.configuration;
+package org.exoplatform.addons.gamification.service;
 
 import static org.junit.Assert.assertThrows;
 
@@ -256,7 +256,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
     assertTrue(storedDomain.isEnabled());
 
     programService.deleteProgramById(storedDomain.getId(), adminAclIdentity);
-    assertThrows(IllegalAccessException.class, () -> programService.updateProgram(updatedDomain, regularAclIdentity));
+    assertThrows(ObjectNotFoundException.class, () -> programService.updateProgram(updatedDomain, regularAclIdentity));
   }
 
   @Test
@@ -274,7 +274,7 @@ public class ProgramServiceTest extends AbstractServiceTest {
   }
 
   @Test
-  public void testGetDomainById() {
+  public void testGetProgramById() {
     assertEquals(programDAO.findAll().size(), 0);
     assertThrows(IllegalArgumentException.class, () -> programService.getProgramById(-1L));
     ProgramDTO program = newProgram();
@@ -282,6 +282,37 @@ public class ProgramServiceTest extends AbstractServiceTest {
     ProgramDTO domain = programService.getProgramById(program.getId());
     assertNotNull(domain);
     assertEquals(program.getId(), domain.getId());
+  }
+
+  @Test
+  public void testGetProgramByIdAndUser() throws IllegalAccessException, ObjectNotFoundException {
+    assertEquals(programDAO.findAll().size(), 0);
+    assertThrows(IllegalArgumentException.class, () -> programService.getProgramById(-1L, "root1"));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(5000L, "root1"));
+
+    ProgramDTO program = newProgram();
+    assertNotNull(program);
+
+    long programId = program.getId();
+
+    ProgramDTO foundProgram = programService.getProgramById(programId, "root1");
+    assertNotNull(foundProgram);
+    assertEquals(programId, foundProgram.getId());
+    assertTrue(program.isEnabled());
+    assertNotNull(programService.getProgramById(programId, "root10"));
+    assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "demo"));
+
+    program.setEnabled(false);
+    program = programService.updateProgram(program, adminAclIdentity);
+
+    assertNotNull(programService.getProgramById(programId, "root1"));
+    assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "root10"));
+    assertThrows(IllegalAccessException.class, () -> programService.getProgramById(programId, "demo"));
+
+    programService.deleteProgramById(programId, adminAclIdentity);
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, "root1"));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, "root10"));
+    assertThrows(ObjectNotFoundException.class, () -> programService.getProgramById(programId, "demo"));
   }
 
   @Test
@@ -312,13 +343,13 @@ public class ProgramServiceTest extends AbstractServiceTest {
   @Test
   public void testCanUpdateDomain() throws IllegalAccessException, ObjectNotFoundException {
     ProgramDTO domain = newProgram();
-    assertFalse(programService.isProgramOwner(domain.getId(), regularAclIdentity));
-    assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity));
-    assertFalse(programService.isProgramOwner(0, regularAclIdentity));
+    assertFalse(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
+    assertTrue(programService.isProgramOwner(domain.getId(), adminAclIdentity.getUserId()));
+    assertFalse(programService.isProgramOwner(0, regularAclIdentity.getUserId()));
     String identityId = identityManager.getOrCreateUserIdentity(regularAclIdentity.getUserId()).getId();
     domain.setOwners(Collections.singleton(Long.parseLong(identityId)));
     programService.updateProgram(domain, adminAclIdentity);
-    assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity));
+    assertTrue(programService.isProgramOwner(domain.getId(), regularAclIdentity.getUserId()));
   }
 
   @Test

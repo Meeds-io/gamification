@@ -43,17 +43,21 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements GenericDAO<RuleEntity, Long> {
 
+  private static final String  DATE_PARAM_NAME           = "date";
+
+  private static final String  EVENT_PARAM_NAME          = "event";
+
   private static final String  QUERY_FILTER_FIND_PREFIX  = "Rule.findAllRules";
 
   private static final String  QUERY_FILTER_COUNT_PREFIX = "Rule.countAllRules";
 
-  private static final String  DOMAIN_ID                 = "domainId";
+  private static final String  DOMAIN_ID_PARAM_NAME      = "domainId";
 
   private Map<String, Boolean> filterNamedQueries        = new HashMap<>();
 
   public List<Long> findHighestBudgetDomainIds(int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIds", Tuple.class);
-    query.setParameter("date", Calendar.getInstance().getTime());
+    query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
@@ -72,7 +76,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   public List<Long> findHighestBudgetDomainIdsBySpacesIds(List<Long> spacesIds, int offset, int limit) {
     TypedQuery<Tuple> query = getEntityManager().createNamedQuery("Rule.getHighestBudgetDomainIdsBySpacesIds", Tuple.class);
     query.setParameter("spacesIds", spacesIds);
-    query.setParameter("date", Calendar.getInstance().getTime());
+    query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     List<Tuple> result = query.getResultList();
     if (result == null) {
       return Collections.emptyList();
@@ -90,9 +94,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public List<RuleEntity> findActiveRulesByEvent(String event) throws PersistenceException {
     TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findActiveRulesByEvent", RuleEntity.class)
-                                                     .setParameter("event", event)
+                                                     .setParameter(EVENT_PARAM_NAME, event)
                                                      .setParameter("type", EntityType.AUTOMATIC)
-                                                     .setParameter("date", Calendar.getInstance().getTime());
+                                                     .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     try {
       return query.getResultList();
     } catch (NoResultException e) {
@@ -113,10 +117,11 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   }
 
-  public RuleEntity findRuleByEventAndDomain(String event, long domainId) throws PersistenceException {
-    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findRuleByEventAndDomain", RuleEntity.class)
-                                                     .setParameter("event", event)
-                                                     .setParameter(DOMAIN_ID, domainId);
+  public RuleEntity findActiveRuleByEventAndDomain(String event, long domainId) throws PersistenceException {
+    TypedQuery<RuleEntity> query = getEntityManager().createNamedQuery("Rule.findActiveRuleByEventAndDomain", RuleEntity.class)
+                                                     .setParameter(EVENT_PARAM_NAME, event)
+                                                     .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
+                                                     .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     query.setParameter("type", EntityType.AUTOMATIC);
     try {
       List<RuleEntity> ruleEntities = query.getResultList();
@@ -128,8 +133,8 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   public long getRulesTotalScoreByDomain(long domainId) throws PersistenceException {
     TypedQuery<Long> query = getEntityManager().createNamedQuery("Rule.getRulesTotalScoreByDomain", Long.class)
-                                               .setParameter(DOMAIN_ID, domainId)
-                                               .setParameter("date", Calendar.getInstance().getTime());
+                                               .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
+                                               .setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
 
     Long score = query.getSingleResult();
     return score == null ? 0 : score.intValue();
@@ -186,7 +191,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       query.setParameter("term", "%" + StringUtils.lowerCase(filter.getTerm()) + "%");
     }
     if (filter.getDomainId() > 0) {
-      query.setParameter(DOMAIN_ID, filter.getDomainId());
+      query.setParameter(DOMAIN_ID_PARAM_NAME, filter.getDomainId());
     }
     if (CollectionUtils.isNotEmpty(filter.getSpaceIds())) {
       query.setParameter("ids", filter.getSpaceIds());
@@ -194,11 +199,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
     if (CollectionUtils.isNotEmpty(filter.getExcludedRuleIds())) {
       query.setParameter("excludedIds", filter.getExcludedRuleIds());
     }
-    EntityStatusType entityStatusType = filter.getEntityStatusType();
     DateFilterType dateFilterType = filter.getDateFilterType();
-    if ((dateFilterType != null && dateFilterType != DateFilterType.ALL)
-        || (entityStatusType != null && entityStatusType != EntityStatusType.ALL)) {
-      query.setParameter("date", Calendar.getInstance().getTime());
+    if (dateFilterType != null && dateFilterType != DateFilterType.ALL) {
+      query.setParameter(DATE_PARAM_NAME, Calendar.getInstance().getTime());
     }
     EntityFilterType entityFilterType = filter.getEntityFilterType();
     if (entityFilterType != null && entityFilterType != EntityFilterType.ALL) {
@@ -233,6 +236,9 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
   }
 
   private void buildPredicates(RuleFilter filter, List<String> suffixes, List<String> predicates) { // NOSONAR
+    suffixes.add("ExcludeDeleted");
+    predicates.add("r.isDeleted = false");
+
     if (StringUtils.isNotBlank(filter.getTerm())) {
       suffixes.add("Term");
       predicates.add("LOWER(r.title) LIKE :term");
@@ -249,10 +255,6 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
       suffixes.add("ExcludeIds");
       predicates.add("r.id NOT IN :excludedIds");
     }
-    if (!filter.isIncludeDeleted()) {
-      suffixes.add("ExcludeDeleted");
-      predicates.add("r.isDeleted = false");
-    }
 
     DateFilterType dateFilterType = filter.getDateFilterType();
     EntityStatusType entityStatusType = filter.getEntityStatusType();
@@ -260,7 +262,7 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
     applyDateFilter(suffixes, predicates, dateFilterType);
     applyTypeFilter(suffixes, predicates, entityFilterType);
-    applyStatusFilter(suffixes, predicates, entityStatusType, dateFilterType == null || dateFilterType == DateFilterType.ALL);
+    applyStatusFilter(suffixes, predicates, entityStatusType);
   }
 
   private void applyTypeFilter(List<String> suffixes, List<String> predicates, EntityFilterType entityFilterType) {
@@ -295,36 +297,13 @@ public class RuleDAO extends GenericDAOJPAImpl<RuleEntity, Long> implements Gene
 
   private void applyStatusFilter(List<String> suffixes,
                                  List<String> predicates,
-                                 EntityStatusType entityStatusType,
-                                 boolean applyDateFilter) {
+                                 EntityStatusType entityStatusType) {
     if (entityStatusType == null || entityStatusType == EntityStatusType.ALL) {
       return;
     }
     boolean filterEnabledRules = entityStatusType == EntityStatusType.ENABLED;
     suffixes.add(filterEnabledRules ? "StatusEnabled" : "StatusDisabled");
-
-    if (applyDateFilter) {
-      switch (entityStatusType) {
-      case ENABLED:
-        predicates.add("r.isEnabled = true");
-        predicates.add("(r.startDate IS NULL OR r.startDate <= :date)");
-        predicates.add("(r.endDate IS NULL OR r.endDate >= :date)");
-        break;
-      case DISABLED:
-        predicates.add("""
-            (
-              r.isEnabled = false
-              OR (r.startDate IS NOT NULL AND r.startDate > :date)
-              OR (r.endDate IS NOT NULL AND r.endDate < :date)
-            )
-            """);
-        break;
-      default:
-        break;
-      }
-    } else {
-      predicates.add("r.isEnabled = " + filterEnabledRules);
-    }
+    predicates.add("r.isEnabled = " + filterEnabledRules);
   }
 
 }
