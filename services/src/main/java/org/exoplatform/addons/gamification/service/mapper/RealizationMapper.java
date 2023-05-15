@@ -103,9 +103,9 @@ public class RealizationMapper {
       gHistoryEntity.setLastModifiedDate(new Date());
     }
     gHistoryEntity.setCreatedBy(realization.getCreatedBy() != null ? realization.getCreatedBy()
-                                                                   : "Gamification Inner Process");
+                                                                   : Utils.SYSTEM_USERNAME);
     gHistoryEntity.setLastModifiedBy(realization.getLastModifiedBy() != null ? realization.getLastModifiedBy()
-                                                                             : "Gamification Inner Process");
+                                                                             : Utils.SYSTEM_USERNAME);
     return gHistoryEntity;
   }
 
