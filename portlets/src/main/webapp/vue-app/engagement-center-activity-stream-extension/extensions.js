@@ -54,7 +54,7 @@ extensionRegistry.registerExtension('activity', 'action', {
   },
   click: (activity) => {
     document.dispatchEvent(new CustomEvent('displayTopBarLoading'));
-    return Vue.prototype.$challengesServices.cancelAnnouncement(activity.templateParams.announcementId)
+    return Vue.prototype.$announcementService.cancelAnnouncement(activity.templateParams.announcementId)
       .finally(() => document.dispatchEvent(new CustomEvent('hideTopBarLoading')));
   },
 });

@@ -101,7 +101,7 @@ export default {
     loading: true,
     displayChallenges: false,
     listChallenges: [],
-    listRealizations: [],
+    realizedChallenges: [],
     orderByRealizations: true,
   }),
   computed: {
@@ -118,7 +118,7 @@ export default {
   created() {
     document.addEventListener('widget-row-click-event', (event) => {
       if (event) {
-        this.$challengesServices.getChallengeById(event.detail)
+        this.$ruleService.getRuleById(event.detail)
           .then(challenge => {
             document.dispatchEvent(new CustomEvent('rule-detail-drawer', { detail: challenge }));
           });
@@ -128,19 +128,30 @@ export default {
   methods: {
     getChallenges() {
       this.loading = true;
-      return this.$challengesServices.getAllChallengesByUser(this.search, 0, this.challengePerPage, this.announcementsPerChallenge, null, null, this.filter, this.orderByRealizations, this.listRealizations, this.period)
+      return this.$ruleService.getRules({
+        term: this.search,
+        status: 'ENABLED',
+        type: 'MANUAL',
+        dateFilter: this.filter,
+        offset: 0,
+        limit: this.challengePerPage,
+        announcementsLimit: this.announcementsPerChallenge,
+        orderByRealizations: this.orderByRealizations,
+        excludedRuleIds: this.realizedChallenges,
+        period: this.period,
+      })
         .then(result => {
-          if (!result) {
+          if (!result?.rules) {
             return;
           }
-          result.forEach(data => {
+          result.rules.forEach(data => {
             const challenge = {};
             challenge.challengeId = data.id;
             challenge.challengeTitle = data.title;
-            challenge.challengePoints =  data.points;
-            challenge.challengesAnnouncementsCount =  data.announcements.length;
+            challenge.challengePoints =  data.score;
+            challenge.challengesAnnouncementsCount = data.announcementsCount;
             this.listChallenges.push(challenge);
-            this.listRealizations.push(data.id);
+            this.realizedChallenges.push(data.id);
           });
           if (this.listChallenges.length < this.challengePerPage && this.orderByRealizations) {
             this.orderByRealizations = false;

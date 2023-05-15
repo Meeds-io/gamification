@@ -27,7 +27,6 @@ import static org.exoplatform.addons.gamification.utils.Utils.addRuleStatisticPa
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addStatisticData;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.dto.configuration.Challenge;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.commons.api.persistence.ExoTransactional;
@@ -94,9 +93,6 @@ public class AnalyticsRuleListener extends Listener<Object, String> {
       return ruleService.findRuleById(id);
     } else if (object instanceof RuleDTO rule) {
       return rule;
-    } else if (object instanceof Challenge challenge) {
-      long id = challenge.getId();
-      return ruleService.findRuleById(id);
     }
     return null;
   }
