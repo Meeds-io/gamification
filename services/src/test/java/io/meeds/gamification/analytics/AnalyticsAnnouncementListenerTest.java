@@ -60,7 +60,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
@@ -197,17 +197,17 @@ public class AnalyticsAnnouncementListenerTest {
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_SCORE_PARAM)));
       assertEquals(String.valueOf(ruleDTO.getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_RULE_TYPE_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getId()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_ID_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getTitle()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getTitle()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TITLE_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getBudget()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getBudget()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_BUDGET_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getType()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getCoverFileId()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getCoverFileId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
-      assertEquals(String.valueOf(ruleDTO.getDomainDTO().getOwners()),
+      assertEquals(String.valueOf(ruleDTO.getProgram().getOwners()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       assertEquals(String.valueOf(announcement.getId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_ANNOUNCE_ID_PARAM)));
@@ -230,23 +230,23 @@ public class AnalyticsAnnouncementListenerTest {
     ruleDTO.setEnabled(true);
     ruleDTO.setDeleted(false);
     ruleDTO.setEvent(EVENT_NAME);
-    ruleDTO.setDomainDTO(newDomainDTO());
+    ruleDTO.setProgram(newProgram());
     ruleDTO.setType(EntityType.MANUAL);
     return ruleDTO;
   }
 
-  private DomainDTO newDomainDTO() {
-    DomainDTO domainDTO = new DomainDTO();
-    domainDTO.setTitle(PROGRAM_TITLE);
-    domainDTO.setDescription(PROGRAM_DESCRIPTION);
-    domainDTO.setDeleted(false);
-    domainDTO.setEnabled(true);
-    domainDTO.setType(EntityType.AUTOMATIC.name());
-    domainDTO.setAudienceId(AUDIENCE_ID);
+  private ProgramDTO newProgram() {
+    ProgramDTO program = new ProgramDTO();
+    program.setTitle(PROGRAM_TITLE);
+    program.setDescription(PROGRAM_DESCRIPTION);
+    program.setDeleted(false);
+    program.setEnabled(true);
+    program.setType(EntityType.AUTOMATIC.name());
+    program.setAudienceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
-    domainDTO.setOwners(owners);
-    return domainDTO;
+    program.setOwners(owners);
+    return program;
   }
 
 }

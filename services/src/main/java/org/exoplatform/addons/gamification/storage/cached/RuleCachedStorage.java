@@ -22,8 +22,9 @@ import java.io.Serializable;
 import org.exoplatform.addons.gamification.service.dto.configuration.CacheKey;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
+import org.exoplatform.addons.gamification.storage.ProgramStorage;
 import org.exoplatform.addons.gamification.storage.RuleStorage;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.storage.dao.ProgramDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
 import org.exoplatform.commons.cache.future.FutureExoCache;
 import org.exoplatform.commons.cache.future.Loader;
@@ -43,8 +44,11 @@ public class RuleCachedStorage extends RuleStorage {
 
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
 
-  public RuleCachedStorage(RuleDAO ruleDAO, CacheService cacheService, GamificationHistoryDAO gamificationHistoryDAO) {
-    super(ruleDAO, gamificationHistoryDAO);
+  public RuleCachedStorage(ProgramStorage programStorage,
+                           ProgramDAO programDAO,
+                           RuleDAO ruleDAO,
+                           CacheService cacheService) {
+    super(programStorage, programDAO, ruleDAO);
     ExoCache<Serializable, Object> ruleCache = cacheService.getCacheInstance(RULE_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> ruleLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override
@@ -66,8 +70,7 @@ public class RuleCachedStorage extends RuleStorage {
   @Override
   public RuleDTO saveRule(RuleDTO ruleDTO) {
     try {
-      ruleDTO = super.saveRule(ruleDTO);
-      return ruleDTO;
+      return super.saveRule(ruleDTO);
     } finally {
       if (EntityType.MANUAL.equals(ruleDTO.getType())) {
         this.ruleFutureCache.clear();

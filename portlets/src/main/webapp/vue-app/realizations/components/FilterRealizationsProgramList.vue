@@ -129,10 +129,9 @@ export default {
     },
     retrievePrograms(append, searchingKey) {
       this.loading = true;
-      this.$programsServices
-        .retrievePrograms(null, null, this.type, this.status, searchingKey, true)
+      this.$programService.getPrograms(null, null, this.type, this.status, searchingKey, true)
         .then((programsList) => {
-          this.size = programsList.domainsSize;
+          this.size = programsList.size;
           if (append) {
             this.loadedMoreProgramsList = programsList?.domains.map(program => ({[program.id]: program.title}));
             this.programsList = this.programsList?.concat(this.loadedMoreProgramsList);

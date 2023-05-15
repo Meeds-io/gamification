@@ -32,10 +32,9 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.addons.gamification.IdentityType;
-import org.exoplatform.addons.gamification.entities.domain.effective.GamificationActionsHistory;
 import org.exoplatform.addons.gamification.rest.model.GamificationInformationRestEntity;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.addons.gamification.service.mapper.DomainMapper;
+import org.exoplatform.addons.gamification.service.RealizationService;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationDTO;
 import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
@@ -53,27 +52,32 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 @RolesAllowed("users")
 public class GamificationInformationsEndpoint implements ResourceContainer {
 
-  protected IdentityManager     identityManager     = null;
+  protected IdentityManager    identityManager    = null;
 
-  protected GamificationService gamificationService = null;
+  protected RealizationService realizationService = null;
 
-  protected SpaceService        spaceService;
+  protected SpaceService       spaceService;
 
   public GamificationInformationsEndpoint(IdentityManager identityManager,
                                           SpaceService spaceService,
-                                          GamificationService gamificationService) {
+                                          RealizationService realizationService) {
     this.identityManager = identityManager;
-    this.gamificationService = gamificationService;
+    this.realizationService = realizationService;
     this.spaceService = spaceService;
   }
 
   @GET
   @Path("history/all")
   @RolesAllowed("users")
-  public Response getAllLeadersByRank(@Context UriInfo uriInfo,
-                                      @QueryParam("capacity") String capacity,
-                                      @QueryParam("providerId") String providerId,
-                                      @QueryParam("remoteId") String remoteId) {
+  public Response getAllLeadersByRank(// NOSONAR
+                                      @Context
+                                      UriInfo uriInfo,
+                                      @QueryParam("capacity")
+                                      String capacity,
+                                      @QueryParam("providerId")
+                                      String providerId,
+                                      @QueryParam("remoteId")
+                                      String remoteId) {
 
     if (StringUtils.isBlank(providerId)) {
       return Response.status(400).entity("identity 'providerId' parameter is mandatory").build();
@@ -110,21 +114,22 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
 
     // find actions History by userid adding a pagination load more capacity
     // filter
-    List<GamificationActionsHistory> ss = gamificationService.findActionsHistoryByEarnerId(earnerIdentity.getId(), loadCapacity);
+    List<RealizationDTO> ss = realizationService.findRealizationsByIdentityId(earnerIdentity.getId(), loadCapacity);
     if (ss == null || ss.isEmpty()) {
       return Response.ok(gamificationInformationRestEntities, MediaType.APPLICATION_JSON).build();
     }
 
-    // Build GamificationActionsHistory flow only when the returned list is not
+    // Build RealizationDTO flow only when the returned list is not
     // null
-    for (GamificationActionsHistory element : ss) {
+    for (RealizationDTO element : ss) {
       // Load Social identity
       Identity receiverIdentity = identityManager.getIdentity(element.getReceiver());
       Profile profile = receiverIdentity.getProfile();
       GamificationInformationRestEntity gamificationInformationRestEntity = new GamificationInformationRestEntity();
       // Set SocialIds
       gamificationInformationRestEntity.setSocialId(receiverIdentity.getId());
-      gamificationInformationRestEntity.setSpace(StringUtils.equals(receiverIdentity.getProviderId(), SpaceIdentityProvider.NAME));
+      gamificationInformationRestEntity.setSpace(StringUtils.equals(receiverIdentity.getProviderId(),
+                                                                    SpaceIdentityProvider.NAME));
       gamificationInformationRestEntity.setReceiver(element.getReceiver());
       // Set username
       gamificationInformationRestEntity.setRemoteId(receiverIdentity.getRemoteId());
@@ -140,15 +145,16 @@ public class GamificationInformationsEndpoint implements ResourceContainer {
       gamificationInformationRestEntity.setActionTitle(element.getActionTitle());
       gamificationInformationRestEntity.setContext(element.getContext());
       // Set Date-Hours-Minutes GMT Format of the creation
-      gamificationInformationRestEntity.setCreatedDate(element.getCreatedDate().toGMTString());
+      gamificationInformationRestEntity.setCreatedDate(element.getCreatedDate());
       // Set Domain
-      gamificationInformationRestEntity.setDomainDTO(DomainMapper.domainEntityToDomainDTO(element.getDomainEntity()));
+      gamificationInformationRestEntity.setProgram(element.getProgram());
       // Set Global Score
       gamificationInformationRestEntity.setGlobalScore(element.getGlobalScore());
       // Set event id
       if (canShowDetails) {
         if (element.getActivityId() != null && element.getActivityId() != 0) {
-          gamificationInformationRestEntity.setObjectId("/" + LinkProvider.getPortalName("") + "/" + LinkProvider.getPortalOwner("")
+          gamificationInformationRestEntity.setObjectId("/" + LinkProvider.getPortalName("") + "/"
+              + LinkProvider.getPortalOwner("")
               + "/activity?id=" + element.getActivityId());
         } else {
           gamificationInformationRestEntity.setObjectId(element.getObjectId());

@@ -16,32 +16,35 @@
  */
 package org.exoplatform.addons.gamification.listener;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER;
+import static org.exoplatform.addons.gamification.GamificationConstant.IDENTITY_OBJECT_TYPE;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.relationship.RelationshipEvent;
-import org.exoplatform.social.core.relationship.RelationshipEvent.Type;
-import org.exoplatform.social.core.relationship.model.Relationship;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import org.exoplatform.addons.gamification.listener.social.relationship.GamificationRelationshipListener;
+import org.exoplatform.addons.gamification.service.RealizationService;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.relationship.RelationshipEvent;
+import org.exoplatform.social.core.relationship.RelationshipEvent.Type;
+import org.exoplatform.social.core.relationship.model.Relationship;
+
 @RunWith(MockitoJUnitRunner.class)
 public class GamificationRelationshipListenerTest {
 
   @Mock
-  protected GamificationService gamificationService;
+  protected RealizationService realizationService;
 
   @Test
   public void testRelationshipConfirmed() {
-    GamificationRelationshipListener gamificationRelationshipListener = new GamificationRelationshipListener(gamificationService);
+    GamificationRelationshipListener gamificationRelationshipListener = new GamificationRelationshipListener(realizationService);
     Identity sender = mock(Identity.class);
     when(sender.getId()).thenReturn("1");
     Identity receiver = mock(Identity.class);
@@ -52,15 +55,15 @@ public class GamificationRelationshipListenerTest {
     RelationshipEvent event = new RelationshipEvent(Type.CONFIRM, null, relationship);
     gamificationRelationshipListener.confirmed(event);
 
-    verify(gamificationService, times(1)).createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
-                                                        sender.getId(),
-                                                        receiver.getId(),
-                                                        sender.getId(),
-                                                        IDENTITY_OBJECT_TYPE);
-    verify(gamificationService, times(1)).createHistory(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
-                                                        receiver.getId(),
-                                                        sender.getId(),
-                                                        receiver.getId(),
-                                                        IDENTITY_OBJECT_TYPE);
+    verify(realizationService, times(1)).createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_SENDER,
+                                                            sender.getId(),
+                                                            receiver.getId(),
+                                                            sender.getId(),
+                                                            IDENTITY_OBJECT_TYPE);
+    verify(realizationService, times(1)).createRealizations(GAMIFICATION_SOCIAL_RELATIONSHIP_RECEIVER,
+                                                            receiver.getId(),
+                                                            sender.getId(),
+                                                            receiver.getId(),
+                                                            IDENTITY_OBJECT_TYPE);
   }
 }
