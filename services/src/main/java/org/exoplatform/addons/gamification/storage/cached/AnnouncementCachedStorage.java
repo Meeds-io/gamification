@@ -13,43 +13,52 @@ import org.exoplatform.services.cache.ExoCache;
 
 public class AnnouncementCachedStorage extends AnnouncementStorage {
 
-  private static final int                              ANNOUNCEMENT_ID_CONTEXT = 0;
+  private static final int                               ANNOUNCEMENT_ID_CONTEXT = 0;
 
-  private static final String                           ANNOUNCEMENT_CACHE_NAME = "gamification.announcement";
+  private static final String                            ANNOUNCEMENT_CACHE_NAME = "gamification.announcement";
 
-  private FutureExoCache<Serializable, Object, Integer> announcementFutureCache;
+  private FutureExoCache<Serializable, Integer, Integer> announcementFutureCache;
 
   public AnnouncementCachedStorage(RealizationStorage realizationsStorage,
                                    RuleStorage ruleStorage,
                                    CacheService cacheService) {
     super(realizationsStorage, ruleStorage);
 
-    ExoCache<Serializable, Object> domainCache = cacheService.getCacheInstance(ANNOUNCEMENT_CACHE_NAME);
-    Loader<Serializable, Object, Integer> domainLoader = new Loader<Serializable, Object, Integer>() {
+    ExoCache<Serializable, Integer> domainCache = cacheService.getCacheInstance(ANNOUNCEMENT_CACHE_NAME);
+    Loader<Serializable, Integer, Integer> domainLoader = new Loader<Serializable, Integer, Integer>() {
       @Override
-      public Object retrieve(Integer context, Serializable key) throws Exception {
+      public Integer retrieve(Integer context, Serializable key) throws Exception {
         if (context == ANNOUNCEMENT_ID_CONTEXT) {
           return AnnouncementCachedStorage.super.countAnnouncements((Long) key);
         } else {
           throw new IllegalStateException("Unknown context id " + context);
         }
-
       }
     };
     this.announcementFutureCache = new FutureExoCache<>(domainLoader, domainCache);
   }
 
   @Override
-  public Long countAnnouncements(long ruleId) {
-    return (Long) this.announcementFutureCache.get(ANNOUNCEMENT_ID_CONTEXT, ruleId);
+  public Announcement createAnnouncement(Announcement announcement) {
+    announcement = super.createAnnouncement(announcement);
+    if (announcement != null) {
+      this.announcementFutureCache.remove(announcement.getChallengeId());
+    }
+    return announcement;
   }
 
   @Override
-  public Announcement saveAnnouncement(Announcement announcement) {
-    try {
-      return super.saveAnnouncement(announcement);
-    } finally {
+  public Announcement deleteAnnouncement(long announcementId) {
+    Announcement announcement = super.deleteAnnouncement(announcementId);
+    if (announcement != null) {
       this.announcementFutureCache.remove(announcement.getChallengeId());
     }
+    return announcement;
   }
+
+  @Override
+  public int countAnnouncements(long ruleId) {
+    return this.announcementFutureCache.get(ANNOUNCEMENT_ID_CONTEXT, ruleId);
+  }
+
 }

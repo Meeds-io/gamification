@@ -135,8 +135,9 @@ public class ProgramDAO extends GenericDAOJPAImpl<ProgramEntity, Long> implement
       suffixes.add("SearchBy");
       predicates.add(" UPPER(d.title) like UPPER(:searchingKey) ");
     }
-    if (!filter.isIncludeDeleted()) {
-      suffixes.add("ExcludeDeleted");
+    if (filter.isIncludeDeleted()) {
+      suffixes.add("IncludeDeleted");
+    } else {
       predicates.add("d.isDeleted = false");
     }
     EntityStatusType entityStatusType = filter.getEntityStatusType();

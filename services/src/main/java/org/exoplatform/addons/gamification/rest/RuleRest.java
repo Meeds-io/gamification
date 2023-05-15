@@ -131,10 +131,6 @@ public class RuleRest implements ResourceContainer {
                            @DefaultValue("ALL")
                            @QueryParam("dateFilter")
                            DateFilterType dateFilter,
-                           @Parameter(description = "If true, this will return the filtered rules including deleted rules. Possible values = true or false. Default value = false.", required = false)
-                           @QueryParam("includeDeleted")
-                           @DefaultValue("false")
-                           boolean includeDeleted,
                            @Parameter(description = "term to search rules with")
                            @QueryParam("term")
                            String term,
@@ -181,7 +177,6 @@ public class RuleRest implements ResourceContainer {
     ruleFilter.setEntityFilterType(ruleType == null ? EntityFilterType.ALL : ruleType);
     ruleFilter.setEntityStatusType(ruleStatus == null ? EntityStatusType.ALL : ruleStatus);
     ruleFilter.setOrderByRealizations(orderByRealizations);
-    ruleFilter.setIncludeDeleted(includeDeleted);
     ruleFilter.setExcludedRuleIds(excludedRuleIds);
     ruleFilter.setDomainId(domainId);
     String[] expandFieldsArray = StringUtils.split(expand, ",");
@@ -301,9 +296,9 @@ public class RuleRest implements ResourceContainer {
       ruleDTO = ruleService.createRule(ruleDTO, username);
       return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO)).build();
     } catch (IllegalAccessException e) {
-      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to create rule").build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectAlreadyExistsException e) {
-      return Response.status(Response.Status.CONFLICT).entity("Rule already exists").build();
+      return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
     }
   }
 
@@ -333,9 +328,9 @@ public class RuleRest implements ResourceContainer {
       ruleDTO = ruleService.updateRule(ruleDTO, username);
       return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO)).build();
     } catch (IllegalAccessException e) {
-      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to update rule").build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     }
   }
 
@@ -363,9 +358,9 @@ public class RuleRest implements ResourceContainer {
       RuleDTO ruleDTO = ruleService.deleteRuleById(ruleId, username);
       return Response.ok().cacheControl(cacheControl).entity(toRestEntity(ruleDTO)).build();
     } catch (ObjectNotFoundException e) {
-      return Response.status(Response.Status.NOT_FOUND).entity("The rule doesn't exit").build();
+      return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
     } catch (IllegalAccessException e) {
-      return Response.status(Response.Status.UNAUTHORIZED).entity("Your are not authorized to delete rule").build();
+      return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();
     }
   }
 
