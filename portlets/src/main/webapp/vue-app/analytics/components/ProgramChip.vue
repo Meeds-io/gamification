@@ -62,7 +62,7 @@ export default {
     if (this.programId) {
       this.loading = true;
       this.error = false;
-      this.$programsServices.getProgramById(this.programId)
+      this.$programService.getProgramById(this.programId)
         .then(program => this.program = program)
         .catch(() => this.error = true)
         .finally(() => this.loading = false);

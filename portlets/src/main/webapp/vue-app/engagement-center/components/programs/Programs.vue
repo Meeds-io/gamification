@@ -200,16 +200,15 @@ export default {
   },
   methods: {
     computeCanAddProgram() {
-      return this.$programsServices.canAddProgram()
+      return this.$programService.canAddProgram()
         .then(canAddProgram => this.canAddProgram = canAddProgram);
     },
     retrievePrograms() {
       this.loading = true;
-      return this.$programsServices
-        .retrievePrograms(this.offset, this.limitToFetch, this.type, this.status)
+      return this.$programService.getPrograms(this.offset, this.limitToFetch, this.type, this.status)
         .then((data) => {
           this.programs = data.domains;
-          this.totalSize = data.domainsSize || 0;
+          this.totalSize = data.size || 0;
         })
         .finally(() => {
           if (!this.initialized) {
@@ -239,7 +238,7 @@ export default {
     },
     deleteProgram() {
       this.loading = true;
-      this.$programsServices.deleteProgram(this.selectedProgram.id)
+      this.$programService.deleteProgram(this.selectedProgram.id)
         .then((deletedProgram) => {
           this.$root.$emit('program-deleted', deletedProgram);
           this.$engagementCenterUtils.displayAlert(this.$t('programs.programDeleteSuccess'));

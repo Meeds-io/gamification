@@ -19,7 +19,7 @@ package org.exoplatform.addons.gamification.rest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.addons.gamification.GamificationUtils;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.addons.gamification.service.effective.LeaderboardFilter;
 import org.exoplatform.addons.gamification.service.effective.StandardLeaderboard;
 import org.exoplatform.services.log.ExoLogger;
@@ -58,20 +58,20 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
 
   private final CacheControl    cacheControl;
 
-  protected GamificationService gamificationService   = null;
+  protected RealizationService realizationService   = null;
 
   protected IdentityManager     identityManager       = null;
 
   protected SpaceService        spaceService          = null;
 
-  public SpaceLeaderboardEndpoint(GamificationService gamificationService,
+  public SpaceLeaderboardEndpoint(RealizationService realizationService,
                                   IdentityManager identityManager,
                                   SpaceService spaceService) {
 
     this.cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
-    this.gamificationService = gamificationService;
+    this.realizationService = realizationService;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
   }
@@ -98,7 +98,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         // Find current space
         Space space = GamificationUtils.extractSpaceNameFromUrl(url);
         // Filter users to add to leaderboard according to filter criteria
-        List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+        List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
 
         if (standardLeaderboards == null) {
           return Response.ok(leaderboardList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
@@ -178,7 +178,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
         // Find current space
         Space space = GamificationUtils.extractSpaceNameFromUrl(url);
 
-        List<StandardLeaderboard> standardLeaderboards = gamificationService.filter(leaderboardFilter);
+        List<StandardLeaderboard> standardLeaderboards = realizationService.getLeaderboard(leaderboardFilter);
 
         if (standardLeaderboards == null) {
           return Response.ok(leaderboardInfoList, MediaType.APPLICATION_JSON).cacheControl(cacheControl).build();
@@ -270,7 +270,7 @@ public class SpaceLeaderboardEndpoint implements ResourceContainer {
     if (!isCurrentUserInTopTen(currentUser, leaderboardList)) {
 
       // Get GaamificationScore for current user
-      int rank = gamificationService.getLeaderboardRank(currentUser, date, domainId);
+      int rank = realizationService.getLeaderboardRank(currentUser, date, domainId);
 
       if (rank > 0) {
 

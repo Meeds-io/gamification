@@ -18,31 +18,38 @@
  *
  */
 
-import * as  challengesServices from './js/challengesServices';
-import  * as programsServices  from './js/programsServices';
-import  * as ruleServices  from './js/RuleServices.js';
-import  * as engagementCenterUtils  from './js/engagementCenterUtils';
+import * as announcementService from './js/AnnouncementService.js';
+import * as programService  from './js/ProgramService.js';
+import * as ruleService  from './js/RuleService.js';
+import * as realizationService  from './js/RealizationService.js';
+import * as utils  from './js/Utils';
 
-if (!Vue.prototype.$challengesServices) {
-  window.Object.defineProperty(Vue.prototype, '$challengesServices', {
-    value: challengesServices,
+if (!Vue.prototype.$programService) {
+  window.Object.defineProperty(Vue.prototype, '$programService', {
+    value: programService,
+  });
+}
+
+if (!Vue.prototype.$ruleService) {
+  window.Object.defineProperty(Vue.prototype, '$ruleService', {
+    value: ruleService,
+  });
+}
+
+if (!Vue.prototype.$announcementService) {
+  window.Object.defineProperty(Vue.prototype, '$announcementService', {
+    value: announcementService,
+  });
+}
+
+if (!Vue.prototype.$realizationService) {
+  window.Object.defineProperty(Vue.prototype, '$realizationService', {
+    value: realizationService,
   });
 }
 
 if (!Vue.prototype.$engagementCenterUtils) {
   window.Object.defineProperty(Vue.prototype, '$engagementCenterUtils', {
-    value: engagementCenterUtils,
-  });
-}
-
-if (!Vue.prototype.$programsServices) {
-  window.Object.defineProperty(Vue.prototype, '$programsServices', {
-    value: programsServices,
-  });
-}
-
-if (!Vue.prototype.$ruleServices) {
-  window.Object.defineProperty(Vue.prototype, '$ruleServices', {
-    value: ruleServices,
+    value: utils,
   });
 }
