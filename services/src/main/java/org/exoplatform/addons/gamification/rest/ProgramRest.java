@@ -134,9 +134,9 @@ public class ProgramRest implements ResourceContainer {
                              @QueryParam("status")
                              @DefaultValue("ENABLED")
                              String status,
-                             @Parameter(description = "owner id")
-                             @QueryParam("ownerId")
-                             long ownerId,
+                             @Parameter(description = "Whether retrieve owned programs only or not")
+                             @QueryParam("owned")
+                             boolean owned,
                              @Parameter(description = "If true, this will return the filtered domains sorted by budget. Possible values = true or false. Default value = false.", required = false)
                              @QueryParam("sortByBudget")
                              @DefaultValue("false")
@@ -163,8 +163,8 @@ public class ProgramRest implements ResourceContainer {
     if (StringUtils.isNotEmpty(query)) {
       domainFilter.setDomainTitle(query);
     }
-    if (ownerId > 0) {
-      domainFilter.setOwnerId(ownerId);
+    if (owned) {
+      domainFilter.setOwnerId(Utils.getCurrentUserIdentityId());
     }
     String currentUser = Utils.getCurrentUser();
     try {

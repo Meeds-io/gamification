@@ -383,7 +383,7 @@ export default {
     switchToAdminMode() {
       this.realizations = [];
       if (this.administrationMode) {
-        this.$programService.getPrograms(0, -1, 'ALL', 'ENABLED', '', false, false, eXo.env.portal.userIdentityId)
+        this.$programService.getPrograms(0, -1, 'ALL', 'ENABLED', '', false, false, true)
           .then(data => {
             this.searchList = data.domains.map(program => program.id);
             this.ownedPrograms = data.domains.map(program => program.id);

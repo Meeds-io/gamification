@@ -199,6 +199,13 @@ public class Utils {
     return EntityBuilder.buildEntityIdentity(identity, IDENTITIES_REST_PATH, IDENTITIES_EXPAND);
   }
 
+  public static final long getCurrentUserIdentityId() {
+    String currentUser = getCurrentUser();
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    Identity identity = identityManager.getOrCreateUserIdentity(currentUser);
+    return identity == null ? 0l : Long.parseLong(identity.getId());
+  }
+
   public static final String getCurrentUser() {
     if (ConversationState.getCurrent() != null && ConversationState.getCurrent().getIdentity() != null) {
       return ConversationState.getCurrent().getIdentity().getUserId();
