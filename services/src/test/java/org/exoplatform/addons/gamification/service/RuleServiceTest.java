@@ -15,8 +15,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package org.exoplatform.addons.gamification.service.configuration;
+package org.exoplatform.addons.gamification.service;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Collections;
@@ -27,6 +28,7 @@ import org.junit.Test;
 import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
@@ -115,12 +117,42 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testDeleteRule() throws Exception {
-
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
     ruleService.deleteRuleById(ruleEntity.getId(), "root1");
     assertTrue(ruleEntity.isDeleted());
     assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRuleById(null, "root"));
+  }
+
+  @Test
+  public void testDeleteNotEndedRule() throws Exception {
+    RuleEntity ruleEntity = newRule();
+    assertFalse(ruleEntity.isDeleted());
+
+    RealizationDTO realization = realizationService.createRealizations(ruleEntity.getEvent(),
+                                                                       TEST_USER_EARNER,
+                                                                       TEST_USER_RECEIVER,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    RealizationDTO latestRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
+    assertNotNull(latestRealization);
+    assertEquals(realization.getId(), latestRealization.getId());
+
+    RuleDTO rule = ruleService.deleteRuleById(ruleEntity.getId(), "root1");
+    assertNotNull(rule);
+    assertTrue(rule.isDeleted());
+
+    restartTransaction();
+    rule = ruleService.findRuleById(rule.getId());
+    assertNotNull(rule);
+
+    latestRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
+    assertNotNull(latestRealization);
+    assertEquals(realization.getId(), latestRealization.getId());
   }
 
   @Test
