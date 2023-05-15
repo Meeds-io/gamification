@@ -49,7 +49,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
         <v-tab-item>
-          <challenges :challenge-id="challengeId" :can-add-challenge="canAddChallenge" />
+          <challenges :challenge-id="challengeId" />
         </v-tab-item>
         <v-tab-item>
           <realizations
@@ -98,7 +98,6 @@ export default {
     earnerId: eXo.env.portal.userIdentityId,
     challengeId: null,
     program: null,
-    canAddChallenge: false,
     displayProgramDetail: false,
     events: [],
     avoidAddToHistory: false,
@@ -128,12 +127,10 @@ export default {
     });
     this.$root.$on('close-program-detail', () => this.displayProgramDetail = false);
     this.initTabs();
-    this.$ruleServices.getEvents()
+    this.$ruleService.getEvents()
       .then(events => {
         this.events = events || [];
       });
-    this.$challengesServices.canAddChallenge()
-      .then(canAddChallenge => this.canAddChallenge = canAddChallenge);
     this.initialized = true;
     window.addEventListener('popstate', (event) => this.initTabs(event));
     document.addEventListener(`extension-${this.extensionApp}-${this.actionValueExtensionType}-updated`, this.refreshActionValueExtensions);
@@ -151,7 +148,7 @@ export default {
       const id = urlPath.match( /\d+/ ) && urlPath.match( /\d+/ ).join('');
       if (urlPath.indexOf(`${eXo.env.portal.context}/${eXo.env.portal.portalName}/contributions/programs`) > -1) {
         if (id) {
-          this.$programsServices.getProgramById(id)
+          this.$programService.getProgramById(id)
             .then(program => {
               if (program && program.id) {
                 this.$root.$emit('open-program-detail', program);

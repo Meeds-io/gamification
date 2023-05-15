@@ -175,7 +175,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <v-stepper-content step="2" class="pe-0 ma-0 py-0">
           <div class="ps-7">
             <v-chip
-              v-if="manualType"
               class="ma-2"
               :color="durationCondition && 'primary' || ''"
               :outlined="!durationCondition"
@@ -216,7 +215,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-card-text class="pa-0 flex d-flex challengeDates">
               <select
                 v-model="durationFilter"
-                class="d-flex flex-grow-1 width-auto ignore-vuetify-classes">
+                class="d-flex flex-grow-1 width-auto ignore-vuetify-classes"
+                @change="resetDates">
                 <option value="BEFORE">
                   {{ $t('rule.form.label.before') }}
                 </option>
@@ -413,10 +413,6 @@ export default {
         this.validEvent = this.value && this.value !== '';
       }
     },
-    durationFilter() {
-      this.startDate = null;
-      this.endDate = null;
-    }
   },
   created() {
     this.$root.$on('rule-form-drawer', this.open);
@@ -429,13 +425,12 @@ export default {
         area: this.programTitle
       };
       if (!this.program) {
-        this.program = this.rule?.domainDTO;
+        this.program = this.rule?.program;
       }
-      this.durationCondition = this.ruleStartDate != null || this.ruleEndDate != null;
-      this.startDate = this.ruleStartDate ? new Date(this.rule.startDate) : null;
-      this.endDate = this.ruleEndDate ? new Date(this.rule.endDate) : null;
-      this.durationFilter = this.ruleStartDate != null ? 'AFTER' : 'BEFORE';
-      this.durationCondition = this.ruleStartDate != null || this.ruleEndDate != null;
+      this.durationCondition = this.rule.startDate || this.rule.endDate;
+      this.durationFilter = this.rule.startDate && 'AFTER' || 'BEFORE';
+      this.startDate = this.rule.startDate ? new Date(this.rule.startDate).getTime() : null;
+      this.endDate = this.rule.endDate ? new Date(this.rule.endDate).getTime() : null;
       this.eventExist = false;
       if (this.$refs.ruleFormDrawer) {
         this.$refs.ruleFormDrawer.open();
@@ -465,8 +460,18 @@ export default {
       this.rule.description = '';
       this.value = {};
     },
+    resetDates() {
+      this.startDate = null;
+      this.endDate = null;
+    },
     retrieveProgramRules() {
-      return this.$ruleServices.getRules(null, this.programId, 'ENABLED', 'AUTOMATIC', 0, this.events?.length || 10)
+      return this.$ruleService.getRules({
+        domainId: this.programId,
+        status: 'ENABLED',
+        type: 'AUTOMATIC',
+        offset: 0,
+        limit: this.events?.length || 10,
+      })
         .then(data => this.programEvents = data && data.rules.map(rule => ({
           ruleId: rule.id,
           event: rule.event,
@@ -502,7 +507,7 @@ export default {
       this.saving = true;
       this.$refs.ruleFormDrawer.startLoading();
       if (this.rule.id) {
-        this.$ruleServices.updateRule(this.rule)
+        this.$ruleService.updateRule(this.rule)
           .then(rule => {
             this.displayAlert(this.$t('programs.details.ruleUpdateSuccess'));
             this.$root.$emit('program-rules-refresh', rule);
@@ -514,7 +519,7 @@ export default {
             this.$refs.ruleFormDrawer.endLoading();
           });
       } else {
-        this.$ruleServices.createRule(this.rule, this.program)
+        this.$ruleService.createRule(this.rule, this.program)
           .then(rule => {
             this.displayAlert(this.$t('programs.details.ruleCreationSuccess'));
             this.$root.$emit('program-rules-refresh', rule);

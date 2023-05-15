@@ -17,16 +17,26 @@ package org.exoplatform.addons.gamification.search;
 
 import java.io.InputStream;
 import java.text.Normalizer;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
-import org.exoplatform.addons.gamification.utils.Utils;
+import org.exoplatform.addons.gamification.storage.RuleStorage;
 import org.exoplatform.commons.search.es.ElasticSearchException;
 import org.exoplatform.commons.search.es.client.ElasticSearchingClient;
 import org.exoplatform.commons.utils.IOUtil;
@@ -36,12 +46,6 @@ import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.manager.IdentityManager;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class RuleSearchConnector {
 
@@ -62,37 +66,41 @@ public class RuleSearchConnector {
   private static final String          DATE_CONDITION               = "@condition@";
 
   private static final String          DATE                         = "@date@";
-  
+
   private static final String          DATE_FILTERING               = "@date_filtering@";
 
-  private static final String          DOMAIN_FILTERING_QUERY       = ",\n"
-      + "        {\n"
-      + "          \"term\": {\n"
-      + "            \"domainId\": {\n"
-      + "              \"value\": \"@domainId@\"\n"
-      + "            }\n"
-      + "          }\n"
-      + "        }\n";  
-  
-  private static final String          AUDIENCE_FILTERING_QUERY     = ",\n"
-      + "        {\n"
-      + "          \"terms\": {\n"
-      + "            \"audience\": [\n"
-      + "              @spaceList@\n"
-      + "            ]\n"
-      + "          }\n"
-      + "        }\n";
+  private static final String          DATE_FIELD_FILTERING_QUERY   = """
+           {
+             "range": {
+               "@dateField@": {
+                 "@condition@": "@date@"
+               }
+             }
+           }
+      """;
+
+  private static final String          DOMAIN_FILTERING_QUERY       = """
+            ,{
+              "term": {
+                "domainId": {
+                  "value": "@domainId@"
+                }
+              }
+            }
+      """;
+
+  private static final String          AUDIENCE_FILTERING_QUERY     = """
+            ,{
+              "terms": {
+                "audience": [
+                  @spaceList@
+                ]
+              }
+            }
+      """;
 
   private static final String          DATE_FILTERING_QUERY         = ", \n @startDateQuery@ @endDateQuery@ \n";
 
-  private static final String          DATE_FIELD_FILTERING_QUERY   = " {\n"
-      + "       \"range\": {\n"
-      +"          \"@dateField@\": {\n"
-      +"            \"@condition@\": \"@date@\"\n"
-      +"           }\n"
-      +"        }\n"
-      +"      }\n";
-  
   private static final String          ILLEGAL_SEARCH_CHARACTERS    = "\\!?^()+-=<>{}[]:\"*~&|#%@";
 
   private final ConfigurationManager   configurationManager;
@@ -105,13 +113,13 @@ public class RuleSearchConnector {
 
   private String                       searchQuery;
 
-  private IdentityManager              identityManager;
+  private RuleStorage                  ruleStorage;
 
   public RuleSearchConnector(ConfigurationManager configurationManager,
+                             RuleStorage ruleStorage,
                              ElasticSearchingClient client,
-                             IdentityManager identityManager,
                              InitParams initParams) {
-    this.identityManager = identityManager;
+    this.ruleStorage = ruleStorage;
     this.configurationManager = configurationManager;
     this.client = client;
 
@@ -127,7 +135,7 @@ public class RuleSearchConnector {
     }
   }
 
-  public List<RuleEntity> search(RuleFilter filter, long offset, long limit) {
+  public List<RuleDTO> search(RuleFilter filter, long offset, long limit) {
     if (offset < 0) {
       throw new IllegalArgumentException("Offset must be positive");
     }
@@ -160,8 +168,8 @@ public class RuleSearchConnector {
   private String buildQueryStatement(RuleFilter filter, long offset, long limit) {
     String term = removeSpecialCharacters(filter.getTerm());
     Set<Long> spaceList = Optional.ofNullable(filter.getSpaceIds())
-            .map(HashSet::new)
-            .orElse(new HashSet<>());
+                                  .map(HashSet::new)
+                                  .orElse(new HashSet<>());
     term = escapeIllegalCharacterInQuery(term);
     if (StringUtils.isBlank(term)) {
       return null;
@@ -173,7 +181,7 @@ public class RuleSearchConnector {
         word = word + "~1";
       }
       return word;
-    }).collect(Collectors.toList());
+    }).toList();
     String termQuery = StringUtils.join(termsQuery, " AND ");
     String query = retrieveSearchQuery();
     if (filter.getDomainId() > 0) {
@@ -233,10 +241,10 @@ public class RuleSearchConnector {
   }
 
   @SuppressWarnings("rawtypes")
-  private List<RuleEntity> buildSearchResult(String jsonResponse) {
+  private List<RuleDTO> buildSearchResult(String jsonResponse) {
     LOG.debug("Search Query response from ES : {} ", jsonResponse);
 
-    List<RuleEntity> results = new ArrayList<>();
+    List<RuleDTO> results = new ArrayList<>();
     JSONParser parser = new JSONParser();
 
     Map json = null;
@@ -255,44 +263,10 @@ public class RuleSearchConnector {
     JSONArray jsonHits = (JSONArray) jsonResult.get("hits");
     for (Object jsonHit : jsonHits) {
       try {
-        RuleEntity rule = new RuleEntity();
-
         JSONObject jsonHitObject = (JSONObject) jsonHit;
         JSONObject hitSource = (JSONObject) jsonHitObject.get("_source");
         long id = parseLong(hitSource, "id");
-        String title = (String) hitSource.get("title");
-        String description = (String) hitSource.get("description");
-        long score = parseLong(hitSource, "score");
-        Long domainId = parseLong(hitSource, "domainId");
-        boolean enabled = Boolean.parseBoolean(String.valueOf(hitSource.get("enabled")));
-        String createdBy = (String) hitSource.get("createdBy");
-        Date createdDate = parseDate(hitSource, "createdDate");
-        Date lastModifiedDate = parseDate(hitSource, "lastModifiedDate");
-        String lastModifiedBy = (String) hitSource.get("lastModifiedBy");
-        String event = (String) hitSource.get("event");
-        long audience = parseLong(hitSource, "audience");
-        Date startDate = parseDate(hitSource, START_DATE);
-        Date endDate = parseDate(hitSource, END_DATE);
-        String type = (String) hitSource.get("type");
-
-        rule.setId(id);
-        rule.setTitle(title);
-        rule.setDescription(description);
-        rule.setEvent(event);
-        rule.setDomainEntity(Utils.getDomainById(domainId));
-        rule.setScore((int) score);
-        rule.setEnabled(enabled);
-        rule.setAudience(audience);
-        rule.setEndDate(endDate);
-        rule.setStartDate(startDate);
-        rule.setType(EntityType.valueOf(type));
-        rule.setManagers(getManagersList(hitSource, "managers"));
-        rule.setCreatedBy(getUserRemoteId(createdBy));
-        rule.setCreatedDate(createdDate);
-        rule.setLastModifiedBy(getUserRemoteId(lastModifiedBy));
-        rule.setLastModifiedDate(lastModifiedDate);
-
-        results.add(rule);
+        results.add(ruleStorage.findRuleById(id));
       } catch (Exception e) {
         LOG.warn("Error processing rules search result item, ignore it from results", e);
       }
@@ -322,40 +296,13 @@ public class RuleSearchConnector {
     return StringUtils.isBlank(value) ? 0 : Long.parseLong(value);
   }
 
-  private Date parseDate(JSONObject hitSource, String key) {
-    Long value = parseLong(hitSource, key);
-    return value != 0 ? new Date(value) : null;
-  }
-
-  private List<Long> getManagersList(JSONObject hitSource, String key) {
-    JSONArray jsonHits = (JSONArray) hitSource.get(key);
-    if (jsonHits == null || jsonHits.isEmpty()) {
-      return Collections.emptyList();
-    } else {
-      List<Long> listManagers = new ArrayList<>();
-      for (Object value : jsonHits) {
-        listManagers.add(Long.parseLong(String.valueOf(value)));
-      }
-      return listManagers;
-    }
-  }
-
-  private String getUserRemoteId(String id) {
-    if (StringUtils.isBlank(id)) {
-      return "";
-    }
-    Identity identity = identityManager.getIdentity(id);
-    return identity != null ? identity.getRemoteId() : "";
-
-  }
-
   private String removeSpecialCharacters(String string) {
     string = Normalizer.normalize(string, Normalizer.Form.NFD);
     string = string.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
     return string;
   }
 
-  public static String escapeIllegalCharacterInQuery(String query) {
+  private static String escapeIllegalCharacterInQuery(String query) {
     if (StringUtils.isBlank(query)) {
       return null;
     }

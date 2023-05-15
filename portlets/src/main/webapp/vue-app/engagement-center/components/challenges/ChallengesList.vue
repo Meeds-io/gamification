@@ -23,8 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       v-for="domain in domains"
       :key="domain.id"
       :domain="domain"
-      :challenges="challengesByDomainId[domain.id]"
-      :can-edit-challenge="canEditChallenge" />
+      :challenges="challengesByDomainId[domain.id]" />
   </v-expansion-panels>
 </template>
 <script>
@@ -42,17 +41,24 @@ export default {
         return {};
       },
     },
-    canEditChallenge: {
-      type: Boolean,
-      default: false,
-    }
   },
-  computed: {
-    domainIndexes() {
-      return this.domains.map((_value, index) => index);
+  data: () => ({
+    domainIndexes: [],
+  }),
+  watch: {
+    domains() {
+      window.setTimeout(() => {
+        this.computeOpenedDomains();
+      }, 300);
     },
   },
+  created() {
+    this.computeOpenedDomains();
+  },
   methods: {
+    computeOpenedDomains() {
+      this.domainIndexes = this.domains?.length && Array.from({ length: this.domains?.length }, (_value, index) => index) || [];
+    },
     announcementAdded(announcement) {
       this.listWinners.unshift({'userName': announcement.assignee});
       this.challenge.announcementsCount = this.challenge.announcementsCount + 1;

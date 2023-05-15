@@ -23,7 +23,12 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.List;
-import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.DateFilterType;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
@@ -33,9 +38,6 @@ import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.container.xml.ValueParam;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
 
 public class RuleSearchConnectorTest extends AbstractServiceTest {
 
@@ -65,7 +67,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving ES Query content", e);
     }
-    ruleSearchConnector = new RuleSearchConnector(configurationManager, client,identityManager, getParams());
+    ruleSearchConnector = new RuleSearchConnector(configurationManager, ruleStorage, client, getParams());
   }
 
   private InitParams getParams() {
@@ -86,7 +88,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   @Test
   public void testSearch() {
     String term = "rule";
-    newDomainDTO();
+    newProgram();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
     assertThrows(IllegalArgumentException.class, () -> ruleSearchConnector.search(filter,-1, 10));
@@ -100,7 +102,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
     when(client.sendRequest(expectedESQuery, ES_INDEX)).thenReturn(searchResult);
     when(client.sendRequest(unexpectedESQuery, ES_INDEX)).thenReturn("{}");
 
-    List<RuleEntity> rules = ruleSearchConnector.search(filter, 0, 10);
+    List<RuleDTO> rules = ruleSearchConnector.search(filter, 0, 10);
     assertNotNull(rules);
     assertEquals(0, rules.size());
 
@@ -113,7 +115,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   @Test
   public void testCount() {
     String term = "rule";
-    newDomainDTO();
+    newProgram();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
 
@@ -138,7 +140,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
   @Test
   public void testSearchWithDateFilter() {
     String term = DateFilterType.ALL.name();
-    newDomainDTO();
+    newProgram();
     RuleFilter filter = new RuleFilter();
     List<Long> listIdSpace = Collections.singletonList(1l);
     filter.setTerm("test");
@@ -163,7 +165,7 @@ public class RuleSearchConnectorTest extends AbstractServiceTest {
 
     filter.setDateFilterType(DateFilterType.STARTED);
     filter.setTerm(DateFilterType.STARTED.name());
-    List<RuleEntity> rules = ruleSearchConnector.search(filter, 0, 10);
+    List<RuleDTO> rules = ruleSearchConnector.search(filter, 0, 10);
     assertNotNull(rules);
     assertEquals(0, rules.size());
 

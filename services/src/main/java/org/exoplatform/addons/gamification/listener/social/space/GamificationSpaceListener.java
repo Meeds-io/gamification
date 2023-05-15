@@ -16,16 +16,23 @@
  */
 package org.exoplatform.addons.gamification.listener.social.space;
 
-import static org.exoplatform.addons.gamification.GamificationConstant.*;
+import static org.exoplatform.addons.gamification.GamificationConstant.BROADCAST_GAMIFICATION_EVENT_ERROR;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_ADD;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_GRANT_AS_LEAD;
+import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_SOCIAL_SPACE_JOIN;
+import static org.exoplatform.addons.gamification.GamificationConstant.IDENTITY_OBJECT_TYPE;
+import static org.exoplatform.addons.gamification.GamificationConstant.OBJECT_ID_PARAM;
+import static org.exoplatform.addons.gamification.GamificationConstant.OBJECT_TYPE_PARAM;
+import static org.exoplatform.addons.gamification.GamificationConstant.RECEIVER_ID;
+import static org.exoplatform.addons.gamification.GamificationConstant.EVENT_NAME;
+import static org.exoplatform.addons.gamification.GamificationConstant.SENDER_ID;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.CANCEL_EVENT_NAME;
 import static org.exoplatform.addons.gamification.listener.generic.GamificationGenericListener.GENERIC_EVENT_NAME;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.exoplatform.addons.gamification.service.ChallengeService;
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -67,22 +74,27 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   @Override
   public void spaceRemoved(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void applicationAdded(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void applicationRemoved(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void applicationActivated(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void applicationDeactivated(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
@@ -91,7 +103,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     Space space = event.getSpace();
 
     createGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN);
-    clearUserChallengeCache();
   }
 
   @Override
@@ -100,7 +111,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     Space space = event.getSpace();
 
     cancelGamificationHistoryEntry(username, space, GAMIFICATION_SOCIAL_SPACE_JOIN);
-    clearUserChallengeCache();
   }
 
   @Override
@@ -113,51 +123,59 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
 
   @Override
   public void revokedLead(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void spaceRenamed(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void spaceDescriptionEdited(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void spaceAvatarEdited(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void spaceAccessEdited(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void addInvitedUser(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void addPendingUser(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
   @Override
   public void spaceRegistrationEdited(SpaceLifeCycleEvent event) {
-
+    // Nothing to do
   }
 
   @Override
   public void spaceBannerEdited(SpaceLifeCycleEvent event) {
+    // Nothing to do
   }
 
-  private void createGamificationHistoryEntry(String username, Space space, String ruleTitle) {
+  private void createGamificationHistoryEntry(String username, Space space, String gamificationEventName) {
     // Compute user id
-    String senderId = identityManager.getOrCreateUserIdentity(username).getId();
+    String earnerIdentityId = identityManager.getOrCreateUserIdentity(username).getId();
     String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, receiverId);
       gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
-      gam.put(SENDER_ID, senderId);
+      gam.put(SENDER_ID, earnerIdentityId);
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
@@ -165,24 +183,24 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     }
     try {
       gam = new HashMap<>();
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, receiverId);
       gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
       gam.put(SENDER_ID, receiverId);
-      gam.put(RECEIVER_ID, senderId);
+      gam.put(RECEIVER_ID, earnerIdentityId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
     }
   }
 
-  private void cancelGamificationHistoryEntry(String username, Space space, String ruleTitle) {
+  private void cancelGamificationHistoryEntry(String username, Space space, String gamificationEventName) {
     // Compute user id
     String senderId = identityManager.getOrCreateUserIdentity(username).getId();
     String receiverId = identityManager.getOrCreateSpaceIdentity(space.getPrettyName()).getId();
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, receiverId);
       gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
       gam.put(SENDER_ID, senderId);
@@ -193,7 +211,7 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
     }
     try {
       gam = new HashMap<>();
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, receiverId);
       gam.put(OBJECT_TYPE_PARAM, IDENTITY_OBJECT_TYPE);
       gam.put(SENDER_ID, receiverId);
@@ -201,13 +219,6 @@ public class GamificationSpaceListener extends SpaceListenerPlugin {
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.error(BROADCAST_GAMIFICATION_EVENT_ERROR, gam, e);
-    }
-  }
-
-  private void clearUserChallengeCache() {
-    ChallengeService challengeService = CommonsUtils.getService(ChallengeService.class);
-    if (challengeService != null) {
-      challengeService.clearUserChallengeCache();
     }
   }
 
