@@ -277,9 +277,6 @@ export default {
     options() {
       this.retrieveProgramRules();
     },
-    status() {
-      this.retrieveProgramRules();
-    },
     keyword() {
       if (!this.keyword) {
         this.retrieveProgramRules();
