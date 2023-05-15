@@ -28,10 +28,14 @@ import java.util.Objects;
 @ExoEntity
 @Table(name = "GAMIFICATION_RULE")
 @NamedQuery(
-  name = "Rule.findRuleByEventAndDomain",
+  name = "Rule.findActiveRuleByEventAndDomain",
   query = "SELECT rule FROM Rule rule" +
     " WHERE LOWER(rule.event) = LOWER(:event)" +
     " AND rule.domainEntity.id = :domainId" +
+    " AND rule.isEnabled = true" +
+    " AND rule.isDeleted = false" +
+    " AND (rule.startDate IS NULL OR rule.startDate <= :date)" +
+    " AND (rule.endDate IS NULL OR rule.endDate >= :date)" +
     " AND rule.type = :type"
 )
 @NamedQuery(

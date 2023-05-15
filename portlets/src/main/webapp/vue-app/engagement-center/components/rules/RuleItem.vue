@@ -71,7 +71,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <v-list-item-title class="d-flex">{{ $t('programs.details.rule.button.edit') }}</v-list-item-title>
               </v-list-item>
               <v-list-item
-                v-if="automaticRule"
                 dense
                 @mousedown="$event.preventDefault()"
                 @click="deleteRule">
@@ -188,6 +187,5 @@ export default {
       this.$emit('delete-rule', this.rule);
     }
   }
-
 };
 </script>

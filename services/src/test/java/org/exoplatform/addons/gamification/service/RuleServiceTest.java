@@ -15,8 +15,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-package org.exoplatform.addons.gamification.service.configuration;
+package org.exoplatform.addons.gamification.service;
 
+import static org.exoplatform.addons.gamification.GamificationConstant.ACTIVITY_OBJECT_TYPE;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Collections;
@@ -27,6 +28,7 @@ import org.junit.Test;
 import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.RealizationDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityFilterType;
@@ -82,6 +84,20 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testFindRuleByIdAndUser() throws IllegalAccessException, ObjectNotFoundException {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    RuleDTO rule = newRuleDTO();
+    assertNotNull(rule);
+
+    Long ruleId = rule.getId();
+    RuleDTO foundRule = ruleService.findRuleById(ruleId, "root1");
+    assertNotNull(foundRule);
+
+    ruleService.deleteRuleById(ruleId, "root1");
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.findRuleById(ruleId, "root1"));
+  }
+
+  @Test
   public void testFindRuleAfterDomainAudienceChange() throws IllegalAccessException, ObjectNotFoundException {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleDTO rule = newRuleDTO();
@@ -115,12 +131,42 @@ public class RuleServiceTest extends AbstractServiceTest {
 
   @Test
   public void testDeleteRule() throws Exception {
-
     RuleEntity ruleEntity = newRule();
     assertFalse(ruleEntity.isDeleted());
     ruleService.deleteRuleById(ruleEntity.getId(), "root1");
     assertTrue(ruleEntity.isDeleted());
     assertThrows(IllegalArgumentException.class, () -> ruleService.deleteRuleById(null, "root"));
+  }
+
+  @Test
+  public void testDeleteNotEndedRule() throws Exception {
+    RuleEntity ruleEntity = newRule();
+    assertFalse(ruleEntity.isDeleted());
+
+    RealizationDTO realization = realizationService.createRealizations(ruleEntity.getEvent(),
+                                                                       TEST_USER_EARNER,
+                                                                       TEST_USER_RECEIVER,
+                                                                       ACTIVITY_ID,
+                                                                       ACTIVITY_OBJECT_TYPE)
+                                                   .get(0);
+    assertNotNull(realization);
+    assertTrue(realization.getId() > 0);
+
+    RealizationDTO latestRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
+    assertNotNull(latestRealization);
+    assertEquals(realization.getId(), latestRealization.getId());
+
+    RuleDTO rule = ruleService.deleteRuleById(ruleEntity.getId(), "root1");
+    assertNotNull(rule);
+    assertTrue(rule.isDeleted());
+
+    restartTransaction();
+    rule = ruleService.findRuleById(rule.getId());
+    assertNotNull(rule);
+
+    latestRealization = realizationService.findLatestRealizationByIdentityId(TEST_USER_EARNER);
+    assertNotNull(latestRealization);
+    assertEquals(realization.getId(), latestRealization.getId());
   }
 
   @Test
@@ -151,8 +197,11 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleEntity ruleEntity = newRule();
     ruleEntity.setDescription("new_description");
     ruleService.updateRule(RuleBuilder.ruleToRuleDTO(domainStorage, ruleEntity), "root1");
-    RuleDTO ruleDTO = ruleService.findRuleById(ruleEntity.getId());
-    assertEquals(ruleEntity.getDescription(), ruleDTO.getDescription());
+    RuleDTO rule = ruleService.findRuleById(ruleEntity.getId());
+    assertEquals(ruleEntity.getDescription(), rule.getDescription());
+
+    ruleService.deleteRuleById(rule.getId(), "root1");
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(rule, "root"));
   }
 
   @Test
@@ -192,20 +241,5 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(3, ruleService.getRules(ruleFilter,0, 10).size());
     assertEquals(3, ruleService.findAllRules(0, 3).size());
   }
-
-  @Test
-  public void getFindRuleByEventAndDomain() {
-    RuleDTO rule = newRuleDTO();
-    String ruleTitle = rule.getTitle();
-    String domainTitle = rule.getProgram() != null ? rule.getProgram().getTitle() : " ";
-    long domainId = rule.getProgram() != null ? rule.getProgram().getId() : null;
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", domainId));
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(ruleTitle, -1));
-    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(ruleTitle, domainId);
-    String newDomainTitle = ruleDTO.getProgram() != null ? ruleDTO.getProgram().getTitle() : "";
-    assertEquals(ruleTitle, ruleDTO.getTitle());
-    assertEquals(domainTitle, newDomainTitle);
-  }
-
 
 }

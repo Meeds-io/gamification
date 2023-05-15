@@ -127,7 +127,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  1L,
                                                  "announcement comment",
                                                  1L,
-                                                 new Date(System.currentTimeMillis()).toString(),
+                                                 Utils.toSimpleDateFormat(new Date()),
                                                  null);
 
     Announcement announcementWithoutAssignee = new Announcement(0,
@@ -137,7 +137,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                                 null,
                                                                 "announcement comment",
                                                                 1L,
-                                                                new Date(System.currentTimeMillis()).toString(),
+                                                                Utils.toSimpleDateFormat(new Date()),
                                                                 null);
 
     Announcement createdAnnouncement = new Announcement(1,
@@ -147,7 +147,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                         1L,
                                                         "announcement comment",
                                                         1L,
-                                                        new Date(System.currentTimeMillis()).toString(),
+                                                        Utils.toSimpleDateFormat(new Date()),
                                                         null);
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
@@ -158,7 +158,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     rootIdentity.setProviderId("organization");
     rootIdentity.setRemoteId("root");
 
-    String[] spaceMembers = { "root" };
+    String[] spaceMembers = {
+        "root"
+    };
     Space space = new Space();
     space.setId("1");
     space.setPrettyName("test_space");
@@ -172,7 +174,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
-    when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
+    when(announcementStorage.createAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
 
     Identity identity = mock(Identity.class);
@@ -184,28 +186,28 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     Map<String, String> templateParams = new HashMap<>();
 
     assertThrows(IllegalArgumentException.class,
-                 () -> announcementService.createAnnouncement(null, templateParams, "root", true));
+                 () -> announcementService.createAnnouncement(null, templateParams, "root"));
     assertThrows(IllegalArgumentException.class,
-                 () -> announcementService.createAnnouncement(createdAnnouncement, templateParams, "root", true));
+                 () -> announcementService.createAnnouncement(createdAnnouncement, templateParams, "root"));
 
     assertThrows(ObjectNotFoundException.class,
-                 () -> announcementService.createAnnouncement(announcement, templateParams, "root", true));
+                 () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
 
     when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
     assertThrows(IllegalArgumentException.class,
-                 () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root", true));
+                 () -> announcementService.createAnnouncement(announcementWithoutAssignee, templateParams, "root"));
 
     UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
          .thenReturn(false);
     assertThrows(ObjectNotFoundException.class,
-                 () -> announcementService.createAnnouncement(announcement, templateParams, "root", true));
+                 () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
     when(identityManager.getIdentity("1")).thenReturn(identity);
     assertThrows(IllegalAccessException.class,
-                 () -> announcementService.createAnnouncement(announcement, templateParams, "root", true));
+                 () -> announcementService.createAnnouncement(announcement, templateParams, "root"));
     UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
          .thenReturn(true);
 
-    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root", true);
+    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(1l, newAnnouncement.getId());
   }
@@ -231,7 +233,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  Long.parseLong(userIdentityId),
                                                  "announcement comment",
                                                  1L,
-                                                 new Date(System.currentTimeMillis()).toString(),
+                                                 Utils.toSimpleDateFormat(new Date()),
                                                  null);
 
     Identity spaceIdentity = new Identity();
@@ -255,7 +257,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(userIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(userIdentity);
-    when(announcementStorage.saveAnnouncement(announcement)).thenAnswer(invocation -> {
+    when(announcementStorage.createAnnouncement(announcement)).thenAnswer(invocation -> {
       announcement.setId(announcementId);
       return announcement;
     });
@@ -290,7 +292,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                                          Long.parseLong(userIdentityId),
                                                                          "announcement comment",
                                                                          Long.parseLong(userIdentityId),
-                                                                         new Date(System.currentTimeMillis()).toString(),
+                                                                         Utils.toSimpleDateFormat(new Date()),
                                                                          null,
                                                                          null);
 
@@ -306,7 +308,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     }).when(activityManager).saveActivityNoReturn(any(), any());
 
     Announcement newAnnouncement = null;
-    newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root", false);
+    newAnnouncement = announcementService.createAnnouncement(announcement, templateParams, "root");
     assertNotNull(newAnnouncement);
     assertEquals(announcementId, newAnnouncement.getId());
 
@@ -332,31 +334,14 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   @Test
   public void testUpdateAnnouncement() throws ObjectNotFoundException, IllegalAccessException {
     RuleDTO rule = newRule();
-    Announcement announcement = new Announcement(0,
-                                                 rule.getId(),
-                                                 rule.getTitle(),
-
-                                                 1L,
-                                                 "announcement comment",
-                                                 1L,
-                                                 new Date(System.currentTimeMillis()).toString(),
-                                                 null);
     Announcement createdAnnouncement = new Announcement(1,
                                                         rule.getId(),
                                                         rule.getTitle(),
                                                         1L,
                                                         "announcement comment",
                                                         1L,
-                                                        new Date(System.currentTimeMillis()).toString(),
+                                                        Utils.toSimpleDateFormat(new Date()),
                                                         null);
-    Announcement editedAnnouncement = new Announcement(1,
-                                                       rule.getId(),
-                                                       rule.getTitle(),
-                                                       1L,
-                                                       "announcement comment",
-                                                       1L,
-                                                       new Date(System.currentTimeMillis()).toString(),
-                                                       1L);
     Identity spaceIdentity = new Identity();
     spaceIdentity.setId("1");
     spaceIdentity.setProviderId("space");
@@ -366,7 +351,9 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     rootIdentity.setProviderId("organization");
     rootIdentity.setRemoteId("root");
 
-    String[] spaceMembers = { "root" };
+    String[] spaceMembers = {
+        "root"
+    };
     Space space = new Space();
     space.setId("1");
     space.setPrettyName("test_space");
@@ -380,8 +367,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateIdentity("space", "root")).thenReturn(spaceIdentity);
     when(identityManager.getOrCreateIdentity("organization", "root")).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("root")).thenReturn(rootIdentity);
-    when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
-    when(announcementStorage.saveAnnouncement(createdAnnouncement)).thenReturn(editedAnnouncement);
     UTILS.when(() -> Utils.canAnnounce(any(), anyString()))
          .thenReturn(true);
     Identity identity = mock(Identity.class);
@@ -393,24 +378,17 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
 
     when(ruleService.findRuleById(rule.getId(), "root")).thenReturn(rule);
     when(identityManager.getIdentity("1")).thenReturn(identity);
-    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), "root", true);
-    assertNotNull(newAnnouncement);
-    newAnnouncement.setActivityId(1L);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.updateAnnouncement(null));
-
-    assertThrows(IllegalArgumentException.class, () -> announcementService.updateAnnouncement(announcement));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.updateAnnouncementComment(0, "comment"));
+    assertThrows(IllegalArgumentException.class, () -> announcementService.updateAnnouncementComment(2l, null));
 
     when(announcementStorage.getAnnouncementById(1L)).thenReturn(null);
-    Announcement finalNewAnnouncement = newAnnouncement;
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.updateAnnouncement(finalNewAnnouncement));
-    when(announcementStorage.getAnnouncementById(1L)).thenReturn(createdAnnouncement);
+    when(announcementStorage.updateAnnouncementComment(2l, "comment")).thenThrow(new ObjectNotFoundException("Fake exception"));
+    assertThrows(ObjectNotFoundException.class, () -> announcementService.updateAnnouncementComment(2l, "comment"));
+    when(announcementStorage.updateAnnouncementComment(1l, "comment")).thenReturn(createdAnnouncement);
 
-    Announcement updatedAnnouncement = null;
-    updatedAnnouncement = announcementService.updateAnnouncement(newAnnouncement);
-    assertEquals(updatedAnnouncement.getId(), newAnnouncement.getId());
-    assertEquals(updatedAnnouncement.getActivityId(), newAnnouncement.getActivityId());
-
+    Announcement updatedAnnouncement = announcementService.updateAnnouncementComment(1l, "comment");
+    assertNotNull(updatedAnnouncement);
   }
 
   @Test
@@ -433,14 +411,6 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(identityManager.getOrCreateUserIdentity(username)).thenReturn(rootIdentity);
     when(identityManager.getOrCreateUserIdentity("john")).thenReturn(johnIdentity);
     RuleDTO rule = newRule();
-    Announcement announcement = new Announcement(0,
-                                                 rule.getId(),
-                                                 rule.getTitle(),
-                                                 1L,
-                                                 "announcement comment",
-                                                 1L,
-                                                 new Date(System.currentTimeMillis()).toString(),
-                                                 null);
     Announcement createdAnnouncement = new Announcement(1,
                                                         rule.getId(),
                                                         rule.getTitle(),
@@ -448,7 +418,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                         1L,
                                                         "announcement comment",
                                                         1L,
-                                                        new Date(System.currentTimeMillis()).toString(),
+                                                        Utils.toSimpleDateFormat(new Date()),
                                                         1L);
     Announcement canceledAnnouncement = new Announcement(1,
                                                          rule.getId(),
@@ -456,18 +426,13 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                          1L,
                                                          "announcement comment",
                                                          1L,
-                                                         new Date(System.currentTimeMillis()).toString(),
+                                                         Utils.toSimpleDateFormat(new Date()),
                                                          null);
 
     when(ruleService.findRuleById(rule.getId(), username)).thenReturn(rule);
     when(identityManager.getIdentity("1")).thenReturn(identity);
-    when(announcementStorage.saveAnnouncement(announcement)).thenReturn(createdAnnouncement);
     when(announcementStorage.getAnnouncementById(createdAnnouncement.getId())).thenReturn(createdAnnouncement);
-    when(announcementStorage.deleteAnnouncement(createdAnnouncement)).thenReturn(canceledAnnouncement);
-
-    Announcement newAnnouncement = announcementService.createAnnouncement(announcement, new HashMap<>(), username, true);
-    assertNotNull(newAnnouncement);
-    assertEquals(1L, newAnnouncement.getId());
+    when(announcementStorage.deleteAnnouncement(createdAnnouncement.getId())).thenReturn(canceledAnnouncement);
 
     assertThrows(IllegalArgumentException.class, () -> announcementService.deleteAnnouncement(-1L, username));
 
@@ -487,7 +452,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                   1L,
                                                   "announcement comment",
                                                   1L,
-                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  Utils.toSimpleDateFormat(new Date()),
                                                   null);
     Announcement announcement2 = new Announcement(1,
                                                   rule.getId(),
@@ -495,7 +460,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                   1L,
                                                   "announcement comment",
                                                   1L,
-                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  Utils.toSimpleDateFormat(new Date()),
                                                   null);
     Announcement announcement3 = new Announcement(1,
                                                   rule.getId(),
@@ -503,7 +468,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                   1L,
                                                   "announcement comment",
                                                   1L,
-                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  Utils.toSimpleDateFormat(new Date()),
                                                   1L);
     List<Announcement> announcementList = new ArrayList<>();
     announcementList.add(announcement1);
@@ -512,15 +477,23 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     when(announcementStorage.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null)).thenReturn(announcementList);
 
     String username = "demo";
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, null, null));
-    assertThrows(ObjectNotFoundException.class, () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
+    assertThrows(IllegalArgumentException.class,
+                 () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, null, null));
+    assertThrows(ObjectNotFoundException.class,
+                 () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
 
     when(ruleService.findRuleById(rule.getId(), username)).thenThrow(new IllegalAccessException());
-    assertThrows(IllegalAccessException.class, () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
+    assertThrows(IllegalAccessException.class,
+                 () -> announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username));
 
     reset(ruleService);
     when(ruleService.findRuleById(rule.getId(), username)).thenReturn(rule);
-    List<Announcement> newAnnouncementList = announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, null, username);
+    List<Announcement> newAnnouncementList = announcementService.findAnnouncements(rule.getId(),
+                                                                                   0,
+                                                                                   10,
+                                                                                   PeriodType.ALL,
+                                                                                   null,
+                                                                                   username);
     assertNotNull(newAnnouncementList);
     assertEquals(announcementList, newAnnouncementList);
   }
@@ -528,7 +501,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   @Test
   public void testGetAnnouncementByChallengeByEarnerType() throws ObjectNotFoundException, IllegalAccessException {
     identityManager.getOrCreateIdentity("1L", "1L");
-    Space    space    = new Space();
+    Space space = new Space();
     space.setId("2L");
     spaceService.createSpace(space, "1L");
 
@@ -541,7 +514,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                   1L,
                                                   "announcement comment",
                                                   1L,
-                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  Utils.toSimpleDateFormat(new Date()),
                                                   null);
     Announcement announcement3 = new Announcement(1,
                                                   rule.getId(),
@@ -549,16 +522,26 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                   2L,
                                                   "announcement comment",
                                                   1L,
-                                                  new Date(System.currentTimeMillis()).toString(),
+                                                  Utils.toSimpleDateFormat(new Date()),
                                                   1L);
     List<Announcement> announcementList = new ArrayList<>();
     announcementList.add(announcement2);
     announcementList.add(announcement3);
-    when(announcementStorage.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, IdentityType.USER)).thenReturn(announcementList);
+    when(announcementStorage.findAnnouncements(rule.getId(),
+                                               0,
+                                               10,
+                                               PeriodType.ALL,
+                                               IdentityType.USER)).thenReturn(announcementList);
 
-    assertThrows(IllegalArgumentException.class, () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, IdentityType.USER, null));
+    assertThrows(IllegalArgumentException.class,
+                 () -> announcementService.findAnnouncements(0, 0, 10, PeriodType.ALL, IdentityType.USER, null));
 
-    List<Announcement> announcements = announcementService.findAnnouncements(rule.getId(), 0, 10, PeriodType.ALL, IdentityType.USER, "root");
+    List<Announcement> announcements = announcementService.findAnnouncements(rule.getId(),
+                                                                             0,
+                                                                             10,
+                                                                             PeriodType.ALL,
+                                                                             IdentityType.USER,
+                                                                             "root");
     assertNotNull(announcements);
     assertEquals(announcementList, announcements);
   }
@@ -567,14 +550,12 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
   public void testCountAllAnnouncementsByChallenge() throws ObjectNotFoundException {
     RuleDTO rule = newRule();
 
-    when(announcementStorage.countAnnouncements(rule.getId())).thenReturn(10l);
+    when(announcementStorage.countAnnouncements(rule.getId())).thenReturn(10);
 
     assertThrows(IllegalArgumentException.class, () -> announcementService.countAnnouncements(0l));
     assertThrows(ObjectNotFoundException.class, () -> announcementService.countAnnouncements(rule.getId()));
     when(ruleService.findRuleById(anyLong())).thenReturn(rule);
-
-    Long count = announcementService.countAnnouncements(rule.getId());
-    assertEquals(10l, (long) count);
+    assertEquals(10, announcementService.countAnnouncements(rule.getId()));
   }
 
   @Test
@@ -585,7 +566,7 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
                                                  1L,
                                                  "announcement comment",
                                                  1L,
-                                                 new Date(System.currentTimeMillis()).toString(),
+                                                 Utils.toSimpleDateFormat(new Date()),
                                                  null);
     when(announcementStorage.getAnnouncementById(announcement.getId())).thenReturn(announcement);
 
@@ -601,8 +582,8 @@ public class AnnouncementServiceTest extends BaseExoTestCase {
     rule.setId(1l);
     rule.setTitle("new challenge");
     rule.setDescription("challenge description");
-    rule.setStartDate(new Date(System.currentTimeMillis()).toString());
-    rule.setEndDate(new Date(System.currentTimeMillis() + 1).toString());
+    rule.setStartDate(Utils.toSimpleDateFormat(new Date()));
+    rule.setEndDate(Utils.toSimpleDateFormat(new Date(System.currentTimeMillis() + 5000)));
     rule.setProgram(newProgram());
     rule.setEnabled(true);
     rule.setScore(10);

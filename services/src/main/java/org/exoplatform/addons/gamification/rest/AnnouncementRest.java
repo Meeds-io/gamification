@@ -151,8 +151,7 @@ public class AnnouncementRest implements ResourceContainer {
       Announcement announcement = AnnouncementBuilder.fromAnnouncementActivity(announcementActivity);
       Announcement newAnnouncement = announcementService.createAnnouncement(announcement,
                                                                             announcementActivity.getTemplateParams(),
-                                                                            currentUser,
-                                                                            false);
+                                                                            currentUser);
       return Response.ok(AnnouncementBuilder.fromAnnouncement(newAnnouncement)).build();
     } catch (IllegalAccessException e) {
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build();

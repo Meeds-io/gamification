@@ -53,31 +53,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-spacer v-if="isMobile" />
     <v-scale-transition>
       <select
-        v-if="canManageRule"
         id="rulesStatusFilter"
-        v-model="status"
-        class="width-auto my-auto ignore-vuetify-classes d-none d-sm-inline"
-        @change="$root.$emit('program-rules-update-status', status)">
+        v-model="filter"
+        class="width-auto my-auto ignore-vuetify-classes d-none d-sm-inline">
         <option
           v-for="item in ruleFilters"
           :key="item.value"
           :value="item.value">
           {{ item.text }}
-        </option>
-      </select>
-      <select
-        v-else
-        id="rulesDateFilter"
-        v-model="dateFilter"
-        class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter width-auto"
-        @change="$root.$emit('program-rules-update-date-filter', dateFilter)">
-        <option
-          v-for="item in rulesDateFilter"
-          :key="item.value"
-          :value="item.value">
-          <span class="d-none d-lg-inline">
-            {{ item.text }}
-          </span>
         </option>
       </select>
     </v-scale-transition>
@@ -117,15 +100,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </v-toolbar>
         <v-list>
           <v-list-item
-            v-for="ruleFilter in ruleFilters"
-            :key="ruleFilter"
-            @click="filterToChange = ruleFilter.value">
+            v-for="item in ruleFilters"
+            :key="item.value"
+            @click="filterToChange = item.value">
             <v-list-item-title class="align-center d-flex">
-              <v-icon v-if="filterToChange === ruleFilter.value">fa-check</v-icon>
+              <v-icon v-if="filterToChange === item.value">fa-check</v-icon>
               <span v-else class="me-6"></span>
               <v-spacer />
               <div>
-                {{ ruleFilter.text }}
+                {{ item.text }}
               </div>
               <v-spacer />
               <span class="me-6"></span>
@@ -152,25 +135,33 @@ export default {
   },
   data: () => ({
     filterToChange: null,
-    status: 'ENABLED',
-    dateFilter: 'STARTED',
+    filter: 'STARTED',
     bottomMenu: false,
     menuHeaderChanged: false,
   }),
   computed: {
     ruleFilters() {
+      return this.canManageRule && this.adminRuleFilters || this.userRuleFilters;
+    },
+    adminRuleFilters() {
       return [{
-        text: this.$t('programs.details.filter.all'),
+        text: this.$t('rules.filter.all'),
         value: 'ALL',
       },{
-        text: this.$t('programs.details.filter.enabled'),
-        value: 'ENABLED',
+        text: this.$t('rules.filter.active'),
+        value: 'STARTED',
+      },{
+        text: this.$t('rules.filter.upcoming'),
+        value: 'NOT_STARTED',
+      },{
+        text: this.$t('rules.filter.ended'),
+        value: 'ENDED',
       },{
         text: this.$t('programs.details.filter.disabled'),
         value: 'DISABLED',
       }];
     },
-    rulesDateFilter() {
+    userRuleFilters() {
       return [{
         text: this.$t('rules.filter.all'),
         value: 'ALL',
@@ -194,13 +185,14 @@ export default {
       this.$emit('keyword-changed', this.keyword);
     },
     filter() {
-      this.$emit('filter-changed', this.filter);
+      const status = (this.filter === 'DISABLED' && 'DISABLED')
+        || (this.canManageRule && this.filter === 'ALL' && 'ALL')
+        || 'ENABLED';
+      const dateFilter = this.filter === 'DISABLED' && 'ALL' || this.filter;
+      this.$emit('filter-changed', status, dateFilter);
     },
   },
   methods: {
-    applyFilter() {
-      this.$emit('filter-changed', this.filter);
-    },
     openBottomMenuFilter() {
       this.filterToChange = this.filter;
       this.bottomMenu = true;
@@ -208,7 +200,6 @@ export default {
     changeFilterSelection() {
       this.bottomMenu = false;
       this.filter = this.filterToChange;
-      this.applyFilter();
     },
     changeHeaderMenu() {
       this.menuHeaderChanged = !this.menuHeaderChanged;
