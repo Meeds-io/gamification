@@ -41,9 +41,9 @@ public class TestGamificationRestEndpoint extends AbstractServiceTest {
     super.setUp();
     startSessionAs("root1");
     registry(getComponentClass());
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
+    newRealizationDTO();
+    newRealizationDTO();
+    newRealizationDTO();
   }
 
   @Test

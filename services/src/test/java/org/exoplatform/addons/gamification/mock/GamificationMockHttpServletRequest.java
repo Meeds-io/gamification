@@ -16,17 +16,12 @@
  */
 package org.exoplatform.addons.gamification.mock;
 
-import org.exoplatform.addons.gamification.service.configuration.BadgeService;
-import org.exoplatform.addons.gamification.service.dto.configuration.BadgeDTO;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.test.mock.MockHttpServletRequest;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import org.exoplatform.services.test.mock.MockHttpServletRequest;
+
 public class GamificationMockHttpServletRequest extends MockHttpServletRequest {
 
     private String remoteUser;

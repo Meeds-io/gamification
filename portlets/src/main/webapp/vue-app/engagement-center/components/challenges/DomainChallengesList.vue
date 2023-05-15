@@ -46,8 +46,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             lg="4">
             <challenge-card
               :domain="domain"
-              :challenge="challenge"
-              :can-edit-challenge="canEditChallenge" />
+              :challenge="challenge" />
           </v-col>
         </v-row>
         <v-row v-if="hasMore" class="ml-6 mr-6 mb-6 mt-n4">
@@ -77,10 +76,6 @@ export default {
         return {};
       },
     },
-    canEditChallenge: {
-      type: Boolean,
-      default: false,
-    }
   },
   computed: {
     title() {
@@ -88,10 +83,10 @@ export default {
       return this.$te(key) && this.$t(key) || this.domain.title;
     },
     size() {
-      return this.domain.challengesSize;
+      return this.domain.size;
     },
     hasMore() {
-      return this.domain.challengesSize > this.domain.challenges.length;
+      return this.domain.size > this.domain.rules.length;
     },
   },
 };

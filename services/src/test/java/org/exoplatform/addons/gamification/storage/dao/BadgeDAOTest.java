@@ -16,7 +16,7 @@
  */
 package org.exoplatform.addons.gamification.storage.dao;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.junit.Test;
 
 import org.exoplatform.addons.gamification.entities.domain.configuration.BadgeEntity;
@@ -33,7 +33,7 @@ public class BadgeDAOTest extends AbstractServiceTest {
 
   @Test
   public void testFindBadgesByDomain() {
-    DomainEntity domainEntity = newDomain();
+    ProgramEntity domainEntity = newDomain();
     assertEquals(badgeStorage.findBadgesByDomain(domainEntity.getId()).size(), 0);
     newBadge(domainEntity.getId());
     assertEquals(badgeStorage.findBadgesByDomain(domainEntity.getId()).size(), 1);
@@ -41,7 +41,7 @@ public class BadgeDAOTest extends AbstractServiceTest {
 
   @Test
   public void testFindEnabledBadgesByDomain() {
-    DomainEntity domainEntity = newDomain();
+    ProgramEntity domainEntity = newDomain();
     assertEquals(badgeStorage.findEnabledBadgesByDomain(domainEntity.getId()).size(), 0);
     BadgeEntity badgeEntity = newBadge(domainEntity.getId());
     assertEquals(badgeStorage.findEnabledBadgesByDomain(domainEntity.getId()).size(), 1);
@@ -52,8 +52,8 @@ public class BadgeDAOTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllBadges() {
-    DomainEntity domainEntity1 = newDomain();
-    DomainEntity domainEntity2 = newDomain();
+    ProgramEntity domainEntity1 = newDomain();
+    ProgramEntity domainEntity2 = newDomain();
     assertEquals(badgeStorage.getAllBadges().size(), 0);
     newBadge("badge1", domainEntity1.getId());
     newBadge("badge2", domainEntity1.getId());
@@ -65,11 +65,11 @@ public class BadgeDAOTest extends AbstractServiceTest {
 
   @Test
   public void testGetAllBadgesWithNullDomain() {
-    DomainEntity domainEntity1 = newDomain();
-    DomainEntity domainEntity2 = newDomain();
-    DomainEntity domainEntity3 = newDomain();
-    DomainEntity domainEntity4 = newDomain();
-    DomainEntity domainEntity5 = newDomain();
+    ProgramEntity domainEntity1 = newDomain();
+    ProgramEntity domainEntity2 = newDomain();
+    ProgramEntity domainEntity3 = newDomain();
+    ProgramEntity domainEntity4 = newDomain();
+    ProgramEntity domainEntity5 = newDomain();
     assertEquals(badgeStorage.findAll().size(), 0);
     newBadge("badge1", domainEntity1.getId());
     newBadge("badge2", domainEntity2.getId());

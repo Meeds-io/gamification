@@ -19,7 +19,7 @@ package org.exoplatform.addons.gamification.listener.user;
 import static org.exoplatform.addons.gamification.GamificationConstant.GAMIFICATION_ATTENDANCE_USER_LOGIN;
 
 import org.exoplatform.addons.gamification.service.configuration.RuleService;
-import org.exoplatform.addons.gamification.service.effective.GamificationService;
+import org.exoplatform.addons.gamification.service.RealizationService;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -32,27 +32,27 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 @Asynchronous
 public class GamificationUserLoginListener extends Listener<ConversationRegistry, ConversationState> {
-  private static final Log      LOG = ExoLogger.getLogger(GamificationUserLoginListener.class);
+  private static final Log     LOG = ExoLogger.getLogger(GamificationUserLoginListener.class);
 
-  protected RuleService         ruleService;
+  protected RuleService        ruleService;
 
-  protected IdentityManager     identityManager;
+  protected IdentityManager    identityManager;
 
-  protected GamificationService gamificationService;
+  protected RealizationService realizationService;
 
   public GamificationUserLoginListener(RuleService ruleService,
                                        IdentityManager identityManager,
-                                       GamificationService gamificationService) {
+                                       RealizationService realizationService) {
     this.ruleService = ruleService;
     this.identityManager = identityManager;
-    this.gamificationService = gamificationService;
+    this.realizationService = realizationService;
   }
 
   @Override
   public void onEvent(Event<ConversationRegistry, ConversationState> event) {
     String username = event.getData().getIdentity().getUserId();
     String sender = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, username).getId();
-    gamificationService.createHistory(GAMIFICATION_ATTENDANCE_USER_LOGIN, sender, sender, null, null);
+    realizationService.createRealizations(GAMIFICATION_ATTENDANCE_USER_LOGIN, sender, sender, null, null);
     LOG.debug("User Login Gamification for {}", username);
   }
 }

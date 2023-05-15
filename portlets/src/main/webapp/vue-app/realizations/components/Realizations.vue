@@ -356,7 +356,7 @@ export default {
         });
     },
     getRealizations() {
-      return this.$realizationsServices.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
+      return this.$realizationService.getAllRealizations(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.sortBy, this.sortDescending, this.offset, this.limit + 1, this.searchList)
         .then(realizations => {
           this.realizations = realizations?.realizations || [];
           this.totalSize = realizations?.size || this.totalSize;
@@ -364,7 +364,7 @@ export default {
         });
     },
     exportFile() {
-      return this.$realizationsServices.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.searchList);
+      return this.$realizationService.exportFile(this.fromDate, this.toDate, this.earnerIdToRetrieve, this.searchList);
     },
     realizationUpdated(updatedRealization){
       const index = this.realizations && this.realizations.findIndex((realization) => { return  realization.id === updatedRealization.id;});
@@ -383,7 +383,7 @@ export default {
     switchToAdminMode() {
       this.realizations = [];
       if (this.administrationMode) {
-        this.$programsServices.retrievePrograms(0, -1, 'ALL', 'ENABLED', '', false, false, eXo.env.portal.userIdentityId)
+        this.$programService.getPrograms(0, -1, 'ALL', 'ENABLED', '', false, false, true)
           .then(data => {
             this.searchList = data.domains.map(program => program.id);
             this.ownedPrograms = data.domains.map(program => program.id);

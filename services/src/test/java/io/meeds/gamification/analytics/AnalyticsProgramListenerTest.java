@@ -17,11 +17,11 @@
  */
 package io.meeds.gamification.analytics;
 
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
-import static org.exoplatform.addons.gamification.service.configuration.DomainService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_CREATE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_DELETE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_DISABLE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_ENABLE_LISTENER;
+import static org.exoplatform.addons.gamification.service.configuration.ProgramService.GAMIFICATION_DOMAIN_UPDATE_LISTENER;
 import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_CREATE_PROGRAM_OPERATION;
 import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_DELETE_PROGRAM_OPERATION;
 import static org.exoplatform.addons.gamification.utils.Utils.STATISTICS_DISABLE_PROGRAM_OPERATION;
@@ -54,7 +54,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
 import org.exoplatform.services.listener.Event;
@@ -87,7 +87,7 @@ public class AnalyticsProgramListenerTest {
   private SpaceService                        spaceService;
 
   @Mock
-  private Event<DomainDTO, String>            event;
+  private Event<ProgramDTO, String>           event;
 
   @Mock
   private Identity                            userIdentity;
@@ -95,7 +95,7 @@ public class AnalyticsProgramListenerTest {
   @Mock
   private Space                               space;
 
-  private DomainDTO                           domainDTO;
+  private ProgramDTO                          program;
 
   private AnalyticsProgramListener            programListener;
 
@@ -111,10 +111,10 @@ public class AnalyticsProgramListenerTest {
 
   @Before
   public void setup() {
-    domainDTO = newDomainDTO();
+    program = newProgram();
     ANALYTICS_UTILS.reset();
     ANALYTICS_UTILS.when(() -> AnalyticsUtils.addSpaceStatistics(any(), any())).thenCallRealMethod();
-    when(event.getSource()).thenReturn(domainDTO);
+    when(event.getSource()).thenReturn(program);
     when(event.getData()).thenReturn(USER_NAME);
     programListener = new AnalyticsProgramListener(identityManager, spaceService);
   }
@@ -168,36 +168,36 @@ public class AnalyticsProgramListenerTest {
       assertEquals(USER_IDENTITY_ID, statisticData.getUserId());
       assertEquals(AUDIENCE_ID, statisticData.getSpaceId());
 
-      assertEquals(String.valueOf(domainDTO.getId()),
+      assertEquals(String.valueOf(program.getId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_ID_PARAM)));
-      assertEquals(String.valueOf(domainDTO.getTitle()),
+      assertEquals(String.valueOf(program.getTitle()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TITLE_PARAM)));
-      assertEquals(String.valueOf(domainDTO.getBudget()),
+      assertEquals(String.valueOf(program.getBudget()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_BUDGET_PARAM)));
-      assertEquals(String.valueOf(domainDTO.getType()),
+      assertEquals(String.valueOf(program.getType()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_TYPE_PARAM)));
-      assertEquals(String.valueOf(domainDTO.getCoverFileId()),
+      assertEquals(String.valueOf(program.getCoverFileId()),
                    String.valueOf(statisticData.getParameters().get(STATISTICS_PROGRAM_COVERFILEID_PARAM)));
-      assertEquals(String.valueOf(domainDTO.getOwners()),
+      assertEquals(String.valueOf(program.getOwners()),
                    String.valueOf(statisticData.getListParameters().get(STATISTICS_PROGRAM_OWNERS_PARAM)));
       return true;
     })), times(1));
   }
 
-  private DomainDTO newDomainDTO() {
-    DomainDTO domainDTO = new DomainDTO();
-    domainDTO.setTitle(PROGRAM_TITLE);
-    domainDTO.setDescription(PROGRAM_DESCRIPTION);
-    domainDTO.setBudget(SCORE);
-    domainDTO.setDeleted(false);
-    domainDTO.setEnabled(true);
-    domainDTO.setCoverFileId(2l);
-    domainDTO.setType(EntityType.AUTOMATIC.name());
-    domainDTO.setAudienceId(AUDIENCE_ID);
+  private ProgramDTO newProgram() {
+    ProgramDTO program = new ProgramDTO();
+    program.setTitle(PROGRAM_TITLE);
+    program.setDescription(PROGRAM_DESCRIPTION);
+    program.setBudget(SCORE);
+    program.setDeleted(false);
+    program.setEnabled(true);
+    program.setCoverFileId(2l);
+    program.setType(EntityType.AUTOMATIC.name());
+    program.setAudienceId(AUDIENCE_ID);
     HashSet<Long> owners = new HashSet<Long>();
     owners.add(1L);
-    domainDTO.setOwners(owners);
-    return domainDTO;
+    program.setOwners(owners);
+    return program;
   }
 
 }
