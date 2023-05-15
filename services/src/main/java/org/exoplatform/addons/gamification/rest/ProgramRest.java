@@ -93,15 +93,17 @@ public class ProgramRest implements ResourceContainer {
 
   protected PortalContainer portalContainer;
 
-  protected ProgramService   domainService;
+  protected ProgramService   programService;
 
   protected IdentityManager identityManager;
 
   public byte[]             defaultProgramCover = null; // NOSONAR
 
-  public ProgramRest(PortalContainer portalContainer, ProgramService domainService, IdentityManager identityManager) {
+  public ProgramRest(PortalContainer portalContainer,
+                     ProgramService programService,
+                     IdentityManager identityManager) {
     this.portalContainer = portalContainer;
-    this.domainService = domainService;
+    this.programService = programService;
     this.identityManager = identityManager;
   }
 
@@ -169,7 +171,7 @@ public class ProgramRest implements ResourceContainer {
       ProgramList domainList = new ProgramList();
       List<ProgramRestEntity> domains = getDomainsRestEntitiesByFilter(domainFilter, offset, limit, currentUser);
       if (returnSize) {
-        int domainsSize = domainService.countPrograms(domainFilter, currentUser);
+        int domainsSize = programService.countPrograms(domainFilter, currentUser);
         domainList.setSize(domainsSize);
       }
       domainList.setDomains(domains);
@@ -200,8 +202,8 @@ public class ProgramRest implements ResourceContainer {
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      program = domainService.createProgram(program, identity);
-      return Response.ok(EntityBuilder.toRestEntity(domainService, program, identity.getUserId())).build();
+      program = programService.createProgram(program, identity);
+      return Response.ok(EntityBuilder.toRestEntity(programService, program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
       LOG.debug("Unauthorized user {} attempts to create a domain", identity.getUserId());
       return Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
@@ -232,8 +234,8 @@ public class ProgramRest implements ResourceContainer {
     program.setId(domainId);
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      program = domainService.updateProgram(program, identity);
-      return Response.ok(EntityBuilder.toRestEntity(domainService, program, identity.getUserId())).build();
+      program = programService.updateProgram(program, identity);
+      return Response.ok(EntityBuilder.toRestEntity(programService, program, identity.getUserId())).build();
     } catch (IllegalAccessException e) {
       LOG.warn("Unauthorized user {} attempts to update the domain {}", identity.getUserId(), program.getId());
       return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized user trying to update a domain").build();
@@ -259,7 +261,7 @@ public class ProgramRest implements ResourceContainer {
     }
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
     try {
-      ProgramDTO program = domainService.deleteProgramById(domainId, identity);
+      ProgramDTO program = programService.deleteProgramById(domainId, identity);
       return Response.ok().entity(program).build();
     } catch (ObjectNotFoundException e) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
@@ -278,7 +280,7 @@ public class ProgramRest implements ResourceContainer {
       @ApiResponse(responseCode = "500", description = "Internal server error") })
   public Response canAddProgram() {
     org.exoplatform.services.security.Identity identity = ConversationState.getCurrent().getIdentity();
-    return Response.ok(String.valueOf(domainService.canAddProgram(identity))).build();
+    return Response.ok(String.valueOf(programService.canAddProgram(identity))).build();
   }
 
   @GET
@@ -307,7 +309,7 @@ public class ProgramRest implements ResourceContainer {
     if (isDefault) {
       lastUpdated = Utils.toRFC3339Date(new Date(DEFAULT_COVER_LAST_MODIFIED));
     } else {
-      domain = domainService.getProgramById(Long.valueOf(domainId));
+      domain = programService.getProgramById(Long.valueOf(domainId));
       if (domain == null) {
         return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
       }
@@ -324,7 +326,7 @@ public class ProgramRest implements ResourceContainer {
       Response.ResponseBuilder builder = request.evaluatePreconditions(eTag);
       if (builder == null) {
         InputStream stream = isDefault ? getDefaultCoverInputStream()
-                                       : domainService.getFileDetailAsStream(Long.valueOf(domainId));
+                                       : programService.getFileDetailAsStream(Long.valueOf(domainId));
         builder = Response.ok(stream, "image/png");
         builder.tag(eTag);
       }
@@ -355,16 +357,16 @@ public class ProgramRest implements ResourceContainer {
       return Response.status(Response.Status.BAD_REQUEST).entity("DomainId must be not null").build();
     }
     String currentUser = Utils.getCurrentUser();
-    ProgramDTO domain = domainService.getProgramById(domainId);
+    ProgramDTO domain = programService.getProgramById(domainId);
     if (domain == null) {
       return Response.status(Response.Status.NOT_FOUND).entity(DOMAIN_NOT_FOUND_MESSAGE).build();
     }
-    return Response.ok(EntityBuilder.toRestEntity(domainService, domain, currentUser)).build();
+    return Response.ok(EntityBuilder.toRestEntity(programService, domain, currentUser)).build();
   }
 
   private List<ProgramRestEntity> getDomainsRestEntitiesByFilter(ProgramFilter filter, int offset, int limit, String currentUser) throws IllegalAccessException {
-    List<ProgramDTO> domains = domainService.getProgramsByFilter(filter, currentUser, offset, limit);
-    return EntityBuilder.toRestEntities(domainService, domains, currentUser);
+    List<ProgramDTO> domains = programService.getProgramsByFilter(filter, currentUser, offset, limit);
+    return EntityBuilder.toRestEntities(programService, domains, currentUser);
   }
 
   public InputStream getDefaultCoverInputStream() throws IOException {

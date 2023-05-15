@@ -63,7 +63,7 @@ public class RealizationServiceImpl implements RealizationService {
 
   private static final String SHEETNAME = "Achivements Report";
 
-  private ProgramService       domainService;
+  private ProgramService      programService;
 
   private RuleService         ruleService;
 
@@ -73,12 +73,12 @@ public class RealizationServiceImpl implements RealizationService {
 
   private RealizationStorage  realizationStorage;
 
-  public RealizationServiceImpl(ProgramService domainService,
+  public RealizationServiceImpl(ProgramService programService,
                                 RuleService ruleService,
                                 IdentityManager identityManager,
                                 SpaceService spaceService,
                                 RealizationStorage realizationStorage) {
-    this.domainService = domainService;
+    this.programService = programService;
     this.ruleService = ruleService;
     this.spaceService = spaceService;
     this.realizationStorage = realizationStorage;
@@ -203,7 +203,7 @@ public class RealizationServiceImpl implements RealizationService {
     if (storedRealization == null) {
       throw new ObjectNotFoundException("Realization with id " + realizationId + " wasn't found");
     }
-    if (Utils.isRewardingManager(username) || domainService.isProgramOwner(realization.getProgram().getId(), userAclIdentity)) {
+    if (Utils.isRewardingManager(username) || programService.isProgramOwner(realization.getProgram().getId(), userAclIdentity)) {
       return realizationStorage.updateRealization(realization);
     } else {
       throw new IllegalAccessException("User doesn't have enough privileges to update achievements of user"
@@ -387,7 +387,7 @@ public class RealizationServiceImpl implements RealizationService {
     RealizationDTO realization = realizationStorage.getRealizationById(realizationId);
     if (realization == null) {
       throw new ObjectNotFoundException("Realization with id " + realizationId + " doesn't exist");
-    } else if (Utils.isRewardingManager(username) || domainService.isProgramOwner(realization.getProgram().getId(), identity)
+    } else if (Utils.isRewardingManager(username) || programService.isProgramOwner(realization.getProgram().getId(), identity)
         || realization.getEarnerId().equals(userIdentity.getId())) {
       return realization;
     } else {
@@ -513,17 +513,17 @@ public class RealizationServiceImpl implements RealizationService {
     } else {
       domainFilter.setSpacesIds(managedSpaceIds.stream().map(Long::parseLong).toList());
     }
-    return domainService.getProgramIdsByFilter(domainFilter, userIdentity.getRemoteId(), 0, -1);
+    return programService.getProgramIdsByFilter(domainFilter, userIdentity.getRemoteId(), 0, -1);
   }
 
   private boolean isDomainsOwner(List<Long> domainIds, Identity userAclIdentity) {
     return domainIds.stream()
-                    .allMatch(domainId -> domainService.isProgramOwner(domainId, userAclIdentity));
+                    .allMatch(domainId -> programService.isProgramOwner(domainId, userAclIdentity));
   }
 
   private boolean isDomainsMember(List<Long> domainIds, Identity userAclIdentity) {
     return domainIds.stream()
-                    .allMatch(domainId -> domainService.isProgramMember(domainId,
+                    .allMatch(domainId -> programService.isProgramMember(domainId,
                                                                        userAclIdentity));
   }
 

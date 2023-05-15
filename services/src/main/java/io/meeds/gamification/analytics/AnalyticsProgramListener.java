@@ -44,8 +44,8 @@ public class AnalyticsProgramListener extends Listener<ProgramDTO, String> {
   @ExoTransactional
   public void onEvent(Event<ProgramDTO, String> event) throws Exception {
     String userId = event.getData();
-    ProgramDTO domain = event.getSource();
-    if (domain == null) {
+    ProgramDTO program = event.getSource();
+    if (program == null) {
       return;
     }
 
@@ -76,7 +76,7 @@ public class AnalyticsProgramListener extends Listener<ProgramDTO, String> {
     default:
       throw new IllegalArgumentException("Unexpected listener event name: " + event.getEventName());
     }
-    addDomainStatisticParameters(identityManager, spaceService, domain, statisticData, userId);
+    addDomainStatisticParameters(identityManager, spaceService, program, statisticData, userId);
     addStatisticData(statisticData);
   }
 

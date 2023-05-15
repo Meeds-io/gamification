@@ -701,7 +701,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     domain1.setDeleted(false);
     domain1.setEnabled(true);
     domain1.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.createProgram(domain1);
+    programService.createProgram(domain1);
     ProgramDTO domain2 = new ProgramDTO();
     domain2.setTitle("domain2");
     domain2.setDescription("Description");
@@ -711,7 +711,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     domain2.setDeleted(false);
     domain2.setEnabled(true);
     domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.createProgram(domain2);
+    programService.createProgram(domain2);
 
     RuleEntity rule1Automatic = newRule("domain1", "domain1", true, EntityType.AUTOMATIC);
     RuleEntity rule2Automatic = newRule("domain2", "domain2", true, EntityType.AUTOMATIC);
@@ -758,7 +758,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     domain1.setDeleted(false);
     domain1.setEnabled(true);
     domain1.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.createProgram(domain1);
+    programService.createProgram(domain1);
     ProgramDTO domain2 = new ProgramDTO();
     domain2.setTitle("domain2");
     domain2.setDescription("Description");
@@ -768,7 +768,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     domain2.setDeleted(false);
     domain2.setEnabled(true);
     domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.createProgram(domain2);
+    programService.createProgram(domain2);
 
     RuleEntity rule1Automatic = newRule("domain1", "domain1", true, EntityType.MANUAL);
     RuleEntity rule2Automatic = newRule("domain2", "domain2", true, EntityType.AUTOMATIC);
@@ -817,7 +817,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     domain1.setDeleted(false);
     domain1.setEnabled(true);
     domain1.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.createProgram(domain1);
+    programService.createProgram(domain1);
     ProgramDTO domain2 = new ProgramDTO();
     domain2.setTitle("domain2");
     domain2.setDescription("Description");
@@ -827,7 +827,7 @@ public class RealizationDAOTest extends AbstractServiceTest {
     domain2.setDeleted(false);
     domain2.setEnabled(true);
     domain2.setLastModifiedDate(Utils.toRFC3339Date(lastModifiedDate));
-    domainService.createProgram(domain2);
+    programService.createProgram(domain2);
 
     RuleEntity rule1Automatic = newRule("domain1", "domain1", true, EntityType.AUTOMATIC);
     RuleEntity rule2Automatic = newRule("domain2", "domain2", true, EntityType.AUTOMATIC);

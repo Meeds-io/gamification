@@ -75,7 +75,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class RuleRest implements ResourceContainer {
   private final CacheControl    cacheControl;
 
-  protected ProgramService       domainService;
+  protected ProgramService      programService;
 
   protected RuleService         ruleService;
 
@@ -83,14 +83,14 @@ public class RuleRest implements ResourceContainer {
 
   protected IdentityManager     identityManager;
 
-  public RuleRest(ProgramService domainService,
+  public RuleRest(ProgramService programService,
                   RuleService ruleService,
                   AnnouncementService announcementService,
                   IdentityManager identityManager) {
     cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
-    this.domainService = domainService;
+    this.programService = programService;
     this.ruleService = ruleService;
     this.announcementService = announcementService;
     this.identityManager = identityManager;
@@ -196,7 +196,7 @@ public class RuleRest implements ResourceContainer {
         ProgramFilter domainFilter = new ProgramFilter();
         domainFilter.setEntityFilterType(EntityFilterType.ALL);
         domainFilter.setEntityStatusType(EntityStatusType.ENABLED);
-        List<ProgramDTO> domains = domainService.getProgramsByFilter(domainFilter, currentUser, 0, -1);
+        List<ProgramDTO> domains = programService.getProgramsByFilter(domainFilter, currentUser, 0, -1);
         List<ProgramWithRulesRestEntity> domainsWithRules = new ArrayList<>();
         for (ProgramDTO domain : domains) {
           ProgramWithRulesRestEntity domainWithRule = new ProgramWithRulesRestEntity(domain);
@@ -262,7 +262,7 @@ public class RuleRest implements ResourceContainer {
       RuleDTO rule = ruleService.findRuleById(id, currentUser);
       String[] expandFieldsArray = StringUtils.split(expand, ",");
       List<String> expandFields = expandFieldsArray == null ? Collections.emptyList() : Arrays.asList(expandFieldsArray);
-      RuleRestEntity ruleEntity = EntityBuilder.toRestEntity(domainService,
+      RuleRestEntity ruleEntity = EntityBuilder.toRestEntity(programService,
                                                              announcementService,
                                                              rule,
                                                              expandFields,
@@ -378,7 +378,7 @@ public class RuleRest implements ResourceContainer {
                                                     boolean noDomain) {
     List<RuleDTO> rules = ruleService.getRules(filter, offset, limit);
     return rules.stream()
-                .map(rule -> EntityBuilder.toRestEntity(domainService,
+                .map(rule -> EntityBuilder.toRestEntity(programService,
                                                         announcementService,
                                                         rule,
                                                         expandFields,
@@ -389,7 +389,7 @@ public class RuleRest implements ResourceContainer {
   }
 
   private RuleRestEntity toRestEntity(RuleDTO rule) {
-    return EntityBuilder.toRestEntity(domainService,
+    return EntityBuilder.toRestEntity(programService,
                                       announcementService,
                                       rule,
                                       null,

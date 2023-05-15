@@ -45,7 +45,6 @@ import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.commons.ObjectAlreadyExistsException;
 import org.exoplatform.commons.file.model.FileItem;
 import org.exoplatform.commons.file.services.FileService;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
@@ -69,35 +68,30 @@ public class BadgeRest implements ResourceContainer {
 
   private final CacheControl      cacheControl;
 
-  protected BadgeService          badgeService                 = null;
+  protected final BadgeService    badgeService;
 
-  protected RuleService           ruleService                  = null;
+  protected final RuleService     ruleService;
 
-  protected FileService           fileService                  = null;
+  protected final FileService     fileService;
 
-  protected UploadService         uploadService                = null;
+  protected final UploadService   uploadService;
 
-  protected IdentityManager       identityManager                = null;
+  protected final IdentityManager identityManager;
 
-  public BadgeRest() {
-
+  public BadgeRest(BadgeService badgeService,
+                   RuleService ruleService,
+                   FileService fileService,
+                   UploadService uploadService,
+                   IdentityManager identityManager) {
     this.cacheControl = new CacheControl();
-
     cacheControl.setNoCache(true);
-
     cacheControl.setNoStore(true);
 
-    badgeService = CommonsUtils.getService(BadgeService.class);
-
-    ruleService = CommonsUtils.getService(RuleService.class);
-
-    fileService = CommonsUtils.getService(FileService.class);
-
-    uploadService = CommonsUtils.getService(UploadService.class);
-
-    identityManager = CommonsUtils.getService(IdentityManager.class);
-
-
+    this.badgeService = badgeService;
+    this.ruleService = ruleService;
+    this.fileService = fileService;
+    this.uploadService = uploadService;
+    this.identityManager = identityManager;
   }
 
   @GET

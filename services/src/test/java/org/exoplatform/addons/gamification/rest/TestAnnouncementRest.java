@@ -74,7 +74,7 @@ public class TestAnnouncementRest extends AbstractServiceTest {
     ConversationState conversationState = startSessionAs("root1");
     ProgramDTO domain = newProgram();
     domain.setOwners(Collections.singleton(identityId));
-    domainService.updateProgram(domain, conversationState.getIdentity());
+    programService.updateProgram(domain, conversationState.getIdentity());
 
     RuleDTO rule = new RuleDTO();
     rule.setTitle("update challenge");

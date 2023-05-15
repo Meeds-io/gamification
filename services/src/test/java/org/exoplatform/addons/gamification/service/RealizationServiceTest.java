@@ -85,7 +85,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
   IdentityManager                                  identityManager;
 
   @Mock
-  ProgramService                                    domainService;
+  ProgramService                                   programService;
 
   @Mock
   RuleService                                      ruleService;
@@ -113,7 +113,7 @@ public class RealizationServiceTest extends AbstractServiceTest {
 
   @Before
   public void setUp() throws Exception { // NOSONAR
-    realizationService = new RealizationServiceImpl(domainService,
+    realizationService = new RealizationServiceImpl(programService,
                                                     ruleService,
                                                     identityManager,
                                                     spaceService,

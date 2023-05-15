@@ -21,16 +21,16 @@ import org.exoplatform.addons.gamification.storage.dao.RealizationDAO;
 
 public class RealizationStorage {
 
-  private ProgramStorage  domainStorage;
+  private ProgramStorage programStorage;
 
   private RuleStorage    ruleStorage;
 
   private RealizationDAO gamificationHistoryDAO;
 
-  public RealizationStorage(ProgramStorage domainStorage,
+  public RealizationStorage(ProgramStorage programStorage,
                             RuleStorage ruleStorage,
                             RealizationDAO gamificationHistoryDAO) {
-    this.domainStorage = domainStorage;
+    this.programStorage = programStorage;
     this.ruleStorage = ruleStorage;
     this.gamificationHistoryDAO = gamificationHistoryDAO;
   }
@@ -41,7 +41,7 @@ public class RealizationStorage {
     List<RealizationEntity> realizationEntities = gamificationHistoryDAO.findRealizationsByFilter(realizationFilter,
                                                                                                   offset,
                                                                                                   limit);
-    return fromEntities(domainStorage, realizationEntities);
+    return fromEntities(programStorage, realizationEntities);
   }
 
   public int countRealizationsByFilter(RealizationFilter realizationFilter) {
@@ -49,26 +49,26 @@ public class RealizationStorage {
   }
 
   public RealizationDTO getRealizationById(long id) {
-    return fromEntity(domainStorage, gamificationHistoryDAO.find(id));
+    return fromEntity(programStorage, gamificationHistoryDAO.find(id));
   }
 
   public RealizationDTO updateRealization(RealizationDTO realization) {
     RealizationEntity realizationEntity = toEntity(ruleStorage, realization);
     realizationEntity = gamificationHistoryDAO.update(realizationEntity);
-    return fromEntity(domainStorage, realizationEntity);
+    return fromEntity(programStorage, realizationEntity);
   }
 
   public RealizationDTO createRealization(RealizationDTO realization) {
     RealizationEntity realizationEntity = toEntity(ruleStorage, realization);
     realizationEntity.setId(null);
     realizationEntity.setCreatedDate(new Date());
-    return fromEntity(domainStorage, gamificationHistoryDAO.create(realizationEntity));
+    return fromEntity(programStorage, gamificationHistoryDAO.create(realizationEntity));
   }
 
   public List<RealizationDTO> findRealizationsByObjectIdAndObjectType(String objectId, String objectType) {
     List<RealizationEntity> realizationEntities = gamificationHistoryDAO.getRealizationsByObjectIdAndObjectType(objectId,
                                                                                                                 objectType);
-    return fromEntities(domainStorage, realizationEntities);
+    return fromEntities(programStorage, realizationEntities);
   }
 
   public List<StandardLeaderboard> findRealizationsByDate(IdentityType identityType, Date date) {
@@ -88,15 +88,15 @@ public class RealizationStorage {
   }
 
   public List<RealizationDTO> findRealizationsByIdentityIdAndByType(String earnerId, EntityType entityType) {
-    return fromEntities(domainStorage, gamificationHistoryDAO.findRealizationsByIdentityIdAndByType(earnerId, entityType));
+    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdAndByType(earnerId, entityType));
   }
 
   public List<RealizationDTO> findRealizationsByIdentityIdSortedByDate(String earnerIdentityId, int limit) {
-    return fromEntities(domainStorage, gamificationHistoryDAO.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit));
+    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByIdentityIdSortedByDate(earnerIdentityId, limit));
   }
 
   public List<RealizationDTO> findRealizationsByDateAndIdentityId(Date date, String earnerIdentityId) {
-    return fromEntities(domainStorage, gamificationHistoryDAO.findRealizationsByDateAndIdentityId(date, earnerIdentityId));
+    return fromEntities(programStorage, gamificationHistoryDAO.findRealizationsByDateAndIdentityId(date, earnerIdentityId));
   }
 
   public List<StandardLeaderboard> findRealizationsByDate(Date fromDate, IdentityType identityType, int limit) {
@@ -153,7 +153,7 @@ public class RealizationStorage {
                                                                                       String receiverId,
                                                                                       String objectId,
                                                                                       String objectType) {
-    return fromEntity(domainStorage,
+    return fromEntity(programStorage,
                       gamificationHistoryDAO.findActionHistoryByActionTitleAndEarnerIdAndReceiverAndObjectId(actionTitle,
                                                                                                              domainId,
                                                                                                              earnerId,
@@ -166,7 +166,7 @@ public class RealizationStorage {
     List<RealizationEntity> entities = gamificationHistoryDAO.findRealizationsByEarnerId(earnerIdentityId, 1);
     // Return the first element since the underluing API returns entities
     // ordered by insertion date
-    return (entities != null && !entities.isEmpty()) ? fromEntity(domainStorage, entities.get(0)) : null;
+    return (entities != null && !entities.isEmpty()) ? fromEntity(programStorage, entities.get(0)) : null;
   }
 
   public List<RealizationDTO> findRealizationsByRuleId(long ruleId,
@@ -174,7 +174,7 @@ public class RealizationStorage {
                                                        int limit,
                                                        PeriodType periodType,
                                                        IdentityType earnerType) {
-    return fromEntities(domainStorage,
+    return fromEntities(programStorage,
                         gamificationHistoryDAO.findRealizationsByRuleId(ruleId,
                                                                         offset,
                                                                         limit,

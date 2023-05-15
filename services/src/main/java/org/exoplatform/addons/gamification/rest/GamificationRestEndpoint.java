@@ -57,7 +57,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
 
   private IdentityManager     identityManager;
 
-  private ProgramService       domainService;
+  private ProgramService      programService;
 
   private RuleService         ruleService;
 
@@ -67,14 +67,14 @@ public class GamificationRestEndpoint implements ResourceContainer {
 
   public GamificationRestEndpoint(RealizationService realizationService,
                                   IdentityManager identityManager,
-                                  ProgramService domainService,
+                                  ProgramService programService,
                                   RuleService ruleService) {
     this.cacheControl = new CacheControl();
     cacheControl.setNoCache(true);
     cacheControl.setNoStore(true);
     this.realizationService = realizationService;
     this.identityManager = identityManager;
-    this.domainService = domainService;
+    this.programService = programService;
     this.ruleService = ruleService;
   }
 
@@ -261,7 +261,7 @@ public class GamificationRestEndpoint implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   public Response getDomains() {
-    return Response.ok(domainService.getEnabledPrograms()).build();
+    return Response.ok(programService.getEnabledPrograms()).build();
   }
 
   /**

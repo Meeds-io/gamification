@@ -16,7 +16,7 @@ public class RealizationRestEntity implements Cloneable {
 
   private RuleDTO        action;
 
-  private ProgramDTO      domain;
+  private ProgramDTO     domain;
 
   private String         domainLabel;
 

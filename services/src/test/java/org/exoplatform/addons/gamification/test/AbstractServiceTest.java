@@ -152,7 +152,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
 
   protected BadgeService                 badgeService;
 
-  protected ProgramService                domainService;
+  protected ProgramService                programService;
 
   protected RuleService                  ruleService;
 
@@ -204,7 +204,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     relationshipManager = ExoContainerContext.getService(RelationshipManager.class);
     announcementService = ExoContainerContext.getService(AnnouncementService.class);
     badgeService = ExoContainerContext.getService(BadgeService.class);
-    domainService = ExoContainerContext.getService(ProgramService.class);
+    programService = ExoContainerContext.getService(ProgramService.class);
     ruleService = ExoContainerContext.getService(RuleService.class);
     realizationService = ExoContainerContext.getService(RealizationService.class);
     entityManagerService = ExoContainerContext.getService(EntityManagerService.class);

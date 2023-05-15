@@ -91,7 +91,7 @@ public class RuleServiceTest extends AbstractServiceTest {
 
     assertNotNull(ruleService.findRuleById(rule.getId()));
     program.setAudienceId(program.getAudienceId() + 1);
-    ProgramDTO updatedProgram = domainService.updateProgram(program, adminAclIdentity);
+    ProgramDTO updatedProgram = programService.updateProgram(program, adminAclIdentity);
 
     RuleDTO updatedRuleAudience = ruleService.findRuleById(rule.getId());
     assertNotNull(updatedRuleAudience);
@@ -181,7 +181,7 @@ public class RuleServiceTest extends AbstractServiceTest {
     ruleFilter.setEntityStatusType(EntityStatusType.DISABLED);
     assertEquals(2, ruleService.getRules(ruleFilter,0, 10).size());
     ruleFilter.setEntityStatusType(EntityStatusType.ALL);
-    ProgramDTO domain = domainService.getProgramByTitle(GAMIFICATION_DOMAIN);
+    ProgramDTO domain = programService.getProgramByTitle(GAMIFICATION_DOMAIN);
     long domainId = domain.getId();
     ruleFilter.setDomainId(domainId);
     assertEquals(1, ruleService.getRules(ruleFilter,0, 10).size());

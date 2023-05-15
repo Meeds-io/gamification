@@ -38,24 +38,24 @@ public class ProgramWithRulesRestEntity extends ProgramDTO {
 
   private int                  size;
 
-  public ProgramWithRulesRestEntity(ProgramDTO domain) {
-    super(domain.getId(),
-          domain.getTitle(),
-          domain.getDescription(),
-          domain.getPriority(),
-          domain.getAudienceId(),
-          domain.getCreatedBy(),
-          domain.getCreatedDate(),
-          domain.getLastModifiedBy(),
-          domain.getLastModifiedDate(),
-          domain.isDeleted(),
-          domain.isEnabled(),
-          domain.getBudget(),
-          domain.getType(),
-          domain.getCoverFileId(),
-          domain.getCoverUrl(),
-          domain.getOwners(),
-          domain.getRulesTotalScore());
+  public ProgramWithRulesRestEntity(ProgramDTO program) {
+    super(program.getId(),
+          program.getTitle(),
+          program.getDescription(),
+          program.getPriority(),
+          program.getAudienceId(),
+          program.getCreatedBy(),
+          program.getCreatedDate(),
+          program.getLastModifiedBy(),
+          program.getLastModifiedDate(),
+          program.isDeleted(),
+          program.isEnabled(),
+          program.getBudget(),
+          program.getType(),
+          program.getCoverFileId(),
+          program.getCoverUrl(),
+          program.getOwners(),
+          program.getRulesTotalScore());
   }
 
 }

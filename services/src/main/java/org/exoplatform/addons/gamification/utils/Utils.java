@@ -263,11 +263,11 @@ public class Utils {
     return space;
   }
 
-  public static ProgramDTO getDomainByTitle(ProgramService domainService, String domainTitle) {
+  public static ProgramDTO getProgramByTitle(ProgramService programService, String domainTitle) {
     if (domainTitle == null || domainTitle.isEmpty()) {
       return null;
     }
-    return domainService.getProgramByTitle(domainTitle);
+    return programService.getProgramByTitle(domainTitle);
   }
 
   public static RuleDTO getRuleById(RuleService ruleService, long ruleId) throws IllegalArgumentException {
@@ -312,7 +312,7 @@ public class Utils {
               .toList();
   }
 
-  public static List<UserInfo> getDomainOwnersByIds(Set<Long> ids, long spaceId) {
+  public static List<UserInfo> getProgramOwnersByIds(Set<Long> ids, long spaceId) {
     if (ids == null || ids.isEmpty()) {
       return Collections.emptyList();
     }
@@ -336,10 +336,10 @@ public class Utils {
               .toList();
   }
 
-  public static UserInfo toUserInfo(ProgramService domainService, long domainId, String username) {
+  public static UserInfo toUserInfo(ProgramService programService, long domainId, String username) {
     ProgramDTO domain = null;
     if (domainId > 0) {
-      domain = domainService.getProgramById(domainId);
+      domain = programService.getProgramById(domainId);
     }
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
     Identity identity = identityManager.getOrCreateUserIdentity(username);

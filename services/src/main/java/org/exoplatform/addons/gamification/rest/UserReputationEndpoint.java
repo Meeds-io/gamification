@@ -60,21 +60,25 @@ public class UserReputationEndpoint implements ResourceContainer {
 
     private final CacheControl cacheControl;
 
-    protected RealizationService realizationService = null;
+    protected final RealizationService realizationService;
 
-    protected IdentityManager identityManager = null;
+    protected final IdentityManager  identityManager;
 
-    protected BadgeService badgeService = null;
+    protected final BadgeService     badgeService;
+
+    protected final FileService      fileService;
 
     public UserReputationEndpoint(RealizationService realizationService,
                                   IdentityManager identityManager,
-                                  BadgeService badgeService) {
+                                  BadgeService badgeService,
+                                  FileService fileService) {
       this.cacheControl = new CacheControl();
       cacheControl.setNoCache(true);
       cacheControl.setNoStore(true);
       this.realizationService = realizationService;
       this.identityManager = identityManager;
       this.badgeService = badgeService;
+      this.fileService = fileService;
     }
 
     @GET
@@ -241,7 +245,7 @@ public class UserReputationEndpoint implements ResourceContainer {
             return null;
         }
         try {
-            file = CommonsUtils.getService(FileService.class).getFile(avatarId);
+            file = fileService.getFile(avatarId);
         } catch (FileStorageException e) {
             return null;
         }

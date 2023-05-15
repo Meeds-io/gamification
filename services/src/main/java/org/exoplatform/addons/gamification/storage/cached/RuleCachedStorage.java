@@ -44,11 +44,11 @@ public class RuleCachedStorage extends RuleStorage {
 
   private FutureExoCache<Serializable, Object, CacheKey> ruleFutureCache;
 
-  public RuleCachedStorage(ProgramStorage domainStorage,
-                           ProgramDAO domainDAO,
+  public RuleCachedStorage(ProgramStorage programStorage,
+                           ProgramDAO programDAO,
                            RuleDAO ruleDAO,
                            CacheService cacheService) {
-    super(domainStorage, domainDAO, ruleDAO);
+    super(programStorage, programDAO, ruleDAO);
     ExoCache<Serializable, Object> ruleCache = cacheService.getCacheInstance(RULE_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> ruleLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override

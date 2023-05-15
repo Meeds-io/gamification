@@ -195,7 +195,7 @@ public class UtilsTest extends AbstractServiceTest {
     RuleDTO rule = newRuleDTO();
     Identity identity = identityManager.getOrCreateUserIdentity("root1");
 
-    UserInfo userInfo = Utils.toUserInfo(domainService, rule.getProgram().getId(), identity.getRemoteId());
+    UserInfo userInfo = Utils.toUserInfo(programService, rule.getProgram().getId(), identity.getRemoteId());
     assertNotNull(userInfo);
     assertEquals("root1", userInfo.getRemoteId());
     assertTrue(userInfo.isCanAnnounce());
@@ -204,11 +204,11 @@ public class UtilsTest extends AbstractServiceTest {
   @Test
   public void testGetDomainByTitle() {
     ProgramDTO domain = newProgram();
-    ProgramDTO savedDomain = Utils.getDomainByTitle(domainService, null);
+    ProgramDTO savedDomain = Utils.getProgramByTitle(programService, null);
     assertNull(savedDomain);
-    savedDomain = Utils.getDomainByTitle(domainService, "");
+    savedDomain = Utils.getProgramByTitle(programService, "");
     assertNull(savedDomain);
-    savedDomain = Utils.getDomainByTitle(domainService, domain.getTitle());
+    savedDomain = Utils.getProgramByTitle(programService, domain.getTitle());
     assertNotNull(savedDomain);
   }
 

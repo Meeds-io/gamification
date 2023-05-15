@@ -35,7 +35,7 @@ public class BadgeBuilder {
     // Utils class, thus private constructor
   }
 
-  public static BadgeDTO fromEntity(ProgramStorage domainStorage, BadgeEntity badgeEntity) {
+  public static BadgeDTO fromEntity(ProgramStorage programStorage, BadgeEntity badgeEntity) {
     BadgeDTO badgeDTO = new BadgeDTO();
     badgeDTO.setId(badgeEntity.getId());
     badgeDTO.setTitle(badgeEntity.getTitle());
@@ -50,16 +50,16 @@ public class BadgeBuilder {
     badgeDTO.setLastModifiedBy(badgeEntity.getLastModifiedBy());
     badgeDTO.setLastModifiedDate(formatDate(badgeEntity.getLastModifiedDate()));
     badgeDTO.setProgram((badgeEntity.getDomainEntity() == null) ? null
-                                                                  : domainStorage.getDomainById(badgeEntity.getDomainEntity()
+                                                                  : programStorage.getDomainById(badgeEntity.getDomainEntity()
                                                                                                            .getId()));
     badgeDTO.setIconFileId(badgeEntity.getIconFileId());
     return badgeDTO;
   }
 
-  public static List<BadgeDTO> fromEntities(ProgramStorage domainStorage, List<BadgeEntity> badges) {
+  public static List<BadgeDTO> fromEntities(ProgramStorage programStorage, List<BadgeEntity> badges) {
     return badges.stream()
                  .filter(Objects::nonNull)
-                 .map(entity -> fromEntity(domainStorage, entity))
+                 .map(entity -> fromEntity(programStorage, entity))
                  .toList();
   }
 

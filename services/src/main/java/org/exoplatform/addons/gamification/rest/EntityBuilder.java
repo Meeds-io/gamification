@@ -55,7 +55,7 @@ public class EntityBuilder {
     }
   }
 
-  public static RuleRestEntity toRestEntity(ProgramService domainService,
+  public static RuleRestEntity toRestEntity(ProgramService programService,
                                             AnnouncementService announcementService,
                                             RuleDTO rule,
                                             List<String> expandFields,
@@ -79,14 +79,14 @@ public class EntityBuilder {
                                                                                                    IdentityType.USER)
                                                    : 0;
     }
-    ProgramDTO domain = noDomain ? null : rule.getProgram();
-    UserInfo userInfo = Utils.toUserInfo(domainService, rule.getDomainId(), Utils.getCurrentUser());
+    ProgramDTO program = noDomain ? null : rule.getProgram();
+    UserInfo userInfo = Utils.toUserInfo(programService, rule.getDomainId(), Utils.getCurrentUser());
 
     return new RuleRestEntity(rule.getId(),
                               rule.getTitle(),
                               rule.getDescription(),
                               rule.getScore(),
-                              domain,
+                              program,
                               rule.isEnabled(),
                               rule.isDeleted(),
                               rule.getCreatedBy(),
@@ -104,31 +104,31 @@ public class EntityBuilder {
                               userInfo);
   }
 
-  public static ProgramRestEntity toRestEntity(ProgramService domainService, ProgramDTO domain, String username) {
-    if (domain == null) {
+  public static ProgramRestEntity toRestEntity(ProgramService programService, ProgramDTO program, String username) {
+    if (program == null) {
       return null;
     }
-    return new ProgramRestEntity(domain.getId(),
-                                domain.getTitle(),
-                                domain.getDescription(),
-                                domain.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(domain.getAudienceId())) : null,
-                                domain.getPriority(),
-                                domain.getCreatedBy(),
-                                domain.getCreatedDate(),
-                                domain.getLastModifiedBy(),
-                                domain.getLastModifiedDate(),
-                                domain.isEnabled(),
-                                domain.isDeleted(),
-                                domain.getBudget(),
-                                domain.getType(),
-                                domain.getCoverUrl(),
-                                domain.getRulesTotalScore(),
-                                Utils.getDomainOwnersByIds(domain.getOwners(), domain.getAudienceId()),
-                                Utils.toUserInfo(domainService, domain.getId(), username));
+    return new ProgramRestEntity(program.getId(),
+                                 program.getTitle(),
+                                 program.getDescription(),
+                                 program.getAudienceId() > 0 ? Utils.getSpaceById(String.valueOf(program.getAudienceId())) : null,
+                                 program.getPriority(),
+                                 program.getCreatedBy(),
+                                 program.getCreatedDate(),
+                                 program.getLastModifiedBy(),
+                                 program.getLastModifiedDate(),
+                                 program.isEnabled(),
+                                 program.isDeleted(),
+                                 program.getBudget(),
+                                 program.getType(),
+                                 program.getCoverUrl(),
+                                 program.getRulesTotalScore(),
+                                 Utils.getProgramOwnersByIds(program.getOwners(), program.getAudienceId()),
+                                 Utils.toUserInfo(programService, program.getId(), username));
   }
 
-  public static List<ProgramRestEntity> toRestEntities(ProgramService domainService, List<ProgramDTO> domains, String username) {
-    return domains.stream().map(program -> toRestEntity(domainService, program, username)).toList();
+  public static List<ProgramRestEntity> toRestEntities(ProgramService programService, List<ProgramDTO> domains, String username) {
+    return domains.stream().map(program -> toRestEntity(programService, program, username)).toList();
   }
 
   public static List<Announcement> getAnnouncements(AnnouncementService announcementService,

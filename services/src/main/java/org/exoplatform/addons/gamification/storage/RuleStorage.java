@@ -15,18 +15,18 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class RuleStorage {
 
-  private ProgramStorage domainStorage;
+  private ProgramStorage programStorage;
 
-  private ProgramDAO     domainDAO;
+  private ProgramDAO     programDAO;
 
-  private RuleDAO       ruleDAO;
+  private RuleDAO        ruleDAO;
 
-  public RuleStorage(ProgramStorage domainStorage,
-                     ProgramDAO domainDAO,
+  public RuleStorage(ProgramStorage programStorage,
+                     ProgramDAO programDAO,
                      RuleDAO ruleDAO) {
-    this.domainStorage = domainStorage;
+    this.programStorage = programStorage;
     this.ruleDAO = ruleDAO;
-    this.domainDAO = domainDAO;
+    this.programDAO = programDAO;
   }
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
@@ -34,7 +34,7 @@ public class RuleStorage {
     ruleEntity.setLastModifiedDate(new Date());
     ProgramDTO program = ruleDTO.getProgram();
     if (program != null) {
-      ProgramEntity domainEntity = domainDAO.find(program.getId());
+      ProgramEntity domainEntity = programDAO.find(program.getId());
       ruleEntity.setDomainEntity(domainEntity);
     }
     if (ruleEntity.getId() == null) {
@@ -43,24 +43,24 @@ public class RuleStorage {
     } else {
       ruleEntity = ruleDAO.update(ruleEntity);
     }
-    return RuleBuilder.ruleToRuleDTO(domainStorage, ruleEntity);
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleEntity);
   }
 
   public RuleDTO findRuleById(Long id) {
-    return RuleBuilder.ruleToRuleDTO(domainStorage, ruleDAO.find(id));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.find(id));
   }
 
   public List<RuleDTO> findActiveRulesByEvent(String event) {
     List<RuleEntity> entities = ruleDAO.findActiveRulesByEvent(event);
-    return RuleBuilder.rulesToRuleDTOs(domainStorage, entities);
+    return RuleBuilder.rulesToRuleDTOs(programStorage, entities);
   }
 
   public RuleDTO findRuleByTitle(String ruleTitle) {
-    return RuleBuilder.ruleToRuleDTO(domainStorage, ruleDAO.findRuleByTitle(ruleTitle));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }
 
   public RuleDTO findRuleByEventAndDomain(String event, long domainId) {
-    return RuleBuilder.ruleToRuleDTO(domainStorage, ruleDAO.findRuleByEventAndDomain(event, domainId));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findRuleByEventAndDomain(event, domainId));
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
@@ -104,7 +104,7 @@ public class RuleStorage {
       ruleEntity.setDeleted(true);
       ruleDAO.update(ruleEntity);
     }
-    return RuleBuilder.ruleToRuleDTO(domainStorage, ruleEntity);
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleEntity);
   }
 
   public void clearCache() { // NOSONAR

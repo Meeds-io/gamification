@@ -28,7 +28,6 @@ import org.exoplatform.addons.gamification.service.configuration.RuleService;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.setting.rule.RuleRegistry;
 import org.exoplatform.addons.gamification.service.setting.rule.model.RuleConfig;
-import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 
@@ -44,12 +43,14 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     private final Map<String, RuleConfig> ruleMap;
 
-    protected RuleService ruleService;
+    protected RuleService               ruleService;
 
-    protected ProgramService domainService;
+    protected ProgramService            programService;
 
-    public RuleRegistryImpl(ProgramService domainService) {
-      this.domainService = domainService;
+    public RuleRegistryImpl(ProgramService programService,
+                            RuleService ruleService) {
+      this.programService = programService;
+      this.ruleService = ruleService;
       this.ruleMap = new HashMap<>();
     }
 
@@ -67,8 +68,6 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
 
     @Override
     public void start() {
-
-        ruleService = CommonsUtils.getService(RuleService.class);
         try {
             // Processing registered rules
 
@@ -94,13 +93,12 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
      * @param ruleConfig
      */
     private void store(RuleConfig ruleConfig, RuleDTO ruleDTO) {
-      domainService = CommonsUtils.getService(ProgramService.class);
       try {
         if (ruleDTO != null) {
           ruleDTO.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX + ruleConfig.getTitle());
           ruleDTO.setDescription(ruleConfig.getDescription());
           ruleDTO.setEvent(ruleConfig.getEvent());
-          CommonsUtils.getService(RuleService.class).updateRule(ruleDTO);
+          ruleService.updateRule(ruleDTO);
         } else {
           RuleDTO ruleDto = new RuleDTO();
           ruleDto.setTitle(GAMIFICATION_DEFAULT_DATA_PREFIX + ruleConfig.getTitle());
@@ -109,7 +107,7 @@ public class RuleRegistryImpl implements Startable, RuleRegistry {
           ruleDto.setEvent(ruleConfig.getEvent());
           ruleDto.setDeleted(false);
           ruleDto.setDescription(ruleConfig.getDescription());
-          CommonsUtils.getService(RuleService.class).createRule(ruleDto);
+          ruleService.createRule(ruleDto);
         }
       } catch (Exception e) {
         LOG.error("Error when saving Rule ", e);

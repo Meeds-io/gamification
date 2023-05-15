@@ -48,10 +48,10 @@ public class ProgramCachedStorage extends ProgramStorage {
 
   public ProgramCachedStorage(FileService fileService,
                              UploadService uploadService,
-                             ProgramDAO domainDAO,
+                             ProgramDAO programDAO,
                              RuleDAO ruleDAO,
                              CacheService cacheService) {
-    super(fileService, uploadService, domainDAO, ruleDAO);
+    super(fileService, uploadService, programDAO, ruleDAO);
     ExoCache<Serializable, Object> domainCache = cacheService.getCacheInstance(DOMAIN_CACHE_NAME);
     Loader<Serializable, Object, CacheKey> domainLoader = new Loader<Serializable, Object, CacheKey>() {
       @Override

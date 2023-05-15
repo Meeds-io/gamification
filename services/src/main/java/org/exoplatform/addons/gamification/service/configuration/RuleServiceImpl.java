@@ -40,16 +40,16 @@ public class RuleServiceImpl implements RuleService {
 
   private static final String   USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
-  private final ProgramService   domainService;
+  private final ProgramService   programService;
 
   private final RuleStorage     ruleStorage;
 
   private final ListenerService listenerService;
 
-  public RuleServiceImpl(ProgramService domainService,
+  public RuleServiceImpl(ProgramService programService,
                          RuleStorage ruleStorage,
                          ListenerService listenerService) {
-    this.domainService = domainService;
+    this.programService = programService;
     this.listenerService = listenerService;
     this.ruleStorage = ruleStorage;
   }
@@ -61,7 +61,7 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO rule = ruleStorage.findRuleById(id);
     if (rule != null && rule.getProgram() != null) {
-      rule.setProgram(domainService.getProgramById(rule.getProgram().getId()));
+      rule.setProgram(programService.getProgramById(rule.getProgram().getId()));
     }
     return rule;
   }
@@ -78,7 +78,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException(USERNAME_IS_MANDATORY_MESSAGE);
     }
-    if (!Utils.isRuleManager(domainService, rule, username)
+    if (!Utils.isRuleManager(programService, rule, username)
         && (!rule.isEnabled()
             || rule.getProgram() == null
             || !Utils.isSpaceMember(rule.getProgram().getAudienceId(), username))) {
@@ -102,7 +102,7 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO rule = ruleStorage.findRuleByTitle(ruleTitle);
     if (rule != null && rule.getProgram() != null) {
-      rule.setProgram(domainService.getProgramById(rule.getProgram().getId()));
+      rule.setProgram(programService.getProgramById(rule.getProgram().getId()));
     }
     return rule;
   }
@@ -154,7 +154,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!Utils.isRuleManager(domainService, rule, username)) {
+    if (!Utils.isRuleManager(programService, rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
     Date endDate = Utils.parseSimpleDate(rule.getEndDate());
@@ -179,7 +179,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getId() != null) {
       throw new IllegalArgumentException("domain id must be equal to 0");
     }
-    if (!Utils.isRuleManager(domainService, rule, username)) {
+    if (!Utils.isRuleManager(programService, rule, username)) {
       throw new IllegalAccessException("The user is not authorized to create a rule");
     }
     checkPermissionAndDates(rule, username);
@@ -212,7 +212,7 @@ public class RuleServiceImpl implements RuleService {
     if (oldRule == null) {
       throw new ObjectNotFoundException("Rule does not exist");
     }
-    if (!Utils.isRuleManager(domainService, oldRule, username)) {
+    if (!Utils.isRuleManager(programService, oldRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
     checkPermissionAndDates(oldRule, username); // Test if user
@@ -230,7 +230,7 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {
-    if (!Utils.isRuleManager(domainService, rule, username)) {
+    if (!Utils.isRuleManager(programService, rule, username)) {
       if (rule.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update the rule with id " + rule.getId());
       } else {

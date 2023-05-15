@@ -100,16 +100,16 @@ public class RuleIndexingServiceConnector extends ElasticIndexingServiceConnecto
     fields.put("type", rule.getType().name());
     Document document = new Document(id, null, new Date(System.currentTimeMillis()), Collections.emptySet(), fields);
 
-    ProgramDTO domain = rule.getProgram();
-    if (domain == null) {
+    ProgramDTO program = rule.getProgram();
+    if (program == null) {
       document.addField("domainId", "");
       document.addField("audience", "");
       document.addListField("managers", Collections.emptyList());
     } else {
-      document.addField("domainId", String.valueOf(domain.getId()));
-      document.addField("audience", String.valueOf(domain.getAudienceId()));
-      if (CollectionUtils.isNotEmpty(domain.getOwners())) {
-        document.addListField("managers", domain.getOwners().stream().map(String::valueOf).toList());
+      document.addField("domainId", String.valueOf(program.getId()));
+      document.addField("audience", String.valueOf(program.getAudienceId()));
+      if (CollectionUtils.isNotEmpty(program.getOwners())) {
+        document.addListField("managers", program.getOwners().stream().map(String::valueOf).toList());
       } else {
         document.addListField("managers", Collections.emptyList());
       }

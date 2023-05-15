@@ -31,11 +31,11 @@ public class RuleBuilder {
     // Class with static methods
   }
 
-  public static List<RuleDTO> rulesToRuleDTOs(ProgramStorage domainStorage,
+  public static List<RuleDTO> rulesToRuleDTOs(ProgramStorage programStorage,
                                               List<RuleEntity> rules) {
     return rules.stream()
                 .filter(Objects::nonNull)
-                .map(entity -> ruleToRuleDTO(domainStorage, entity))
+                .map(entity -> ruleToRuleDTO(programStorage, entity))
                 .toList();
   }
 
@@ -74,7 +74,7 @@ public class RuleBuilder {
     return rule;
   }
 
-  public static RuleDTO ruleToRuleDTO(ProgramStorage domainStorage, RuleEntity ruleEntity) {
+  public static RuleDTO ruleToRuleDTO(ProgramStorage programStorage, RuleEntity ruleEntity) {
     if (ruleEntity == null) {
       return null;
     } else {
@@ -102,7 +102,7 @@ public class RuleBuilder {
       rule.setLastModifiedDate(Utils.toRFC3339Date(ruleEntity.getLastModifiedDate()));
       rule.setLastModifiedBy(ruleEntity.getLastModifiedBy());
       rule.setProgram(ruleEntity.getDomainEntity() == null ? null
-                                                             : domainStorage.getDomainById(ruleEntity.getDomainEntity().getId()));
+                                                             : programStorage.getDomainById(ruleEntity.getDomainEntity().getId()));
       return rule;
     }
   }

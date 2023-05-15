@@ -44,7 +44,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   private static final Log        LOG                                  = ExoLogger.getLogger(ProgramServiceImpl.class);
 
-  protected final ProgramStorage   domainStorage;
+  protected final ProgramStorage  programStorage;
 
   protected final ListenerService listenerService;
 
@@ -54,11 +54,12 @@ public class ProgramServiceImpl implements ProgramService {
 
   protected final FileService     fileService;
 
-  public ProgramServiceImpl(ProgramStorage domainStorage,
-                           ListenerService listenerService,
-                           IdentityManager identityManager,
-                           SpaceService spaceService, FileService fileService) {
-    this.domainStorage = domainStorage;
+  public ProgramServiceImpl(ProgramStorage programStorage,
+                            ListenerService listenerService,
+                            IdentityManager identityManager,
+                            SpaceService spaceService,
+                            FileService fileService) {
+    this.programStorage = programStorage;
     this.listenerService = listenerService;
     this.identityManager = identityManager;
     this.spaceService = spaceService;
@@ -75,9 +76,9 @@ public class ProgramServiceImpl implements ProgramService {
   public List<Long> getProgramIdsByFilter(ProgramFilter domainFilter, String username, int offset, int limit) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
       if (domainFilter.isSortByBudget()) {
-        return domainStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
+        return programStorage.findHighestBudgetDomainIdsBySpacesIds(domainFilter.getSpacesIds(), offset, limit);
       } else {
-        return domainStorage.getDomainsByFilter(domainFilter, offset, limit);
+        return programStorage.getDomainsByFilter(domainFilter, offset, limit);
       }
     } else {
       return Collections.emptyList();
@@ -86,7 +87,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public List<ProgramDTO> getEnabledPrograms() {
-    return domainStorage.getEnabledDomains();
+    return programStorage.getEnabledDomains();
   }
 
   @Override
@@ -94,13 +95,13 @@ public class ProgramServiceImpl implements ProgramService {
     if (StringUtils.isBlank(domainTitle)) {
       throw new IllegalArgumentException("domainTitle has to be not null");
     }
-    return domainStorage.getProgramByTitle(domainTitle);
+    return programStorage.getProgramByTitle(domainTitle);
   }
 
   @Override
   public int countPrograms(ProgramFilter domainFilter, String username) throws IllegalAccessException {
     if (computeUserSpaces(domainFilter, username)) {
-      return domainStorage.countDomains(domainFilter);
+      return programStorage.countDomains(domainFilter);
     } else {
       return 0;
     }
@@ -131,7 +132,7 @@ public class ProgramServiceImpl implements ProgramService {
 
   @Override
   public ProgramDTO updateProgram(ProgramDTO domain, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
-    ProgramDTO storedDomain = domainStorage.getDomainById(domain.getId());
+    ProgramDTO storedDomain = programStorage.getDomainById(domain.getId());
     if (storedDomain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
     }
@@ -154,7 +155,7 @@ public class ProgramServiceImpl implements ProgramService {
     domain.setDeleted(storedDomain.isDeleted());
     domain.setCoverFileId(storedDomain.getCoverFileId());
 
-    domain = domainStorage.saveDomain(domain);
+    domain = programStorage.saveDomain(domain);
     if (storedDomain.isEnabled() && !domain.isEnabled()) {
       broadcast(GAMIFICATION_DOMAIN_DISABLE_LISTENER, domain, aclIdentity.getUserId());
     } else if (!storedDomain.isEnabled() && domain.isEnabled()) {
@@ -168,7 +169,7 @@ public class ProgramServiceImpl implements ProgramService {
   @Override
   public ProgramDTO deleteProgramById(long domainId, Identity aclIdentity) throws IllegalAccessException, ObjectNotFoundException {
     String date = Utils.toRFC3339Date(new Date(System.currentTimeMillis()));
-    ProgramDTO domain = domainStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getDomainById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("domain doesn't exist");
     }
@@ -177,7 +178,7 @@ public class ProgramServiceImpl implements ProgramService {
     }
     domain.setDeleted(true);
     domain.setLastModifiedDate(date);
-    domain = domainStorage.saveDomain(domain);
+    domain = programStorage.saveDomain(domain);
     broadcast(GAMIFICATION_DOMAIN_DELETE_LISTENER, domain, aclIdentity.getUserId());
     return domain;
   }
@@ -187,12 +188,12 @@ public class ProgramServiceImpl implements ProgramService {
     if (domainId <= 0) {
       throw new IllegalArgumentException("domain id has to be positive integer");
     }
-    return domainStorage.getDomainById(domainId);
+    return programStorage.getDomainById(domainId);
   }
 
   @Override
   public InputStream getFileDetailAsStream(long domainId) throws ObjectNotFoundException {
-    ProgramDTO domain = domainStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getDomainById(domainId);
     if (domain == null) {
       throw new ObjectNotFoundException("Domain with id " + domainId + " doesn't exist");
     }
@@ -220,7 +221,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (userIdentity == null) {
       return false;
     }
-    ProgramDTO domain = domainStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getDomainById(domainId);
     if (domain == null) {
       return false;
     }
@@ -234,7 +235,7 @@ public class ProgramServiceImpl implements ProgramService {
     if (userIdentity == null) {
       return false;
     }
-    ProgramDTO domain = domainStorage.getDomainById(domainId);
+    ProgramDTO domain = programStorage.getDomainById(domainId);
     if (domain == null) {
       return false;
     }
@@ -295,7 +296,7 @@ public class ProgramServiceImpl implements ProgramService {
     domain.setCreatedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
     domain.setLastModifiedBy(username);
     domain.setLastModifiedDate(Utils.toRFC3339Date(new Date(System.currentTimeMillis())));
-    return domainStorage.saveDomain(domain);
+    return programStorage.saveDomain(domain);
   }
 
 }

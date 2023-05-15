@@ -21,7 +21,7 @@ public class RealizationMapper {
     // Class with static methods
   }
 
-  public static RealizationDTO fromEntity(ProgramStorage domainStorage,
+  public static RealizationDTO fromEntity(ProgramStorage programStorage,
                                           RealizationEntity realizationEntity) {
     if (realizationEntity == null) {
       return null;
@@ -38,7 +38,7 @@ public class RealizationMapper {
                               realizationEntity.getGlobalScore(),
                               realizationEntity.getActionTitle(),
                               realizationEntity.getDomainEntity() == null ? null
-                                                                          : domainStorage.getDomainById(realizationEntity.getDomainEntity()
+                                                                          : programStorage.getDomainById(realizationEntity.getDomainEntity()
                                                                                                                          .getId()),
                               realizationEntity.getDomain(),
                               realizationEntity.getContext(),
@@ -58,13 +58,13 @@ public class RealizationMapper {
                               realizationEntity.getType());
   }
 
-  public static List<RealizationDTO> fromEntities(ProgramStorage domainStorage,
+  public static List<RealizationDTO> fromEntities(ProgramStorage programStorage,
                                                   List<RealizationEntity> realizationEntities) {
     if (CollectionUtils.isEmpty(realizationEntities)) {
       return new ArrayList<>(Collections.emptyList());
     } else {
       return realizationEntities.stream()
-                                .map(entity -> fromEntity(domainStorage, entity))
+                                .map(entity -> fromEntity(programStorage, entity))
                                 .toList();
     }
   }
