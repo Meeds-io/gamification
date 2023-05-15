@@ -17,7 +17,6 @@
 
 package org.exoplatform.addons.gamification.rest;
 
-
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -43,9 +42,9 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
     super.setUp();
     startSessionAs("root1");
     registry(getComponentClass());
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
-    newGamificationActionsHistoryDTO();
+    newRealizationDTO();
+    newRealizationDTO();
+    newRealizationDTO();
   }
 
   @Test
@@ -65,6 +64,7 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
     }
 
   }
+
   @Test
   public void testFilter() {
 
@@ -81,6 +81,7 @@ public class TestLeaderboardEndpoint extends AbstractServiceTest {
       fail();
     }
   }
+
   @Test
   public void testStats() {
 

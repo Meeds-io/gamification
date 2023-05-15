@@ -32,7 +32,7 @@ public class CacheKey implements Serializable {
 
   private RuleFilter        ruleFilter;
 
-  private DomainFilter      domainFilter;
+  private ProgramFilter      domainFilter;
 
   private int               offset;
 
@@ -63,14 +63,14 @@ public class CacheKey implements Serializable {
     this.limit = limit;
   }
 
-  public CacheKey(Integer context, DomainFilter domainFilter, int offset, int limit) {
+  public CacheKey(Integer context, ProgramFilter domainFilter, int offset, int limit) {
     this.context = context;
     this.domainFilter = domainFilter;
     this.offset = offset;
     this.limit = limit;
   }
 
-  public CacheKey(Integer context, DomainFilter domainFilter) {
+  public CacheKey(Integer context, ProgramFilter domainFilter) {
     this.context = context;
     this.domainFilter = domainFilter;
   }

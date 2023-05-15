@@ -21,11 +21,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.UserInfo;
 import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +42,7 @@ public class RuleRestEntity implements Cloneable {
 
   protected int                        score;
 
-  private DomainDTO                    domainDTO;
+  private ProgramDTO                   program;
 
   protected boolean                    enabled;
 
@@ -65,7 +66,7 @@ public class RuleRestEntity implements Cloneable {
 
   private EntityType                   type;
 
-  private List<Long>                   managers;
+  private Set<Long>                    managers;
 
   private List<AnnouncementRestEntity> announcements;
 
@@ -79,7 +80,7 @@ public class RuleRestEntity implements Cloneable {
                               title,
                               description,
                               score,
-                              domainDTO,
+                              program,
                               enabled,
                               deleted,
                               createdBy,

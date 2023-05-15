@@ -1,6 +1,6 @@
 package org.exoplatform.addons.gamification.rest;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.services.rest.impl.ContainerResponse;
 import org.junit.Before;
@@ -18,11 +18,11 @@ public class TestUserReputationEndpoint extends AbstractServiceTest {
     super.setUp();
     startSessionAs("root1");
     registry(getComponentClass());
-    DomainEntity domainEntity = newDomain();
+    ProgramEntity domainEntity = newDomain();
     newBadge(domainEntity.getId());
-    newGamificationActionsHistory("rule1", domainEntity.getId());
-    newGamificationActionsHistory("rule2", domainEntity.getId());
-    newGamificationActionsHistory("rule3", domainEntity.getId());
+    newRealizationEntity("rule1", domainEntity.getId());
+    newRealizationEntity("rule2", domainEntity.getId());
+    newRealizationEntity("rule3", domainEntity.getId());
   }
 
   @Test

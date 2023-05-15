@@ -137,7 +137,7 @@ export default {
                 method: 'GET',
                 credentials: 'include',
               }).then((resp) => {
-                if (resp && resp.ok) {
+                if (resp?.ok) {
                   return resp.json();
                 }
                 else {

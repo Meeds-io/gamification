@@ -167,19 +167,21 @@ export default {
       this.loading = true;
       const offset = (this.page - 1) * this.announcementPerPage;
       this.listWinners = [];
-      this.$challengesServices.getAllAnnouncementsByChallenge(this.challengeId, earnerType, offset, this.announcementPerPage).then(announcements => {
-        if (announcements.length > 0) {
-          announcements.filter(announce => announce.assignee).map(announce => {
-            const announcement = {
-              user: announce.assignee,
-              activityId: announce.activityId,
-              createDate: announce.createdDate,
-              noActivityId: announce.activityId === null,
-            };
-            this.listWinners.push(announcement);
-          });
-        }
-      }).finally(() => this.loading = false);
+      this.$ruleService.getRuleAnnouncementsById(this.challengeId, earnerType, offset, this.announcementPerPage)
+        .then(announcements => {
+          if (announcements.length > 0) {
+            announcements.filter(announce => announce.assignee).map(announce => {
+              const announcement = {
+                user: announce.assignee,
+                activityId: announce.activityId,
+                createDate: announce.createdDate,
+                noActivityId: announce.activityId === null,
+              };
+              this.listWinners.push(announcement);
+            });
+          }
+        })
+        .finally(() => this.loading = false);
     },
   }
 };

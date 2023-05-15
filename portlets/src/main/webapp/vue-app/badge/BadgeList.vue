@@ -121,7 +121,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 <form id="domainSelectboxGroup">
                   <label class="pt-0">{{ $t('exoplatform.gamification.gamificationinformation.Domain') }}:</label>
 
-                  <select v-model="editedbadge.domainDTO" class="mb-4">
+                  <select v-model="editedbadge.program" class="mb-4">
                     <option disabled>
                       {{ $t('exoplatform.gamification.selectdomain') }}
                     </option>
@@ -143,12 +143,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                   <label class="uiSwitchBtn">
                     <input
                       v-model="editedbadge.enabled"
-                      :disabled="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled"
+                      :disabled="editedbadge.program==null||!editedbadge.program.enabled"
                       type="checkbox">
                     <div class="slider round"><span class="absolute-yes">{{ $t(`exoplatform.gamification.YES`,"YES") }}</span></div>
                     <span class="absolute-no">{{ $t(`exoplatform.gamification.NO`,"NO") }}</span>
                   </label>
-                  <div v-if="editedbadge.domainDTO==null||!editedbadge.domainDTO.enabled" class="error"> *{{ $t(`exoplatform.gamification.disabledDomainForBadges`,"This domain cannot be enabled as long as the related domain is disabled") }}.</div>
+                  <div v-if="editedbadge.program==null||!editedbadge.program.enabled" class="error"> *{{ $t(`exoplatform.gamification.disabledDomainForBadges`,"This domain cannot be enabled as long as the related domain is disabled") }}.</div>
                 </form>
  
 
@@ -273,7 +273,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </div>
               </td>
               <td style="max-width: 105px;">
-                <div v-if="badge.domainDTO != null">{{ $t(`exoplatform.gamification.gamificationinformation.domain.${badge.domainDTO.title}`,badge.domainDTO.title) }}</div>
+                <div v-if="badge.program != null">{{ $t(`exoplatform.gamification.gamificationinformation.domain.${badge.program.title}`,badge.program.title) }}</div>
               </td>
 
 
@@ -360,13 +360,13 @@ export default {
         return (this.$t(`badge.description.${item.title}`,item.description).toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || this.$t(`badge.title.${item.title}`,item.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1
                         || item.neededScore.toString().toLowerCase().indexOf(this.search.toLowerCase()) > -1
-                        || this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.domainDTO.title}`,item.domainDTO.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1)
+                        || this.$t(`exoplatform.gamification.gamificationinformation.domain.${item.program.title}`,item.program.title).toLowerCase().indexOf(this.search.toLowerCase()) > -1)
                         && (this.enabledFilter === null || item.enabled === this.enabledFilter);
 
       });
     },
     isDisabled: function(){
-      return !(this.isNotEmpty(this.editedbadge.neededScore)&&this.isNotEmpty(this.editedbadge.title)&&this.editedbadge.domainDTO!=null);
+      return !(this.isNotEmpty(this.editedbadge.neededScore)&&this.isNotEmpty(this.editedbadge.title)&&this.editedbadge.program!=null);
 
     }
   },
@@ -410,8 +410,8 @@ export default {
     },
     collapseEditButton(badge) {
       if ( badge ) {
-        if (badge?.domainDTO && this.domains?.length) {
-          badge.domainDTO = this.domains.find(domain => domain.title === badge.domainDTO.title);
+        if (badge?.program && this.domains?.length) {
+          badge.program = this.domains.find(domain => domain.title === badge.program.title);
         }
         this.badge = badge;
         this.editedbadge=badge;

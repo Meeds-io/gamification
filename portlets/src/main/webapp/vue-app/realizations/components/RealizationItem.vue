@@ -356,14 +356,14 @@ export default {
   },
   methods: {
     updateRealizations(status) {
-      this.$realizationsServices.updateRealization(this.realization.id, status)
+      this.$realizationService.updateRealization(this.realization.id, status)
         .then((updatedRealization) => this.$emit('updated', updatedRealization));
     },
     editRealization() {
       this.$root.$emit('realization-open-edit-drawer', this.realization, this.actionLabel);
     },
     openProgramDetail() {
-      this.$programsServices.getProgramById(this.program.id)
+      this.$programService.getProgramById(this.program.id)
         .then(program => {
           if (program && program.id) {
             this.$root.$emit('open-program-detail', program);

@@ -3,65 +3,64 @@ package org.exoplatform.addons.gamification.storage;
 import java.util.Date;
 import java.util.List;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleDTO;
 import org.exoplatform.addons.gamification.service.dto.configuration.RuleFilter;
-import org.exoplatform.addons.gamification.service.dto.configuration.constant.EntityType;
-import org.exoplatform.addons.gamification.service.mapper.RuleMapper;
-import org.exoplatform.addons.gamification.storage.dao.GamificationHistoryDAO;
+import org.exoplatform.addons.gamification.service.mapper.RuleBuilder;
+import org.exoplatform.addons.gamification.storage.dao.ProgramDAO;
 import org.exoplatform.addons.gamification.storage.dao.RuleDAO;
-import org.exoplatform.addons.gamification.utils.Utils;
 import org.exoplatform.commons.exception.ObjectNotFoundException;
 
 public class RuleStorage {
-  
-  private RuleDAO                ruleDAO;
 
-  private GamificationHistoryDAO gamificationHistoryDAO;
+  private ProgramStorage programStorage;
 
-  public RuleStorage(RuleDAO ruleDAO, GamificationHistoryDAO gamificationHistoryDAO) {
+  private ProgramDAO     programDAO;
+
+  private RuleDAO        ruleDAO;
+
+  public RuleStorage(ProgramStorage programStorage,
+                     ProgramDAO programDAO,
+                     RuleDAO ruleDAO) {
+    this.programStorage = programStorage;
     this.ruleDAO = ruleDAO;
-    this.gamificationHistoryDAO = gamificationHistoryDAO;
+    this.programDAO = programDAO;
   }
 
   public RuleDTO saveRule(RuleDTO ruleDTO) {
-    RuleEntity ruleEntity = RuleMapper.ruleDTOToRule(ruleDTO);
+    RuleEntity ruleEntity = RuleBuilder.ruleDTOToRule(ruleDTO);
     ruleEntity.setLastModifiedDate(new Date());
-    DomainDTO domainDTO = ruleDTO.getDomainDTO();
-    if (domainDTO != null) {
-      DomainEntity domainEntity = Utils.getDomainById(domainDTO.getId());
+    ProgramDTO program = ruleDTO.getProgram();
+    if (program != null) {
+      ProgramEntity domainEntity = programDAO.find(program.getId());
       ruleEntity.setDomainEntity(domainEntity);
     }
     if (ruleEntity.getId() == null) {
       ruleEntity.setCreatedDate(new Date());
       ruleEntity = ruleDAO.create(ruleEntity);
-    } else if (!ruleEntity.isDeleted()) {
+    } else {
       ruleEntity = ruleDAO.update(ruleEntity);
     }
-    return RuleMapper.ruleToRuleDTO(ruleEntity);
-  }
-
-  public RuleDTO findEnableRuleByTitle(String ruleTitle) {
-    return RuleMapper.ruleToRuleDTO(ruleDAO.findEnableRuleByTitle(ruleTitle));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleEntity);
   }
 
   public RuleDTO findRuleById(Long id) {
-    return RuleMapper.ruleToRuleDTO(ruleDAO.find(id));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.find(id));
   }
 
-  public List<RuleDTO> findEnabledRulesByEvent(String event) {
-    List<RuleEntity> entities = ruleDAO.findEnabledRulesByEvent(event);
-    return RuleMapper.rulesToRuleDTOs(entities);
+  public List<RuleDTO> findActiveRulesByEvent(String event) {
+    List<RuleEntity> entities = ruleDAO.findActiveRulesByEvent(event);
+    return RuleBuilder.rulesToRuleDTOs(programStorage, entities);
   }
 
   public RuleDTO findRuleByTitle(String ruleTitle) {
-    return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByTitle(ruleTitle));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findRuleByTitle(ruleTitle));
   }
 
   public RuleDTO findRuleByEventAndDomain(String event, long domainId) {
-    return RuleMapper.ruleToRuleDTO(ruleDAO.findRuleByEventAndDomain(event, domainId));
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleDAO.findRuleByEventAndDomain(event, domainId));
   }
 
   public List<Long> findRulesIdsByFilter(RuleFilter ruleFilter, int offset, int limit) {
@@ -78,18 +77,6 @@ public class RuleStorage {
 
   public List<Long> findAllRulesIds(int offset, int limit) {
     return ruleDAO.findRulesIdsByFilter(new RuleFilter(), offset, limit);
-  }
-
-  public List<RuleDTO> getActiveRules() {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getActiveRules());
-  }
-
-  public List<RuleDTO> getAllRulesByDomain(long domainId) {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRulesByDomain(domainId));
-  }
-
-  public List<RuleDTO> getAllRulesWithNullDomain() {
-    return RuleMapper.rulesToRuleDTOs(ruleDAO.getAllRulesWithNullDomain());
   }
 
   public List<String> getAllEvents() {
@@ -117,11 +104,7 @@ public class RuleStorage {
       ruleEntity.setDeleted(true);
       ruleDAO.update(ruleEntity);
     }
-    return RuleMapper.ruleToRuleDTO(ruleEntity);
-  }
-
-  public List<Long> findMostRealizedRuleIds(List<Long> spacesIds, int offset, int limit, EntityType type) {
-    return gamificationHistoryDAO.findMostRealizedRuleIds(spacesIds, offset, limit, type);
+    return RuleBuilder.ruleToRuleDTO(programStorage, ruleEntity);
   }
 
   public void clearCache() { // NOSONAR

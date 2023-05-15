@@ -17,7 +17,7 @@
 
 package org.exoplatform.addons.gamification.connector;
 
-import org.exoplatform.addons.gamification.entities.domain.configuration.DomainEntity;
+import org.exoplatform.addons.gamification.entities.domain.configuration.ProgramEntity;
 import org.exoplatform.addons.gamification.entities.domain.configuration.RuleEntity;
 import org.exoplatform.addons.gamification.test.AbstractServiceTest;
 import org.exoplatform.commons.search.domain.Document;
@@ -38,7 +38,7 @@ public class RuleIndexingServiceConnectorTest extends AbstractServiceTest {
   public void testCreate() {
     assertThrows(IllegalArgumentException.class, () -> ruleIndexingServiceConnector.update(""));
     assertThrows(IllegalStateException.class, () -> ruleIndexingServiceConnector.update("5122165"));
-    DomainEntity domainEntity = newDomain();
+    ProgramEntity domainEntity = newDomain();
     RuleEntity rule = newRule("test", domainEntity.getId());
     Document document = ruleIndexingServiceConnector.create(String.valueOf(rule.getId()));
     assertNotNull(document);
@@ -50,7 +50,7 @@ public class RuleIndexingServiceConnectorTest extends AbstractServiceTest {
   public void testUpdate() {
     assertThrows(IllegalArgumentException.class, () -> ruleIndexingServiceConnector.update(""));
     assertThrows(IllegalStateException.class, () -> ruleIndexingServiceConnector.update("5122165"));
-    DomainEntity domainEntity = newDomain();
+    ProgramEntity domainEntity = newDomain();
     RuleEntity rule = newManualRule("test", domainEntity.getId());
     Document document = ruleIndexingServiceConnector.update(String.valueOf(rule.getId()));
     assertNotNull(document);
