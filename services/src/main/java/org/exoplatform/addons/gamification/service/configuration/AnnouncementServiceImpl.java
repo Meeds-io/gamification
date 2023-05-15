@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.addons.gamification.IdentityType;
 import org.exoplatform.addons.gamification.service.AnnouncementService;
 import org.exoplatform.addons.gamification.service.dto.configuration.Announcement;
@@ -32,9 +34,9 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
 
-  private static final Log    LOG = ExoLogger.getLogger(AnnouncementServiceImpl.class);
+  private static final Log    LOG             = ExoLogger.getLogger(AnnouncementServiceImpl.class);
 
-  private AnnouncementStorage announcementStorage;
+  public static final long    MILLIS_IN_A_DAY = 1000 * 60 * 60 * 24;                               // NOSONAR
 
   private ActivityManager     activityManager;
 
@@ -44,6 +46,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
   private RuleService         ruleService;
 
+  private AnnouncementStorage announcementStorage;
+
   private ListenerService     listenerService;
 
   public AnnouncementServiceImpl(AnnouncementStorage announcementStorage,
@@ -52,33 +56,48 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                  IdentityManager identityManager,
                                  ActivityManager activityManager,
                                  ListenerService listenerService) {
+    this.ruleService = ruleService;
     this.announcementStorage = announcementStorage;
     this.spaceService = spaceService;
     this.activityManager = activityManager;
     this.identityManager = identityManager;
-    this.ruleService = ruleService;
     this.listenerService = listenerService;
   }
 
   @Override
-  public Announcement createAnnouncement(Announcement announcement,
+  public Announcement createAnnouncement(Announcement announcement, // NOSONAR
                                          Map<String, String> templateParams,
-                                         String username,
-                                         boolean system) throws ObjectNotFoundException, IllegalAccessException {
+                                         String username) throws ObjectNotFoundException, IllegalAccessException {
     if (announcement == null) {
       throw new IllegalArgumentException("announcement is mandatory");
     }
     if (announcement.getId() != 0) {
       throw new IllegalArgumentException("announcement id must be equal to 0");
     }
-    RuleDTO rule = ruleService.findRuleById(announcement.getChallengeId(), username);
-    if (rule == null) {
-      throw new ObjectNotFoundException("Rule with id '" + announcement.getChallengeId() + "' doesn't exist");
-    }
     Long assignee = announcement.getAssignee();
     if (assignee == null) {
       throw new IllegalArgumentException("announcement assignee must have at least one winner");
     }
+
+    RuleDTO rule = ruleService.findRuleById(announcement.getChallengeId(), username);
+    if (rule == null) {
+      throw new ObjectNotFoundException("Rule with id '" + announcement.getChallengeId() + "' doesn't exist");
+    }
+    if (rule.isDeleted()) {
+      throw new IllegalAccessException("Rule with id '" + announcement.getChallengeId() + "' is deleted");
+    }
+    if (!rule.isEnabled()) {
+      throw new IllegalAccessException("Rule with id '" + announcement.getChallengeId() + "' isn't enabled");
+    }
+    if (StringUtils.isNotBlank(rule.getStartDate())
+        && Utils.parseSimpleDate(rule.getStartDate()).getTime() > System.currentTimeMillis()) {
+      throw new IllegalAccessException("Rule with id '" + announcement.getChallengeId() + "' hasn't started yet");
+    }
+    if (StringUtils.isNotBlank(rule.getEndDate())
+        && Utils.parseSimpleDate(rule.getEndDate()).getTime() < System.currentTimeMillis()) {
+      throw new IllegalAccessException("Rule with id '" + announcement.getChallengeId() + "' has ended");
+    }
+
     Identity assigneeIdentity = identityManager.getIdentity(assignee.toString());
     if (assigneeIdentity == null || assigneeIdentity.isDeleted() || !assigneeIdentity.isEnable()) {
       throw new ObjectNotFoundException("Assignee with id " + assignee + " does not exist");
@@ -93,19 +112,37 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     announcement.setCreator(creatorId);
     announcement.setAssignee(creatorId);
     announcement.setCreatedDate(Utils.toRFC3339Date(new Date()));
-    announcement = announcementStorage.saveAnnouncement(announcement);
-    if (!system) {
-      try {
-        announcement = createActivity(rule, announcement, templateParams);
-      } catch (Exception e) {
-        LOG.warn("Error while creating activity for announcement with challenge with id {} made by user {}",
-                 rule.getId(),
-                 creatorIdentity.getId(),
-                 e);
-      }
+    Announcement createdAnnouncement = announcementStorage.createAnnouncement(announcement);
+    createActivity(rule, createdAnnouncement, templateParams);
+    broadcastEvent(listenerService, POST_CREATE_ANNOUNCEMENT_EVENT, createdAnnouncement, creatorId);
+    return createdAnnouncement;
+  }
+
+  @Override
+  public Announcement deleteAnnouncement(long announcementId, String username) throws ObjectNotFoundException,
+                                                                               IllegalAccessException {
+    if (announcementId <= 0) {
+      throw new IllegalArgumentException("Announcement id has to be positive integer");
     }
-    broadcastEvent(listenerService, POST_CREATE_ANNOUNCEMENT_EVENT, announcement, creatorId);
-    return announcement;
+    Announcement announcementToCancel = getAnnouncementById(announcementId);
+    if (announcementToCancel == null) {
+      throw new ObjectNotFoundException("Announcement does not exist");
+    }
+    Identity identity = identityManager.getOrCreateUserIdentity(username);
+    if (!announcementToCancel.getCreator().equals(Long.parseLong(identity.getId()))) {
+      throw new IllegalAccessException("user " + username + " is not allowed to cancel announcement with id "
+          + announcementToCancel.getId());
+    }
+    deleteActivity(announcementToCancel);
+    return announcementStorage.deleteAnnouncement(announcementId);
+  }
+
+  @Override
+  public Announcement getAnnouncementById(long announcementId) {
+    if (announcementId <= 0) {
+      throw new IllegalArgumentException("announcementId is mandatory");
+    }
+    return announcementStorage.getAnnouncementById(announcementId);
   }
 
   @Override
@@ -131,7 +168,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Long countAnnouncements(long ruleId) throws ObjectNotFoundException {
+  public int countAnnouncements(long ruleId) throws ObjectNotFoundException {
     if (ruleId <= 0) {
       throw new IllegalArgumentException("ruleId has to be positive integer");
     }
@@ -143,7 +180,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Long countAnnouncements(long ruleId, IdentityType earnerType) throws ObjectNotFoundException {
+  public int countAnnouncements(long ruleId, IdentityType earnerType) throws ObjectNotFoundException {
     if (ruleId <= 0) {
       throw new IllegalArgumentException("ruleId has to be positive integer");
     }
@@ -155,82 +192,64 @@ public class AnnouncementServiceImpl implements AnnouncementService {
   }
 
   @Override
-  public Announcement updateAnnouncement(Announcement announcement) throws ObjectNotFoundException {
-    return updateAnnouncement(announcement, true);
-  }
-
-  @Override
-  public Announcement updateAnnouncement(Announcement announcement, boolean broadcast) throws ObjectNotFoundException {
-    if (announcement == null) {
-      throw new IllegalArgumentException("announcement is mandatory");
-    }
-    if (announcement.getId() == 0) {
-      throw new IllegalArgumentException("announcement id must not be equal to 0");
-    }
-
-    Announcement oldAnnouncement = announcementStorage.getAnnouncementById(announcement.getId());
-    if (oldAnnouncement == null) {
-      throw new ObjectNotFoundException("Announcement does not exist");
-    }
-    Announcement savedAnnouncement = announcementStorage.saveAnnouncement(announcement);
-    if (broadcast) {
-      broadcastEvent(listenerService, POST_UPDATE_ANNOUNCEMENT_EVENT, announcement, announcement.getCreator());
-    }
-    return savedAnnouncement;
-  }
-
-  @Override
-  public Announcement deleteAnnouncement(long announcementId, String username) throws ObjectNotFoundException,
-                                                                               IllegalAccessException {
-    if (announcementId <= 0) {
-      throw new IllegalArgumentException("Announcement id has to be positive integer");
-    }
-    Announcement announcementToCancel = announcementStorage.getAnnouncementById(announcementId);
-    if (announcementToCancel == null) {
-      throw new ObjectNotFoundException("Announcement does not exist");
-    }
-    Identity identity = identityManager.getOrCreateUserIdentity(username);
-    if (!announcementToCancel.getCreator().equals(Long.parseLong(identity.getId()))) {
-      throw new IllegalAccessException("user " + username + " is not allowed to cancel announcement with id "
-          + announcementToCancel.getId());
-    }
-    String activityId = String.valueOf(announcementToCancel.getActivityId());
-    activityManager.deleteActivity(activityId);
-    return announcementStorage.deleteAnnouncement(announcementToCancel);
-  }
-
-  @Override
-  public Announcement getAnnouncementById(Long announcementId) {
-    if (announcementId == null || announcementId <= 0) {
+  public Announcement updateAnnouncementComment(long announcementId, String comment) throws ObjectNotFoundException {
+    if (announcementId == 0) {
       throw new IllegalArgumentException("announcement id is mandatory");
     }
-    return announcementStorage.getAnnouncementById(announcementId);
+    if (StringUtils.isBlank(comment)) {
+      throw new IllegalArgumentException("announcement comment is mandatory");
+    }
+
+    Announcement announcement = announcementStorage.updateAnnouncementComment(announcementId, comment);
+    broadcastEvent(listenerService, POST_UPDATE_ANNOUNCEMENT_EVENT, announcement, announcement.getCreator());
+    return announcement;
   }
 
-  public Announcement createActivity(RuleDTO rule,
-                                     Announcement announcement,
-                                     Map<String, String> templateParams) throws ObjectNotFoundException {
-    if (templateParams == null) {
-      templateParams = new HashMap<>();
+  private void deleteActivity(Announcement announcement) {
+    try {
+      String activityId = String.valueOf(announcement.getActivityId());
+      activityManager.deleteActivity(activityId);
+    } catch (Exception e) {
+      LOG.warn("Error while deleting activity for announcement with challenge with id {} made by user {}",
+               announcement.getChallengeId(),
+               announcement.getCreator(),
+               e);
     }
-    Space space = spaceService.getSpaceById(String.valueOf(rule.getAudienceId()));
-    if (space == null) {
-      throw new ObjectNotFoundException("space doesn't exists");
-    }
-    Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
-    if (spaceIdentity == null) {
-      throw new ObjectNotFoundException("space doesn't exists");
-    }
-    ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
-    activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
-    activity.setTitle(announcement.getComment());
-    activity.setUserId(String.valueOf(announcement.getCreator()));
-    templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
-    templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
-    Utils.buildActivityParams(activity, templateParams);
-
-    activityManager.saveActivityNoReturn(spaceIdentity, activity);
-    announcement.setActivityId(Long.parseLong(activity.getId()));
-    return updateAnnouncement(announcement, false);
   }
+
+  private void createActivity(RuleDTO rule,
+                              Announcement announcement,
+                              Map<String, String> templateParams) {
+    try {
+      if (templateParams == null) {
+        templateParams = new HashMap<>();
+      }
+      Space space = spaceService.getSpaceById(String.valueOf(rule.getAudienceId()));
+      if (space == null) {
+        throw new ObjectNotFoundException("space doesn't exists");
+      }
+      Identity spaceIdentity = identityManager.getOrCreateSpaceIdentity(space.getPrettyName());
+      if (spaceIdentity == null) {
+        throw new ObjectNotFoundException("space doesn't exists");
+      }
+      ExoSocialActivityImpl activity = new ExoSocialActivityImpl();
+      activity.setType(ANNOUNCEMENT_ACTIVITY_TYPE);
+      activity.setTitle(announcement.getComment());
+      activity.setUserId(String.valueOf(announcement.getCreator()));
+      templateParams.put(ANNOUNCEMENT_ID_TEMPLATE_PARAM, String.valueOf(announcement.getId()));
+      templateParams.put(ANNOUNCEMENT_DESCRIPTION_TEMPLATE_PARAM, rule.getTitle());
+      Utils.buildActivityParams(activity, templateParams);
+
+      activityManager.saveActivityNoReturn(spaceIdentity, activity);
+      long activityId = Long.parseLong(activity.getId());
+      announcementStorage.updateAnnouncementActivityId(announcement.getId(), activityId);
+      announcement.setActivityId(activityId);
+    } catch (Exception e) {
+      LOG.warn("Error while creating activity for announcement with challenge with id {} made by user {}",
+               rule.getId(),
+               announcement.getCreator(),
+               e);
+    }
+  }
+
 }
