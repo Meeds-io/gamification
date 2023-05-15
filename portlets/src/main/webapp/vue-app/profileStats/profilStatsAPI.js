@@ -19,7 +19,7 @@ export function getUsersByGamificationRank(period) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -32,7 +32,7 @@ export function getReputationStatus() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -46,7 +46,7 @@ export function getUserInformations() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -60,7 +60,7 @@ export function getSpaces() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -74,7 +74,7 @@ export function getSpacesOfUser(offset, limit) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     }
     else {
@@ -88,7 +88,7 @@ export function getCommonsSpaces(offset, limit) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     }
     else {
@@ -102,7 +102,7 @@ export function getSpacesRequests() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -130,7 +130,7 @@ export function getAchievements(providerId, remoteId, limit) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error ('Error when getting achievements');
@@ -148,7 +148,7 @@ export function replyInvitationToJoinSpace(spaceMembershipId, reply) {
       'Content-Type': 'application/json'
     }
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -175,7 +175,7 @@ export function getConnections() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -189,7 +189,7 @@ export function getConnectionsRequests() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -203,7 +203,7 @@ export function getConnectionRequestSender(senderUrl) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -222,7 +222,7 @@ export function replyInvitationToConnect(relationId, reply) {
       'Content-Type': 'application/json'
     }
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -236,7 +236,7 @@ export function getGamificationPoints(period) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     }
     else {
@@ -250,7 +250,7 @@ export function getGamificationPointsStats(period) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     }
     else {
@@ -264,7 +264,7 @@ export function getCommonConnections(relationId) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {

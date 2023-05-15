@@ -28,7 +28,7 @@
             :max-height="programCoverSize"
             :max-width="programCoverSize" /><span class="font-weight-bold my-auto ms-3">{{ program.title }}</span>
         </div>
-        <div v-if="!automaticRule && !isOpenRule && dateInfo" class="d-flex flex-row py-3">
+        <div v-if="!isOpenRule && dateInfo" class="d-flex flex-row py-3">
           <v-icon size="30" class="primary--text ps-1">fas fa-calendar-day</v-icon><span class="my-auto ms-4" v-sanitized-html="dateInfo"></span>
         </div>
         <div
@@ -179,7 +179,7 @@ export default {
       return this.automaticRule ? this.actionValueExtension?.icon : 'fas fa-trophy';
     },
     ruleScore() {
-      return this.rule?.score || this.rule?.points;
+      return this.rule?.score;
     },
     startDate() {
       return this.rule?.startDate && new Date(this.rule.startDate);
@@ -191,10 +191,8 @@ export default {
       return this.rule?.endDate === null && (this.rule?.startDate === null || this.startDate?.getTime() < Date.now());
     },
     isActiveRule() {
-      return this.automaticRule || (this.startDate === null && this.endDate === null)
-                                || (this.startDate?.getTime() <= Date.now() && this.endDate?.getTime() >= Date.now())
-                                || (this.startDate === null && this.endDate?.getTime() >= Date.now())
-                                || (this.startDate?.getTime() <= Date.now() && this.endDate === null);
+      return (!this.startDate || this.startDate.getTime() <= Date.now())
+        && (!this.endDate || this.endDate.getTime() > Date.now());
     },
     dateInfo() {
       if (this.endDate && this.endDate?.getTime() < Date.now()) {
@@ -251,7 +249,7 @@ export default {
     this.$root.$on('rule-detail-drawer', (rule, editorFocus) => {
       this.rule = rule;
       this.editorFocus = editorFocus;
-      this.program = rule?.domainDTO || rule?.program;
+      this.program = rule?.program;
       if (this.$refs.ruleDetailDrawer && this.isRuleAccessible) {
         this.$refs.ruleDetailDrawer.open();
         this.$nextTick()
@@ -269,7 +267,7 @@ export default {
     document.addEventListener('rule-detail-drawer', event => {
       if (event && event.detail) {
         this.rule = event.detail;
-        this.program = this.rule?.domainDTO || this.rule?.program;
+        this.program = this.rule?.program;
         if (this.$refs.ruleDetailDrawer) {
           this.$refs.ruleDetailDrawer.open();
         }
@@ -298,7 +296,7 @@ export default {
         templateParams: this.templateParams,
       };
       this.sending = true;
-      this.$challengesServices.saveAnnouncement(announcement)
+      this.$announcementService.createAnnouncement(announcement)
         .then(createdAnnouncement => {
           this.$engagementCenterUtils.displayAlert(this.$t('challenges.announcementCreateSuccess'));
           this.$root.$emit('announcement-added', {detail: {
@@ -346,7 +344,7 @@ export default {
             subModule: 'rule',
             userId: eXo.env.portal.userIdentityId,
             userName: eXo.env.portal.userName,
-            spaceId: this.rule.domainDTO?.audienceId || 0,
+            spaceId: this.rule.program?.audienceId || 0,
             operation: 'viewRule',
             timestamp: Date.now(),
             parameters: {
@@ -356,10 +354,10 @@ export default {
               ruleBudget: this.rule.score || 0,
               ruleType: this.rule.type,
               ruleEvent: this.rule.event,
-              programId: this.rule.domainDTO?.id,
-              programTitle: this.rule.domainDTO?.title,
-              programType: this.rule.domainDTO?.type,
-              programBudget: this.rule.domainDTO?.rulesTotalScore || 0,
+              programId: this.rule.program?.id,
+              programTitle: this.rule.program?.title,
+              programType: this.rule.program?.type,
+              programBudget: this.rule.program?.rulesTotalScore || 0,
               drawer: 'ruleDetail',
               portalName: eXo.env.portal.portalName,
               portalUri: eXo.env.server.portalBaseURL,

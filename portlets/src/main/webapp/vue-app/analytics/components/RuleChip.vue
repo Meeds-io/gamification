@@ -62,7 +62,7 @@ export default {
     if (this.ruleId) {
       this.loading = true;
       this.error = false;
-      this.$ruleServices.getRuleById(this.ruleId)
+      this.$ruleService.getRuleById(this.ruleId)
         .then(rule => this.rule = rule)
         .catch(() => this.error = true)
         .finally(() => this.loading = false);

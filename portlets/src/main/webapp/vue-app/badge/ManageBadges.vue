@@ -187,9 +187,9 @@ export default {
         });
     },
     getDomains(){
-      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/domains?type=ALL`, {
+      return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL`, {
         credentials: 'include',
-      }).then(resp => resp && resp.ok && resp.json())
+      }).then(resp => resp?.ok && resp.json())
         .then(data => this.domains = data?.domains || []);
     }
   }
