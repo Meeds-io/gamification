@@ -63,7 +63,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
   }
 
   @Override
-  public void saveActivity(ActivityLifeCycleEvent event) {
+  public void saveActivity(ActivityLifeCycleEvent event) { // NOSONAR
     // Target Activity
     ExoSocialActivity activity = event.getSource();
     // This listener track all kind of activities
@@ -186,6 +186,7 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
     }
   }
 
+  @Override
   public void updateComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
     // Waiting for spec to be implemented
   }
@@ -372,13 +373,13 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
         || activity.getType().equalsIgnoreCase("contents:spaces"));
   }
 
-  private void createActivityGamificationHistoryEntry(String senderId, String receiverId, String ruleTitle, String activityId) {
+  private void createActivityGamificationHistoryEntry(String earnerIdentityId, String receiverId, String gamificationEventName, String activityId) {
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
-      gam.put(SENDER_ID, senderId);
+      gam.put(SENDER_ID, earnerIdentityId);
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
@@ -388,14 +389,14 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private void cancelActivityGamificationHistoryEntry(String senderId,
                                                       String receiverId,
-                                                      String ruleTitle,
+                                                      String gamificationEventName,
                                                       String objectId,
-                                                      String ObjectType) {
+                                                      String objectType) {
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, objectId);
-      gam.put(OBJECT_TYPE_PARAM, ObjectType);
+      gam.put(OBJECT_TYPE_PARAM, objectType);
       gam.put(SENDER_ID, senderId);
       gam.put(RECEIVER_ID, receiverId);
       listenerService.broadcast(CANCEL_EVENT_NAME, gam, null);
@@ -406,14 +407,14 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private void cancelSpaceGamificationHistoryEntry(String senderId,
                                                    String receiverId,
-                                                   String ruleTitle,
+                                                   String gamificationEventName,
                                                    String objectId,
-                                                   String ObjectType) {
+                                                   String objectType) {
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, objectId);
-      gam.put(OBJECT_TYPE_PARAM, ObjectType);
+      gam.put(OBJECT_TYPE_PARAM, objectType);
       gam.put(SENDER_ID, senderId);
       gam.put(SENDER_TYPE, SpaceIdentityProvider.NAME);
       gam.put(RECEIVER_ID, receiverId);
@@ -425,11 +426,11 @@ public class GamificationActivityListener extends ActivityListenerPlugin {
 
   private void createSpaceGamificationHistoryEntry(String spacePrettyName,
                                                    String receiverId,
-                                                   String ruleTitle,
+                                                   String gamificationEventName,
                                                    String activityId) {
     Map<String, String> gam = new HashMap<>();
     try {
-      gam.put(RULE_TITLE, ruleTitle);
+      gam.put(EVENT_NAME, gamificationEventName);
       gam.put(OBJECT_ID_PARAM, activityId);
       gam.put(OBJECT_TYPE_PARAM, ACTIVITY_OBJECT_TYPE);
       gam.put(SENDER_ID, spacePrettyName);

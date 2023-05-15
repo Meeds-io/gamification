@@ -26,13 +26,6 @@ import org.exoplatform.commons.exception.ObjectNotFoundException;
 public interface RuleService {
 
     /**
-     * Find enable RuleEntity by title
-     * @param ruleTitle : rule's title param
-     * @return an instance of RuleDTO
-     */
-     RuleDTO findEnableRuleByTitle (String ruleTitle);
-
-    /**
      * Get RuleEntity by id
      * @param id : rule's id param
      * @return an instance of RuleDTO
@@ -54,7 +47,7 @@ public interface RuleService {
      * @param ruleTitle : rule's title param
      * @return an instance of RuleDTO
      */
-     List<RuleDTO> findEnabledRulesByEvent (String ruleTitle);
+     List<RuleDTO> findActiveRulesByEvent (String ruleTitle);
 
     /**
      * Find a RuleEntity by title
@@ -90,31 +83,13 @@ public interface RuleService {
      * @param limit Limit of result
      * @return {@link List} of {@link RuleDTO}
      */
-    List<RuleDTO> getRulesByFilter(RuleFilter ruleFilter, int offset, int limit) ;
+    List<RuleDTO> getRules(RuleFilter ruleFilter, int offset, int limit) ;
 
     /**
      * @param ruleFilter {@link RuleFilter} used to count associated rules
      * @return count rules by filter
      */
-    int countAllRules(RuleFilter ruleFilter);
-
-    /**
-     * Get all active Rules from DB
-     * @return RuleDTO list
-     */
-     List<RuleDTO> getActiveRules();
-    /**
-     * Get all Rules by Domain from DB
-     * @param domainId domain id
-     * @return RuleDTO list
-     */
-    List<RuleDTO> getAllRulesByDomain(long domainId);
-
-    /**
-     * Get all Rules by with null DomainDTO from DB
-     * @return RuleDTO list
-     */
-     List<RuleDTO> getAllRulesWithNullDomain();
+    int countRules(RuleFilter ruleFilter);
 
     /**
      * Get all Events from rules

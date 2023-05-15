@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <div class="d-flex flex-row my-auto">
               <v-icon size="18" class="mt-n2px primary--text ms-1">fas fa-trophy</v-icon>
               <div class="font-weight-bold text--secondary text-subtitle-2 mt-1 ms-2">
-                {{ challenge && challenge.points }} {{ $t('challenges.label.points') }}
+                {{ challenge && challenge.score }} {{ $t('challenges.label.points') }}
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     v-if="enableDelete"
                     class="editList"
                     @mousedown="$event.preventDefault()"
-                    @click="deleteChallenge">
+                    @click="deleteRule">
                     <v-list-item-title class="editLabel">{{ $t('challenges.delete') }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -126,12 +126,6 @@ export default {
     challenge: {
       type: Object,
       default: null
-    },
-    domain: {
-      type: Array,
-      default: function () {
-        return [];
-      },
     },
   },
   data: () => ({
@@ -208,10 +202,10 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.$ruleServices.getRuleById(this.challenge?.id)
+      this.$ruleService.getRuleById(this.challenge?.id)
         .then(rule => this.$root.$emit('rule-form-drawer', rule));
     },
-    deleteChallenge(event) {
+    deleteRule(event) {
       if (event) {
         event.preventDefault();
         event.stopPropagation();
