@@ -500,6 +500,7 @@ public class TestRuleRest extends AbstractServiceTest {
     data.put("area", program.getTitle());
     data.put("type", "AUTOMATIC");
     data.put("program", domainData);
+    data.put("enabled", "true");
 
     startSessionAs("root10");
     ContainerResponse response = getResponse("POST", getURLResource("rules"), data.toString());

@@ -23,7 +23,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -87,17 +86,13 @@ public class AnnouncementActivityUpdaterTest {
                                                               new ActivityLifeCycleEvent(ActivityLifeCycleEvent.Type.UPDATE_ACTIVITY,
                                                                                          announcementActivity);
 
-    when(announcementService.getAnnouncementById(announcement.getId())).thenReturn(announcement);
-
     announcementActivityUpdater.updateActivity(announcementActivityLifeCycleEvent);
-    verify(announcementService, times(1)).getAnnouncementById(anyLong());
-    verify(announcementService, times(1)).updateAnnouncement(any(Announcement.class));
+    verify(announcementService, times(1)).updateAnnouncementComment(announcement.getId(), announcement.getComment());
     verify(activityManager, times(1)).updateActivity(any(ExoSocialActivity.class), anyBoolean());
 
-    doThrow(ObjectNotFoundException.class).when(announcementService).updateAnnouncement(any(Announcement.class));
+    doThrow(ObjectNotFoundException.class).when(announcementService).updateAnnouncementComment(announcement.getId(), announcement.getComment());
     announcementActivityUpdater.updateActivity(announcementActivityLifeCycleEvent);
-    verify(announcementService, times(2)).getAnnouncementById(anyLong());
-    verify(announcementService, times(2)).updateAnnouncement(any(Announcement.class));
+    verify(announcementService, times(2)).updateAnnouncementComment(announcement.getId(), announcement.getComment());
     verify(activityManager, times(2)).updateActivity(any(ExoSocialActivity.class), anyBoolean());
   }
 }
