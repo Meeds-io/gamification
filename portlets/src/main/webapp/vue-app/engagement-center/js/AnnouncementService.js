@@ -21,7 +21,7 @@ export function getAnnouncements(ruleId, earnerType, offset, limit) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error when getting challenges');
@@ -38,7 +38,7 @@ export function createAnnouncement(announcement) {
     },
     body: JSON.stringify(announcement),
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error(resp.status);
@@ -51,7 +51,7 @@ export function cancelAnnouncement(announcementId) {
     method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Response code indicates a server error', resp);

@@ -68,7 +68,7 @@ export function getRules(filter) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error when getting rules');
@@ -81,7 +81,7 @@ export function getRuleById(id) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error(`Error retrieving rule by id ${id}`);
@@ -94,7 +94,7 @@ export function getEvents() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error when getting events');
@@ -108,7 +108,7 @@ export function deleteRule(ruleId) {
     method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Response code indicates a server error', resp);
@@ -124,7 +124,7 @@ export function updateRule(rule) {
     },
     body: JSON.stringify(rule),
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error(resp.status);
@@ -142,7 +142,7 @@ export function createRule(rule, domain) {
     },
     body: JSON.stringify(rule),
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error(resp.status);

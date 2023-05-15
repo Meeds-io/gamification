@@ -49,7 +49,7 @@ export function getPrograms(offset, limit, type, status, query, includeDeleted, 
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Server indicates an error while sending request');
@@ -66,7 +66,7 @@ export function saveProgram(program) {
     },
     body: JSON.stringify(program),
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error saving program');
@@ -82,7 +82,7 @@ export function canAddProgram() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Server indicates an error while sending request');
@@ -99,7 +99,7 @@ export function updateProgram(program) {
     },
     body: JSON.stringify(program),
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error updating program');
@@ -112,7 +112,7 @@ export function getProgramById(id) {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       return null;
@@ -125,7 +125,7 @@ export function deleteProgram(programId) {
     method: 'DELETE',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Response code indicates a server error', resp);

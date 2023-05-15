@@ -35,7 +35,7 @@ export function getAllRealizations(fromDate, toDate, earnerIds, sortBy, sortDesc
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error when getting realizations');
@@ -51,7 +51,7 @@ export function updateRealization( id, status, actionLabel, domain, points) {
       'Content-Type': 'application/json'
     },
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error('Error updating realization status');

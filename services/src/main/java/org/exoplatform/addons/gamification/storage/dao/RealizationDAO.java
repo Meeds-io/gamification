@@ -50,6 +50,8 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
 
+  private static final String        DATE_PARAM_NAME         = "date";
+
   private static final String        TO_DATE_PARAM_NAME      = "toDate";
 
   private static final String        FROM_DATE_PARAM_NAME    = "fromDate";
@@ -114,7 +116,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findAllRealizationsByDateByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date)
+    query.setParameter(DATE_PARAM_NAME, date)
          .setParameter(DOMAIN_ID_PARAM_NAME, domainId)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.ACCEPTED);
@@ -185,7 +187,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDate",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date);
+    query.setParameter(DATE_PARAM_NAME, date);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.ACCEPTED);
     return query.getResultList();
@@ -203,7 +205,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDate",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date);
+    query.setParameter(DATE_PARAM_NAME, date);
     query.setParameter(EARNER_TYPE_PARAM_NAME, earnerType);
     query.setParameter(STATUS, HistoryStatus.ACCEPTED);
     query.setMaxResults(limit);
@@ -254,7 +256,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<RealizationEntity> query =
                                         getEntityManager().createNamedQuery("RealizationEntity.findActionHistoryByDateByEarnerId",
                                                                             RealizationEntity.class)
-                                                          .setParameter("date", date)
+                                                          .setParameter(DATE_PARAM_NAME, date)
                                                           .setParameter(EARNER_ID_PARAM_NAME, earnerId);
 
     return query.getResultList();
@@ -277,7 +279,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
     TypedQuery<StandardLeaderboard> query =
                                           getEntityManager().createNamedQuery("RealizationEntity.findRealizationsByDateByDomain",
                                                                               StandardLeaderboard.class);
-    query.setParameter("date", date)
+    query.setParameter(DATE_PARAM_NAME, date)
          .setParameter(EARNER_TYPE_PARAM_NAME, earnerType)
          .setParameter(DOMAIN_ID_PARAM_NAME, domainId);
     query.setMaxResults(limit);
@@ -337,9 +339,11 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
   public Map<Long, Long> findUsersReputationScoreBetweenDate(List<String> earnersId, Date fromDate, Date toDate) {
     TypedQuery<Tuple> query =
                             getEntityManager().createNamedQuery("RealizationEntity.findUsersReputationScoreBetweenDate",
-                                                                Tuple.class);
-    query.setParameter("earnersId", earnersId).setParameter("fromDate", fromDate).setParameter("toDate", toDate);
-    query.setParameter(STATUS, HistoryStatus.ACCEPTED);
+                                                                Tuple.class)
+                                              .setParameter("earnersId", earnersId)
+                                              .setParameter(FROM_DATE_PARAM_NAME, fromDate)
+                                              .setParameter(TO_DATE_PARAM_NAME, toDate)
+                                              .setParameter(STATUS, HistoryStatus.ACCEPTED);
 
     return query.getResultList()
                 .stream()
@@ -616,7 +620,7 @@ public class RealizationDAO extends GenericDAOJPAImpl<RealizationEntity, Long> {
                                : "SELECT DISTINCT g FROM RealizationEntity g ";
     String orderBy = null;
     String sortDirection = filter.isSortDescending() ? " DESC" : " ASC";
-    if (StringUtils.equals(filter.getSortField(), "date") || StringUtils.isAllEmpty(filter.getSortField())) {
+    if (StringUtils.equals(filter.getSortField(), DATE_PARAM_NAME) || StringUtils.isAllEmpty(filter.getSortField())) {
       orderBy = " ORDER BY g.id " + sortDirection;
     } else {
       orderBy = " ORDER BY g." + filter.getSortField() + sortDirection + " ,g.id DESC ";

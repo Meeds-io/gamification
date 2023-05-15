@@ -184,7 +184,7 @@ export default {
       this.loading = true;
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/leaderboard/filter?${params}`, {
         credentials: 'include',
-      }).then(resp => resp && resp.ok && resp.json())
+      }).then(resp => resp?.ok && resp.json())
         .then(data => {
           const currentUser = data && data.find(user => !user.socialId);
           this.currentRank = currentUser?.rank;
@@ -198,7 +198,7 @@ export default {
     retrievePrograms() {
       return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/gamification/programs?type=ALL&sortByBudget=true`, {
         credentials: 'include',
-      }).then(resp => resp && resp.ok && resp.json())
+      }).then(resp => resp?.ok && resp.json())
         .then(data => {
           const domains = data?.domains || [];
           domains.forEach(domain => {

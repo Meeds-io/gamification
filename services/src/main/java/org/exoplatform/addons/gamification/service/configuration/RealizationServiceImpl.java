@@ -8,6 +8,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -19,8 +23,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
@@ -411,7 +417,17 @@ public class RealizationServiceImpl implements RealizationService {
       String[] dataToWrite = data.split("\\r?\\n");
       SimpleDateFormat formatter = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
       fileName += formatter.format(new Date());
-      File temp = File.createTempFile(fileName, ".xlsx");
+      File temp;
+      if (SystemUtils.IS_OS_UNIX) {
+        FileAttribute<Set<PosixFilePermission>> tempFileAttributes = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"));
+        temp = Files.createTempFile(fileName, ".xlsx", tempFileAttributes).toFile();
+      } else {
+        temp = Files.createTempFile(fileName, ".xlsx").toFile();
+        if (!temp.setReadable(true, true) || !temp.setWritable(true, true)) {
+          throw new IllegalStateException("Can't write a temp file to export XLS achievements file");
+        }
+      }
+
       temp.deleteOnExit();
       try (XSSFWorkbook workbook = new XSSFWorkbook(); FileOutputStream outputStream = new FileOutputStream(temp)) {
         Sheet sheet = workbook.createSheet(SHEETNAME);
