@@ -288,12 +288,14 @@ public class Utils {
     return StringUtils.isBlank(title) ? null : ruleService.findRuleByTitle("def_" + title);
   }
 
-  public static boolean isRuleManager(ProgramService programService, RuleDTO rule, String username) {
+  public static boolean isRuleManager(RuleDTO rule, String username) {
     ProgramDTO program = rule.getProgram();
     if (program == null) {
       return false;
     } else {
-      return programService.isProgramOwner(program.getId(), getUserAclIdentity(username));
+      return isProgramOwner(program.getAudienceId(),
+                            program.getId() > 0 ? program.getOwners() : Collections.emptySet(),
+                            username);
     }
   }
 
@@ -383,13 +385,13 @@ public class Utils {
     return userInfo;
   }
 
-  public static Long countAnnouncementsByRuleIdAndEarnerType(AnnouncementService announcementService,
-                                                             long ruleId,
-                                                             IdentityType earnerType) {
+  public static int countAnnouncementsByRuleIdAndEarnerType(AnnouncementService announcementService,
+                                                            long ruleId,
+                                                            IdentityType earnerType) {
     try {
       return announcementService.countAnnouncements(ruleId, earnerType);
     } catch (ObjectNotFoundException e) {
-      return 0L;
+      return 0;
     }
   }
 
@@ -446,7 +448,16 @@ public class Utils {
     activity.setTemplateParams(currentTemplateParams);
   }
 
+  public static boolean isProgramOwner(long spaceId, Set<Long> ownerIds, String username) {
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    Identity userIdentity = identityManager.getOrCreateUserIdentity(username);
+    return isProgramOwner(spaceId, ownerIds, userIdentity);
+  }
+
   public static boolean isProgramOwner(long spaceId, Set<Long> ownerIds, Identity userIdentity) {
+    if (userIdentity == null || userIdentity.isDeleted() || !userIdentity.isEnable()) {
+      return false;
+    }
     String username = userIdentity.getRemoteId();
     if (isSpaceManager(spaceId, username)) {
       return true;
@@ -550,25 +561,13 @@ public class Utils {
     return aclIdentity;
   }
 
-  public static boolean isSpaceManager(long spaceId, String userId) {
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    if (spaceService.isSuperManager(userId)) {
-      return true;
-    }
-    Space space = getSpaceById(String.valueOf(spaceId));
-    if (space == null) {
-      return false;
-    }
-    return spaceService.isManager(space, userId);
-  }
-
-  public static boolean isSpaceMember(long spaceId, String userId) {
+  public static boolean isSpaceMember(long spaceId, String username) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = getSpaceById(String.valueOf(spaceId));
     if (space == null) {
       return false;
     }
-    return spaceService.isMember(space, userId);
+    return spaceService.isMember(space, username);
   }
 
   public static boolean isUserMemberOfGroupOrUser(String username, String permissionExpression) {
@@ -655,6 +654,18 @@ public class Utils {
     statisticData.addParameter(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
 
     addRuleStatisticParameters(identityManager, spaceService, rule, statisticData, username);
+  }
+
+  private static boolean isSpaceManager(long spaceId, String username) {
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    if (spaceService.isSuperManager(username)) {
+      return true;
+    }
+    Space space = getSpaceById(String.valueOf(spaceId));
+    if (space == null) {
+      return false;
+    }
+    return spaceService.isManager(space, username);
   }
 
 }

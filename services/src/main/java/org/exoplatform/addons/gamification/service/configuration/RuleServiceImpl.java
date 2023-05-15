@@ -20,8 +20,6 @@ import static org.exoplatform.addons.gamification.utils.Utils.POST_CREATE_RULE_E
 import static org.exoplatform.addons.gamification.utils.Utils.POST_DELETE_RULE_EVENT;
 import static org.exoplatform.addons.gamification.utils.Utils.POST_UPDATE_RULE_EVENT;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class RuleServiceImpl implements RuleService {
 
   private static final String   USERNAME_IS_MANDATORY_MESSAGE = "Username is mandatory";
 
-  private final ProgramService   programService;
+  private final ProgramService  programService;
 
   private final RuleStorage     ruleStorage;
 
@@ -76,13 +74,16 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO rule = findRuleById(ruleId);
     if (rule == null) {
-      throw new ObjectNotFoundException(USERNAME_IS_MANDATORY_MESSAGE);
+      throw new ObjectNotFoundException("Rule doesn't exist");
     }
-    if (!Utils.isRuleManager(programService, rule, username)
+    if (rule.isDeleted()) {
+      throw new ObjectNotFoundException("Rule has been deleted");
+    }
+    if (!Utils.isRuleManager(rule, username)
         && (!rule.isEnabled()
             || rule.getProgram() == null
             || !Utils.isSpaceMember(rule.getProgram().getAudienceId(), username))) {
-      throw new IllegalAccessException(USERNAME_IS_MANDATORY_MESSAGE);
+      throw new IllegalAccessException("Rule isn't accessible");
     }
     return rule;
   }
@@ -107,16 +108,6 @@ public class RuleServiceImpl implements RuleService {
     return rule;
   }
 
-  public RuleDTO findRuleByEventAndDomain(String ruleTitle, long domainId) throws IllegalArgumentException {
-    if (StringUtils.isBlank(ruleTitle)) {
-      throw new IllegalArgumentException("Rule title is mandatory");
-    }
-    if (domainId < 0) {
-      throw new IllegalArgumentException("Domain id must be positive");
-    }
-    return ruleStorage.findRuleByEventAndDomain(ruleTitle, domainId);
-  }
-
   @Override
   public List<RuleDTO> findAllRules(int offset, int limit) {
     List<Long> rulesIds = ruleStorage.findAllRulesIds(offset, limit);
@@ -138,10 +129,6 @@ public class RuleServiceImpl implements RuleService {
     return ruleStorage.getAllEvents();
   }
 
-  public long getRulesTotalScoreByDomain(long domainId) {
-    return ruleStorage.getRulesTotalScoreByDomain(domainId);
-  }
-
   @Override
   public RuleDTO deleteRuleById(Long ruleId, String username) throws IllegalAccessException, ObjectNotFoundException {
     if (username == null) {
@@ -154,15 +141,9 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!Utils.isRuleManager(programService, rule, username)) {
+    if (!Utils.isRuleManager(rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
-    Date endDate = Utils.parseSimpleDate(rule.getEndDate());
-    Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-    if (endDate != null && (endDate.after(currentDate) || endDate.equals(currentDate))) {
-      throw new IllegalArgumentException("Rule does not ended yet");
-    }
-
     rule = ruleStorage.deleteRuleById(ruleId, username);
     Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, rule, username);
     return rule;
@@ -179,14 +160,12 @@ public class RuleServiceImpl implements RuleService {
     if (rule.getId() != null) {
       throw new IllegalArgumentException("domain id must be equal to 0");
     }
-    if (!Utils.isRuleManager(programService, rule, username)) {
-      throw new IllegalAccessException("The user is not authorized to create a rule");
-    }
     checkPermissionAndDates(rule, username);
     rule.setCreatedBy(username);
     rule.setLastModifiedBy(username);
+    rule.setDeleted(false);
     long domainId = rule.getProgram().getId();
-    RuleDTO similarRule = ruleStorage.findRuleByEventAndDomain(rule.getEvent(), domainId);
+    RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), domainId);
     if (similarRule != null && !similarRule.isDeleted()) {
       throw new ObjectAlreadyExistsException("Rule with same event and domain already exist");
     }
@@ -210,15 +189,17 @@ public class RuleServiceImpl implements RuleService {
     }
     RuleDTO oldRule = ruleStorage.findRuleById(rule.getId());
     if (oldRule == null) {
-      throw new ObjectNotFoundException("Rule does not exist");
+      throw new ObjectNotFoundException("Rule doesn't exist");
     }
-    if (!Utils.isRuleManager(programService, oldRule, username)) {
+    if (oldRule.isDeleted()) {
+      throw new ObjectNotFoundException("Rule with id '" + oldRule.getId() + "' was deleted");
+    }
+    if (!Utils.isRuleManager(oldRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
-    checkPermissionAndDates(oldRule, username); // Test if user
-    // was manager
-    checkPermissionAndDates(rule, username); // Test if user is
-    // remaining manager
+    checkPermissionAndDates(oldRule, username); // Test if user was manager
+    checkPermissionAndDates(rule, username); // Test if user is remaining
+                                             // manager
     rule.setCreatedDate(oldRule.getCreatedDate());
     rule.setCreatedBy(oldRule.getCreatedBy());
     return updateRuleAndBroadcast(rule, username);
@@ -230,8 +211,8 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {
-    if (!Utils.isRuleManager(programService, rule, username)) {
-      if (rule.getId() > 0) {
+    if (!Utils.isRuleManager(rule, username)) {
+      if (rule.getId() != null && rule.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update the rule with id " + rule.getId());
       } else {
         throw new IllegalAccessException("User " + username + " is not allowed to create a rule that it can't manage");
@@ -251,7 +232,7 @@ public class RuleServiceImpl implements RuleService {
     ProgramDTO program = rule.getProgram();
     if (program != null) {
       long domainId = rule.getProgram().getId();
-      RuleDTO similarRule = ruleStorage.findRuleByEventAndDomain(rule.getEvent(), domainId);
+      RuleDTO similarRule = ruleStorage.findActiveRuleByEventAndDomain(rule.getEvent(), domainId);
       if (similarRule != null && !similarRule.getId().equals(rule.getId()) && !similarRule.isDeleted()) {
         throw new IllegalStateException("Rule with same event and domain already exist");
       }

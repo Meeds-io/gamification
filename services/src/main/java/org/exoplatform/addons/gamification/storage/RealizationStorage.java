@@ -182,11 +182,11 @@ public class RealizationStorage {
                                                                         earnerType));
   }
 
-  public Long countRealizationsByRuleId(long ruleId) {
+  public int countRealizationsByRuleId(long ruleId) {
     return gamificationHistoryDAO.countRealizationsByRuleId(ruleId);
   }
 
-  public Long countRealizationsByRuleIdAndEarnerType(long ruleId, IdentityType earnerType) {
+  public int countRealizationsByRuleIdAndEarnerType(long ruleId, IdentityType earnerType) {
     return gamificationHistoryDAO.countRealizationsByRuleIdAndEarnerType(ruleId, earnerType);
   }
 
