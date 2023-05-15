@@ -19,7 +19,7 @@ package org.exoplatform.addons.gamification.rest.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.exoplatform.addons.gamification.service.dto.configuration.DomainDTO;
+import org.exoplatform.addons.gamification.service.dto.configuration.ProgramDTO;
 
 @Getter
 @Setter
@@ -42,7 +42,7 @@ public class GamificationInformationRestEntity {
 
   String         actionTitle;
 
-  DomainDTO      domainDTO;
+  ProgramDTO     program;
 
   String         context;
 

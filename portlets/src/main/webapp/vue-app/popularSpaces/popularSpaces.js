@@ -19,7 +19,7 @@ export function getUsersByGamificationRank() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } 
     else {
@@ -34,7 +34,7 @@ export function getReputationStatus() {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
-    if (resp && resp.ok) {
+    if (resp?.ok) {
       return resp.json();
     } else {
       throw new Error ('Error when getting the user reputation status');

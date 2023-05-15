@@ -22,21 +22,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
     <!-- Domains storage (JPA) -->
     <component>
-        <type>org.exoplatform.addons.gamification.storage.dao.DomainDAO</type>
+        <type>org.exoplatform.addons.gamification.storage.dao.ProgramDAO</type>
     </component>
     <!-- Domains Service Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.service.configuration.DomainService</key>
-        <type>org.exoplatform.addons.gamification.service.configuration.DomainServiceImpl</type>
+        <key>org.exoplatform.addons.gamification.service.configuration.ProgramService</key>
+        <type>org.exoplatform.addons.gamification.service.configuration.ProgramServiceImpl</type>
     </component>
     <!-- Domains storage Layer-->
     <component>
-        <key>org.exoplatform.addons.gamification.storage.DomainStorage</key>
-        <type>org.exoplatform.addons.gamification.storage.cached.DomainCachedStorage</type>
-    </component>
-    <!-- Domains entity Mapper -->
-    <component>
-        <type>org.exoplatform.addons.gamification.service.mapper.DomainMapper</type>
+        <key>org.exoplatform.addons.gamification.storage.ProgramStorage</key>
+        <type>org.exoplatform.addons.gamification.storage.cached.ProgramCachedStorage</type>
     </component>
 
     <external-component-plugins>
