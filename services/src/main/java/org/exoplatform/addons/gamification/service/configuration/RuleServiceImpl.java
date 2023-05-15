@@ -157,12 +157,6 @@ public class RuleServiceImpl implements RuleService {
     if (!Utils.isRuleManager(programService, rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
-    Date endDate = Utils.parseSimpleDate(rule.getEndDate());
-    Date currentDate = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
-    if (endDate != null && (endDate.after(currentDate) || endDate.equals(currentDate))) {
-      throw new IllegalArgumentException("Rule does not ended yet");
-    }
-
     rule = ruleStorage.deleteRuleById(ruleId, username);
     Utils.broadcastEvent(listenerService, POST_DELETE_RULE_EVENT, rule, username);
     return rule;

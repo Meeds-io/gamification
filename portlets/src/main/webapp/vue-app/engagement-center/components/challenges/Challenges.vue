@@ -313,7 +313,7 @@ export default {
           } else if (e.message  === '404') {
             msg = this.$t('challenges.notFound');
           } else  {
-            msg = this.$t('challenges.deleteErrorSave');
+            msg = this.$t('challenges.deleteError');
           }
           this.showAlert('error', msg);
         })
