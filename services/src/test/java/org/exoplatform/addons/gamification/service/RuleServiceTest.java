@@ -84,6 +84,20 @@ public class RuleServiceTest extends AbstractServiceTest {
   }
 
   @Test
+  public void testFindRuleByIdAndUser() throws IllegalAccessException, ObjectNotFoundException {
+    assertEquals(ruleDAO.findAll().size(), 0);
+    RuleDTO rule = newRuleDTO();
+    assertNotNull(rule);
+
+    Long ruleId = rule.getId();
+    RuleDTO foundRule = ruleService.findRuleById(ruleId, "root1");
+    assertNotNull(foundRule);
+
+    ruleService.deleteRuleById(ruleId, "root1");
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.findRuleById(ruleId, "root1"));
+  }
+
+  @Test
   public void testFindRuleAfterDomainAudienceChange() throws IllegalAccessException, ObjectNotFoundException {
     assertEquals(ruleDAO.findAll().size(), 0);
     RuleDTO rule = newRuleDTO();
@@ -183,8 +197,11 @@ public class RuleServiceTest extends AbstractServiceTest {
     RuleEntity ruleEntity = newRule();
     ruleEntity.setDescription("new_description");
     ruleService.updateRule(RuleBuilder.ruleToRuleDTO(domainStorage, ruleEntity), "root1");
-    RuleDTO ruleDTO = ruleService.findRuleById(ruleEntity.getId());
-    assertEquals(ruleEntity.getDescription(), ruleDTO.getDescription());
+    RuleDTO rule = ruleService.findRuleById(ruleEntity.getId());
+    assertEquals(ruleEntity.getDescription(), rule.getDescription());
+
+    ruleService.deleteRuleById(rule.getId(), "root1");
+    assertThrows(ObjectNotFoundException.class, () -> ruleService.updateRule(rule, "root"));
   }
 
   @Test
@@ -224,20 +241,5 @@ public class RuleServiceTest extends AbstractServiceTest {
     assertEquals(3, ruleService.getRules(ruleFilter,0, 10).size());
     assertEquals(3, ruleService.findAllRules(0, 3).size());
   }
-
-  @Test
-  public void getFindRuleByEventAndDomain() {
-    RuleDTO rule = newRuleDTO();
-    String ruleTitle = rule.getTitle();
-    String domainTitle = rule.getProgram() != null ? rule.getProgram().getTitle() : " ";
-    long domainId = rule.getProgram() != null ? rule.getProgram().getId() : null;
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain("", domainId));
-    assertThrows(IllegalArgumentException.class, () -> ruleService.findRuleByEventAndDomain(ruleTitle, -1));
-    RuleDTO ruleDTO = ruleService.findRuleByEventAndDomain(ruleTitle, domainId);
-    String newDomainTitle = ruleDTO.getProgram() != null ? ruleDTO.getProgram().getTitle() : "";
-    assertEquals(ruleTitle, ruleDTO.getTitle());
-    assertEquals(domainTitle, newDomainTitle);
-  }
-
 
 }

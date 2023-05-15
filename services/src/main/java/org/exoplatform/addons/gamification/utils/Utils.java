@@ -383,13 +383,13 @@ public class Utils {
     return userInfo;
   }
 
-  public static Long countAnnouncementsByRuleIdAndEarnerType(AnnouncementService announcementService,
-                                                             long ruleId,
-                                                             IdentityType earnerType) {
+  public static int countAnnouncementsByRuleIdAndEarnerType(AnnouncementService announcementService,
+                                                            long ruleId,
+                                                            IdentityType earnerType) {
     try {
       return announcementService.countAnnouncements(ruleId, earnerType);
     } catch (ObjectNotFoundException e) {
-      return 0L;
+      return 0;
     }
   }
 
