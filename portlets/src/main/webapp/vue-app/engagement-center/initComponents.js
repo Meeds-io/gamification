@@ -40,6 +40,8 @@ import ProgramOwnerAssignment from './components/programs/ProgramOwnerAssignment
 import RuleTitle from './components/rules/RuleTitle.vue';
 import RuleItem from './components/rules/RuleItem.vue';
 import RuleFormDrawer from './components/rules/RuleFormDrawer.vue';
+import RuleRecurrenceInput from './components/rules/form/RuleRecurrenceInput.vue';
+import ButtonGroupItem from './components/rules/form/ButtonGroupItem.vue';
 import RuleDetailDrawer from './components/rules/RuleDetailDrawer.vue';
 import RulesToolbar from './components/rules/RulesToolbar.vue';
 import NoRuleFound from './components/rules/NoRuleFound.vue';
@@ -73,6 +75,8 @@ const components = {
   'engagement-center-rule-title': RuleTitle,
   'engagement-center-rule-item': RuleItem,
   'engagement-center-rule-form-drawer': RuleFormDrawer,
+  'engagement-center-rule-recurrence-input': RuleRecurrenceInput,
+  'engagement-center-button-group-item': ButtonGroupItem,
   'engagement-center-rule-detail-drawer': RuleDetailDrawer,
   'engagement-center-rules-toolbar': RulesToolbar,
   'engagement-center-no-rule-found': NoRuleFound,

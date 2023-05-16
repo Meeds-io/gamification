@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <component-plugin>
             <name>RuleNameUpgradePlugin</name>
             <set-method>addUpgradePlugin</set-method>
-            <type>org.exoplatform.addons.gamification.upgrade.RuleNameUpgradePlugin</type>
+            <type>io.meeds.gamification.upgrade.RuleNameUpgradePlugin</type>
             <description>Fix rule Title</description>
             <init-params>
                 <value-param>
