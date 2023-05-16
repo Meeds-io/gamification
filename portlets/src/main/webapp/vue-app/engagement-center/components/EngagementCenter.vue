@@ -49,7 +49,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             :action-value-extensions="actionValueExtensions" />
         </v-tab-item>
         <v-tab-item>
-          <challenges :challenge-id="challengeId" />
+          <challenges
+            :is-administrator="isAdministrator"
+            :challenge-id="challengeId" />
         </v-tab-item>
         <v-tab-item>
           <realizations

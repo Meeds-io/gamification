@@ -20,8 +20,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     class="challenges-application border-box-sizing"
     :class="classWelcomeMessage"
     role="main">
-    <v-toolbar
-      flat>
+    <v-toolbar flat>
       <v-spacer />
       <div class="challengeFilter text-center d-flex align-center justify-space-around">
         <v-text-field
@@ -46,11 +45,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="my-auto ignore-vuetify-classes text-truncate challengeQuickFilter mb-3"
           @change="refreshChallenges">
           <option
-            v-for="dateFilter in rulesDateFilter"
-            :key="dateFilter.value"
-            :value="dateFilter.value">
+            v-for="item in ruleFilters"
+            :key="item.value"
+            :value="item.value">
             <span class="d-none d-lg-inline">
-              {{ dateFilter.text }}
+              {{ item.text }}
             </span>
           </option>
         </select>
@@ -88,6 +87,10 @@ export default {
     challengeId: {
       type: Number,
       default: null
+    },
+    isAdministrator: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
@@ -157,7 +160,28 @@ export default {
         return 6;
       }
     },
-    rulesDateFilter() {
+    ruleFilters() {
+      return this.isAdministrator && this.adminRuleFilters || this.userRuleFilters;
+    },
+    adminRuleFilters() {
+      return [{
+        text: this.$t('challenges.filter.allChallenges'),
+        value: 'ALL',
+      },{
+        text: this.$t('challenges.filter.activeChallenges'),
+        value: 'STARTED',
+      },{
+        text: this.$t('challenges.filter.UpcomingChallenges'),
+        value: 'NOT_STARTED',
+      },{
+        text: this.$t('challenges.filter.endedChallenges'),
+        value: 'ENDED',
+      },{
+        text: this.$t('programs.details.filter.disabled'),
+        value: 'DISABLED',
+      }];
+    },
+    userRuleFilters() {
       return [{
         text: this.$t('challenges.filter.allChallenges'),
         value: 'ALL',
@@ -253,13 +277,18 @@ export default {
       return this.getChallenges(true, domainId);
     },
     getChallenges(append, domainId) {
-      this.loading = true;
       const offset = append && domainId && this.challengesByDomainId[domainId]?.length || 0;
+      const status = (this.filter === 'DISABLED' && 'DISABLED')
+        || (this.isAdministrator && this.filter === 'ALL' && 'ALL')
+        || 'ENABLED';
+      const dateFilter = this.filter === 'DISABLED' && 'ALL' || this.filter;
+
+      this.loading = true;
       return this.$ruleService.getRules({
         term: this.search,
         domainId,
-        dateFilter: this.filter,
-        status: 'ENABLED',
+        dateFilter,
+        status,
         type: 'MANUAL',
         offset,
         limit: this.challengePerPage,
