@@ -15,10 +15,8 @@
  */
 package io.meeds.gamification.listener;
 
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.exoplatform.commons.search.index.IndexingService;
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.PortalContainer;
-import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -34,39 +32,30 @@ import io.meeds.gamification.utils.Utils;
 public class RulesESListener extends Listener<Object, String> {
   private static final Log LOG = ExoLogger.getLogger(RulesESListener.class);
 
-  private PortalContainer  container;
-
   private IndexingService  indexingService;
 
   private RuleService      ruleService;
 
-  public RulesESListener(PortalContainer container,
-                         IndexingService indexingService,
+  public RulesESListener(IndexingService indexingService,
                          RuleService ruleService) {
-    this.container = container;
     this.indexingService = indexingService;
     this.ruleService = ruleService;
   }
 
   @Override
+  @ExoTransactional
   public void onEvent(Event<Object, String> event) throws Exception {
     Object object = event.getSource();
     Long ruleId = getRuleId(object);
     boolean ruleDeleted = ruleId == null || Utils.POST_DELETE_RULE_EVENT.equals(event.getEventName());
 
-    ExoContainerContext.setCurrentContainer(container);
-    RequestLifeCycle.begin(container);
-    try {
-      RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
-      if (ruleDeleted || rule == null || rule.isDeleted() || !rule.isEnabled()) {
-        LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
-        indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
-      } else {
-        LOG.debug("Notifying indexing service for rule with id={}", ruleId);
-        indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
-      }
-    } finally {
-      RequestLifeCycle.end();
+    RuleDTO rule = ruleDeleted ? null : ruleService.findRuleById(ruleId);
+    if (ruleDeleted || rule == null || rule.isDeleted() || !rule.isEnabled()) {
+      LOG.debug("Notifying unindexing service for rule with id={}", ruleId);
+      indexingService.unindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
+    } else {
+      LOG.debug("Notifying indexing service for rule with id={}", ruleId);
+      indexingService.reindex(RuleIndexingServiceConnector.INDEX, String.valueOf(ruleId));
     }
   }
 
