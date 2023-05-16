@@ -37,6 +37,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.security.IdentityConstants;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -184,11 +185,37 @@ public class ProgramServiceImpl implements ProgramService {
   }
 
   @Override
-  public ProgramDTO getProgramById(long domainId) {
-    if (domainId <= 0) {
-      throw new IllegalArgumentException("domain id has to be positive integer");
+  public ProgramDTO getProgramById(long programId, String username) throws IllegalAccessException, ObjectNotFoundException {
+    if (StringUtils.isBlank(username)) {
+      throw new IllegalAccessException("Username is mandatory");
     }
-    return programStorage.getDomainById(domainId);
+    ProgramDTO program = getProgramById(programId);
+    if (program == null) {
+      throw new ObjectNotFoundException("Program doesn't exist");
+    }
+    if (program.isDeleted()) {
+      throw new ObjectNotFoundException("Program has been deleted");
+    }
+    if (!Utils.isRewardingManager(username)
+        && !Utils.isSpaceMember(program.getAudienceId(), username)) {
+      throw new IllegalAccessException("Rule isn't accessible");
+    }
+    if (!program.isEnabled()
+        && !Utils.isRewardingManager(username)
+        && !Utils.isProgramOwner(program.getAudienceId(),
+                                 program.getOwners(),
+                                 Utils.getIdentityByTypeAndId(OrganizationIdentityProvider.NAME, username))) {
+      throw new IllegalAccessException("Rule isn't accessible");
+    }
+    return program;
+  }
+
+  @Override
+  public ProgramDTO getProgramById(long programId) {
+    if (programId <= 0) {
+      throw new IllegalArgumentException("Program id is mandatory");
+    }
+    return programStorage.getDomainById(programId);
   }
 
   @Override
@@ -239,7 +266,8 @@ public class ProgramServiceImpl implements ProgramService {
     if (domain == null) {
       return false;
     }
-    return domain.getAudienceId() == 0 || Utils.isSpaceMember(domain.getAudienceId(), userName)
+    return domain.getAudienceId() == 0
+        || Utils.isSpaceMember(domain.getAudienceId(), userName)
         || Utils.isRewardingManager(userName);
   }
 

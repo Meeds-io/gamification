@@ -550,25 +550,13 @@ public class Utils {
     return aclIdentity;
   }
 
-  public static boolean isSpaceManager(long spaceId, String userId) {
-    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-    if (spaceService.isSuperManager(userId)) {
-      return true;
-    }
-    Space space = getSpaceById(String.valueOf(spaceId));
-    if (space == null) {
-      return false;
-    }
-    return spaceService.isManager(space, userId);
-  }
-
-  public static boolean isSpaceMember(long spaceId, String userId) {
+  public static boolean isSpaceMember(long spaceId, String username) {
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = getSpaceById(String.valueOf(spaceId));
     if (space == null) {
       return false;
     }
-    return spaceService.isMember(space, userId);
+    return spaceService.isMember(space, username);
   }
 
   public static boolean isUserMemberOfGroupOrUser(String username, String permissionExpression) {
@@ -655,6 +643,18 @@ public class Utils {
     statisticData.addParameter(STATISTICS_ANNOUNCE_COMMENT_PARAM, announcement.getComment());
 
     addRuleStatisticParameters(identityManager, spaceService, rule, statisticData, username);
+  }
+
+  private static boolean isSpaceManager(long spaceId, String username) {
+    SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+    if (spaceService.isSuperManager(username)) {
+      return true;
+    }
+    Space space = getSpaceById(String.valueOf(spaceId));
+    if (space == null) {
+      return false;
+    }
+    return spaceService.isManager(space, username);
   }
 
 }

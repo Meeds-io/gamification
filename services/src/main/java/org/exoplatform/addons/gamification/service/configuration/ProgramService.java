@@ -39,7 +39,7 @@ public interface ProgramService {
   /**
    * Gets programs by filter.
    *
-   * @param  programFilter           {@link ProgramFilter} used to filter results
+   * @param  programFilter          {@link ProgramFilter} used to filter results
    * @param  username               User name accessing programs
    * @param  offset                 index of the search
    * @param  limit                  limit of results to return
@@ -53,7 +53,7 @@ public interface ProgramService {
   /**
    * Gets Program Ids by filter.
    *
-   * @param  programFilter           {@link ProgramFilter} used to filter results
+   * @param  programFilter          {@link ProgramFilter} used to filter results
    * @param  username               User name accessing Programs
    * @param  offset                 index of the search
    * @param  limit                  limit of results to return
@@ -75,7 +75,7 @@ public interface ProgramService {
    * Find a Program by title
    * 
    * @param  programTitle : Program title
-   * @return             found {@link ProgramDTO}
+   * @return              found {@link ProgramDTO}
    */
   ProgramDTO getProgramByTitle(String programTitle);
 
@@ -87,8 +87,8 @@ public interface ProgramService {
    *                                  create a program
    * @return                        created {@link ProgramDTO}
    * @throws IllegalAccessException when user is not authorized to create a
-   *                                  Program for the designated owner defined in
-   *                                  object
+   *                                  Program for the designated owner defined
+   *                                  in object
    */
   ProgramDTO createProgram(ProgramDTO program, Identity aclIdentity) throws IllegalAccessException;
 
@@ -120,7 +120,7 @@ public interface ProgramService {
   /**
    * Deletes an existing Program by id
    *
-   * @param  programId                Program technical identifier to delete
+   * @param  programId               Program technical identifier to delete
    * @param  aclIdentity             Security identity of user attempting to
    *                                   delete a program
    * @return                         deleted {@link ProgramDTO}
@@ -133,15 +133,28 @@ public interface ProgramService {
   /**
    * Retrieves a program identified by its technical identifier.
    * 
-   * @param  id : program id
-   * @return    found {@link ProgramDTO}
+   * @param  programId : program id
+   * @return           found {@link ProgramDTO}
    */
-  ProgramDTO getProgramById(long id);
+  ProgramDTO getProgramById(long programId);
+
+  /**
+   * Retrieves a program identified by its technical identifier accessed by a
+   * user
+   * 
+   * @param  programId
+   * @param  username
+   * @return           found {@link ProgramDTO}
+   * @throws IllegalAccessException  when user is not authorized to access program
+   * @throws ObjectNotFoundException program not found
+   */
+  ProgramDTO getProgramById(long programId, String username) throws IllegalAccessException, ObjectNotFoundException;
 
   /**
    * Count all Programs by filter
    *
-   * @param  programFilter           {@link ProgramFilter} used to filter Programs
+   * @param  programFilter          {@link ProgramFilter} used to filter
+   *                                  Programs
    * @param  username               User name accessing Programs
    * @return                        Programs count
    * @throws IllegalAccessException when user is not authorized to get another
@@ -152,7 +165,7 @@ public interface ProgramService {
   /**
    * Retrieves a cover identified by Program technical identifier.
    *
-   * @param  programId                Program unique identifier
+   * @param  programId               Program unique identifier
    * @return                         found {@link InputStream}
    * @throws ObjectNotFoundException Program not found
    */
@@ -170,7 +183,7 @@ public interface ProgramService {
   /**
    * Check whether user can add programs or not
    * 
-   * @param  programId    technical identifier of program
+   * @param  programId   technical identifier of program
    * @param  aclIdentity Security identity of user
    * @return             true if user has enough privileges to create a program,
    *                     else false
@@ -180,7 +193,7 @@ public interface ProgramService {
   /**
    * Check whether user is member of program or not
    * 
-   * @param  programId    technical identifier of program
+   * @param  programId   technical identifier of program
    * @param  aclIdentity Security identity of user
    * @return             true if user has enough privileges to see a program,
    *                     else false
