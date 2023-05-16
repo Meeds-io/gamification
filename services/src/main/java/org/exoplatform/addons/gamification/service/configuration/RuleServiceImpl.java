@@ -79,7 +79,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule.isDeleted()) {
       throw new ObjectNotFoundException("Rule has been deleted");
     }
-    if (!Utils.isRuleManager(programService, rule, username)
+    if (!Utils.isRuleManager(rule, username)
         && (!rule.isEnabled()
             || rule.getProgram() == null
             || !Utils.isSpaceMember(rule.getProgram().getAudienceId(), username))) {
@@ -141,7 +141,7 @@ public class RuleServiceImpl implements RuleService {
     if (rule == null) {
       throw new ObjectNotFoundException("Rule with id " + ruleId + " is not found");
     }
-    if (!Utils.isRuleManager(programService, rule, username)) {
+    if (!Utils.isRuleManager(rule, username)) {
       throw new IllegalAccessException("The user is not authorized to delete a rule");
     }
     rule = ruleStorage.deleteRuleById(ruleId, username);
@@ -159,9 +159,6 @@ public class RuleServiceImpl implements RuleService {
     }
     if (rule.getId() != null) {
       throw new IllegalArgumentException("domain id must be equal to 0");
-    }
-    if (!Utils.isRuleManager(programService, rule, username)) {
-      throw new IllegalAccessException("The user is not authorized to create a rule");
     }
     checkPermissionAndDates(rule, username);
     rule.setCreatedBy(username);
@@ -197,13 +194,12 @@ public class RuleServiceImpl implements RuleService {
     if (oldRule.isDeleted()) {
       throw new ObjectNotFoundException("Rule with id '" + oldRule.getId() + "' was deleted");
     }
-    if (!Utils.isRuleManager(programService, oldRule, username)) {
+    if (!Utils.isRuleManager(oldRule, username)) {
       throw new IllegalAccessException("The user is not authorized to update a rule");
     }
-    checkPermissionAndDates(oldRule, username); // Test if user
-    // was manager
-    checkPermissionAndDates(rule, username); // Test if user is
-    // remaining manager
+    checkPermissionAndDates(oldRule, username); // Test if user was manager
+    checkPermissionAndDates(rule, username); // Test if user is remaining
+                                             // manager
     rule.setCreatedDate(oldRule.getCreatedDate());
     rule.setCreatedBy(oldRule.getCreatedBy());
     return updateRuleAndBroadcast(rule, username);
@@ -215,8 +211,8 @@ public class RuleServiceImpl implements RuleService {
   }
 
   private void checkPermissionAndDates(RuleDTO rule, String username) throws IllegalAccessException {
-    if (!Utils.isRuleManager(programService, rule, username)) {
-      if (rule.getId() > 0) {
+    if (!Utils.isRuleManager(rule, username)) {
+      if (rule.getId() != null && rule.getId() > 0) {
         throw new IllegalAccessException("User " + username + " is not allowed to update the rule with id " + rule.getId());
       } else {
         throw new IllegalAccessException("User " + username + " is not allowed to create a rule that it can't manage");
